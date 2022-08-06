@@ -1,0 +1,71 @@
+.web-account-dialog {
+  display: flex;flex-flow: column;align-items: center;
+  &-info {
+    border: 12px solid $cf7;border-radius: 48px;width: 100%;padding: 36px;margin-bottom: 36px;
+    dl {
+      margin-bottom: 36px;
+      dt {
+        display: flex;align-items: center;font-size: 18px;line-height: 20px;
+      }
+      dd {
+        font-size: 26px;margin-top: 16px;
+      }
+    }
+    address, p {
+      font-size: 14px;line-height: 20px;color: $c88;
+    }
+    p {
+      font-size: 10px;
+    }
+    & + .web-button {
+      width: 186px;
+    }
+  }
+  &-btns {
+    display: flex;justify-content: space-between;align-items: center;margin-bottom: 36px;
+    .web-button {
+      width: 174px;
+    }
+  }
+}
+
+.mobile-mode {
+  .web-account-dialog {
+    &-info {
+      border-width: rem(8);
+      border-radius: rem(28);padding: rem(24);margin-bottom: rem(24);
+      dl {
+        margin-bottom: rem(24);
+        dt {
+          font-size: rem(14);line-height: rem(16);
+        }
+        dd {
+          font-size: rem(18);margin-top: rem(8);
+        }
+      }
+      address, p {
+        font-size: rem(10);line-height: rem(16);word-break: break-all;
+      }
+      p {
+        font-size: rem(8);
+      }
+      & + .web-button {
+        width: rem(143);
+      }
+    }
+    &-btns {
+      margin-bottom: rem(24);
+      .web-button {
+        width: rem(108);
+      }
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .web-account-dialog {
+    &-info {
+      border-color: $c33;
+    }
+  }
+}

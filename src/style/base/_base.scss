@@ -1,0 +1,115 @@
+// base by fungleo
+html {
+  background-color: $cff;
+  color: $c22;
+  &.dark {
+    background: $c22;
+    color: $cff;
+  }
+}
+body {
+  line-height: 1;
+  font-family: 'Urbanist', 'PingFang SC', 'Heiti SC', 'Droidsansfallback', Helvetica, 'Droid Sans';
+  font-size: 16px;
+
+  & > iframe {
+    display: none !important;
+    z-index: 0 !important;
+    position: static !important;
+  }
+}
+.block {
+  display: block;
+}
+.none {
+  display: none;
+}
+.clear {
+  clear: both;
+}
+
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.tl {
+  text-align: left;
+}
+.tr {
+  text-align: right;
+}
+.tc {
+  text-align: center;
+}
+
+.cf {
+  zoom: 1;
+  &:before,
+  &:after {
+    content: '';
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+.web {
+  width: 1392px;margin-left: auto;margin-right: auto;
+  &_ {
+    min-width: 1392px;margin-left: auto;margin-right: auto;
+  }
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  // background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: $ce7;
+  border-radius: 5px;
+  border: 2px solid rgba($ce7, .5);
+}
+::-webkit-scrollbar-track-piece {
+  background: $cff;
+}
+
+.mobile-mode {
+  body {
+    font-size: rem(16);
+    padding-top: constant(safe-area-inset-top);
+    padding-left: constant(safe-area-inset-left);
+    padding-right: constant(safe-area-inset-right);
+    padding-bottom: constant(safe-area-inset-bottom);
+    font-weight: normal;
+  }
+  &::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    display: none !important;
+    background: transparent;
+    -webkit-overflow-scrolling: touch;
+    &-thumb,
+    &-track-piece {
+      background: transparent;
+    }
+  }
+  * {
+    user-select: none;
+  }
+
+  input,
+  textarea {
+    user-select: auto;
+  }
+  input[type='password'] {
+    user-select: none;
+  }
+}
+
+$header-height: 114px;
+$header-bottom: 4px;

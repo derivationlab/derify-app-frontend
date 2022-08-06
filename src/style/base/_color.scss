@@ -1,0 +1,31 @@
+$c55: #555;
+$cff: #fff;
+$c00: #000;
+$c66: #666;
+$c22: #222;
+$c33: #333;
+$c44: #444;
+$c88: #888;
+$cf7: #f7f7f7;
+$ce7: #E7E7E7;
+
+$lRed: #EC6989;
+$red: #E7446B;
+$buy: #11BE6B;
+$lBuy: #52EAA1;
+$sell: #F64242;
+$lSell: #FF7171;
+$lTips: #FF7E67;
+$lYellow: #FBE86C;
+$yellow: #FAE247;
+$blue: #42A3FF;
+
+$primary: $red;
+$line: $cf7;
+
+.buy {
+  color: $buy !important;
+}
+.sell {
+  color: $sell !important;
+}

@@ -1,0 +1,12 @@
+.web-not-connect,
+.web-not-initializing {
+  position: absolute;top: 0;left: 0;right: 0;bottom: 0;
+  background: rgba($cf7, .8);z-index: 15;
+  display: flex;justify-content: center;align-items: center;
+}
+.dark, .mobile-mode.dark {
+  .web-not-connect,
+  .web-not-initializing  {
+    background: rgba($c33, .8);
+  }
+}

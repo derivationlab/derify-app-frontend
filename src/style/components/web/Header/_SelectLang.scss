@@ -1,0 +1,90 @@
+.web-header-select-lang {
+  position: relative;
+  &-label {
+    height: 48px;border-radius: 24px;font-size: 18px;padding: 0 24px;
+    display: flex;justify-content: space-between;align-items: center;
+    @include dz();background: rgba($cff, 0);white-space: nowrap;cursor: pointer;
+    span {
+      display: flex;align-items: center;color: $c88;
+      @include dz();
+      &:after {
+        display: block;content: '';margin-left: 8px;
+        width: 12px;height: 12px;background: url($res + 'icon/arrow-right.svg') center/contain no-repeat;
+      }
+    }
+    &:hover {
+      background: $cf7;
+      span {
+        color: $red;
+        &:after {
+          background-image: url($res + 'icon/arrow-right-active.svg');
+        }
+      }
+    }
+  }
+  &-menu {
+    position: absolute;right: 0;top: 48px;display: none;
+    box-shadow: 0px 0px 8px rgba($c00, 0.2);background: $cff;
+    border-radius: 24px;padding: 24px;width: 240px;z-index: 11;
+    &.show {
+      display: block;
+    }
+    li {
+      display: flex;align-items: center;padding: 0 24px;
+      &.active, &.active:hover {
+        background: $red;color: $cff;
+      }
+    }
+  }
+}
+
+.mobile-mode {
+  .web-header-select-lang {
+    &-label {
+      height: rem(36);border-radius: rem(20);font-size: rem(14);padding: 0 rem(20);
+      span {
+        &:after {
+          margin-left: rem(8);
+          width: rem(10);height: rem(10);
+        }
+      }
+    }
+    &-menu {
+      top: rem(40);
+      border-radius: rem(20);padding: rem(20);width: rem(170);
+      li {
+        padding: 0 rem(18);
+      }
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .web-header-select-lang {
+    &-label {
+      background: rgba($c33, 0);white-space: nowrap;cursor: pointer;
+      span {
+        color: $c88;
+        &:after {
+          background-image: url($res + 'icon/arrow-right-dark.svg')
+        }
+      }
+      &:hover {
+        background: $c33;
+        span {
+          color: $yellow;
+          &:after {
+            background-image: url($res + 'icon/arrow-right-dark-active.svg');
+          }
+        }
+      }
+    }
+    &-menu {
+      box-shadow: 0px 0px 8px rgba($c00, 0.8);background: $c22;
+      li {
+        &.active, &.active:hover {
+          background: $yellow;color: $c22;
+        }
+      }
+    }
+  }
+}

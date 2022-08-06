@@ -1,0 +1,78 @@
+.web-stepper {
+  display: flex;align-items: center;
+  button {
+    position: relative;cursor: pointer;
+    width: 40px;height: 40px;border-radius: 20px;
+    border: 2px solid $ce7;background: $cff;
+    @include dz();
+    &:before, &:after {
+      content: '';width: 16px;height: 2px;border-radius: 1px;background: $c88;
+      position: absolute;left: 50%;top: 50%;
+      @include dz();
+      margin-left: -8px;margin-top: -1px;
+    }
+    &:hover {
+      border-color: $red;
+      &:before, &:after {
+        background: $red;
+      }
+    }
+
+    &:disabled, &:disabled:hover {
+      background: $ce7;
+      cursor: not-allowed;
+      border-color: $ce7;
+      &:before, &:after {
+        background: $cff;
+      }
+    }
+  }
+
+  &-add {
+    &:after {
+      @include xz(90);
+    }
+  }
+
+  label, input {
+    padding: 0 10px;font-size: 18px;font-weight: bold;width: 58px;text-align: center;
+    border: none;background: none;
+  }
+}
+.mobile-mode {
+  .web-stepper {
+    button {
+      width: rem(24);height: rem(24);border-radius: rem(12);
+      border-width: rem(2);
+      &:before, &:after {
+        width: rem(12);height: rem(2);border-radius: rem(1);
+        margin-left: rem(-6);margin-top: rem(-1);
+      }
+    }
+
+    label, input {
+      padding: 0 rem(8);font-size: rem(14);width: rem(30);
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .web-stepper {
+    button {
+      border-color: $c44;background: $c22;
+      &:hover {
+        border-color: $yellow;
+        &:before, &:after {
+          background: $yellow;
+        }
+      }
+
+      &:disabled, &:disabled:hover {
+        background: $c44;
+        border-color: $c44;
+        &:before, &:after {
+          background: $c33;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+.web-percent-button {
+  display: flex;width: 100%;padding: 0 2px;
+  @include ns();
+  span {
+    position: relative;
+    flex: 1;display: flex;align-items: center;justify-content: center;
+    box-shadow: 0 0 0 2px $ce7;height: 26px;background: $cff;
+    font-size: 12px;color: $c88;cursor: pointer;
+    // @include dz();
+    &:first-child {
+      border-radius: 13px 0 0 13px;
+    }
+    &:last-child {
+      border-radius: 0 13px 13px 0;
+    }
+    &:hover, &.active {
+      box-shadow: 0 0 0 2px $red;color: $red;z-index: 1;
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .web-percent-button {
+    span {
+      box-shadow: 0 0 0 2px $c44;background: $c22;
+      &:hover, &.active {
+        box-shadow: 0 0 0 2px $yellow;color: $yellow;
+      }
+    }
+  }
+}

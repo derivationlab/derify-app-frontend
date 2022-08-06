@@ -1,0 +1,17 @@
+.m-trade-fixed {
+  position: fixed;bottom: 0;left: 0;right: 0;z-index: 20;
+  background: $cff;height: rem(60);box-shadow: 0 0 rem(24) rgba($c00, 0.2);
+  display: flex;justify-content: center;align-items: center;
+  .web-button {
+    margin: 0 rem(12);
+  }
+  .web-trade-bench-button-short {
+    width: rem(156);
+  }
+}
+
+.dark {
+  .m-trade-fixed {
+    background: $c22;box-shadow: 0 0 rem(24) rgba($c00, 0.8);
+  }
+}

@@ -1,0 +1,25 @@
+.web-decimal-show {
+  font-weight: 800;
+  color:$buy;
+  em {
+    font-size: 1.45em;
+  }
+
+  small {
+    font-size: 1em;
+  }
+}
+.mobile-mode {
+  .web-decimal-show {
+    color:$c22;
+    em, small {
+      font-weight: 800;
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .web-decimal-show {
+    color:$cff;
+  }
+}

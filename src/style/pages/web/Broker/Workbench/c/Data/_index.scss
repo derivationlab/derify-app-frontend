@@ -1,0 +1,9 @@
+.web-broker-workbench-data {
+  @extend .web;margin: 48px auto;
+}
+
+.mobile-mode {
+  .web-broker-workbench-data {
+    width: 100%;padding: 0 rem(16);margin: rem(24) auto;
+  }
+}

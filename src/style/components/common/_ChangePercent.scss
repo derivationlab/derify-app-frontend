@@ -1,0 +1,28 @@
+.web-change-percent {
+  span {
+    display: inline-flex;color: $cff;justify-content: center;align-items: center;
+  }
+
+  &-size {
+    &-default span {
+      height: 20px;padding: 0 10px;font-size: 12px;font-weight: bold;border-radius: 10px;
+    }
+  }
+  &.up span {
+    @include jb($buy, lighten($buy, 10), 90);
+  }
+  &.down span {
+    @include jb($sell, lighten($sell, 10), 90);
+  }
+}
+
+
+.mobile-mode {
+  .web-change-percent {
+    &-size {
+      &-default span {
+        height: rem(16);padding: 0 rem(8);font-size: rem(10);border-radius: rem(8);
+      }
+    }
+  }
+}

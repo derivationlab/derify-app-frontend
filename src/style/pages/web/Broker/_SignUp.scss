@@ -1,0 +1,166 @@
+.web-broker-sign-up {
+  @extend .web;
+  border-radius: 48px;background: $cf7;padding: 0 48px 36px;margin-bottom: 48px;
+
+  &-header {
+    display: flex;align-items: center;justify-content: center;
+    height: 120px;font-size: 24px;
+  }
+
+  &-footer {
+    display: flex;justify-content: center;align-items: center;margin-top: 36px;
+    .web-button {
+      width: 186px;margin: 0 18px;
+    }
+  }
+
+  &-step-1 {
+    padding: 36px 48px;background: $cff;border-radius: 36px;
+    p {
+      font-size: 18px;line-height: 20px;margin-bottom: 16px;
+    }
+    em {
+      display: block;font-size: 40px;color: $red;font-weight: bold;
+      u {
+        font-size: 26px;color: $c22;font-weight: 200;margin-left: 8px;
+      }
+    }
+    hr {
+      border: dashed $ce7;border-width: 0 0 2px;margin: 24px 0;
+    }
+    span, address {
+      display: block;font-size: 14px;line-height: 20px;
+    }
+    address {
+      color: $c88;
+    }
+  }
+  &-step-2 {
+    padding: 0 24px;
+  }
+  &-step-3 {
+    @extend .web;background: $cf7;border-radius: 24px;
+    display: flex;justify-content: center;align-items: center;flex-flow: column;
+    height: calc(100vh - 200px);
+
+    h3 {
+      font-size: 40px;font-weight: normal;
+    }
+    p {
+      margin: 36px 0 48px;font-size: 26px;font-weight: 200;
+    }
+    .web-button {
+      width: 194px;
+    }
+  }
+}
+
+.mobile-mode {
+  .web-broker-sign-up {
+    width: auto;margin: 0 rem(16) rem(32);
+    background: $cff;padding: 0;
+
+    &-header {
+      height: rem(32);font-size: rem(18);margin-bottom: rem(24);
+    }
+
+    &-footer {
+      margin-top: rem(24);
+      .web-button {
+        width: rem(140);margin: 0 rem(5);white-space: nowrap;
+      }
+    }
+    &-step {
+      &-layout {
+        padding: rem(8) rem(8) rem(24);background: $cf7;border-radius: rem(36);
+      }
+      &-1 {
+        padding: rem(24);border-radius: rem(28);
+        p {
+          font-size: rem(14);line-height: rem(16);margin-bottom: rem(8);
+        }
+        em {
+          font-size: rem(28);
+          u {
+            font-size: rem(18);margin-left: rem(8);
+          }
+        }
+        hr {
+          margin: rem(12) 0;
+        }
+        span, address {
+          font-size: rem(12);line-height: rem(20);
+        }
+      }
+      &-2 {
+        padding: 0 24px;
+      }
+      &-3 {
+        width: auto;margin: 0 rem(16) rem(24);background: $cf7;border-radius: rem(36);
+        height: rem(350);
+
+        h3, p {
+          font-size: rem(18);line-height: rem(28);margin: 0;font-weight: 200;
+        }
+        .web-button {
+          width: rem(150);margin-top: rem(32);
+        }
+      }
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .web-broker-sign-up {
+    background: $c33;
+
+    &-step-1 {
+      background: $c22;
+      em {
+        color: $yellow;
+        u {
+          color: $cff;
+        }
+      }
+      hr {
+        border-color: $c44;
+      }
+    }
+    &-step-3 {
+      background: $c33;
+    }
+  }
+}
+
+.mobile-mode.dark {
+  .web-broker-sign-up {
+    background: $c22;
+    &-step {
+      &-layout {
+        background: $c33;
+      }
+      &-1 {
+        padding: rem(24);border-radius: rem(28);
+        p {
+          font-size: rem(14);line-height: rem(16);margin-bottom: rem(8);
+        }
+        em {
+          font-size: rem(28);
+          u {
+            font-size: rem(18);margin-left: rem(8);
+          }
+        }
+        hr {
+          margin: rem(12) 0;
+        }
+        span, address {
+          font-size: rem(12);line-height: rem(20);
+        }
+      }
+
+      &-3 {
+        width: auto;margin: 0 rem(16) rem(24);background: $cf7;border-radius: rem(36);
+      }
+    }
+  }
+}

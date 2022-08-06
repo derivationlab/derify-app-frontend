@@ -1,0 +1,57 @@
+.web-broker-rank {
+  @extend .web;margin-bottom: 48px;
+  & > h2 {
+    font-size: 24px;height: 120px;display: flex;justify-content: center;align-items: center;
+  }
+  &-table-row {
+    &-name {
+      display: flex;align-items: center;
+      .web-image {
+        display: block;width: 40px;height: 40px;border-radius: 50%;margin-left: -24px;margin-right: 8px;
+      }
+      main {
+        display: flex;flex-flow: column;line-height: 20px;
+        strong {
+          font-size: 14px;font-weight: normal;
+        }
+        em {
+          font-size: 10px;color: $c88;
+        }
+      }
+    }
+    &-text {
+      font-size: 26px;font-weight: bold;
+      small {
+        font-size: 18px;font-weight: 200;margin-left: 4px;
+      }
+    }
+  }
+}
+
+.mobile-mode {
+  .web-broker-rank {
+    width: 100%;padding: 0 rem(16) 0;margin-bottom: rem(32);
+    & > h2 {
+      font-size: rem(18);height: rem(32);margin-bottom: rem(24);
+    }
+    &-table-row {
+      &-name {
+        .web-image {
+          width: rem(36);height: rem(36);margin-left: rem(-16);margin-right: rem(8);
+        }
+        main {
+          line-height: rem(20);
+          strong {
+            font-size: rem(12);
+          }
+          em {
+            font-size: rem(10);
+          }
+        }
+      }
+      &-text {
+        font-size: rem(14);font-weight: bold;
+      }
+    }
+  }
+}

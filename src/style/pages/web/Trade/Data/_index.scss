@@ -1,0 +1,99 @@
+.web-trade-data {
+  margin-top: 48px;overflow: inherit;
+  .rc-tabs-nav {
+    width: 80%;margin: 0 auto;
+    &-wrap {
+      justify-content: center;
+    }
+  }
+  &-pane {
+    background: $cf7;border-radius: 48px;padding: 12px;margin-top: -12px;
+  }
+  &-connect{position: relative;min-height: 624px}
+  &-list {
+    width: 100%;
+  }
+  &-item {
+    background: $cff;padding: 36px;border-radius: 36px;
+    hr {
+      border-bottom: dashed $ce7; border-width: 0 0 2px;background: none;margin: 12px 0;
+    }
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+  &-wrap {
+    display: flex;flex-flow: column;align-items: center;
+    &-item {}
+    & > .web-button {
+      margin: 36px auto 24px;
+      img {
+        display: block;margin-left: 8px;
+      }
+    }
+    .web-pagination {
+      margin: 36px auto 24px;
+    }
+  }
+}
+.mobile-mode {
+  .web-trade-data {
+    width: 100%;
+    margin-top: rem(24);
+    .rc-tabs-nav {
+      .rc-tabs-tab {
+        margin: 0 rem(12);
+        &:nth-child(1) {
+          margin-left: 0;
+        }
+        &:nth-child(3) {
+          margin-right: 0;
+        }
+        &-btn {
+          padding-left: 0; padding-right: 0;
+        }
+      }
+    }
+    &-pane {
+      border-radius: rem(36);padding: rem(8);margin-top: rem(-8);
+    }
+    &-connect{
+      min-height: rem(200)
+    }
+    &-item {
+      padding: rem(24);border-radius: rem(28);
+      hr {
+        margin: rem(12) 0;
+      }
+      &:not(:last-child) {
+        margin-bottom: rem(8);
+      }
+    }
+    &-wrap {
+      display: flex;flex-flow: column;align-items: center;
+
+      & > .web-button {
+        margin: rem(24) auto rem(16);
+        img {
+          margin-left: rem(8);width: rem(16);height: rem(16);
+        }
+      }
+      .web-pagination {
+        margin: rem(24) auto rem(16);
+      }
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .web-trade-data {
+    &-pane {
+      background: $c33;
+    }
+    &-item {
+      background: $c22;
+      hr {
+        border-color: $c44;
+      }
+    }
+  }
+}

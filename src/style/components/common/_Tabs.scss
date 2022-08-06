@@ -1,0 +1,64 @@
+.web-tabs {
+  border: none;
+  .rc-tabs-tab {
+    font-size: 18px;background: none;
+    &-btn {
+      line-height: 48px;padding: 0 32px 12px;
+    }
+    &-active {
+      color: $red;
+    }
+  }
+  .rc-tabs-nav-wrap {
+    &:after {
+      content: '';display: block;height: 12px;border-radius: 6px;background: $cf7;
+      position: absolute;left: 0;right: 0;bottom: 0;
+    }
+  }
+  .rc-tabs-nav-list {
+    z-index: 1;
+  }
+  .rc-tabs-ink-bar {
+    height: 12px;border-radius: 6px;background: $red;
+  }
+}
+
+.mobile-mode {
+  .web-tabs {
+    .rc-tabs-tab {
+      font-size: rem(14);
+      &-btn {
+        line-height: rem(40);padding: 0 rem(26) rem(8);
+      }
+    }
+    .rc-tabs-nav-wrap {
+      justify-content: center;
+      &:after {
+        height: rem(8);border-radius: rem(4);
+      }
+    }
+    .rc-tabs-nav-list {
+      width: 100%;justify-content: center;
+    }
+    .rc-tabs-ink-bar {
+      height: rem(8);border-radius: rem(4);
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .web-tabs {
+    .rc-tabs-tab {
+      &-active {
+        color: $yellow;
+      }
+    }
+    .rc-tabs-nav-wrap {
+      &:after {
+        background: $c33;
+      }
+    }
+    .rc-tabs-ink-bar {
+      background: $yellow;
+    }
+  }
+}

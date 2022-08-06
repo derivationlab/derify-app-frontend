@@ -1,0 +1,146 @@
+$communitys: telegram, discord, twitter, reddit, wechat;
+
+.m-reg {
+  background: $cf7;border-radius: rem(36);padding: rem(8);
+  &-item {
+    display: flex;justify-content: space-between;align-items: center;
+    min-height: rem(56);padding: rem(16) rem(24);background: $cff;border-radius: rem(28);
+    margin-bottom: rem(8);
+    & > label {
+      font-size: rem(14);
+    }
+    & > span, & > .textarea {
+      width: 50%;line-height: rem(20);padding-right: rem(20);min-height: rem(20);
+      font-size: rem(14);font-weight: bold;text-align: right;word-break: break-all;
+      background: url($res + 'icon/arrow-right.svg') center right/rem(12) rem(12) no-repeat;
+
+    }
+    & > .textarea {
+      @include moreZoomLine(4, 0.8rem);
+    }
+    &-logo {
+      padding-right: rem(20);
+      background: url($res + 'icon/arrow-right.svg') center right/rem(12) rem(12) no-repeat;
+      .web-image {
+        width: rem(62);height: rem(62);
+      }
+    }
+    &-community {
+      padding-right: rem(20);height: rem(20);
+      background: url($res + 'icon/arrow-right.svg') center right/rem(12) rem(12) no-repeat;
+      display: flex;align-items: center;
+
+      i {
+        display: block;width: rem(16);height: rem(16);border-radius: 50%;margin: 0 rem(2);
+        background: center/contain no-repeat;
+
+        @each $item in $communitys {
+          &.#{$item} {
+            background-image: url($res + 'icon/' + $item + '.svg');
+          }
+        }
+      }
+    }
+  }
+  & > footer {
+    display: flex;justify-content: center;
+    padding: rem(16);
+  }
+  &-dialog {
+    .web-select {
+      &, &-show, &-show-button {
+        width: 100%;
+      }
+      &-options {
+        right: 0;
+      }
+    }
+    &-tip {
+      font-size: rem(12);line-height: rem(20);margin: rem(12) rem(12);
+      em {
+        color: $red;
+      }
+    }
+    & + .web-button {
+      margin: rem(24) auto 0;display: flex;
+    }
+    &-logo {
+      display: flex;align-items: center;justify-content: center;width: rem(120);height: rem(120);
+      border: 2px dashed $ce7;border-radius: rem(24);text-align: center;cursor: pointer;
+      background: $cff;margin: 0 auto;
+      label {
+        display: flex;align-items: center;justify-content: center;
+        width: rem(100);height: rem(100);overflow: hidden;border-radius: rem(16);
+      }
+      input {
+        display: none;
+      }
+      i {
+        font-size: rem(10);line-height: 1.4;
+      }
+      img {
+        max-width: rem(100); max-height: rem(100);
+      }
+    }
+    &-logo + &-tip {
+      text-align: center;
+    }
+    dl {
+      display: flex;justify-content: space-between;align-items: center;
+      dt {
+        display: flex;align-items: center;font-size: rem(14);width: rem(95);
+        &:before {
+          content: '';display: block;width: rem(20);height: rem(20);
+          background: center/contain no-repeat;margin-right: rem(8);
+        }
+      }
+      dd {
+        flex: 1;
+      }
+      @each $item in $communitys {
+        &.m-reg-community-#{$item} dt:before {
+          background-image: url($res + 'icon/' + $item + '-line.svg');
+        }
+      }
+      &:not(:last-child) {
+        margin-bottom: rem(12);
+      }
+    }
+  }
+}
+
+.dark {
+  .m-reg {
+    background: $c33;
+    &-item {
+      background: $c22;
+      & > span, & > .textarea {
+        background-image: url($res + 'icon/arrow-right-dark.svg');
+      }
+      &-logo {
+        background-image: url($res + 'icon/arrow-right-dark.svg');
+      }
+      &-community {
+        background-image: url($res + 'icon/arrow-right-dark.svg');
+        i {
+          @each $item in $communitys {
+            &.#{$item} {
+              background-image: url($res + 'icon/' + $item + '-dark.svg');
+            }
+          }
+        }
+      }
+    }
+    &-dialog {
+      &-tip {
+        em {
+          color: $yellow;
+        }
+      }
+      &-logo {
+        border-color: $c44;
+        background: $c33;
+      }
+    }
+  }
+}

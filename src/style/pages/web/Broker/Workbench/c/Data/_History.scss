@@ -1,0 +1,242 @@
+%td-strong {
+  display: block;font-size: 14px;line-height: 20px;font-weight: normal;
+}
+%td-em {
+  font-size: 10px;color: $c88;line-height: 20px;display: block;
+}
+.web-broker-table {
+  margin-top: -12px;
+  &-history {
+    &-type {
+      strong {
+        @extend %td-strong;
+      }
+      a {
+        font-size: 10px;display: flex;align-items: center;
+        @include oneline(20px);color: $c88;
+        &:after {
+          display: block;content: '';width: 20px;height: 20px;
+          background: url($res + 'icon/share-gray.svg') center/contain no-repeat;
+        }
+      }
+    }
+    &-amount, &-balance {
+      strong {
+        @extend %td-strong;
+      }
+      u {
+        @extend %td-em;
+      }
+    }
+  }
+  &-time {
+    time {
+      @extend %td-strong;
+      white-space: nowrap;
+    }
+    em {
+      @extend %td-em;
+    }
+  }
+  &-transaction {
+    &-tx {
+      a {
+        display: flex;align-items: center;
+        @include oneline(20px);
+        &:after {
+          content: '';display: block;width: 20px;height: 20px;
+          background-position: center;
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+        &:first-child {
+          font-size: 14px;
+          &:after {
+            background-image: url($res + 'icon/share.svg');margin-left: 4px;
+          }
+        }
+        &:last-child {
+          font-size: 10px;color: $c88;
+          &:after {
+            background-image: url($res + 'icon/share-gray.svg');
+          }
+        }
+      }
+    }
+    &-type {
+      strong {
+        @extend %td-strong;font-weight: bold;
+        &.open {
+          color: $buy;
+        }
+        &.close {
+          color: $sell;
+        }
+      }
+      em {
+        @extend %td-em;
+      }
+    }
+    &-pnl {
+      strong {
+        @extend %td-strong;font-weight: bold;
+        &.up {
+          color: $buy;
+        }
+        &.down {
+          color: $sell;
+        }
+      }
+      em {
+        @extend %td-em;
+      }
+    }
+  }
+  &-trader {
+    &-tx {
+      display: flex;align-items: center;
+      .web-image {
+        width: 40px;height: 40px;margin-left: -24px;margin-right: 8px;
+      }
+      a {
+        display: flex;align-items: center;
+        @include oneline(20px);
+        &:after {
+          content: '';display: block;width: 20px;height: 20px;
+          background: url($res + 'icon/share.svg') center/contain no-repeat;
+        }
+      }
+    }
+  }
+  &-wrap{
+    position: relative;
+    min-height: calc(100vh - 760px);
+    .loading{
+      position: absolute;z-index: 1;
+      width: 100%;height: 100%;
+      display: flex;align-items: center;justify-content: center;
+    }
+  }
+}
+
+%td-strong-mobile {
+  display: block;font-size: rem(12);line-height: rem(20);font-weight: normal;
+}
+%td-em-mobile {
+  font-size: rem(8);color: $c88;line-height: rem(12);display: block;
+}
+
+.mobile-mode {
+  .web-broker-table {
+    margin-top: rem(-8);
+    &-history {
+      &-type {
+        strong {
+          @extend %td-strong-mobile;
+        }
+        time {
+          @extend %td-em-mobile;
+        }
+      }
+      &-amount, &-balance {
+        strong {
+          @extend %td-strong-mobile;
+        }
+        u {
+          @extend %td-em-mobile;
+        }
+      }
+    }
+    &-time {
+      time {
+        @extend %td-strong-mobile;
+      }
+      em {
+        @extend %td-em-mobile;
+      }
+    }
+    &-transaction {
+      &-tx {
+        a {
+          @include oneline(rem(20));
+          &:after {
+            width: rem(20);height: rem(20);
+            background-image: url($res + 'icon/share-gray.svg');
+          }
+        }
+        time {
+          @extend %td-em-mobile;
+        }
+      }
+      &-type {
+        strong {
+          @extend %td-strong-mobile;
+        }
+        em {
+          @extend %td-em-mobile;
+        }
+      }
+      &-pnl {
+        strong {
+          @extend %td-strong-mobile;
+        }
+        em {
+          @extend %td-em-mobile;
+        }
+      }
+    }
+    &-trader {
+      &-tx {
+        margin: 0 rem(-16);
+        .web-image {
+          width: rem(36);height: rem(36);margin-right: rem(8);margin-left: 0;
+        }
+        a {
+          @include oneline(rem(20));
+          &:after {
+            width: rem(20);height: rem(20);
+            background-image: url($res + 'icon/share-gray.svg');
+          }
+        }
+      }
+    }
+    &-wrap{
+      position: relative;
+      min-height: rem(400);
+      .loading{
+        position: absolute;z-index: 1;
+        width: 100%;height: 100%;
+        display: flex;align-items: center;justify-content: center;
+      }
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .web-broker-table {
+    &-transaction {
+      &-tx {
+        a {
+          &:first-child {
+            &:after {
+              background-image: url($res + 'icon/share-dark.svg');
+            }
+          }
+          &:last-child {
+            &:after {
+              background-image: url($res + 'icon/share-gray.svg');
+            }
+          }
+        }
+      }
+    }
+    &-trader {
+      &-tx {
+        a {
+          &:after {
+            background-image: url($res + 'icon/share-dark.svg');
+          }
+        }
+      }
+    }
+  }
+}

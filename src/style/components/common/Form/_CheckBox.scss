@@ -1,0 +1,36 @@
+.web-form-checkbox {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr;
+  label {
+    display: flex;align-items: center;cursor: pointer;
+    span {
+      font-size: 14px;display: flex;align-items: center;
+      &:before {
+        content: '';display: block;width: 12px;height: 12px;
+        border: 2px solid $red;border-radius: 4px;margin-right: 4px;
+      }
+    }
+    input {
+      display: none;
+      &:checked + span {
+        color: $red;
+        &:before {
+          box-shadow: 0 0 0 2px $cff inset, 0 0 0 8px $red inset;
+        }
+      }
+    }
+  }
+  span {
+    font-size: 14px;display: flex;align-items: center;cursor: pointer;height: 48px;
+    &:before {
+      content: '';display: block;width: 12px;height: 12px;
+      border: 2px solid $red;border-radius: 4px;margin-right: 4px;
+    }
+    &.active {
+      color: $red;
+      &:before {
+        box-shadow: 0 0 0 2px $cff inset, 0 0 0 8px $red inset;
+      }
+    }
+  }
+}

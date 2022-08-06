@@ -1,0 +1,27 @@
+.web-trade {
+  @extend .web;margin-bottom: 48px;
+  display: flex;align-items: flex-start;justify-content: space-between;
+  &-main {
+    width: 968px;
+  }
+}
+
+.mobile-mode {
+  .web-trade {
+    width: 100%;padding: 0 rem(16);
+    margin-bottom: rem(36);
+    flex-flow: column;
+    &-mobile-header {
+      width: 100%;padding: rem(8);border-radius: rem(36);position: relative;
+      @include jb(#FFF4F7, #F2FBFF, 135);
+    }
+  }
+}
+
+.dark {
+  .web-trade {
+    &-mobile-header {
+      background: $c33;
+    }
+  }
+}

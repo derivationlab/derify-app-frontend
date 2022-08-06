@@ -1,0 +1,151 @@
+
+.web-button {
+  display: inline-flex;justify-content: center;align-items: center;border: none;
+  @include dz();opacity: 1;cursor: pointer;
+  &-size {
+    &-default {
+      height: 48px;border-radius: 24px;padding: 0 24px;font-size: 18px;font-weight: bold;
+    }
+    &-mini {
+      height: 32px;border-radius: 16px;padding: 0 16px;font-size: 16px;font-weight: normal;
+    }
+    &-medium {
+      height: 40px;border-radius: 20px;padding: 0 20px;font-size: 18px;font-weight: bold;
+    }
+  }
+  &-type {
+    &-default {
+      @include jb($lRed, $red, -90);color: $cff;
+      &.outline {
+        background: none;border: 2px solid $red;color: $red;
+      }
+      &.disabled {
+        @extend %disabled;
+      }
+    }
+    &-blue {
+      background: $blue;color: $cff;
+      &.outline {
+        background: none;border: 2px solid $blue;color: $blue;
+      }
+      &.disabled {
+        @extend %disabled;
+      }
+    }
+    &-gray {
+      background: $c88;color: $cff;
+      &.outline {
+        background: none;border: 2px solid $c88;color: $c88;
+      }
+      &.disabled {
+        @extend %disabled;
+      }
+    }
+    &-sell {
+      @include jb($sell, lighten($sell, 10), 90);color: $cff;
+      &.outline {
+        background: none;border: 2px solid $sell;color: $sell;
+      }
+      &.disabled {
+        @extend %disabled;
+      }
+    }
+    &-buy {
+      @include jb($buy, lighten($buy, 10), 90);color: $cff;
+      &.outline {
+        background: none;border: 2px solid $buy;color: $buy;
+      }
+      &.disabled {
+        @extend %disabled;
+      }
+    }
+  }
+  &:hover {
+    opacity: .8;
+  }
+  &.loading {
+    cursor: wait;opacity: .5;
+  }
+  &.full {
+    width: 100%;display: flex;
+  }
+  // & + & {
+  //   margin-left: 5px;
+  // }
+}
+%disabled {
+  background: $ce7;color: $cff;border-color: $ce7;cursor: not-allowed;
+}
+%disabled-dark {
+  background: $c88;color: $c44;border-color: $c88;cursor: not-allowed;
+}
+.mobile-mode {
+  .web-button {
+    &-size {
+      &-default {
+        height: rem(36);border-radius: rem(18);padding: 0 rem(24);font-size: rem(14);
+      }
+      &-mini {
+        height: rem(20);border-radius: rem(10);padding: 0 rem(10);font-size: rem(10);
+      }
+      &-medium {
+        height: rem(24);border-radius: rem(12);padding: 0 rem(12);font-size: rem(12);font-weight: bold;
+      }
+    }
+    &.outline {
+      border-width: rem(2);
+    }
+  }
+}
+
+.dark {
+  .web-button {
+    &-type {
+      &-default {
+        @include jb($lYellow, $yellow, -90);color: $c22;
+        &.outline {
+          background: none;border: 2px solid $yellow;color: $yellow; color: $cff;
+        }
+        &.disabled {
+          @extend %disabled-dark;
+        }
+      }
+      &-blue {
+        background: $blue;color: $cff;
+        &.outline {
+          background: none;border: 2px solid $blue;color: $blue;
+        }
+        &.disabled {
+          @extend %disabled-dark;
+        }
+      }
+      &-gray {
+        background: $c88;color: $cff;
+        &.outline {
+          background: none;border: 2px solid $c88;color: $c88;
+        }
+        &.disabled {
+          @extend %disabled-dark;
+        }
+      }
+      &-sell {
+        @include jb($sell, lighten($sell, 10), 90);color: $cff;
+        &.outline {
+          background: none;border: 2px solid $sell;color: $sell;
+        }
+        &.disabled {
+          @extend %disabled-dark;
+        }
+      }
+      &-buy {
+        @include jb($buy, lighten($buy, 10), 90);color: $cff;
+        &.outline {
+          background: none;border: 2px solid $buy;color: $buy;
+        }
+        &.disabled {
+          @extend %disabled-dark;
+        }
+      }
+    }
+  }
+}

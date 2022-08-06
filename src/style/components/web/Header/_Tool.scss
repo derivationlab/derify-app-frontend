@@ -1,0 +1,115 @@
+.web-header-tool {
+  position: relative;
+  &-button {
+    width: 32px;height: 32px;cursor: pointer;border-radius: 50%;
+    border: 0 solid $cf7;background: $cf7;
+    display: flex;justify-content: center;align-items: center;
+    @include dz();
+    &:before {
+      content: '';display: block;width: 4px;height: 4px;background: $c88;border-radius: 50%;
+      box-shadow: -6px 0 $c88, 6px 0 $c88;
+      @include dz();
+    }
+    &.active, &:hover {
+      border:2px solid $red;background: $cff;
+      &:before {
+        background: $red;box-shadow: -6px 0 $red, 6px 0 $red;
+      }
+    }
+  }
+  &-menu {
+    position: absolute;right: 0;width: 370px;top: 40px;display: none;
+    box-shadow: 0px 0px 8px rgba($c00, 0.2);
+    border-radius: 24px;padding: 24px;
+    @include mh();
+    @include dz();z-index: 10;
+    &.show {
+      display: block;
+    }
+    ul {
+      li {
+        height: 48px;border-radius: 24px;font-size: 18px;
+        @include dz();background: rgba($cff, 0);white-space: nowrap;cursor: pointer;
+        &:hover {
+          background: $cf7;color: $red;
+        }
+        & > a {
+          display: block;flex: 1;height: 48px;padding: 0 24px;display: flex;align-items: center;
+        }
+        strong {
+          padding: 0 9px;font-weight: normal;
+        }
+        &:not(:last-of-type) {
+          margin-bottom: 4px;
+        }
+      }
+    }
+  }
+}
+
+.mobile-mode {
+  .web-header-tool {
+    &-button {
+      width: rem(20);height: rem(20);
+      &:before {
+        width: rem(2.5);height: rem(2.5);
+        box-shadow: rem(-4) 0 $c88, rem(4) 0 $c88;
+      }
+    }
+    &-menu {
+      width: rem(260);top: rem(28);
+      border-radius: rem(20);padding: rem(20);
+      background: rgba($cff, .5);
+      ul {
+        li {
+          height: rem(36);border-radius: rem(20);font-size: rem(14);
+          & > a {
+            height: rem(36);padding: 0 rem(20);
+          }
+          strong {
+            padding: 0 rem(6);
+          }
+          &:not(:last-of-type) {
+            margin-bottom: rem(4);
+          }
+        }
+      }
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .web-header-tool {
+    &-button {
+      border: 0 solid $c33;background: $c33;
+      &.active, &:hover {
+        border:2px solid $yellow;background: $c22;
+        &:before {
+          background: $yellow;box-shadow: -6px 0 $yellow, 6px 0 $yellow;
+        }
+      }
+    }
+    &-menu {
+      box-shadow: 0px 0px 8px rgba($c00, 0.8);
+      background-color: $c22;
+      ul {
+        li {
+          background: rgba($c33, 0);
+          &:hover {
+            background: $c33;color: $yellow;
+          }
+        }
+      }
+    }
+  }
+}
+.mobile-mode.dark {
+  .web-header-tool {
+    &-button {
+      &.active, &:hover {
+        &:before {
+          background: $yellow;box-shadow: rem(-4) 0 $yellow, rem(4) 0 $yellow;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,79 @@
+.web-form-input {
+  position: relative;
+  input, textarea {
+    width: 100%;display: block;
+    background: $cff;
+    border: 2px solid $ce7;
+    border-radius: 24px;
+    color: $c22;
+    &:focus {
+      border-color: $red;
+      color: $red;
+    }
+    &::placeholder {
+      color: $ce7;
+    }
+  }
+  input {
+    height: 48px;padding: 0 24px;font-size: 18px;
+  }
+  textarea {
+    height: 208px;padding: 24px;font-size: 18px;line-height: 1.5;
+  }
+  &-clearable, &-suffix {
+    position: absolute;height: 24px;right: 16px;top: 12px;
+  }
+  &-clearable {
+    border-radius: 50%;width: 24px;
+    background: url($res + 'icon/close.svg') center/contain no-repeat $cf7;
+    cursor: pointer;
+  }
+  &-suffix {
+    font-size: 18px;line-height: 24px;color: $c88;
+  }
+}
+
+.mobile-mode {
+  .web-form-input {
+    input, textarea {
+      border-width: rem(2);
+      border-radius: rem(18);
+    }
+    input {
+      height: rem(36);padding: 0 rem(18);font-size: rem(14);
+    }
+    textarea {
+      height: rem(200);padding: rem(18);font-size: rem(14);
+    }
+    &-clearable, &-suffix {
+      height: rem(16);right: rem(12);top: rem(10);
+    }
+    &-clearable {
+      width: rem(16);
+    }
+    &-suffix {
+      font-size: rem(14);line-height: rem(16);
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .web-form-input {
+    input, textarea {
+      background: $c22;
+      border-color: $c44;
+      color: $cff;
+      &:focus {
+        border-color: $yellow;
+        color: $yellow;
+      }
+      &::placeholder {
+        color: $c88;
+      }
+    }
+
+    &-clearable {
+      background: url($res + 'icon/close-dark.svg') center/contain no-repeat $c22;
+    }
+  }
+}

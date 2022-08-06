@@ -1,0 +1,18 @@
+.web-chart-area {
+  height: 450px;
+  .recharts-rectangle {
+    border-radius: 10px 10px 0 0;
+  }
+}
+.mobile-mode {
+  .web-chart-area {
+    height: rem(440);width: rem(614);
+    @include fd(0.5);transform-origin:0 0;
+    .recharts-rectangle {
+      border-radius: 10px 10px 0 0;
+    }
+    &-layout {
+      height: rem(220);
+    }
+  }
+}

@@ -1,0 +1,54 @@
+.web-addtoken {
+  &-button {
+    margin-right: 16px;position: relative;
+  }
+  &-menu {
+    position: absolute;right: 0;width: 370px;top: 40px;display: none;
+    box-shadow: 0px 0px 8px rgba($c00, 0.2);
+    border-radius: 24px;padding: 24px;
+    @include mh();
+    @include dz();
+    &.show {
+      display: block;z-index: 10;
+    }
+    ul {
+      li {
+        display: flex;align-items: center;height: 48px;padding: 0 24px;border-radius: 24px;font-size: 18px;
+        @include dz();background: rgba($cff, 0);white-space: nowrap;cursor: pointer;
+        &:hover {
+          background: $cf7;color: $red;
+        }
+        strong {
+          padding: 0 9px;font-weight: normal;
+        }
+        &:not(:last-of-type) {
+          margin-bottom: 4px;
+        }
+      }
+      hr {
+        margin: 12px 24px;height: 2px;background: $ce7;border: none;
+      }
+    }
+  }
+}
+
+.dark {
+  .web-addtoken {
+    &-menu {
+      box-shadow: 0px 0px 8px rgba($c00, 0.8);
+      background: $c22;
+
+      ul {
+        li {
+          background: rgba($c22, 0);
+          &:hover {
+            background: $c33;color: $yellow;
+          }
+        }
+        hr {
+          background: $c44;
+        }
+      }
+    }
+  }
+}

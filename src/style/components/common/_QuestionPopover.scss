@@ -1,0 +1,112 @@
+.web-question-popover {
+  position: relative;
+  $self: &;
+  &, & > img {
+    width: 20px;height: 20px;
+  }
+  img {
+    cursor: pointer;display: block;
+  }
+  &-text {
+    position: absolute;width: 300px;padding: 18px;border-radius: 9px;
+    font-size: 12px;color: $c88;line-height: 1.4;z-index: 23;
+    white-space: pre-line;
+    @include yd(-50%, 0);
+    background: $cff;
+    box-shadow: 0 2px 12px 0 rgb($c00, .1);
+
+    &:after {
+      content: '';width: 14px;height: 14px;background: $cff;
+      display: block;position: absolute;left: 50%;bottom: -6px;margin-left: -7px;
+      @include xz(45);
+      filter: drop-shadow(0 2px 12px rgba(0,0,0,.03));
+    }
+  }
+  &-size {
+    &-default {
+      &, & > img {
+        width: 32px;height: 32px;
+      }
+      #{$self}-text {
+        bottom: 38px;left: 16px;
+      }
+    }
+    &-mini {
+      &, & > img {
+        width: 20px;height: 20px;
+      }
+      #{$self}-text {
+        bottom: 26px;left: 10px;
+      }
+    }
+    &-inline {
+      width: auto;height: auto;
+      #{$self}-text {
+        bottom: 26px;left: 10px;
+      }
+    }
+  }
+}
+.mobile-mode {
+  .web-question-popover {
+    &, & > img {
+      width: rem(16);height: rem(16);
+    }
+    &-text {
+      width: rem(200);padding: rem(10);border-radius: rem(10);
+      font-size: rem(12);text-align: center;
+      position: fixed;left: 50%;top: 50%;bottom: auto;right: auto;
+      @include yd(-50%, -50%);
+      box-shadow: 0 0 0 100vmax rgba($c00, .5);color: $c22;
+      &:after {
+        display: none;
+        // width: rem(14);height: rem(14);bottom: -6px;margin-left: -7px;
+      }
+    }
+    &-size {
+      &-default {
+        &, & > img {
+          width: rem(20);height: rem(20);
+        }
+        .web-question-popover-text {
+          // bottom: rem(28);
+          // left: rem(10);
+        }
+      }
+      &-mini {
+        &, & > img {
+          width: rem(16);height: rem(16);
+        }
+        .web-question-popover-text {
+          // bottom: rem(28);
+          // left: rem(8);
+        }
+      }
+    }
+  }
+}
+
+.dark {
+  .web-question-popover {
+    &-text {
+      color: $cff;
+      background: $c22;
+      box-shadow: 0 2px 12px 0 rgb($c00, .8);
+
+      &:after {
+        background: $c22;
+        filter: drop-shadow(0 2px 12px rgba($c00,.5));
+      }
+    }
+  }
+}
+
+.mobile-mode.dark {
+  .web-question-popover {
+    &-text {
+      color: $cff;
+      background: $c22;
+      box-shadow: 0 0 0 100vmax rgb($c00, .8);
+    }
+  }
+}

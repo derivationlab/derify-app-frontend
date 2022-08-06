@@ -1,0 +1,129 @@
+.m-header {
+  display: flex;justify-content: space-between;z-index: 21;padding: 0 rem(16) 0 rem(12);
+  &, &-bg, &-blank {
+    height: rem(48);width: 100vmin;
+  }
+  &-bg {
+    z-index: 20;
+    background: rgba($cff, 1);
+  }
+  &, &-bg {
+    position: fixed;top: 0;left: 0;right: 0;
+  }
+  &-blank {
+    margin-bottom: rem(24);
+  }
+  .m-logo {
+    padding-left: rem(8);display: flex;align-items: center;font-size: rem(16);
+    background: url($res + 'icon/logo-menu.svg') left center/rem(2.5) rem(12.5) no-repeat;
+    &:before {
+      content: '';display: block;width: rem(24);height: rem(24);margin-right: rem(8);
+      background: url($res + 'logo-mobile.svg') center/contain no-repeat;
+    }
+  }
+  &-right {
+    display: flex;align-items: center;
+  }
+}
+
+.m-nav {
+  position: absolute;top: 0;left: 0;bottom: 0;z-index: 23;
+  width: rem(300);background: $cff;
+  box-shadow: 0 0 rem(20) rgba($c00, 0.2);
+  &-layout {
+    position: fixed;top: 0;left: -100vmin;bottom: 0;z-index: 22;
+    width: 100vmin;opacity: 0;
+    @include dz();
+    background: rgba($cff, .5);
+    &.show {
+      left: 0;opacity: 1;
+    }
+  }
+
+  h2 {
+    padding: rem(12) rem(18);
+    a {
+      display: block;height: rem(24);text-indent: -9999px;
+      background: url($res + 'logo.png') left center/contain no-repeat;
+    }
+  }
+
+  nav {
+    padding: rem(32);
+    ul {}
+    li {
+      a {
+        display: flex;align-items: center;padding: 0 rem(24);
+        height: rem(48);border-radius: rem(24);
+        &.active {
+          font-weight: bold;background: $red;font-weight: bold;color: $cff;
+        }
+      }
+    }
+  }
+
+  footer {
+    position: absolute;bottom: rem(42);left: rem(56);font-size: rem(14);color: $c88;
+    p {
+      display: flex;align-items: center;height: rem(24);text-align: left;
+      span {
+        display: block;width: rem(20);height: rem(20);text-indent: -9999px;
+        background: center/contain no-repeat;margin-right: rem(8);
+        &.telegram {
+          background-image: url($res + 'icon/telegram-nav.svg');
+        }
+
+        &.discord {
+          background-image: url($res + 'icon/discord-nav.svg');
+        }
+
+        &.twitter {
+          background-image: url($res + 'icon/twitter-nav.svg');
+        }
+
+        &.reddit {
+          background-image: url($res + 'icon/reddit-nav.svg');
+        }
+
+        &.wechat {
+          background-image: url($res + 'icon/wechat-nav.svg');
+        }
+      }
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .m-header {
+    &-bg {
+      z-index: 20;
+      background: rgba($c22, .8);
+    }
+    .m-logo {
+      background-image: url($res + 'icon/logo-menu-dark.svg');
+    }
+  }
+
+  .m-nav {
+    background: $c22;
+    box-shadow: 0 0 rem(20) rgba($c00, 0.8);
+    &-layout {
+      background: rgba($c22, .8);
+    }
+
+    h2 {
+      a {
+        background-image: url($res + 'logo-dark.png');
+      }
+    }
+
+    nav {
+      li {
+        a {
+          &.active {
+            background: $yellow;color: $c22;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+.web-select-network {
+  &-button {
+    margin-right: 16px;position: relative;
+    .web-button {
+      padding: 0 10px 0 8px;
+      img {
+        display: block;width: 16px;height: 16px;margin-right: 6px;
+      }
+    }
+  }
+  &-menu {
+    position: absolute;right: 0;width: 240px;top: 40px;display: none;
+    box-shadow: 0px 0px 8px rgba($c00, 0.2);
+    border-radius: 24px;padding: 24px;
+    @include mh();
+    @include dz();
+    &.show {
+      display: block;z-index: 10;
+    }
+    h3 {
+      text-align: center;font-size: 18px;line-height: 32px;margin-bottom: 12px;
+    }
+    ul {
+      li {
+        cursor: pointer;display: flex;align-items: center;height: 48px;border-radius: 24px;
+        padding: 12px;font-size: 18px;color: $c22;
+        @include dz();background: rgba($cff, 0);
+        &:not(:last-child) {
+          margin-bottom: 4px;
+        }
+        img {
+          display: block;width: 24px;height: 24px;margin-right: 12px;
+        }
+        &:hover {
+          background: $cf7;color: $red;
+        }
+        &.active {
+          background: $red;color: $cff;
+        }
+      }
+    }
+  }
+}
+
+.mobile-mode {
+  .web-select-network {
+    &-button {
+      margin: 0 rem(8);
+      .web-button {
+        padding: 0 rem(10) 0 rem(4);
+        img {
+          width: rem(12);height: rem(12);margin-right: rem(4);
+        }
+      }
+    }
+    &-menu {
+      width: rem(200);top: rem(28);
+      border-radius: rem(20);padding: rem(20);
+      background: rgba($cff, .5);
+      h3 {
+        font-size: rem(14);line-height: rem(20);margin-bottom: rem(20);
+      }
+      ul {
+        li {
+          height: rem(36);border-radius: rem(18);
+          padding: rem(8);font-size: rem(14);
+          &:not(:last-child) {
+            margin-bottom: rem(4);
+          }
+          img {
+            width: rem(20);height: rem(20);margin-right: rem(8);
+          }
+        }
+      }
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .web-select-network {
+    &-menu {
+      box-shadow: 0px 0px 8px rgba($c00, 0.8);
+      background: $c22;
+      ul {
+        li {
+          color: $cff;
+          background: rgba($c33, 0);
+
+          &:hover {
+            background: $c33;color: $yellow;
+          }
+          &.active {
+            background: $yellow;color: $c22;
+          }
+        }
+      }
+    }
+  }
+}

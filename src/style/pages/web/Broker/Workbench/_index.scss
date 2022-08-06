@@ -1,0 +1,10 @@
+.web-broker-workbench {
+  @extend .web;
+  display: flex;justify-content: space-between;align-items: flex-start;
+}
+
+.mobile-mode {
+  .web-broker-workbench {
+    width: 100%;padding: 0 rem(16);flex-flow: column-reverse;position: relative;
+  }
+}

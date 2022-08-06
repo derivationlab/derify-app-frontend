@@ -1,0 +1,50 @@
+.web-trade-data-item-header {
+  display: flex;justify-content: space-between;align-items: center;margin-bottom: 24px;
+  h4 {
+    display: flex;align-items: center;font-size: 18px;line-height: 20px;font-weight: normal;
+    strong {
+      display: block;margin-right: 8px;
+    }
+  }
+  button {
+    background: none;font-size: 18px;line-height: 20px;opacity: 1;cursor: pointer;
+    display: flex;align-items: center;border: none;font-weight: bold;color: $red;
+    text-transform:uppercase;
+    @include dz();
+    &:after {
+      content: '';display: block;width: 20px;height: 20px;margin-left: 4px;
+      background: url($res + 'icon/close-active.svg') center/contain no-repeat;
+    }
+    &:hover {
+      opacity: .8;
+    }
+  }
+}
+.mobile-mode {
+  .web-trade-data-item-header {
+    margin-bottom: rem(24);
+    h4 {
+      font-size: rem(14);line-height: rem(16);
+      strong {
+        margin-right: rem(8);
+      }
+    }
+    button {
+      font-size: rem(14);line-height: rem(16);
+
+      &:after {
+        width: rem(16);height: rem(16);margin-left: rem(4);
+      }
+    }
+  }
+}
+.dark {
+  .web-trade-data-item-header {
+    button {
+      color: $yellow;
+      &:after {
+        background-image: url($res + 'icon/close-active-dark.svg');
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+.web-trade-atom-wrap {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+}
+
+.mobile-mode {
+  .web-trade-atom-wrap {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+  }
+}

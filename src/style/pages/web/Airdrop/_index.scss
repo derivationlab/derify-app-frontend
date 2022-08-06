@@ -1,0 +1,42 @@
+.web-airdrop {
+  width: 876px;margin: 0 auto 35px;
+  header, ul {
+    display: flex;border-radius: 48px;border: 12px solid $cf7;
+  }
+  header {
+    justify-content: space-between;margin-bottom: 48px;padding: 48px;
+    main {
+      h3 {
+        font-size: 18px;line-height: 20px;font-weight: normal;
+      }
+      .web-balance-show {
+        margin: 16px 0;font-size: 26px;
+      }
+      p {
+        font-size: 14px;line-height: 20px;color: $c88;
+        strong {
+          color: $c22;
+        }
+      }
+    }
+  }
+  ul {
+    flex-flow: column;background: $cf7;
+    li {
+      display: flex;justify-content: space-between;align-items: center;height: 72px;border-radius: 36px;
+      background: $cff;padding: 0 16px 0 36px;
+      &:not(:last-child) {
+        margin-bottom: 12px;
+      }
+      h4 {
+        font-size: 16px;line-height: 20px;font-weight: normal;flex: 1;
+        time {
+          font-size: 16px;display: block;color: $red;
+        }
+      }
+      .web-balance-show {
+        font-size: 26px;font-size: 18px;margin-right: 160px;
+      }
+    }
+  }
+}

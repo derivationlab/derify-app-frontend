@@ -1,0 +1,111 @@
+.web-deposit-dialog {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+
+  &-info {
+    background: $cf7;
+    border-radius: 48px;
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    margin-bottom: 36px;
+
+    dl {
+      margin-bottom: 16px;
+
+      dt {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        line-height: 20px;
+      }
+
+      dd {
+        font-size: 26px;
+        margin-top: 16px;
+      }
+    }
+
+    address {
+      font-size: 14px;
+      line-height: 20px;
+      color: $c88;
+    }
+
+    .wallet {
+      border-radius: 36px;
+      background: $cff;
+      padding: 36px;
+    }
+
+    .amount {
+      margin: 36px 38px 38px;
+    }
+
+    & + .web-button {
+      width: 186px;
+    }
+  }
+}
+
+.mobile-mode {
+  .web-deposit-dialog {
+
+    &-info {
+      border-radius: rem(36);
+      padding: rem(8);
+      margin-bottom: rem(20);
+
+      dl {
+        margin-bottom: rem(8);
+
+        dt {
+          font-size: rem(14);
+          line-height: rem(16);
+        }
+
+        dd {
+          font-size: rem(18);
+          margin-top: rem(8);
+        }
+      }
+
+      address {
+        font-size: rem(10);
+        line-height: rem(16);
+        word-break: break-all;
+      }
+
+      .wallet {
+        border-radius: rem(28);
+        padding: rem(24);
+      }
+
+      .amount {
+        margin: rem(12) rem(18);
+      }
+
+      & + .web-button {
+        width: rem(143);
+      }
+    }
+  }
+}
+
+
+.dark, .mobile-mode.dark {
+  .web-deposit-dialog {
+
+    &-info {
+      background: $c33;
+
+      .wallet {
+        background: $c22;
+        em {
+          color: $cff;
+        }
+      }
+    }
+  }
+}

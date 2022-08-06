@@ -1,0 +1,8 @@
+.web-withdraw-dialog {
+  @extend .web-deposit-dialog;
+  &-info {
+    address {
+      em{font-style: normal;color:$c22}
+    }
+  }
+}

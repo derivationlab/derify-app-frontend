@@ -1,0 +1,27 @@
+.web-trade-data-atom {
+  height: 60px;
+  label, footer {
+    display: flex;align-items: center;height: 20px;font-size: 12px;
+  }
+  section {
+    font-size: 16px;font-weight: bold;display: flex;align-items: center;height: 20px;
+    .up {
+      color: $buy;
+    }
+    .down {
+      color: $sell;
+    }
+  }
+}
+
+.mobile-mode {
+  .web-trade-data-atom {
+    height: rem(48);
+    label, footer {
+      font-size: rem(10);height: rem(16);
+    }
+    section {
+      font-size: rem(12);height: rem(16);
+    }
+  }
+}

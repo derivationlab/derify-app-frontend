@@ -1,0 +1,24 @@
+.web-trade-edit-button {
+  font-size: 12px;color: $red;margin-left: 8px;cursor: pointer;
+  display: flex;align-items: center;opacity: 1;
+  @include dz();
+  &:after {
+    content: '';width: 16px;height: 16px;display: block;
+    background: url($res + 'icon/edit.svg') center/contain no-repeat;
+  }
+  &:hover {
+    opacity: .8;
+  }
+}
+
+.dark {
+  .web-trade-edit-button {
+    color: $yellow;
+    &:after {
+      background-image: url($res + 'icon/edit-dark.svg');
+    }
+    &:hover {
+      opacity: .8;
+    }
+  }
+}

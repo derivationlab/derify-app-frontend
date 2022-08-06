@@ -1,0 +1,265 @@
+.web-trade-bench {
+  width: 376px;border-radius: 48px;padding: 12px;position: relative;
+  @include jb(#FFF4F7, #F2FBFF, 135);
+  &-info {
+    padding: 36px;background: $cff;border-radius: 36px;
+    dl {
+      margin-bottom: 32px;
+      dt {
+        display: flex;align-items: center;font-size: 16px;line-height: 20px;
+      }
+      dd {
+        margin-top: 16px;
+      }
+    }
+    section {
+      display: flex;justify-content: space-between;align-items: center;
+      .web-button {
+        width: 128px;
+      }
+    }
+    .web-balance-show {
+      height: 26px;
+      strong {
+        font-size: 32px;
+      }
+      small {
+        font-size: 16px;font-weight: bold;
+      }
+      span {
+        font-size: 18px;
+      }
+    }
+  }
+  &-pane {
+    padding: 36px 24px 0;
+    &-row {
+      display: flex;justify-content: space-between;
+    }
+    &-col {
+      flex: 1;display: flex;flex-flow: column;align-items: flex-start;
+      header {
+        font-size: 14px;line-height: 16px;margin-bottom: 10px;padding-left: 24px;
+        width: 100%;
+      }
+      & + & {
+        align-items: flex-end;
+        header {
+          padding-left: 14px;
+        }
+      }
+    }
+    .web-select-show-button {
+      background: $cff;
+    }
+    &-volume {
+      &-input input {
+        width: 180px;border-radius: 24px 0 0 24px;padding-right: 16px;
+        &:focus {
+          position: relative;z-index: 2;
+        }
+      }
+      &-max {
+        line-height: 16px;margin-bottom: 10px;font-size: 12px;color: $c88;margin-left: -200px;
+        text-align: right;
+        white-space: nowrap;
+        em {
+          color: $c22;
+        }
+      }
+      &-type {
+        .web-select-show-button {
+          border-radius: 0 24px 24px 0;margin-left: -2px;width: 126px;padding-left: 14px;
+          min-width: 0;
+        }
+        .web-select-options {
+          left: auto;right: 0;
+        }
+      }
+    }
+  }
+  &-open-type {
+    .web-select-show-button {
+      width: 180px;border-radius: 24px 0 0 24px;padding-right: 16px;
+    }
+  }
+  &-leverage {
+    .web-leverage-select-curr {
+      border-radius: 0 24px 24px 0;margin-left: -2px;width: 126px;padding-left: 14px;
+    }
+  }
+  &-price-input {
+    width: 100%;
+    &-disabled {
+      border: 2px solid $ce7;height: 48px;border-radius: 24px;background: $cf7;
+      display: flex;justify-content: center;align-items: center;
+      font-size: 18px;font-weight: bold;color: $ce7;
+    }
+    input {
+      padding-right: 70px;
+    }
+  }
+  &-button {
+    &-short {
+      width: 146px;justify-content: space-between;
+      strong {
+        font-size: 18px;
+      }
+      em {
+        font-size: 12px;line-height: 14px;
+        display: flex;flex-flow: column;align-items: flex-end;
+        u {
+          font-weight: normal;
+        }
+      }
+    }
+    &-full {
+      position: relative;
+      strong {
+        font-size: 18px;
+      }
+      em {
+        position: absolute;right: 24px;top: 8px;
+        font-size: 12px;line-height: 14px;
+        display: flex;flex-flow: column;align-items: flex-end;
+        u {
+          font-weight: normal;
+        }
+      }
+    }
+  }
+  .web-form-input input {
+    font-weight: bold;
+  }
+}
+.mobile-mode {
+  .web-trade-bench {
+    width: 100%;border-radius: 0;padding: 0;position: static;
+    display: flex;flex-flow: column-reverse;
+    &-info {
+      padding: rem(24);border-radius: rem(24);
+      dl {
+        margin-bottom: rem(12);
+        dt {
+          font-size: rem(12);line-height: rem(16);
+        }
+        dd {
+          margin-top: rem(5);
+        }
+      }
+      section {
+        .web-button {
+          width: rem(133);height: rem(28);border-radius: rem(14);
+        }
+      }
+      .web-balance-show {
+        height: rem(26);
+        strong {
+          font-size: rem(24);
+        }
+        small {
+          font-size: rem(16);
+        }
+        span {
+          font-size: rem(16);;
+        }
+      }
+    }
+    &-pane {
+      padding: rem(24) rem(24) rem(12);
+      &-col {
+        header {
+          font-size: rem(14);line-height: rem(16);margin-bottom: rem(6);padding-left: rem(16);
+        }
+        & + .web-trade-bench-col {
+          header {
+            padding-left: rem(8);
+          }
+        }
+      }
+      &-volume {
+        &-input input {
+          width: rem(175);border-radius: rem(18) 0 0 rem(18);padding-right: rem(12);
+        }
+        &-max {
+          line-height: rem(16);margin-bottom: rem(6);font-size: rem(10);margin-left: -200px;
+        }
+        &-type {
+          .web-select-show-button {
+            border-radius: 0 rem(18) rem(18) 0;margin-left: rem(-2);width: rem(106);padding-left: rem(10);
+          }
+        }
+      }
+    }
+    &-open-type {
+      .web-select-show-button {
+        width: rem(175);border-radius: rem(18) 0 0 rem(18);padding-right: rem(12);
+      }
+    }
+    &-leverage {
+      .web-leverage-select-curr {
+        border-radius: 0 rem(18) rem(18) 0;margin-left: rem(-2);width: rem(106);padding-left: rem(10);
+      }
+    }
+    &-price-input {
+      &-disabled {
+        border-width: rem(2);height: rem(36);border-radius: rem(18);font-size: rem(14);
+      }
+      input {
+        padding-right: rem(50);
+      }
+    }
+    &-button {
+      &-short {
+        width: rem(133);
+        strong {
+          font-size: rem(14);
+        }
+        em {
+          font-size: rem(10);line-height: rem(12);
+        }
+      }
+      &-full {
+        strong {
+          font-size: rem(14);
+        }
+        em {
+          right: rem(18);top: rem(6);
+          font-size: rem(10);line-height: rem(12);
+        }
+      }
+    }
+  }
+}
+.dark {
+  .web-trade-bench {
+    background: $c33;
+    &-info {
+      background: $c22;
+    }
+    &-pane {
+      .web-select-show-button {
+        background: $c22;
+      }
+      &-volume {
+        &-input input {
+          background: $c22;
+        }
+        &-max {
+          color: $c88;
+          em {
+            color: $cff;
+          }
+        }
+      }
+    }
+    &-price-input {
+      &-disabled {
+        border-color: $c44;background: $c44;color: $c88;
+      }
+      input {
+        background: $c22;
+      }
+    }
+  }
+}

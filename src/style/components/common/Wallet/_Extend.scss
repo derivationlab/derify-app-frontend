@@ -1,0 +1,164 @@
+.web-extend-dialog {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+
+  &-info {
+    background: $cf7;
+    border-radius: 48px;
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    margin-bottom: 36px;
+
+    dl {
+      margin-bottom: 16px;
+
+      dt {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        line-height: 20px;
+      }
+
+      dd {
+        font-size: 26px;
+        margin-top: 16px;
+      }
+    }
+
+    address {
+      font-size: 14px;
+      line-height: 20px;
+      color: $c88;
+    }
+
+    & + .web-button {
+      width: 186px;
+    }
+  }
+
+  &-wallet {
+    border-radius: 36px;
+    background: $cff;
+    padding: 36px;
+    dl:nth-child(1){
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      border-bottom: 1px dashed $ce7;
+    }
+    dl:last-child{margin-bottom: 0}
+  }
+
+  &-amount {
+    margin: 36px 38px 38px;
+    p {
+      display: flex;justify-content: space-between;font-size: 14px;line-height: 16px;margin-bottom: 10px;padding-left: 24px;
+      em {
+        color: $red;font-weight: bold;
+        u {
+          color: $c88;font-weight: normal;
+        }
+      }
+    }
+    label {
+      display: flex;justify-content: space-between;padding: 6px 6px 6px 22px;
+      height: 48px;border-radius: 24px;border: 2px solid $ce7;background: $cff;
+      input {
+        display: block;width: 100%;flex: 1;border: none;background: none;font-size: 18px;
+      }
+      aside {
+        display: flex;align-items: center;
+        u {
+          display: block;margin: 0 6px;
+        }
+      }
+    }
+  }
+}
+.mobile-mode {
+  .web-extend-dialog {
+    &-info {
+      border-radius: rem(36);
+      padding: rem(8);
+      margin-bottom: rem(24);
+
+      dl {
+        margin-bottom: 16px;
+
+        dt {
+          font-size: rem(14);
+          line-height: rem(16);
+        }
+
+        dd {
+          font-size: rem(18);
+          margin-top: rem(8);
+        }
+      }
+
+      address {
+        font-size: rem(10);
+        line-height: rem(16);
+      }
+
+      & + .web-button {
+        width: rem(143);
+      }
+    }
+
+    &-wallet {
+      border-radius: rem(28);
+      padding: rem(24);
+      dl:nth-child(1){
+        padding-bottom: rem(12);
+        margin-bottom: rem(12);
+      }
+      dl:last-child{margin-bottom: 0}
+    }
+
+    &-amount {
+      margin: rem(24);
+      p {
+        font-size: rem(12);line-height: rem(16);margin-bottom: rem(6);padding-left: rem(18);
+      }
+      label {
+        padding: rem(6) rem(6) rem(6) rem(18);
+        height: rem(36);border-radius: rem(18);
+        input {
+          font-size: rem(14);
+        }
+        aside {
+          u {
+            margin: 0 rem(6);
+          }
+        }
+      }
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .web-extend-dialog {
+    &-info {
+      background: $c33;
+    }
+
+    &-wallet {
+      background: $c22;
+      dl:nth-child(1){
+        border-bottom: 1px dashed $c44;
+      }
+    }
+
+    &-amount {
+      p {
+        em {
+          color: $yellow;
+        }
+      }
+      label {
+        border-color: $c44;background: $c22;
+      }
+    }
+  }
+}

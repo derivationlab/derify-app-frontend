@@ -1,0 +1,47 @@
+.web-trade-multiple-status {
+  display: inline-flex;align-items: center;height: 20px;border-radius: 10px;padding: 2px 2px 2px 10px;
+  font-size: 12px;font-weight: bold;justify-content: center;
+  min-width: 50px;
+  &.no-multiple {
+    padding-right: 10px;
+  }
+  span {
+    color: $cff;text-transform:capitalize;
+  }
+  em {
+    background: $cff;height: 16px;border-radius: 8px;padding: 0 8px;
+    display: flex;align-items: center;margin-left: 8px;
+  }
+  &.status-short {
+    @include jb(lighten($sell, 10), $sell, -90);
+    em {
+      color: $sell;
+    }
+  }
+  &.status-long {
+    @include jb(lighten($buy, 10), $buy, -90);
+    em {
+      color: $buy;
+    }
+  }
+  &.status-2-way {
+    @include jb(lighten($blue, 10), $blue, -90);
+    em {
+      color: $blue;
+    }
+  }
+}
+.mobile-mode {
+  .web-trade-multiple-status {
+    height: rem(16);border-radius: rem(8);padding: rem(2) rem(2) rem(2) rem(8);
+    font-size: rem(10);
+    min-width: rem(50);
+    &.no-multiple {
+      padding-right: rem(8);
+    }
+    em {
+      height: rem(12);border-radius: rem(6);padding: 0 rem(6);
+      display: flex;align-items: center;margin-left: rem(6);
+    }
+  }
+}

@@ -1,0 +1,96 @@
+.rc-dialog {
+  &-wrap {
+    display: flex;
+    align-items: center;
+  }
+
+  &-mask {
+    background-color: rgba($cf7, .8);
+  }
+
+  &-close {
+    top: 36px;
+    right: 36px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    opacity: 0.75;
+    @include dz();
+    background: url($res + 'icon/close.svg') center/contain no-repeat;
+  }
+
+  &-header {
+    border: none;background: none;text-align: center;
+    padding: 36px 0 0;
+  }
+  &-title {
+    font-size: 18px;line-height: 32px;color: $c22;font-weight: normal;
+  }
+
+  &-content {
+    background: $cff;
+    border-radius: 48px;
+    box-sizing: border-box;
+    box-shadow: 0 0 12px rgba($c88, .5);
+  }
+  &-body {
+    padding: 36px;
+  }
+}
+
+.mobile-mode {
+  .rc-dialog {
+    &-wrap {
+      justify-content: center;
+    }
+    &-close {
+      top: rem(24);
+      right: rem(24);
+      width: rem(20);
+      height: rem(20);
+      // img {
+      //   display: block;
+      //   width: rem(20);
+      //   height: rem(20);
+      // }
+    }
+
+    &-header {
+      padding: rem(24) 0 0;
+    }
+    &-title {
+      font-size: rem(14);line-height: rem(32);
+    }
+
+    &-content {
+      border-radius: rem(36);
+      box-shadow: 0 0 rem(12) rgba($c88, .5);
+    }
+    &-body {
+      padding: rem(24);
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .rc-dialog {
+    &-mask {
+      background-color: rgba($c22, .8);
+    }
+
+    &-close {
+      background-image: url($res + 'icon/close-dark.svg');
+    }
+
+    &-title {
+      color: $cff;
+    }
+
+    &-content {
+      background: $c22;
+      box-shadow: 0 0 12px rgba($c00, .8);
+    }
+
+  }
+}

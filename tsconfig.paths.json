@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"],
+      "@/api": ["src/api"],
+      "@/lib": ["src/lib"],
+      "@/utils": ["src/utils"],
+      "@/pages": ["src/pages"],
+      "@/store": ["src/store"],
+      "@/style": ["src/style"],
+      "@/class": ["src/class"],
+      "@/hooks": ["src/hooks"],
+      "@/routes": ["src/routes"],
+      "@/config": ["src/config"],
+      "@/components": ["src/components"]
+    }
+  }
+}

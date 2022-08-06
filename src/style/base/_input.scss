@@ -1,0 +1,31 @@
+input,
+textarea,
+select,
+button {
+  font-family: 'Urbanist', 'PingFang SC', 'Heiti SC', 'Droidsansfallback', Helvetica, 'Droid Sans';
+  -webkit-appearance: none;
+  color: $c22;
+  &[type='radio'] {
+    -webkit-appearance: radio;
+  }
+  &[type='checkbox'] {
+    -webkit-appearance: checkbox;
+  }
+  -webkit-tap-highlight-color: rgba(#fff, 0);
+  outline: none;
+}
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.dark {
+  input,
+  textarea,
+  select,
+  button {
+    color: $c88;
+  }
+}

@@ -1,0 +1,102 @@
+.web-pagination {
+  display: flex;justify-content: center;align-items: center;
+  span, em, i {
+    margin: 0 6px;height: 48px;
+  }
+  span, i {
+    width: 48px;cursor: pointer;
+  }
+  span {
+    display: block;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 1;
+    @include dz();
+    &.disabled {
+      cursor: not-allowed;
+    }
+  }
+  &-home, &-end {
+    background-image: url($res + 'icon/go-home.svg');
+  }
+  &-prev, &-next {
+    background-image: url($res + 'icon/go-prev.svg');
+  }
+  &-home.disabled, &-end.disabled {
+    background-image: url($res + 'icon/go-home-gray.svg');
+  }
+  &-prev.disabled, &-next.disabled {
+    background-image: url($res + 'icon/go-prev-gray.svg');
+  }
+  &-end, &-next {
+    @include xz(180);
+  }
+  // $types: 'home', 'prev', 'next', 'end';
+  // @each $type in $types {
+  //   &-#{$type} {
+  //     background-image: url($res + 'icon/go-' + $type + '.svg');
+  //   }
+  // }
+
+  em, i {
+    display: flex;align-items: center;justify-content: center;
+    font-size: 18px;font-weight: bold;color: $c88;background: $cff;
+    border: 2px solid $ce7;border-radius: 24px;
+  }
+  em {
+    padding: 0 24px;min-width: 100px;
+  }
+  i {
+    &.active {
+      border-color: $red;color: $cff;background: $red;
+    }
+  }
+}
+
+.mobile-mode {
+  .web-pagination {
+    span, em, i {
+      margin: 0 rem(4);height: rem(36);
+    }
+    span, i {
+      width: rem(36);
+    }
+
+    em, i {
+      font-size: rem(14);
+      border-radius: rem(18);
+    }
+    em {
+      padding: 0 rem(18);min-width: rem(80);
+    }
+  }
+}
+.dark, .mobile-mode.dark {
+  .web-pagination {
+    &-home, &-end {
+      background-image: url($res + 'icon/go-home-dark.svg');
+    }
+    &-prev, &-next {
+      background-image: url($res + 'icon/go-prev-dark.svg');
+    }
+    &-home.disabled, &-end.disabled {
+      background-image: url($res + 'icon/go-home-dark.svg');
+      opacity: .5;
+    }
+    &-prev.disabled, &-next.disabled {
+      background-image: url($res + 'icon/go-prev-dark.svg');
+      opacity: .5;
+    }
+
+    em, i {
+      color: $c88;background: $c22;
+      border: 2px solid $c44;
+    }
+    i {
+      &.active {
+        border-color: $yellow;color: $c22;background: $yellow;
+      }
+    }
+  }
+}

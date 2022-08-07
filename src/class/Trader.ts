@@ -439,11 +439,12 @@ class Trader {
     const tradingFeesBeforeClosing = await contracts[token].getPositionChangeFeeRatio()
     const tradingFeesBeforeClosing_BN = new BN(tradingFeesBeforeClosing._hex)
 
-    const tradingFeesAfterClosing = tradingFeesBeforeClosing_BN
-      .times(nakedPositionTradingPairAfterClosing_BN)
-      .div(nakedPositionTradingPairBeforeClosing_BN)
-      .integerValue(BN.ROUND_FLOOR)
-
+    const tradingFeesAfterClosing = nakedPositionTradingPairBeforeClosing_BN.isEqualTo(0)
+      ? new BN(0)
+      : tradingFeesBeforeClosing_BN
+          .times(nakedPositionTradingPairAfterClosing_BN)
+          .div(nakedPositionTradingPairBeforeClosing_BN) // nakedPositionTradingPairBeforeClosing_BN: maybe 0
+          .integerValue(BN.ROUND_FLOOR)
     const radioSum = tradingFeesAfterClosing.abs().plus(tradingFeesBeforeClosing_BN.abs())
     // console.info(`radioSum:${String(radioSum)}`)
 

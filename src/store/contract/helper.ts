@@ -63,7 +63,7 @@ export const getTokenSpotPrice = async (): Promise<Record<string, string>[]> => 
 
   try {
     const response = await multicall(DerifyDerivativeAbi, calls)
-    console.info(response)
+    // console.info(response)
     if (!isEmpty(response)) {
       return response.map(([b]: [BigNumberish], index: number) => {
         return {

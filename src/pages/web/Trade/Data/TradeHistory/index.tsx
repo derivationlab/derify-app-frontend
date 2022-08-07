@@ -10,10 +10,12 @@ import Loading from '@/components/common/Loading'
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
+import { useShareMessage } from '@/store/share/hooks'
 
 const TradeHistory: FC = () => {
   // const { t } = useTranslation()
   const { data: account } = useAccount()
+  const { shareMessage } = useShareMessage()
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [tradeFlow, setTradeFlow] = useState<Record<string, any>>({})
@@ -51,6 +53,10 @@ const TradeHistory: FC = () => {
   useEffect(() => {
     void getTraderTradeFlowFunc()
   }, [])
+
+  useEffect(() => {
+    if (shareMessage && shareMessage?.extraType === 'UPDATE_TRADE_HISTORY') void getTraderTradeFlowFunc()
+  }, [shareMessage])
 
   return (
     <div className="web-trade-data-wrap">

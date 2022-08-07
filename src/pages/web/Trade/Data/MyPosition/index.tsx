@@ -103,9 +103,10 @@ const MyPosition: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
+          dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(getCurrentPositionsAmountDataAsync())
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
+          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))
@@ -130,9 +131,10 @@ const MyPosition: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
+          dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(getCurrentPositionsAmountDataAsync())
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
+          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))

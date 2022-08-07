@@ -33,12 +33,15 @@ export interface CommunityProps {
   Reddit?: string
   WeChat?: string
 }
-
+// twitter: /^https?:\/\/([a-zA-Z]*)(.)?twitter.com\/(\w)+/,
+//   instagram: /^https?:\/\/([a-zA-Z]*)(.)?instagram.com\/(\w)+/,
+//   facebook: /^https?:\/\/([a-zA-Z]*)(.)?facebook.com\/(\w)+/,
+//   discord: /^https?:\/\/([a-zA-Z]*)(.)?discord.com\/(\w)+/
 export const patterns = {
-  telegram: /^(https?:\/\/)?(www\.)?(telegram|t)\.me\/(u\/)?(\w)+\/?$/,
-  discord: /^(https?:\/\/)?(www\.)?(discord)\.(com|gg)\/(u\/)?(\w)+\/?$/,
-  twitter: /^(https?:\/\/)?(www\.)?(twitter)\.com\/(u\/)?(\w)+\/?$/,
-  reddit: /^(https?:\/\/)?(www\.)?(reddit)\.com\/r\/(u\/)?(\w)+\/?$/,
+  telegram: /^(https?:\/\/)?(www\.)?(telegram|t)\.me\/(u\/)?([\w-./?%&=]*)+\/?$/,
+  discord: /^(https?:\/\/)?(www\.)?(discord)\.(com|gg)\/(u\/)?([\w-./?%&=]*)+\/?$/,
+  twitter: /^(https?:\/\/)?(www\.)?(twitter)\.com\/(u\/)?([\w-./?%&=]*)+\/?$/,
+  reddit: /^(https?:\/\/)?(www\.)?(reddit)\.com\/(u\/)?([\w-./?%&=]*)+\/?$/,
   wechat: /^[a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}$/
 }
 
@@ -69,25 +72,25 @@ export const rules2 = {
   },
   telegram: {
     pattern: {
-      value: /^(https?:\/\/)?(www\.)?(telegram|t)\.me\/(u\/)?(\w)+\/?$/,
+      value: patterns.telegram,
       message: 'Error telegram url'
     }
   },
   discord: {
     pattern: {
-      value: /^(https?:\/\/)?(www\.)?(discord)\.(com|gg)\/(u\/)?(\w)+\/?$/,
+      value: patterns.discord,
       message: 'Error discord url'
     }
   },
   twitter: {
     pattern: {
-      value: /^(https?:\/\/)?(www\.)?(twitter)\.com\/(u\/)?(\w)+\/?$/,
+      value: patterns.twitter,
       message: 'Error twitter url'
     }
   },
   reddit: {
     pattern: {
-      value: /^(https?:\/\/)?(www\.)?(reddit)\.com\/r\/(u\/)?(\w)+\/?$/,
+      value: patterns.reddit,
       message: 'Error reddit url'
     }
   },

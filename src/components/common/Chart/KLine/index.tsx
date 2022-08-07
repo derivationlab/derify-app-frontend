@@ -38,7 +38,6 @@ const KLine: FC<Props> = ({ cRef, getMoreData }) => {
       if (chart) chart.clearData()
     },
     initData: (data: KLineDataProps[], more: boolean) => {
-      console.info(data)
       if (chart) chart.applyNewData(data, more)
     },
     update: (data: KLineDataProps) => {

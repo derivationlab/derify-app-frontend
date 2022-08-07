@@ -60,7 +60,7 @@ const MyOrder: FC = () => {
         batch(() => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
+          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))
@@ -86,7 +86,7 @@ const MyOrder: FC = () => {
         batch(() => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
+          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))

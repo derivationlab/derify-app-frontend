@@ -57,13 +57,12 @@ const PositionVolume: FC = () => {
       SelectTimesValues[timeSelectVal]
     )
 
-    const long = history.reduce((p: BN, n: Record<string, any>) => p.plus(new BN(n.long_position_amount)), new BN(0))
-    const short = history.reduce((p: BN, n: Record<string, any>) => p.plus(new BN(n.short_position_amount)), new BN(0))
+    const long = new BN(current?.long_position_amount ?? 0)
+    const short = new BN(current?.short_position_amount ?? 0)
     const total = long.plus(short)
-    const volume = new BN(current?.long_position_amount ?? 0).plus(current?.short_position_amount ?? 0)
 
     setPositionVolume({
-      volume: volume.toString(),
+      volume: total.toString(),
       long: `${long.div(total).times(100).toFixed(2)}%`,
       short: `${short.div(total).times(100).toFixed(2)}%`
     })
@@ -74,7 +73,7 @@ const PositionVolume: FC = () => {
         .map((o) => ({
           ...o,
           long_position_amount: Number(o.long_position_amount),
-          short_position_amount: o.short_position_amount
+          short_position_amount: Number(o.short_position_amount)
         }))
         .reverse()
       setPositionsData(convert)

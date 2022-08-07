@@ -1,13 +1,11 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { useSigner } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import { isEmpty } from 'lodash'
 import BN from 'bignumber.js'
+import { isEmpty } from 'lodash'
+import { useSigner } from 'wagmi'
 import { batch } from 'react-redux'
-
+import { useTranslation } from 'react-i18next'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import Trader from '@/class/Trader'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-
 import { useAppDispatch } from '@/store'
 import { getMyPositionsDataAsync } from '@/store/contract'
 import { PositionSide } from '@/store/contract/helper'
@@ -16,16 +14,11 @@ import { setShareMessage } from '@/store/share'
 import { useContractData } from '@/store/contract/hooks'
 import { getTraderDataAsync } from '@/store/trader'
 import { getCurrentPositionsAmountDataAsync } from '@/store/constant'
-
-import { safeInterceptionValues } from '@/utils/tools'
-
 import { LeverageSelect } from '@/components/common/Form'
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
-
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
 import Initializing from './c/Initializing'
-
 import Info from './c/Info'
 import Row from './c/Row'
 import Col from './c/Col'
@@ -72,7 +65,7 @@ const Bench: FC = () => {
         .plus(memoPairInfo?.longPmrRate ?? 0)
         .div(2)
         .times(100)
-      return apy.isLessThanOrEqualTo(0) ? '--' : safeInterceptionValues(String(apy))
+      return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
     }
     return '--'
   }, [memoPairInfo])
@@ -135,10 +128,8 @@ const Bench: FC = () => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(getCurrentPositionsAmountDataAsync())
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
+          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
         })
-        // todo update trade history
-        // ...
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed

@@ -1,6 +1,6 @@
 const urlTable: Record<string, { web: string }> = {
   dev: {
-    web: 'https://derify-web-fe-pre.vercel.app/'
+    web: 'https://dev.derify.exchange/'
   },
   prod: {
     web: 'https://derify.finance/'

@@ -43,10 +43,10 @@ const addresses: Record<string, Address> = {
 
 const envTable: { [string: string]: Record<string, Address> } = {
   dev: {
-    multiCall: {
-      56: '',
-      97: '0x8F3273Fb89B075b1645095ABaC6ed17B2d4Bc576'
-    },
+    // multiCall: {
+    //   56: '',
+    //   97: '0x8F3273Fb89B075b1645095ABaC6ed17B2d4Bc576'
+    // },
     DerifyRewards: {
       56: '',
       97: '0xA069E21F555e1eEF78B0f29A43f8a23927B4ad47'

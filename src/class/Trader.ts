@@ -102,7 +102,7 @@ class Trader {
     try {
       const _amount = getDecimalAmount(amount).toString()
       // console.info(_amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getEDRFAddress(), _amount)
+      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), _amount)
       if (!approve) return false
 
       const res = await contract.burnEdrfExtendValidPeriod(_amount)

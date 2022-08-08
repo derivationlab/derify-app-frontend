@@ -31,10 +31,8 @@ const Info: FC = () => {
     history.push('/broker-edit')
   }
 
-  // 发起交易的ui交互细节 todo
   const extendBrokerPrivilegeCb = useCallback(
     async (amount: string) => {
-      console.info(amount)
       const toast = window.toast.loading(t('common.pending', 'pending...'))
 
       setVisibleStatus('')
@@ -45,7 +43,8 @@ const Info: FC = () => {
         if (status) {
           // succeed
           window.toast.success(t('common.success', 'success'))
-          dispatch(getBrokerDataAsync(account)) // 从合约端更新经纪商特权结束时间
+
+          dispatch(getBrokerDataAsync(account))
         } else {
           // failed
           window.toast.error(t('common.failed', 'failed'))

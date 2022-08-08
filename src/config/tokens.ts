@@ -1,5 +1,7 @@
 import { Token } from '@/config/types'
+import { getEnv } from '@/config/env'
 
+// default for prod
 const tokens: { [key: string]: Token } = {
   BTC: {
     symbol: 'BTC',
@@ -57,6 +59,11 @@ const tokens: { [key: string]: Token } = {
   }
 }
 
+const envTable: { [string: string]: Record<string, Token> } = {
+  dev: {},
+  prod: {}
+}
+
 export const BASE_TOKEN_SYMBOL = 'BUSD'
 
-export default tokens
+export default Object.assign(tokens, envTable[getEnv()])

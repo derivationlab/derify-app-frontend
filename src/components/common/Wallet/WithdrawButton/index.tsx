@@ -21,7 +21,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
   const [dialogStatus, setDialogStatus] = useState<string>('')
   const dispatch = useAppDispatch()
   const { data: signer } = useSigner()
-  const { traderWithdraw } = Trader
+  const { traderWithdrawMargin } = Trader
 
   // withdraw
   const onConfirmWithdrawEv = useCallback(
@@ -31,7 +31,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
       setDialogStatus('')
 
       if (signer) {
-        const status = await traderWithdraw(signer, amount)
+        const status = await traderWithdrawMargin(signer, amount)
         const account = await signer.getAddress()
         if (status) {
           // succeed

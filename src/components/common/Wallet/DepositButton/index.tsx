@@ -21,7 +21,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const [dialogStatus, setDialogStatus] = useState<string>('')
   const dispatch = useAppDispatch()
   const { data: signer } = useSigner()
-  const { traderDeposit } = Trader
+  const { traderDepositMargin } = Trader
 
   // deposit
   const onConfirmDepositEv = useCallback(
@@ -32,7 +32,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       if (signer) {
         const account = await signer.getAddress()
-        const status = await traderDeposit(signer, account, amount)
+        const status = await traderDepositMargin(signer, account, amount)
         if (status) {
           // succeed
           dispatch(getTraderDataAsync(account))

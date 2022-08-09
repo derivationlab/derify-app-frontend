@@ -37,7 +37,7 @@ const Bench: FC = () => {
   const { data: signer } = useSigner()
   const { brokerBound: broker } = useTraderData()
   const { pairs, currentPair } = useContractData()
-  const { openPosition, minimumOpenPositionLimit } = Trader
+  const { openPositionOrder, minimumOpenPositionLimit } = Trader
 
   const [openType, setOpenType] = useState<PriceType>(PriceType.Market)
   const [leverage, setLeverage] = useState<number>(10)
@@ -107,7 +107,7 @@ const Bench: FC = () => {
       const _isOrderConversion = isOrderConversion(openPosParams?.openType, openPosParams?.price)
 
       const account = await signer.getAddress()
-      const status = await openPosition(
+      const status = await openPositionOrder(
         signer,
         broker.broker,
         openPosParams?.token,

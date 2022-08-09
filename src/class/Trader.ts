@@ -14,10 +14,7 @@ import {
 } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import {
-  getBTCAddress,
-  getBUSDAddress,
-  getDerifyExchangeAddress,
-  getETHAddress
+  getBTCAddress, getBUSDAddress, getDerifyExchangeAddress, getETHAddress
 } from '@/utils/addressHelpers'
 
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
@@ -26,7 +23,7 @@ import { PriceType } from '@/pages/web/Trade/Bench'
 
 class Trader {
   // withdraw
-  traderWithdraw = async (signer: Signer, amount: string): Promise<boolean> => {
+  traderWithdrawMargin = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
 
     try {
@@ -43,7 +40,7 @@ class Trader {
   }
 
   // deposit
-  traderDeposit = async (signer: Signer, account: string, amount: string): Promise<boolean> => {
+  traderDepositMargin = async (signer: Signer, account: string, amount: string): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
 
     try {
@@ -349,7 +346,7 @@ class Trader {
   }
 
   // openPosition
-  openPosition = async (
+  openPositionOrder = async (
     signer: Signer,
     brokerId: string,
     token: string,

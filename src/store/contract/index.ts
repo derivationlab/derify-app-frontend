@@ -2,7 +2,7 @@ import BN from 'bignumber.js'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { getEventsData } from '@/api/events'
-import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { nonBigNumberInterception } from '@/utils/tools'
 import Cache from '@/utils/cache'
 
 import { ContractState, AppThunkDispatch } from '../types'
@@ -25,7 +25,7 @@ export const getTokenSpotPriceAsync = createAsyncThunk('ContractData/getTokenSpo
   return data
 })
 
-export const getEventsDataSync = () => (dispatch: AppThunkDispatch) => {
+export const getEventsDataAsync = () => (dispatch: AppThunkDispatch) => {
   getEventsData((data) => {
     if (data.length) {
       // console.info(data)

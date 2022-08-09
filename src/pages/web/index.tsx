@@ -24,7 +24,7 @@ import BrokerSignUpStep1 from '@/pages/web/Broker/SignUp/step1'
 import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
 import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
-import { getEventsDataSync } from '@/store/contract'
+import { getEventsDataAsync } from '@/store/contract'
 
 const Web: FC = () => {
   const dispatch = useAppDispatch()
@@ -123,7 +123,7 @@ const Web: FC = () => {
   }, [account?.address])
 
   useEffect(() => {
-    dispatch(getEventsDataSync())
+    dispatch(getEventsDataAsync())
   }, [])
 
   return (

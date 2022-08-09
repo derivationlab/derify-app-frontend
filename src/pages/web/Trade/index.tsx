@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import { claimTestUSDT } from '@/api'
 import { useAppDispatch } from '@/store'
 import { getBrokerBoundDataAsync, getBrokerDataAsync } from '@/store/trader'
-import { getEventsDataSync, getMyPositionsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
+import { getEventsDataAsync, getMyPositionsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
 import { getCurrentPositionsAmountDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
 import { MobileContext } from '@/context/Mobile'
 
@@ -41,7 +41,7 @@ const Trade: FC = () => {
   useEffect(() => {
     if (blockNumber) {
       dispatch(getTokenSpotPriceAsync())
-      dispatch(getEventsDataSync())
+      dispatch(getEventsDataAsync())
       dispatch(getCurrentPositionsAmountDataAsync())
       dispatch(getPositionChangeFeeRatioDataAsync())
     }

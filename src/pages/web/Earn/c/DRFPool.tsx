@@ -3,13 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { useSigner } from 'wagmi'
 import BN from 'bignumber.js'
 
-import Trader from '@/class/Trader'
+import Earn from '@/class/Earn'
 import { useAppDispatch } from '@/store'
 import { useTraderData } from '@/store/trader/hooks'
 import { getStakingInfoDataAsync } from '@/store/trader'
 import { useConstantData } from '@/store/constant/hooks'
 import { getStakingDrfPoolDataAsync } from '@/store/constant'
-
 import { MobileContext } from '@/context/Mobile'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -17,7 +16,6 @@ import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
-
 import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
 
@@ -27,10 +25,8 @@ const DRFPool: FC = () => {
   const { data: signer } = useSigner()
   const { trader } = useTraderData()
   const { stakingDrf, indicator } = useConstantData()
-
   const { mobile } = useContext(MobileContext)
-
-  const { withdrawEDRFRewards, traderStakingDrf, traderRedeemDrf } = Trader
+  const { traderWithdrawEDRFRewards, traderStakingDrf, traderRedeemDrf } = Earn
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -93,7 +89,7 @@ const DRFPool: FC = () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     if (signer) {
-      const status = await withdrawEDRFRewards(signer)
+      const status = await traderWithdrawEDRFRewards(signer)
       const account = await signer.getAddress()
       if (status) {
         // succeed

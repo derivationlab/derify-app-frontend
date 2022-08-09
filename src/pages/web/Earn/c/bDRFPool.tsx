@@ -4,14 +4,13 @@ import BN from 'bignumber.js'
 import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import Trader from '@/class/Trader'
+import Earn from '@/class/Earn'
 import { useAppDispatch } from '@/store'
+import { MobileContext } from '@/context/Mobile'
 import { useTraderData } from '@/store/trader/hooks'
 import { getBondInfoDataAsync } from '@/store/trader'
 import { useConstantData } from '@/store/constant/hooks'
 import { getBankBDRFPoolDataAsync } from '@/store/constant'
-
-import { MobileContext } from '@/context/Mobile'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import DecimalShow from '@/components/common/DecimalShow'
@@ -26,13 +25,12 @@ import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
 const EranbDRFPool: FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { data: signer } = useSigner()
   const { trader } = useTraderData()
   const { bankBDRF } = useConstantData()
-  const { data: signer } = useSigner()
-
   const { mobile } = useContext(MobileContext)
 
-  const { withdrawBond, pledgedBond, redemptionBond, exchangeBond } = Trader
+  const { traderWithdrawBond, traderPledgedBond, traderRedemptionBond, traderExchangeBond } = Earn
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -45,7 +43,7 @@ const EranbDRFPool: FC = () => {
 
     if (signer) {
       const account = await signer.getAddress()
-      const status = await pledgedBond(signer, amount)
+      const status = await traderPledgedBond(signer, amount)
       if (status) {
         // succeed
         dispatch(getBankBDRFPoolDataAsync())
@@ -68,7 +66,7 @@ const EranbDRFPool: FC = () => {
 
     if (signer) {
       const account = await signer.getAddress()
-      const status = await redemptionBond(signer, amount)
+      const status = await traderRedemptionBond(signer, amount)
       if (status) {
         // succeed
         dispatch(getBankBDRFPoolDataAsync())
@@ -102,7 +100,7 @@ const EranbDRFPool: FC = () => {
     onCloseDialogEv()
 
     if (signer) {
-      const status = await exchangeBond(signer, amount)
+      const status = await traderExchangeBond(signer, amount)
       const account = await signer.getAddress()
       if (status) {
         // succeed
@@ -123,7 +121,7 @@ const EranbDRFPool: FC = () => {
     onCloseDialogEv()
 
     if (signer) {
-      const status = await withdrawBond(signer)
+      const status = await traderWithdrawBond(signer)
       const account = await signer.getAddress()
       if (status) {
         // succeed

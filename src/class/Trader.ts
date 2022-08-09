@@ -1,10 +1,10 @@
+import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 import type { Signer } from 'ethers'
 import {
   getDerifyDerivativeBTCContract,
   getDerifyDerivativeETHContract,
   getDerifyExchangeContract,
-  getDerifyRewardsContract
 } from '@/utils/contractHelpers'
 import {
   nonBigNumberInterception,
@@ -14,15 +14,12 @@ import {
 } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import {
-  getBDRFAddress,
   getBTCAddress,
   getBUSDAddress,
   getDerifyExchangeAddress,
-  getDerifyRewardsAddress,
-  getDRFAddress,
   getETHAddress
 } from '@/utils/addressHelpers'
-import BN from 'bignumber.js'
+
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { PriceType } from '@/pages/web/Trade/Bench'
@@ -57,136 +54,6 @@ class Trader {
 
       const gasLimit = await estimateGas(contract, 'deposit', [_amount], 0)
       const res = await contract.deposit(_amount, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // withdrawPositionReward
-  withdrawPMRewards = async (signer: Signer): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-
-    try {
-      const res = await contract.withdrawPositionReward()
-      const receipt = await res.wait()
-
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // withdrawAllEdrf
-  withdrawEDRFRewards = async (signer: Signer): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-    try {
-      const res = await contract.withdrawAllEdrf()
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // stakingDrf
-  traderStakingDrf = async (signer: Signer, amount: string): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-    try {
-      const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getDRFAddress(), _amount)
-
-      if (!approve) return false
-
-      const gasLimit = await estimateGas(contract, 'stakingDrf', [_amount], 0)
-      const res = await contract.stakingDrf(_amount, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // redeemDrf
-  traderRedeemDrf = async (signer: Signer, amount: string): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-    try {
-      const _amount = toHexString(amount)
-
-      const gasLimit = await estimateGas(contract, 'redeemDrf', [_amount], 0)
-      const res = await contract.redeemDrf(_amount, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // withdrawAllBond
-  withdrawBond = async (signer: Signer): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-    try {
-      const res = await contract.withdrawAllBond()
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // depositBondToBank
-  pledgedBond = async (signer: Signer, amount: string): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-    try {
-      const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getBDRFAddress(), _amount)
-
-      if (!approve) return false
-
-      const gasLimit = await estimateGas(contract, 'depositBondToBank', [_amount], 0)
-      const res = await contract.depositBondToBank(_amount, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // redeemBondFromBank
-  redemptionBond = async (signer: Signer, amount: string): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-    try {
-      const _amount = toHexString(amount)
-
-      const gasLimit = await estimateGas(contract, 'redeemBondFromBank', [_amount], 0)
-      const res = await contract.redeemBondFromBank(_amount, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // exchangeBond
-  exchangeBond = async (signer: Signer, amount: string): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-    try {
-      const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getBDRFAddress(), _amount)
-
-      if (!approve) return false
-
-      const gasLimit = await estimateGas(contract, 'exchangeBond', [_amount], 0)
-      const res = await contract.exchangeBond(_amount, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {

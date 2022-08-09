@@ -1,33 +1,33 @@
-import React, { FC, useContext, useMemo } from 'react'
-import BN from 'bignumber.js'
-import { useTranslation } from 'react-i18next'
 import { useSigner } from 'wagmi'
+import BN from 'bignumber.js'
+import React, { FC, useContext, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import Trader from '@/class/Trader'
+import Earn from '@/class/Earn'
 import { useAppDispatch } from '@/store'
-import { getPMRewardDataAsync, getStakingInfoDataAsync } from '@/store/trader'
+import { MobileContext } from '@/context/Mobile'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTraderData } from '@/store/trader/hooks'
+import { nonBigNumberInterception } from '@/utils/tools'
 import { useConstantData } from '@/store/constant/hooks'
 import { useContractData } from '@/store/contract/hooks'
-import { MobileContext } from '@/context/Mobile'
-import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { getPMRewardDataAsync, getStakingInfoDataAsync } from '@/store/actions'
 
-import QuestionPopover from '@/components/common/QuestionPopover'
-import DecimalShow from '@/components/common/DecimalShow'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
+import DecimalShow from '@/components/common/DecimalShow'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import QuestionPopover from '@/components/common/QuestionPopover'
 
 const PositionMining: FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { data: signer } = useSigner()
   const { trader } = useTraderData()
   const { mobile } = useContext(MobileContext)
   const { positions } = useConstantData()
-  const { data: signer } = useSigner()
   const { pairs, pairsLoaded } = useContractData()
-  const { withdrawPMRewards } = Trader
+  const { traderWithdrawPMRewards } = Earn
 
   const memoPositionApy = useMemo(() => {
     if (pairsLoaded) {
@@ -63,7 +63,7 @@ const PositionMining: FC = () => {
       // + trader?.drfBalance? todo
       const amount = new BN(trader?.usdBalance ?? 0).plus(new BN(trader?.drfBalance ?? 0)).toString()
       // const amount = trader?.usdBalance ?? 0
-      const status = await withdrawPMRewards(signer)
+      const status = await traderWithdrawPMRewards(signer)
       const account = await signer.getAddress()
       if (status) {
         // succeed

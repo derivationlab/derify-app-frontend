@@ -27,12 +27,12 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
 
   const memoDisabled = useMemo(() => {
-    return new BN(trader?.drfBalance ?? 0).isGreaterThan(0)
-  }, [trader?.drfBalance])
+    return new BN(trader?.stakingDRFBalance ?? 0).isGreaterThan(0)
+  }, [trader?.stakingDRFBalance])
 
   const onChangeEv = (v: string) => {
     const _v = new BN(v)
-    const _balance = new BN(trader?.drfBalance ?? 0)
+    const _balance = new BN(trader?.stakingDRFBalance ?? 0)
     if (_balance.isGreaterThanOrEqualTo(v) && _v.isGreaterThan(0)) {
       setIsDisabled(false)
       setDepositAmount(v)
@@ -50,14 +50,14 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.DRFPool.StakingAmount', 'Staking Amount')}</dt>
               <dd>
-                <BalanceShow value={trader?.drfBalance ?? 0} unit="DRF" />
+                <BalanceShow value={trader?.stakingDRFBalance ?? 0} unit="DRF" />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={trader?.drfBalance ?? 0}
+              max={trader?.stakingDRFBalance ?? 0}
               title={t('Earn.DRFPool.AmountToUnstake', 'Amount to unstake')}
               unit="DRF"
               onChange={onChangeEv}

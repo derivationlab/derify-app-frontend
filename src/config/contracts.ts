@@ -9,23 +9,23 @@ const addresses: Record<string, Address> = {
   },
   DerifyRewards: {
     56: '',
-    97: '0x953668ffcDB8DFF2d26BAF77cff3c289d8435acf'
+    97: '0x895981b73A2CF54F1aF3d433D40f407e49309f0C'
   },
   DerifyExchange: {
     56: '',
-    97: '0xaA7E363ba770A743C7100cF722AD236641035468'
+    97: '0x88E1C1f39B3468f185C607E75b2ff307A5085D1E'
   },
   DerifyDerivative_BTC: {
     56: '',
-    97: '0x08D6b960E9a73F5936233796B15E45FbA530c9Dd'
+    97: '0x166d4038360f05226799bADbcA55ee40019BB9D9'
   },
   DerifyDerivative_ETH: {
     56: '',
-    97: '0x5c4a09863d8DbC7F8c1E831d3c76250946D6313F'
+    97: '0x2E444Fd151B52E9e9119a713cb0C3643bF4D7a1E'
   },
   DerifyBroker: {
     56: '',
-    97: '0xF86441B0e309c77A17bB964C0f2Ea7D8b16F0928'
+    97: '0x64afbB172F813b2901A4e9A0c13317684972249C'
   }
 }
 

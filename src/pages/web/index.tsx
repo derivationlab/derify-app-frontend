@@ -1,9 +1,12 @@
-import React, { FC, FunctionComponent, useCallback, useEffect, useMemo } from 'react'
 import { useAccount } from 'wagmi'
+import React, { FC, FunctionComponent, useCallback, useEffect, useMemo } from 'react'
+
 import { useAppDispatch } from '@/store'
-import { getBrokerBoundDataAsync, getBrokerDataAsync, getTraderDataAsync } from '@/store/trader'
 import { useTraderData } from '@/store/trader/hooks'
+import { getEventsDataAsync } from '@/store/contract'
 import { Redirect, Switch, Route } from '@/components/common/Route'
+import { getBrokerBoundDataAsync, getBrokerDataAsync, getTraderDataAsync } from '@/store/trader'
+
 import Header from '@/components/web/Header'
 import Loading from '@/components/common/Loading'
 import Toast from '@/components/common/Toast'
@@ -24,7 +27,6 @@ import BrokerSignUpStep1 from '@/pages/web/Broker/SignUp/step1'
 import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
 import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
-import { getEventsDataAsync } from '@/store/contract'
 
 const Web: FC = () => {
   const dispatch = useAppDispatch()

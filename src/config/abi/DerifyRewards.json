@@ -1253,6 +1253,11 @@
       },
       {
         "internalType": "uint256",
+        "name": "lastUpdatedBlockNumber",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "bondWalletBalance",
         "type": "uint256"
       },
@@ -1296,6 +1301,11 @@
       {
         "internalType": "uint256",
         "name": "edrfBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastUpdatedBlockNumber",
         "type": "uint256"
       }
     ],

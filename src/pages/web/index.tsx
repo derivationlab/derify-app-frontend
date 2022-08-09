@@ -67,7 +67,6 @@ const Web: FC = () => {
   )
 
   const handleBrokerBindList = useMemo(() => {
-    return <BrokerBindList />
     if (brokerBoundLoaded) {
       return brokerBound?.broker ? <Redirect to="/broker" /> : <BrokerBindList />
     }
@@ -80,11 +79,9 @@ const Web: FC = () => {
         return <BrokerSignUpStep2 />
       } else {
         return <Redirect to="/broker" />
-        // return <BrokerSignUpStep2 />
       }
     }
     return <Loading show type="fixed" />
-    // return <BrokerSignUpStep2 />
   }, [broker?.isBroker, brokerLoaded])
 
   const handleBrokerWorkbench = useMemo(() => {

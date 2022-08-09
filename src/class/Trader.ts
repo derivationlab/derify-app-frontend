@@ -1,14 +1,12 @@
 import { isEmpty } from 'lodash'
 import type { Signer } from 'ethers'
 import {
-  getDerifyBrokerContract,
   getDerifyDerivativeBTCContract,
   getDerifyDerivativeETHContract,
   getDerifyExchangeContract,
   getDerifyRewardsContract
 } from '@/utils/contractHelpers'
 import {
-  getDecimalAmount,
   nonBigNumberInterception,
   safeInterceptionValues,
   toFloorNum,
@@ -19,11 +17,9 @@ import {
   getBDRFAddress,
   getBTCAddress,
   getBUSDAddress,
-  getDerifyBrokerAddress,
   getDerifyExchangeAddress,
   getDerifyRewardsAddress,
   getDRFAddress,
-  getEDRFAddress,
   getETHAddress
 } from '@/utils/addressHelpers'
 import BN from 'bignumber.js'
@@ -32,13 +28,6 @@ import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { PriceType } from '@/pages/web/Trade/Bench'
 
 class Trader {
-  burnLimit = '0'
-  burnLimitPerDay = '0'
-
-  constructor() {
-    void this.burnLimitAmount()
-  }
-
   // withdraw
   traderWithdraw = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
@@ -74,75 +63,6 @@ class Trader {
       console.info(e)
       return false
     }
-  }
-
-  // applyBroker
-  getPrivilegeForBroker = async (signer: Signer): Promise<boolean> => {
-    const contract = getDerifyBrokerContract(signer)
-    try {
-      const _amount = getDecimalAmount(this.burnLimit).toString()
-
-      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), _amount)
-
-      if (!approve) return false
-
-      const res = await contract.applyBroker()
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // burnEdrfExtendValidPeriod
-  extendBrokerPrivilege = async (signer: Signer, amount: string): Promise<boolean> => {
-    const contract = getDerifyBrokerContract(signer)
-
-    try {
-      const _amount = getDecimalAmount(amount).toString()
-      // console.info(_amount)
-      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), _amount)
-      if (!approve) return false
-
-      const res = await contract.burnEdrfExtendValidPeriod(_amount)
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // withdrawBrokerReward
-  withdrawRewards = async (signer: Signer): Promise<boolean> => {
-    const contract = getDerifyBrokerContract(signer)
-
-    try {
-      const res = await contract.withdrawBrokerReward()
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // brokerApplyNumber  brokerValidUnitNumber
-  burnLimitAmount = async () => {
-    const contract = getDerifyBrokerContract()
-
-    const brokerApplyNumber = await contract.brokerApplyNumber()
-    const brokerValidUnitNumber = await contract.brokerValidUnitNumber()
-
-    const _brokerValidUnitNumber = new BN(brokerValidUnitNumber._hex)
-    const burnLimitPerDay = _brokerValidUnitNumber
-      .times(24 * 3600)
-      .div(3)
-      .div(new BN(10).pow(8))
-
-    this.burnLimit = safeInterceptionValues(brokerApplyNumber)
-    this.burnLimitPerDay = burnLimitPerDay.integerValue(BN.ROUND_CEIL).toString()
   }
 
   // withdrawPositionReward

@@ -1,29 +1,28 @@
-import React, { FC, useCallback, useState, useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
-import classNames from 'classnames'
 import dayjs from 'dayjs'
 import { useSigner } from 'wagmi'
+import classNames from 'classnames'
+import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useState, useMemo } from 'react'
 
-import Trader from '@/class/Trader'
+import Broker from '@/class/Broker'
+import { copyText } from '@/utils/tools'
 import { useAppDispatch } from '@/store'
-import { getBrokerDataAsync } from '@/store/trader'
 import { useTraderData } from '@/store/trader/hooks'
-import { getTraderAsBrokerData } from '@/store/trader/helper'
-import { calcSecondsDays, copyText } from '@/utils/tools'
+import { getBrokerDataAsync } from '@/store/actions'
 
-import QuestionPopover from '@/components/common/QuestionPopover'
-import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
+import Button from '@/components/common/Button'
 import ExtendDialog from '@/components/common/Wallet/Extend'
+import QuestionPopover from '@/components/common/QuestionPopover'
 
 const Info: FC = () => {
-  const { t } = useTranslation()
   const history = useHistory()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { broker } = useTraderData()
-  const { extendBrokerPrivilege } = Trader
+  const { extendBrokerPrivilege } = Broker
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 

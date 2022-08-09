@@ -1,19 +1,18 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import BN from 'bignumber.js'
 import { useAccount, useSigner } from 'wagmi'
 import { useHistory } from 'react-router-dom'
-import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useMemo, useState } from 'react'
 
-import Trader from '@/class/Trader'
-import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { getEDRFAddress } from '@/utils/addressHelpers'
-import { thousandthsDivision } from '@/utils/tools'
-
-import { getBrokerDataAsync } from '@/store/trader'
+import Broker from '@/class/Broker'
 import { useAppDispatch } from '@/store'
+import { thousandthsDivision } from '@/utils/tools'
+import { getBrokerDataAsync } from '@/store/actions'
+import { getEDRFAddress } from '@/utils/addressHelpers'
+import { useTokenBalance } from '@/hooks/useTokenBalance'
 
-import QuestionPopover from '@/components/common/QuestionPopover'
 import Button from '@/components/common/Button'
+import QuestionPopover from '@/components/common/QuestionPopover'
 
 const BrokerSignUpStep1: FC = () => {
   const history = useHistory()
@@ -21,7 +20,7 @@ const BrokerSignUpStep1: FC = () => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
-  const { getPrivilegeForBroker, burnLimit } = Trader
+  const { getPrivilegeForBroker, burnLimitAmount } = Broker
   const { balance, balanceLoaded } = useTokenBalance(getEDRFAddress())
 
   const [loading, setLoading] = useState<boolean>(false)
@@ -50,14 +49,14 @@ const BrokerSignUpStep1: FC = () => {
 
   const memoDisabled = useMemo(() => {
     const _balance = new BN(balance)
-    const _burnLimit = new BN(burnLimit)
-    return _balance.isEqualTo(0) || _burnLimit.isEqualTo(0) || _balance.isLessThan(burnLimit)
-  }, [balance, burnLimit])
+    const _burnLimit = new BN(burnLimitAmount)
+    return _balance.isEqualTo(0) || _burnLimit.isEqualTo(0) || _balance.isLessThan(burnLimitAmount)
+  }, [balance, burnLimitAmount])
 
   const memoInsufficient = useMemo(() => {
     const _balance = new BN(balance)
-    return _balance.isEqualTo(0) || _balance.isLessThan(burnLimit)
-  }, [balance, burnLimit])
+    return _balance.isEqualTo(0) || _balance.isLessThan(burnLimitAmount)
+  }, [balance, burnLimitAmount])
 
   return (
     <div className="web-broker-sign-up">
@@ -69,7 +68,7 @@ const BrokerSignUpStep1: FC = () => {
         <section className="web-broker-sign-up-step-1">
           <p>{t('Broker.Reg.Getting', 'Getting broker privilege will cost you')}</p>
           <em>
-            {thousandthsDivision(burnLimit)}
+            {thousandthsDivision(burnLimitAmount)}
             <u>eDRF</u>
           </em>
           <hr />

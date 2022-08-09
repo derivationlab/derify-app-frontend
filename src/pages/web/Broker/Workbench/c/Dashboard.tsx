@@ -1,18 +1,18 @@
-import React, { FC, useCallback, useContext, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import dayjs from 'dayjs'
 import BN from 'bignumber.js'
 import { useSigner } from 'wagmi'
-import dayjs from 'dayjs'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useContext, useMemo } from 'react'
 
-import Trader from '@/class/Trader'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import Broker from '@/class/Broker'
 import { useAppDispatch } from '@/store'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTraderData } from '@/store/trader/hooks'
 import { getBrokerDataAsync } from '@/store/trader'
 import { useConstantData } from '@/store/constant/hooks'
 import { MobileContext } from '@/context/Mobile'
-import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -24,13 +24,13 @@ const Dashboard: FC = () => {
   const { indicator } = useConstantData()
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
-  const { withdrawRewards } = Trader
+  const { withdrawBrokerReward } = Broker
 
   const withdrawRewardsCb = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     if (signer) {
-      const status = await withdrawRewards(signer)
+      const status = await withdrawBrokerReward(signer)
       const account = await signer.getAddress()
 
       if (status) {

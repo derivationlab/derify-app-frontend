@@ -94,7 +94,7 @@ const Web: FC = () => {
       }
     }
     return <Loading show type="fixed" />
-  }, [broker?.isBroker, brokerBound?.broker, brokerLoaded, brokerBoundLoaded])
+  }, [broker?.isBroker, broker?.broker, brokerBound?.broker, brokerLoaded, brokerBoundLoaded])
 
   const handleBrokerSignUpStep1 = useMemo(() => {
     if (brokerLoaded) {
@@ -111,21 +111,19 @@ const Web: FC = () => {
       return <Redirect to="/broker" />
     }
     return <Loading show type="fixed" />
-  }, [brokerLoaded, broker?.isBroker])
+  }, [brokerLoaded, broker?.isBroker, broker?.broker])
 
   useEffect(() => {
     if (account?.address) {
       dispatch(getTraderDataAsync(account?.address))
       dispatch(getBrokerDataAsync(account?.address))
       dispatch(getBrokerBoundDataAsync(account?.address))
-
-
     }
-  }, [account?.address])
+  }, [account?.address, dispatch])
 
   useEffect(() => {
     dispatch(getEventsDataAsync())
-  }, [])
+  }, [dispatch])
 
   return (
     <>

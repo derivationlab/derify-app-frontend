@@ -120,9 +120,9 @@ class Trader {
     const tradingFeesAfterClosing = nakedPositionTradingPairBeforeClosing_BN.isEqualTo(0)
       ? new BN(0)
       : tradingFeesBeforeClosing_BN
-        .times(nakedPositionTradingPairAfterClosing_BN)
-        .div(nakedPositionTradingPairBeforeClosing_BN) // nakedPositionTradingPairBeforeClosing_BN: maybe 0
-        .integerValue(BN.ROUND_FLOOR)
+          .times(nakedPositionTradingPairAfterClosing_BN)
+          .div(nakedPositionTradingPairBeforeClosing_BN) // nakedPositionTradingPairBeforeClosing_BN: maybe 0
+          .integerValue(BN.ROUND_FLOOR)
     const radioSum = tradingFeesAfterClosing.abs().plus(tradingFeesBeforeClosing_BN.abs())
     // console.info(`radioSum:${String(radioSum)}`)
 
@@ -177,7 +177,7 @@ class Trader {
     const contract = contracts[token]
 
     const job = this.calcOrderOperateType(takeProfitPrice, stopLossPrice)
-    console.info(job)
+
     if (isEmpty(job)) return true
 
     const { method, stopType, orderStopType, cancelStopType } = job
@@ -185,11 +185,6 @@ class Trader {
     const _stopLossPrice = toFloorNum(stopLossPrice)
 
     try {
-      const trader = await signer.getAddress()
-      /**
-       #### orderStopPosition
-       */
-      // console.info(trader, side, stopType, _takeProfitPrice, _stopLossPrice)
       if (method === 'orderStopPosition') {
         const gasLimit = await estimateGas(
           contract,

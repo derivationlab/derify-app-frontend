@@ -14,7 +14,7 @@ const exchangeContract = getDerifyExchangeContract()
 const rewardsContract = getDerifyRewardsContract()
 const brokerContract = getDerifyBrokerContract()
 
-const getBrokerValidPeriodData = async (trader: string): Promise<number> => {
+export const getBrokerValidPeriodData = async (trader: string): Promise<number> => {
   try {
     const { data } = await getBrokerValidPeriod(trader)
     return Number(data)

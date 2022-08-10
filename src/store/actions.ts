@@ -1,2 +1,8 @@
-export { getBrokerDataAsync, getPMRewardDataAsync, getStakingInfoDataAsync } from './trader'
+export {
+  getBrokerDataAsync,
+  getPMRewardDataAsync,
+  getStakingInfoDataAsync,
+  getBrokerValidPeriodDataAsync,
+  getBrokerBaseInfoAsync
+} from './trader'
 export { setShareMessage, clearShareMessage } from './share'

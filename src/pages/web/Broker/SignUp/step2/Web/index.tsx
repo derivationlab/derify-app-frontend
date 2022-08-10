@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { getBrokerInfoById, updateBrokerInfo } from '@/api'
 import { useAppDispatch } from '@/store'
 import { useTraderData } from '@/store/trader/hooks'
-import { getBrokerDataAsync } from '@/store/trader'
+import { getBrokerBaseInfoAsync } from '@/store/trader'
 import Button from '@/components/common/Button'
 import { Form, FormInput, FormItem, FormSelect, FormUploadImage } from '@/components/common/Form'
 import { defaultValues, FormInputProps, patterns, rules } from '../config'
@@ -100,7 +100,7 @@ const BrokerSignUpStep2: FC = () => {
     })
 
     if (data.code === 0) {
-      if (account?.address) dispatch(getBrokerDataAsync(account?.address))
+      if (account?.address) dispatch(getBrokerBaseInfoAsync(account?.address))
       history.push('/broker/sign-up/step3')
     }
   }
@@ -108,17 +108,17 @@ const BrokerSignUpStep2: FC = () => {
   useEffect(() => {
     if (pathname === '/broker-edit' && brokerLoaded && !isEmpty(broker)) {
       const {
-        introduction,
-        broker: _broker,
-        name,
         id,
         logo,
+        name,
+        broker: _broker,
+        language,
         telegram,
         discord,
         twitter,
         reddit,
         wechat,
-        language
+        introduction
       } = broker
       setValue('id', id)
       setValue('name', name)
@@ -131,14 +131,13 @@ const BrokerSignUpStep2: FC = () => {
       setValue('reddit', reddit)
       setValue('wechat', wechat)
       setValue('introduction', introduction)
+    } else {
+      setValue('language', 'English')
     }
   }, [pathname, broker, brokerLoaded])
 
   useEffect(() => {
-    if (account?.address) {
-      setValue('language', 'English')
-      setValue('broker', account.address)
-    }
+    if (account?.address) setValue('broker', account.address)
   }, [account?.address])
 
   return (

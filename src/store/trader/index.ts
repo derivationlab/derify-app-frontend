@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, Dispatch } from '@reduxjs/toolkit'
 import { TraderState } from '../types'
 import {
   getTraderAccountData,
@@ -7,8 +7,10 @@ import {
   getTraderBoundBrokerData,
   getPMRewardData,
   getBondInfoData,
-  getStakingInfoData
+  getStakingInfoData,
+  getBrokerValidPeriodData
 } from './helper'
+import { getBrokerInfoByAddr } from '@/api'
 
 const initialState: TraderState = {
   trader: {},
@@ -16,6 +18,16 @@ const initialState: TraderState = {
   brokerBound: {},
   brokerLoaded: false,
   brokerBoundLoaded: false
+}
+
+export const getBrokerBaseInfoAsync = (trader: string) => async (dispatch: Dispatch) => {
+  const { data } = await getBrokerInfoByAddr(trader)
+  dispatch(updateBrokerBaseInfo(data))
+}
+
+export const getBrokerValidPeriodDataAsync = (trader: string) => async (dispatch: Dispatch) => {
+  const period = await getBrokerValidPeriodData(trader)
+  dispatch(updateValidPeriodDays(period))
 }
 
 export const getTraderDataAsync = createAsyncThunk('TraderData/getTraderDataAsync', async (trader: string) => {
@@ -68,6 +80,12 @@ export const traderDataSlice = createSlice({
       state.brokerBound = {}
       state.brokerLoaded = false
       state.brokerBoundLoaded = false
+    },
+    updateBrokerBaseInfo: (state, action) => {
+      state.broker = { ...state.broker, ...action.payload }
+    },
+    updateValidPeriodDays: (state, action) => {
+      state.broker = { ...state.broker, validPeriodDays: action.payload }
     }
   },
   extraReducers: (builder) => {
@@ -101,6 +119,6 @@ export const traderDataSlice = createSlice({
 })
 
 // Actions
-export const { clearTraderInfo } = traderDataSlice.actions
+export const { clearTraderInfo, updateValidPeriodDays, updateBrokerBaseInfo } = traderDataSlice.actions
 
 export default traderDataSlice.reducer

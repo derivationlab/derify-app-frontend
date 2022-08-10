@@ -9,7 +9,7 @@ import Broker from '@/class/Broker'
 import { copyText } from '@/utils/tools'
 import { useAppDispatch } from '@/store'
 import { useTraderData } from '@/store/trader/hooks'
-import { getBrokerDataAsync } from '@/store/actions'
+import { getBrokerValidPeriodDataAsync } from '@/store/actions'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
@@ -43,7 +43,7 @@ const Info: FC = () => {
           // succeed
           window.toast.success(t('common.success', 'success'))
 
-          dispatch(getBrokerDataAsync(account))
+          dispatch(getBrokerValidPeriodDataAsync(account))
         } else {
           // failed
           window.toast.error(t('common.failed', 'failed'))

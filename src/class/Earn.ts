@@ -6,7 +6,6 @@ import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { getBDRFAddress, getDerifyRewardsAddress, getDRFAddress } from '@/utils/addressHelpers'
 
 class Earn {
-  // withdrawPositionReward
   traderWithdrawPMRewards = async (signer: Signer): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
 
@@ -21,7 +20,6 @@ class Earn {
     }
   }
 
-  // withdrawAllEdrf
   traderWithdrawEDRFRewards = async (signer: Signer): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
@@ -34,7 +32,6 @@ class Earn {
     }
   }
 
-  // stakingDrf
   traderStakingDrf = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
@@ -53,7 +50,6 @@ class Earn {
     }
   }
 
-  // redeemDrf
   traderRedeemDrf = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
@@ -69,7 +65,6 @@ class Earn {
     }
   }
 
-  // withdrawAllBond
   traderWithdrawBond = async (signer: Signer): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
@@ -82,7 +77,6 @@ class Earn {
     }
   }
 
-  // depositBondToBank
   traderPledgedBond = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
@@ -101,7 +95,6 @@ class Earn {
     }
   }
 
-  // redeemBondFromBank
   traderRedemptionBond = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
@@ -117,7 +110,6 @@ class Earn {
     }
   }
 
-  // exchangeBond
   traderExchangeBond = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {

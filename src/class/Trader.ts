@@ -1,21 +1,20 @@
 import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 import type { Signer } from 'ethers'
-import {
-  getDerifyDerivativeBTCContract,
-  getDerifyDerivativeETHContract,
-  getDerifyExchangeContract
-} from '@/utils/contractHelpers'
-import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
-import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { getBTCAddress, getBUSDAddress, getDerifyExchangeAddress, getETHAddress } from '@/utils/addressHelpers'
 
-import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { PriceType } from '@/pages/web/Trade/Bench'
+import { OrderTypes, PositionSide } from '@/store/contract/helper'
+import { estimateGas, setAllowance } from '@/utils/practicalMethod'
+import {
+  getDerifyExchangeContract,
+  getDerifyDerivativeBTCContract,
+  getDerifyDerivativeETHContract
+} from '@/utils/contractHelpers'
+import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
+import { getBTCAddress, getBUSDAddress, getDerifyExchangeAddress, getETHAddress } from '@/utils/addressHelpers'
 
 class Trader {
-  // withdraw
   traderWithdrawMargin = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
 
@@ -32,7 +31,6 @@ class Trader {
     }
   }
 
-  // deposit
   traderDepositMargin = async (signer: Signer, account: string, amount: string): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
 
@@ -52,7 +50,6 @@ class Trader {
     }
   }
 
-  // tradingFeeRatio
   calcClosePositionTradingFee = async (symbol: string, token: string, amount: string, spotPrice: string) => {
     const contracts = {
       [getBTCAddress()]: getDerifyDerivativeBTCContract(),
@@ -70,7 +67,6 @@ class Trader {
     return nonBigNumberInterception(fee)
   }
 
-  // getPositionChangeFee
   calcClosePositionChangeFee = async (
     side: PositionSide,
     symbol: string,
@@ -124,9 +120,9 @@ class Trader {
     const tradingFeesAfterClosing = nakedPositionTradingPairBeforeClosing_BN.isEqualTo(0)
       ? new BN(0)
       : tradingFeesBeforeClosing_BN
-          .times(nakedPositionTradingPairAfterClosing_BN)
-          .div(nakedPositionTradingPairBeforeClosing_BN) // nakedPositionTradingPairBeforeClosing_BN: maybe 0
-          .integerValue(BN.ROUND_FLOOR)
+        .times(nakedPositionTradingPairAfterClosing_BN)
+        .div(nakedPositionTradingPairBeforeClosing_BN) // nakedPositionTradingPairBeforeClosing_BN: maybe 0
+        .integerValue(BN.ROUND_FLOOR)
     const radioSum = tradingFeesAfterClosing.abs().plus(tradingFeesBeforeClosing_BN.abs())
     // console.info(`radioSum:${String(radioSum)}`)
 
@@ -167,7 +163,6 @@ class Trader {
     }
   }
 
-  // orderStopPosition cancleOrderedStopPosition orderAndCancleStopPosition
   takeProfitOrStopLoss = async (
     signer: Signer,
     token: string,
@@ -243,7 +238,6 @@ class Trader {
     }
   }
 
-  // openPosition
   openPositionOrder = async (
     signer: Signer,
     brokerId: string,
@@ -305,7 +299,6 @@ class Trader {
     }
   }
 
-  // calc size value
   checkOpenPositionSize = async (
     token: string,
     side: PositionSide,
@@ -336,7 +329,6 @@ class Trader {
     return size
   }
 
-  // getTraderOpenUpperBound
   getOpenUpperBound = async (
     token: string,
     trader: string,
@@ -355,7 +347,6 @@ class Trader {
     return [safeInterceptionValues(String(size), 8), safeInterceptionValues(String(amount), 8)]
   }
 
-  // getSysOpenUpperBound
   getSysOpenUpperBound = async (token: string, side: PositionSide, price: string): Promise<string[]> => {
     const contract = getDerifyExchangeContract()
     const data = await contract.getSysOpenUpperBound(token, side)
@@ -366,7 +357,6 @@ class Trader {
     return [size, safeInterceptionValues(String(amount), 8)]
   }
 
-  // Minimum open position limit
   minimumOpenPositionLimit = (side: string, price: string, volume: string | number, symbol: string): boolean => {
     const limit = 100
     const calcU = symbol === BASE_TOKEN_SYMBOL ? new BN(volume) : new BN(volume).times(price) // U
@@ -374,7 +364,6 @@ class Trader {
     return calcU.isLessThan(limit)
   }
 
-  // cancelOrderedStopPosition cancelOrderedLimitPosition
   cancelSomePosition = async (
     signer: Signer,
     token: string,
@@ -405,7 +394,6 @@ class Trader {
     }
   }
 
-  // closePosition
   closeSomePosition = async (
     signer: Signer,
     brokerId: string,
@@ -439,7 +427,6 @@ class Trader {
     }
   }
 
-  // closeAllPositions
   closeAllPositions = async (signer: Signer, brokerId: string): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
 
@@ -454,7 +441,6 @@ class Trader {
     }
   }
 
-  // cancleAllOrderedPositions
   cancelAllPosOrders = async (signer: Signer): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
 

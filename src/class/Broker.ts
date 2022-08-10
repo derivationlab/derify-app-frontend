@@ -14,7 +14,6 @@ class Broker {
     void this.getBurnLimitAmount()
   }
 
-  // applyBroker
   getPrivilegeForBroker = async (signer: Signer): Promise<boolean> => {
     const contract = getDerifyBrokerContract(signer)
 
@@ -35,7 +34,6 @@ class Broker {
     }
   }
 
-  // burnEdrfExtendValidPeriod
   extendBrokerPrivilege = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyBrokerContract(signer)
 
@@ -56,7 +54,6 @@ class Broker {
     }
   }
 
-  // withdrawBrokerReward
   withdrawBrokerReward = async (signer: Signer): Promise<boolean> => {
     const contract = getDerifyBrokerContract(signer)
 
@@ -71,7 +68,6 @@ class Broker {
     }
   }
 
-  // brokerApplyNumber  brokerValidUnitNumber
   getBurnLimitAmount = async () => {
     const contract = getDerifyBrokerContract()
 

@@ -2,7 +2,7 @@ import React, { ChangeEvent, FC, useMemo, useState } from 'react'
 import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
-import Trader from '@/class/Trader'
+import Broker from '@/class/Broker'
 import { getEDRFAddress } from '@/utils/addressHelpers'
 import { nonBigNumberInterception } from '@/utils/tools'
 import { useTokenBalance } from '@/hooks/useTokenBalance'
@@ -20,7 +20,7 @@ interface Props {
 const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { balance } = useTokenBalance(getEDRFAddress())
-  const { burnLimitPerDay } = Trader
+  const { burnLimitPerDay } = Broker
 
   const [burnAmount, setBurnAmount] = useState<string>('')
 

@@ -4,18 +4,11 @@ import type { Signer } from 'ethers'
 import {
   getDerifyDerivativeBTCContract,
   getDerifyDerivativeETHContract,
-  getDerifyExchangeContract,
+  getDerifyExchangeContract
 } from '@/utils/contractHelpers'
-import {
-  nonBigNumberInterception,
-  safeInterceptionValues,
-  toFloorNum,
-  toHexString
-} from '@/utils/tools'
+import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import {
-  getBTCAddress, getBUSDAddress, getDerifyExchangeAddress, getETHAddress
-} from '@/utils/addressHelpers'
+import { getBTCAddress, getBUSDAddress, getDerifyExchangeAddress, getETHAddress } from '@/utils/addressHelpers'
 
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
@@ -51,101 +44,6 @@ class Trader {
 
       const gasLimit = await estimateGas(contract, 'deposit', [_amount], 0)
       const res = await contract.deposit(_amount, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // cancelOrderedStopPosition cancelOrderedLimitPosition
-  cancelSomePosition = async (
-    signer: Signer,
-    token: string,
-    side: string,
-    orderType: OrderTypes,
-    timestamp: string
-  ): Promise<boolean> => {
-    let response: any = null
-    const contracts = {
-      [getBTCAddress()]: getDerifyDerivativeBTCContract(signer),
-      [getETHAddress()]: getDerifyDerivativeETHContract(signer)
-    }
-
-    try {
-      if (orderType === OrderTypes.Limit) {
-        const gasLimit = await estimateGas(contracts[token], 'cancelOrderedLimitPosition', [side, timestamp], 0)
-        response = await contracts[token].cancelOrderedLimitPosition(side, timestamp, { gasLimit })
-      } else {
-        const gasLimit = await estimateGas(contracts[token], 'cancelOrderedStopPosition', [orderType - 1, side], 0)
-        response = await contracts[token].cancelOrderedStopPosition(orderType - 1, side, { gasLimit })
-      }
-
-      const receipt = await response.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // closePosition
-  closeSomePosition = async (
-    signer: Signer,
-    brokerId: string,
-    symbol: string,
-    token: string,
-    side: string,
-    size: string,
-    amount: string,
-    spotPrice: string,
-    whetherStud?: boolean
-  ): Promise<boolean> => {
-    let SIZE_OUTPUT = ''
-    const contract = getDerifyExchangeContract(signer)
-    // console.info(whetherStud)
-    if (whetherStud) {
-      SIZE_OUTPUT = toFloorNum(size)
-    } else {
-      const AMOUNT_BN = new BN(amount)
-      const SIZE_BN = symbol === BASE_TOKEN_SYMBOL ? AMOUNT_BN.div(spotPrice) : AMOUNT_BN
-      SIZE_OUTPUT = toFloorNum(String(SIZE_BN))
-    }
-
-    try {
-      const gasLimit = await estimateGas(contract, 'closePosition', [brokerId, token, side, SIZE_OUTPUT], 0)
-      const res = await contract.closePosition(brokerId, token, side, SIZE_OUTPUT, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // closeAllPositions
-  closeAllPositions = async (signer: Signer, brokerId: string): Promise<boolean> => {
-    const contract = getDerifyExchangeContract(signer)
-
-    try {
-      const gasLimit = await estimateGas(contract, 'closeAllPositions', [brokerId], 0)
-      const res = await contract.closeAllPositions(brokerId, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  // cancleAllOrderedPositions
-  cancelAllPosOrders = async (signer: Signer): Promise<boolean> => {
-    const contract = getDerifyExchangeContract(signer)
-
-    try {
-      const gasLimit = await estimateGas(contract, 'cancelAllOrderedPositions', [], 0)
-      const res = await contract.cancelAllOrderedPositions({ gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
@@ -474,6 +372,101 @@ class Trader {
     const calcU = symbol === BASE_TOKEN_SYMBOL ? new BN(volume) : new BN(volume).times(price) // U
 
     return calcU.isLessThan(limit)
+  }
+
+  // cancelOrderedStopPosition cancelOrderedLimitPosition
+  cancelSomePosition = async (
+    signer: Signer,
+    token: string,
+    side: string,
+    orderType: OrderTypes,
+    timestamp: string
+  ): Promise<boolean> => {
+    let response: any = null
+    const contracts = {
+      [getBTCAddress()]: getDerifyDerivativeBTCContract(signer),
+      [getETHAddress()]: getDerifyDerivativeETHContract(signer)
+    }
+
+    try {
+      if (orderType === OrderTypes.Limit) {
+        const gasLimit = await estimateGas(contracts[token], 'cancelOrderedLimitPosition', [side, timestamp], 0)
+        response = await contracts[token].cancelOrderedLimitPosition(side, timestamp, { gasLimit })
+      } else {
+        const gasLimit = await estimateGas(contracts[token], 'cancelOrderedStopPosition', [orderType - 1, side], 0)
+        response = await contracts[token].cancelOrderedStopPosition(orderType - 1, side, { gasLimit })
+      }
+
+      const receipt = await response.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
+
+  // closePosition
+  closeSomePosition = async (
+    signer: Signer,
+    brokerId: string,
+    symbol: string,
+    token: string,
+    side: string,
+    size: string,
+    amount: string,
+    spotPrice: string,
+    whetherStud?: boolean
+  ): Promise<boolean> => {
+    let SIZE_OUTPUT = ''
+    const contract = getDerifyExchangeContract(signer)
+    // console.info(whetherStud)
+    if (whetherStud) {
+      SIZE_OUTPUT = toFloorNum(size)
+    } else {
+      const AMOUNT_BN = new BN(amount)
+      const SIZE_BN = symbol === BASE_TOKEN_SYMBOL ? AMOUNT_BN.div(spotPrice) : AMOUNT_BN
+      SIZE_OUTPUT = toFloorNum(String(SIZE_BN))
+    }
+
+    try {
+      const gasLimit = await estimateGas(contract, 'closePosition', [brokerId, token, side, SIZE_OUTPUT], 0)
+      const res = await contract.closePosition(brokerId, token, side, SIZE_OUTPUT, { gasLimit })
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
+
+  // closeAllPositions
+  closeAllPositions = async (signer: Signer, brokerId: string): Promise<boolean> => {
+    const contract = getDerifyExchangeContract(signer)
+
+    try {
+      const gasLimit = await estimateGas(contract, 'closeAllPositions', [brokerId], 0)
+      const res = await contract.closeAllPositions(brokerId, { gasLimit })
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
+
+  // cancleAllOrderedPositions
+  cancelAllPosOrders = async (signer: Signer): Promise<boolean> => {
+    const contract = getDerifyExchangeContract(signer)
+
+    try {
+      const gasLimit = await estimateGas(contract, 'cancelAllOrderedPositions', [], 0)
+      const res = await contract.cancelAllOrderedPositions({ gasLimit })
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
   }
 }
 

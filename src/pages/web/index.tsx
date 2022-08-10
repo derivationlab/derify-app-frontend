@@ -118,6 +118,8 @@ const Web: FC = () => {
       dispatch(getTraderDataAsync(account?.address))
       dispatch(getBrokerDataAsync(account?.address))
       dispatch(getBrokerBoundDataAsync(account?.address))
+
+
     }
   }, [account?.address])
 

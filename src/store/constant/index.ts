@@ -1,22 +1,21 @@
 import { Dispatch, createSlice } from '@reduxjs/toolkit'
 
+import { getIndicatorData } from '@/api'
 import { getBTCAddress, getETHAddress } from '@/utils/addressHelpers'
-
 import {
   getBankBDRFPoolData,
+  getStakingDrfPoolData,
   getCurrentPositionsAmountData,
-  getPositionChangeFeeRatioData,
-  getStakingDrfPoolData
+  getPositionChangeFeeRatioData
 } from './helper'
 import { ConstantState } from '../types'
-import { getIndicatorData } from '@/api'
 
 const initialState: ConstantState = {
-  bankBDRF: '0',
-  stakingDrf: '0',
+  DRFPool: '0',
+  bDRFPool: '0',
+  indicator: {},
   positions: [],
-  posFeeRatio: {},
-  indicator: {}
+  posFeeRatio: {}
 }
 
 export const getCurrentPositionsAmountDataAsync = () => async (dispatch: Dispatch) => {
@@ -28,10 +27,7 @@ export const getCurrentPositionsAmountDataAsync = () => async (dispatch: Dispatc
     setPositionsData([
       { ...all, token: '' },
       { ...btc, token: getBTCAddress() },
-      {
-        ...eth,
-        token: getETHAddress()
-      }
+      { ...eth, token: getETHAddress() }
     ])
   )
 }
@@ -43,7 +39,7 @@ export const getPositionChangeFeeRatioDataAsync = () => async (dispatch: Dispatc
 
 export const getStakingDrfPoolDataAsync = () => async (dispatch: Dispatch) => {
   const data = await getStakingDrfPoolData()
-  dispatch(setStakingDrfData(data))
+  dispatch(setDRFPoolData(data))
 }
 
 export const getIndicatorDataAsync = () => async (dispatch: Dispatch) => {
@@ -53,7 +49,7 @@ export const getIndicatorDataAsync = () => async (dispatch: Dispatch) => {
 
 export const getBankBDRFPoolDataAsync = () => async (dispatch: Dispatch) => {
   const data = await getBankBDRFPoolData()
-  dispatch(setBankBdrfData(data))
+  dispatch(setBDRFPoolData(data))
 }
 
 export const constantDataSlice = createSlice({
@@ -63,11 +59,11 @@ export const constantDataSlice = createSlice({
     setIndicatorData: (state, action) => {
       state.indicator = action.payload
     },
-    setBankBdrfData: (state, action) => {
-      state.bankBDRF = action.payload
+    setBDRFPoolData: (state, action) => {
+      state.bDRFPool = action.payload
     },
-    setStakingDrfData: (state, action) => {
-      state.stakingDrf = action.payload
+    setDRFPoolData: (state, action) => {
+      state.DRFPool = action.payload
     },
     setPositionsData: (state, action) => {
       state.positions = action.payload
@@ -79,7 +75,7 @@ export const constantDataSlice = createSlice({
 })
 
 // Actions
-export const { setPositionsData, setPosFeeRatioData, setStakingDrfData, setBankBdrfData, setIndicatorData } =
+export const { setPositionsData, setPosFeeRatioData, setDRFPoolData, setBDRFPoolData, setIndicatorData } =
   constantDataSlice.actions
 
 export default constantDataSlice.reducer

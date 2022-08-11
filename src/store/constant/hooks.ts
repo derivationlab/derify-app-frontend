@@ -4,11 +4,11 @@ import { ConstantState, State } from '@/store/types'
 export const useConstantData = (): ConstantState => {
   return useSelector((state: State) => {
     return {
-      bankBDRF: state.constant.bankBDRF,
-      stakingDrf: state.constant.stakingDrf,
+      DRFPool: state.constant.DRFPool,
+      bDRFPool: state.constant.bDRFPool,
+      indicator: state.constant.indicator,
       positions: state.constant.positions,
-      posFeeRatio: state.constant.posFeeRatio,
-      indicator: state.constant.indicator
+      posFeeRatio: state.constant.posFeeRatio
     }
   })
 }

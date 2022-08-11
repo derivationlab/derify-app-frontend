@@ -20,8 +20,8 @@ export interface ContractState {
 }
 
 export interface ConstantState {
-  bankBDRF: string
-  stakingDrf: string
+  bDRFPool: string
+  DRFPool: string
   positions: Record<string, any>[]
   posFeeRatio: Record<string, any>
   indicator: Record<string, any>

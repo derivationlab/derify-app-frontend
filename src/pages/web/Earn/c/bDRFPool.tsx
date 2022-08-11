@@ -27,7 +27,7 @@ const EranbDRFPool: FC = () => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { trader } = useTraderData()
-  const { bankBDRF } = useConstantData()
+  const { bDRFPool } = useConstantData()
   const { mobile } = useContext(MobileContext)
 
   const { traderWithdrawBond, traderPledgedBond, traderRedemptionBond, traderExchangeBond } = Earn
@@ -180,7 +180,7 @@ const EranbDRFPool: FC = () => {
               <BalanceShow value={trader?.bondReturnBalance ?? 0} unit="bDRF" />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{bankBDRF}</strong> bDRF
+                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{bDRFPool}</strong> bDRF
               </p>
             </main>
             <aside>

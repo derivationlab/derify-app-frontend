@@ -24,7 +24,7 @@ const DRFPool: FC = () => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { trader } = useTraderData()
-  const { stakingDrf, indicator } = useConstantData()
+  const { DRFPool, indicator } = useConstantData()
   const { mobile } = useContext(MobileContext)
   const { traderWithdrawEDRFRewards, traderStakingDrf, traderRedeemDrf } = Earn
 
@@ -138,7 +138,7 @@ const DRFPool: FC = () => {
               <BalanceShow value={trader?.stakingDRFBalance ?? 0} unit="DRF" />
               <div className="block" />
               <p>
-                {t('Earn.DRFPool.CurrentPoolSize', 'Current pool size')} : <strong>{stakingDrf}</strong> DRF
+                {t('Earn.DRFPool.CurrentPoolSize', 'Current pool size')} : <strong>{DRFPool}</strong> DRF
               </p>
             </main>
             <aside>

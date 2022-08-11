@@ -20,11 +20,11 @@ export interface ContractState {
 }
 
 export interface ConstantState {
-  bDRFPool: string
   DRFPool: string
+  bDRFPool: string
+  indicator: Record<string, any>
   positions: Record<string, any>[]
   posFeeRatio: Record<string, any>
-  indicator: Record<string, any>
 }
 
 export interface ShareMessageState {

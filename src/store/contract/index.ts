@@ -74,7 +74,6 @@ export const contractDataSlice = createSlice({
   reducers: {
     setPairsExtData: (state, action) => {
       state.pairs = outputDataDeal(state.pairs, action.payload)
-      state.pairsLoaded = true
     },
     setCurrentPair: (state, action) => {
       state.currentPair = action.payload

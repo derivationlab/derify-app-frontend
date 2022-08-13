@@ -15,7 +15,7 @@ import { useAccount, useSigner } from 'wagmi'
 // import { getBDRFContract, getDerifyExchangeContract, getEDRFContract } from '@/utils/contractHelpers'
 // import { getDecimalAmount, safeInterceptionValues } from '@/utils/practicalMethod'
 import BigNumber from 'bignumber.js'
-import { getEventsData } from '@/api/events'
+import { getEventsData } from '@/api'
 import { getMyPositionsData } from '@/store/contract/helper'
 
 import Loading from '@/components/common/Loading'

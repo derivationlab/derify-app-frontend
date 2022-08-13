@@ -1,4 +1,4 @@
-import { get, post } from '@/utils/http'
+import { get } from '@/utils/http'
 import { KLineTimes } from '@/data'
 
 export const getCurrentPositionsAmount = async (tokenAddr: string) => {
@@ -35,5 +35,10 @@ export const getTraderEDRFBalance = async (trader: string) => {
 
 export const getTraderBondBalance = async (trader: string) => {
   const response = await get(`api/trader_latest_bond_balance/${trader}`)
+  return response
+}
+
+export const getEventsData = async () => {
+  const response = await get('api/app_data')
   return response
 }

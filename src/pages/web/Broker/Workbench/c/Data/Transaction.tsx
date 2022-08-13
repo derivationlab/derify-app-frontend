@@ -37,7 +37,7 @@ const RowTransaction: FC<{ data: Record<string, any> }> = ({ data }) => {
       {mobile ? (
         <time>{calcTimeStr(data.event_time)}</time>
       ) : (
-        <a href="/" title={data.user}>
+        <a href={`${BSC_SCAN_URL}/address/${data.user}`} target="_blank" title={data.user}>
           by trader {calcShortHash(data.user)}
         </a>
       )}

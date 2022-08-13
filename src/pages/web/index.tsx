@@ -11,7 +11,6 @@ import Header from '@/components/web/Header'
 import Loading from '@/components/common/Loading'
 import Toast from '@/components/common/Toast'
 
-import Test from '@/pages/test'
 import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
 import Faucet from '@/pages/web/Faucet'
@@ -130,7 +129,6 @@ const Web: FC = () => {
       <Header />
       <Switch>
         <Route path="/" exact render={() => <Redirect to="/trade" />} />
-        <Route path="/test" render={() => handleUnbindBroker(Test)} />
         <Route path="/earn" render={() => handleUnbindBroker(Earn)} />
         <Route path="/trade" render={() => handleUnbindBroker(Trade)} />
         <Route path="/faucet" render={() => handleUnbindBroker(Faucet)} />

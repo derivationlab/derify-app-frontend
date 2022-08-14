@@ -173,9 +173,9 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           // console.info(`price:${String(long.price)}/${safeInterceptionValues(String(long.price), 8)}`)
           // console.info(`leverage:${String(long.leverage)}/${safeInterceptionValues(String(long.leverage), 8)}`)
 
-          const _size = safeInterceptionValues(String(long.size), 8)
-          const DIV = String(new BN(long.price._hex).times(_size).div(new BN(10).pow(8)))
-          const volume = nonBigNumberInterception(DIV, 8)
+          const size = safeInterceptionValues(String(long.size), 8)
+          const div = String(new BN(long.price._hex).times(size).div(new BN(10).pow(8)))
+          const volume = nonBigNumberInterception(div, 8)
 
           outputMyPosition.push({
             volume,
@@ -199,9 +199,9 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             variables
           )
 
-          const _size = safeInterceptionValues(String(short.size), 8)
-          const DIV = String(new BN(short.price._hex).times(_size).div(new BN(10).pow(8)))
-          const volume = nonBigNumberInterception(DIV, 8)
+          const size = safeInterceptionValues(String(short.size), 8)
+          const div = String(new BN(short.price._hex).times(size).div(new BN(10).pow(8)))
+          const volume = nonBigNumberInterception(div, 8)
 
           outputMyPosition.push({
             volume,
@@ -229,9 +229,9 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             // console.info(`size:${String(order.size)}`)
             // console.info(`price:${String(order.price)}`)
             // console.info(`leverage:${String(order.leverage)}`)
-            const _size = safeInterceptionValues(String(order.size), 8)
-            const DIV = String(new BN(order.price._hex).times(_size).div(new BN(10).pow(8)))
-            const volume = nonBigNumberInterception(DIV)
+            const size = safeInterceptionValues(String(order.size), 8)
+            const div = String(new BN(order.price._hex).times(size).div(new BN(10).pow(8)))
+            const volume = nonBigNumberInterception(div)
 
             outputMyOrders.push({
               volume,
@@ -248,9 +248,9 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
         // My Order - short
         shortOrderOpenPosition.forEach((order: Record<string, any>) => {
           if (order.isUsed) {
-            const _size = safeInterceptionValues(String(order.size), 8)
-            const DIV = String(new BN(order.price._hex).times(_size).div(new BN(10).pow(8)))
-            const volume = nonBigNumberInterception(DIV)
+            const size = safeInterceptionValues(String(order.size), 8)
+            const div = String(new BN(order.price._hex).times(size).div(new BN(10).pow(8)))
+            const volume = nonBigNumberInterception(div)
 
             outputMyOrders.push({
               volume,
@@ -266,9 +266,9 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
         })
         // My Order - long stop profit
         if (longOrderStopProfitPosition.isUsed) {
-          const _size = safeInterceptionValues(String(long.size), 8)
-          const DIV = String(new BN(longOrderStopProfitPosition.stopPrice._hex).times(_size).div(new BN(10).pow(8)))
-          const volume = nonBigNumberInterception(DIV)
+          const size = safeInterceptionValues(String(long.size), 8)
+          const div = String(new BN(longOrderStopProfitPosition.stopPrice._hex).times(size).div(new BN(10).pow(8)))
+          const volume = nonBigNumberInterception(div)
 
           outputMyOrders.push({
             volume,
@@ -286,9 +286,9 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           // console.info(`size:${String(long.size)}`)
           // console.info(`price:${String(longOrderStopLossPosition.stopPrice)}`)
 
-          const _size = safeInterceptionValues(String(long.size), 8)
-          const DIV = String(new BN(longOrderStopLossPosition.stopPrice._hex).times(_size).div(new BN(10).pow(8)))
-          const volume = nonBigNumberInterception(DIV)
+          const size = safeInterceptionValues(String(long.size), 8)
+          const div = String(new BN(longOrderStopLossPosition.stopPrice._hex).times(size).div(new BN(10).pow(8)))
+          const volume = nonBigNumberInterception(div)
 
           outputMyOrders.push({
             volume,
@@ -303,9 +303,9 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
         }
         // My Order - short stop loss
         if (shortOrderStopLossPosition.isUsed) {
-          const _size = safeInterceptionValues(String(short.size), 8)
-          const DIV = String(new BN(shortOrderStopLossPosition.stopPrice._hex).times(_size).div(new BN(10).pow(8)))
-          const volume = nonBigNumberInterception(DIV)
+          const size = safeInterceptionValues(String(short.size), 8)
+          const div = String(new BN(shortOrderStopLossPosition.stopPrice._hex).times(size).div(new BN(10).pow(8)))
+          const volume = nonBigNumberInterception(div)
 
           outputMyOrders.push({
             volume,
@@ -320,9 +320,9 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
         }
         // My Order - short stop profit
         if (shortOrderStopProfitPosition.isUsed) {
-          const _size = safeInterceptionValues(String(short.size), 8)
-          const DIV = String(new BN(shortOrderStopProfitPosition.stopPrice._hex).times(_size).div(new BN(10).pow(8)))
-          const volume = nonBigNumberInterception(DIV)
+          const size = safeInterceptionValues(String(short.size), 8)
+          const div = String(new BN(shortOrderStopProfitPosition.stopPrice._hex).times(size).div(new BN(10).pow(8)))
+          const volume = nonBigNumberInterception(div)
 
           outputMyOrders.push({
             volume,

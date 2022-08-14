@@ -74,42 +74,46 @@ const Info: FC = () => {
   }, [broker?.validPeriodDays])
 
   return (
-    <div className="web-broker-info">
-      <header className="web-broker-info-header-layout">
-        <div className="web-broker-info-header-ico">
+    <div className='web-broker-info'>
+      <header className='web-broker-info-header-layout'>
+        <div className='web-broker-info-header-ico'>
           <Image src={broker?.logo || 'icon/normal-ico.svg'} cover />
         </div>
-        <div className="web-broker-info-header">
+        <div className='web-broker-info-header'>
           <h3>
-            {broker?.name} <i className="web-broker-info-edit" onClick={goEdit} />
+            {broker?.name || '--'} <i className='web-broker-info-edit' onClick={goEdit} />
           </h3>
-          <small>@{broker?.id}</small>
-          <div className="web-broker-info-header-sns">
-            {broker?.telegram && <a href={broker?.telegram} target="_blank" className="telegram" />}
-            {broker?.discord && <a href={broker?.discord} target="_blank" className="discord" />}
-            {broker?.twitter && <a href={broker?.twitter} target="_blank" className="twitter" />}
-            {broker?.reddit && <a href={broker?.reddit} target="_blank" className="reddit" />}
-            {broker?.wechat && (
-              <QuestionPopover text={`WeChat: ${broker?.wechat}`} size="inline">
-                <a className="wechat" />
-              </QuestionPopover>
-            )}
-          </div>
-          <div className="web-broker-info-header-lang">
-            <span>{broker?.language}</span>
-          </div>
+          {broker?.id && (
+            <>
+              <small>@{broker?.id}</small>
+              <div className='web-broker-info-header-sns'>
+                {broker?.telegram && <a href={broker?.telegram} target='_blank' className='telegram' />}
+                {broker?.discord && <a href={broker?.discord} target='_blank' className='discord' />}
+                {broker?.twitter && <a href={broker?.twitter} target='_blank' className='twitter' />}
+                {broker?.reddit && <a href={broker?.reddit} target='_blank' className='reddit' />}
+                {broker?.wechat && (
+                  <QuestionPopover text={`WeChat: ${broker?.wechat}`} size='inline'>
+                    <a className='wechat' />
+                  </QuestionPopover>
+                )}
+              </div>
+              <div className='web-broker-info-header-lang'>
+                <span>{broker?.language}</span>
+              </div>
+            </>
+          )}
         </div>
       </header>
-      <article className="web-broker-info-about" title="The development team of Derify Protocol">
+      <article className='web-broker-info-about' title='The development team of Derify Protocol'>
         {broker?.introduction}
       </article>
-      <section className="web-broker-info-data">
+      <section className='web-broker-info-data'>
         <main>
           <dl>
             <dt>
               {t('Broker.BV.BrokerPrivilegeExpiration', 'Broker Privilege Expiration')}
               <QuestionPopover
-                size="mini"
+                size='mini'
                 text={t(
                   'Broker.BV.BrokerPrivilegeExpirationTip',
                   'Once your privilege is expired, you will not be able to receive rewards, but your can resume as our Broker whenever you like.'
@@ -127,20 +131,21 @@ const Info: FC = () => {
               </dd>
             )}
           </dl>
-          <Button size="mini" onClick={() => setVisibleStatus('extend')}>
+          <Button size='mini' onClick={() => setVisibleStatus('extend')}>
             {memoIsExpired ? t('Broker.BV.Renew', 'Renew') : t('Broker.BV.Extend', 'Extend')}
           </Button>
         </main>
         <footer className={classNames({ expired: memoIsExpired })}>
           <p>
-            {t('Broker.BV.ExpireAt', 'expire at')} <time>{memoExpireDate}</time>
+            {t('Broker.BV.ExpireAt', 'expire at')}
+            <time>{memoExpireDate}</time>
           </p>
           <aside>
-            <a href={broker?.reference} target="_blank">
+            <a href={broker?.reference} target='_blank'>
               {t('Broker.BV.MyPromotionLink', 'My promotion link')}
             </a>
             <button onClick={copyTextEv} />
-            <a href={broker?.reference} target="_blank">
+            <a href={broker?.reference} target='_blank'>
               <i />
             </a>
           </aside>

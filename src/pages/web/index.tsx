@@ -86,8 +86,9 @@ const Web: FC = () => {
   const handleBrokerWorkbench = useMemo(() => {
     if (brokerLoaded && brokerBoundLoaded) {
       if (broker?.isBroker) {
-        if (broker.broker) return <BrokerWorkbench />
-        return <Redirect to="/broker/sign-up/step2" />
+        return <BrokerWorkbench />
+        // if (broker.broker) return <BrokerWorkbench />
+        // return <Redirect to="/broker/sign-up/step2" />
       } else {
         return brokerBound?.broker ? <Redirect to="/broker" /> : <Redirect to="/broker-bind" />
       }

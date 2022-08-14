@@ -2,23 +2,26 @@
 import BN from 'bignumber.js'
 import classNames from 'classnames'
 import React, { FC, useEffect, useMemo, useState } from 'react'
+
 import { useContractData } from '@/store/contract/hooks'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   value: number | string
+  decimal?: number
   onChange: (value: number) => void
   currValue?: number | string
 }
 
 const list = [0.25, 0.5, 0.75, 1]
 
-const PercentButton: FC<Props> = ({ value, onChange, currValue }) => {
+const PercentButton: FC<Props> = ({ value, onChange, currValue, decimal= 2 }) => {
   const { currentPair } = useContractData()
 
   const [valueIndex, setValueIndex] = useState<number>(-1)
 
   const values = useMemo(() => {
-    return list.map((item) => Number(new BN(value).multipliedBy(item).toFixed(8)))
+    return list.map((item) => Number(nonBigNumberInterception(String(new BN(value).times(item)), decimal)))
   }, [value])
 
   const submitChange = (index: number) => {

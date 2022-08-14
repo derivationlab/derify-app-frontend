@@ -78,7 +78,6 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                   <em>{safeInterceptionValues(data?.averagePrice ?? 0)}</em>
                 </p>
                 <p>
-                  {/* DerifyExchange智能合约接口：getCloseUpperBound todo volume 是否正确 */}
                   {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} :{' '}
                   <em>{safeInterceptionValues(data?.size ?? 0, 4)}</em> {data?.symbol} /{' '}
                   <em>{safeInterceptionValues(data?.volume ?? 0)}</em> {BASE_TOKEN_SYMBOL}

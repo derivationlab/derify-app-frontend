@@ -43,7 +43,7 @@ const MyPosition: FC = () => {
 
   const { theme } = useContext(ThemeContext)
 
-  const [targetPosition, setTargetPosition] = useState<Record<string, any>>({})
+  const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
   const memoShareMessage = useMemo(() => {
@@ -54,18 +54,18 @@ const MyPosition: FC = () => {
   }, [shareMessage])
 
   const memoPairInfo = useMemo(() => {
-    return pairs.find((pair) => pair.token === targetPosition?.token) ?? {}
-  }, [pairs, targetPosition])
+    return pairs.find((pair) => pair.token === targetPosOrd?.token) ?? {}
+  }, [pairs, targetPosOrd])
 
   const onCloseDialogEv = () => setDialogStatus('')
 
   const previewPositionInfoEv = (pos: Record<string, any>) => {
-    setTargetPosition(pos)
+    setTargetPosOrd(pos)
     setDialogStatus('preview-close-position')
   }
 
   const editPositionTriggerEv = (pos: Record<string, any>) => {
-    setTargetPosition(pos)
+    setTargetPosOrd(pos)
     setDialogStatus('edit-position')
   }
 
@@ -90,12 +90,12 @@ const MyPosition: FC = () => {
         signer,
         broker.broker,
         memoShareMessage?.symbol,
-        targetPosition?.token,
-        targetPosition?.side,
-        targetPosition?.size,
+        targetPosOrd?.token,
+        targetPosOrd?.side,
+        targetPosOrd?.size,
         memoShareMessage?.amount,
-        targetPosition?.averagePrice,
-        whetherStud(targetPosition?.size ?? 0, targetPosition?.volume ?? 0, memoShareMessage?.amount ?? 0)
+        targetPosOrd?.averagePrice,
+        whetherStud(targetPosOrd?.size ?? 0, targetPosOrd?.volume ?? 0, memoShareMessage?.amount ?? 0)
       )
 
       if (status) {
@@ -205,19 +205,19 @@ const MyPosition: FC = () => {
       <div className="web-trade-data-wrap">{memoMyPositions}</div>
 
       <PositionClosePreviewDialog
-        data={{ ...targetPosition, ...memoPairInfo }}
+        data={{ ...targetPosOrd, ...memoPairInfo }}
         visible={dialogStatus === 'preview-close-position'}
         onClose={onCloseDialogEv}
         onClick={() => setDialogStatus('confirm-close-position')}
       />
       <PositionCloseConfirmDialog
-        data={{ ...targetPosition, ...memoPairInfo }}
+        data={{ ...targetPosOrd, ...memoPairInfo }}
         visible={dialogStatus === 'confirm-close-position'}
         onClose={onCloseDialogEv}
         onClick={closeOnePositionsFunc}
       />
       <TakeProfitAndStopLossDialog
-        data={{ ...targetPosition, ...memoPairInfo }}
+        data={{ ...targetPosOrd, ...memoPairInfo }}
         visible={dialogStatus === 'edit-position'}
         onClose={onCloseDialogEv}
         onClick={takeProfitOrStopLossFunc}

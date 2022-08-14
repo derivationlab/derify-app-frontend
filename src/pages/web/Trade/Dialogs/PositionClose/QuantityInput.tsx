@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState, useEffect } from 'react'
+import React, { FC, useMemo, useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
@@ -26,8 +26,8 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
   }, [baseCoin])
 
   const typeChangeEv = (symbol: any) => {
-    if (value === maxBUSD) onChange(maxBase)
-    else if (value === maxBase) onChange(maxBUSD)
+    if (symbol === BASE_TOKEN_SYMBOL) onChange(maxBUSD)
+    else if (symbol === baseCoin) onChange(maxBase)
     else onChange(0)
 
     setType(symbol)
@@ -46,7 +46,7 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
         <Input value={value} onChange={(amount) => onChange(Number(amount))} type="number" />
         <Select value={type} onChange={typeChangeEv} options={typeOptions} />
       </section>
-      <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(Number(amount))} />
+      <PercentButton decimal={type === BASE_TOKEN_SYMBOL ? 2 : 4} currValue={value} value={maxVolume} onChange={(amount) => onChange(Number(amount))} />
     </div>
   )
 }

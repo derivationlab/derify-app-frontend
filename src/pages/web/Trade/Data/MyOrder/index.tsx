@@ -1,40 +1,35 @@
 import React, { FC, useMemo, useState, useContext } from 'react'
 import { isEmpty } from 'lodash'
+import { batch } from 'react-redux'
 import { useSigner, useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import { batch } from 'react-redux'
 
 import Trader from '@/class/Trader'
-import { useAppDispatch } from '@/store'
-import { clearShareMessage, setShareMessage } from '@/store/share'
-import { getMyPositionsDataAsync } from '@/store/contract'
-import { useContractData } from '@/store/contract/hooks'
-import { getTraderDataAsync } from '@/store/trader'
-import { getCurrentPositionsAmountDataAsync } from '@/store/constant'
-
 import ThemeContext from '@/context/Theme/Context'
+import { useAppDispatch } from '@/store'
+import { setShareMessage } from '@/store/share'
+import { getTraderDataAsync } from '@/store/trader'
+import { useContractData } from '@/store/contract/hooks'
+import { getMyPositionsDataAsync } from '@/store/contract'
 
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
-
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Loading from '@/components/common/Loading'
-
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
 
 const MyOrder: FC = () => {
-  const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
+  const { theme } = useContext(ThemeContext)
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
   const { myOrders, myOrdersLoaded } = useContractData()
   const { cancelAllPosOrders, cancelSomePosition } = Trader
 
-  const { theme } = useContext(ThemeContext)
-
-  const [targetPosition, setTargetPosition] = useState<Record<string, any>>({})
+  const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
   const onCloseDialogEv = () => setDialogStatus('')
@@ -48,10 +43,10 @@ const MyOrder: FC = () => {
       const account = await signer.getAddress()
       const status = await cancelSomePosition(
         signer,
-        targetPosition?.token,
-        targetPosition?.side,
-        targetPosition?.orderType,
-        targetPosition?.timestamp
+        targetPosOrd?.token,
+        targetPosOrd?.side,
+        targetPosOrd?.orderType,
+        targetPosOrd?.timestamp
       )
       if (status) {
         // succeed
@@ -98,7 +93,7 @@ const MyOrder: FC = () => {
   }
 
   const confirmCancelOnePosOrderEv = (order: Record<string, any>) => {
-    setTargetPosition(order)
+    setTargetPosOrd(order)
     setDialogStatus('cancel-one-position')
   }
 

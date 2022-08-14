@@ -31,15 +31,18 @@ const Chart: FC = () => {
     return [...data, { ...last, close: Number(target.spotPrice) }]
   }
 
-  const getBaseData = useCallback(async (pairs: Record<string, any>[]) => {
-    if (kline.current) {
-      setLoading(true)
-      kline.current.reset()
-      const { data, more } = await getKLineData(currentPair, time, +new Date(), 100, true)
-      kline.current.initData(handleTradeData(data, pairs), more)
-      setLoading(false)
-    }
-  }, [time, currentPair])
+  const getBaseData = useCallback(
+    async (pairs: Record<string, any>[]) => {
+      if (kline.current) {
+        setLoading(true)
+        kline.current.reset()
+        const { data, more } = await getKLineData(currentPair, time, +new Date(), 100, true)
+        kline.current.initData(handleTradeData(data, pairs), more)
+        setLoading(false)
+      }
+    },
+    [time, currentPair]
+  )
 
   const getMoreData = useCallback(async (lastTime: number) => {
     return await getKLineData(currentPair, time, lastTime, 100, false)
@@ -57,13 +60,13 @@ const Chart: FC = () => {
   }, [time, currentPair, pairsLoaded])
 
   return (
-    <div className='web-trade-kline-chart'>
+    <div className="web-trade-kline-chart">
       <Select value={time} objOptions={KLineTimes} onChange={(val) => setTime(Number(val))} />
-      <div className='web-trade-kline-chart-layout'>
+      <div className="web-trade-kline-chart-layout">
         {/* @ts-ignore */}
         <KLineChart cRef={kline} getMoreData={(time: number) => getMoreData(time)} />
       </div>
-      <Loading show={loading} type='float' />
+      <Loading show={loading} type="float" />
     </div>
   )
 }

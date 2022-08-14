@@ -29,14 +29,14 @@ export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
   if (data.length) {
     const _ = data.map(
       ({
-         shortDrfPmrRate,
-         shortUsdPmrRate,
-         longUsdPmrRate,
-         longDrfPmrRate,
-         price_change_rate,
-         token,
-         ...rest
-       }: Record<string, any>) => {
+        shortDrfPmrRate,
+        shortUsdPmrRate,
+        longUsdPmrRate,
+        longDrfPmrRate,
+        price_change_rate,
+        token,
+        ...rest
+      }: Record<string, any>) => {
         const long1 = new BN(longDrfPmrRate).plus(longUsdPmrRate)
         const long2 = String(long1)
         // const long2 = String(long1.times(100))

@@ -37,9 +37,13 @@ const RowTrader: FC<{ data: Record<string, any> }> = ({ data }) => {
 
 const RowLastTransaction: FC<RowProps> = ({ text }) => (
   <div className="web-broker-table-trader-tx">
-    {text ? (<a href={`${BSC_SCAN_URL}/tx/${text}`} target="_blank" title={text}>
-    {calcShortHash(text ?? '')}
-      </a>) : '-'}
+    {text ? (
+      <a href={`${BSC_SCAN_URL}/tx/${text}`} target="_blank" title={text}>
+        {calcShortHash(text ?? '')}
+      </a>
+    ) : (
+      '-'
+    )}
   </div>
 )
 

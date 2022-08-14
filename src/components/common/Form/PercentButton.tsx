@@ -15,7 +15,7 @@ interface Props {
 
 const list = [0.25, 0.5, 0.75, 1]
 
-const PercentButton: FC<Props> = ({ value, onChange, currValue, decimal= 2 }) => {
+const PercentButton: FC<Props> = ({ value, onChange, currValue, decimal = 2 }) => {
   const { currentPair } = useContractData()
 
   const [valueIndex, setValueIndex] = useState<number>(-1)

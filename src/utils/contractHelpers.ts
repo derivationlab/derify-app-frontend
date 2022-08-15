@@ -3,7 +3,7 @@ import type { Provider } from '@ethersproject/providers'
 import type { Contract } from '@ethersproject/contracts'
 import type { Signer } from '@ethersproject/abstract-signer'
 import type { ContractInterface } from '@ethersproject/contracts'
-import { simpleRpcProvider } from '@/utils/simpleRpcProvider'
+import { baseProvider } from '@/utils/baseProvider'
 
 import bep20Abi from '@/config/abi/erc20.json'
 import multiCallAbi from '@/config/abi/MM.json'
@@ -27,7 +27,7 @@ import {
 } from '@/utils/addressHelpers'
 
 export const getContract = (abi: ContractInterface, address: string, signer?: Signer | Provider | null): Contract => {
-  const signerOrProvider = signer ?? simpleRpcProvider
+  const signerOrProvider = signer ?? baseProvider
   return new ethers.Contract(address, abi, signerOrProvider)
 }
 

@@ -1,7 +1,7 @@
 import { useSigner, useBlockNumber } from 'wagmi'
 import { useCallback, useEffect, useState } from 'react'
 import { getBep20Contract } from '@/utils/contractHelpers'
-import { simpleRpcProvider } from '@/utils/simpleRpcProvider'
+import { baseProvider } from '@/utils/baseProvider'
 import { safeInterceptionValues } from '@/utils/tools'
 
 export const useTokenBalance = (tokenAddress?: string): any => {
@@ -22,7 +22,7 @@ export const useTokenBalance = (tokenAddress?: string): any => {
         const balance = await contract.balanceOf(account)
         setBalance(safeInterceptionValues(balance, 8, 18))
       } else {
-        const balance = await simpleRpcProvider.getBalance(account)
+        const balance = await baseProvider.getBalance(account)
         setBalance(safeInterceptionValues(balance, 8, 18))
       }
     }

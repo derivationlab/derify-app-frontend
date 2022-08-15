@@ -20,6 +20,7 @@ const Trade: FC = () => {
   const { data: account } = useAccount()
   const { data: blockNumber } = useBlockNumber()
   const { mobile } = useContext(MobileContext)
+
   const [toggle, setToggle] = useState<boolean>(false)
 
   useEffect(() => {

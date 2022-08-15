@@ -1,24 +1,23 @@
-import { Buffer } from 'buffer'
 import toast from 'react-hot-toast'
+import { Buffer } from 'buffer'
 import { createClient, defaultChains } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+
 import { BSC_SCAN_URL } from '@/config'
+import { rpcUrl, chainId, netLabel } from '@/utils/baseProvider'
 
 window.toast = toast
 
 if (!window.Buffer) window.Buffer = Buffer
 
-const rpcUrl = process.env.REACT_APP_PUBLIC_NODE ?? ''
-const chainId = process.env.REACT_APP_CHAIN_ID
-
 const bscChain = [
   {
-    id: 97,
-    name: 'BNB Smart Chain Testnet',
-    network: 'BNB Smart Chain Testnet',
+    id: chainId,
+    name: `BNB Smart Chain ${netLabel}`,
+    network: `BNB Smart Chain ${netLabel}`,
     nativeCurrency: {
       name: 'BNB',
       symbol: 'BNB',

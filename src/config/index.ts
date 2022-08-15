@@ -6,8 +6,9 @@ const API_PREFIX_URLS_SCHEMA: Record<string, string> = {
   prod: 'https://api.derify.exchange/',
   // dev: 'http://3.35.241.226:7073/'
   // dev: 'https://dev-bsctestnet-api.derify.exchange/'
-  dev: 'https://dev-api.derify.exchange/'
+  dev: 'https://api.derify.exchange/'
 }
+
 const BSC_SCAN_URLS_SCHEMA: Record<string, string> = {
   [ChainId.MAINNET]: 'https://bscscan.com',
   [ChainId.TESTNET]: 'https://testnet.bscscan.com'

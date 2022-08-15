@@ -15,12 +15,8 @@ const rewardsContract = getDerifyRewardsContract()
 const brokerContract = getDerifyBrokerContract()
 
 export const getBrokerValidPeriodData = async (trader: string): Promise<number> => {
-  try {
-    const { data } = await getBrokerValidPeriod(trader)
-    return Number(data)
-  } catch (e) {
-    return 0
-  }
+  const { data = 0 } = await getBrokerValidPeriod(trader) // DBroker: GBI_NOT_BROKER
+  return Number(data)
 }
 
 const getBrokerInfoByContract = async (trader: string) => {

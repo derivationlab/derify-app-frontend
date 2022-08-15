@@ -1,25 +1,19 @@
 import React, { FC, useEffect, useState, useContext } from 'react'
 import { useAccount, useBlockNumber } from 'wagmi'
-import { useInterval } from 'react-use'
 import classNames from 'classnames'
 
-import { claimTestUSDT } from '@/api'
 import { useAppDispatch } from '@/store'
-import { getBrokerBoundDataAsync, getBrokerDataAsync } from '@/store/trader'
+import { MobileContext } from '@/context/Mobile'
 import { getEventsDataAsync, getMyPositionsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
 import { getCurrentPositionsAmountDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
-import { MobileContext } from '@/context/Mobile'
 
-// import Button from '@/components/common/Button'
-
+import Data from './Data'
 import KLine from './KLine'
 import Bench from './Bench'
-import Data from './Data'
-
-import SymbolSelect from './KLine/SymbolSelect'
-import HeaderData from './KLine/HeaderData'
 import Chart from './KLine/Chart'
+import HeaderData from './KLine/HeaderData'
 import MobileFixed from './KLine/MobileFixed'
+import SymbolSelect from './KLine/SymbolSelect'
 
 const Trade: FC = () => {
   const dispatch = useAppDispatch()
@@ -27,12 +21,6 @@ const Trade: FC = () => {
   const { data: blockNumber } = useBlockNumber()
   const { mobile } = useContext(MobileContext)
   const [toggle, setToggle] = useState<boolean>(false)
-
-  // 404
-  const claimTestUSDTEv = async () => {
-    const data = await claimTestUSDT({ trader: account?.address, amount: 100000 })
-    // console.info(data)
-  }
 
   useEffect(() => {
     if (account?.address) dispatch(getMyPositionsDataAsync(account.address))

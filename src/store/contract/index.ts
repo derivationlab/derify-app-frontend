@@ -37,15 +37,11 @@ export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
         token,
         ...rest
       }: Record<string, any>) => {
-        const long1 = new BN(longDrfPmrRate).plus(longUsdPmrRate)
-        const long2 = String(long1)
-        // const long2 = String(long1.times(100))
-        const longPmrRate = nonBigNumberInterception(long2)
+        const long = new BN(longDrfPmrRate).plus(longUsdPmrRate)
+        const longPmrRate = nonBigNumberInterception(String(long))
 
-        const short1 = new BN(shortDrfPmrRate).plus(shortUsdPmrRate)
-        const short2 = String(short1)
-        // const short2 = String(short1.times(100))
-        const shortPmrRate = nonBigNumberInterception(short2)
+        const short = new BN(shortDrfPmrRate).plus(shortUsdPmrRate)
+        const shortPmrRate = nonBigNumberInterception(String(short))
 
         const price = String(price_change_rate)
         const changeRate = nonBigNumberInterception(price, 4)

@@ -65,3 +65,8 @@ export const getListOfAllUsersOfBroker = async (broker: string, page: number, of
   const response = await get(`api/traders_of_brokerAddr/${broker}/${page}/${offset}`)
   return response
 }
+
+export const getBrokerRegisterTime = async (broker: string) => {
+  const response = await get(`api/broker_apply_time/${broker}`)
+  return response
+}

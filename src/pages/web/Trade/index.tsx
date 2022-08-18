@@ -37,8 +37,8 @@ const Trade: FC = () => {
   if (mobile) {
     return (
       <>
-        <div className='web-trade'>
-          <div className='web-trade-mobile-header'>
+        <div className="web-trade">
+          <div className="web-trade-mobile-header">
             <SymbolSelect onToggle={() => setToggle(!toggle)} />
             <div className={classNames({ none: toggle })}>
               <Chart />
@@ -56,8 +56,8 @@ const Trade: FC = () => {
   }
 
   return (
-    <div className='web-trade'>
-      <main className='web-trade-main'>
+    <div className="web-trade">
+      <main className="web-trade-main">
         <KLine />
         <Data />
       </main>

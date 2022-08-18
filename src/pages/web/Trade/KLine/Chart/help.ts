@@ -43,7 +43,11 @@ export const getKLineData = async (token: string, time: number, endTime: number,
   }
 }
 
-export const reorganizeLastPieceOfData = (data: Record<string, any>[], pairs: Record<string, any>[], current: string) => {
+export const reorganizeLastPieceOfData = (
+  data: Record<string, any>[],
+  pairs: Record<string, any>[],
+  current: string
+) => {
   const lastPieceOfData = data.pop()
   const targetPairsData = pairs.find((pair) => pair.token === current) ?? {}
   return [...data, { ...lastPieceOfData, close: Number(targetPairsData.spotPrice ?? 0) }]

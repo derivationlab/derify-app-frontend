@@ -2,14 +2,12 @@ import { useHistory, useParams } from 'react-router-dom'
 import React, { FC, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 
+import { useAppDispatch } from '@/store'
+import { useTraderData } from '@/store/trader/hooks'
+import { getBrokerBoundDataAsync } from '@/store/trader'
 import { bindYourBroker, getBrokerInfoById } from '@/api'
 
-import { useAppDispatch } from '@/store'
-import { getBrokerBoundDataAsync } from '@/store/trader'
-import { useTraderData } from '@/store/trader/hooks'
-
 import Loading from '@/components/common/Loading'
-
 import BrokerCard from './c/BrokerCard'
 
 const BrokerInfo: FC = () => {
@@ -43,22 +41,22 @@ const BrokerInfo: FC = () => {
   const getBrokerInfoByIdFunc = async () => {
     setInfoLoaded(true)
 
-    const { data } = await getBrokerInfoById(brokerId)
-
-    if (data.length) {
-      setBrokerInfo(data[0])
-
-      // auto bind broker
-      if (brokerBound?.broker) {
-        history.push('/broker')
-      } else {
-        void (await bindBrokerFunc())
-      }
-    } else {
+    if (brokerBound?.broker) {
       history.push('/broker')
-    }
+    } else {
+      const { data } = await getBrokerInfoById(brokerId)
 
-    setInfoLoaded(false)
+      if (data.length > 0 && data[0]?.is_enable === 1) {
+        setBrokerInfo(data[0])
+
+        // auto bind broker
+        await bindBrokerFunc()
+
+        setInfoLoaded(false)
+      } else {
+        history.push('/broker')
+      }
+    }
   }
 
   useEffect(() => {

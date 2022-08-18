@@ -4,13 +4,12 @@ import Table from 'rc-table'
 import classNames from 'classnames'
 import { useAccount } from 'wagmi'
 import { isEmpty } from 'lodash'
-import BN from 'bignumber.js'
 
 import { BSC_SCAN_URL } from '@/config'
 import { MobileContext } from '@/context/Mobile'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { getBrokerRewardTx } from '@/api'
-import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 import Pagination from '@/components/common/Pagination'
 
@@ -84,12 +83,12 @@ const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
   // const { mobile } = useContext(MobileContext)
   const up = useMemo(() => Number(data.pnl_usdt) > 0, [data.pnl_usdt])
   const down = useMemo(() => Number(data.pnl_usdt) < 0, [data.pnl_usdt])
-  const PNLU = nonBigNumberInterception(data.pnl_usdt)
+  const pnl_usdt = nonBigNumberInterception(data.pnl_usdt)
 
   return (
     <div className="web-broker-table-transaction-pnl">
       <strong className={classNames({ up }, { down })}>
-        {Math.abs(data.pnl_usdt) === 0 ? '-' : `${judgeUpsAndDowns(data.pnl_usdt)}${PNLU}`}
+        {Math.abs(data.pnl_usdt) === 0 ? '-' : `${judgeUpsAndDowns(data.pnl_usdt)}${pnl_usdt}`}
       </strong>
       <em>{BASE_TOKEN_SYMBOL}</em>
     </div>
@@ -110,7 +109,6 @@ const Transaction: FC = () => {
     setIsLoading(true)
 
     if (account?.address) {
-      // const { data } = await getBrokerRewardTx('0x34D2F68529CCE3080A2eF473BC35Fa95FFaB4589', index, 10)
       const { data } = await getBrokerRewardTx(account.address, index, 10)
 
       setTradeFlow(data)

@@ -28,7 +28,7 @@ const HeaderData: FC = () => {
       return [nonBigNumberInterception(m), n === 0 || m === 0 ? 0 : nonBigNumberInterception(x)]
     }
     return ['0', '0']
-  }, [positions, currentPair])
+  }, [positions, currentPair, pairs])
 
   const memoPosFeeRatio = useMemo(() => {
     if (!isEmpty(posFeeRatio)) {
@@ -36,7 +36,7 @@ const HeaderData: FC = () => {
       return posFeeRatio[key]
     }
     return '0'
-  }, [posFeeRatio, currentPair])
+  }, [posFeeRatio, currentPair, pairs])
 
   const memoPositionApy = useMemo(() => {
     // longPmrRate shortPmrRate

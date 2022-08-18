@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/store'
 import { useTraderData } from '@/store/trader/hooks'
 import { getEventsDataAsync } from '@/store/contract'
 import { Redirect, Switch, Route } from '@/components/common/Route'
-import { getBrokerBoundDataAsync, getBrokerDataAsync, getTraderDataAsync } from '@/store/trader'
+import { getBrokerBoundDataAsync, getBrokerDataAsync } from '@/store/trader'
 
 import Header from '@/components/web/Header'
 import Loading from '@/components/common/Loading'
@@ -115,7 +115,6 @@ const Web: FC = () => {
 
   useEffect(() => {
     if (account?.address) {
-      dispatch(getTraderDataAsync(account?.address))
       dispatch(getBrokerDataAsync(account?.address))
       dispatch(getBrokerBoundDataAsync(account?.address))
     }

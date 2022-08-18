@@ -24,8 +24,8 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { data: ACCOUNT } = useAccount()
   const { balance } = useTokenBalance(getBUSDAddress())
 
-  const [depositAmount, setDepositAmount] = useState<string>('0')
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
+  const [depositAmount, setDepositAmount] = useState<string>('0')
 
   const memoDisabled = useMemo(() => {
     return new BN(balance).isGreaterThan(0)

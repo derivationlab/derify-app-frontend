@@ -17,11 +17,12 @@ interface Props {
 }
 
 const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
-  const { t } = useTranslation()
-  const [dialogStatus, setDialogStatus] = useState<string>('')
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { traderWithdrawMargin } = Trader
+
+  const [dialogStatus, setDialogStatus] = useState<string>('')
 
   // withdraw
   const onConfirmWithdrawEv = useCallback(

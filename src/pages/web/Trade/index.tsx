@@ -1,10 +1,11 @@
-import React, { FC, useEffect, useState, useContext } from 'react'
+import React, { FC, useEffect, useState, useContext, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 import classNames from 'classnames'
 import { useInterval } from 'react-use'
 
 import { useAppDispatch } from '@/store'
 import { MobileContext } from '@/context/Mobile'
+import { useContractData } from '@/store/contract/hooks'
 import { getEventsDataAsync, getMyPositionsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
 import { getCurrentPositionsAmountDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
 
@@ -20,19 +21,24 @@ const Trade: FC = () => {
   const dispatch = useAppDispatch()
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
+  const { pairs, currentPair } = useContractData()
 
   const [toggle, setToggle] = useState<boolean>(false)
 
+  const memoPairInfo = useMemo(() => {
+    return pairs.find((pair) => pair.token === currentPair) ?? {}
+  }, [pairs, currentPair])
+
   useEffect(() => {
     if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
-  }, [account?.address])
+  }, [account?.address, memoPairInfo?.spotPrice])
 
   useInterval(() => {
-    dispatch(getTokenSpotPriceAsync())
     dispatch(getEventsDataAsync())
+    dispatch(getTokenSpotPriceAsync())
     dispatch(getCurrentPositionsAmountDataAsync())
     dispatch(getPositionChangeFeeRatioDataAsync())
-  }, 6000)
+  }, 10000)
 
   if (mobile) {
     return (

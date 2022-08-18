@@ -190,7 +190,7 @@ const Bench: FC = () => {
 
   useEffect(() => {
     if (openType === 1) setLimitPrice(memoPairInfo?.spotPrice)
-  }, [currentPair, openType])
+  }, [currentPair, openType, memoPairInfo?.spotPrice])
 
   // todo check
   useEffect(() => {

@@ -198,9 +198,11 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             },
             variables
           )
-
+          // console.info('size', String(short.size))
+          // console.info('price', String(short.price))
+          // console.info('leverage', String(short.leverage))
           const size = safeInterceptionValues(String(short.size), 8)
-          const div = String(new BN(short.price._hex).times(size).div(new BN(10).pow(8)))
+          const div = String(new BN(spotPrice).times(size))
           const volume = nonBigNumberInterception(div, 8)
 
           outputMyPosition.push({

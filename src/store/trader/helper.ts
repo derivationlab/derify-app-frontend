@@ -3,12 +3,12 @@ import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 import { getDerifyBrokerContract, getDerifyExchangeContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 import {
   getBrokerInfoByAddr,
-  getBrokerInfoByTrader,
-  getBrokerRegisterTime,
-  getBrokerRewardsToday,
   getBrokerValidPeriod,
   getTraderBondBalance,
-  getTraderEDRFBalance
+  getTraderEDRFBalance,
+  getBrokerRewardsToday,
+  getBrokerInfoByTrader,
+  getBrokerRegisterTime
 } from '@/api'
 
 const exchangeContract = getDerifyExchangeContract()

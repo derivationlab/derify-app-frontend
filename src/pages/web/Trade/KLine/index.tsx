@@ -1,6 +1,4 @@
-import React, { FC, useState } from 'react'
-
-import { useContractData } from '@/store/contract/hooks'
+import React, { FC } from 'react'
 
 import SymbolSelect from './SymbolSelect'
 import HeaderData from './HeaderData'

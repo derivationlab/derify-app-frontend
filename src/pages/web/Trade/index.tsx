@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState, useContext } from 'react'
-import { useAccount, useBlockNumber } from 'wagmi'
+import { useAccount } from 'wagmi'
 import classNames from 'classnames'
+import { useInterval } from 'react-use'
 
 import { useAppDispatch } from '@/store'
 import { MobileContext } from '@/context/Mobile'
@@ -18,7 +19,6 @@ import SymbolSelect from './KLine/SymbolSelect'
 const Trade: FC = () => {
   const dispatch = useAppDispatch()
   const { data: account } = useAccount()
-  const { data: blockNumber } = useBlockNumber()
   const { mobile } = useContext(MobileContext)
 
   const [toggle, setToggle] = useState<boolean>(false)
@@ -27,20 +27,18 @@ const Trade: FC = () => {
     if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
   }, [account?.address])
 
-  useEffect(() => {
-    if (blockNumber) {
-      dispatch(getTokenSpotPriceAsync())
-      dispatch(getEventsDataAsync())
-      dispatch(getCurrentPositionsAmountDataAsync())
-      dispatch(getPositionChangeFeeRatioDataAsync())
-    }
-  }, [blockNumber])
+  useInterval(() => {
+    dispatch(getTokenSpotPriceAsync())
+    dispatch(getEventsDataAsync())
+    dispatch(getCurrentPositionsAmountDataAsync())
+    dispatch(getPositionChangeFeeRatioDataAsync())
+  }, 6000)
 
   if (mobile) {
     return (
       <>
-        <div className="web-trade">
-          <div className="web-trade-mobile-header">
+        <div className='web-trade'>
+          <div className='web-trade-mobile-header'>
             <SymbolSelect onToggle={() => setToggle(!toggle)} />
             <div className={classNames({ none: toggle })}>
               <Chart />
@@ -58,8 +56,8 @@ const Trade: FC = () => {
   }
 
   return (
-    <div className="web-trade">
-      <main className="web-trade-main">
+    <div className='web-trade'>
+      <main className='web-trade-main'>
         <KLine />
         <Data />
       </main>

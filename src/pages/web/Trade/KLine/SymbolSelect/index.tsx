@@ -1,8 +1,7 @@
-import React, { FC, useState, useRef, useEffect, useMemo, useContext } from 'react'
+import React, { FC, useState, useRef, useMemo, useContext } from 'react'
 import classNames from 'classnames'
 import { useClickAway } from 'react-use'
 
-import { SymbolTokensOptions } from '@/data'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
 import { MobileContext } from '@/context/Mobile'
@@ -50,16 +49,6 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
     setShow(false)
     onToggle?.()
   }
-
-  // useEffect(() => {
-  //   const currentPairIndex = Cache.get('currentPairIndex')
-  //
-  //   if (currentPairIndex) {
-  //     setCurr(pairs[currentPairIndex])
-  //
-  //     dispatch(setCurrentPair(pairs[currentPairIndex].token))
-  //   }
-  // }, [])
 
   return (
     <div className={classNames('web-trade-symlol-select', { show })} ref={ref}>

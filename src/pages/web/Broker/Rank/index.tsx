@@ -68,7 +68,7 @@ const Rank: FC = () => {
     {
       title: t('Broker.RankList.Name', 'Name'),
       dataIndex: 'name',
-      width: mobile ? 275 : '',
+      width: mobile ? 275 : 250,
       render: (_: string, data: Record<string, any>) => <RowName data={data} />
     },
     {

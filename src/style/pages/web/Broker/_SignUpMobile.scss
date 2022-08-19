@@ -141,6 +141,13 @@ $communitys: telegram, discord, twitter, reddit, wechat;
         border-color: $c44;
         background: $c33;
       }
+      dl {
+        @each $item in $communitys {
+          &.m-reg-community-#{$item} dt:before {
+            background-image: url($res + 'icon/' + $item + '-dark.svg');
+          }
+        }
+      }
     }
   }
 }

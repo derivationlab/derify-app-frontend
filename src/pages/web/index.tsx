@@ -66,6 +66,7 @@ const Web: FC = () => {
   )
 
   const handleBrokerBindList = useMemo(() => {
+    return <BrokerBindList />
     if (brokerBoundLoaded) {
       return brokerBound?.broker ? <Redirect to="/broker" /> : <BrokerBindList />
     }

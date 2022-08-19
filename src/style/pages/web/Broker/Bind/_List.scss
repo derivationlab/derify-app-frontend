@@ -156,11 +156,14 @@
       margin-bottom: rem(24);
       display: block;
       main {
-        display: flex;padding: 0 rem(28);
+        display: flex;padding: 0 rem(28);justify-content: center;
       }
       .web-select {
         &:not(:last-child) {
           margin-right: rem(24);
+        }
+        &-show-button{
+          width: rem(150);
         }
       }
     }

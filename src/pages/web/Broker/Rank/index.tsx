@@ -5,12 +5,11 @@ import { useTranslation } from 'react-i18next'
 
 import { getBrokersRankList } from '@/api'
 import { MobileContext } from '@/context/Mobile'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useConstantData } from '@/store/constant/hooks'
-import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
 interface RowTextProps {
   value: string | number
@@ -37,7 +36,6 @@ const RowText: FC<RowTextProps> = ({ value, unit }) => (
 const Rank: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { indicator } = useConstantData()
 
   const [brokerList, setBrokerList] = useState<Record<string, any>>({})
   const [isLoading, setIsLoading] = useState<boolean>(true)

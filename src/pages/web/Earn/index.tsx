@@ -4,10 +4,8 @@ import { useAccount, useBlockNumber } from 'wagmi'
 import { useAppDispatch } from '@/store'
 import { getBondInfoDataAsync, getPMRewardDataAsync, getStakingInfoDataAsync } from '@/store/trader'
 import {
-  getIndicatorDataAsync,
   getBankBDRFPoolDataAsync,
-  getStakingDrfPoolDataAsync,
-  getCurrentPositionsAmountDataAsync
+  getStakingDrfPoolDataAsync
 } from '@/store/constant'
 
 import DRFPool from './c/DRFPool'
@@ -25,14 +23,10 @@ const Eran: FC = () => {
       dispatch(getBondInfoDataAsync(account?.address))
       dispatch(getStakingInfoDataAsync(account?.address))
     }
-  }, [dispatch, account?.address, blockNumber])
 
-  useEffect(() => {
-    dispatch(getIndicatorDataAsync())
     dispatch(getBankBDRFPoolDataAsync())
     dispatch(getStakingDrfPoolDataAsync())
-    dispatch(getCurrentPositionsAmountDataAsync())
-  }, [])
+  }, [dispatch, account?.address, blockNumber])
 
   return (
     <div className="web-eran">

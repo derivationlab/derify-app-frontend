@@ -6,7 +6,7 @@ import { useInterval } from 'react-use'
 import { useAppDispatch } from '@/store'
 import { MobileContext } from '@/context/Mobile'
 import { useContractData } from '@/store/contract/hooks'
-import { getEventsDataAsync, getMyPositionsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
+import { getEventsDataAsync, getMyPositionsDataAsync } from '@/store/contract'
 import { getCurrentPositionsAmountDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
 
 import Data from './Data'
@@ -33,12 +33,27 @@ const Trade: FC = () => {
     if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
   }, [account?.address, memoPairInfo?.spotPrice])
 
-  useInterval(() => {
+  useEffect(() => {
+    /**
+     apy,
+     token,
+     longPmrRate,
+     shortPmrRate,
+     price_change_rate
+     */
     dispatch(getEventsDataAsync())
-    dispatch(getTokenSpotPriceAsync())
+
+    /**
+     long_position_amount: "0"
+     short_position_amount: "0"
+     */
     dispatch(getCurrentPositionsAmountDataAsync())
+
+    /**
+     position change fee ratio
+     */
     dispatch(getPositionChangeFeeRatioDataAsync())
-  }, 10000)
+  }, [memoPairInfo?.spotPrice])
 
   if (mobile) {
     return (

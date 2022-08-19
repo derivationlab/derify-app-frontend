@@ -5,20 +5,22 @@ import 'rc-dialog/assets/index.css'
 import 'rc-collapse/assets/index.css'
 import 'rc-tabs/assets/index.css'
 import 'rc-table/assets/index.css'
-import '@/style/style.scss'
 
-// const Mobile = lazy(() => import('@/pages/mobile'))
-const WebVersionEntry = lazy(() => import('@/pages/web'))
+import '@/style/style.scss'
+import { useInitialEffect } from '@/hooks/useInitialEffect'
+
+const WebEntry = lazy(() => import('@/pages/web'))
 
 function App() {
+  useInitialEffect()
+
   return (
     <Suspense fallback={null}>
       <Switch>
-        <Route path="/" component={WebVersionEntry} />
+        <Route path="/" component={WebEntry} />
       </Switch>
     </Suspense>
   )
 }
 
 export default App
-// <Route path="/m" exact component={Mobile} />

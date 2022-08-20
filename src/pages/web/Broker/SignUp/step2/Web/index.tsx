@@ -173,19 +173,49 @@ const BrokerSignUpStep2: FC = () => {
             <FormSelect name="language" options={SelectLangOptions} />
           </FormItem>
           <FormItem label={t('Broker.Reg.Community', 'Community')}>
-            <FormItem label="Telegram" prop="telegram" showTip={false} hideError icon={`icon/telegram-${theme === 'Dark' ? 'dark' : 'line'}.svg`}>
+            <FormItem
+              label="Telegram"
+              prop="telegram"
+              showTip={false}
+              hideError
+              icon={`icon/telegram-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="telegram" maxLength={60} clearable />
             </FormItem>
-            <FormItem label="Discord" prop="discord" showTip={false} hideError icon={`icon/discord-${theme === 'Dark' ? 'dark' : 'line'}.svg`}>
+            <FormItem
+              label="Discord"
+              prop="discord"
+              showTip={false}
+              hideError
+              icon={`icon/discord-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="discord" maxLength={60} clearable />
             </FormItem>
-            <FormItem label="Twitter" prop="twitter" showTip={false} hideError icon={`icon/twitter-${theme === 'Dark' ? 'dark' : 'line'}.svg`}>
+            <FormItem
+              label="Twitter"
+              prop="twitter"
+              showTip={false}
+              hideError
+              icon={`icon/twitter-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="twitter" maxLength={60} clearable />
             </FormItem>
-            <FormItem label="Reddit" prop="reddit" showTip={false} hideError icon={`icon/reddit-${theme === 'Dark' ? 'dark' : 'line'}.svg`}>
+            <FormItem
+              label="Reddit"
+              prop="reddit"
+              showTip={false}
+              hideError
+              icon={`icon/reddit-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="reddit" maxLength={60} clearable />
             </FormItem>
-            <FormItem label="WeChat" prop="wechat" showTip={false} hideError icon={`icon/wechat-${theme === 'Dark' ? 'dark' : 'line'}.svg`}>
+            <FormItem
+              label="WeChat"
+              prop="wechat"
+              showTip={false}
+              hideError
+              icon={`icon/wechat-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="wechat" maxLength={60} clearable />
             </FormItem>
           </FormItem>

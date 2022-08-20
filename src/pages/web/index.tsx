@@ -48,7 +48,9 @@ const Web: FC = () => {
     return <Loading show type="fixed" />
   }, [brokerBoundLoaded, brokerBound?.broker])
 
-  const handleUnbindBroker = useCallback((C: FunctionComponent) => {
+  const handleUnbindBroker = useCallback(
+    (C: FunctionComponent) => {
+      return <C />
       if (brokerBoundLoaded) {
         return brokerBound?.broker ? <C /> : <Redirect to="/broker-bind" />
       }
@@ -56,7 +58,9 @@ const Web: FC = () => {
         return <C />
       }
       return <Loading show type="fixed" />
-    }, [brokerBoundLoaded, brokerBound?.broker, account?.address])
+    },
+    [brokerBoundLoaded, brokerBound?.broker, account?.address]
+  )
 
   const handleBrokerBindList = useMemo(() => {
     if (brokerBoundLoaded) {

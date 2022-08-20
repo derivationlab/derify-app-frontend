@@ -17,6 +17,7 @@ interface KlineChartProps {
 }
 
 const Chart: FC = () => {
+  const store = useRef<Record<string, any>>({})
   const kline = useRef<KlineChartProps>(null)
   const { currentPair, pairs, pairsLoaded } = useContractData()
 

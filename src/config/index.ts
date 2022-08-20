@@ -2,11 +2,8 @@ import getEnvKey from '@/config/env'
 import { ChainId } from '@/config/types'
 
 const API_PREFIX_URLS_SCHEMA: Record<string, string> = {
-  // prod: 'https://api.derify.exchange/bsc/',
   prod: 'https://api.derify.exchange/',
-  // dev: 'http://3.35.241.226:7073/'
-  // dev: 'https://dev-bsctestnet-api.derify.exchange/'
-  dev: 'https://api.derify.exchange/'
+  dev: 'https://dev-bsctestnet-api.derify.exchange/'
 }
 
 const BSC_SCAN_URLS_SCHEMA: Record<string, string> = {

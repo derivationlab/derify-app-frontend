@@ -3,10 +3,7 @@ import { useAccount, useBlockNumber } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
 import { getBondInfoDataAsync, getPMRewardDataAsync, getStakingInfoDataAsync } from '@/store/trader'
-import {
-  getBankBDRFPoolDataAsync,
-  getStakingDrfPoolDataAsync
-} from '@/store/constant'
+import { getBankBDRFPoolDataAsync, getStakingDrfPoolDataAsync } from '@/store/constant'
 
 import DRFPool from './c/DRFPool'
 import EranbDRFPool from './c/bDRFPool'

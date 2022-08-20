@@ -34,7 +34,11 @@ const Chart: FC = () => {
 
       const { data, more } = await getKLineData(currentPair, timeLine, +new Date(), 100, true)
 
-      kline.current.initData(reorganizeLastPieceOfData(data, pairs, currentPair), more)
+      store.current = data[data.length - 1]
+
+      const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
+
+      kline.current.initData(reorganize, more)
 
       setLoading(false)
     }
@@ -47,7 +51,12 @@ const Chart: FC = () => {
   useInterval(() => {
     const func = async () => {
       if (kline.current) {
+        kline.current.update(store.current)
+
         const { data } = await getKLineData(currentPair, timeLine, +new Date(), 1, false)
+
+        store.current = data[0]
+
         kline.current.update(reorganizeLastPieceOfData(data, [memoPairInfo], currentPair)[0])
       }
     }

@@ -28,7 +28,7 @@ export const calcKlineData = (data: [number, number, number, number, number][]):
 
 let initToken = ''
 
-export const getKLineData = async (token: string, time: number, endTime: number, limit = 100, isInit: boolean) => {
+export const getKLineData = async (token: string, time: number, endTime: number, limit = 10, isInit: boolean) => {
   if (isInit) initToken = token
   if (token !== initToken) {
     await sleep(3000)
@@ -47,7 +47,7 @@ export const reorganizeLastPieceOfData = (
   data: Record<string, any>[],
   pairs: Record<string, any>[],
   current: string
-) => {
+): Record<string, any>[] => {
   const lastPieceOfData = data.pop()
   const targetPairsData = pairs.find((pair) => pair.token === current) ?? {}
   return [...data, { ...lastPieceOfData, close: Number(targetPairsData.spotPrice ?? 0) }]

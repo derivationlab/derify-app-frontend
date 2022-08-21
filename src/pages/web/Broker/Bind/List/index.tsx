@@ -11,6 +11,7 @@ import {
 } from '@/data'
 import { MobileContext } from '@/context/Mobile'
 import Pagination from '@/components/common/Pagination'
+import Loading from '@/components/common/Loading'
 import Select from '@/components/common/Form/Select'
 import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
@@ -22,17 +23,25 @@ const List: FC = () => {
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
 
+  const pageSize = 10
+
   const [language, setLanguage] = useState<string>('ALL')
   const [community, setCommunity] = useState<string>('ALL')
   const [operating, setOperating] = useState<string>('-')
   const [pageIndex, setPageIndex] = useState<number>(0)
-  const [brokerList, setBrokerList] = useState<Record<string, any>>({})
+  const [totalItems, setTotalItems] = useState<number>(0)
+  const [brokerList, setBrokerList] = useState<Array<Record<string, any>>>([])
   const [brokerData, setBrokerData] = useState<Record<string, any>>({})
   const [visibleStatus, setVisibleStatus] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const onPageChangeEv = (index: number) => {
-    setPageIndex(index)
-    void getBrokersListCb()
+  const onPageChangeEv = async (index: number) => {
+    if (!loading) {
+      setLoading(true)
+      setPageIndex(index)
+      await getBrokersListCb(index)
+      setLoading(false)
+    }
   }
 
   const confirmBrokerEv = async (broker: Record<string, any>) => {
@@ -64,15 +73,20 @@ const List: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const getBrokersListCb = useCallback(async () => {
-    const { data } = await getBrokersList(pageIndex, 10, language, community)
-
-    setBrokerList(data)
-  }, [language, community, pageIndex])
+  const getBrokersListCb = useCallback(
+    async (index: number) => {
+      const {
+        data: { records, totalItems }
+      } = await getBrokersList(index, pageSize, language, community)
+      setBrokerList(records ?? [])
+      setTotalItems(totalItems ?? 0)
+    },
+    [language, community, pageIndex]
+  )
 
   useEffect(() => {
-    void getBrokersListCb()
-  }, [language, community, pageIndex, getBrokersListCb])
+    void getBrokersListCb(0)
+  }, [language, community])
 
   return (
     <div className="web-broker-list">
@@ -97,15 +111,23 @@ const List: FC = () => {
             onChange={(value) => setCommunity(String(value))}
           />
         </main>
-        {!mobile && <Pagination page={pageIndex} total={brokerList?.totalItems ?? 0} onChange={onPageChangeEv} />}
+        {!mobile && (
+          <Pagination page={pageIndex} pageSize={pageSize} total={totalItems ?? 0} onChange={onPageChangeEv} />
+        )}
       </section>
       <main className="web-broker-list-main">
-        {brokerList?.records?.map((broker: Record<string, any>) => (
-          <BrokerItem operating={operating} data={broker} key={broker.id} onClick={() => confirmBrokerEv(broker)} />
+        {brokerList.map((broker: Record<string, any>, index) => (
+          <BrokerItem operating={operating} data={broker} key={index} onClick={() => confirmBrokerEv(broker)} />
         ))}
       </main>
-      <Pagination full={!mobile} page={pageIndex} total={brokerList?.totalItems ?? 0} onChange={onPageChangeEv} />
-
+      <Pagination
+        pageSize={pageSize}
+        full={!mobile}
+        page={pageIndex}
+        total={totalItems ?? 0}
+        onChange={onPageChangeEv}
+      />
+      <Loading type="fixed" show={loading} />
       <BrokerDialog
         visible={visibleStatus === 'broker'}
         data={brokerData}

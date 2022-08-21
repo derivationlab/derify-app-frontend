@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useMemo, useEffect, useContext } from 'react'
+import React, { FC, useState, useRef, useMemo, useEffect, useContext, BaseSyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { MobileContext } from '@/context/Mobile'
@@ -19,12 +19,13 @@ const BrokerItem: FC<Props> = ({ data, operating, onClick }) => {
 
   const { mobile } = useContext(MobileContext)
 
-  const defaultHeight = 108
+  const defaultHeight = mobile ? 96 : 108
   const [articleHeight, setArticleHeight] = useState<number>(defaultHeight)
   const [realHeight, setRealHeight] = useState<number>(0)
 
   useEffect(() => {
     const h = ref.current?.offsetHeight
+    console.log(h)
     if (h) setRealHeight(h)
   }, [ref.current?.offsetHeight])
 
@@ -33,7 +34,8 @@ const BrokerItem: FC<Props> = ({ data, operating, onClick }) => {
     return realHeight > defaultHeight
   }, [realHeight])
 
-  const changeArticleHeight = () => {
+  const changeArticleHeight = (e: BaseSyntheticEvent) => {
+    e.stopPropagation()
     setArticleHeight(articleHeight === defaultHeight ? realHeight + 18 : defaultHeight)
   }
 
@@ -60,10 +62,9 @@ const BrokerItem: FC<Props> = ({ data, operating, onClick }) => {
           <span>{data?.language}</span>
         </div>
       </div>
-      <div className="web-broker-list-item-about" style={{ maxHeight: mobile ? 'auto' : `${articleHeight}px` }}>
+      <div className="web-broker-list-item-about" style={{ maxHeight: `${articleHeight}px` }}>
         <article ref={ref}>{data?.introduction}</article>
         {isShowMore &&
-          !mobile &&
           (articleHeight === defaultHeight ? (
             <aside className="more" onClick={changeArticleHeight}>
               More

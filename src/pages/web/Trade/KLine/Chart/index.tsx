@@ -83,13 +83,13 @@ const Chart: FC = () => {
   }, [memoPairInfo?.spotPrice, pairsLoaded, timeLine, currentPair])
 
   return (
-    <div className='web-trade-kline-chart'>
+    <div className="web-trade-kline-chart">
       <Select value={timeLine} objOptions={KLineTimes} onChange={(val) => setTimeLine(Number(val))} />
-      <div className='web-trade-kline-chart-layout'>
+      <div className="web-trade-kline-chart-layout">
         {/* @ts-ignore */}
         <KLineChart cRef={kline} getMoreData={(timeLine: number) => getMoreData(timeLine)} />
       </div>
-      <Loading show={loading} type='float' />
+      <Loading show={loading} type="float" />
     </div>
   )
 }

@@ -51,11 +51,9 @@ const Chart: FC = () => {
   useInterval(() => {
     const func = async () => {
       if (kline.current) {
-        const { timestamp } = store.current
-
         const { data } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 1, false)
         // console.info(timestamp, data[0]?.timestamp)
-        if (timestamp !== data[0]?.timestamp) {
+        if (store.current?.timestamp !== data[0]?.timestamp) {
           kline.current.update(store.current)
           store.current = data[0]
         }

@@ -34,11 +34,11 @@ const Chart: FC = () => {
 
       const { data, more } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 100, true)
 
-      // store.current = data[data.length - 1] // keep original data
+      store.current = data[data.length - 1] // keep original data
 
-      // const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
+      const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
 
-      kline.current.initData(data, more)
+      kline.current.initData(reorganize, more)
 
       setLoading(false)
     }
@@ -51,19 +51,22 @@ const Chart: FC = () => {
   useInterval(() => {
     const func = async () => {
       if (kline.current) {
-        // kline.current.update(store.current)
+        const { timestamp } = store.current
 
         const { data } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 1, false)
+        // console.info(timestamp, data[0]?.timestamp)
+        if (timestamp !== data[0]?.timestamp) {
+          kline.current.update(store.current)
+          store.current = data[0]
+        }
 
-        // store.current = data[0]
+        const reorganize = reorganizeLastPieceOfData(data, [memoPairInfo], currentPair)
 
-        // const reorganize = reorganizeLastPieceOfData(data, [memoPairInfo], currentPair)
-
-        kline.current.update(data[0])
+        kline.current.update(reorganize[0])
       }
     }
     void func()
-  }, 6000)
+  }, 60000)
 
   // todo: backup code
   // useEffect(() => {

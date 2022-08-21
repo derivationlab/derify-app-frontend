@@ -58,5 +58,6 @@ export const reorganizeLastPieceOfData = (
 export const getKlineEndTime = (): number => {
   const date = dayjs().format('YYYY-MM-DD')
   const hour = dayjs().hour()
+  // console.info(dayjs(`${date} 16`).valueOf())
   return dayjs(`${date} ${hour + 1}`).valueOf()
 }

@@ -69,7 +69,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const atom1Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.TradeHistory.Type', 'Type')} footer={tradeDesc[data?.type].desc}>
-        <span className={classNames(`${data?.type < 4 ? 'up' : 'down'}`)}>{memoTypeSide}</span>
+        <span className={classNames(`${data?.type < 3 ? 'up' : 'down'}`)}>{memoTypeSide}</span>
       </DataAtom>
     ),
     [data?.type, memoTypeSide, t]

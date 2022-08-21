@@ -26,6 +26,7 @@ export const getTokenSpotPriceAsync = createAsyncThunk('ContractData/getTokenSpo
 
 export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
   const { data } = await getEventsData()
+  // console.info(data)
   if (data.length) {
     const _ = data.map(
       ({

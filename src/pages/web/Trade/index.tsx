@@ -1,13 +1,11 @@
 import React, { FC, useEffect, useState, useContext, useMemo } from 'react'
 import { useAccount } from 'wagmi'
 import classNames from 'classnames'
-import { useInterval } from 'react-use'
 
 import { useAppDispatch } from '@/store'
 import { MobileContext } from '@/context/Mobile'
 import { useContractData } from '@/store/contract/hooks'
-import { getEventsDataAsync, getMyPositionsDataAsync } from '@/store/contract'
-import { getCurrentPositionsAmountDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
+import { getMyPositionsDataAsync } from '@/store/contract'
 
 import Data from './Data'
 import KLine from './KLine'
@@ -32,28 +30,6 @@ const Trade: FC = () => {
   useEffect(() => {
     if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
   }, [account?.address, memoPairInfo?.spotPrice])
-
-  useEffect(() => {
-    /**
-     apy,
-     token,
-     longPmrRate,
-     shortPmrRate,
-     price_change_rate
-     */
-    dispatch(getEventsDataAsync())
-
-    /**
-     long_position_amount: "0"
-     short_position_amount: "0"
-     */
-    dispatch(getCurrentPositionsAmountDataAsync())
-
-    /**
-     position change fee ratio
-     */
-    dispatch(getPositionChangeFeeRatioDataAsync())
-  }, [memoPairInfo?.spotPrice])
 
   if (mobile) {
     return (

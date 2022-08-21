@@ -13,7 +13,6 @@ import { useTraderData } from '@/store/trader/hooks'
 import { setShareMessage } from '@/store/share'
 import { useContractData } from '@/store/contract/hooks'
 import { getTraderDataAsync } from '@/store/trader'
-import { getCurrentPositionsAmountDataAsync } from '@/store/constant'
 import { LeverageSelect } from '@/components/common/Form'
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -127,7 +126,6 @@ const Bench: FC = () => {
         batch(() => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
-          dispatch(getCurrentPositionsAmountDataAsync())
           dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
         })
       } else {

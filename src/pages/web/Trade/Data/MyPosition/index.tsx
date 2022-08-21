@@ -105,7 +105,6 @@ const MyPosition: FC = () => {
         batch(() => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
-          dispatch(getCurrentPositionsAmountDataAsync())
           dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
         })
       } else {

@@ -34,7 +34,7 @@ const Chart: FC = () => {
 
       const { data, more } = await getKLineData(currentPair, timeLine, +new Date(), 100, true)
 
-      store.current = data[data.length - 1]
+      store.current = data[data.length - 1] // keep original data
 
       const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
 
@@ -57,21 +57,30 @@ const Chart: FC = () => {
 
         store.current = data[0]
 
-        kline.current.update(reorganizeLastPieceOfData(data, [memoPairInfo], currentPair)[0])
+        const reorganize = reorganizeLastPieceOfData(data, [memoPairInfo], currentPair)
+
+        kline.current.update(reorganize[0])
       }
     }
     void func()
   }, 60000)
 
+  // todo: backup code
+  // useEffect(() => {
+  //   setLoading(true)
+  //
+  //   void getBaseData()
+  // }, [timeLine, currentPair])
+  //
+  // useEffect(() => {
+  //   if (pairsLoaded && memoPairInfo?.spotPrice) void getBaseData()
+  // }, [memoPairInfo?.spotPrice, pairsLoaded])
+
   useEffect(() => {
     setLoading(true)
 
-    void getBaseData()
-  }, [timeLine, currentPair])
-
-  useEffect(() => {
     if (pairsLoaded && memoPairInfo?.spotPrice) void getBaseData()
-  }, [memoPairInfo?.spotPrice, pairsLoaded])
+  }, [memoPairInfo?.spotPrice, pairsLoaded, timeLine, currentPair])
 
   return (
     <div className="web-trade-kline-chart">

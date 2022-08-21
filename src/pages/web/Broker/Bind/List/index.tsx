@@ -23,7 +23,7 @@ const List: FC = () => {
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const pageSize = 4
+  const pageSize = 10
 
   const [language, setLanguage] = useState<string>('ALL')
   const [community, setCommunity] = useState<string>('ALL')

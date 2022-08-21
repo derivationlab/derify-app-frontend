@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import { getKLineData as getKLineDataApi } from '@/api'
 import { sleep } from '@/utils/tools'
 
@@ -51,4 +53,10 @@ export const reorganizeLastPieceOfData = (
   const lastPieceOfData = data.pop()
   const targetPairsData = pairs.find((pair) => pair.token === current) ?? {}
   return [...data, { ...lastPieceOfData, close: Number(targetPairsData.spotPrice ?? 0) }]
+}
+
+export const getKlineEndTime = (): number => {
+  const date = dayjs().format('YYYY-MM-DD')
+  const hour = dayjs().hour()
+  return dayjs(`${date} ${hour + 1}`).valueOf()
 }

@@ -4,11 +4,11 @@ import { useInterval } from 'react-use'
 import { KLineTimes } from '@/data'
 import { useContractData } from '@/store/contract/hooks'
 
-import KLineChart from '@/components/common/Chart/KLine'
 import { Select } from '@/components/common/Form'
 import Loading from '@/components/common/Loading'
+import KLineChart from '@/components/common/Chart/KLine'
 
-import { getKLineData, reorganizeLastPieceOfData } from './help'
+import { getKLineData, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 
 interface KlineChartProps {
   reset: () => void
@@ -32,13 +32,13 @@ const Chart: FC = () => {
     if (kline.current) {
       kline.current.reset()
 
-      const { data, more } = await getKLineData(currentPair, timeLine, +new Date(), 100, true)
+      const { data, more } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 100, true)
 
-      store.current = data[data.length - 1] // keep original data
+      // store.current = data[data.length - 1] // keep original data
 
-      const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
+      // const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
 
-      kline.current.initData(reorganize, more)
+      kline.current.initData(data, more)
 
       setLoading(false)
     }
@@ -51,19 +51,19 @@ const Chart: FC = () => {
   useInterval(() => {
     const func = async () => {
       if (kline.current) {
-        kline.current.update(store.current)
+        // kline.current.update(store.current)
 
-        const { data } = await getKLineData(currentPair, timeLine, +new Date(), 1, false)
+        const { data } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 1, false)
 
-        store.current = data[0]
+        // store.current = data[0]
 
-        const reorganize = reorganizeLastPieceOfData(data, [memoPairInfo], currentPair)
+        // const reorganize = reorganizeLastPieceOfData(data, [memoPairInfo], currentPair)
 
-        kline.current.update(reorganize[0])
+        kline.current.update(data[0])
       }
     }
     void func()
-  }, 60000)
+  }, 6000)
 
   // todo: backup code
   // useEffect(() => {

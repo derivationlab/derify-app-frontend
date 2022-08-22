@@ -2,13 +2,13 @@ import React, { FC, useCallback, useEffect, useState } from 'react'
 import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
 
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
 import { getCurrentInsuranceData, getHistoryInsuranceData } from '@/api'
 
+import { AreaChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { AreaChart } from '@/components/common/Chart'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 const InsurancePool: FC = () => {
   const { t } = useTranslation()

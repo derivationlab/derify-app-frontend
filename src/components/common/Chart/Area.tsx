@@ -1,4 +1,4 @@
-import React, { FC, useState, PureComponent, useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import dayjs from 'dayjs'
 import numeral from 'numeral'

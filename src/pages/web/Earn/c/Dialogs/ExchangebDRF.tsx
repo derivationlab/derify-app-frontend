@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTraderData } from '@/store/trader/hooks'
-import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { getDUSDAddress } from '@/utils/addressHelpers'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'

@@ -164,7 +164,7 @@ export default {
       AmountToWithdraw: 'Amount to withdraw',
       Confirm: 'Confirm',
       WithdrawTip:
-        'Due to the system risk control rules, you will recieve {{BUSD}} BUSD, and {{bDRF}} bDRF as compensation. You can exchange bDRF to BUSD at 1 : 1 ratio when Buyback Pool >0.'
+        'Due to the system risk control rules, you will recieve {{BUSD}} BUSD, and {{bBUSD}} bBUSD as compensation. You can exchange bBUSD to BUSD at 1 : 1 ratio when Buyback Pool >0.'
     }
   }
 }

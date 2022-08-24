@@ -9,12 +9,12 @@ import { multicall } from '@/utils/multicall'
 import { safeInterceptionValues } from '@/utils/tools'
 
 import {
+  getETHAddress,
   getBTCAddress,
   getDerifyDerivativeBTCAddress,
-  getDerifyDerivativeETHAddress,
-  getETHAddress
+  getDerifyDerivativeETHAddress
 } from '@/utils/addressHelpers'
-import { getDerifyExchangeContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
+import { getDerifyRewardsContract } from '@/utils/contractHelpers'
 
 export const getCurrentPositionsAmountData = async (token: string): Promise<Record<string, any>> => {
   const base = { long_position_amount: '0', short_position_amount: '0' }
@@ -67,6 +67,6 @@ export const getStakingDrfPoolData = async () => {
 
 export const getBankBDRFPoolData = async () => {
   const contract = getDerifyRewardsContract()
-  const data = await contract.bankBdrfPool()
+  const data = await contract.bankBondPool()
   return safeInterceptionValues(data._hex)
 }

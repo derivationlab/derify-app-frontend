@@ -12,7 +12,7 @@ export const getSymbol = (address: string): string => {
   return find?.symbol ?? ''
 }
 
-export const getMulticallAddress = () => {
+export const getMultiCallAddress = () => {
   return getAddress(contracts.multiCall)
 }
 
@@ -42,16 +42,16 @@ export const getEDRFAddress = () => {
   return getAddress(tokens.eDRF.address)
 }
 
-export const getBDRFAddress = () => {
-  return getAddress(tokens.bDRF.address)
+export const getbBUSDAddress = () => {
+  return getAddress(tokens.bBUSD.address)
 }
 
 export const getDRFAddress = () => {
   return getAddress(tokens.DRF.address)
 }
 
-export const getBUSDAddress = () => {
-  return getAddress(tokens.BUSD.address)
+export const getDUSDAddress = () => {
+  return getAddress(tokens.DUSD.address)
 }
 
 export const getETHAddress = () => {

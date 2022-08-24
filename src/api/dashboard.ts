@@ -1,4 +1,4 @@
-import { get, post } from '@/utils/http'
+import { get } from '@/utils/http'
 
 export const getIndicatorData = async () => {
   const response = await get('api/current_index_data')
@@ -17,5 +17,10 @@ export const getHistoryInsuranceData = async (days: number) => {
 
 export const getCurrentInsuranceData = async () => {
   const response = await get('api/current_insurance_pool')
+  return response
+}
+
+export const getCurrentTradingAmount = async (tokenAddr: string) => {
+  const response = await get(`api/current_trading_amount/${tokenAddr}`)
   return response
 }

@@ -91,7 +91,7 @@ const Web: FC = () => {
       }
     }
     return <Loading show type="fixed" />
-  }, [broker?.isBroker, broker?.broker, brokerBound?.broker, brokerLoaded, brokerBoundLoaded])
+  }, [broker?.isBroker, brokerBound?.broker, brokerLoaded, brokerBoundLoaded])
 
   const handleBrokerSignUpStep1 = useMemo(() => {
     if (brokerLoaded) {

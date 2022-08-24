@@ -21,8 +21,8 @@ const tokens: { [key: string]: Token } = {
     decimals: 18,
     projectLink: ''
   },
-  BUSD: {
-    symbol: 'BUSD',
+  DUSD: {
+    symbol: 'DUSD',
     address: {
       56: '',
       97: '0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba'
@@ -30,8 +30,8 @@ const tokens: { [key: string]: Token } = {
     decimals: 18,
     projectLink: ''
   },
-  bDRF: {
-    symbol: 'bDRF',
+  bBUSD: {
+    symbol: 'bBUSD',
     address: {
       56: '',
       97: '0x97bE258158D28Cda9dCad2856de2F106C39F8581'
@@ -60,7 +60,26 @@ const tokens: { [key: string]: Token } = {
 }
 
 const envTable: { [string: string]: Record<string, Token> } = {
-  dev: {},
+  dev: {
+    bBUSD: {
+      symbol: 'bBUSD',
+      address: {
+        56: '',
+        97: '0x647C8470F7c2A3A049c9DEfeA38CC763F903De70'
+      },
+      decimals: 18,
+      projectLink: ''
+    },
+    eDRF: {
+      symbol: 'eDRF',
+      address: {
+        56: '',
+        97: '0xf2954889cfC1C073B28B4B5Fd57167aFab9e319C'
+      },
+      decimals: 18,
+      projectLink: ''
+    }
+  },
   prod: {}
 }
 

@@ -4,7 +4,7 @@ import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
 import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { getBUSDAddress, getDRFAddress } from '@/utils/addressHelpers'
+import { getDUSDAddress, getDRFAddress } from '@/utils/addressHelpers'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'

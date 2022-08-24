@@ -25,7 +25,7 @@ const AddTokenButton: FC = () => {
   const tokens: Record<string, any>[] = [
     { ...tokensInfo.DRF, image: '', direction: 0 },
     { ...tokensInfo.eDRF, image: '', direction: 0 },
-    { ...tokensInfo.bDRF, image: '', direction: 1 }
+    { ...tokensInfo.bBUSD, image: '', direction: 1 }
   ]
 
   const addToken = (token: Record<string, any>) => {

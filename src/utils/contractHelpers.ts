@@ -8,22 +8,22 @@ import { baseProvider } from '@/utils/baseProvider'
 import bep20Abi from '@/config/abi/erc20.json'
 import multiCallAbi from '@/config/abi/MM.json'
 import eDRFAbi from '@/config/abi/eDRF.json'
-import bDRFAbi from '@/config/abi/bDRF.json'
+import bBUSDAbi from '@/config/abi/bBUSD.json'
 import DUSDAbi from '@/config/abi/DUSD.json'
 import DerifyBrokerAbi from '@/config/abi/DerifyBroker.json'
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import {
-  getBDRFAddress,
-  getBUSDAddress,
+  getbBUSDAddress,
+  getDUSDAddress,
   getDerifyBrokerAddress,
   getDerifyDerivativeBTCAddress,
   getDerifyDerivativeETHAddress,
   getDerifyExchangeAddress,
   getDerifyRewardsAddress,
   getEDRFAddress,
-  getMulticallAddress
+  getMultiCallAddress
 } from '@/utils/addressHelpers'
 
 export const getContract = (abi: ContractInterface, address: string, signer?: Signer | Provider | null): Contract => {
@@ -36,7 +36,7 @@ export const getBep20Contract = (address: string, signer?: Signer | Provider | n
 }
 
 export const getMulticallContract = (signer?: Signer | Provider | null) => {
-  return getContract(multiCallAbi, getMulticallAddress(), signer)
+  return getContract(multiCallAbi, getMultiCallAddress(), signer)
 }
 
 export const getEDRFContract = (signer?: Signer | Provider | null) => {
@@ -44,11 +44,11 @@ export const getEDRFContract = (signer?: Signer | Provider | null) => {
 }
 
 export const getBDRFContract = (signer?: Signer | Provider | null) => {
-  return getContract(bDRFAbi, getBDRFAddress(), signer)
+  return getContract(bBUSDAbi, getbBUSDAddress(), signer)
 }
 
 export const getBUSDContract = (signer?: Signer | Provider | null) => {
-  return getContract(DUSDAbi, getBUSDAddress(), signer)
+  return getContract(DUSDAbi, getDUSDAddress(), signer)
 }
 
 export const getDerifyRewardsContract = (signer?: Signer | Provider | null) => {

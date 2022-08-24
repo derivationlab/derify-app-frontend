@@ -27,7 +27,7 @@ const EranbDRFPool: FC = () => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { trader } = useTraderData()
-  const { bDRFPool } = useConstantData()
+  const { bBUSDPool } = useConstantData()
   const { mobile } = useContext(MobileContext)
 
   const { traderWithdrawBond, traderPledgedBond, traderRedemptionBond, traderExchangeBond } = Earn
@@ -141,13 +141,13 @@ const EranbDRFPool: FC = () => {
       <div className="web-eran-item">
         <header className="web-eran-item-header">
           <h3>
-            {t('Earn.bDRFPool.bDRFPool', 'bDRF Pool')}
-            <QuestionPopover text={t('Earn.bDRFPool.bDRFPoolTip', 'bDRF Pool', { APR: memoAPY })} />
+            {t('Earn.bDRFPool.bDRFPool', 'bBUSD Pool')}
+            <QuestionPopover text={t('Earn.bDRFPool.bDRFPoolTip', 'bBUSD Pool', { APR: memoAPY })} />
           </h3>
           <p>
             {t(
               'Earn.bDRFPool.bDRFPoolTitle',
-              'Deposit bDRF to earn stable interests, or exchange bDRF to stable coin.'
+              'Deposit bBUSD to earn stable interests, or exchange bBUSD to stable coin.'
             )}
           </p>
         </header>
@@ -159,10 +159,10 @@ const EranbDRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow value={trader?.bondBalance ?? 0} unit="bDRF" />
+              <BalanceShow value={trader?.bondBalance ?? 0} unit="bBUSD" />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} : <strong>{trader?.exchangeable ?? 0}</strong> bDRF
+                {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} : <strong>{trader?.exchangeable ?? 0}</strong> bBUSD
               </p>
             </main>
             <aside>
@@ -177,10 +177,10 @@ const EranbDRFPool: FC = () => {
           <div className="web-eran-item-card">
             <main>
               <h4>{t('Earn.bDRFPool.Deposited', 'Deposited')}</h4>
-              <BalanceShow value={trader?.bondReturnBalance ?? 0} unit="bDRF" />
+              <BalanceShow value={trader?.bondReturnBalance ?? 0} unit="bBUSD" />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{bDRFPool}</strong> bDRF
+                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{bBUSDPool}</strong> bBUSD
               </p>
             </main>
             <aside>

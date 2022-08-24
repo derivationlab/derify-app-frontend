@@ -106,6 +106,7 @@ const Bench: FC = () => {
       const _isOrderConversion = isOrderConversion(openPosParams?.openType, openPosParams?.price)
 
       const account = await signer.getAddress()
+
       const status = await openPositionOrder(
         signer,
         broker.broker,

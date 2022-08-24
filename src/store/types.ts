@@ -21,7 +21,7 @@ export interface ContractState {
 
 export interface ConstantState {
   DRFPool: string
-  bDRFPool: string
+  bBUSDPool: string
   indicator: Record<string, any>
   positions: Record<string, any>[]
   posFeeRatio: Record<string, any>

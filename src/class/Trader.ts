@@ -12,7 +12,7 @@ import {
   getDerifyDerivativeETHContract
 } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
-import { getBTCAddress, getBUSDAddress, getDerifyExchangeAddress, getETHAddress } from '@/utils/addressHelpers'
+import { getBTCAddress, getDUSDAddress, getDerifyExchangeAddress, getETHAddress } from '@/utils/addressHelpers'
 
 class Trader {
   traderWithdrawMargin = async (signer: Signer, amount: string): Promise<boolean> => {
@@ -36,7 +36,7 @@ class Trader {
 
     try {
       const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyExchangeAddress(), getBUSDAddress(), _amount)
+      const approve = await setAllowance(signer, getDerifyExchangeAddress(), getDUSDAddress(), _amount)
 
       if (!approve) return false
 

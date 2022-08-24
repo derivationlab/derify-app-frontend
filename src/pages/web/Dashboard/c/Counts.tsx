@@ -41,7 +41,7 @@ const Counts: FC = () => {
         </main>
       </section>
       <section>
-        <h3>{t('Dashboard.bDRFPrice', 'bDRF Price')}</h3>
+        <h3>{t('Dashboard.bDRFPrice', 'bBUSD Price')}</h3>
         <main>
           <BalanceShow value={indicator?.bdrfPrice ?? 0} unit="" />
           <u>{BASE_TOKEN_SYMBOL}</u>

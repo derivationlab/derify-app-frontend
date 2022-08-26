@@ -29,18 +29,18 @@ const InsurancePool: FC = () => {
     }
   }, [timeSelectVal])
 
-  const getInsuranceVolumeCb = useCallback(async () => {
+  const getInsuranceVolumeFunc = async () => {
     const { data: current } = await getCurrentInsuranceData()
 
     setInsuranceVolume(current?.insurance_pool ?? 0)
-  }, [])
+  }
 
   useEffect(() => {
     void getInsuranceDataCb()
   }, [getInsuranceDataCb, timeSelectVal])
 
   useEffect(() => {
-    void getInsuranceVolumeCb()
+    void getInsuranceVolumeFunc()
   }, [blockNumber])
 
   return (

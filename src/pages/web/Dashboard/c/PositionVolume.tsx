@@ -14,12 +14,6 @@ import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
 
-interface Volume {
-  long: string
-  volume: string
-  short: string
-}
-
 const base = { long: '0%', volume: '0', short: '0%' }
 
 const PositionVolume: FC = () => {

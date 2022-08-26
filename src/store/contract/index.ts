@@ -1,4 +1,5 @@
 import BN from 'bignumber.js'
+import { isArray } from 'lodash'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import Cache from '@/utils/cache'
@@ -26,8 +27,8 @@ export const getTokenSpotPriceAsync = createAsyncThunk('ContractData/getTokenSpo
 
 export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
   const { data } = await getEventsData()
-  // console.info(data)
-  if (data.length) {
+
+  if (isArray(data)) {
     const _ = data.map(
       ({
         shortDrfPmrRate,

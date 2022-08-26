@@ -5,13 +5,14 @@ import { useTranslation } from 'react-i18next'
 
 import ThemeContext from '@/context/Theme/Context'
 
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { useConstantData } from '@/store/constant/hooks'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
-import { getCurrentPositionsAmount, getHistoryPositionsData } from '@/api'
+import { getHistoryPositionsData } from '@/api'
 
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface Volume {
   long: string
@@ -23,11 +24,12 @@ const base = { long: '0%', volume: '0', short: '0%' }
 
 const PositionVolume: FC = () => {
   const { t } = useTranslation()
+  const { theme } = useContext(ThemeContext)
+  const { positions } = useConstantData()
+
   const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
   const [positionData, setPositionsData] = useState<Record<string, any>[]>([])
-  const [positionVolume, setPositionVolume] = useState<Volume>(base)
-  const { theme } = useContext(ThemeContext)
 
   const barColor = useMemo(() => {
     let longColor = '#B0FBD7'
@@ -51,21 +53,10 @@ const PositionVolume: FC = () => {
   }, [theme])
 
   const getHistoryPositionsDataCb = useCallback(async () => {
-    const { data: current } = await getCurrentPositionsAmount(SelectSymbolTokens[pairSelectVal])
     const { data: history } = await getHistoryPositionsData(
       SelectSymbolTokens[pairSelectVal],
       SelectTimesValues[timeSelectVal]
     )
-
-    const long = new BN(current?.long_position_amount ?? 0)
-    const short = new BN(current?.short_position_amount ?? 0)
-    const total = long.plus(short)
-
-    setPositionVolume({
-      volume: total.toString(),
-      long: `${long.div(total).times(100).toFixed(2)}%`,
-      short: `${short.div(total).times(100).toFixed(2)}%`
-    })
 
     if (isArray(history)) {
       // Huge data will have hidden dangers todo
@@ -80,6 +71,25 @@ const PositionVolume: FC = () => {
     }
   }, [timeSelectVal, pairSelectVal])
 
+  const memoPositionsVolume = useMemo(() => {
+    if (positions.length > 0) {
+      const isAll = SelectSymbolTokens[pairSelectVal] === 'all'
+      const target =
+        positions.find((p) => (p.token === '' && isAll) || p.token === SelectSymbolTokens[pairSelectVal]) ?? base
+      // console.info(target)
+      const long = new BN(target?.long_position_amount ?? 0)
+      const short = new BN(target?.short_position_amount ?? 0)
+      const total = long.plus(short)
+
+      return {
+        volume: total.toString(),
+        long: `${long.div(total).times(100).toFixed(2)}%`,
+        short: `${short.div(total).times(100).toFixed(2)}%`
+      }
+    }
+    return base
+  }, [pairSelectVal, positions])
+
   useEffect(() => {
     void getHistoryPositionsDataCb()
   }, [getHistoryPositionsDataCb, timeSelectVal, pairSelectVal])
@@ -89,7 +99,7 @@ const PositionVolume: FC = () => {
       <header className="web-dashborad-chart-header">
         <h3>
           {t('Dashboard.PositionVolume', 'Position Volume')} :
-          <BalanceShow value={positionVolume.volume} unit={BASE_TOKEN_SYMBOL} format={false} />
+          <BalanceShow value={memoPositionsVolume?.volume} unit={BASE_TOKEN_SYMBOL} format={false} />
         </h3>
         <aside>
           <Select
@@ -108,10 +118,10 @@ const PositionVolume: FC = () => {
         <div className="web-dashborad-chart-position-tip">
           {/*{positionVolume.long}*/}
           <span className="long">
-            Long<i>{positionVolume.long}</i>
+            Long<i>{memoPositionsVolume?.long}</i>
           </span>
           <span className="short">
-            Short<i>{positionVolume.short}</i>
+            Short<i>{memoPositionsVolume?.short}</i>
           </span>
         </div>
         <BarChart

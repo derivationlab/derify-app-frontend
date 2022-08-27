@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState, useContext } from 'react'
-import { useAccount, useBlockNumber } from 'wagmi'
+import React, { FC, useEffect, useState, useContext, useMemo } from 'react'
+import { useAccount } from 'wagmi'
 import classNames from 'classnames'
 
 import { useAppDispatch } from '@/store'
 import { MobileContext } from '@/context/Mobile'
-import { getEventsDataAsync, getMyPositionsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
-import { getCurrentPositionsAmountDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
+import { useContractData } from '@/store/contract/hooks'
+import { getMyPositionsDataAsync } from '@/store/contract'
 
 import Data from './Data'
 import KLine from './KLine'
@@ -18,23 +18,18 @@ import SymbolSelect from './KLine/SymbolSelect'
 const Trade: FC = () => {
   const dispatch = useAppDispatch()
   const { data: account } = useAccount()
-  const { data: blockNumber } = useBlockNumber()
   const { mobile } = useContext(MobileContext)
+  const { pairs, currentPair } = useContractData()
 
   const [toggle, setToggle] = useState<boolean>(false)
 
-  useEffect(() => {
-    if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
-  }, [account?.address])
+  const memoPairInfo = useMemo(() => {
+    return pairs.find((pair) => pair.token === currentPair) ?? {}
+  }, [pairs, currentPair])
 
   useEffect(() => {
-    if (blockNumber) {
-      dispatch(getTokenSpotPriceAsync())
-      dispatch(getEventsDataAsync())
-      dispatch(getCurrentPositionsAmountDataAsync())
-      dispatch(getPositionChangeFeeRatioDataAsync())
-    }
-  }, [blockNumber])
+    if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
+  }, [account?.address, memoPairInfo?.spotPrice])
 
   if (mobile) {
     return (

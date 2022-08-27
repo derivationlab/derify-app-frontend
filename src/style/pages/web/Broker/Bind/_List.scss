@@ -156,11 +156,14 @@
       margin-bottom: rem(24);
       display: block;
       main {
-        display: flex;padding: 0 rem(28);
+        display: flex;padding: 0 rem(28);justify-content: center;
       }
       .web-select {
         &:not(:last-child) {
           margin-right: rem(24);
+        }
+        &-show-button{
+          width: rem(150);
         }
       }
     }
@@ -216,10 +219,20 @@
         }
       }
       &-about {
-        width: rem(200);margin: rem(24) 0 0;height: auto;
+        width: rem(200);margin: rem(24) 0 0;
         font-size: rem(12); line-height: rem(16);
         aside {
-          display: none;
+          font-size: rem(12);line-height: rem(16);
+          &.more {
+            position: absolute;right: 0;bottom: 0;background: $cff;
+            display: flex;align-items: center;padding-left: 10px;
+            &:before {
+              content: '...';display: block;margin-right: 30px;color: $c22;
+            }
+          }
+          &.hide {
+            text-align: right;
+          }
         }
       }
       &-operate {

@@ -3,21 +3,19 @@ import { useAccount } from 'wagmi'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-import { bindYourBroker, getBrokerInfoById, getBrokersList } from '@/api'
 import { useAppDispatch } from '@/store'
-import { getBrokerBoundDataAsync } from '@/store/trader'
-
 import { MobileContext } from '@/context/Mobile'
+import { getBrokerBoundDataAsync } from '@/store/trader'
+import { bindYourBroker, getBrokerInfoById } from '@/api'
 
 import Button from '@/components/common/Button'
-
 import BrokerDialog from './BrokerDialog'
 
 const Bind: FC = () => {
-  const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
   const history = useHistory()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
+  const { mobile } = useContext(MobileContext)
   const { data: account } = useAccount()
 
   const [brokerId, setBrokerId] = useState<string>('')
@@ -50,10 +48,6 @@ const Bind: FC = () => {
   }
 
   const onConfirmEv = async () => {
-    // debug code
-    // const d = await getBrokersList(0, 10)
-    // console.info(d) // DerivationLab
-
     setLoading(true)
 
     const { data } = await getBrokerInfoById(brokerId)

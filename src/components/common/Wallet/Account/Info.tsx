@@ -1,20 +1,36 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useAccount } from 'wagmi'
 
+import { useAppDispatch } from '@/store'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { getTraderDataAsync } from '@/store/trader'
 import { useTraderData } from '@/store/trader/hooks'
+import { useContractData } from '@/store/contract/hooks'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
-
 import BalanceShow from '../BalanceShow'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface Props {
   size?: string
 }
 
 const AccountInfo: FC<Props> = ({ size = 'default' }) => {
+  const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { trader } = useTraderData()
+  const { pairs, currentPair } = useContractData()
+  const { data: account } = useAccount()
+
+  const memoPairInfo = useMemo(() => {
+    return pairs.find((pair) => pair.token === currentPair)
+  }, [pairs, currentPair])
+
+  useEffect(() => {
+    if (account?.address) {
+      dispatch(getTraderDataAsync(account?.address))
+    }
+  }, [account?.address, dispatch, memoPairInfo?.spotPrice])
 
   return (
     <>

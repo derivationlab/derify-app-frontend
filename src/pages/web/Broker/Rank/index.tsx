@@ -5,12 +5,11 @@ import { useTranslation } from 'react-i18next'
 
 import { getBrokersRankList } from '@/api'
 import { MobileContext } from '@/context/Mobile'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useConstantData } from '@/store/constant/hooks'
-import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
 interface RowTextProps {
   value: string | number
@@ -37,7 +36,6 @@ const RowText: FC<RowTextProps> = ({ value, unit }) => (
 const Rank: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { indicator } = useConstantData()
 
   const [brokerList, setBrokerList] = useState<Record<string, any>>({})
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -68,7 +66,7 @@ const Rank: FC = () => {
     {
       title: t('Broker.RankList.Name', 'Name'),
       dataIndex: 'name',
-      width: mobile ? 275 : '',
+      width: mobile ? 275 : 250,
       render: (_: string, data: Record<string, any>) => <RowName data={data} />
     },
     {
@@ -86,11 +84,6 @@ const Rank: FC = () => {
       dataIndex: '',
       width: 250,
       render: (_: string, data: Record<string, any>) => {
-        // const accumulated_drf_reward = new BN(data?.accumulated_drf_reward ?? 0).times(indicator?.drfPrice ?? 0)
-        // const rewards_plus = accumulated_drf_reward.plus(data?.accumulated_usd_reward ?? 0).toString()
-        // const rewards_total = safeInterceptionValues(
-        //   rewards_plus.indexOf('.') > -1 ? rewards_plus : `${rewards_plus}.0`
-        // )
         const usd = String(data?.accumulated_usd_reward)
         const accumulated_usd_reward = nonBigNumberInterception(usd)
         const drf = String(data?.accumulated_drf_reward)
@@ -108,11 +101,6 @@ const Rank: FC = () => {
       dataIndex: '',
       width: 250,
       render: (_: string, data: Record<string, any>) => {
-        // const today_drf_reward = new BN(data?.today_drf_reward ?? 0).times(indicator?.drfPrice ?? 0)
-        // const rewards_plus = today_drf_reward.plus(data?.today_usd_reward ?? 0).toString()
-        // const rewards_total = safeInterceptionValues(
-        //   rewards_plus.indexOf('.') > -1 ? rewards_plus : `${rewards_plus}.0`
-        // )
         const usd = String(data?.today_usd_reward)
         const today_usd_reward = nonBigNumberInterception(usd)
         const drf = String(data?.today_drf_reward)

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useContext, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useAccount } from 'wagmi'
@@ -12,6 +12,7 @@ import Button from '@/components/common/Button'
 import { Form, FormInput, FormItem, FormSelect, FormUploadImage } from '@/components/common/Form'
 import { defaultValues, FormInputProps, patterns, rules } from '../config'
 import { SelectLangOptions } from '@/data'
+import ThemeContext from '@/context/Theme/Context'
 
 export const AccountTip: FC = () => {
   const { t } = useTranslation()
@@ -27,9 +28,11 @@ const BrokerSignUpStep2: FC = () => {
   const history = useHistory()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { theme } = useContext(ThemeContext)
   const { pathname } = useLocation()
   const { data: account } = useAccount()
   const { broker, brokerLoaded } = useTraderData()
+  console.info(theme)
   const formMode = useForm({ defaultValues })
   const { handleSubmit, setValue } = formMode
 
@@ -170,19 +173,49 @@ const BrokerSignUpStep2: FC = () => {
             <FormSelect name="language" options={SelectLangOptions} />
           </FormItem>
           <FormItem label={t('Broker.Reg.Community', 'Community')}>
-            <FormItem label="Telegram" prop="telegram" showTip={false} hideError icon="icon/telegram-line.svg">
+            <FormItem
+              label="Telegram"
+              prop="telegram"
+              showTip={false}
+              hideError
+              icon={`icon/telegram-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="telegram" maxLength={60} clearable />
             </FormItem>
-            <FormItem label="Discord" prop="discord" showTip={false} hideError icon="icon/discord-line.svg">
+            <FormItem
+              label="Discord"
+              prop="discord"
+              showTip={false}
+              hideError
+              icon={`icon/discord-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="discord" maxLength={60} clearable />
             </FormItem>
-            <FormItem label="Twitter" prop="twitter" showTip={false} hideError icon="icon/twitter-line.svg">
+            <FormItem
+              label="Twitter"
+              prop="twitter"
+              showTip={false}
+              hideError
+              icon={`icon/twitter-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="twitter" maxLength={60} clearable />
             </FormItem>
-            <FormItem label="Reddit" prop="reddit" showTip={false} hideError icon="icon/reddit-line.svg">
+            <FormItem
+              label="Reddit"
+              prop="reddit"
+              showTip={false}
+              hideError
+              icon={`icon/reddit-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="reddit" maxLength={60} clearable />
             </FormItem>
-            <FormItem label="WeChat" prop="wechat" showTip={false} hideError icon="icon/wechat-line.svg">
+            <FormItem
+              label="WeChat"
+              prop="wechat"
+              showTip={false}
+              hideError
+              icon={`icon/wechat-${theme === 'Dark' ? 'dark' : 'line'}.svg`}
+            >
               <FormInput name="wechat" maxLength={60} clearable />
             </FormItem>
           </FormItem>

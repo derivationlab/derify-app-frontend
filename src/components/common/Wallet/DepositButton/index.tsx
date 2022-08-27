@@ -17,11 +17,12 @@ interface Props {
 }
 
 const DepositButton: FC<Props> = ({ size = 'default' }) => {
-  const { t } = useTranslation()
-  const [dialogStatus, setDialogStatus] = useState<string>('')
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { traderDepositMargin } = Trader
+
+  const [dialogStatus, setDialogStatus] = useState<string>('')
 
   // deposit
   const onConfirmDepositEv = useCallback(

@@ -48,19 +48,12 @@ const Dashboard: FC = () => {
   }, [signer])
 
   const memoTotalBalance = useMemo(() => {
-    // console.info(indicator)
-    // const drfRewardBalance = new BN(broker?.drfRewardBalance ?? 0).times(indicator?.drfPrice ?? 0)
-    // const rewards_plus = drfRewardBalance.plus(broker?.usdRewardBalance ?? 0).toString()
-    // return safeInterceptionValues(rewards_plus.indexOf('.') > -1 ? rewards_plus : `${rewards_plus}.0`)
     const drf = String(broker?.drfRewardBalance ?? 0)
     const usd = String(broker?.usdRewardBalance ?? 0)
     return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]
   }, [broker?.usdRewardBalance, broker?.drfRewardBalance])
 
   const memoHistoryBalance = useMemo(() => {
-    // const accumulatedDrfReward = new BN(broker?.accumulatedDrfReward ?? 0).times(indicator?.drfPrice ?? 0)
-    // const rewards_plus = accumulatedDrfReward.plus(broker?.accumulatedUsdReward ?? 0).toString()
-    // return safeInterceptionValues(rewards_plus.indexOf('.') > -1 ? rewards_plus : `${rewards_plus}.0`)
     const drf = String(broker?.accumulatedDrfReward ?? 0)
     const usd = String(broker?.accumulatedUsdReward ?? 0)
     return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]

@@ -65,10 +65,10 @@ export const getTokenSpotPrice = async (): Promise<Record<string, string>[]> => 
     const response = await multicall(DerifyDerivativeAbi, calls)
     // console.info(response)
     if (!isEmpty(response)) {
-      return response.map(([b]: [BigNumberish], index: number) => {
+      return response.map(([price]: [BigNumberish], index: number) => {
         return {
           ...basePairs[index],
-          spotPrice: safeInterceptionValues(b)
+          spotPrice: safeInterceptionValues(price, 8)
         }
       })
     }
@@ -168,13 +168,13 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             },
             variables
           )
-          // console.info(`isUsed:${long.isUsed}`)
+          // console.info(`spotPrice:${spotPrice}`)
           // console.info(`size:${String(long.size)}/${safeInterceptionValues(String(long.size), 8)}`)
           // console.info(`price:${String(long.price)}/${safeInterceptionValues(String(long.price), 8)}`)
           // console.info(`leverage:${String(long.leverage)}/${safeInterceptionValues(String(long.leverage), 8)}`)
 
           const size = safeInterceptionValues(String(long.size), 8)
-          const div = String(new BN(long.price._hex).times(size).div(new BN(10).pow(8)))
+          const div = String(new BN(spotPrice).times(size))
           const volume = nonBigNumberInterception(div, 8)
 
           outputMyPosition.push({
@@ -198,9 +198,12 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             },
             variables
           )
-
+          // console.info(`spotPrice:${spotPrice}`)
+          // console.info(`size:${String(short.size)}/${safeInterceptionValues(String(short.size), 8)}`)
+          // console.info(`price:${String(short.price)}/${safeInterceptionValues(String(short.price), 8)}`)
+          // console.info(`leverage:${String(short.leverage)}/${safeInterceptionValues(String(short.leverage), 8)}`)
           const size = safeInterceptionValues(String(short.size), 8)
-          const div = String(new BN(short.price._hex).times(size).div(new BN(10).pow(8)))
+          const div = String(new BN(spotPrice).times(size))
           const volume = nonBigNumberInterception(div, 8)
 
           outputMyPosition.push({

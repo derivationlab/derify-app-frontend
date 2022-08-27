@@ -24,11 +24,10 @@ const HeaderData: FC = () => {
       const m = long_position_amount - short_position_amount
       const n = long_position_amount + short_position_amount
       const x = ((m / n) * 100).toFixed(2)
-      // console.info(find, m, n, x)
       return [nonBigNumberInterception(m), n === 0 || m === 0 ? 0 : nonBigNumberInterception(x)]
     }
     return ['0', '0']
-  }, [positions, currentPair])
+  }, [positions, currentPair, pairs])
 
   const memoPosFeeRatio = useMemo(() => {
     if (!isEmpty(posFeeRatio)) {
@@ -36,15 +35,13 @@ const HeaderData: FC = () => {
       return posFeeRatio[key]
     }
     return '0'
-  }, [posFeeRatio, currentPair])
+  }, [posFeeRatio, currentPair, pairs])
 
   const memoPositionApy = useMemo(() => {
-    // longPmrRate shortPmrRate
     const find = pairs.find((p) => p.token === currentPair) ?? { longPmrRate: 0, shortPmrRate: 0 }
-    // console.info(find)
     return [
-      Number(find.longPmrRate) <= 0 ? '--' : (find.longPmrRate * 100).toFixed(2),
-      Number(find.shortPmrRate) <= 0 ? '--' : (find.shortPmrRate * 100).toFixed(2)
+      Number(find.longPmrRate) <= 0 ? '--' : ((find.longPmrRate ?? 0) * 100).toFixed(2),
+      Number(find.shortPmrRate) <= 0 ? '--' : ((find.shortPmrRate ?? 0) * 100).toFixed(2)
     ]
   }, [pairs, currentPair])
 

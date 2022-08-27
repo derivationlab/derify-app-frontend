@@ -1,15 +1,12 @@
 import { useAccount } from 'wagmi'
-import React, { FC, FunctionComponent, useCallback, useEffect, useMemo } from 'react'
+import React, { FC, FunctionComponent, useCallback, useMemo } from 'react'
 
-import { useAppDispatch } from '@/store'
 import { useTraderData } from '@/store/trader/hooks'
-import { getEventsDataAsync } from '@/store/contract'
 import { Redirect, Switch, Route } from '@/components/common/Route'
-import { getBrokerBoundDataAsync, getBrokerDataAsync, getTraderDataAsync } from '@/store/trader'
 
 import Header from '@/components/web/Header'
-import Loading from '@/components/common/Loading'
 import Toast from '@/components/common/Toast'
+import Loading from '@/components/common/Loading'
 
 import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
@@ -18,17 +15,16 @@ import Airdrop from '@/pages/web/Airdrop'
 import Dashboard from '@/pages/web/Dashboard'
 import BrokerRank from '@/pages/web/Broker/Rank'
 import BrokerBind from '@/pages/web/Broker/Bind'
-import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
 import BrokerBound from '@/pages/web/Broker/MyBroker'
+import BrokerConnect from '@/pages/web/Broker/c/Connect'
 import BrokerBindList from '@/pages/web/Broker/Bind/List'
 import BrokerWorkbench from '@/pages/web/Broker/Workbench'
 import BrokerSignUpStep1 from '@/pages/web/Broker/SignUp/step1'
 import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
 import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
-import BrokerConnect from '@/pages/web/Broker/c/Connect'
+import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
 
 const Web: FC = () => {
-  const dispatch = useAppDispatch()
   const { data: account } = useAccount()
   const { broker, brokerLoaded, brokerBound, brokerBoundLoaded } = useTraderData()
 
@@ -54,6 +50,7 @@ const Web: FC = () => {
 
   const handleUnbindBroker = useCallback(
     (C: FunctionComponent) => {
+      return <C />
       if (brokerBoundLoaded) {
         return brokerBound?.broker ? <C /> : <Redirect to="/broker-bind" />
       }
@@ -112,18 +109,6 @@ const Web: FC = () => {
     }
     return <Loading show type="fixed" />
   }, [brokerLoaded, broker?.isBroker, broker?.broker])
-
-  useEffect(() => {
-    if (account?.address) {
-      dispatch(getTraderDataAsync(account?.address))
-      dispatch(getBrokerDataAsync(account?.address))
-      dispatch(getBrokerBoundDataAsync(account?.address))
-    }
-  }, [account?.address, dispatch])
-
-  useEffect(() => {
-    dispatch(getEventsDataAsync())
-  }, [dispatch])
 
   return (
     <>

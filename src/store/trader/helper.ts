@@ -3,11 +3,12 @@ import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 import { getDerifyBrokerContract, getDerifyExchangeContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 import {
   getBrokerInfoByAddr,
-  getBrokerInfoByTrader,
-  getBrokerRewardsToday,
   getBrokerValidPeriod,
   getTraderBondBalance,
-  getTraderEDRFBalance
+  getTraderEDRFBalance,
+  getBrokerRewardsToday,
+  getBrokerInfoByTrader,
+  getBrokerRegisterTime
 } from '@/api'
 
 const exchangeContract = getDerifyExchangeContract()
@@ -96,8 +97,9 @@ export const getTraderAsBrokerData = async (trader: string): Promise<Record<stri
   try {
     const { data } = await getBrokerInfoByAddr(trader)
     const { data: today } = await getBrokerRewardsToday(trader)
+    const { data: registerTime } = await getBrokerRegisterTime(trader)
     const fromContract = await getBrokerInfoByContract(trader)
-    // console.info(today)
+    // console.info(registerTime)
     if (!isEmpty(data)) {
       const { id, ...rest } = data
 
@@ -108,7 +110,8 @@ export const getTraderAsBrokerData = async (trader: string): Promise<Record<stri
         reference,
         ...today,
         ...rest,
-        ...fromContract
+        ...fromContract,
+        update_time: registerTime
       }
     }
 

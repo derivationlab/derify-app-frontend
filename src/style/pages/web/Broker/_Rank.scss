@@ -12,10 +12,10 @@
       main {
         display: flex;flex-flow: column;line-height: 20px;
         strong {
-          font-size: 14px;font-weight: normal;
+          font-size: 20px;font-weight: normal;
         }
         em {
-          font-size: 10px;color: $c88;
+          font-size: 14px;color: $c88;
         }
       }
     }
@@ -42,10 +42,10 @@
         main {
           line-height: rem(20);
           strong {
-            font-size: rem(12);
+            font-size: rem(20);
           }
           em {
-            font-size: rem(10);
+            font-size: rem(14);
           }
         }
       }

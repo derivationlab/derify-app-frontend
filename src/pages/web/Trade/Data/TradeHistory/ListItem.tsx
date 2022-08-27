@@ -39,7 +39,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   }, [data?.position_change_fee])
 
   const memoTypeSide = useMemo(() => {
-    return data?.type < 4 ? t('Trade.TradeHistory.Open', 'Open') : t('Trade.TradeHistory.Close', 'Close')
+    return data?.type < 3 ? t('Trade.TradeHistory.Open', 'Open') : t('Trade.TradeHistory.Close', 'Close')
   }, [data?.type, t])
 
   // todo make map better
@@ -69,7 +69,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const atom1Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.TradeHistory.Type', 'Type')} footer={tradeDesc[data?.type].desc}>
-        <span className={classNames(`${data?.type < 4 ? 'up' : 'down'}`)}>{memoTypeSide}</span>
+        <span className={classNames(`${data?.type < 3 ? 'up' : 'down'}`)}>{memoTypeSide}</span>
       </DataAtom>
     ),
     [data?.type, memoTypeSide, t]
@@ -154,7 +154,6 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
     [data?.event_time, memoTimestamp, t]
   )
 
-  // 杠杆倍数 todo ?
   return (
     <div className="web-trade-data-item">
       <ItemHeader symbol={getPairName(data?.token)} direction={PositionSide[data?.side] as any} />

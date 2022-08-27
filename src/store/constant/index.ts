@@ -19,10 +19,10 @@ const initialState: ConstantState = {
 }
 
 export const getCurrentPositionsAmountDataAsync = () => async (dispatch: Dispatch) => {
-  // todo check often pending
   const eth = await getCurrentPositionsAmountData(getETHAddress())
   const btc = await getCurrentPositionsAmountData(getBTCAddress())
   const all = await getCurrentPositionsAmountData('all')
+
   dispatch(
     setPositionsData([
       { ...all, token: '' },

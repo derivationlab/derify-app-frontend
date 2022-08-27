@@ -127,7 +127,7 @@ const BrokerSignUpStep2: FC = () => {
       setValue('name', name)
       setValue('logo', logo)
       setValue('broker', _broker)
-      setValue('language', language)
+      setValue('language', language || 'English')
       setValue('telegram', telegram)
       setValue('discord', discord)
       setValue('twitter', twitter)

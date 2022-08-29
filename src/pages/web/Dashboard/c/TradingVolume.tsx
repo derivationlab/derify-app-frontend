@@ -1,7 +1,8 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { isArray } from 'lodash'
 import { useBlockNumber } from 'wagmi'
 import { useTranslation } from 'react-i18next'
+import days from 'dayjs'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useContractData } from '@/store/contract/hooks'
@@ -20,7 +21,7 @@ const TradingVolume: FC = () => {
   const [tradingData, setTradingData] = useState<Record<string, any>[]>([])
   const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
-  const [tradingVolume, setTradingVolume] = useState<string>('0')
+  const [tradingVolume, setTradingVolume] = useState<Record<string, any>[]>([])
 
   const getHistoryTradingDataCb = useCallback(async () => {
     const { data: trading } = await getHistoryTradingData(
@@ -36,14 +37,12 @@ const TradingVolume: FC = () => {
   }, [timeSelectVal, pairSelectVal])
 
   const getTradingVolumeDataCb = useCallback(async () => {
-    // console.info(blockNumber)
     const { data: volume } = await getCurrentTradingAmount(currentPair)
-    // trading_amount: '843.40500000', trading_fee: '0.42170250'
 
-    if (isArray(volume)) {
-      setTradingVolume(volume[0]?.trading_amount ?? 0)
-    }
+    if (isArray(volume)) setTradingVolume([{...volume[0], day_time: days().utc().startOf('days').format()}])
   }, [currentPair])
+
+  const memoCombineData = useMemo(() => ([...tradingData, ...tradingVolume]), [tradingData, tradingVolume])
 
   useEffect(() => {
     void getHistoryTradingDataCb()
@@ -58,7 +57,7 @@ const TradingVolume: FC = () => {
       <header className="web-dashborad-chart-header">
         <h3>
           {t('Dashboard.TradingVolume', 'Trading Volume')} :
-          <BalanceShow value={tradingVolume} unit={BASE_TOKEN_SYMBOL} format={false} />
+          <BalanceShow value={tradingVolume[0]?.trading_amount ?? 0} unit={BASE_TOKEN_SYMBOL} format={false} />
         </h3>
         <aside>
           <Select
@@ -84,7 +83,7 @@ const TradingVolume: FC = () => {
         {/*/>*/}
         <BarChart
           chartId="PositionVolume"
-          data={tradingData}
+          data={memoCombineData}
           xKey="day_time"
           enableLegend={false}
           timeFormatStr={timeSelectVal !== '1D' ? 'MM/DD' : 'HH:mm'}

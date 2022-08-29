@@ -2,11 +2,12 @@ import { isEmpty, times } from 'lodash'
 import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 
 import basePairs from '@/config/pairs'
-import { getCurrentPositionsAmount } from '@/api'
-import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import { multicall } from '@/utils/multicall'
+import { getCurrentPositionsAmount } from '@/api'
 import { safeInterceptionValues } from '@/utils/tools'
 import { getDerifyRewardsContract } from '@/utils/contractHelpers'
+
+import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 export const getCurrentPositionsAmountData = async (token: string): Promise<Record<string, any>> => {
   const base = { long_position_amount: '0', short_position_amount: '0' }

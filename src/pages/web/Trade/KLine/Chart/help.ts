@@ -50,9 +50,13 @@ export const reorganizeLastPieceOfData = (
   pairs: Record<string, any>[],
   current: string
 ): Record<string, any>[] => {
-  const lastPieceOfData = data.pop()
+  const lastPieceOfData = data.pop() ?? {}
   const targetPairsData = pairs.find((pair) => pair.token === current) ?? {}
-  return [...data, { ...lastPieceOfData, close: Number(targetPairsData.spotPrice ?? 0) }]
+  const pairSpotPrice = Number(targetPairsData.spotPrice ?? 0)
+  const { high = 0, low = 0 } = lastPieceOfData
+  const _low = Math.min(low, pairSpotPrice)
+  const _high = Math.max(high, pairSpotPrice)
+  return [...data, { ...lastPieceOfData, close: pairSpotPrice, high: _high, low: _low }]
 }
 
 export const getKlineEndTime = (): number => {

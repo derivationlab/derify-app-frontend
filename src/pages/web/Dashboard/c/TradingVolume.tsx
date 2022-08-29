@@ -41,10 +41,10 @@ const TradingVolume: FC = () => {
 
     const day_time = days().utc().startOf('days').format()
 
-    if (isArray(volume)) setTradingVolume([{...volume[0], day_time}])
+    if (isArray(volume)) setTradingVolume([{ ...volume[0], day_time }])
   }, [currentPair])
 
-  const memoCombineData = useMemo(() => ([...tradingData, ...tradingVolume]), [tradingData, tradingVolume])
+  const memoCombineData = useMemo(() => [...tradingData, ...tradingVolume], [tradingData, tradingVolume])
 
   useEffect(() => {
     void getHistoryTradingDataCb()

@@ -38,7 +38,7 @@ const InsurancePool: FC = () => {
     setInsuranceVolume({ ...current, day_time })
   }
 
-  const memoCombineData = useMemo(() => ([...insuranceData, insuranceVolume]), [insuranceData, insuranceVolume])
+  const memoCombineData = useMemo(() => [...insuranceData, insuranceVolume], [insuranceData, insuranceVolume])
 
   useEffect(() => {
     void getInsuranceDataCb()

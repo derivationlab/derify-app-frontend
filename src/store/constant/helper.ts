@@ -4,16 +4,8 @@ import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 import basePairs from '@/config/pairs'
 import { getCurrentPositionsAmount } from '@/api'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
-
 import { multicall } from '@/utils/multicall'
 import { safeInterceptionValues } from '@/utils/tools'
-
-import {
-  getETHAddress,
-  getBTCAddress,
-  getDerifyDerivativeBTCAddress,
-  getDerifyDerivativeETHAddress
-} from '@/utils/addressHelpers'
 import { getDerifyRewardsContract } from '@/utils/contractHelpers'
 
 export const getCurrentPositionsAmountData = async (token: string): Promise<Record<string, any>> => {
@@ -28,11 +20,12 @@ export const getCurrentPositionsAmountData = async (token: string): Promise<Reco
 }
 
 export const getPositionChangeFeeRatioData = async () => {
-  const contracts = [getDerifyDerivativeBTCAddress(), getDerifyDerivativeETHAddress()]
-  let feeRatios = {
-    [getBTCAddress()]: '0',
-    [getETHAddress()]: '0'
-  }
+  let combine = {}
+  basePairs.forEach((pair) => {
+    combine = { ...combine, [pair.token]: '0' }
+  })
+  let feeRatios = combine
+  const contracts = basePairs.map((pair) => pair.contract)
 
   const calls = times(contracts.length, (index) => ({
     address: basePairs[index].contract,

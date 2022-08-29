@@ -47,6 +47,10 @@ const envTable: { [string: string]: Record<string, Address> } = {
       56: '',
       97: '0xA5d35BE0299377749C2F617190c0bc48d7a4eF8f'
     },
+    DerifyDerivative_BNB: {
+      56: '',
+      97: '0xC116016dBe7d2620B77fC044dF687e2e1C99dfd8'
+    },
     DerifyBroker: {
       56: '',
       97: '0x5ee4b4801aE40391899D702d7B786cF68D8520E9'

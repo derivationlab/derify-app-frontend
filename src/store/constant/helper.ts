@@ -1,9 +1,9 @@
 import { isEmpty, times } from 'lodash'
 import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 
+import basePairs from '@/config/pairs'
 import { getCurrentPositionsAmount } from '@/api'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
-import { basePairs } from '@/store/contract/helper'
 
 import { multicall } from '@/utils/multicall'
 import { safeInterceptionValues } from '@/utils/tools'

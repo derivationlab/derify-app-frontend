@@ -1,9 +1,12 @@
-import { getBTCAddress, getETHAddress } from '@/utils/addressHelpers'
+import pairs from '@/config/pairs'
 
-export const SymbolTokens: Record<string, string> = {
-  'BTC-BUSD': getBTCAddress(),
-  'ETH-BUSD': getETHAddress()
-}
+let combine = {}
+
+pairs.forEach((pair) => {
+  combine = { ...combine, [pair.name]: pair.token }
+})
+console.info(combine)
+export const SymbolTokens: Record<string, string> = combine
 
 export const SymbolOptions = Object.keys(SymbolTokens)
 

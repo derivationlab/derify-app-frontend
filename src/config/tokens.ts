@@ -78,6 +78,15 @@ const envTable: { [string: string]: Record<string, Token> } = {
       },
       decimals: 18,
       projectLink: ''
+    },
+    bnb: {
+      symbol: 'BNB',
+      address: {
+        56: '',
+        97: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52'
+      },
+      decimals: 18,
+      projectLink: ''
     }
   },
   prod: {}

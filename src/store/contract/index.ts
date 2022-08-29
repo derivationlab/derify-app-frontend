@@ -3,10 +3,11 @@ import { isArray } from 'lodash'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import Cache from '@/utils/cache'
+import basePairs from '@/config/pairs'
 import { getEventsData } from '@/api'
 import { nonBigNumberInterception } from '@/utils/tools'
 import { ContractState, AppThunkDispatch } from '../types'
-import { basePairs, getMyPositionsData, getTokenSpotPrice, outputDataDeal } from './helper'
+import { getMyPositionsData, getTokenSpotPrice, outputDataDeal } from './helper'
 
 const currentPairIndex = Cache.get('currentPairIndex') ?? 0
 

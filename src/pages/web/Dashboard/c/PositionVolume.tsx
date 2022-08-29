@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from
 import BN from 'bignumber.js'
 import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import days from 'dayjs'
 
 import ThemeContext from '@/context/Theme/Context'
 
@@ -14,7 +15,15 @@ import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
 
-const base = { long: '0%', volume: '0', short: '0%' }
+const time = days().utc().startOf('days').format()
+const base = {
+  long: '0%',
+  volume: '0',
+  short: '0%',
+  day_time: time,
+  long_position_amount: 0,
+  short_position_amount: 0
+}
 
 const PositionVolume: FC = () => {
   const { t } = useTranslation()
@@ -76,21 +85,28 @@ const PositionVolume: FC = () => {
       const total = long.plus(short)
 
       return {
-        volume: total.toString(),
         long: `${long.div(total).times(100).toFixed(2)}%`,
-        short: `${short.div(total).times(100).toFixed(2)}%`
+        short: `${short.div(total).times(100).toFixed(2)}%`,
+        volume: total.toString(),
+        day_time: time,
+        long_position_amount: target?.long_position_amount ?? 0,
+        short_position_amount: target?.short_position_amount ?? 0
       }
     }
     return base
   }, [pairSelectVal, positions])
+
+  const memoCombineData = useMemo(() => {
+    return ([...positionData, memoPositionsVolume])
+  }, [positionData, memoPositionsVolume])
 
   useEffect(() => {
     void getHistoryPositionsDataCb()
   }, [getHistoryPositionsDataCb, timeSelectVal, pairSelectVal])
 
   return (
-    <div className="web-dashborad-chart">
-      <header className="web-dashborad-chart-header">
+    <div className='web-dashborad-chart'>
+      <header className='web-dashborad-chart-header'>
         <h3>
           {t('Dashboard.PositionVolume', 'Position Volume')} :
           <BalanceShow value={memoPositionsVolume?.volume} unit={BASE_TOKEN_SYMBOL} format={false} />
@@ -108,20 +124,20 @@ const PositionVolume: FC = () => {
           />
         </aside>
       </header>
-      <main className="web-dashborad-chart-main">
-        <div className="web-dashborad-chart-position-tip">
+      <main className='web-dashborad-chart-main'>
+        <div className='web-dashborad-chart-position-tip'>
           {/*{positionVolume.long}*/}
-          <span className="long">
+          <span className='long'>
             Long<i>{memoPositionsVolume?.long}</i>
           </span>
-          <span className="short">
+          <span className='short'>
             Short<i>{memoPositionsVolume?.short}</i>
           </span>
         </div>
         <BarChart
-          chartId="PositionVolume"
-          data={positionData}
-          xKey="day_time"
+          chartId='PositionVolume'
+          data={memoCombineData}
+          xKey='day_time'
           timeFormatStr={timeSelectVal !== '1D' ? 'MM/DD' : 'HH:mm'}
           yFormat={barColor}
         />

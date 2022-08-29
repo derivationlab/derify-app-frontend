@@ -1,6 +1,7 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import days from 'dayjs'
 
 import { useBlockNumber } from 'wagmi'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
@@ -17,7 +18,7 @@ const InsurancePool: FC = () => {
 
   const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
   const [insuranceData, setInsuranceData] = useState<Record<string, any>[]>([])
-  const [insuranceVolume, setInsuranceVolume] = useState<string>('0')
+  const [insuranceVolume, setInsuranceVolume] = useState<Record<string, any>>({})
 
   const getInsuranceDataCb = useCallback(async () => {
     const { data: history } = await getHistoryInsuranceData(SelectTimesValues[timeSelectVal])
@@ -32,8 +33,12 @@ const InsurancePool: FC = () => {
   const getInsuranceVolumeFunc = async () => {
     const { data: current } = await getCurrentInsuranceData()
 
-    setInsuranceVolume(current?.insurance_pool ?? 0)
+    const day_time = days().utc().startOf('days').format()
+
+    setInsuranceVolume({ ...current, day_time })
   }
+
+  const memoCombineData = useMemo(() => ([...insuranceData, insuranceVolume]), [insuranceData, insuranceVolume])
 
   useEffect(() => {
     void getInsuranceDataCb()
@@ -48,7 +53,7 @@ const InsurancePool: FC = () => {
       <header className="web-dashborad-chart-header">
         <h3>
           {t('Dashboard.InsurancePool', 'Insurance Pool')} :
-          <BalanceShow value={insuranceVolume} unit={BASE_TOKEN_SYMBOL} format={false} />
+          <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={BASE_TOKEN_SYMBOL} format={false} />
         </h3>
         <aside>
           <Select
@@ -61,7 +66,7 @@ const InsurancePool: FC = () => {
       <main className="web-dashborad-chart-main">
         <AreaChart
           chartId="InsurancePool"
-          data={insuranceData}
+          data={memoCombineData}
           xKey="day_time"
           timeFormatStr={timeSelectVal !== '1D' ? 'MM/DD' : 'HH:mm'}
           yKey="insurance_pool"

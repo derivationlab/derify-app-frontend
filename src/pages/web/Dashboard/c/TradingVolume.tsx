@@ -39,7 +39,9 @@ const TradingVolume: FC = () => {
   const getTradingVolumeDataCb = useCallback(async () => {
     const { data: volume } = await getCurrentTradingAmount(currentPair)
 
-    if (isArray(volume)) setTradingVolume([{...volume[0], day_time: days().utc().startOf('days').format()}])
+    const day_time = days().utc().startOf('days').format()
+
+    if (isArray(volume)) setTradingVolume([{...volume[0], day_time}])
   }, [currentPair])
 
   const memoCombineData = useMemo(() => ([...tradingData, ...tradingVolume]), [tradingData, tradingVolume])

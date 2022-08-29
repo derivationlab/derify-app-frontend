@@ -65,7 +65,7 @@ const envTable: { [string: string]: Record<string, Token> } = {
       symbol: 'bBUSD',
       address: {
         56: '',
-        97: '0x647C8470F7c2A3A049c9DEfeA38CC763F903De70'
+        97: '0xe545f5aeA093B84Cc500737b216F36Fc61B71Da1'
       },
       decimals: 18,
       projectLink: ''
@@ -74,7 +74,7 @@ const envTable: { [string: string]: Record<string, Token> } = {
       symbol: 'eDRF',
       address: {
         56: '',
-        97: '0xf2954889cfC1C073B28B4B5Fd57167aFab9e319C'
+        97: '0xd531479f89A573CEa84d08Af1De67420e9734b82'
       },
       decimals: 18,
       projectLink: ''

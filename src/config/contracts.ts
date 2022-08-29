@@ -33,23 +33,23 @@ const envTable: { [string: string]: Record<string, Address> } = {
   dev: {
     DerifyRewards: {
       56: '',
-      97: '0x027d27912038cC00F88acD11B7522f29B8E6fF50'
+      97: '0x849E0B8eB97753857b71Edf2CbC6E1E0bC2D5837'
     },
     DerifyExchange: {
       56: '',
-      97: '0x30Daa58D5437F17009ccCe887154b68fb7e14b82'
+      97: '0x766326B2eD618285b1e8014e6e9650C05808e617'
     },
     DerifyDerivative_BTC: {
       56: '',
-      97: '0x19f0F618E717E861A0eaa1b539B91dD795E264A5'
+      97: '0xffe20ae02fA7E808d61a493f4BE6615e3a405278'
     },
     DerifyDerivative_ETH: {
       56: '',
-      97: '0xC8B5268E89698147054b2dCf1184Dcf5C6D83E74'
+      97: '0xA5d35BE0299377749C2F617190c0bc48d7a4eF8f'
     },
     DerifyBroker: {
       56: '',
-      97: '0x5c3b30fB8cf399Eaef89B9f2860f3f910EB25Ea1'
+      97: '0x5ee4b4801aE40391899D702d7B786cF68D8520E9'
     }
   },
   prod: {}

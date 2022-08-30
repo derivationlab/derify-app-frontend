@@ -45,7 +45,7 @@ export const externalLink = (url: string): string => {
 export async function http(request: Request): Promise<HttpResponse> {
   // { signal: controller.signal }
   // return Promise.race([timedOutPromise(6000), fetch(request)])
-  return Promise.race([timedOutPromise(3000), fetch(request)])
+  return Promise.race([timedOutPromise(5000), fetch(request)])
     .then(async (res) => {
       const json = await res.json()
       return json

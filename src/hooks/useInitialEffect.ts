@@ -1,14 +1,10 @@
 import { useEffect } from 'react'
 import { useAccount, useBlockNumber } from 'wagmi'
 
+import { useAppDispatch } from '@/store'
 import { getBrokerBoundDataAsync, getBrokerDataAsync } from '@/store/trader'
 import { getEventsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
-import {
-  getIndicatorDataAsync,
-  getCurrentPositionsAmountDataAsync,
-  getPositionChangeFeeRatioDataAsync
-} from '@/store/constant'
-import { useAppDispatch } from '@/store'
+import { getIndicatorDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
 
 export const useInitialEffect = () => {
   const dispatch = useAppDispatch()
@@ -23,39 +19,35 @@ export const useInitialEffect = () => {
   }, [account?.address, dispatch])
 
   useEffect(() => {
-    /**
-     * spotPrice
-     */
-    dispatch(getTokenSpotPriceAsync())
+    if (blockNumber) {
+      /**
+       * spotPrice
+       */
+      dispatch(getTokenSpotPriceAsync())
 
-    /**
-     bdrfPrice: 0
-     drfBurnt: 1.1903499167890368
-     drfBuyBack: 4008.58768796
-     drfPrice: 0
-     drfStakingApy: 0
-     edrfPrice: 0
-     */
-    dispatch(getIndicatorDataAsync())
+      /**
+       bdrfPrice: 0
+       drfBurnt: 1.1903499167890368
+       drfBuyBack: 4008.58768796
+       drfPrice: 0
+       drfStakingApy: 0
+       edrfPrice: 0
+       */
+      dispatch(getIndicatorDataAsync())
 
-    /**
-     apy,
-     token,
-     longPmrRate,
-     shortPmrRate,
-     price_change_rate
-     */
-    dispatch(getEventsDataAsync())
+      /**
+       apy,
+       token,
+       longPmrRate,
+       shortPmrRate,
+       price_change_rate
+       */
+      dispatch(getEventsDataAsync())
 
-    /**
-     long_position_amount: "0"
-     short_position_amount: "0"
-     */
-    dispatch(getCurrentPositionsAmountDataAsync())
-
-    /**
-     position change fee ratio
-     */
-    dispatch(getPositionChangeFeeRatioDataAsync())
+      /**
+       position change fee ratio
+       */
+      dispatch(getPositionChangeFeeRatioDataAsync())
+    }
   }, [blockNumber])
 }

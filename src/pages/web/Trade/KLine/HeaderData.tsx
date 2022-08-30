@@ -1,33 +1,39 @@
-import React, { FC, useMemo, useContext } from 'react'
-import { useTranslation } from 'react-i18next'
 import { isEmpty } from 'lodash'
-import BN from 'bignumber.js'
+import { useInterval } from 'react-use'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
+import { MobileContext } from '@/context/Mobile'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { useShareMessage } from '@/store/share/hooks'
 import { useConstantData } from '@/store/constant/hooks'
 import { useContractData } from '@/store/contract/hooks'
-import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
-import { MobileContext } from '@/context/Mobile'
+import { nonBigNumberInterception } from '@/utils/tools'
+import { getCurrentPositionsAmountData } from '@/store/constant/helper'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 
 const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
+  const { posFeeRatio } = useConstantData()
+  const { shareMessage } = useShareMessage()
   const { currentPair, pairs } = useContractData()
-  const { positions, posFeeRatio } = useConstantData()
 
-  const memoPositionInfo = useMemo(() => {
-    if (!isEmpty(positions)) {
-      const find = positions.find((p) => p.token === currentPair) ?? {}
-      const { long_position_amount = 0, short_position_amount = 0 } = find
+  const [positionInfo, setPositionInfo] = useState<string[]>(['0', '0'])
+
+  const getPositionsAmountFunc = async (currentPair: string) => {
+    const data = await getCurrentPositionsAmountData(currentPair)
+
+    if (data) {
+      const { long_position_amount = 0, short_position_amount = 0 } = data
       const m = long_position_amount - short_position_amount
       const n = long_position_amount + short_position_amount
       const x = ((m / n) * 100).toFixed(2)
-      return [nonBigNumberInterception(m), n === 0 || m === 0 ? 0 : nonBigNumberInterception(x)]
+
+      setPositionInfo([nonBigNumberInterception(m), n === 0 || m === 0 ? '0' : nonBigNumberInterception(x)])
     }
-    return ['0', '0']
-  }, [positions, currentPair, pairs])
+  }
 
   const memoPosFeeRatio = useMemo(() => {
     if (!isEmpty(posFeeRatio)) {
@@ -45,6 +51,20 @@ const HeaderData: FC = () => {
     ]
   }, [pairs, currentPair])
 
+  useInterval(() => {
+    void getPositionsAmountFunc(currentPair)
+  }, 10000)
+
+  useEffect(() => {
+    setPositionInfo(['0', '0'])
+
+    void getPositionsAmountFunc(currentPair)
+  }, [currentPair])
+
+  useEffect(() => {
+    if (shareMessage && shareMessage?.type.includes('UPDATE_POSITIONS_AMOUNT')) void getPositionsAmountFunc(currentPair)
+  }, [shareMessage])
+
   return (
     <div className="web-trade-kline-header-data">
       <section>
@@ -54,13 +74,13 @@ const HeaderData: FC = () => {
         </h3>
         {!mobile ? (
           <strong>
-            {memoPositionInfo[1]}% ( {memoPositionInfo[0]} {BASE_TOKEN_SYMBOL} )
+            {positionInfo[1]}% ( {positionInfo[0]} {BASE_TOKEN_SYMBOL} )
           </strong>
         ) : (
           <>
-            <strong>{memoPositionInfo[1]}%</strong>
+            <strong>{positionInfo[1]}%</strong>
             <small>
-              ({memoPositionInfo[0]} {BASE_TOKEN_SYMBOL})
+              ({positionInfo[0]} {BASE_TOKEN_SYMBOL})
             </small>
           </>
         )}

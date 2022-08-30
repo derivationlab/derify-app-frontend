@@ -1,19 +1,18 @@
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from 'react'
 import BN from 'bignumber.js'
-import { isArray } from 'lodash'
+import { isArray, isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import days from 'dayjs'
 
-import ThemeContext from '@/context/Theme/Context'
-
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useConstantData } from '@/store/constant/hooks'
-import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 import { getHistoryPositionsData } from '@/api'
+import ThemeContext from '@/context/Theme/Context'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
+import { getCurrentPositionsAmountData } from '@/store/constant/helper'
 
 const time = days().utc().startOf('days').format()
 const base = {
@@ -28,11 +27,11 @@ const base = {
 const PositionVolume: FC = () => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
-  const { positions } = useConstantData()
 
   const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
   const [positionData, setPositionsData] = useState<Record<string, any>[]>([])
+  const [totalAmount, setTotalAmount] = useState<Record<string, any>>(base)
 
   const barColor = useMemo(() => {
     let longColor = '#B0FBD7'
@@ -56,6 +55,8 @@ const PositionVolume: FC = () => {
   }, [theme])
 
   const getHistoryPositionsDataCb = useCallback(async () => {
+    setPositionsData([])
+
     const { data: history } = await getHistoryPositionsData(
       SelectSymbolTokens[pairSelectVal],
       SelectTimesValues[timeSelectVal]
@@ -70,46 +71,52 @@ const PositionVolume: FC = () => {
           short_position_amount: Number(o.short_position_amount)
         }))
         .reverse()
+
       setPositionsData(convert)
     }
   }, [timeSelectVal, pairSelectVal])
 
-  const memoPositionsVolume = useMemo(() => {
-    if (positions.length > 0) {
-      const isAll = SelectSymbolTokens[pairSelectVal] === 'all'
-      const target =
-        positions.find((p) => (p.token === '' && isAll) || p.token === SelectSymbolTokens[pairSelectVal]) ?? base
-      // console.info(target)
-      const long = new BN(target?.long_position_amount ?? 0)
-      const short = new BN(target?.short_position_amount ?? 0)
+  const getTotalPositionsAmountCb = useCallback(async () => {
+    setTotalAmount(base)
+
+    const data = await getCurrentPositionsAmountData(SelectSymbolTokens[pairSelectVal])
+
+    if (data) {
+      const long = new BN(data.long_position_amount)
+      const short = new BN(data.short_position_amount)
       const total = long.plus(short)
 
-      return {
-        long: `${long.div(total).times(100).toFixed(2)}%`,
-        short: `${short.div(total).times(100).toFixed(2)}%`,
-        volume: total.toString(),
-        day_time: time,
-        long_position_amount: target?.long_position_amount ?? 0,
-        short_position_amount: target?.short_position_amount ?? 0
+      if (total.isGreaterThan(0)) {
+        setTotalAmount({
+          long: `${long.div(total).times(100).toFixed(2)}%`,
+          short: `${short.div(total).times(100).toFixed(2)}%`,
+          volume: total.toString(),
+          day_time: time,
+          long_position_amount: data.long_position_amount,
+          short_position_amount: data.short_position_amount
+        })
       }
     }
-    return base
-  }, [pairSelectVal, positions])
+  }, [pairSelectVal])
 
   const memoCombineData = useMemo(() => {
-    return [...positionData, memoPositionsVolume]
-  }, [positionData, memoPositionsVolume])
+    return [...positionData, totalAmount]
+  }, [positionData, totalAmount])
 
   useEffect(() => {
     void getHistoryPositionsDataCb()
   }, [getHistoryPositionsDataCb, timeSelectVal, pairSelectVal])
+
+  useEffect(() => {
+    void getTotalPositionsAmountCb()
+  }, [pairSelectVal])
 
   return (
     <div className="web-dashborad-chart">
       <header className="web-dashborad-chart-header">
         <h3>
           {t('Dashboard.PositionVolume', 'Position Volume')} :
-          <BalanceShow value={memoPositionsVolume?.volume} unit={BASE_TOKEN_SYMBOL} format={false} />
+          <BalanceShow value={totalAmount?.volume} unit={BASE_TOKEN_SYMBOL} format={false} />
         </h3>
         <aside>
           <Select
@@ -128,10 +135,10 @@ const PositionVolume: FC = () => {
         <div className="web-dashborad-chart-position-tip">
           {/*{positionVolume.long}*/}
           <span className="long">
-            Long<i>{memoPositionsVolume?.long}</i>
+            Long<i>{totalAmount?.long}</i>
           </span>
           <span className="short">
-            Short<i>{memoPositionsVolume?.short}</i>
+            Short<i>{totalAmount?.short}</i>
           </span>
         </div>
         <BarChart

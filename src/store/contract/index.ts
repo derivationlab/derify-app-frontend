@@ -46,8 +46,7 @@ export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
         const short = new BN(shortDrfPmrRate).plus(shortUsdPmrRate)
         const shortPmrRate = nonBigNumberInterception(String(short))
 
-        const price = String(price_change_rate)
-        const changeRate = nonBigNumberInterception(price, 4)
+        const changeRate = nonBigNumberInterception(String(price_change_rate), 4)
 
         const apyMax = Math.max(Number(longPmrRate), Number(shortPmrRate))
 

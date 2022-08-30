@@ -55,7 +55,7 @@ const TradeHistory: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (shareMessage && shareMessage?.extraType === 'UPDATE_TRADE_HISTORY') void getTraderTradeFlowFunc()
+    if (shareMessage && shareMessage?.type.includes('UPDATE_TRADE_HISTORY')) void getTraderTradeFlowFunc()
   }, [shareMessage])
 
   return (

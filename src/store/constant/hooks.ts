@@ -7,7 +7,6 @@ export const useConstantData = (): ConstantState => {
       DRFPool: state.constant.DRFPool,
       bBUSDPool: state.constant.bBUSDPool,
       indicator: state.constant.indicator,
-      positions: state.constant.positions,
       posFeeRatio: state.constant.posFeeRatio
     }
   })

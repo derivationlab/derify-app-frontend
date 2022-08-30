@@ -5,7 +5,7 @@ let combine = {}
 pairs.forEach((pair) => {
   combine = { ...combine, [pair.name]: pair.token }
 })
-console.info(combine)
+
 export const SymbolTokens: Record<string, string> = combine
 
 export const SymbolOptions = Object.keys(SymbolTokens)

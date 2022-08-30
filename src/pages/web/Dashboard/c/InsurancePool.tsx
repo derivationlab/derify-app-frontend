@@ -12,6 +12,8 @@ import { AreaChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
+const time = days().utc().startOf('days').format()
+
 const InsurancePool: FC = () => {
   const { t } = useTranslation()
 
@@ -32,9 +34,7 @@ const InsurancePool: FC = () => {
   const getInsuranceVolumeFunc = async () => {
     const { data: current } = await getCurrentInsuranceData()
 
-    const day_time = days().utc().startOf('days').format()
-
-    setInsuranceVolume({ ...current, day_time })
+    setInsuranceVolume({ ...current, day_time: time })
   }
 
   const memoCombineData = useMemo(() => [...insuranceData, insuranceVolume], [insuranceData, insuranceVolume])
@@ -44,6 +44,8 @@ const InsurancePool: FC = () => {
   }, 10000)
 
   useEffect(() => {
+    setInsuranceData([])
+
     void getInsuranceDataCb()
   }, [getInsuranceDataCb, timeSelectVal])
 

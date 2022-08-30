@@ -77,7 +77,7 @@ const PositionVolume: FC = () => {
     }
   }, [timeSelectVal, pairSelectVal])
 
-  const getPositionsAmountFunc = useCallback(async () => {
+  const getPositionsAmountFunc = async () => {
     const data = await getCurrentPositionsAmountData(SelectSymbolTokens[pairSelectVal])
 
     if (data) {
@@ -96,7 +96,7 @@ const PositionVolume: FC = () => {
         })
       }
     }
-  }, [pairSelectVal])
+  }
 
   const memoCombineData = useMemo(() => {
     return [...positionData, totalAmount]
@@ -107,6 +107,8 @@ const PositionVolume: FC = () => {
   }, 10000)
 
   useEffect(() => {
+    setPositionsData([])
+
     void getHistoryPositionsDataCb()
   }, [getHistoryPositionsDataCb, timeSelectVal, pairSelectVal])
 

@@ -12,6 +12,8 @@ import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
+const time = days().utc().startOf('days').format()
+
 const TradingVolume: FC = () => {
   const { t } = useTranslation()
 
@@ -33,27 +35,29 @@ const TradingVolume: FC = () => {
     }
   }, [timeSelectVal, pairSelectVal])
 
-  const getTradingVolumeDataCb = useCallback(async () => {
+  const getTradingVolumeDataFunc = async () => {
     const { data: volume } = await getCurrentTradingAmount(SelectSymbolTokens[pairSelectVal])
 
-    const day_time = days().utc().startOf('days').format()
-
-    if (isArray(volume)) setTradingVolume([{ ...volume[0], day_time }])
-  }, [pairSelectVal])
+    if (isArray(volume)) setTradingVolume([{ ...volume[0], day_time: time }])
+  }
 
   const memoCombineData = useMemo(() => [...tradingData, ...tradingVolume], [tradingData, tradingVolume])
 
   useInterval(() => {
-    void getTradingVolumeDataCb()
+    void getTradingVolumeDataFunc()
   }, 10000)
 
   useEffect(() => {
+    setTradingData([])
+
     void getHistoryTradingDataCb()
   }, [getHistoryTradingDataCb, timeSelectVal, pairSelectVal])
 
   useEffect(() => {
-    void getTradingVolumeDataCb()
-  }, [])
+    setTradingVolume([])
+
+    void getTradingVolumeDataFunc()
+  }, [pairSelectVal])
 
   return (
     <div className="web-dashborad-chart">

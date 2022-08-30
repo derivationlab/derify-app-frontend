@@ -2,8 +2,8 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import days from 'dayjs'
+import { useInterval } from 'react-use'
 
-import { useBlockNumber } from 'wagmi'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
 import { getCurrentInsuranceData, getHistoryInsuranceData } from '@/api'
@@ -14,7 +14,6 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const InsurancePool: FC = () => {
   const { t } = useTranslation()
-  const { data: blockNumber } = useBlockNumber({ watch: true })
 
   const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
   const [insuranceData, setInsuranceData] = useState<Record<string, any>[]>([])
@@ -40,13 +39,17 @@ const InsurancePool: FC = () => {
 
   const memoCombineData = useMemo(() => [...insuranceData, insuranceVolume], [insuranceData, insuranceVolume])
 
+  useInterval(() => {
+    void getInsuranceVolumeFunc()
+  }, 10000)
+
   useEffect(() => {
     void getInsuranceDataCb()
   }, [getInsuranceDataCb, timeSelectVal])
 
   useEffect(() => {
     void getInsuranceVolumeFunc()
-  }, [blockNumber])
+  }, [])
 
   return (
     <div className="web-dashborad-chart">

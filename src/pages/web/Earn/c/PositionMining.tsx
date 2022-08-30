@@ -1,7 +1,8 @@
 import { useSigner } from 'wagmi'
 import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
-import React, { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useInterval } from 'react-use'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Earn from '@/class/Earn'
@@ -31,11 +32,11 @@ const PositionMining: FC = () => {
 
   const [totalAmount, setTotalAmount] = useState<Record<string, any>>({})
 
-  const getTotalPositionsAmountCb = useCallback(async () => {
+  const getPositionsAmountFunc = async () => {
     const data = await getCurrentPositionsAmountData('all')
 
     if (data) setTotalAmount(data)
-  }, [])
+  }
 
   const memoPositionApy = useMemo(() => {
     if (pairsLoaded) {
@@ -88,8 +89,12 @@ const PositionMining: FC = () => {
     window.toast.dismiss(toast)
   }
 
+  useInterval(() => {
+    void getPositionsAmountFunc()
+  }, 10000)
+
   useEffect(() => {
-    void getTotalPositionsAmountCb()
+    void getPositionsAmountFunc()
   }, [])
 
   return (

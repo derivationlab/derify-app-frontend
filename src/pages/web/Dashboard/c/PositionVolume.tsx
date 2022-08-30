@@ -1,18 +1,19 @@
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from 'react'
 import BN from 'bignumber.js'
-import { isArray, isEmpty } from 'lodash'
+import { useInterval } from 'react-use'
+import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import days from 'dayjs'
 
 import { getHistoryPositionsData } from '@/api'
 import ThemeContext from '@/context/Theme/Context'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { getCurrentPositionsAmountData } from '@/store/constant/helper'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
-import { getCurrentPositionsAmountData } from '@/store/constant/helper'
 
 const time = days().utc().startOf('days').format()
 const base = {
@@ -76,9 +77,7 @@ const PositionVolume: FC = () => {
     }
   }, [timeSelectVal, pairSelectVal])
 
-  const getTotalPositionsAmountCb = useCallback(async () => {
-    setTotalAmount(base)
-
+  const getPositionsAmountFunc = useCallback(async () => {
     const data = await getCurrentPositionsAmountData(SelectSymbolTokens[pairSelectVal])
 
     if (data) {
@@ -103,12 +102,18 @@ const PositionVolume: FC = () => {
     return [...positionData, totalAmount]
   }, [positionData, totalAmount])
 
+  useInterval(() => {
+    void getPositionsAmountFunc()
+  }, 10000)
+
   useEffect(() => {
     void getHistoryPositionsDataCb()
   }, [getHistoryPositionsDataCb, timeSelectVal, pairSelectVal])
 
   useEffect(() => {
-    void getTotalPositionsAmountCb()
+    setTotalAmount(base)
+
+    void getPositionsAmountFunc()
   }, [pairSelectVal])
 
   return (

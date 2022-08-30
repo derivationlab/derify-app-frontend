@@ -1,8 +1,8 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { isArray } from 'lodash'
-import { useBlockNumber } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import days from 'dayjs'
+import { useInterval } from 'react-use'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useContractData } from '@/store/contract/hooks'
@@ -15,7 +15,6 @@ import { BarChart } from '@/components/common/Chart'
 
 const TradingVolume: FC = () => {
   const { t } = useTranslation()
-  const { data: blockNumber } = useBlockNumber({ watch: true })
   const { currentPair } = useContractData()
 
   const [tradingData, setTradingData] = useState<Record<string, any>[]>([])
@@ -46,13 +45,17 @@ const TradingVolume: FC = () => {
 
   const memoCombineData = useMemo(() => [...tradingData, ...tradingVolume], [tradingData, tradingVolume])
 
+  useInterval(() => {
+    void getTradingVolumeDataCb()
+  }, 10000)
+
   useEffect(() => {
     void getHistoryTradingDataCb()
   }, [getHistoryTradingDataCb, timeSelectVal, pairSelectVal, currentPair])
 
   useEffect(() => {
     void getTradingVolumeDataCb()
-  }, [blockNumber])
+  }, [])
 
   return (
     <div className="web-dashborad-chart">

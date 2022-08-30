@@ -48,14 +48,10 @@ const TradingVolume: FC = () => {
   }, 10000)
 
   useEffect(() => {
-    setTradingData([])
-
     void getHistoryTradingDataCb()
   }, [getHistoryTradingDataCb, timeSelectVal, pairSelectVal])
 
   useEffect(() => {
-    setTradingVolume([])
-
     void getTradingVolumeDataFunc()
   }, [pairSelectVal])
 

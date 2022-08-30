@@ -44,8 +44,6 @@ const InsurancePool: FC = () => {
   }, 10000)
 
   useEffect(() => {
-    setInsuranceData([])
-
     void getInsuranceDataCb()
   }, [getInsuranceDataCb, timeSelectVal])
 

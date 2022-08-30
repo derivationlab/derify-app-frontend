@@ -56,8 +56,6 @@ const PositionVolume: FC = () => {
   }, [theme])
 
   const getHistoryPositionsDataCb = useCallback(async () => {
-    setPositionsData([])
-
     const { data: history } = await getHistoryPositionsData(
       SelectSymbolTokens[pairSelectVal],
       SelectTimesValues[timeSelectVal]
@@ -107,8 +105,6 @@ const PositionVolume: FC = () => {
   }, 10000)
 
   useEffect(() => {
-    setPositionsData([])
-
     void getHistoryPositionsDataCb()
   }, [getHistoryPositionsDataCb, timeSelectVal, pairSelectVal])
 

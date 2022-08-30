@@ -23,9 +23,15 @@ const AddTokenButton: FC = () => {
   })
 
   const tokens: Record<string, any>[] = [
-    { ...tokensInfo.DRF, image: '', direction: 0 },
-    { ...tokensInfo.eDRF, image: '', direction: 0 },
-    { ...tokensInfo.bBUSD, image: '', direction: 1 }
+    // todo token address???
+    {
+      ...tokensInfo.DRF,
+      image: '',
+      direction: 0,
+      swap: 'swap?inputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&outputCurrency=0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F'
+    }
+    // { ...tokensInfo.eDRF, image: '', direction: 0 },
+    // { ...tokensInfo.bBUSD, image: '', direction: 1 }
   ]
 
   const addToken = (token: Record<string, any>) => {
@@ -36,7 +42,7 @@ const AddTokenButton: FC = () => {
     if (token.direction === 'Sell') {
       window.open(`${PANCAKE_SWAP_URL}swap?inputCurrency=${getAddress(token.address)}`)
     } else {
-      window.open(`${PANCAKE_SWAP_URL}swap?outputCurrency=${getAddress(token.address)}`)
+      window.open(`${PANCAKE_SWAP_URL}${token.swap}`)
     }
     setMenuStatus(false)
   }

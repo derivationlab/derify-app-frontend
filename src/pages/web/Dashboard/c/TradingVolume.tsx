@@ -1,21 +1,19 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { isArray } from 'lodash'
-import { useTranslation } from 'react-i18next'
 import days from 'dayjs'
+import { isArray } from 'lodash'
 import { useInterval } from 'react-use'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useContractData } from '@/store/contract/hooks'
 import { getCurrentTradingAmount, getHistoryTradingData } from '@/api'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 
+import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { BarChart } from '@/components/common/Chart'
 
 const TradingVolume: FC = () => {
   const { t } = useTranslation()
-  const { currentPair } = useContractData()
 
   const [tradingData, setTradingData] = useState<Record<string, any>[]>([])
   const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
@@ -36,12 +34,12 @@ const TradingVolume: FC = () => {
   }, [timeSelectVal, pairSelectVal])
 
   const getTradingVolumeDataCb = useCallback(async () => {
-    const { data: volume } = await getCurrentTradingAmount(currentPair)
+    const { data: volume } = await getCurrentTradingAmount(SelectSymbolTokens[pairSelectVal])
 
     const day_time = days().utc().startOf('days').format()
 
     if (isArray(volume)) setTradingVolume([{ ...volume[0], day_time }])
-  }, [currentPair])
+  }, [pairSelectVal])
 
   const memoCombineData = useMemo(() => [...tradingData, ...tradingVolume], [tradingData, tradingVolume])
 
@@ -51,7 +49,7 @@ const TradingVolume: FC = () => {
 
   useEffect(() => {
     void getHistoryTradingDataCb()
-  }, [getHistoryTradingDataCb, timeSelectVal, pairSelectVal, currentPair])
+  }, [getHistoryTradingDataCb, timeSelectVal, pairSelectVal])
 
   useEffect(() => {
     void getTradingVolumeDataCb()

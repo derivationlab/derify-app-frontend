@@ -60,7 +60,7 @@ const AddTokenButton: FC = () => {
             </li>
           ))}
           <hr />
-          {tokens.slice(0,1).map((token, index) => (
+          {tokens.slice(0, 1).map((token, index) => (
             <li key={`buy-${index}`} onClick={() => buyToken(token)}>
               {token.direction === 0
                 ? t('Nav.AddToken.Buy', 'Add Token', { token: token.symbol })

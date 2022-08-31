@@ -29,9 +29,9 @@ const AddTokenButton: FC = () => {
       image: '',
       direction: 0,
       swap: 'swap?inputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&outputCurrency=0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F'
-    }
-    // { ...tokensInfo.eDRF, image: '', direction: 0 },
-    // { ...tokensInfo.bBUSD, image: '', direction: 1 }
+    },
+    { ...tokensInfo.eDRF, image: '', direction: 0 },
+    { ...tokensInfo.bBUSD, image: '', direction: 1 }
   ]
 
   const addToken = (token: Record<string, any>) => {
@@ -60,7 +60,7 @@ const AddTokenButton: FC = () => {
             </li>
           ))}
           <hr />
-          {tokens.map((token, index) => (
+          {tokens.slice(0,1).map((token, index) => (
             <li key={`buy-${index}`} onClick={() => buyToken(token)}>
               {token.direction === 0
                 ? t('Nav.AddToken.Buy', 'Add Token', { token: token.symbol })

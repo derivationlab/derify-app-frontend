@@ -40,7 +40,7 @@ const PositionMining: FC = () => {
 
   const memoPositionApy = useMemo(() => {
     if (pairsLoaded) {
-      const apy = pairs.map((d) => d.apy)
+      const apy = pairs.map((d) => d.apy ?? 0)
       const max = String(Math.max.apply(null, apy) * 100)
       return nonBigNumberInterception(max)
     }

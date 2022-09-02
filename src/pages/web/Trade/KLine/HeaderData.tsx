@@ -44,10 +44,12 @@ const HeaderData: FC = () => {
   }, [posFeeRatio, currentPair, pairs])
 
   const memoPositionApy = useMemo(() => {
-    const find = pairs.find((p) => p.token === currentPair) ?? { longPmrRate: 0, shortPmrRate: 0 }
+    const find = pairs.find((p) => p.token === currentPair)
+    const longPmrRate = find?.longPmrRate ?? 0
+    const shortPmrRate = find?.shortPmrRate ?? 0
     return [
-      Number(find.longPmrRate) <= 0 ? '--' : ((find.longPmrRate ?? 0) * 100).toFixed(2),
-      Number(find.shortPmrRate) <= 0 ? '--' : ((find.shortPmrRate ?? 0) * 100).toFixed(2)
+      Number(longPmrRate) <= 0 ? '--' : (longPmrRate * 100).toFixed(2),
+      Number(shortPmrRate) <= 0 ? '--' : (longPmrRate * 100).toFixed(2)
     ]
   }, [pairs, currentPair])
 

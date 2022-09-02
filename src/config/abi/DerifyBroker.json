@@ -150,6 +150,12 @@
       {
         "indexed": false,
         "internalType": "uint256",
+        "name": "accumulatedReward",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "timestamp",
         "type": "uint256"
       }
@@ -352,6 +358,12 @@
         "indexed": false,
         "internalType": "int256",
         "name": "balance",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "accumulatedReward",
         "type": "int256"
       },
       {
@@ -800,6 +812,11 @@
       {
         "internalType": "uint256[]",
         "name": "validPeriodBlocks",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "lastUpdatedBlockNumbers",
         "type": "uint256[]"
       }
     ],

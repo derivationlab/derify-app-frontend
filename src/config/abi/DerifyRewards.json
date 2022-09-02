@@ -13,7 +13,7 @@
       },
       {
         "internalType": "address",
-        "name": "_tokenBDRF",
+        "name": "_tokenBBUSD",
         "type": "address"
       },
       {
@@ -84,7 +84,7 @@
         "type": "uint256"
       }
     ],
-    "name": "BankBdrfPoolUpdate",
+    "name": "BankBondPoolUpdate",
     "type": "event"
   },
   {
@@ -148,7 +148,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "newTokenBDRF",
+        "name": "newtokenBBUSD",
         "type": "address"
       },
       {
@@ -644,7 +644,7 @@
   },
   {
     "inputs": [],
-    "name": "bankBdrfPool",
+    "name": "bankBondPool",
     "outputs": [
       {
         "internalType": "uint256",
@@ -884,7 +884,7 @@
   },
   {
     "inputs": [],
-    "name": "tokenBDRF",
+    "name": "tokenBBUSD",
     "outputs": [
       {
         "internalType": "address",
@@ -987,7 +987,7 @@
       },
       {
         "internalType": "address",
-        "name": "_tokenBDRF",
+        "name": "_tokenBBUSD",
         "type": "address"
       },
       {

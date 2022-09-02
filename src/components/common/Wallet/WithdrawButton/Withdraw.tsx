@@ -91,7 +91,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             {withdrawInfo?.bdrfAmount > 0 && (
               <address>
                 <em>{withdrawInfo?.usdAmount}</em> {BASE_TOKEN_SYMBOL}
-                <em>, {withdrawInfo?.bdrfAmount}</em> bDRF
+                <em>, {withdrawInfo?.bdrfAmount}</em> bBUSD
               </address>
             )}
             <address>

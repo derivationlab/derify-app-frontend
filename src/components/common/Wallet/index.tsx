@@ -37,7 +37,7 @@ const WalletDialog: FC<Props> = ({ visible, onClose, onClick }) => {
       <div className="web-wallet-dialog">
         <p className="web-wallet-dialog-tips">
           {t('Nav.CW.TitleTip')}{' '}
-          <span onClick={() => window.open('https://dev.derify.finance/terms')}>
+          <span onClick={() => window.open('https://derify.finance/terms')}>
             {t('Nav.CW.TermsOfService', 'Terms of Service.')}
           </span>
         </p>

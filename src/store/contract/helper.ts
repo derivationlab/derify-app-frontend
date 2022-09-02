@@ -1,19 +1,14 @@
+import BN from 'bignumber.js'
 import { times, isEmpty } from 'lodash'
 import type { BigNumberish } from '@ethersproject/bignumber'
-import BN from 'bignumber.js'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
-import { getTraderVariablesData } from '@/store/trader/helper'
-import { nonBigNumberInterception, safeInterceptionValues, toHexString } from '@/utils/tools'
-import { getDerifyExchangeContract } from '@/utils/contractHelpers'
-import { multicall } from '@/utils/multicall'
 
-import {
-  getBTCAddress,
-  getETHAddress,
-  getDerifyDerivativeBTCAddress,
-  getDerifyDerivativeETHAddress
-} from '@/utils/addressHelpers'
+import pairs from '@/config/pairs'
+import { multicall } from '@/utils/multicall'
+import { getTraderVariablesData } from '@/store/trader/helper'
+import { getDerifyExchangeContract } from '@/utils/contractHelpers'
+import { nonBigNumberInterception, safeInterceptionValues, toHexString } from '@/utils/tools'
+
+import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 export enum PositionSide {
   Long,
@@ -27,30 +22,8 @@ export enum OrderTypes {
   StopLoss
 }
 
-// deps: enum OrderTypes
-export const OrderDesc = [
-  ['Open', 'Limit'], // Limit
-  ['Close', 'TP'], // StopProfit
-  ['Close', 'SL'] // StopLoss
-]
-
-export const basePairs = [
-  {
-    name: `BTC-${BASE_TOKEN_SYMBOL}`,
-    token: getBTCAddress(),
-    symbol: 'BTC',
-    contract: getDerifyDerivativeBTCAddress()
-  },
-  {
-    name: `ETH-${BASE_TOKEN_SYMBOL}`,
-    token: getETHAddress(),
-    symbol: 'ETH',
-    contract: getDerifyDerivativeETHAddress()
-  }
-]
-
 export const getPairName = (address: string): string => {
-  const find = basePairs.find((pair) => pair.token === address.toLowerCase())
+  const find = pairs.find((pair) => pair.token === address.toLowerCase())
   return find?.name ?? ''
 }
 
@@ -59,7 +32,7 @@ export const getPairBaseCoinName = (address: string): string => {
 }
 
 export const getTokenSpotPrice = async (): Promise<Record<string, string>[]> => {
-  const calls = times(basePairs.length, (index) => ({ address: basePairs[index].contract, name: 'getSpotPrice' }))
+  const calls = times(pairs.length, (index) => ({ address: pairs[index].contract, name: 'getSpotPrice' }))
 
   try {
     const response = await multicall(DerifyDerivativeAbi, calls)
@@ -67,15 +40,15 @@ export const getTokenSpotPrice = async (): Promise<Record<string, string>[]> => 
     if (!isEmpty(response)) {
       return response.map(([price]: [BigNumberish], index: number) => {
         return {
-          ...basePairs[index],
+          ...pairs[index],
           spotPrice: safeInterceptionValues(price, 8)
         }
       })
     }
-    return basePairs
+    return pairs
   } catch (e) {
     console.info(e)
-    return basePairs
+    return pairs
   }
 }
 
@@ -131,8 +104,8 @@ const calcStopLossOrStopProfitPrice = ({ isUsed, stopPrice }: Record<string, any
 export const getMyPositionsData = async (trader: string): Promise<Record<string, any>[]> => {
   const outputMyOrders: Record<string, any>[] = []
   const outputMyPosition: Record<string, any>[] = []
-  const calls = times(basePairs.length, (index) => ({
-    address: basePairs[index].contract,
+  const calls = times(pairs.length, (index) => ({
+    address: pairs[index].contract,
     name: 'getTraderDerivativePositions',
     params: [trader]
   }))
@@ -179,7 +152,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
 
           outputMyPosition.push({
             volume,
-            ...basePairs[i],
+            ...pairs[i],
             ...longPositionView,
             side: PositionSide.Long,
             size: safeInterceptionValues(String(long.size), 8),
@@ -208,7 +181,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
 
           outputMyPosition.push({
             volume,
-            ...basePairs[i],
+            ...pairs[i],
             ...shortPositionView,
             side: PositionSide.Short,
             size: safeInterceptionValues(String(short.size), 8),
@@ -238,7 +211,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
 
             outputMyOrders.push({
               volume,
-              ...basePairs[i],
+              ...pairs[i],
               side: PositionSide.Long,
               size: safeInterceptionValues(String(order.size), 4),
               price: safeInterceptionValues(String(order.price)),
@@ -257,7 +230,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
 
             outputMyOrders.push({
               volume,
-              ...basePairs[i],
+              ...pairs[i],
               side: PositionSide.Short,
               size: safeInterceptionValues(String(order.size), 4),
               price: safeInterceptionValues(String(order.price)),
@@ -275,7 +248,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
 
           outputMyOrders.push({
             volume,
-            ...basePairs[i],
+            ...pairs[i],
             side: PositionSide.Long,
             size: safeInterceptionValues(String(long.size), 4),
             price: safeInterceptionValues(String(longOrderStopProfitPosition.stopPrice)),
@@ -295,7 +268,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
 
           outputMyOrders.push({
             volume,
-            ...basePairs[i],
+            ...pairs[i],
             side: PositionSide.Long,
             size: safeInterceptionValues(String(long.size), 4),
             price: safeInterceptionValues(String(longOrderStopLossPosition.stopPrice)),
@@ -312,7 +285,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
 
           outputMyOrders.push({
             volume,
-            ...basePairs[i],
+            ...pairs[i],
             side: PositionSide.Short,
             size: safeInterceptionValues(String(short.size), 4),
             price: safeInterceptionValues(String(shortOrderStopLossPosition.stopPrice)),
@@ -329,7 +302,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
 
           outputMyOrders.push({
             volume,
-            ...basePairs[i],
+            ...pairs[i],
             side: PositionSide.Short,
             size: safeInterceptionValues(String(short.size), 4),
             price: safeInterceptionValues(String(shortOrderStopProfitPosition.stopPrice)),

@@ -4,7 +4,7 @@ import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
 import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { getBDRFAddress } from '@/utils/addressHelpers'
+import { getbBUSDAddress } from '@/utils/addressHelpers'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -20,7 +20,7 @@ interface Props {
 const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
-  const { balance } = useTokenBalance(getBDRFAddress())
+  const { balance } = useTokenBalance(getbBUSDAddress())
 
   const [depositAmount, setDepositAmount] = useState<string>('0')
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
@@ -42,14 +42,14 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   return (
-    <Dialog width="540px" visible={visible} title={t('Earn.bDRFPool.DepositbDRF', 'Deposit bDRF')} onClose={onClose}>
+    <Dialog width="540px" visible={visible} title={t('Earn.bDRFPool.DepositbDRF', 'Deposit bBUSD')} onClose={onClose}>
       <div className="web-deposit-dialog">
         <div className="web-deposit-dialog-info">
           <div className="wallet">
             <dl>
               <dt>{t('Earn.bDRFPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balance} unit="bDRF" />
+                <BalanceShow value={balance} unit="bBUSD" />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
@@ -58,7 +58,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <AmountInput
               max={balance}
               title={t('Earn.bDRFPool.AmountToDeposit', 'Amount to deposit')}
-              unit="bDRF"
+              unit="bBUSD"
               onChange={onChangeEv}
             />
           </div>

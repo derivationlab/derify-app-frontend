@@ -1,6 +1,8 @@
 import { useSigner } from 'wagmi'
 import BN from 'bignumber.js'
-import React, { FC, useContext, useMemo } from 'react'
+import { isEmpty } from 'lodash'
+import { useInterval } from 'react-use'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Earn from '@/class/Earn'
@@ -9,8 +11,8 @@ import { MobileContext } from '@/context/Mobile'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTraderData } from '@/store/trader/hooks'
 import { nonBigNumberInterception } from '@/utils/tools'
-import { useConstantData } from '@/store/constant/hooks'
 import { useContractData } from '@/store/contract/hooks'
+import { getCurrentPositionsAmountData } from '@/store/constant/helper'
 import { getPMRewardDataAsync, getStakingInfoDataAsync } from '@/store/actions'
 
 import Button from '@/components/common/Button'
@@ -22,12 +24,19 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 const PositionMining: FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { data: signer } = useSigner()
   const { trader } = useTraderData()
+  const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
-  const { positions } = useConstantData()
   const { pairs, pairsLoaded } = useContractData()
   const { traderWithdrawPMRewards } = Earn
+
+  const [totalAmount, setTotalAmount] = useState<Record<string, any>>({})
+
+  const getPositionsAmountFunc = async () => {
+    const data = await getCurrentPositionsAmountData('all')
+
+    if (data) setTotalAmount(data)
+  }
 
   const memoPositionApy = useMemo(() => {
     if (pairsLoaded) {
@@ -35,11 +44,12 @@ const PositionMining: FC = () => {
       const max = String(Math.max.apply(null, apy) * 100)
       return nonBigNumberInterception(max)
     }
+    return '0'
   }, [pairsLoaded, pairs])
 
   const memoPositionsAm = useMemo(() => {
-    if (positions[0]) {
-      const { long_position_amount, short_position_amount } = positions[0]
+    if (!isEmpty(totalAmount)) {
+      const { long_position_amount, short_position_amount } = totalAmount
       if (long_position_amount && short_position_amount) {
         const m = new BN(long_position_amount)
         const n = new BN(short_position_amount)
@@ -48,7 +58,7 @@ const PositionMining: FC = () => {
       }
     }
     return '0'
-  }, [positions])
+  }, [totalAmount])
 
   const memoDisabled = useMemo(() => {
     const m = new BN(trader?.drfBalance ?? 0)
@@ -78,6 +88,14 @@ const PositionMining: FC = () => {
 
     window.toast.dismiss(toast)
   }
+
+  useInterval(() => {
+    void getPositionsAmountFunc()
+  }, 10000)
+
+  useEffect(() => {
+    void getPositionsAmountFunc()
+  }, [])
 
   return (
     <div className="web-eran-item">

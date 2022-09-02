@@ -18,7 +18,7 @@ interface Props {
 
 const SymbolSelect: FC<Props> = ({ onToggle }) => {
   const dispatch = useAppDispatch()
-  const { pairs, currentPair } = useContractData()
+  const { pairs } = useContractData()
   const { mobile } = useContext(MobileContext)
 
   const ref = useRef(null)

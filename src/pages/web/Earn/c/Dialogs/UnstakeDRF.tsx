@@ -3,8 +3,6 @@ import { useAccount } from 'wagmi'
 import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
-import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { getBUSDAddress } from '@/utils/addressHelpers'
 import { useTraderData } from '@/store/trader/hooks'
 
 import Dialog from '@/components/common/Dialog'

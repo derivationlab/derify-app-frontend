@@ -2,17 +2,14 @@ import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 import type { Signer } from 'ethers'
 
+import pairs from '@/config/pairs'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { PriceType } from '@/pages/web/Trade/Bench'
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import {
-  getDerifyExchangeContract,
-  getDerifyDerivativeBTCContract,
-  getDerifyDerivativeETHContract
-} from '@/utils/contractHelpers'
+import { getDUSDAddress, getDerifyExchangeAddress } from '@/utils/addressHelpers'
+import { getDerifyExchangeContract, getDerifyDerivativePairContract } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
-import { getBTCAddress, getBUSDAddress, getDerifyExchangeAddress, getETHAddress } from '@/utils/addressHelpers'
 
 class Trader {
   traderWithdrawMargin = async (signer: Signer, amount: string): Promise<boolean> => {
@@ -36,7 +33,7 @@ class Trader {
 
     try {
       const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyExchangeAddress(), getBUSDAddress(), _amount)
+      const approve = await setAllowance(signer, getDerifyExchangeAddress(), getDUSDAddress(), _amount)
 
       if (!approve) return false
 
@@ -51,14 +48,13 @@ class Trader {
   }
 
   calcClosePositionTradingFee = async (symbol: string, token: string, amount: string, spotPrice: string) => {
-    const contracts = {
-      [getBTCAddress()]: getDerifyDerivativeBTCContract(),
-      [getETHAddress()]: getDerifyDerivativeETHContract()
-    }
+    const pair = pairs.find((pair) => pair.token === token)
+    const contract = getDerifyDerivativePairContract(pair!.contract)
+
     const _amount = new BN(amount)
     const size = symbol === BASE_TOKEN_SYMBOL ? _amount.div(spotPrice) : _amount
 
-    const ratio = await contracts[token].tradingFeeRatio()
+    const ratio = await contract.tradingFeeRatio()
 
     const _ratio = safeInterceptionValues(String(ratio), 8)
     // console.info(`size:${String(size)}`, `price:${spotPrice}`)
@@ -82,13 +78,11 @@ class Trader {
     // console.info(`size:${size}`)
     let nakedPositionTradingPairAfterClosing_BN: BN = new BN(0)
 
-    const contracts = {
-      [getBTCAddress()]: getDerifyDerivativeBTCContract(),
-      [getETHAddress()]: getDerifyDerivativeETHContract()
-    }
+    const pair = pairs.find((pair) => pair.token === token)
+    const contract = getDerifyDerivativePairContract(pair!.contract)
 
-    const longTotalSize = await contracts[token].longTotalSize()
-    const shortTotalSize = await contracts[token].shortTotalSize()
+    const longTotalSize = await contract.longTotalSize()
+    const shortTotalSize = await contract.shortTotalSize()
 
     const longTotalSize_BN = new BN(longTotalSize._hex)
     const shortTotalSize_BN = new BN(shortTotalSize._hex)
@@ -114,7 +108,7 @@ class Trader {
       .minus(nakedPositionTradingPairBeforeClosing_BN.abs())
     // console.info(`nakedPositionDiff:${String(nakedPositionDiff_BN)}`)
 
-    const tradingFeesBeforeClosing = await contracts[token].getPositionChangeFeeRatio()
+    const tradingFeesBeforeClosing = await contract.getPositionChangeFeeRatio()
     const tradingFeesBeforeClosing_BN = new BN(tradingFeesBeforeClosing._hex)
 
     const tradingFeesAfterClosing = nakedPositionTradingPairBeforeClosing_BN.isEqualTo(0)
@@ -126,7 +120,7 @@ class Trader {
     const radioSum = tradingFeesAfterClosing.abs().plus(tradingFeesBeforeClosing_BN.abs())
     // console.info(`radioSum:${String(radioSum)}`)
 
-    const fee = await contracts[token].getPositionChangeFee(String(nakedPositionDiff_BN), String(radioSum))
+    const fee = await contract.getPositionChangeFee(String(nakedPositionDiff_BN), String(radioSum))
     // console.info(String(fee), safeInterceptionValues(fee, 8), 8)
 
     return safeInterceptionValues(String(fee))
@@ -170,11 +164,8 @@ class Trader {
     takeProfitPrice: number,
     stopLossPrice: number
   ): Promise<boolean> => {
-    const contracts = {
-      [getBTCAddress()]: getDerifyDerivativeBTCContract(signer),
-      [getETHAddress()]: getDerifyDerivativeETHContract(signer)
-    }
-    const contract = contracts[token]
+    const pair = pairs.find((pair) => pair.token === token)
+    const contract = getDerifyDerivativePairContract(pair!.contract)
 
     const job = this.calcOrderOperateType(takeProfitPrice, stopLossPrice)
 
@@ -367,18 +358,16 @@ class Trader {
     timestamp: string
   ): Promise<boolean> => {
     let response: any = null
-    const contracts = {
-      [getBTCAddress()]: getDerifyDerivativeBTCContract(signer),
-      [getETHAddress()]: getDerifyDerivativeETHContract(signer)
-    }
+    const pair = pairs.find((pair) => pair.token === token)
+    const contract = getDerifyDerivativePairContract(pair!.contract, signer)
 
     try {
       if (orderType === OrderTypes.Limit) {
-        const gasLimit = await estimateGas(contracts[token], 'cancelOrderedLimitPosition', [side, timestamp], 0)
-        response = await contracts[token].cancelOrderedLimitPosition(side, timestamp, { gasLimit })
+        const gasLimit = await estimateGas(contract, 'cancelOrderedLimitPosition', [side, timestamp], 0)
+        response = await contract.cancelOrderedLimitPosition(side, timestamp, { gasLimit })
       } else {
-        const gasLimit = await estimateGas(contracts[token], 'cancelOrderedStopPosition', [orderType - 1, side], 0)
-        response = await contracts[token].cancelOrderedStopPosition(orderType - 1, side, { gasLimit })
+        const gasLimit = await estimateGas(contract, 'cancelOrderedStopPosition', [orderType - 1, side], 0)
+        response = await contract.cancelOrderedStopPosition(orderType - 1, side, { gasLimit })
       }
 
       const receipt = await response.wait()

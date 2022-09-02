@@ -158,7 +158,7 @@ export default {
       AmountToWithdraw: '取回数量',
       Confirm: '确认',
       WithdrawTip:
-        '根据系统风控规则，你将收到 {{BUSD}} BUSD和 {{bDRF}} bDRF作为补偿，你可以在回购池余额>0时以1:1的比例将bDRF换回USDT'
+        '根据系统风控规则，你将收到 {{BUSD}} BUSD和 {{bBUSD}} bBUSD作为补偿，你可以在回购池余额>0时以1:1的比例将bBUSD换回USDT'
     }
   }
 }

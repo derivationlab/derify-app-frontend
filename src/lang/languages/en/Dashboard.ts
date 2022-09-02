@@ -5,7 +5,7 @@ export default {
     TotalDestroyed: 'Total Destroyed',
     BuybackPool: 'Buyback Pool',
     eDRFPrice: 'eDRF Price',
-    bDRFPrice: 'bDRF Price',
+    bDRFPrice: 'bBUSD Price',
     TradingVolume: 'Trading Volume',
     AllDerivatives: 'All Derivatives',
     PositionVolume: 'Position Volume',

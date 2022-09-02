@@ -1,38 +1,31 @@
 import { isEmpty, times } from 'lodash'
 import { BigNumberish, BigNumber } from '@ethersproject/bignumber'
 
-import { getCurrentPositionsAmount } from '@/api'
-import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
-import { basePairs } from '@/store/contract/helper'
-
+import basePairs from '@/config/pairs'
 import { multicall } from '@/utils/multicall'
+import { getCurrentPositionsAmount } from '@/api'
 import { safeInterceptionValues } from '@/utils/tools'
+import { getDerifyRewardsContract } from '@/utils/contractHelpers'
 
-import {
-  getBTCAddress,
-  getDerifyDerivativeBTCAddress,
-  getDerifyDerivativeETHAddress,
-  getETHAddress
-} from '@/utils/addressHelpers'
-import { getDerifyExchangeContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
+import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
-export const getCurrentPositionsAmountData = async (token: string): Promise<Record<string, any>> => {
-  const base = { long_position_amount: '0', short_position_amount: '0' }
+export const getCurrentPositionsAmountData = async (token: string): Promise<Record<string, any> | null> => {
   try {
     const { data } = await getCurrentPositionsAmount(token)
-    if (data) return data
-    return base
+    return data
   } catch (e) {
-    return base
+    console.info(e)
+    return null
   }
 }
 
 export const getPositionChangeFeeRatioData = async () => {
-  const contracts = [getDerifyDerivativeBTCAddress(), getDerifyDerivativeETHAddress()]
-  let feeRatios = {
-    [getBTCAddress()]: '0',
-    [getETHAddress()]: '0'
-  }
+  let combine = {}
+  basePairs.forEach((pair) => {
+    combine = { ...combine, [pair.token]: '0' }
+  })
+  let feeRatios = combine
+  const contracts = basePairs.map((pair) => pair.contract)
 
   const calls = times(contracts.length, (index) => ({
     address: basePairs[index].contract,
@@ -67,6 +60,6 @@ export const getStakingDrfPoolData = async () => {
 
 export const getBankBDRFPoolData = async () => {
   const contract = getDerifyRewardsContract()
-  const data = await contract.bankBdrfPool()
+  const data = await contract.bankBondPool()
   return safeInterceptionValues(data._hex)
 }

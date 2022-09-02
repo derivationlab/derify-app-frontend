@@ -44,7 +44,7 @@ export const client = createClient({
         chains: bscChain,
         options: {
           appName: 'Derify protocol',
-          chainId: Number(chainId),
+          chainId: chainId,
           jsonRpcUrl: rpcUrl
         }
       }),

@@ -106,6 +106,7 @@ const Bench: FC = () => {
       const _isOrderConversion = isOrderConversion(openPosParams?.openType, openPosParams?.price)
 
       const account = await signer.getAddress()
+
       const status = await openPositionOrder(
         signer,
         broker.broker,
@@ -126,7 +127,7 @@ const Bench: FC = () => {
         batch(() => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
+          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))

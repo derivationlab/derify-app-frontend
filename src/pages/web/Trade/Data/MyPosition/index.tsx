@@ -13,7 +13,6 @@ import { getMyPositionsDataAsync } from '@/store/contract'
 import { clearShareMessage, setShareMessage } from '@/store/share'
 import { useShareMessage } from '@/store/share/hooks'
 import { getTraderDataAsync } from '@/store/trader'
-import { getCurrentPositionsAmountDataAsync } from '@/store/constant'
 import { safeInterceptionValues } from '@/utils/tools'
 
 import ThemeContext from '@/context/Theme/Context'
@@ -105,7 +104,7 @@ const MyPosition: FC = () => {
         batch(() => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
+          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))
@@ -132,8 +131,7 @@ const MyPosition: FC = () => {
         batch(() => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
-          dispatch(getCurrentPositionsAmountDataAsync())
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE', extraType: 'UPDATE_TRADE_HISTORY' }))
+          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY', 'UPDATE_POSITIONS_AMOUNT'] }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))
@@ -161,8 +159,7 @@ const MyPosition: FC = () => {
         batch(() => {
           dispatch(getTraderDataAsync(account))
           dispatch(getMyPositionsDataAsync(account))
-          dispatch(getCurrentPositionsAmountDataAsync())
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
+          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_POSITIONS_AMOUNT'] }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))

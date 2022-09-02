@@ -3,7 +3,7 @@ import type { Signer } from 'ethers'
 import { toHexString } from '@/utils/tools'
 import { getDerifyRewardsContract } from '@/utils/contractHelpers'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { getBDRFAddress, getDerifyRewardsAddress, getDRFAddress } from '@/utils/addressHelpers'
+import { getbBUSDAddress, getDerifyRewardsAddress, getDRFAddress } from '@/utils/addressHelpers'
 
 class Earn {
   traderWithdrawPMRewards = async (signer: Signer): Promise<boolean> => {
@@ -81,7 +81,7 @@ class Earn {
     const contract = getDerifyRewardsContract(signer)
     try {
       const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getBDRFAddress(), _amount)
+      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getbBUSDAddress(), _amount)
 
       if (!approve) return false
 
@@ -114,7 +114,7 @@ class Earn {
     const contract = getDerifyRewardsContract(signer)
     try {
       const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getBDRFAddress(), _amount)
+      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getbBUSDAddress(), _amount)
 
       if (!approve) return false
 

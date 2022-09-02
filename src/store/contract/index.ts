@@ -1,11 +1,13 @@
 import BN from 'bignumber.js'
+import { isArray } from 'lodash'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import Cache from '@/utils/cache'
+import basePairs from '@/config/pairs'
 import { getEventsData } from '@/api'
 import { nonBigNumberInterception } from '@/utils/tools'
 import { ContractState, AppThunkDispatch } from '../types'
-import { basePairs, getMyPositionsData, getTokenSpotPrice, outputDataDeal } from './helper'
+import { getMyPositionsData, getTokenSpotPrice, outputDataDeal } from './helper'
 
 const currentPairIndex = Cache.get('currentPairIndex') ?? 0
 
@@ -26,8 +28,8 @@ export const getTokenSpotPriceAsync = createAsyncThunk('ContractData/getTokenSpo
 
 export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
   const { data } = await getEventsData()
-  // console.info(data)
-  if (data.length) {
+
+  if (isArray(data)) {
     const _ = data.map(
       ({
         shortDrfPmrRate,
@@ -44,8 +46,7 @@ export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
         const short = new BN(shortDrfPmrRate).plus(shortUsdPmrRate)
         const shortPmrRate = nonBigNumberInterception(String(short))
 
-        const price = String(price_change_rate)
-        const changeRate = nonBigNumberInterception(price, 4)
+        const changeRate = nonBigNumberInterception(String(price_change_rate), 4)
 
         const apyMax = Math.max(Number(longPmrRate), Number(shortPmrRate))
 

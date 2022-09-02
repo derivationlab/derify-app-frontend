@@ -41,14 +41,14 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   return (
-    <Dialog width="540px" visible={visible} title={t('Earn.bDRFPool.WithdrawBDRF', 'Withdraw bDRF')} onClose={onClose}>
+    <Dialog width="540px" visible={visible} title={t('Earn.bDRFPool.WithdrawBDRF', 'Withdraw bBUSD')} onClose={onClose}>
       <div className="web-deposit-dialog">
         <div className="web-deposit-dialog-info">
           <div className="wallet">
             <dl>
               <dt>{t('Earn.bDRFPool.Withdrawable', 'Withdrawable')}</dt>
               <dd>
-                <BalanceShow value={trader?.bondReturnBalance ?? 0} unit="bDRF" />
+                <BalanceShow value={trader?.bondReturnBalance ?? 0} unit="bBUSD" />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
@@ -57,7 +57,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <AmountInput
               max={trader?.bondReturnBalance ?? 0}
               title={t('Earn.bDRFPool.AmountToWithdraw', 'Amount to withdraw')}
-              unit="bDRF"
+              unit="bBUSD"
               onChange={onChangeEv}
             />
           </div>

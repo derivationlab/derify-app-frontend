@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { getBUSDAddress } from '@/utils/addressHelpers'
+import { getDUSDAddress } from '@/utils/addressHelpers'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -22,7 +22,7 @@ interface Props {
 const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
-  const { balance } = useTokenBalance(getBUSDAddress())
+  const { balance } = useTokenBalance(getDUSDAddress())
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')

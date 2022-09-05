@@ -5,7 +5,7 @@ export default {
       Type: 'Type',
       Type0: 'Income',
       Type1: 'Withdraw',
-      Type2: 'Exchange',
+      Type2: 'GasFee',
       Type3: 'Redeem',
       Type4: 'Deposit',
       Type5: 'Interest',

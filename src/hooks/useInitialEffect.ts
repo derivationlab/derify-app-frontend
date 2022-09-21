@@ -51,6 +51,5 @@ export const useInitialEffect = () => {
      edrfPrice: 0
      */
     dispatch(getIndicatorDataAsync())
-
   }, [])
 }

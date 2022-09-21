@@ -51,11 +51,11 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
 
   return (
     <div className={classNames('web-trade-symbol-select', { show })} ref={ref}>
-      {mobile && <div className='web-trade-symbol-select-toggle' onClick={toggleFunc} />}
-      <div className='web-trade-symbol-select-curr' onClick={() => setShow(!show)}>
+      {mobile && <div className="web-trade-symbol-select-toggle" onClick={toggleFunc} />}
+      <div className="web-trade-symbol-select-curr" onClick={() => setShow(!show)}>
         <h4>{currentPairInfo.name}</h4>
         <aside>
-          <BalanceShow value={currentPairInfo?.spotPrice ?? 0} unit='' />
+          <BalanceShow value={currentPairInfo?.spotPrice ?? 0} unit="" />
           <ChangePercent value={currentPairInfo?.price_change_rate ?? 0} />
         </aside>
       </div>

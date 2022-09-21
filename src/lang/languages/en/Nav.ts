@@ -29,6 +29,7 @@ export default {
       Feedback: 'Feedback',
       Tutorial: 'Tutorial',
       Docs: 'Docs',
+      Test: 'Testnet',
       Whitepaper: 'Whitepaper',
       Community: 'Community'
     },

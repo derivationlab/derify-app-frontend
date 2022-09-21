@@ -46,9 +46,6 @@ const Header: FC = () => {
           <NavLink to="/broker" className={classNames({ active: P.indexOf('broker') > -1 })} onClick={handleNavLinkEv}>
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>
-          <NavLink to="/faucet" onClick={handleNavLinkEv}>
-            {t('Nav.Nav.Faucet', 'Faucet')}
-          </NavLink>
         </nav>
         <div className="web-header-tools">
           <ConnectButton />

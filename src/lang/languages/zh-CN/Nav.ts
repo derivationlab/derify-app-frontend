@@ -29,6 +29,7 @@ export default {
       Feedback: '反馈',
       Tutorial: '教程',
       Docs: '文档',
+      Test: '测试网',
       Whitepaper: '白皮书',
       Community: '社区'
     },

@@ -5,6 +5,7 @@ export const Feedback =
 export const Tutorial = 'https://docs.derify.finance/getting-started/tutorial'
 export const Docs = 'https://docs.derify.finance/'
 export const WhitePaper = 'https://docs.derify.finance/whitepaper/introduction'
+export const TestNet = 'https://test.derify.exchange/'
 
 export const Twitter = 'https://twitter.com/DerifyProtocol'
 export const Telegram = 'https://t.me/DerifyProtocol_Official'

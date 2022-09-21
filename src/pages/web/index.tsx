@@ -117,7 +117,6 @@ const Web: FC = () => {
         <Route path="/" exact render={() => <Redirect to="/trade" />} />
         <Route path="/earn" render={() => handleUnbindBroker(Earn)} />
         <Route path="/trade" render={() => handleUnbindBroker(Trade)} />
-        <Route path="/faucet" render={() => handleUnbindBroker(Faucet)} />
         <Route path="/airdrop" render={() => handleUnbindBroker(Airdrop)} />
         <Route path="/dashboard" render={() => handleUnbindBroker(Dashboard)} />
 

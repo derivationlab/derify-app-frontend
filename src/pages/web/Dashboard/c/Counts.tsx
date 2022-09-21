@@ -5,6 +5,7 @@ import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useConstantData } from '@/store/constant/hooks'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 const Counts: FC = () => {
   const { t } = useTranslation()
@@ -14,36 +15,36 @@ const Counts: FC = () => {
     <div className="web-dashborad-counts">
       <section>
         <h3>{t('Dashboard.DRFPrice', 'DRF Price')}</h3>
-        <main>
-          <BalanceShow value={indicator?.drfPrice ?? 0} unit="" />
+        <main className='web-balance-show'>
+          <strong>{nonBigNumberInterception(indicator?.drfPrice ?? 0, 4)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>
         </main>
       </section>
       <section>
         <h3>{t('Dashboard.TotalDestroyed', 'Total Destroyed')}</h3>
-        <main>
-          <BalanceShow value={indicator?.drfBurnt ?? 0} unit="" />
+        <main className='web-balance-show'>
+          <strong>{nonBigNumberInterception(indicator?.drfBurnt ?? 0)}</strong>
           <u>DRF</u>
         </main>
       </section>
       <section>
         <h3>{t('Dashboard.BuybackPool', 'Buyback Pool')}</h3>
-        <main>
-          <BalanceShow value={indicator?.drfBuyBack ?? 0} unit="" />
+        <main className='web-balance-show'>
+          <strong>{nonBigNumberInterception(indicator?.drfBuyBack ?? 0)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>
         </main>
       </section>
       <section>
         <h3>{t('Dashboard.eDRFPrice', 'eDRF Price')}</h3>
-        <main>
-          <BalanceShow value={indicator?.edrfPrice ?? 0} unit="" />
+        <main className='web-balance-show'>
+          <strong>{nonBigNumberInterception(indicator?.edrfPrice ?? 0)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>
         </main>
       </section>
       <section>
         <h3>{t('Dashboard.bDRFPrice', 'bBUSD Price')}</h3>
-        <main>
-          <BalanceShow value={indicator?.bdrfPrice ?? 0} unit="" />
+        <main className='web-balance-show'>
+          <strong>{nonBigNumberInterception(indicator?.bdrfPrice ?? 0)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>
         </main>
       </section>

@@ -4,7 +4,8 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers'
 const BSC_MAINNET_RPC_URLS = [
   'https://bsc-dataseed1.ninicoin.io',
   'https://bsc-dataseed1.defibit.io',
-  'https://bsc-dataseed.binance.org'
+  'https://bsc-dataseed.binance.org',
+  'https://binance.ankr.com'
 ]
 
 const BSC_TESTNET_RPC_URLS = [

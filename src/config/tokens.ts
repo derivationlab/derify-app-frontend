@@ -24,7 +24,7 @@ const tokens: { [key: string]: Token } = {
   DUSD: {
     symbol: 'DUSD',
     address: {
-      56: '',
+      56: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
       97: '0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba'
     },
     decimals: 18,
@@ -60,7 +60,7 @@ const tokens: { [key: string]: Token } = {
   bnb: {
     symbol: 'BNB',
     address: {
-      56: '',
+      56: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52',
       97: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52'
     },
     decimals: 18,

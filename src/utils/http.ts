@@ -89,12 +89,17 @@ export async function formDataPost(path: string, body: Record<string, any>, args
     formData.append(key, body[key])
   })
 
+  const headers = new Headers()
+
+  headers.append('x-api-key', API_AUTH_KEY)
+
   return await http(
     new Request(externalLink(path), {
       ...args,
       method: 'post',
       mode: 'cors',
-      body: formData
+      body: formData,
+      headers
     })
   )
 }

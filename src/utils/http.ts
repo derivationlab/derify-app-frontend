@@ -59,7 +59,7 @@ export async function http(request: Request): Promise<HttpResponse> {
 export async function get(path: string, params?: Record<string, unknown>, args?: RequestInit): Promise<HttpResponse> {
   const _path = combineUrl(externalLink(path), params)
   const headers = new Headers()
-  
+
   headers.append('x-api-key', API_AUTH_KEY)
 
   return await http(new Request(_path, { ...args, method: 'get', headers }))

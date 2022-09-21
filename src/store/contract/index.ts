@@ -32,10 +32,10 @@ export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
   if (isArray(data)) {
     const _ = data.map(
       ({
-        shortDrfPmrRate,
-        shortUsdPmrRate,
-        longUsdPmrRate,
-        longDrfPmrRate,
+        shortDrfPmrRate = 0,
+        shortUsdPmrRate = 0,
+        longUsdPmrRate = 0,
+        longDrfPmrRate = 0,
         price_change_rate,
         token,
         ...rest

@@ -10,7 +10,7 @@ import Loading from '@/components/common/Loading'
 
 import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
-import Faucet from '@/pages/web/Faucet'
+// import Faucet from '@/pages/web/Faucet'
 import Airdrop from '@/pages/web/Airdrop'
 import Dashboard from '@/pages/web/Dashboard'
 import BrokerRank from '@/pages/web/Broker/Rank'

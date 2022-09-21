@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash'
-import { API_PREFIX_URL } from '@/config'
+import { API_PREFIX_URL, API_AUTH_KEY } from '@/config'
 
 interface HttpResponse extends Response {
   data: any
@@ -59,15 +59,19 @@ export async function http(request: Request): Promise<HttpResponse> {
 export async function get(path: string, params?: Record<string, unknown>, args?: RequestInit): Promise<HttpResponse> {
   const _path = combineUrl(externalLink(path), params)
   const headers = new Headers()
-  headers.append('x-api-key', 'I.YlJgZt2WC5BoP5PW4sxDdVTWxP/h')
+  
+  headers.append('x-api-key', API_AUTH_KEY)
+
   return await http(new Request(_path, { ...args, method: 'get', headers }))
 }
 
 export async function post(path: string, body?: Record<string, unknown>, args?: RequestInit): Promise<HttpResponse> {
-  const headers = new Headers()
   const _body = isEmpty(body) ? '' : JSON.stringify(body)
+  const headers = new Headers()
+
   headers.append('Content-Type', 'application/json;charset=UTF-8')
-  headers.append('x-api-key', 'I.YlJgZt2WC5BoP5PW4sxDdVTWxP/h')
+  headers.append('x-api-key', API_AUTH_KEY)
+
   return await http(
     new Request(externalLink(path), {
       ...args,

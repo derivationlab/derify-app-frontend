@@ -38,7 +38,7 @@ const HeaderData: FC = () => {
   const memoPosFeeRatio = useMemo(() => {
     if (!isEmpty(posFeeRatio)) {
       const key = Object.keys(posFeeRatio).find((p) => p === currentPair) ?? ''
-      return posFeeRatio[key]
+      return posFeeRatio[key] ?? '0'
     }
     return '0'
   }, [posFeeRatio, currentPair, pairs])

@@ -10,7 +10,7 @@ const networks: Record<string, any>[] = [
   {
     icon: 'icon/bnb.svg',
     name: 'BNB Chain',
-    shortName: 'BNB Chain',
+    shortName: 'BNB Chain'
     // id: '97'
     // },
     // {

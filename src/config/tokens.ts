@@ -33,7 +33,7 @@ const tokens: { [key: string]: Token } = {
   bBUSD: {
     symbol: 'bBUSD',
     address: {
-      56: '',
+      56: '0x3AAcA9b7Cc0535e0c6E95Ad028A17A312B6867a9',
       97: '0x4B26f0Fcb1DB5739E98834B3eDAE05ce2B4a1ACf'
     },
     decimals: 18,
@@ -42,7 +42,7 @@ const tokens: { [key: string]: Token } = {
   DRF: {
     symbol: 'DRF',
     address: {
-      56: '',
+      56: '0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F',
       97: '0x11B876d9D5d18d70664153C84fD3084c1E71E2ef'
     },
     decimals: 18,
@@ -51,7 +51,7 @@ const tokens: { [key: string]: Token } = {
   eDRF: {
     symbol: 'eDRF',
     address: {
-      56: '',
+      56: '0x7BD13d5867e7adB71d6f255aa3E6c9E1619681b3',
       97: '0x06C275C10D6C1b1f82704c509cb1b41eC06543E6'
     },
     decimals: 18,

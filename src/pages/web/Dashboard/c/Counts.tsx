@@ -15,35 +15,35 @@ const Counts: FC = () => {
     <div className="web-dashborad-counts">
       <section>
         <h3>{t('Dashboard.DRFPrice', 'DRF Price')}</h3>
-        <main className='web-balance-show'>
+        <main className="web-balance-show">
           <strong>{nonBigNumberInterception(indicator?.drfPrice ?? 0, 4)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>
         </main>
       </section>
       <section>
         <h3>{t('Dashboard.TotalDestroyed', 'Total Destroyed')}</h3>
-        <main className='web-balance-show'>
+        <main className="web-balance-show">
           <strong>{nonBigNumberInterception(indicator?.drfBurnt ?? 0)}</strong>
           <u>DRF</u>
         </main>
       </section>
       <section>
         <h3>{t('Dashboard.BuybackPool', 'Buyback Pool')}</h3>
-        <main className='web-balance-show'>
+        <main className="web-balance-show">
           <strong>{nonBigNumberInterception(indicator?.drfBuyBack ?? 0)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>
         </main>
       </section>
       <section>
         <h3>{t('Dashboard.eDRFPrice', 'eDRF Price')}</h3>
-        <main className='web-balance-show'>
+        <main className="web-balance-show">
           <strong>{nonBigNumberInterception(indicator?.edrfPrice ?? 0)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>
         </main>
       </section>
       <section>
         <h3>{t('Dashboard.bDRFPrice', 'bBUSD Price')}</h3>
-        <main className='web-balance-show'>
+        <main className="web-balance-show">
           <strong>{nonBigNumberInterception(indicator?.bdrfPrice ?? 0)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>
         </main>

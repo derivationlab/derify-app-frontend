@@ -26,16 +26,6 @@ export const useInitialEffect = () => {
       dispatch(getTokenSpotPriceAsync())
 
       /**
-       bdrfPrice: 0
-       drfBurnt: 1.1903499167890368
-       drfBuyBack: 4008.58768796
-       drfPrice: 0
-       drfStakingApy: 0
-       edrfPrice: 0
-       */
-      dispatch(getIndicatorDataAsync())
-
-      /**
        apy,
        token,
        longPmrRate,
@@ -50,4 +40,17 @@ export const useInitialEffect = () => {
       dispatch(getPositionChangeFeeRatioDataAsync())
     }
   }, [blockNumber])
+
+  useEffect(() => {
+    /**
+     bdrfPrice: 0
+     drfBurnt: 1.1903499167890368
+     drfBuyBack: 4008.58768796
+     drfPrice: 0
+     drfStakingApy: 0
+     edrfPrice: 0
+     */
+    dispatch(getIndicatorDataAsync())
+
+  }, [])
 }

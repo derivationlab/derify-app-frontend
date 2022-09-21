@@ -55,7 +55,7 @@ const HeaderData: FC = () => {
 
   useInterval(() => {
     void getPositionsAmountFunc(currentPair)
-  }, 10000)
+  }, 60000)
 
   useEffect(() => {
     setPositionInfo(['0', '0'])

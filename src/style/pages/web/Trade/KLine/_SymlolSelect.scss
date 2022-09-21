@@ -1,4 +1,4 @@
-.web-trade-symlol-select {
+.web-trade-symbol-select {
   position: relative;z-index: 4;
   &-curr {
     border: 2px solid $cff; background: $cff;width: 260px;
@@ -93,7 +93,7 @@
   }
 }
 .mobile-mode {
-  .web-trade-symlol-select {
+  .web-trade-symbol-select {
     width: 100%;
     &-curr {
       width: 100%;
@@ -114,7 +114,7 @@
         }
       }
     }
-    &.show .web-trade-symlol-select-curr {
+    &.show .web-trade-symbol-select-curr {
       h4 {
         &:after {
           background-image: url($res + 'icon/dot-active.svg');
@@ -184,7 +184,7 @@
   }
 }
 .dark {
-  .web-trade-symlol-select {
+  .web-trade-symbol-select {
     &-curr {
       background: $c22;
       border-color: $c22;
@@ -194,7 +194,7 @@
         }
       }
     }
-    &.show .web-trade-symlol-select-curr {
+    &.show .web-trade-symbol-select-curr {
       border-color: $yellow;color: $yellow;
       h4 {
         &:after {
@@ -236,7 +236,7 @@
   }
 }
 .mobile-mode.dark {
-  .web-trade-symlol-select {
+  .web-trade-symbol-select {
     &-curr {
       h4 {
         &:after {
@@ -244,7 +244,7 @@
         }
       }
     }
-    &.show .web-trade-symlol-select-curr {
+    &.show .web-trade-symbol-select-curr {
       h4 {
         &:after {
           background-image: url($res + 'icon/dot-active-dark.svg');

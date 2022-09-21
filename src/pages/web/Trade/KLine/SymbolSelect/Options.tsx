@@ -6,7 +6,6 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
 
 interface Props {
-  curr: Record<string, any>
   data: Record<string, any>[]
   onChange: (item: Record<string, any>, index: number) => void
 }
@@ -23,8 +22,8 @@ const Options: FC<Props> = ({ data, onChange }) => {
   }, [data, keyword])
 
   return (
-    <div className="web-trade-symlol-select-options">
-      <div className="web-trade-symlol-select-search">
+    <div className="web-trade-symbol-select-options">
+      <div className="web-trade-symbol-select-search">
         <input type="text" placeholder="Search derivatives" onChange={searchFC} />
         <i />
       </div>

@@ -66,11 +66,12 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
 
       try {
         const _price = openType === 0 ? spotPrice : price
-        // console.info(`price：${_price}`)
+
         if (_price) {
           const [size, amount] = await getOpenUpperBound(currentPair, account!.address!, openType, _price, leverage)
           console.info([size, amount])
           setLeverageVolume(memoTokenSymbol === BASE_TOKEN_SYMBOL ? amount : size)
+          setIsCalculating(false)
         }
       } catch (e) {
         console.info(e)

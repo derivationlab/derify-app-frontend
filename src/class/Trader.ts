@@ -325,7 +325,16 @@ class Trader {
     const _price = toHexString(price)
     const _leverage = toHexString(leverage)
     const contract = getDerifyExchangeContract()
-
+    // console.info(`getTraderOpenUpperBound()原始参数:`)
+    // console.info(`token:${token}`, `trader:${trader}`, `openType:${openType}`, `price:${price}`, `leverage:${leverage}`)
+    // console.info(`getTraderOpenUpperBound()转换参数:`)
+    // console.info(
+    //   `token:${token}`,
+    //   `trader:${trader}`,
+    //   `openType:${openType}`,
+    //   `price:${_price}`,
+    //   `leverage:${_leverage}`
+    // )
     const data = await contract.getTraderOpenUpperBound(token, trader, openType, _price, _leverage)
 
     const { size, amount } = data

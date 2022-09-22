@@ -12,6 +12,7 @@ import Button from '@/components/common/Button'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   data: Record<string, any>
@@ -20,12 +21,13 @@ interface Props {
   onClick: () => void
 }
 
-const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
+const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { calcClosePositionTradingFee, calcClosePositionChangeFee } = Trader
+  const { calcClosePositionTradingFee, calcClosePositionChangeFee, checkOpenPositionSize } = Trader
 
   const [changeFee, setChangeFee] = useState<string>('0')
   const [tradingFee, setTradingFee] = useState<string>('0')
+  const [validVolume, setValidVolume] = useState<string>('0')
   const [changeFeeCalculating, setChangeFeeCalculating] = useState<boolean>(true)
   const [tradingFeeCalculating, setTradingFeeCalculating] = useState<boolean>(true)
 
@@ -47,13 +49,20 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
     setChangeFeeCalculating(false)
   }, [data])
 
-  const memoApyValue = useMemo(() => {
-    const apy = new BN(data?.apy).times(100)
-    return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
-  }, [data?.apy])
+  const checkOpenPositionSizeFunc = async () => {
+    const volume = await checkOpenPositionSize(data.token, data.side, data.symbol, data.openType, data.volume, data.price)
+    console.info(volume)
+    setValidVolume(volume)
+  }
+
+  // const memoApyValue = useMemo(() => {
+  //   const apy = new BN(data?.apy).times(100)
+  //   return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
+  // }, [data?.apy])
 
   useEffect(() => {
     if (!isEmpty(data) && visible) {
+      void checkOpenPositionSizeFunc()
       void calcClosePositionTradingFeeCb()
       void calcClosePositionChangeFeeCb()
     }
@@ -67,11 +76,11 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible])
 
   return (
-    <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
-      <div className="web-trade-dialog web-trade-dialog-position-close">
-        <div className="web-trade-dialog-body">
-          <div className="web-trade-dialog-position-info">
-            <header className="web-trade-dialog-position-info-header">
+    <Dialog width='540px' visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
+      <div className='web-trade-dialog web-trade-dialog-position-close'>
+        <div className='web-trade-dialog-body'>
+          <div className='web-trade-dialog-position-info'>
+            <header className='web-trade-dialog-position-info-header'>
               <h4>
                 <strong>{data?.name}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
@@ -82,31 +91,31 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               </p>
               */}
             </header>
-            <section className="web-trade-dialog-position-info-data">
+            <section className='web-trade-dialog-position-info-data'>
               {data?.openType === 0 ? (
                 <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>
               ) : (
                 <p>
-                  <BalanceShow value={data?.price} unit="" />
+                  <BalanceShow value={data?.price} unit='' />
                   <em>{t('Trade.Bench.LimitPrice', 'Limit Price')}</em>
                 </p>
               )}
             </section>
           </div>
-          <div className="web-trade-dialog-position-confirm">
+          <div className='web-trade-dialog-position-confirm'>
             <dl>
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
               {data?.side === PositionSide['2-Way'] ? (
                 <dd>
                   <section>
                     <aside>
-                      <MultipleStatus direction="Long" />
-                      <em>{new BN(data?.volume).div(2).toString()}</em>
+                      <MultipleStatus direction='Long' />
+                      <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString())}</em>
                       <u>{data?.symbol}</u>
                     </aside>
                     <aside>
-                      <MultipleStatus direction="Short" />
-                      <em>{new BN(data?.volume).div(2).toString()}</em>
+                      <MultipleStatus direction='Short' />
+                      <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString())}</em>
                       <u>{data?.symbol}</u>
                     </aside>
                   </section>
@@ -114,7 +123,7 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               ) : (
                 <dd>
                   <span>
-                    <em>{data?.volume}</em>
+                    <em>{nonBigNumberInterception(validVolume)}</em>
                     <u>{data?.symbol}</u>
                   </span>
                 </dd>
@@ -123,7 +132,7 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             <dl>
               <dt>
                 {t('Trade.COP.PCFEstimate', 'PCF(Estimate)')}
-                <QuestionPopover size="mini" text={t('Trade.COP.PCFEstimateTip', 'PCF(Estimate)')} />
+                <QuestionPopover size='mini' text={t('Trade.COP.PCFEstimateTip', 'PCF(Estimate)')} />
               </dt>
               <dd>
                 {changeFeeCalculating ? (
@@ -140,7 +149,7 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               <dt>
                 {t('Trade.COP.TradingFee', 'Trading Fee')}
                 <QuestionPopover
-                  size="mini"
+                  size='mini'
                   text={t('Trade.COP.TradingFeeTip', 'Trading Fee=Trading volume*Trading Fee Rate')}
                 />
               </dt>
@@ -163,6 +172,6 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   )
 }
 
-PositionOen.defaultProps = {}
+PositionOpen.defaultProps = {}
 
-export default PositionOen
+export default PositionOpen

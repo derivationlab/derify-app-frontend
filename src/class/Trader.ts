@@ -10,6 +10,7 @@ import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { getDUSDAddress, getDerifyExchangeAddress } from '@/utils/addressHelpers'
 import { getDerifyExchangeContract, getDerifyDerivativePairContract } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
+import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 class Trader {
   traderWithdrawMargin = async (signer: Signer, amount: string): Promise<boolean> => {
@@ -30,7 +31,7 @@ class Trader {
 
   traderDepositMargin = async (signer: Signer, account: string, amount: string): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
-
+    console.info(contract.address)
     try {
       const _amount = toHexString(amount)
       const approve = await setAllowance(signer, getDerifyExchangeAddress(), getDUSDAddress(), _amount)
@@ -79,10 +80,11 @@ class Trader {
     let nakedPositionTradingPairAfterClosing_BN: BN = new BN(0)
 
     const pair = pairs.find((pair) => pair.token === token)
-    const contract = getDerifyDerivativePairContract(pair!.contract)
+    const exchangeContract = getDerifyExchangeContract()
+    const derivativeContract = getDerifyDerivativePairContract(pair!.contract)
 
-    const longTotalSize = await contract.longTotalSize()
-    const shortTotalSize = await contract.shortTotalSize()
+    const longTotalSize = await derivativeContract.longTotalSize()
+    const shortTotalSize = await derivativeContract.shortTotalSize()
 
     const longTotalSize_BN = new BN(longTotalSize._hex)
     const shortTotalSize_BN = new BN(shortTotalSize._hex)
@@ -103,27 +105,38 @@ class Trader {
       }
     }
 
-    const nakedPositionDiff_BN = nakedPositionTradingPairAfterClosing_BN
+    const nakedPositionDiff_BN = new BN(safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8))
       .abs()
       .minus(nakedPositionTradingPairBeforeClosing_BN.abs())
-    // console.info(`nakedPositionDiff:${String(nakedPositionDiff_BN)}`)
+      .times(spotPrice)
 
-    const tradingFeesBeforeClosing = await contract.getPositionChangeFeeRatio()
-    const tradingFeesBeforeClosing_BN = new BN(tradingFeesBeforeClosing._hex)
+    const liquidityPool = await exchangeContract.liquidityPool()
+    const kRatio = await derivativeContract.kRatio()
+    const gRatio = await derivativeContract.gRatio()
+    const roRatio = await derivativeContract.roRatio()
+    const beforeRatio = await derivativeContract.getPositionChangeFeeRatio()
 
-    const tradingFeesAfterClosing = nakedPositionTradingPairBeforeClosing_BN.isEqualTo(0)
-      ? new BN(0)
-      : tradingFeesBeforeClosing_BN
-          .times(nakedPositionTradingPairAfterClosing_BN)
-          .div(nakedPositionTradingPairBeforeClosing_BN) // nakedPositionTradingPairBeforeClosing_BN: maybe 0
-          .integerValue(BN.ROUND_FLOOR)
-    const radioSum = tradingFeesAfterClosing.abs().plus(tradingFeesBeforeClosing_BN.abs())
-    // console.info(`radioSum:${String(radioSum)}`)
+    const minimum = BN.minimum(new BN(liquidityPool._hex).times(safeInterceptionValues(String(kRatio), 8)), new BN(gRatio._hex))
 
-    const fee = await contract.getPositionChangeFee(String(nakedPositionDiff_BN), String(radioSum))
-    // console.info(String(fee), safeInterceptionValues(fee, 8), 8)
+    console.info(`minimum:${safeInterceptionValues(String(minimum), 8)}`)
+    // console.info(`kRatio:${safeInterceptionValues(String(kRatio), 8)}`)
+    // console.info(`gRatio:${safeInterceptionValues(String(gRatio), 8)}`)
+    // console.info(`roRatio:${safeInterceptionValues(String(roRatio), 8)}`)
+    // console.info(`liquidityPool:${safeInterceptionValues(String(liquidityPool), 8)}`)
+    console.info(`nakedPositionDiff:${safeInterceptionValues(String(nakedPositionDiff_BN), 8)}`)
+    // console.info(`beforeRatio:${safeInterceptionValues(String(beforeRatio), 18)}`)
+    // console.info(`spotPrice:${spotPrice}`)
 
-    return safeInterceptionValues(String(fee))
+    const tradingFeeBeforeClosing_BN = minimum.isEqualTo(0) ? new BN(0) : nakedPositionDiff_BN.div(safeInterceptionValues(String(minimum), 8))
+
+    const radioSum = new BN(beforeRatio._hex).abs().plus(tradingFeeBeforeClosing_BN.abs())
+
+    console.info(`radioSum:${radioSum.toFixed(8)}`)
+
+    const fee = new BN(safeInterceptionValues(String(nakedPositionDiff_BN), 8))
+      .times(radioSum.div(2).plus(safeInterceptionValues(roRatio._hex, 8)))
+
+    return fee.toFixed(2)
   }
 
   calcOrderOperateType = (TP: number, SL: number): Record<string, any> => {
@@ -294,8 +307,8 @@ class Trader {
     price: string
   ): Promise<string> => {
     const data = await this.getSysOpenUpperBound(token, side, price)
-
-    const [_size, _amount] = data
+    console.info(data)
+    const [systemSizeLimit, systemAmountLimit] = data
     const size_BN = new BN(size)
 
     if (side === PositionSide['2-Way']) return size
@@ -303,12 +316,12 @@ class Trader {
     if (openType !== PriceType.Market) return size
 
     if (type === BASE_TOKEN_SYMBOL) {
-      if (size_BN.isGreaterThan(_amount)) {
-        return _amount
+      if (size_BN.isGreaterThan(systemAmountLimit)) {
+        return systemAmountLimit
       }
     } else {
-      if (size_BN.isGreaterThan(_size)) {
-        return _size
+      if (size_BN.isGreaterThan(systemSizeLimit)) {
+        return systemSizeLimit
       }
     }
 
@@ -325,6 +338,7 @@ class Trader {
     const _price = toHexString(price)
     const _leverage = toHexString(leverage)
     const contract = getDerifyExchangeContract()
+    // console.info(`合约地址:${contract.address}`)
     // console.info(`getTraderOpenUpperBound()原始参数:`)
     // console.info(`token:${token}`, `trader:${trader}`, `openType:${openType}`, `price:${price}`, `leverage:${leverage}`)
     // console.info(`getTraderOpenUpperBound()转换参数:`)

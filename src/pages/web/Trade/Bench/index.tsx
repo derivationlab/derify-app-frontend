@@ -236,7 +236,6 @@ const Bench: FC = () => {
           <Row>
             <Col>
               <Button
-                disabled={memoDisabledCondition1 || memoDisabledCondition2}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog('Long')}

@@ -116,25 +116,31 @@ class Trader {
     const roRatio = await derivativeContract.roRatio()
     const beforeRatio = await derivativeContract.getPositionChangeFeeRatio()
 
-    const minimum = BN.minimum(new BN(liquidityPool._hex).times(safeInterceptionValues(String(kRatio), 8)), new BN(gRatio._hex))
+    const minimum = BN.minimum(
+      new BN(liquidityPool._hex).times(safeInterceptionValues(String(kRatio), 8)),
+      new BN(gRatio._hex)
+    )
 
-    console.info(`minimum:${safeInterceptionValues(String(minimum), 8)}`)
+    // console.info(`minimum:${safeInterceptionValues(String(minimum), 8)}`)
     // console.info(`kRatio:${safeInterceptionValues(String(kRatio), 8)}`)
     // console.info(`gRatio:${safeInterceptionValues(String(gRatio), 8)}`)
     // console.info(`roRatio:${safeInterceptionValues(String(roRatio), 8)}`)
     // console.info(`liquidityPool:${safeInterceptionValues(String(liquidityPool), 8)}`)
-    console.info(`nakedPositionDiff:${safeInterceptionValues(String(nakedPositionDiff_BN), 8)}`)
+    // console.info(`nakedPositionDiff:${safeInterceptionValues(String(nakedPositionDiff_BN), 8)}`)
     // console.info(`beforeRatio:${safeInterceptionValues(String(beforeRatio), 18)}`)
     // console.info(`spotPrice:${spotPrice}`)
 
-    const tradingFeeBeforeClosing_BN = minimum.isEqualTo(0) ? new BN(0) : nakedPositionDiff_BN.div(safeInterceptionValues(String(minimum), 8))
+    const tradingFeeBeforeClosing_BN = minimum.isEqualTo(0)
+      ? new BN(0)
+      : nakedPositionDiff_BN.div(safeInterceptionValues(String(minimum), 8))
 
     const radioSum = new BN(beforeRatio._hex).abs().plus(tradingFeeBeforeClosing_BN.abs())
 
-    console.info(`radioSum:${radioSum.toFixed(8)}`)
+    // console.info(`radioSum:${radioSum.toFixed(8)}`)
 
-    const fee = new BN(safeInterceptionValues(String(nakedPositionDiff_BN), 8))
-      .times(radioSum.div(2).plus(safeInterceptionValues(roRatio._hex, 8)))
+    const fee = new BN(safeInterceptionValues(String(nakedPositionDiff_BN), 8)).times(
+      radioSum.div(2).plus(safeInterceptionValues(roRatio._hex, 8))
+    )
 
     return fee.toFixed(2)
   }
@@ -307,7 +313,7 @@ class Trader {
     price: string
   ): Promise<string> => {
     const data = await this.getSysOpenUpperBound(token, side, price)
-    console.info(data)
+    // console.info(data)
     const [systemSizeLimit, systemAmountLimit] = data
     const size_BN = new BN(size)
 

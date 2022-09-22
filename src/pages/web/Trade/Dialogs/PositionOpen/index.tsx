@@ -50,8 +50,15 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [data])
 
   const checkOpenPositionSizeFunc = async () => {
-    const volume = await checkOpenPositionSize(data.token, data.side, data.symbol, data.openType, data.volume, data.price)
-    console.info(volume)
+    const volume = await checkOpenPositionSize(
+      data.token,
+      data.side,
+      data.symbol,
+      data.openType,
+      data.volume,
+      data.price
+    )
+
     setValidVolume(volume)
   }
 
@@ -76,11 +83,11 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible])
 
   return (
-    <Dialog width='540px' visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
-      <div className='web-trade-dialog web-trade-dialog-position-close'>
-        <div className='web-trade-dialog-body'>
-          <div className='web-trade-dialog-position-info'>
-            <header className='web-trade-dialog-position-info-header'>
+    <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
+      <div className="web-trade-dialog web-trade-dialog-position-close">
+        <div className="web-trade-dialog-body">
+          <div className="web-trade-dialog-position-info">
+            <header className="web-trade-dialog-position-info-header">
               <h4>
                 <strong>{data?.name}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
@@ -91,30 +98,30 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               </p>
               */}
             </header>
-            <section className='web-trade-dialog-position-info-data'>
+            <section className="web-trade-dialog-position-info-data">
               {data?.openType === 0 ? (
                 <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>
               ) : (
                 <p>
-                  <BalanceShow value={data?.price} unit='' />
+                  <BalanceShow value={data?.price} unit="" />
                   <em>{t('Trade.Bench.LimitPrice', 'Limit Price')}</em>
                 </p>
               )}
             </section>
           </div>
-          <div className='web-trade-dialog-position-confirm'>
+          <div className="web-trade-dialog-position-confirm">
             <dl>
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
               {data?.side === PositionSide['2-Way'] ? (
                 <dd>
                   <section>
                     <aside>
-                      <MultipleStatus direction='Long' />
+                      <MultipleStatus direction="Long" />
                       <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString())}</em>
                       <u>{data?.symbol}</u>
                     </aside>
                     <aside>
-                      <MultipleStatus direction='Short' />
+                      <MultipleStatus direction="Short" />
                       <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString())}</em>
                       <u>{data?.symbol}</u>
                     </aside>
@@ -132,7 +139,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             <dl>
               <dt>
                 {t('Trade.COP.PCFEstimate', 'PCF(Estimate)')}
-                <QuestionPopover size='mini' text={t('Trade.COP.PCFEstimateTip', 'PCF(Estimate)')} />
+                <QuestionPopover size="mini" text={t('Trade.COP.PCFEstimateTip', 'PCF(Estimate)')} />
               </dt>
               <dd>
                 {changeFeeCalculating ? (
@@ -149,7 +156,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               <dt>
                 {t('Trade.COP.TradingFee', 'Trading Fee')}
                 <QuestionPopover
-                  size='mini'
+                  size="mini"
                   text={t('Trade.COP.TradingFeeTip', 'Trading Fee=Trading volume*Trading Fee Rate')}
                 />
               </dt>

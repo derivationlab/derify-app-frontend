@@ -104,18 +104,19 @@ class Trader {
         nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.plus(size))
       }
     }
-
+    // console.info(String(nakedPositionTradingPairAfterClosing_BN), String(nakedPositionTradingPairBeforeClosing_BN)) // 15006290 7480662
     const nakedPositionDiff_BN = new BN(safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8))
       .abs()
-      .minus(nakedPositionTradingPairBeforeClosing_BN.abs())
+      .minus(new BN(safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)).abs())
       .times(spotPrice)
-
+    // console.info('start...')
+    // console.time()
     const liquidityPool = await exchangeContract.liquidityPool()
     const kRatio = await derivativeContract.kRatio()
     const gRatio = await derivativeContract.gRatio()
     const roRatio = await derivativeContract.roRatio()
     const beforeRatio = await derivativeContract.getPositionChangeFeeRatio()
-
+    // console.timeEnd()
     const minimum = BN.minimum(
       new BN(liquidityPool._hex).times(safeInterceptionValues(String(kRatio), 8)),
       new BN(gRatio._hex)
@@ -134,14 +135,16 @@ class Trader {
       ? new BN(0)
       : nakedPositionDiff_BN.div(safeInterceptionValues(String(minimum), 8))
 
-    const radioSum = new BN(beforeRatio._hex).abs().plus(tradingFeeBeforeClosing_BN.abs())
-
+    const radioSum = new BN(safeInterceptionValues(beforeRatio._hex, 8)).abs().plus(tradingFeeBeforeClosing_BN.abs())
+    //
     // console.info(`radioSum:${radioSum.toFixed(8)}`)
+    // console.info(`tradingFeeBeforeClosing_BN:${String(tradingFeeBeforeClosing_BN)}`)
+    // console.info(`beforeRatio:${String(beforeRatio)}`)
 
     const fee = new BN(safeInterceptionValues(String(nakedPositionDiff_BN), 8)).times(
       radioSum.div(2).plus(safeInterceptionValues(roRatio._hex, 8))
     )
-
+    // console.info(fee.toFixed(2))
     return fee.toFixed(2)
   }
 

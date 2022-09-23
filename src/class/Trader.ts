@@ -72,19 +72,23 @@ class Trader {
     spotPrice: string,
     isOpenPosition = false
   ): Promise<string> => {
-    if (side === PositionSide['2-Way']) return '0'
-    // console.info(side, symbol, amount, spotPrice, isOpenPosition)
-    const size =
-      symbol === BASE_TOKEN_SYMBOL ? toFloorNum(new BN(amount).div(spotPrice).toString()) : toFloorNum(amount)
-    // console.info(`size:${size}`)
     let nakedPositionTradingPairAfterClosing_BN: BN = new BN(0)
 
-    const pair = pairs.find((pair) => pair.token === token)
-    const exchangeContract = getDerifyExchangeContract()
-    const derivativeContract = getDerifyDerivativePairContract(pair!.contract)
+    if (side === PositionSide['2-Way']) return '0'
 
+    const size =
+      symbol === BASE_TOKEN_SYMBOL ? toFloorNum(new BN(amount).div(spotPrice).toString()) : toFloorNum(amount)
+    const pairInfo = pairs.find((pair) => pair.token === token)
+    const exchangeContract = getDerifyExchangeContract()
+    const derivativeContract = getDerifyDerivativePairContract(pairInfo!.contract)
+
+    const liquidityPool = await exchangeContract.liquidityPool()
     const longTotalSize = await derivativeContract.longTotalSize()
     const shortTotalSize = await derivativeContract.shortTotalSize()
+    const kRatio = await derivativeContract.kRatio()
+    const gRatio = await derivativeContract.gRatio()
+    const roRatio = await derivativeContract.roRatio()
+    const beforeRatio = await derivativeContract.getPositionChangeFeeRatio()
 
     const longTotalSize_BN = new BN(longTotalSize._hex)
     const shortTotalSize_BN = new BN(shortTotalSize._hex)
@@ -104,47 +108,29 @@ class Trader {
         nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.plus(size))
       }
     }
-    // console.info(String(nakedPositionTradingPairAfterClosing_BN), String(nakedPositionTradingPairBeforeClosing_BN)) // 15006290 7480662
-    const nakedPositionDiff_BN = new BN(safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8))
+
+    const raw_data_naked_after = safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8)
+    const raw_data_naked_before = safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)
+    const nakedPositionDiff_BN = new BN(raw_data_naked_after)
       .abs()
-      .minus(new BN(safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)).abs())
+      .minus(new BN(raw_data_naked_before).abs())
       .times(spotPrice)
-    // console.info('start...')
-    // console.time()
-    const liquidityPool = await exchangeContract.liquidityPool()
-    const kRatio = await derivativeContract.kRatio()
-    const gRatio = await derivativeContract.gRatio()
-    const roRatio = await derivativeContract.roRatio()
-    const beforeRatio = await derivativeContract.getPositionChangeFeeRatio()
-    // console.timeEnd()
-    const minimum = BN.minimum(
-      new BN(liquidityPool._hex).times(safeInterceptionValues(String(kRatio), 8)),
-      new BN(gRatio._hex)
-    )
 
-    // console.info(`minimum:${safeInterceptionValues(String(minimum), 8)}`)
-    // console.info(`kRatio:${safeInterceptionValues(String(kRatio), 8)}`)
-    // console.info(`gRatio:${safeInterceptionValues(String(gRatio), 8)}`)
-    // console.info(`roRatio:${safeInterceptionValues(String(roRatio), 8)}`)
-    // console.info(`liquidityPool:${safeInterceptionValues(String(liquidityPool), 8)}`)
-    // console.info(`nakedPositionDiff:${safeInterceptionValues(String(nakedPositionDiff_BN), 8)}`)
-    // console.info(`beforeRatio:${safeInterceptionValues(String(beforeRatio), 18)}`)
-    // console.info(`spotPrice:${spotPrice}`)
+    const raw_data_kRatio = safeInterceptionValues(String(kRatio), 8)
+    const minimum = BN.minimum(new BN(liquidityPool._hex).times(raw_data_kRatio), new BN(gRatio._hex))
 
+    const row_data_minimum = safeInterceptionValues(String(minimum), 8)
     const tradingFeeBeforeClosing_BN = minimum.isEqualTo(0)
       ? new BN(0)
-      : nakedPositionDiff_BN.div(safeInterceptionValues(String(minimum), 8))
+      : new BN(raw_data_naked_after).div(row_data_minimum)
 
-    const radioSum = new BN(safeInterceptionValues(beforeRatio._hex, 8)).abs().plus(tradingFeeBeforeClosing_BN.abs())
-    //
-    // console.info(`radioSum:${radioSum.toFixed(8)}`)
-    // console.info(`tradingFeeBeforeClosing_BN:${String(tradingFeeBeforeClosing_BN)}`)
-    // console.info(`beforeRatio:${String(beforeRatio)}`)
+    const row_data_beforeRatio = safeInterceptionValues(beforeRatio._hex, 8)
+    const radioSum = new BN(row_data_beforeRatio).abs().plus(tradingFeeBeforeClosing_BN.abs())
 
-    const fee = new BN(safeInterceptionValues(String(nakedPositionDiff_BN), 8)).times(
-      radioSum.div(2).plus(safeInterceptionValues(roRatio._hex, 8))
-    )
-    // console.info(fee.toFixed(2))
+    const row_data_roRatio = safeInterceptionValues(roRatio._hex, 8)
+    const row_data_naked_final = safeInterceptionValues(String(nakedPositionDiff_BN), 8)
+    const fee = new BN(row_data_naked_final).times(radioSum.div(2).plus(row_data_roRatio))
+
     return fee.toFixed(2)
   }
 

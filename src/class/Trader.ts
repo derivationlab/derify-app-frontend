@@ -109,10 +109,20 @@ class Trader {
       }
     }
 
-    console.info(`开仓量(${symbol}):${size}`, `开仓后裸头寸：${String(nakedPositionTradingPairAfterClosing_BN)}`, `开仓前裸头寸：${String(nakedPositionTradingPairBeforeClosing_BN)}`)
+    console.info(
+      `开仓量(${symbol}):${size}`,
+      `开仓后裸头寸：${String(nakedPositionTradingPairAfterClosing_BN)}`,
+      `开仓前裸头寸：${String(nakedPositionTradingPairBeforeClosing_BN)}`
+    )
 
-    const raw_data_naked_after = safeInterceptionValues(String(new BN(safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8)).times(spotPrice)), 8)
-    const raw_data_naked_before = safeInterceptionValues(String(new BN(safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)).times(spotPrice)), 8)
+    const raw_data_naked_after = safeInterceptionValues(
+      String(new BN(safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8)).times(spotPrice)),
+      8
+    )
+    const raw_data_naked_before = safeInterceptionValues(
+      String(new BN(safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)).times(spotPrice)),
+      8
+    )
     const nakedPositionDiff_BN = new BN(raw_data_naked_after).abs().minus(new BN(raw_data_naked_before).abs())
 
     const raw_data_kRatio = safeInterceptionValues(String(kRatio), 8)

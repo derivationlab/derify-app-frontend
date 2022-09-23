@@ -165,7 +165,7 @@ class Trader {
     stopLossPrice: number
   ): Promise<boolean> => {
     const pair = pairs.find((pair) => pair.token === token)
-    const contract = getDerifyDerivativePairContract(pair!.contract)
+    const contract = getDerifyDerivativePairContract(pair!.contract, signer)
 
     const job = this.calcOrderOperateType(takeProfitPrice, stopLossPrice)
 

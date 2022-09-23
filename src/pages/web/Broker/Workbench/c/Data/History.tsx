@@ -41,7 +41,7 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
   const TypeEnum = [
     t('Broker.History.Type0', 'Income'),
     t('Broker.History.Type1', 'Withdraw'),
-    t('Broker.History.Type2', 'Exchange'), // todo GasFee?
+    t('Broker.History.Type2', 'GasFee'),
     t('Broker.History.Type3', 'Redeem'),
     t('Broker.History.Type4', 'Deposit'),
     t('Broker.History.Type5', 'Interest')

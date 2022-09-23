@@ -109,23 +109,36 @@ class Trader {
       }
     }
 
-    const raw_data_naked_after = safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8)
-    const raw_data_naked_before = safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)
-    const nakedPositionDiff_BN = new BN(raw_data_naked_after)
-      .abs()
-      .minus(new BN(raw_data_naked_before).abs())
-      .times(spotPrice)
+    console.info(`开仓量(${symbol}):${size}`, `开仓后裸头寸：${String(nakedPositionTradingPairAfterClosing_BN)}`, `开仓前裸头寸：${String(nakedPositionTradingPairBeforeClosing_BN)}`)
+
+    const raw_data_naked_after = safeInterceptionValues(String(new BN(safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8)).times(spotPrice)), 8)
+    const raw_data_naked_before = safeInterceptionValues(String(new BN(safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)).times(spotPrice)), 8)
+    const nakedPositionDiff_BN = new BN(raw_data_naked_after).abs().minus(new BN(raw_data_naked_before).abs())
 
     const raw_data_kRatio = safeInterceptionValues(String(kRatio), 8)
     const minimum = BN.minimum(new BN(liquidityPool._hex).times(raw_data_kRatio), new BN(gRatio._hex))
 
     const row_data_minimum = safeInterceptionValues(String(minimum), 8)
-    const tradingFeeBeforeClosing_BN = minimum.isEqualTo(0)
+    const tradingFeeAfterClosing_BN = minimum.isEqualTo(0)
       ? new BN(0)
       : new BN(raw_data_naked_after).div(row_data_minimum)
 
+    console.info(`raw_data_naked_after:${raw_data_naked_after}`)
+    console.info(`raw_data_naked_before:${raw_data_naked_before}`)
+    console.info(`minimum:${safeInterceptionValues(String(minimum), 8)}`)
+    console.info(`kRatio:${safeInterceptionValues(String(kRatio), 8)}`)
+    console.info(`gRatio:${safeInterceptionValues(String(gRatio), 8)}`)
+    console.info(`roRatio:${safeInterceptionValues(String(roRatio), 8)}`)
+    console.info(`liquidityPool:${safeInterceptionValues(String(liquidityPool), 8)}`)
+    console.info(`最终裸头寸nakedPositionDiff:${safeInterceptionValues(String(nakedPositionDiff_BN), 8)}`)
+    console.info(`开仓前动仓费率:${safeInterceptionValues(String(beforeRatio), 18)}`)
+    console.info(`spotPrice:${spotPrice}`)
+    console.info(`开仓后动仓费率:${String(tradingFeeAfterClosing_BN)}`)
+
     const row_data_beforeRatio = safeInterceptionValues(beforeRatio._hex, 8)
-    const radioSum = new BN(row_data_beforeRatio).abs().plus(tradingFeeBeforeClosing_BN.abs())
+    const radioSum = new BN(row_data_beforeRatio).abs().plus(tradingFeeAfterClosing_BN.abs())
+
+    console.info(`radioSum:${radioSum.toFixed(8)}`)
 
     const row_data_roRatio = safeInterceptionValues(roRatio._hex, 8)
     const row_data_naked_final = safeInterceptionValues(String(nakedPositionDiff_BN), 8)

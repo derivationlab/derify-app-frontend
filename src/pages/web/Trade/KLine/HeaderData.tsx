@@ -49,7 +49,7 @@ const HeaderData: FC = () => {
     const shortPmrRate = find?.shortPmrRate ?? 0
     return [
       Number(longPmrRate) <= 0 ? '--' : (longPmrRate * 100).toFixed(2),
-      Number(shortPmrRate) <= 0 ? '--' : (longPmrRate * 100).toFixed(2)
+      Number(shortPmrRate) <= 0 ? '--' : (shortPmrRate * 100).toFixed(2)
     ]
   }, [pairs, currentPair])
 

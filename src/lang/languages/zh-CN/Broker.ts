@@ -5,7 +5,7 @@ export default {
       Type: '类型',
       Type0: '收入',
       Type1: '取回',
-      Type2: '兑换',
+      Type2: 'Gas',
       Type3: '赎回',
       Type4: '存入',
       Type5: '利息',

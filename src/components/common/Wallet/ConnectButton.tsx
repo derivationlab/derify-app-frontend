@@ -28,7 +28,7 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
       return
     }
 
-    if (!connector.ready && connectorsIndex === 0) {
+    if (!connector.ready && [0, 3].includes(connectorsIndex)) {
       window.open('https://metamask.io/download/', '_blank')
       return
     }

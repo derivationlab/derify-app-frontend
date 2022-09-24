@@ -45,22 +45,21 @@ const WalletDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }, [connectors])
 
   return (
-    <Dialog width='472px' visible={visible} title={t('Nav.CW.Title', 'Select a wallet')} onClose={onClose}>
-      <div className='web-wallet-dialog'>
-        <p className='web-wallet-dialog-tips'>
+    <Dialog width="472px" visible={visible} title={t('Nav.CW.Title', 'Select a wallet')} onClose={onClose}>
+      <div className="web-wallet-dialog">
+        <p className="web-wallet-dialog-tips">
           {t('Nav.CW.TitleTip')}{' '}
           <span onClick={() => window.open('https://derify.finance/terms')}>
             {t('Nav.CW.TermsOfService', 'Terms of Service.')}
           </span>
         </p>
-        <div className='web-wallet-dialog-list'>
-          {wallets
-            .map((w, index) => (
-              <div className='web-wallet-dialog-list-item' key={w.title} onClick={() => onClick(w.id)}>
-                <Image src={`icon/${w.icon}`} />
-                <p>{w.title}</p>
-              </div>
-            ))}
+        <div className="web-wallet-dialog-list">
+          {wallets.map((w, index) => (
+            <div className="web-wallet-dialog-list-item" key={w.title} onClick={() => onClick(w.id)}>
+              <Image src={`icon/${w.icon}`} />
+              <p>{w.title}</p>
+            </div>
+          ))}
         </div>
       </div>
     </Dialog>

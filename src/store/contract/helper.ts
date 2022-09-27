@@ -113,8 +113,8 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
   try {
     const response = await multicall(DerifyDerivativeAbi, calls)
     const spotPrices = await getTokenSpotPrice()
-    const variables = await getTraderVariablesData(trader)
-    // console.info(response)
+    const variables = await getTraderVariablesData(trader) // 0x8BF5722AF17ce9F25211F4Cb8DFF5639831A2250
+    // console.info(String(response))
     if (!isEmpty(response)) {
       for (let i = 0; i < response.length; i++) {
         const [
@@ -312,7 +312,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           })
         }
       }
-      // console.info(outputMyPosition)
+      console.info(outputMyPosition)
 
       return [outputMyPosition, outputMyOrders]
     }

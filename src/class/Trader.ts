@@ -432,7 +432,7 @@ class Trader {
   ): Promise<boolean> => {
     let SIZE_OUTPUT = ''
     const contract = getDerifyExchangeContract(signer)
-    // console.info(whetherStud)
+    // console.info(`func: closePosition size`, size)
     if (whetherStud) {
       SIZE_OUTPUT = toFloorNum(size)
     } else {

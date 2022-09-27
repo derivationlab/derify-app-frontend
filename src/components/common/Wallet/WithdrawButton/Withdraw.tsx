@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTraderData } from '@/store/trader/hooks'
-import { safeInterceptionValues } from '@/utils/tools'
+import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -90,8 +90,8 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             </dl>
             {withdrawInfo?.bdrfAmount > 0 && (
               <address>
-                <em>{withdrawInfo?.usdAmount}</em> {BASE_TOKEN_SYMBOL}
-                <em>, {withdrawInfo?.bdrfAmount}</em> bBUSD
+                <em>{nonBigNumberInterception(withdrawInfo?.usdAmount, 8)}</em> {BASE_TOKEN_SYMBOL}
+                <em>, {nonBigNumberInterception(withdrawInfo?.bdrfAmount, 8)}</em> bBUSD
               </address>
             )}
             <address>

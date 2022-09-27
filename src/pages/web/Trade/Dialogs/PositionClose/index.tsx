@@ -48,7 +48,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
       setAmountInput(0)
       setSymbolSelect(BASE_TOKEN_SYMBOL)
     }
-    setAmountInput(Number(safeInterceptionValues(data?.volume ?? 0)))
+    setAmountInput(Number(safeInterceptionValues(data?.volume ?? 0, 8)))
   }, [visible, data?.volume])
 
   return (
@@ -88,8 +88,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               value={amountInput}
               onSymbol={(symbol) => setSymbolSelect(symbol)}
               onChange={(amount) => setAmountInput(amount)}
-              maxBUSD={safeInterceptionValues(data?.volume ?? 0) as any}
-              maxBase={safeInterceptionValues(data?.size ?? 0, 4) as any}
+              maxBUSD={safeInterceptionValues(data?.volume ?? 0, 8) as any}
+              maxBase={safeInterceptionValues(data?.size ?? 0, 8) as any}
               baseCoin={data?.symbol}
             />
           </div>

@@ -4,5 +4,24 @@
     address {
       em{font-style: normal;color:$c22}
     }
+    .tips{
+      color:$c88;
+      font-size: 14px;
+      padding: 10px 24px 0;
+      line-height: 1.2;
+      b{color:$c22}
+    }
+  }
+}
+
+.mobile-mode {
+  .web-withdraw-dialog {
+    @extend .web-deposit-dialog;
+    &-info {
+      .tips{
+        font-size: rem(12);
+        padding: rem(4) rem(18) 0;
+      }
+    }
   }
 }

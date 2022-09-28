@@ -88,12 +88,6 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 <BalanceShow value={trader.availableMargin} unit={BASE_TOKEN_SYMBOL} />
               </dd>
             </dl>
-            {withdrawInfo?.bdrfAmount > 0 && (
-              <address>
-                <em>{nonBigNumberInterception(withdrawInfo?.usdAmount, 8)}</em> {BASE_TOKEN_SYMBOL}
-                <em>, {nonBigNumberInterception(withdrawInfo?.bdrfAmount, 8)}</em> bBUSD
-              </address>
-            )}
             <address>
               {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{memoMargin[0]}</em> {BASE_TOKEN_SYMBOL}{' '}
               <em>( {memoMargin[1]}%)</em>
@@ -105,6 +99,17 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
               title={t('Trade.Withdraw.AmountToWithdraw', 'Amount to withdraw')}
               onChange={onChangeEv}
             />
+            {withdrawInfo?.bdrfAmount > 0 && (
+              <p
+                className="tips"
+                dangerouslySetInnerHTML={{
+                  __html: t('Trade.Withdraw.WithdrawTip', '', {
+                    BUSD: nonBigNumberInterception(withdrawInfo?.usdAmount, 8),
+                    bBUSD: nonBigNumberInterception(withdrawInfo?.bdrfAmount, 8)
+                  })
+                }}
+              ></p>
+            )}
           </div>
         </div>
         <Button onClick={() => onClick(withdrawAmount)} disabled={!memoDisabled || isDisabled}>

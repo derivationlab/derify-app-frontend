@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
@@ -21,16 +21,17 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
   const { trader } = useTraderData()
   const { pairs, currentPair } = useContractData()
   const { data: account } = useAccount()
+  const { isConnected } = useConnect()
 
   const memoPairInfo = useMemo(() => {
     return pairs.find((pair) => pair.token === currentPair)
   }, [pairs, currentPair])
 
   useEffect(() => {
-    if (account?.address) {
+    if (isConnected && account?.address) {
       dispatch(getTraderDataAsync(account?.address))
     }
-  }, [account?.address, dispatch, memoPairInfo?.spotPrice])
+  }, [isConnected, account?.address, dispatch, memoPairInfo?.spotPrice])
 
   return (
     <>

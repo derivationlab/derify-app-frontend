@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useAccount, useBlockNumber } from 'wagmi'
+import { useAccount, useBlockNumber, useConnect } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
 import { getBrokerBoundDataAsync, getBrokerDataAsync } from '@/store/trader'
@@ -9,14 +9,15 @@ import { getIndicatorDataAsync, getPositionChangeFeeRatioDataAsync } from '@/sto
 export const useInitialEffect = () => {
   const dispatch = useAppDispatch()
   const { data: account } = useAccount()
+  const { isConnected } = useConnect()
   const { data: blockNumber } = useBlockNumber({ watch: true })
 
   useEffect(() => {
-    if (account?.address) {
+    if (isConnected && account?.address) {
       dispatch(getBrokerDataAsync(account?.address))
       dispatch(getBrokerBoundDataAsync(account?.address))
     }
-  }, [account?.address, dispatch])
+  }, [isConnected, account?.address, dispatch])
 
   useEffect(() => {
     if (blockNumber) {

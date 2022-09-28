@@ -80,8 +80,8 @@ const Chart: FC = () => {
   useEffect(() => {
     setLoading(true)
 
-    if (pairsLoaded && memoPairInfo?.spotPrice) void getBaseData()
-  }, [memoPairInfo?.spotPrice, pairsLoaded, timeLine, currentPair])
+    if (pairsLoaded) void getBaseData()
+  }, [pairsLoaded, timeLine, currentPair])
 
   return (
     <div className="web-trade-kline-chart">

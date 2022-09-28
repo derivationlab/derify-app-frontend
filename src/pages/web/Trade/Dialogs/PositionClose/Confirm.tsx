@@ -38,12 +38,6 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     return {}
   }, [shareMessage, visible])
 
-  const memoPositionApy = useMemo(() => {
-    const max = Math.max(data?.shortPmrRate ?? 0, data?.longPmrRate ?? 0)
-    const apy = new BN(max).times(100)
-    return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
-  }, [data?.shortPmrRate, data?.longPmrRate])
-
   const calcClosePositionTradingFeeCb = useCallback(async () => {
     setTradingFeeCalculating(true)
 
@@ -102,9 +96,6 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                 <strong>{data?.name}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
               </h4>
-              <p>
-                <strong>{memoPositionApy}%</strong> APY.
-              </p>
             </header>
             <section className="web-trade-dialog-position-info-data">
               <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>

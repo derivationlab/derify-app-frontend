@@ -26,7 +26,7 @@ export default {
       Theme: 'Theme',
       Light: 'Light',
       Dark: 'Dark',
-      Feedback: 'Feedback',
+      Feedback: 'Support',
       Tutorial: 'Tutorial',
       Docs: 'Docs',
       Test: 'Testnet',

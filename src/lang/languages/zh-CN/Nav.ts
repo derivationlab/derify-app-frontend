@@ -26,7 +26,7 @@ export default {
       Theme: '主题',
       Light: '明亮',
       Dark: '黑暗',
-      Feedback: '反馈',
+      Feedback: '客服',
       Tutorial: '教程',
       Docs: '文档',
       Test: '测试网',

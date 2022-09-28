@@ -1,7 +1,7 @@
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 export const Feedback =
-  'https://docs.google.com/forms/d/e/1FAIpQLSelBo6du-kioL3kTWgMqCOtiwNZvw7D7kF82SSm3l314Ot9xA/viewform'
+  'https://discord.com/channels/822422051099902053/827112242449350686'
 export const Tutorial = 'https://docs.derify.finance/getting-started/tutorial'
 export const Docs = 'https://docs.derify.finance/'
 export const WhitePaper = 'https://docs.derify.finance/whitepaper/introduction'

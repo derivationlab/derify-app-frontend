@@ -108,7 +108,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                     bBUSD: nonBigNumberInterception(withdrawInfo?.bdrfAmount, 8)
                   })
                 }}
-              ></p>
+              />
             )}
           </div>
         </div>

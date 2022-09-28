@@ -46,12 +46,7 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
         <Input value={value} onChange={(amount) => onChange(Number(amount))} type="number" />
         <Select value={type} onChange={typeChangeEv} options={typeOptions} />
       </section>
-      <PercentButton
-        decimal={type === BASE_TOKEN_SYMBOL ? 2 : 4}
-        currValue={value}
-        value={maxVolume}
-        onChange={(amount) => onChange(Number(amount))}
-      />
+      <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(Number(amount))} />
     </div>
   )
 }

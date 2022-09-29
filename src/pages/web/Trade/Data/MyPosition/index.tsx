@@ -69,11 +69,9 @@ const MyPosition: FC = () => {
   }
 
   // 100% or not
-  const whetherStud = (size: string, volume: string, amount: string): boolean => {
-    const _size = safeInterceptionValues(size, 4) // 0.xx
-    const _volume = safeInterceptionValues(volume) // 0.xx
-    const amount_BN = new BN(amount) // 0.xx
-    return amount_BN.isEqualTo(_volume) || amount_BN.isEqualTo(_size)
+  const whetherStud = ({ size = 0, volume = 0 }, amount: string): boolean => {
+    const amount_BN = new BN(amount)
+    return amount_BN.isEqualTo(volume) || amount_BN.isEqualTo(size)
   }
 
   const closeOnePositionsFunc = async () => {
@@ -84,17 +82,20 @@ const MyPosition: FC = () => {
     onCloseDialogEv()
 
     if (signer && broker?.broker) {
+      const { token, side, size } = targetPosOrd
+      const { symbol = '', amount = 0 } = memoShareMessage
+
       const account = await signer.getAddress()
       const status = await closeSomePosition(
         signer,
         broker.broker,
-        memoShareMessage?.symbol,
-        targetPosOrd?.token,
-        targetPosOrd?.side,
-        targetPosOrd?.size,
-        memoShareMessage?.amount,
-        targetPosOrd?.averagePrice,
-        whetherStud(targetPosOrd?.size ?? 0, targetPosOrd?.volume ?? 0, memoShareMessage?.amount ?? 0)
+        symbol,
+        token,
+        side,
+        size,
+        amount,
+        memoPairInfo?.spotPrice,
+        whetherStud(targetPosOrd, amount)
       )
 
       if (status) {

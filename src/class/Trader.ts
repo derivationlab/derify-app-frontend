@@ -431,8 +431,9 @@ class Trader {
     whetherStud?: boolean
   ): Promise<boolean> => {
     let SIZE_OUTPUT = ''
+
     const contract = getDerifyExchangeContract(signer)
-    // console.info(`func: closePosition size`, size)
+
     if (whetherStud) {
       SIZE_OUTPUT = toFloorNum(size)
     } else {
@@ -440,6 +441,8 @@ class Trader {
       const SIZE_BN = symbol === BASE_TOKEN_SYMBOL ? AMOUNT_BN.div(spotPrice) : AMOUNT_BN
       SIZE_OUTPUT = toFloorNum(String(SIZE_BN))
     }
+
+    // console.info(`func: closePosition size`, size, SIZE_OUTPUT)
 
     try {
       const gasLimit = await estimateGas(contract, 'closePosition', [brokerId, token, side, SIZE_OUTPUT], 0)

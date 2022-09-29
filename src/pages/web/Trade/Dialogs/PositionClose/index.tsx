@@ -78,9 +78,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                   <em>{safeInterceptionValues(data?.averagePrice ?? 0)}</em>
                 </p>
                 <p>
-                  {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} :{' '}
-                  <em>{safeInterceptionValues(data?.size ?? 0, 4)}</em> {data?.symbol} /{' '}
-                  <em>{safeInterceptionValues(data?.volume ?? 0)}</em> {BASE_TOKEN_SYMBOL}
+                  {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} : <em>{data?.size ?? 0}</em>{' '}
+                  {data?.symbol} / <em>{data?.volume ?? 0}</em> {BASE_TOKEN_SYMBOL}
                 </p>
               </section>
             </div>
@@ -88,8 +87,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               value={amountInput}
               onSymbol={(symbol) => setSymbolSelect(symbol)}
               onChange={(amount) => setAmountInput(amount)}
-              maxBUSD={safeInterceptionValues(data?.volume ?? 0, 8) as any}
-              maxBase={safeInterceptionValues(data?.size ?? 0, 8) as any}
+              maxBUSD={(data?.volume ?? 0) as any}
+              maxBase={(data?.size ?? 0) as any}
               baseCoin={data?.symbol}
             />
           </div>

@@ -23,7 +23,7 @@ function App() {
           <Route path="/" component={WebEntry} />
         </Switch>
       </Suspense>
-      <AccessDeniedDialog visible />
+      <AccessDeniedDialog visible={false} />
     </>
   )
 }

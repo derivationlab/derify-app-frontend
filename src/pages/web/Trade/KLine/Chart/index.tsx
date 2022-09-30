@@ -32,7 +32,7 @@ const Chart: FC = () => {
     if (kline.current) {
       kline.current.reset()
 
-      const { data, more } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 100, true)
+      const { data, more } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 150, true)
 
       store.current = data[data.length - 1] // keep original data
 
@@ -45,7 +45,7 @@ const Chart: FC = () => {
   }, [pairs, timeLine, currentPair])
 
   const getMoreData = useCallback(async (lastTime: number) => {
-    return await getKLineData(currentPair, timeLine, lastTime, 100, false)
+    return await getKLineData(currentPair, timeLine, lastTime, 50, false)
   }, [])
 
   useInterval(() => {

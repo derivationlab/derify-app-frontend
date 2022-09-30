@@ -11,6 +11,9 @@ module.exports = {
     alias: {
       '@': P('src')
     },
+    externals: {
+      geoip2: 'geoip2'
+    },
     configure: (webpackConfig, { env }) => {
       if (env === 'production') {
         webpackConfig.plugins.push(

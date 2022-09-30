@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { Switch, Route } from '@/components/common/Route'
 
 import { useInitialEffect } from '@/hooks/useInitialEffect'
@@ -16,6 +16,16 @@ const WebEntry = lazy(() => import('@/pages/web'))
 function App() {
   useInitialEffect()
 
+  const [visible, setVisible] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (typeof window?.geoip2 !== 'undefined') {
+      window.geoip2?.country(function (response: { country: { iso_code: string } }) {
+        if (response?.country?.iso_code === 'CN') setVisible(true)
+      })
+    }
+  }, [])
+
   return (
     <>
       <Suspense fallback={null}>
@@ -23,7 +33,7 @@ function App() {
           <Route path="/" component={WebEntry} />
         </Switch>
       </Suspense>
-      <AccessDeniedDialog visible={false} />
+      <AccessDeniedDialog visible={visible} />
     </>
   )
 }

@@ -1,0 +1,29 @@
+.web-access-denied-dialog {
+  font-size: 18px;
+  &-tips {
+    margin:-10px 0 0;line-height: 1.4;
+    a {
+      color:$lRed;text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
+
+.mobile-mode {
+  .web-access-denied-dialog {
+    font-size: rem(14);
+    &-tips {
+      margin:rem(-10) 0 0;
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .web-access-denied-dialog {
+    &-tips {
+      a {
+        color:$yellow;
+      }
+    }
+  }
+}

@@ -33,7 +33,7 @@ const Chart: FC = () => {
     if (!onetime) setLoading(true)
 
     if (kline.current) {
-      kline.current.reset()
+      // kline.current.reset()
 
       const { data, more } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 150, true)
 

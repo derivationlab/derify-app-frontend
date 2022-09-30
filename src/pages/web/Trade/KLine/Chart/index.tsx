@@ -3,18 +3,19 @@ import { useInterval } from 'react-use'
 
 import { KLineTimes } from '@/data'
 import { useContractData } from '@/store/contract/hooks'
+import { getKLineData, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 
 import { Select } from '@/components/common/Form'
 import Loading from '@/components/common/Loading'
 import KLineChart from '@/components/common/Chart/KLine'
-
-import { getKLineData, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 
 interface KlineChartProps {
   reset: () => void
   update: (data: any) => void
   initData: (data: any, more?: boolean) => void
 }
+
+let onetime = false
 
 const Chart: FC = () => {
   const store = useRef<Record<string, any>>({})
@@ -29,6 +30,8 @@ const Chart: FC = () => {
   }, [pairs, currentPair])
 
   const getBaseData = useCallback(async () => {
+    if (!onetime) setLoading(true)
+
     if (kline.current) {
       kline.current.reset()
 
@@ -39,9 +42,10 @@ const Chart: FC = () => {
       const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
 
       kline.current.initData(reorganize, more)
-
-      setLoading(false)
     }
+
+    onetime = true
+    setLoading(false)
   }, [pairs, timeLine, currentPair])
 
   const getMoreData = useCallback(async (lastTime: number) => {
@@ -66,26 +70,24 @@ const Chart: FC = () => {
     void func()
   }, 60000)
 
-  // todo: backup code
-  // useEffect(() => {
-  //   setLoading(true)
-  //
-  //   void getBaseData()
-  // }, [timeLine, currentPair])
-  //
-  // useEffect(() => {
-  //   if (pairsLoaded && memoPairInfo?.spotPrice) void getBaseData()
-  // }, [memoPairInfo?.spotPrice, pairsLoaded])
+  useEffect(() => {
+    if (pairsLoaded) void getBaseData()
+  }, [pairsLoaded, timeLine, currentPair, memoPairInfo?.spotPrice])
 
   useEffect(() => {
     setLoading(true)
-
-    if (pairsLoaded) void getBaseData()
-  }, [pairsLoaded, timeLine, currentPair])
+  }, [currentPair])
 
   return (
     <div className="web-trade-kline-chart">
-      <Select value={timeLine} objOptions={KLineTimes} onChange={(val) => setTimeLine(Number(val))} />
+      <Select
+        value={timeLine}
+        objOptions={KLineTimes}
+        onChange={(val) => {
+          onetime = false
+          setTimeLine(Number(val))
+        }}
+      />
       <div className="web-trade-kline-chart-layout">
         {/* @ts-ignore */}
         <KLineChart cRef={kline} getMoreData={(timeLine: number) => getMoreData(timeLine)} />

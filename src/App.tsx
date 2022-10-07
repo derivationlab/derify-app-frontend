@@ -21,7 +21,7 @@ function App() {
   useEffect(() => {
     if (typeof window?.geoip2 !== 'undefined') {
       window.geoip2?.country(function (response: { country: { iso_code: string } }) {
-        if (response?.country?.iso_code === 'CN') setVisible(true)
+        if (response?.country?.iso_code.toUpperCase() === 'CN') setVisible(true)
       })
     }
   }, [])

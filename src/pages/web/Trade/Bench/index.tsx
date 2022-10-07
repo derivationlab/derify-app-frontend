@@ -53,7 +53,7 @@ const Bench: FC = () => {
   const memoLongPosApy = useMemo(() => {
     if (!isEmpty(memoPairInfo) && memoPairInfo?.longPmrRate) {
       const apy = new BN(memoPairInfo?.longPmrRate).times(100)
-      return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
+      return apy.isLessThanOrEqualTo(0) ? '0' : String(apy)
     }
     return '--'
   }, [memoPairInfo])
@@ -64,7 +64,7 @@ const Bench: FC = () => {
         .plus(memoPairInfo?.longPmrRate ?? 0)
         .div(2)
         .times(100)
-      return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
+      return apy.isLessThanOrEqualTo(0) ? '0' : String(apy)
     }
     return '--'
   }, [memoPairInfo])
@@ -72,7 +72,7 @@ const Bench: FC = () => {
   const memoShortPosApy = useMemo(() => {
     if (!isEmpty(memoPairInfo) && memoPairInfo?.shortPmrRate) {
       const apy = new BN(memoPairInfo?.shortPmrRate).times(100)
-      return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
+      return apy.isLessThanOrEqualTo(0) ? '0' : String(apy)
     }
     return '--'
   }, [memoPairInfo])

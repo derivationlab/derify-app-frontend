@@ -41,7 +41,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
           <QuestionPopover size={size} text={t('Nav.Account.MarginBalanceTip', 'Margin Balance')} />
         </dt>
         <dd>
-          <BalanceShow value={trader.marginBalance} unit={BASE_TOKEN_SYMBOL} />
+          <BalanceShow value={trader?.marginBalance ?? 0} unit={BASE_TOKEN_SYMBOL} />
         </dd>
       </dl>
       <dl>
@@ -50,7 +50,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
           <QuestionPopover size={size} text={t('Nav.Account.AvaliableMarginBalanceTip', 'Available Margin Balance')} />
         </dt>
         <dd>
-          <BalanceShow value={trader.availableMargin} unit={BASE_TOKEN_SYMBOL} />
+          <BalanceShow value={trader?.availableMargin ?? 0} unit={BASE_TOKEN_SYMBOL} />
         </dd>
       </dl>
     </>

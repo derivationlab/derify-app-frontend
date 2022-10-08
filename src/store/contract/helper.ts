@@ -109,7 +109,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
   const calls = times(pairs.length, (index) => ({
     address: pairs[index].contract,
     name: 'getTraderDerivativePositions',
-    params: ['0x8BF5722AF17ce9F25211F4Cb8DFF5639831A2250']
+    params: [trader]
   }))
 
   try {

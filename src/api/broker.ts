@@ -70,3 +70,8 @@ export const getBrokerRegisterTime = async (broker: string) => {
   const response = await get(`api/broker_apply_time/${broker}`)
   return response
 }
+
+export const getIP = async () => {
+  const response = await get('https://bnb.openleverage.finance/api/ip/disable')
+  return response
+}

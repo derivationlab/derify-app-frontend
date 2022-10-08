@@ -30,6 +30,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const [validVolume, setValidVolume] = useState<string>('0')
   const [changeFeeCalculating, setChangeFeeCalculating] = useState<boolean>(true)
   const [tradingFeeCalculating, setTradingFeeCalculating] = useState<boolean>(true)
+  const [tradingVolCalculating, setTradingVolCalculating] = useState<boolean>(true)
 
   const calcClosePositionTradingFeeCb = useCallback(async () => {
     setTradingFeeCalculating(true)
@@ -50,6 +51,8 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [data])
 
   const checkOpenPositionSizeFunc = async () => {
+    setTradingVolCalculating(true)
+
     const volume = await checkOpenPositionSize(
       data.token,
       data.side,
@@ -60,6 +63,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
     )
 
     setValidVolume(volume)
+    setTradingVolCalculating(false)
   }
 
   // const memoApyValue = useMemo(() => {
@@ -114,25 +118,33 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
               {data?.side === PositionSide['2-Way'] ? (
                 <dd>
-                  <section>
-                    <aside>
-                      <MultipleStatus direction="Long" />
-                      <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString())}</em>
-                      <u>{data?.symbol}</u>
-                    </aside>
-                    <aside>
-                      <MultipleStatus direction="Short" />
-                      <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString())}</em>
-                      <u>{data?.symbol}</u>
-                    </aside>
-                  </section>
+                  {tradingVolCalculating ? (
+                    <small>calculating...</small>
+                  ) : (
+                    <section>
+                      <aside>
+                        <MultipleStatus direction="Long" />
+                        <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString(), 8)}</em>
+                        <u>{data?.symbol}</u>
+                      </aside>
+                      <aside>
+                        <MultipleStatus direction="Short" />
+                        <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString(), 8)}</em>
+                        <u>{data?.symbol}</u>
+                      </aside>
+                    </section>
+                  )}
                 </dd>
               ) : (
                 <dd>
-                  <span>
-                    <em>{nonBigNumberInterception(validVolume)}</em>
-                    <u>{data?.symbol}</u>
-                  </span>
+                  {tradingVolCalculating ? (
+                    <small>calculating...</small>
+                  ) : (
+                    <span>
+                      <em>{validVolume}</em>
+                      <u>{data?.symbol}</u>
+                    </span>
+                  )}
                 </dd>
               )}
             </dl>

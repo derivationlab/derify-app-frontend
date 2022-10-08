@@ -59,7 +59,7 @@ class Trader {
 
     const _ratio = safeInterceptionValues(String(ratio), 8)
 
-    const fee = String(volume.times(_ratio).toFixed(18))
+    const fee = String(volume.times(_ratio).toFixed(10))
 
     return nonBigNumberInterception(fee, 8)
   }
@@ -152,9 +152,9 @@ class Trader {
 
     const row_data_roRatio = safeInterceptionValues(roRatio._hex, 8)
     const row_data_naked_final = safeInterceptionValues(String(nakedPositionDiff_BN), 8)
-    const fee = new BN(row_data_naked_final).times(radioSum.div(2).plus(row_data_roRatio))
+    const fee = new BN(row_data_naked_final).times(radioSum.div(2).plus(row_data_roRatio)).times(-1)
 
-    return nonBigNumberInterception(fee.toFixed(18), 8)
+    return nonBigNumberInterception(fee.toFixed(10), 8)
   }
 
   calcOrderOperateType = (TP: number, SL: number): Record<string, any> => {

@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 
@@ -63,7 +62,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
       data?.spotPrice
     )
 
-    setChangeFee(new BN(fee).times(-1).toString())
+    setChangeFee(fee)
     setChangeFeeCalculating(false)
   }, [data?.spotPrice, memoShareMessage?.symbol, memoShareMessage?.amount, data?.side, data?.token])
 

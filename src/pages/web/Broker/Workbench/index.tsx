@@ -8,8 +8,8 @@ const BrokerWorkbench: FC = () => {
   return (
     <>
       <div className="web-broker-workbench">
-        {/*<Dashboard />*/}
-        {/*<Info />*/}
+        <Dashboard />
+        <Info />
       </div>
       <Data />
     </>

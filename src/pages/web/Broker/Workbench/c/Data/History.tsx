@@ -65,14 +65,14 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
 
 const RowAmount: FC<Record<string, any>> = ({ text = 0, coin = BASE_TOKEN_SYMBOL }) => (
   <div className="web-broker-table-history-amount">
-    <strong>{safeInterceptionValues(getDecimalAmount(text).toString())}</strong>
+    <strong>{text}</strong>
     <u>{coin}</u>
   </div>
 )
 
 const RowBalance: FC<Record<string, any>> = ({ text = 0, coin = BASE_TOKEN_SYMBOL }) => (
   <div className="web-broker-table-history-balance">
-    <strong>{safeInterceptionValues(getDecimalAmount(text).toString())}</strong>
+    <strong>{text}</strong>
     <u>{coin}</u>
   </div>
 )
@@ -94,7 +94,6 @@ const History: FC = () => {
     setIsLoading(true)
 
     if (account?.address) {
-      // const { data } = await getBrokerAccountFlow('0x34D2F68529CCE3080A2eF473BC35Fa95FFaB4589', index, 10)
       const { data } = await getBrokerAccountFlow(account.address, index, 10)
 
       setTradeFlow(data)
@@ -130,25 +129,15 @@ const History: FC = () => {
       dataIndex: 'amount',
       width: mobile ? 95 : 268,
       render: (_: string, data: Record<string, any>) => {
-        const drf_amount = new BN(data?.drf_amount ?? 0).times(indicator?.drfPrice ?? 0)
-        const rewards_plus = drf_amount.plus(data?.usd_amount ?? 0).toString()
-        const rewards_total = nonBigNumberInterception(rewards_plus)
+        const usd_amount = nonBigNumberInterception(data?.usd_amount, 8)
+        const drf_amount = nonBigNumberInterception(data?.drf_amount, 8)
 
-        // const usd = String(data?.usd_amount)
-        // const usd_amount = safeInterceptionValues(
-        //   usd.indexOf('.') > -1 ? usd : `${usd}.0`
-        // )
-        // const drf = String(data?.drf_amount)
-        // const drf_amount = safeInterceptionValues(
-        //   drf.indexOf('.') > -1 ? drf : `${drf}.0`
-        // )
-        // return (
-        //   <>
-        //     <RowAmount text={usd_amount} />
-        //     <RowAmount text={drf_amount} coin='DRF' />
-        //   </>
-        // )
-        return <RowAmount text={rewards_total} />
+        return (
+          <>
+            <RowAmount text={usd_amount} />
+            <RowAmount text={drf_amount} coin="DRF" />
+          </>
+        )
       }
     },
     {
@@ -156,25 +145,14 @@ const History: FC = () => {
       dataIndex: 'balance',
       width: mobile ? 95 : 268,
       render: (_: string, data: Record<string, any>) => {
-        const drf_balance = new BN(data?.drf_balance ?? 0).times(indicator?.drfPrice ?? 0)
-        const rewards_plus = drf_balance.plus(data?.usd_balance ?? 0).toString()
-        const rewards_total = nonBigNumberInterception(rewards_plus)
-
-        // const usd = String(data?.usd_balance)
-        // const usd_balance = safeInterceptionValues(
-        //   usd.indexOf('.') > -1 ? usd : `${usd}.0`
-        // )
-        // const drf = String(data?.drf_balance)
-        // const drf_balance = safeInterceptionValues(
-        //   drf.indexOf('.') > -1 ? drf : `${drf}.0`
-        // )
-        // return (
-        //   <>
-        //     <RowBalance text={usd_balance} />
-        //     <RowBalance text={drf_balance} coin='DRF' />
-        //   </>
-        // )
-        return <RowBalance text={rewards_total} />
+        const usd_balance = nonBigNumberInterception(data?.usd_balance ?? 0, 8)
+        const drf_balance = nonBigNumberInterception(data?.drf_balance ?? 0, 8)
+        return (
+          <>
+            <RowBalance text={usd_balance} />
+            <RowBalance text={drf_balance} coin="DRF" />
+          </>
+        )
       }
     }
   ]

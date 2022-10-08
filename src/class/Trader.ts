@@ -52,16 +52,16 @@ class Trader {
     const pair = pairs.find((pair) => pair.token === token)
     const contract = getDerifyDerivativePairContract(pair!.contract)
 
-    const _amount = new BN(amount)
-    const size = symbol === BASE_TOKEN_SYMBOL ? _amount.div(spotPrice) : _amount
+    const amount_BN = new BN(amount)
+    const volume = symbol === BASE_TOKEN_SYMBOL ? amount_BN : amount_BN.times(spotPrice)
 
     const ratio = await contract.tradingFeeRatio()
 
     const _ratio = safeInterceptionValues(String(ratio), 8)
-    // console.info(`size:${String(size)}`, `price:${spotPrice}`)
-    // console.info(`ratio:${_ratio}`, String(size.times(spotPrice).times(_ratio))) // 0.0005
-    const fee = String(size.times(spotPrice).times(_ratio))
-    return nonBigNumberInterception(fee)
+
+    const fee = String(volume.times(_ratio).toFixed(18))
+
+    return nonBigNumberInterception(fee, 8)
   }
 
   calcClosePositionChangeFee = async (
@@ -154,7 +154,7 @@ class Trader {
     const row_data_naked_final = safeInterceptionValues(String(nakedPositionDiff_BN), 8)
     const fee = new BN(row_data_naked_final).times(radioSum.div(2).plus(row_data_roRatio))
 
-    return fee.toFixed(2)
+    return nonBigNumberInterception(fee.toFixed(18), 8)
   }
 
   calcOrderOperateType = (TP: number, SL: number): Record<string, any> => {

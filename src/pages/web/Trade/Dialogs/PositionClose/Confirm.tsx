@@ -99,21 +99,11 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
             </header>
             <section className="web-trade-dialog-position-info-data">
               <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>
-              {/* todo 平仓限价市价？ */}
-              {/*{data?.orderType === 0 ? (*/}
-              {/*  <p>*/}
-              {/*    <BalanceShow value={data?.price} unit="" />*/}
-              {/*    <em>Limit Price</em>*/}
-              {/*  </p>*/}
-              {/*) : (*/}
-              {/*  <strong>Market Price</strong>*/}
-              {/*)}*/}
             </section>
           </div>
           <div className="web-trade-dialog-position-confirm">
             <dl>
               <dt>{t('Trade.ClosePosition.Volume', 'Volume')}</dt>
-              {/* todo 这里还细分 Long Short 2-Way? */}
               <dd>
                 <em>{memoShareMessage?.amount}</em>
                 <u>{memoShareMessage?.symbol}</u>

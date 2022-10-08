@@ -14,7 +14,7 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { activeChain, switchNetwork, chains } = useNetwork()
-  const { connectAsync, connectors, isConnecting, activeConnector } = useConnect()
+  const { connectAsync, connectors, isConnecting, activeConnector, isConnected } = useConnect()
 
   const [needSwitchNet, setNeedSwitchNet] = useState<boolean>(false)
   const [showWalletInf, setShowWalletInf] = useState<boolean>(false)
@@ -76,7 +76,7 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
 
   return (
     <>
-      {account?.address ? (
+      {isConnected && account?.address ? (
         <Button size={size} onClick={() => setVisibleStatus('account')}>
           {memoAccountHide}
         </Button>

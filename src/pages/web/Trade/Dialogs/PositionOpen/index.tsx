@@ -46,7 +46,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
     const fee = await calcClosePositionChangeFee(data?.side, data?.symbol, data?.token, data?.volume, data?.price, true)
 
-    setChangeFee(new BN(fee).times(-1).toString())
+    setChangeFee(fee)
     setChangeFeeCalculating(false)
   }, [data])
 

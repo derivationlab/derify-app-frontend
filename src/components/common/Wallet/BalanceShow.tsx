@@ -21,7 +21,7 @@ const BalanceShow: FC<Props> = ({ value, unit, format = true, percent = false })
 
   return (
     <div className={classNames('web-balance-show million dec')}>
-      <strong>{int}</strong>
+      <strong>{int ?? 0}</strong>
       <small>
         {dec && `.${dec}`}
         {percent ? '%' : ''}

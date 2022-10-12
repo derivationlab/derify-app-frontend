@@ -69,35 +69,7 @@ const tokens: { [key: string]: Token } = {
 }
 
 const envTable: { [string: string]: Record<string, Token> } = {
-  dev: {
-    bBUSD: {
-      symbol: 'bBUSD',
-      address: {
-        56: '',
-        97: '0xe545f5aeA093B84Cc500737b216F36Fc61B71Da1'
-      },
-      decimals: 18,
-      projectLink: ''
-    },
-    eDRF: {
-      symbol: 'eDRF',
-      address: {
-        56: '',
-        97: '0xd531479f89A573CEa84d08Af1De67420e9734b82'
-      },
-      decimals: 18,
-      projectLink: ''
-    },
-    bnb: {
-      symbol: 'BNB',
-      address: {
-        56: '',
-        97: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52'
-      },
-      decimals: 18,
-      projectLink: ''
-    }
-  },
+  dev: {},
   prod: {}
 }
 

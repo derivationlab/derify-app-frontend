@@ -34,32 +34,7 @@ const addresses: Record<string, Address> = {
 }
 
 const envTable: { [string: string]: Record<string, Address> } = {
-  dev: {
-    DerifyRewards: {
-      56: '',
-      97: '0x849E0B8eB97753857b71Edf2CbC6E1E0bC2D5837'
-    },
-    DerifyExchange: {
-      56: '',
-      97: '0x766326B2eD618285b1e8014e6e9650C05808e617'
-    },
-    DerifyDerivative_BTC: {
-      56: '',
-      97: '0xffe20ae02fA7E808d61a493f4BE6615e3a405278'
-    },
-    DerifyDerivative_ETH: {
-      56: '',
-      97: '0xA5d35BE0299377749C2F617190c0bc48d7a4eF8f'
-    },
-    DerifyDerivative_BNB: {
-      56: '',
-      97: '0xC116016dBe7d2620B77fC044dF687e2e1C99dfd8'
-    },
-    DerifyBroker: {
-      56: '',
-      97: '0x5ee4b4801aE40391899D702d7B786cF68D8520E9'
-    }
-  },
+  dev: {},
   prod: {}
 }
 

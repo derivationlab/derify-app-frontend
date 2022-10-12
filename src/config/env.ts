@@ -1,12 +1,12 @@
 const urlTable: Record<string, { web: string }> = {
   dev: {
-    web: 'https://dev.derify.exchange/'
+    web: 'https://test.derify.exchange/'
   },
   prod: {
     web: 'https://derify.finance/'
   },
   pre: {
-    web: ''
+    web: 'https://pre.derify.exchange/'
   }
 }
 

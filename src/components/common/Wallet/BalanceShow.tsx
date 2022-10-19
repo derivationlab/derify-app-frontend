@@ -9,12 +9,13 @@ interface Props {
   value: number | string
   unit: string
   format?: boolean
+  decimal?: number
   percent?: boolean
 }
 
-const BalanceShow: FC<Props> = ({ value, unit, format = true, percent = false }) => {
+const BalanceShow: FC<Props> = ({ value, unit, format = true, percent = false, decimal = 2 }) => {
   const [int, dec] = useMemo(() => {
-    const safeNumber = nonBigNumberInterception(value)
+    const safeNumber = nonBigNumberInterception(value, decimal)
     const finalValue = percent ? new BN(safeNumber).multipliedBy(100).toString() : safeNumber
     return finalValue.split('.')
   }, [value, format, percent])

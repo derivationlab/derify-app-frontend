@@ -124,7 +124,7 @@ const DRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.DRFPool.Claimable', 'Claimable')}</h4>
-              <BalanceShow value={trader?.stakingEDRFBalance ?? 0} unit="eDRF" />
+              <BalanceShow value={trader?.stakingEDRFBalance ?? 0} unit="eDRF" decimal={4} />
             </main>
             <aside>
               <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawEDRFRewardsFunc}>

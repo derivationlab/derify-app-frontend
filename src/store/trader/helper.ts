@@ -141,9 +141,9 @@ export const getPMRewardData = async (trader: string) => {
     const { usdBalance, usdAccumulatedBalance, drfBalance, drfAccumulatedBalance } = data
 
     return {
-      usdBalance: safeInterceptionValues(usdBalance),
+      usdBalance: safeInterceptionValues(usdBalance, 4),
       usdAccumulatedBalance: safeInterceptionValues(usdAccumulatedBalance),
-      drfBalance: safeInterceptionValues(drfBalance),
+      drfBalance: safeInterceptionValues(drfBalance, 4),
       drfAccumulatedBalance: safeInterceptionValues(drfAccumulatedBalance)
     }
   } catch (e) {
@@ -175,7 +175,7 @@ export const getBondInfoData = async (trader: string) => {
     const bondBalance = await getTraderBondBalanceData(trader) // '0x12f756f0FD6E3C13A51223b1B0040fE914680908'
     const exchangeable = await rewardsContract.getExchangeBondSizeUpperBound(trader)
     // console.info(bondBalance)
-    const _bondBalance = nonBigNumberInterception(bondBalance.toFixed(8)) // todo
+    const _bondBalance = nonBigNumberInterception(bondBalance.toFixed(8), 4) // todo
     const { bondReturnBalance, bondWalletBalance, bondAnnualInterestRatio } = bondInfo
 
     return {
@@ -208,7 +208,7 @@ export const getStakingInfoData = async (trader: string) => {
     const stakingInfo = await rewardsContract.getStakingInfo(trader)
 
     const { drfBalance } = stakingInfo
-    const stakingEDRFBalance = nonBigNumberInterception(eDRFBalance)
+    const stakingEDRFBalance = nonBigNumberInterception(eDRFBalance, 4)
 
     return {
       stakingDRFBalance: safeInterceptionValues(drfBalance, 8),

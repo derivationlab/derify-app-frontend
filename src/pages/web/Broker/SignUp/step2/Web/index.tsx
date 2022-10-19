@@ -123,8 +123,12 @@ const BrokerSignUpStep2: FC = () => {
         wechat,
         introduction
       } = broker
-      const index = logo.lastIndexOf('/')
-      setValue('logo', `${API_PREFIX_URL}${logo.substring(index + 1)}` as any)
+
+      if (logo) {
+        const index = logo.lastIndexOf('/')
+        setValue('logo', `${API_PREFIX_URL}${logo.substring(index + 1)}` as any)
+      }
+
       setValue('id', id)
       setValue('name', name)
       setValue('broker', _broker)

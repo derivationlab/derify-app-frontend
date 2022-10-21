@@ -39,7 +39,7 @@ const Bench: FC = () => {
   const { openPositionOrder, minimumOpenPositionLimit } = Trader
 
   const [openType, setOpenType] = useState<PriceType>(PriceType.Market)
-  const [leverage, setLeverage] = useState<number>(10)
+  const [leverage, setLeverage] = useState<number>(30)
   const [limitPrice, setLimitPrice] = useState(0) // todo type
   const [quantity, setQuantity] = useState<number | string>('') // todo type
   const [quantityType, setQuantityType] = useState<any>(BASE_TOKEN_SYMBOL) // todo type

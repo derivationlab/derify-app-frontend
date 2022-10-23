@@ -2,9 +2,11 @@ import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
+import { traderInfoUpdates } from '@/api'
+
+import Button from '@/components/common/Button'
 import WalletDialog from '@/components/common/Wallet'
 import AccountDialog from '@/components/common/Wallet/Account'
-import Button from '@/components/common/Button'
 
 interface Props {
   size?: 'mini' | 'default'
@@ -73,6 +75,16 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
   useEffect(() => {
     if ((activeChain?.unsupported || needSwitchNet) && switchNetwork) switchNetwork(chains[0]?.id)
   }, [activeChain, needSwitchNet, switchNetwork, chains])
+
+  useEffect(() => {
+    const func = (trader: string) => {
+      void traderInfoUpdates({ trader })
+    }
+
+    if (isConnected && account?.address) {
+      func(account.address)
+    }
+  }, [isConnected, account?.address])
 
   return (
     <>

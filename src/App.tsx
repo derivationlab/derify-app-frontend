@@ -26,12 +26,12 @@ function App() {
     }
 
     void func()
-
-    if (typeof window?.geoip2 !== 'undefined') {
-      window.geoip2?.country(function (response: { country: { iso_code: string } }) {
-        if (response?.country?.iso_code.toUpperCase() === 'CN') setVisible(true)
-      })
-    }
+    //
+    // if (typeof window?.geoip2 !== 'undefined') {
+    //   window.geoip2?.country(function (response: { country: { iso_code: string } }) {
+    //     if (response?.country?.iso_code.toUpperCase() === 'CN') setVisible(true)
+    //   })
+    // }
   }, [])
 
   return (

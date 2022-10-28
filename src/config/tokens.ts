@@ -34,7 +34,7 @@ const tokens: { [key: string]: Token } = {
     symbol: 'bBUSD',
     address: {
       56: '',
-      97: '0x4B26f0Fcb1DB5739E98834B3eDAE05ce2B4a1ACf'
+      97: '0x1DaDCC4EfA178D98C04d7EeA6c41df16712fEa61'
     },
     decimals: 18,
     projectLink: ''
@@ -52,7 +52,7 @@ const tokens: { [key: string]: Token } = {
     symbol: 'eDRF',
     address: {
       56: '',
-      97: '0x06C275C10D6C1b1f82704c509cb1b41eC06543E6'
+      97: '0xcFC597eEDFC368c19AFD22e581468a2e69eA5E24'
     },
     decimals: 18,
     projectLink: ''

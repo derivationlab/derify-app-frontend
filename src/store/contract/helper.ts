@@ -149,15 +149,14 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           // console.info(`leverage:${String(long.leverage)}/${safeInterceptionValues(String(long.leverage), 8)}`)
 
           const size = safeInterceptionValues(String(long.size), 8)
-          const div = String(new BN(spotPrice).times(size))
-          const volume = nonBigNumberInterception(div, 8)
+          const volume = nonBigNumberInterception(String(new BN(spotPrice).times(size)), 8)
 
           outputMyPosition.push({
+            size,
             volume,
             ...pairs[i],
             ...longPositionView,
             side: PositionSide.Long,
-            size: safeInterceptionValues(String(long.size), 8),
             stopLossPrice: calcStopLossOrStopProfitPrice(longOrderStopLossPosition),
             takeProfitPrice: calcStopLossOrStopProfitPrice(longOrderStopProfitPosition),
             averagePrice: safeInterceptionValues(String(long.price), 8)
@@ -178,15 +177,14 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           // console.info(`price:${String(short.price)}/${safeInterceptionValues(String(short.price), 8)}`)
           // console.info(`leverage:${String(short.leverage)}/${safeInterceptionValues(String(short.leverage), 8)}`)
           const size = safeInterceptionValues(String(short.size), 8)
-          const div = String(new BN(spotPrice).times(size))
-          const volume = nonBigNumberInterception(div, 8)
+          const volume = nonBigNumberInterception(String(new BN(spotPrice).times(size)), 8)
 
           outputMyPosition.push({
+            size,
             volume,
             ...pairs[i],
             ...shortPositionView,
             side: PositionSide.Short,
-            size: safeInterceptionValues(String(short.size), 8),
             stopLossPrice: calcStopLossOrStopProfitPrice(shortOrderStopLossPosition),
             takeProfitPrice: calcStopLossOrStopProfitPrice(shortOrderStopProfitPosition),
             averagePrice: safeInterceptionValues(String(short.price), 8)
@@ -212,10 +210,10 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             const volume = nonBigNumberInterception(div)
 
             outputMyOrders.push({
+              size,
               volume,
               ...pairs[i],
               side: PositionSide.Long,
-              size: safeInterceptionValues(String(order.size), 4),
               price: safeInterceptionValues(String(order.price)),
               leverage: safeInterceptionValues(String(order.leverage)),
               timestamp: String(order.timestamp),
@@ -231,10 +229,10 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             const volume = nonBigNumberInterception(div)
 
             outputMyOrders.push({
+              size,
               volume,
               ...pairs[i],
               side: PositionSide.Short,
-              size: safeInterceptionValues(String(order.size), 4),
               price: safeInterceptionValues(String(order.price)),
               leverage: safeInterceptionValues(String(order.leverage)),
               timestamp: String(order.timestamp),
@@ -249,10 +247,10 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           const volume = nonBigNumberInterception(div)
 
           outputMyOrders.push({
+            size,
             volume,
             ...pairs[i],
             side: PositionSide.Long,
-            size: safeInterceptionValues(String(long.size), 4),
             price: safeInterceptionValues(String(longOrderStopProfitPosition.stopPrice)),
             leverage: safeInterceptionValues(String(long.leverage)),
             orderType: OrderTypes.StopProfit,
@@ -269,10 +267,10 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           const volume = nonBigNumberInterception(div)
 
           outputMyOrders.push({
+            size,
             volume,
             ...pairs[i],
             side: PositionSide.Long,
-            size: safeInterceptionValues(String(long.size), 4),
             price: safeInterceptionValues(String(longOrderStopLossPosition.stopPrice)),
             leverage: safeInterceptionValues(String(long.leverage)),
             orderType: OrderTypes.StopLoss,
@@ -286,10 +284,10 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           const volume = nonBigNumberInterception(div)
 
           outputMyOrders.push({
+            size,
             volume,
             ...pairs[i],
             side: PositionSide.Short,
-            size: safeInterceptionValues(String(short.size), 4),
             price: safeInterceptionValues(String(shortOrderStopLossPosition.stopPrice)),
             leverage: safeInterceptionValues(String(short.leverage)),
             orderType: OrderTypes.StopLoss,
@@ -303,10 +301,10 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           const volume = nonBigNumberInterception(div)
 
           outputMyOrders.push({
+            size,
             volume,
             ...pairs[i],
             side: PositionSide.Short,
-            size: safeInterceptionValues(String(short.size), 4),
             price: safeInterceptionValues(String(shortOrderStopProfitPosition.stopPrice)),
             leverage: safeInterceptionValues(String(short.leverage)),
             orderType: OrderTypes.StopProfit,

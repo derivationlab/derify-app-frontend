@@ -18,7 +18,9 @@ const Options: FC<Props> = ({ data, onChange }) => {
     setKeyword(e.target.value.trim().toLocaleLowerCase())
   }
   const options = useMemo(() => {
-    return data.filter((item) => item.name.toLocaleLowerCase().includes(keyword))
+    return data.filter((item) => {
+      return item.name && item.name.toLocaleLowerCase().includes(keyword)
+    })
   }, [data, keyword])
 
   return (

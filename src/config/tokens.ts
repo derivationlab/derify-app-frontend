@@ -69,8 +69,7 @@ const tokens: { [key: string]: Token } = {
 }
 
 const envTable: { [string: string]: Record<string, Token> } = {
-  dev: {
-  },
+  dev: {},
   prod: {}
 }
 

@@ -35,8 +35,7 @@ const addresses: Record<string, Address> = {
 }
 
 const envTable: { [string: string]: Record<string, Address> } = {
-  dev: {
-  },
+  dev: {},
   prod: {}
 }
 

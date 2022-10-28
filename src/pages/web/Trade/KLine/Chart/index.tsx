@@ -1,5 +1,6 @@
 import React, { FC, useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { useInterval } from 'react-use'
+import { isEmpty } from 'lodash'
 
 import { KLineTimes } from '@/data'
 import { useContractData } from '@/store/contract/hooks'
@@ -20,10 +21,12 @@ let onetime = false
 const Chart: FC = () => {
   const store = useRef<Record<string, any>>({})
   const kline = useRef<KlineChartProps>(null)
+
   const { currentPair, pairs, pairsLoaded } = useContractData()
 
-  const [timeLine, setTimeLine] = useState(60 * 60 * 1000)
   const [loading, setLoading] = useState<boolean>(false)
+  const [timeLine, setTimeLine] = useState(60 * 60 * 1000)
+  const [chartData, setChartData] = useState<Record<string, any>[]>([])
 
   const memoPairInfo = useMemo(() => {
     return pairs.find((pair) => pair.token === currentPair) ?? {}
@@ -35,11 +38,13 @@ const Chart: FC = () => {
     if (kline.current) {
       // kline.current.reset()
 
-      const { data, more } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 150, true)
+      const { data, more } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 130, true)
 
       store.current = data[data.length - 1] // keep original data
 
       const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
+
+      setChartData(reorganize)
 
       kline.current.initData(reorganize, more)
     }
@@ -72,7 +77,14 @@ const Chart: FC = () => {
 
   useEffect(() => {
     if (pairsLoaded) void getBaseData()
-  }, [pairsLoaded, timeLine, currentPair, memoPairInfo?.spotPrice])
+  }, [pairsLoaded, timeLine, currentPair])
+
+  useEffect(() => {
+    if (!isEmpty(store.current) && kline.current) {
+      const reorganize = reorganizeLastPieceOfData([store.current], [memoPairInfo], currentPair)
+      kline.current.update(reorganize[0])
+    }
+  }, [chartData, memoPairInfo?.spotPrice])
 
   useEffect(() => {
     setLoading(true)

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useAccount, useBlockNumber } from 'wagmi'
+import { useAccount, useBlockNumber, useConnect } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
 import { getBrokerBoundDataAsync, getBrokerDataAsync } from '@/store/trader'
@@ -9,14 +9,15 @@ import { getIndicatorDataAsync, getPositionChangeFeeRatioDataAsync } from '@/sto
 export const useInitialEffect = () => {
   const dispatch = useAppDispatch()
   const { data: account } = useAccount()
+  const { isConnected } = useConnect()
   const { data: blockNumber } = useBlockNumber({ watch: true })
 
   useEffect(() => {
-    if (account?.address) {
+    if (isConnected && account?.address) {
       dispatch(getBrokerDataAsync(account?.address))
       dispatch(getBrokerBoundDataAsync(account?.address))
     }
-  }, [account?.address, dispatch])
+  }, [isConnected, account?.address, dispatch])
 
   useEffect(() => {
     if (blockNumber) {
@@ -24,16 +25,6 @@ export const useInitialEffect = () => {
        * spotPrice
        */
       dispatch(getTokenSpotPriceAsync())
-
-      /**
-       bdrfPrice: 0
-       drfBurnt: 1.1903499167890368
-       drfBuyBack: 4008.58768796
-       drfPrice: 0
-       drfStakingApy: 0
-       edrfPrice: 0
-       */
-      dispatch(getIndicatorDataAsync())
 
       /**
        apy,
@@ -50,4 +41,16 @@ export const useInitialEffect = () => {
       dispatch(getPositionChangeFeeRatioDataAsync())
     }
   }, [blockNumber])
+
+  useEffect(() => {
+    /**
+     bdrfPrice: 0
+     drfBurnt: 1.1903499167890368
+     drfBuyBack: 4008.58768796
+     drfPrice: 0
+     drfStakingApy: 0
+     edrfPrice: 0
+     */
+    dispatch(getIndicatorDataAsync())
+  }, [])
 }

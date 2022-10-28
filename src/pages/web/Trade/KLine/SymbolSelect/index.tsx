@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useMemo, useContext } from 'react'
+import React, { FC, useState, useRef, useMemo, useContext, useEffect } from 'react'
 import classNames from 'classnames'
 import { useClickAway } from 'react-use'
 
@@ -26,41 +26,40 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
 
   useClickAway(ref, () => setShow(false))
 
-  const [curr, setCurr] = useState<Record<string, any>>(pairs[Cache.get('currentPairIndex') ?? 0])
+  const [currentPairInfo, setCurrentPairInfo] = useState<Record<string, any>>({})
 
   const changeFunc = (pair: Record<string, any>, pairIndex: number) => {
-    setCurr(pair)
-    // onChange(item)
-    setShow(false)
+    setCurrentPairInfo(pair)
 
     dispatch(setCurrentPair(pair.token))
 
+    setShow(false)
+
     Cache.set('currentPairIndex', pairIndex)
   }
-
-  const memoPairInfo = useMemo(() => {
-    if (pairs.length) {
-      const find = pairs.find((p) => p.token === curr.token)
-      return find
-    }
-  }, [curr, pairs])
 
   const toggleFunc = () => {
     setShow(false)
     onToggle?.()
   }
 
+  useEffect(() => {
+    if (pairs.length) {
+      setCurrentPairInfo(pairs[Cache.get('currentPairIndex') ?? 0])
+    }
+  }, [pairs])
+
   return (
-    <div className={classNames('web-trade-symlol-select', { show })} ref={ref}>
-      {mobile && <div className="web-trade-symlol-select-toggle" onClick={toggleFunc} />}
-      <div className="web-trade-symlol-select-curr" onClick={() => setShow(!show)}>
-        <h4>{curr.name}</h4>
+    <div className={classNames('web-trade-symbol-select', { show })} ref={ref}>
+      {mobile && <div className="web-trade-symbol-select-toggle" onClick={toggleFunc} />}
+      <div className="web-trade-symbol-select-curr" onClick={() => setShow(!show)}>
+        <h4>{currentPairInfo.name}</h4>
         <aside>
-          <BalanceShow value={memoPairInfo?.spotPrice ?? 0} unit="" />
-          <ChangePercent value={memoPairInfo?.price_change_rate ?? 0} />
+          <BalanceShow value={currentPairInfo?.spotPrice ?? 0} unit="" />
+          <ChangePercent value={currentPairInfo?.price_change_rate ?? 0} />
         </aside>
       </div>
-      {show && <Options curr={curr} data={pairs} onChange={changeFunc} />}
+      {show && <Options data={pairs} onChange={changeFunc} />}
     </div>
   )
 }

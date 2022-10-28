@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { PositionSide } from '@/store/contract/helper'
 import { MobileContext } from '@/context/Mobile'
-import { safeInterceptionValues } from '@/utils/tools'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
@@ -62,7 +62,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         footer={(data?.name ?? '').replace('-', ' / ')}
       >
         <span>
-          {safeInterceptionValues(data?.size ?? 0, 4)} / {safeInterceptionValues(data?.volume ?? 0)}
+          {nonBigNumberInterception(data?.size ?? 0, 4)} / {nonBigNumberInterception(data?.volume ?? 0)}
         </span>
       </DataAtom>
     ),
@@ -75,7 +75,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.AvgPriceTip')}
         footer={BASE_TOKEN_SYMBOL}
       >
-        <span>{safeInterceptionValues(data?.averagePrice ?? 0)}</span>
+        <span>{nonBigNumberInterception(data?.averagePrice ?? 0)}</span>
       </DataAtom>
     ),
     [data?.averagePrice, t]

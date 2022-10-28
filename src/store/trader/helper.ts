@@ -61,11 +61,12 @@ export const getTraderAccountData = async (trader: string): Promise<Record<strin
 
   try {
     const { balance, marginBalance, totalMargin, availableMargin } = await exchangeContract.getTraderAccount(trader)
+    // console.info(String(availableMargin), safeInterceptionValues(availableMargin))
     return {
       balance: safeInterceptionValues(balance),
       marginBalance: safeInterceptionValues(marginBalance),
       totalMargin: safeInterceptionValues(totalMargin),
-      availableMargin: safeInterceptionValues(availableMargin)
+      availableMargin: safeInterceptionValues(availableMargin, 8)
     }
   } catch (e) {
     // console.info(e)
@@ -140,9 +141,9 @@ export const getPMRewardData = async (trader: string) => {
     const { usdBalance, usdAccumulatedBalance, drfBalance, drfAccumulatedBalance } = data
 
     return {
-      usdBalance: safeInterceptionValues(usdBalance),
+      usdBalance: safeInterceptionValues(usdBalance, 4),
       usdAccumulatedBalance: safeInterceptionValues(usdAccumulatedBalance),
-      drfBalance: safeInterceptionValues(drfBalance),
+      drfBalance: safeInterceptionValues(drfBalance, 4),
       drfAccumulatedBalance: safeInterceptionValues(drfAccumulatedBalance)
     }
   } catch (e) {
@@ -171,17 +172,17 @@ export const getBondInfoData = async (trader: string) => {
 
   try {
     const bondInfo = await rewardsContract.getBondInfo(trader)
-    const bondBalance = await getTraderBondBalanceData(trader)
+    const bondBalance = await getTraderBondBalanceData(trader) // '0x12f756f0FD6E3C13A51223b1B0040fE914680908'
     const exchangeable = await rewardsContract.getExchangeBondSizeUpperBound(trader)
-
-    const _bondBalance = nonBigNumberInterception(bondBalance)
+    // console.info(bondBalance)
+    const _bondBalance = nonBigNumberInterception(bondBalance.toFixed(8), 4) // todo
     const { bondReturnBalance, bondWalletBalance, bondAnnualInterestRatio } = bondInfo
 
     return {
       bondBalance: _bondBalance,
       exchangeable: safeInterceptionValues(exchangeable),
       bondWalletBalance: safeInterceptionValues(bondWalletBalance),
-      bondReturnBalance: safeInterceptionValues(bondReturnBalance),
+      bondReturnBalance: safeInterceptionValues(bondReturnBalance, 8),
       bondAnnualInterestRatio: safeInterceptionValues(bondAnnualInterestRatio)
     }
   } catch (e) {
@@ -207,10 +208,10 @@ export const getStakingInfoData = async (trader: string) => {
     const stakingInfo = await rewardsContract.getStakingInfo(trader)
 
     const { drfBalance } = stakingInfo
-    const stakingEDRFBalance = nonBigNumberInterception(eDRFBalance)
+    const stakingEDRFBalance = nonBigNumberInterception(eDRFBalance, 4)
 
     return {
-      stakingDRFBalance: safeInterceptionValues(drfBalance),
+      stakingDRFBalance: safeInterceptionValues(drfBalance, 8),
       stakingEDRFBalance
     }
   } catch (e) {

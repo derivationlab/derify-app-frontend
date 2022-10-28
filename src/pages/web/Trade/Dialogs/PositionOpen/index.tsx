@@ -12,6 +12,7 @@ import Button from '@/components/common/Button'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   data: Record<string, any>
@@ -20,14 +21,16 @@ interface Props {
   onClick: () => void
 }
 
-const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
+const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { calcClosePositionTradingFee, calcClosePositionChangeFee } = Trader
+  const { calcClosePositionTradingFee, calcClosePositionChangeFee, checkOpenPositionSize } = Trader
 
   const [changeFee, setChangeFee] = useState<string>('0')
   const [tradingFee, setTradingFee] = useState<string>('0')
+  const [validVolume, setValidVolume] = useState<string>('0')
   const [changeFeeCalculating, setChangeFeeCalculating] = useState<boolean>(true)
   const [tradingFeeCalculating, setTradingFeeCalculating] = useState<boolean>(true)
+  const [tradingVolCalculating, setTradingVolCalculating] = useState<boolean>(true)
 
   const calcClosePositionTradingFeeCb = useCallback(async () => {
     setTradingFeeCalculating(true)
@@ -43,17 +46,34 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
     const fee = await calcClosePositionChangeFee(data?.side, data?.symbol, data?.token, data?.volume, data?.price, true)
 
-    setChangeFee(new BN(fee).times(-1).toString())
+    setChangeFee(fee)
     setChangeFeeCalculating(false)
   }, [data])
 
-  const memoApyValue = useMemo(() => {
-    const apy = new BN(data?.apy).times(100)
-    return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
-  }, [data?.apy])
+  const checkOpenPositionSizeFunc = async () => {
+    setTradingVolCalculating(true)
+
+    const volume = await checkOpenPositionSize(
+      data.token,
+      data.side,
+      data.symbol,
+      data.openType,
+      data.volume,
+      data.price
+    )
+
+    setValidVolume(volume)
+    setTradingVolCalculating(false)
+  }
+
+  // const memoApyValue = useMemo(() => {
+  //   const apy = new BN(data?.apy).times(100)
+  //   return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
+  // }, [data?.apy])
 
   useEffect(() => {
     if (!isEmpty(data) && visible) {
+      void checkOpenPositionSizeFunc()
       void calcClosePositionTradingFeeCb()
       void calcClosePositionChangeFeeCb()
     }
@@ -98,25 +118,33 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
               {data?.side === PositionSide['2-Way'] ? (
                 <dd>
-                  <section>
-                    <aside>
-                      <MultipleStatus direction="Long" />
-                      <em>{new BN(data?.volume).div(2).toString()}</em>
-                      <u>{data?.symbol}</u>
-                    </aside>
-                    <aside>
-                      <MultipleStatus direction="Short" />
-                      <em>{new BN(data?.volume).div(2).toString()}</em>
-                      <u>{data?.symbol}</u>
-                    </aside>
-                  </section>
+                  {tradingVolCalculating ? (
+                    <small>calculating...</small>
+                  ) : (
+                    <section>
+                      <aside>
+                        <MultipleStatus direction="Long" />
+                        <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString(), 8)}</em>
+                        <u>{data?.symbol}</u>
+                      </aside>
+                      <aside>
+                        <MultipleStatus direction="Short" />
+                        <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString(), 8)}</em>
+                        <u>{data?.symbol}</u>
+                      </aside>
+                    </section>
+                  )}
                 </dd>
               ) : (
                 <dd>
-                  <span>
-                    <em>{data?.volume}</em>
-                    <u>{data?.symbol}</u>
-                  </span>
+                  {tradingVolCalculating ? (
+                    <small>calculating...</small>
+                  ) : (
+                    <span>
+                      <em>{validVolume}</em>
+                      <u>{data?.symbol}</u>
+                    </span>
+                  )}
                 </dd>
               )}
             </dl>
@@ -163,6 +191,6 @@ const PositionOen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   )
 }
 
-PositionOen.defaultProps = {}
+PositionOpen.defaultProps = {}
 
-export default PositionOen
+export default PositionOpen

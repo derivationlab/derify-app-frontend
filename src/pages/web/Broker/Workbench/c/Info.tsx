@@ -15,6 +15,7 @@ import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
 import ExtendDialog from '@/components/common/Wallet/Extend'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { API_PREFIX_URL } from '@/config'
 
 const Info: FC = () => {
   const history = useHistory()
@@ -73,11 +74,19 @@ const Info: FC = () => {
     return '0000-00-00'
   }, [broker?.validPeriodDays])
 
+  const memoLogo = useMemo(() => {
+    if (broker?.logo) {
+      const index = broker.logo.lastIndexOf('/')
+      return `${API_PREFIX_URL}${broker.logo.substring(index + 1)}`
+    }
+    return 'icon/normal-ico.svg'
+  }, [])
+
   return (
     <div className="web-broker-info">
       <header className="web-broker-info-header-layout">
         <div className="web-broker-info-header-ico">
-          <Image src={broker?.logo || 'icon/normal-ico.svg'} cover />
+          <Image src={memoLogo} cover />
         </div>
         <div className="web-broker-info-header">
           <h3>

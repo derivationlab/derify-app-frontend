@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTraderData } from '@/store/trader/hooks'
-import { safeInterceptionValues } from '@/utils/tools'
+import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -88,12 +88,6 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 <BalanceShow value={trader.availableMargin} unit={BASE_TOKEN_SYMBOL} />
               </dd>
             </dl>
-            {withdrawInfo?.bdrfAmount > 0 && (
-              <address>
-                <em>{withdrawInfo?.usdAmount}</em> {BASE_TOKEN_SYMBOL}
-                <em>, {withdrawInfo?.bdrfAmount}</em> bBUSD
-              </address>
-            )}
             <address>
               {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{memoMargin[0]}</em> {BASE_TOKEN_SYMBOL}{' '}
               <em>( {memoMargin[1]}%)</em>
@@ -105,6 +99,17 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
               title={t('Trade.Withdraw.AmountToWithdraw', 'Amount to withdraw')}
               onChange={onChangeEv}
             />
+            {withdrawInfo?.bdrfAmount > 0 && (
+              <p
+                className="tips"
+                dangerouslySetInnerHTML={{
+                  __html: t('Trade.Withdraw.WithdrawTip', '', {
+                    BUSD: nonBigNumberInterception(withdrawInfo?.usdAmount, 8),
+                    bBUSD: nonBigNumberInterception(withdrawInfo?.bdrfAmount, 8)
+                  })
+                }}
+              />
+            )}
           </div>
         </div>
         <Button onClick={() => onClick(withdrawAmount)} disabled={!memoDisabled || isDisabled}>

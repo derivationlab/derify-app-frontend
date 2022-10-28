@@ -7,7 +7,7 @@ import SelectLang from './SelectLang'
 import SelectTheme from './SelectTheme'
 import Community from './Community'
 
-import { Feedback, Docs, WhitePaper, Tutorial } from '@/data/links'
+import { Feedback, Docs, WhitePaper, Tutorial, TestNet } from '@/data/links'
 
 const Tool: FC = () => {
   const { t } = useTranslation()
@@ -41,6 +41,11 @@ const Tool: FC = () => {
           <li>
             <a href={Docs} target="_blank">
               {t('Nav.Tool.Docs', 'Docs')}
+            </a>
+          </li>
+          <li>
+            <a href={TestNet} target="_blank">
+              {t('Nav.Tool.Test', 'Testnet')}
             </a>
           </li>
           <li>

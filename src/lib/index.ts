@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast'
 import { Buffer } from 'buffer'
-import { createClient, defaultChains } from 'wagmi'
+import { createClient } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -49,7 +49,7 @@ export const client = createClient({
         }
       }),
       new WalletConnectConnector({
-        chains: defaultChains,
+        chains: bscChain,
         options: {
           qrcode: true,
           rpc: { [chainId]: rpcUrl }

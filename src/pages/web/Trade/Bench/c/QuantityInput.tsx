@@ -64,18 +64,25 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
     const calcMaxVolumeFunc = async () => {
       setIsCalculating(true)
 
-      const _price = openType === 0 ? spotPrice : price
-      // console.info(`price：${_price}`)
-      if (_price) {
-        const [size, amount] = await getOpenUpperBound(currentPair, account!.address!, openType, _price, leverage)
-        setLeverageVolume(memoTokenSymbol === BASE_TOKEN_SYMBOL ? amount : size)
-      }
+      try {
+        const _price = openType === 0 ? spotPrice : price
 
-      setIsCalculating(false)
+        if (_price) {
+          // 0x8BF5722AF17ce9F25211F4Cb8DFF5639831A2250
+          const [size, amount] = await getOpenUpperBound(currentPair, account!.address!, openType, _price, leverage)
+          // console.info([size, amount])
+          setLeverageVolume(memoTokenSymbol === BASE_TOKEN_SYMBOL ? amount : size)
+          setIsCalculating(false)
+        }
+      } catch (e) {
+        console.info(e)
+        setIsCalculating(false)
+      }
     }
 
-    if ((account?.address && spotPrice) || (shareMessage && shareMessage.type === 'MAX_VOLUME_UPDATE'))
+    if ((account?.address && spotPrice) || (shareMessage && shareMessage.type === 'MAX_VOLUME_UPDATE')) {
       void calcMaxVolumeFunc()
+    }
   }, [leverage, openType, price, currentPair, account?.address, memoPairInfo?.spotPrice, memoTokenSymbol, shareMessage])
 
   return (

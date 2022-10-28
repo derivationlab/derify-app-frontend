@@ -2,9 +2,11 @@ import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
 import { useAccount, useConnect, useNetwork } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
+import { traderInfoUpdates } from '@/api'
+
+import Button from '@/components/common/Button'
 import WalletDialog from '@/components/common/Wallet'
 import AccountDialog from '@/components/common/Wallet/Account'
-import Button from '@/components/common/Button'
 
 interface Props {
   size?: 'mini' | 'default'
@@ -14,7 +16,7 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { activeChain, switchNetwork, chains } = useNetwork()
-  const { connectAsync, connectors, isConnecting, activeConnector } = useConnect()
+  const { connectAsync, connectors, isConnecting, activeConnector, isConnected } = useConnect()
 
   const [needSwitchNet, setNeedSwitchNet] = useState<boolean>(false)
   const [showWalletInf, setShowWalletInf] = useState<boolean>(false)
@@ -28,7 +30,7 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
       return
     }
 
-    if (!connector.ready && connectorsIndex === 0) {
+    if (!connector.ready && [0, 3].includes(connectorsIndex)) {
       window.open('https://metamask.io/download/', '_blank')
       return
     }
@@ -74,9 +76,19 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
     if ((activeChain?.unsupported || needSwitchNet) && switchNetwork) switchNetwork(chains[0]?.id)
   }, [activeChain, needSwitchNet, switchNetwork, chains])
 
+  useEffect(() => {
+    const func = (trader: string) => {
+      void traderInfoUpdates({ trader })
+    }
+
+    if (isConnected && account?.address) {
+      func(account.address)
+    }
+  }, [isConnected, account?.address])
+
   return (
     <>
-      {account?.address ? (
+      {isConnected && account?.address ? (
         <Button size={size} onClick={() => setVisibleStatus('account')}>
           {memoAccountHide}
         </Button>

@@ -38,7 +38,7 @@ const HeaderData: FC = () => {
   const memoPosFeeRatio = useMemo(() => {
     if (!isEmpty(posFeeRatio)) {
       const key = Object.keys(posFeeRatio).find((p) => p === currentPair) ?? ''
-      return posFeeRatio[key]
+      return posFeeRatio[key] ?? '0'
     }
     return '0'
   }, [posFeeRatio, currentPair, pairs])
@@ -48,14 +48,14 @@ const HeaderData: FC = () => {
     const longPmrRate = find?.longPmrRate ?? 0
     const shortPmrRate = find?.shortPmrRate ?? 0
     return [
-      Number(longPmrRate) <= 0 ? '--' : (longPmrRate * 100).toFixed(2),
-      Number(shortPmrRate) <= 0 ? '--' : (shortPmrRate * 100).toFixed(2)
+      Number(longPmrRate) <= 0 ? '0' : (longPmrRate * 100).toFixed(2),
+      Number(shortPmrRate) <= 0 ? '0' : (shortPmrRate * 100).toFixed(2)
     ]
   }, [pairs, currentPair])
 
   useInterval(() => {
     void getPositionsAmountFunc(currentPair)
-  }, 10000)
+  }, 60000)
 
   useEffect(() => {
     setPositionInfo(['0', '0'])

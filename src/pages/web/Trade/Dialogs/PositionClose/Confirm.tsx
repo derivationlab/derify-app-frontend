@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 
@@ -38,12 +37,6 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     return {}
   }, [shareMessage, visible])
 
-  const memoPositionApy = useMemo(() => {
-    const max = Math.max(data?.shortPmrRate ?? 0, data?.longPmrRate ?? 0)
-    const apy = new BN(max).times(100)
-    return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
-  }, [data?.shortPmrRate, data?.longPmrRate])
-
   const calcClosePositionTradingFeeCb = useCallback(async () => {
     setTradingFeeCalculating(true)
 
@@ -69,7 +62,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
       data?.spotPrice
     )
 
-    setChangeFee(new BN(fee).times(-1).toString())
+    setChangeFee(fee)
     setChangeFeeCalculating(false)
   }, [data?.spotPrice, memoShareMessage?.symbol, memoShareMessage?.amount, data?.side, data?.token])
 
@@ -102,27 +95,14 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                 <strong>{data?.name}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
               </h4>
-              <p>
-                <strong>{memoPositionApy}%</strong> APY.
-              </p>
             </header>
             <section className="web-trade-dialog-position-info-data">
               <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>
-              {/* todo 平仓限价市价？ */}
-              {/*{data?.orderType === 0 ? (*/}
-              {/*  <p>*/}
-              {/*    <BalanceShow value={data?.price} unit="" />*/}
-              {/*    <em>Limit Price</em>*/}
-              {/*  </p>*/}
-              {/*) : (*/}
-              {/*  <strong>Market Price</strong>*/}
-              {/*)}*/}
             </section>
           </div>
           <div className="web-trade-dialog-position-confirm">
             <dl>
               <dt>{t('Trade.ClosePosition.Volume', 'Volume')}</dt>
-              {/* todo 这里还细分 Long Short 2-Way? */}
               <dd>
                 <em>{memoShareMessage?.amount}</em>
                 <u>{memoShareMessage?.symbol}</u>

@@ -4,7 +4,6 @@ import { init, Chart } from 'klinecharts'
 import ThemeContext from '@/context/Theme/Context'
 
 import KLineConfig from './config'
-import { info } from 'sass'
 
 export interface KLineDataProps {
   open: number

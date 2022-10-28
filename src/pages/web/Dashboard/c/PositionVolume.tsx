@@ -102,7 +102,7 @@ const PositionVolume: FC = () => {
 
   useInterval(() => {
     void getPositionsAmountFunc()
-  }, 10000)
+  }, 60000)
 
   useEffect(() => {
     void getHistoryPositionsDataCb()

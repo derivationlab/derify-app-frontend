@@ -15,12 +15,12 @@ export const estimateGas = async (
   }
 
   const rawGasEstimation = await contract.estimateGas[methodName](...methodArgs)
-  console.info(`real need gas:${rawGasEstimation}`)
-  console.info(
-    `Gas after amplification:${rawGasEstimation
-      .mul(ethers.BigNumber.from(10000).add(ethers.BigNumber.from(gasMarginPer10000)))
-      .div(ethers.BigNumber.from(10000))}`
-  )
+  // console.info(`real need gas:${rawGasEstimation}`)
+  // console.info(
+  //   `Gas after amplification:${rawGasEstimation
+  //     .mul(ethers.BigNumber.from(10000).add(ethers.BigNumber.from(gasMarginPer10000)))
+  //     .div(ethers.BigNumber.from(10000))}`
+  // )
   return rawGasEstimation
     .mul(ethers.BigNumber.from(10000).add(ethers.BigNumber.from(gasMarginPer10000)))
     .div(ethers.BigNumber.from(10000))

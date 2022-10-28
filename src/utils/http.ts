@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash'
-import { API_PREFIX_URL } from '@/config'
+import { API_PREFIX_URL, API_AUTH_KEY } from '@/config'
 
 interface HttpResponse extends Response {
   data: any
@@ -45,7 +45,7 @@ export const externalLink = (url: string): string => {
 export async function http(request: Request): Promise<HttpResponse> {
   // { signal: controller.signal }
   // return Promise.race([timedOutPromise(6000), fetch(request)])
-  return Promise.race([timedOutPromise(5000), fetch(request)])
+  return Promise.race([timedOutPromise(8000), fetch(request)])
     .then(async (res) => {
       const json = await res.json()
       return json
@@ -58,13 +58,20 @@ export async function http(request: Request): Promise<HttpResponse> {
 
 export async function get(path: string, params?: Record<string, unknown>, args?: RequestInit): Promise<HttpResponse> {
   const _path = combineUrl(externalLink(path), params)
-  return await http(new Request(_path, { ...args, method: 'get' }))
+  const headers = new Headers()
+
+  headers.append('x-api-key', API_AUTH_KEY)
+
+  return await http(new Request(_path, { ...args, method: 'get', headers }))
 }
 
 export async function post(path: string, body?: Record<string, unknown>, args?: RequestInit): Promise<HttpResponse> {
-  const headers = new Headers()
   const _body = isEmpty(body) ? '' : JSON.stringify(body)
+  const headers = new Headers()
+
   headers.append('Content-Type', 'application/json;charset=UTF-8')
+  headers.append('x-api-key', API_AUTH_KEY)
+
   return await http(
     new Request(externalLink(path), {
       ...args,
@@ -82,12 +89,17 @@ export async function formDataPost(path: string, body: Record<string, any>, args
     formData.append(key, body[key])
   })
 
+  const headers = new Headers()
+
+  headers.append('x-api-key', API_AUTH_KEY)
+
   return await http(
     new Request(externalLink(path), {
       ...args,
       method: 'post',
       mode: 'cors',
-      body: formData
+      body: formData,
+      headers
     })
   )
 }

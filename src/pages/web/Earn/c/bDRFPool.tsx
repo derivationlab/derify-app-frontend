@@ -159,7 +159,7 @@ const EranbDRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow value={trader?.bondBalance ?? 0} unit="bBUSD" />
+              <BalanceShow value={trader?.bondBalance ?? 0} unit="bBUSD" decimal={4} />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} : <strong>{trader?.exchangeable ?? 0}</strong> bBUSD

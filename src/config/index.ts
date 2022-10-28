@@ -14,6 +14,7 @@ const BSC_SCAN_URLS_SCHEMA: Record<string, string> = {
 
 const { REACT_APP_CHAIN_ID } = process.env
 
+export const API_AUTH_KEY = 'I.YlJgZt2WC5BoP5PW4sxDdVTWxP/h'
 export const API_PREFIX_URL = API_PREFIX_URLS_SCHEMA[getEnvKey()]
 export const BSC_SCAN_URL = BSC_SCAN_URLS_SCHEMA[REACT_APP_CHAIN_ID]
 export const STATIC_RESOURCES_URL = 'https://derify-app-resources.vercel.app/image/'

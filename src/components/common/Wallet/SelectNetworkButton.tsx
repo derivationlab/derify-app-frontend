@@ -9,9 +9,9 @@ import Image from '@/components/common/Image'
 const networks: Record<string, any>[] = [
   {
     icon: 'icon/bnb.svg',
-    name: 'BNBTest Chain',
-    shortName: 'BNBTest',
-    id: '97'
+    name: 'BNB Chain',
+    shortName: 'BNB Chain'
+    // id: '97'
     // },
     // {
     //   icon: 'icon/bnb.svg',

@@ -13,6 +13,7 @@ import { Form, FormInput, FormItem, FormSelect, FormUploadImage } from '@/compon
 import { defaultValues, FormInputProps, patterns, rules } from '../config'
 import { SelectLangOptions } from '@/data'
 import ThemeContext from '@/context/Theme/Context'
+import { API_PREFIX_URL } from '@/config'
 
 export const AccountTip: FC = () => {
   const { t } = useTranslation()
@@ -32,7 +33,6 @@ const BrokerSignUpStep2: FC = () => {
   const { pathname } = useLocation()
   const { data: account } = useAccount()
   const { broker, brokerLoaded } = useTraderData()
-  console.info(theme)
   const formMode = useForm({ defaultValues })
   const { handleSubmit, setValue } = formMode
 
@@ -123,9 +123,14 @@ const BrokerSignUpStep2: FC = () => {
         wechat,
         introduction
       } = broker
+
+      if (logo) {
+        const index = logo.lastIndexOf('/')
+        setValue('logo', `${API_PREFIX_URL}${logo.substring(index + 1)}` as any)
+      }
+
       setValue('id', id)
       setValue('name', name)
-      setValue('logo', logo)
       setValue('broker', _broker)
       setValue('language', language || 'English')
       setValue('telegram', telegram)

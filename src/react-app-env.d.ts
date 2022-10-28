@@ -2,6 +2,7 @@
 
 interface Window {
   toast: any
+  geoip2: any
   ethereum?: {
     request: (...args: unknown[]) => Promise<any>
     on: (p: string, f?: (k: unknown) => void) => void

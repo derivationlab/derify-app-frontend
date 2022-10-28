@@ -36,7 +36,7 @@ export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
         shortUsdPmrRate = 0,
         longUsdPmrRate = 0,
         longDrfPmrRate = 0,
-        price_change_rate,
+        price_change_rate = 0,
         token,
         ...rest
       }: Record<string, any>) => {

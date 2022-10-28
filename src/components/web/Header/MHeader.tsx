@@ -17,7 +17,8 @@ const MHeader: FC = () => {
     { url: '/trade', name: t('Nav.Nav.Trade', 'Trade') },
     { url: '/earn', name: t('Nav.Nav.Earn', 'Earn') },
     { url: '/dashboard', name: t('Nav.Nav.Dashboard', 'Dashboard') },
-    { url: '/broker', name: t('Nav.Nav.Broker', 'Broker') }
+    { url: '/broker', name: t('Nav.Nav.Broker', 'Broker') },
+    { url: '/faucet', name: t('Nav.Nav.Faucet', 'Faucet') }
   ]
 
   const [showMenu, setShowMenu] = useState<boolean>(false)

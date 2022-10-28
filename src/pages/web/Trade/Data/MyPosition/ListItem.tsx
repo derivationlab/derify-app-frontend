@@ -62,7 +62,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         footer={(data?.name ?? '').replace('-', ' / ')}
       >
         <span>
-          {data?.size ?? 0} / {nonBigNumberInterception(data?.volume ?? 0)}
+          {nonBigNumberInterception(data?.size ?? 0, 4)} / {nonBigNumberInterception(data?.volume ?? 0)}
         </span>
       </DataAtom>
     ),

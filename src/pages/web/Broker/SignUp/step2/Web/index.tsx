@@ -51,10 +51,10 @@ const BrokerSignUpStep2: FC = () => {
       return
     }
 
-    if (!telegram && !discord && !twitter && !reddit && !wechat) {
-      window.toast.error(t('Broker.Reg.ReCheck', 'Information is incomplete, please re-check.'))
-      return
-    }
+    // if (!telegram && !discord && !twitter && !reddit && !wechat) {
+    //   window.toast.error(t('Broker.Reg.ReCheck', 'Information is incomplete, please re-check.'))
+    //   return
+    // }
 
     if (telegram && !patterns.telegram.test(telegram)) {
       window.toast.error('Error telegram url')

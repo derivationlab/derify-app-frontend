@@ -28,7 +28,7 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
   const typeChangeEv = (symbol: any) => {
     if (symbol === BASE_TOKEN_SYMBOL) onChange(maxBUSD)
     else if (symbol === baseCoin) onChange(maxBase)
-    else onChange(0)
+    else onChange('' as any)
 
     setType(symbol)
     onSymbol(symbol)
@@ -43,7 +43,7 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
     <div className="web-trade-dialog-position-close-quantity">
       <label>{t('Trade.ClosePosition.AmountToClose', 'Amount to Close')}</label>
       <section>
-        <Input value={value} onChange={(amount) => onChange(Number(amount))} type="number" />
+        <Input value={value} onChange={(amount) => onChange(amount)} type="number" />
         <Select value={type} onChange={typeChangeEv} options={typeOptions} />
       </section>
       <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(Number(amount))} />

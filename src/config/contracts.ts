@@ -23,7 +23,6 @@ const addresses: Record<string, Address> = {
     56: '0x396d8f9428387c2DBaAFDf1D9fC8abb00E055347',
     97: '0xfcB8AB7C7Eb54DbB40bdC78bDB1982bA3944eE27'
   },
-  // todo del
   DerifyDerivative_BNB: {
     56: '0x2e97db10eC6D0Ee8ebF66621F77C9fC8497ff515',
     97: '0xe7eCE523460CeB26b4f49a49399Bdf4A165d089F'

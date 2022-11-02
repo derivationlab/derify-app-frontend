@@ -76,7 +76,11 @@ const Chart: FC = () => {
   }, 60000)
 
   useEffect(() => {
-    if (pairsLoaded) void getBaseData()
+    if (pairsLoaded) {
+      store.current = {}
+
+      void getBaseData()
+    }
   }, [pairsLoaded, timeLine, currentPair])
 
   useEffect(() => {

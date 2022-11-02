@@ -3,9 +3,9 @@ import {
   getETHAddress,
   getBTCAddress,
   getDerifyDerivativeBTCAddress,
-  getDerifyDerivativeETHAddress
-  // getDerifyDerivativeBNBAddress,
-  // getBNBAddress
+  getDerifyDerivativeETHAddress,
+  getDerifyDerivativeBNBAddress,
+  getBNBAddress
 } from '@/utils/addressHelpers'
 
 const pairs = [
@@ -20,13 +20,13 @@ const pairs = [
     token: getETHAddress(),
     symbol: 'ETH',
     contract: getDerifyDerivativeETHAddress()
+  },
+  {
+    name: `BNB-${BASE_TOKEN_SYMBOL}`,
+    token: getBNBAddress(),
+    symbol: 'BNB',
+    contract: getDerifyDerivativeBNBAddress()
   }
-  // {
-  //   name: `BNB-${BASE_TOKEN_SYMBOL}`,
-  //   token: getBNBAddress(),
-  //   symbol: 'BNB',
-  //   contract: getDerifyDerivativeBNBAddress()
-  // }
 ]
 
 export default pairs

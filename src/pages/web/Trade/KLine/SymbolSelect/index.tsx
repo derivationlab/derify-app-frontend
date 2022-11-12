@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useMemo, useContext, useEffect } from 'react'
+import React, { FC, useState, useRef, useContext, useEffect } from 'react'
 import classNames from 'classnames'
 import { useClickAway } from 'react-use'
 

@@ -10,7 +10,6 @@ import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { getDUSDAddress, getDerifyExchangeAddress } from '@/utils/addressHelpers'
 import { getDerifyExchangeContract, getDerifyDerivativePairContract } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
-import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 class Trader {
   traderWithdrawMargin = async (signer: Signer, amount: string): Promise<boolean> => {

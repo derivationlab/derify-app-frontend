@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState, useEffect, useCallback } from 'react'
+import React, { FC, useMemo, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'

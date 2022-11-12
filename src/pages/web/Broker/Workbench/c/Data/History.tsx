@@ -1,4 +1,3 @@
-import BN from 'bignumber.js'
 import React, { FC, useEffect, useState, useMemo, useContext } from 'react'
 import { isEmpty } from 'lodash'
 import { useAccount } from 'wagmi'
@@ -8,7 +7,7 @@ import Table from 'rc-table'
 import { BSC_SCAN_URL } from '@/config'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { getBrokerAccountFlow } from '@/api'
-import { getDecimalAmount, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { nonBigNumberInterception } from '@/utils/tools'
 import { useConstantData } from '@/store/constant/hooks'
 
 import { MobileContext } from '@/context/Mobile'
@@ -27,11 +26,6 @@ interface DataProps {
   update_type: string | number
   event_time: string
   update_time: string
-}
-
-interface RowProps {
-  text?: string
-  data?: DataProps
 }
 
 const RowType: FC<{ data: DataProps }> = ({ data }) => {
@@ -80,7 +74,6 @@ const RowBalance: FC<Record<string, any>> = ({ text = 0, coin = BASE_TOKEN_SYMBO
 // loading ui todo
 const History: FC = () => {
   const { t } = useTranslation()
-  const { indicator } = useConstantData()
 
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)

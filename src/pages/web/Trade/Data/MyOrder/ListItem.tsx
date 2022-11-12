@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo, useContext } from 'react'
+import React, { FC, useMemo, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
@@ -6,8 +6,6 @@ import dayjs from 'dayjs'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { PositionSide } from '@/store/contract/helper'
 import { MobileContext } from '@/context/Mobile'
-
-import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
@@ -31,11 +29,13 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   }, [data?.timestamp])
 
   // OrderDesc[data?.orderType][1]}
-  const OrderDescLang = [
-    ['Open', t('Trade.MyOrder.LimitPrice', 'Limit Price')], // Limit
-    ['Close', t('Trade.MyOrder.TakeProfit', 'Take Profit')], // StopProfit
-    ['Close', t('Trade.MyOrder.StopLoss', 'Stop Loss')] // StopLoss
-  ]
+  const OrderDescLang = useMemo(() => {
+    return [
+      ['Open', t('Trade.MyOrder.LimitPrice', 'Limit Price')], // Limit
+      ['Close', t('Trade.MyOrder.TakeProfit', 'Take Profit')], // StopProfit
+      ['Close', t('Trade.MyOrder.StopLoss', 'Stop Loss')] // StopLoss
+    ]
+  }, [t])
 
   const atom1Tsx = useMemo(
     () => (

@@ -12,7 +12,7 @@ interface Props {
   onClick: () => void
 }
 
-const PositionCloseAll: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
+const PositionCloseAll: FC<Props> = ({ loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   return (
     <Dialog

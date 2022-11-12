@@ -23,7 +23,7 @@ interface Props {
   onClick: () => void
 }
 
-const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
+const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 

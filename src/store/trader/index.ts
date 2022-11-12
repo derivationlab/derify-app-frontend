@@ -92,14 +92,14 @@ export const traderDataSlice = createSlice({
     builder.addCase(getTraderDataAsync.fulfilled, (state, action) => {
       state.trader = { ...state.trader, ...action.payload }
     })
-    builder.addCase(getBrokerDataAsync.pending, (state, action) => {
+    builder.addCase(getBrokerDataAsync.pending, (state) => {
       state.brokerLoaded = false
     })
     builder.addCase(getBrokerDataAsync.fulfilled, (state, action) => {
       state.broker = action.payload
       state.brokerLoaded = true
     })
-    builder.addCase(getBrokerBoundDataAsync.pending, (state, action) => {
+    builder.addCase(getBrokerBoundDataAsync.pending, (state) => {
       state.brokerBoundLoaded = false
     })
     builder.addCase(getBrokerBoundDataAsync.fulfilled, (state, action) => {

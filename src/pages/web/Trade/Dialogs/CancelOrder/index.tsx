@@ -12,7 +12,7 @@ interface Props {
   onClick: () => void
 }
 
-const CancelOrder: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
+const CancelOrder: FC<Props> = ({ loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   return (
     <Dialog width="470px" visible={visible} title={t('Trade.MyOrder.CancelOrder', 'Cancel Orders')} onClose={onClose}>

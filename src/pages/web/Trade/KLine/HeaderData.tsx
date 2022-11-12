@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash'
 import { useInterval } from 'react-use'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 
 import { MobileContext } from '@/context/Mobile'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'

@@ -29,7 +29,7 @@ const Trade: FC = () => {
 
   useEffect(() => {
     if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
-  }, [account?.address, memoPairInfo?.spotPrice])
+  }, [account?.address, memoPairInfo?.spotPrice, dispatch])
 
   if (mobile) {
     return (

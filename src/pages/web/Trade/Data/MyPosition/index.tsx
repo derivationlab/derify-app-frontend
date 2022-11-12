@@ -13,7 +13,6 @@ import { getMyPositionsDataAsync } from '@/store/contract'
 import { clearShareMessage, setShareMessage } from '@/store/share'
 import { useShareMessage } from '@/store/share/hooks'
 import { getTraderDataAsync } from '@/store/trader'
-import { safeInterceptionValues } from '@/utils/tools'
 
 import ThemeContext from '@/context/Theme/Context'
 

@@ -20,7 +20,7 @@ interface Props {
   onClick: (params: Record<string, any>) => void
 }
 
-const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
+const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
   const [stopLossAmount, setStopLossAmount] = useState<any>()

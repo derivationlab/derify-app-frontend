@@ -37,6 +37,10 @@ export const getDerifyDerivativeBNBAddress = () => {
   return getAddress(contracts.DerifyDerivative_BNB)
 }
 
+export const getDerifyDerivativeMATICAddress = () => {
+  return getAddress(contracts.DerifyDerivative_MATIC)
+}
+
 export const getDerifyBrokerAddress = () => {
   return getAddress(contracts.DerifyBroker)
 }
@@ -68,4 +72,8 @@ export const getBTCAddress = () => {
 
 export const getBNBAddress = () => {
   return getAddress(tokens.bnb.address)
+}
+
+export const getMATICAddress = () => {
+  return getAddress(tokens.matic.address)
 }

@@ -2,7 +2,7 @@ import BN from 'bignumber.js'
 import { times, isEmpty } from 'lodash'
 import type { BigNumberish } from '@ethersproject/bignumber'
 
-import pairs from '@/config/pairs'
+import pairs, { Pair } from '@/config/pairs'
 import { multicall } from '@/utils/multicall'
 import { getTraderVariablesData } from '@/store/trader/helper'
 import { getDerifyExchangeContract } from '@/utils/contractHelpers'
@@ -24,6 +24,10 @@ export enum OrderTypes {
   StopLoss
 }
 
+interface PairWithSpotPrice extends Pair {
+  spotPrice?: string
+}
+
 export const getPairName = (address: string): string => {
   const find = pairs.find((pair) => pair.token === address.toLowerCase())
   return find?.name ?? ''
@@ -33,19 +37,17 @@ export const getPairBaseCoinName = (address: string): string => {
   return getPairName(address).split('-')[0]
 }
 
-export const getTokenSpotPrice = async (): Promise<Record<string, string>[]> => {
+export const getTokenSpotPrice = async (): Promise<PairWithSpotPrice[]> => {
   const calls = times(pairs.length, (index) => ({ address: pairs[index].contract, name: 'getSpotPrice' }))
 
   try {
     const response = await multicall(DerifyDerivativeAbi, calls)
     // console.info(response)
     if (!isEmpty(response)) {
-      return response.map(([price]: [BigNumberish], index: number) => {
-        return {
-          ...pairs[index],
-          spotPrice: safeInterceptionValues(price, 8)
-        }
-      })
+      return response.map(([price]: [BigNumberish], index: number) => ({
+        ...pairs[index],
+        spotPrice: safeInterceptionValues(price, 8)
+      }))
     }
     return pairs
   } catch (e) {
@@ -131,7 +133,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             shortOrderStopProfitPosition
           }
         ] = response[i]
-        const spotPrice = spotPrices[i]?.spotPrice
+        const spotPrice = spotPrices[i]?.spotPrice ?? 0
 
         // My Positions - long
         if (long.isUsed) {

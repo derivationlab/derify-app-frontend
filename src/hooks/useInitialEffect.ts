@@ -21,24 +21,24 @@ export const useInitialEffect = () => {
 
   useEffect(() => {
     // if (blockNumber) {
-      /**
-       * spotPrice
-       */
-      dispatch(getTokenSpotPriceAsync())
+    /**
+     * spotPrice
+     */
+    dispatch(getTokenSpotPriceAsync())
 
-      /**
+    /**
        apy,
        token,
        longPmrRate,
        shortPmrRate,
        price_change_rate
        */
-      dispatch(getEventsDataAsync())
+    dispatch(getEventsDataAsync())
 
-      /**
+    /**
        position change fee ratio
        */
-      dispatch(getPositionChangeFeeRatioDataAsync())
+    dispatch(getPositionChangeFeeRatioDataAsync())
     // }
   }, [blockNumber])
 

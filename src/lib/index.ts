@@ -1,6 +1,7 @@
 import toast from 'react-hot-toast'
 import { Buffer } from 'buffer'
-import { createClient } from 'wagmi'
+import { publicProvider } from 'wagmi/providers/public'
+import { createClient, configureChains, defaultChains } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
@@ -13,7 +14,7 @@ window.toast = toast
 
 if (!window.Buffer) window.Buffer = Buffer
 
-const bscChain = [
+const extraChains = [
   {
     id: chainId,
     name: `BNB Smart Chain ${netLabel}`,
@@ -35,13 +36,15 @@ const bscChain = [
   }
 ]
 
+const { provider } = configureChains([...defaultChains, ...extraChains], [publicProvider()])
+
 export const client = createClient({
   autoConnect: true,
   connectors() {
     return [
-      new MetaMaskConnector({ chains: bscChain, options: { shimDisconnect: true } }),
+      new MetaMaskConnector({ chains: extraChains, options: { shimDisconnect: true } }),
       new CoinbaseWalletConnector({
-        chains: bscChain,
+        chains: extraChains,
         options: {
           appName: 'Derify protocol',
           chainId: chainId,
@@ -49,13 +52,14 @@ export const client = createClient({
         }
       }),
       new WalletConnectConnector({
-        chains: bscChain,
+        chains: extraChains,
         options: {
           qrcode: true,
           rpc: { [chainId]: rpcUrl }
         }
       }),
-      new InjectedConnector({ chains: bscChain, options: { name: 'Injected', shimDisconnect: true } })
+      new InjectedConnector({ chains: extraChains, options: { name: 'Injected', shimDisconnect: true } })
     ]
-  }
+  },
+  provider
 })

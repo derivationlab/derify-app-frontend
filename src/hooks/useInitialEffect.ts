@@ -20,7 +20,7 @@ export const useInitialEffect = () => {
   }, [isConnected, account?.address, dispatch])
 
   useEffect(() => {
-    if (blockNumber) {
+    // if (blockNumber) {
       /**
        * spotPrice
        */
@@ -39,7 +39,7 @@ export const useInitialEffect = () => {
        position change fee ratio
        */
       dispatch(getPositionChangeFeeRatioDataAsync())
-    }
+    // }
   }, [blockNumber])
 
   useEffect(() => {

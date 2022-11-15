@@ -92,6 +92,7 @@ const Chart: FC = () => {
 
   useEffect(() => {
     setLoading(true)
+    if (kline.current) kline.current.reset()
   }, [currentPair])
 
   return (

@@ -33,7 +33,7 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yFormat, timeFormatStr, enableL
     return o?.label
   }
   const formatTip = (value: any, label: string) => {
-    return [formatValue(value), formatLegend(label)]
+    return [formatValue(value) as typeof value, formatLegend(label)]
   }
 
   const toolTipStyle = theme === 'Dark' ? { backgroundColor: '#222', color: '#fff', borderColor: '#444' } : {}

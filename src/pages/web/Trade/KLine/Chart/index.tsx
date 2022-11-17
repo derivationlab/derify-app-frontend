@@ -87,6 +87,7 @@ const Chart: FC = () => {
   }, [chartData, memoPairInfo?.spotPrice])
 
   useEffect(() => {
+    kline.current && kline.current.reset()
     setLoading(true)
     if (kline.current) kline.current.reset()
   }, [currentPair])

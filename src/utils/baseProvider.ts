@@ -2,15 +2,13 @@ import { sample } from 'lodash'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 
 const BSC_MAINNET_RPC_URLS = [
-  'https://bsc-dataseed1.ninicoin.io',
-  'https://bsc-dataseed1.defibit.io',
-  'https://bsc-dataseed.binance.org',
-  'https://binance.ankr.com'
+  'https://bsc.nodereal.io',
+  'https://bsc-dataseed1.binance.org',
+  'https://bsc-mainnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3'
 ]
 
 const BSC_TESTNET_RPC_URLS = [
   'https://data-seed-prebsc-1-s1.binance.org:8545',
-  // 'https://data-seed-prebsc-2-s1.binance.org:8545', // often error
   'https://data-seed-prebsc-1-s3.binance.org:8545'
 ]
 

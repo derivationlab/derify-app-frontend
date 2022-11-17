@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 
 import { getKLineData as getKLineDataApi } from '@/api'
-import { sleep } from '@/utils/tools'
+import { nonBigNumberInterception, sleep } from '@/utils/tools'
 
 interface klineData {
   open: number
@@ -52,7 +52,7 @@ export const reorganizeLastPieceOfData = (
 ): Record<string, any>[] => {
   const lastPieceOfData = data.pop() ?? {}
   const targetPairsData = pairs.find((pair) => pair.token === current) ?? {}
-  const pairSpotPrice = Number(targetPairsData.spotPrice ?? 0)
+  const pairSpotPrice = Number(nonBigNumberInterception(targetPairsData.spotPrice ?? 0))
   const { high = 0, low = 0 } = lastPieceOfData
   const _low = Math.min(low, pairSpotPrice)
   const _high = Math.max(high, pairSpotPrice)

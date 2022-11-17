@@ -8,10 +8,7 @@ const BSC_MAINNET_RPC_URLS = [
   'https://binance.ankr.com'
 ]
 
-const BSC_TESTNET_RPC_URLS = [
-  'https://bsc-testnet.public.blastapi.io',
-  'https://bsctestapi.terminet.io/rpc',
-]
+const BSC_TESTNET_RPC_URLS = ['https://bsc-testnet.public.blastapi.io', 'https://bsctestapi.terminet.io/rpc']
 
 const RPC_URLS: Record<string, string[]> = {
   '56': BSC_MAINNET_RPC_URLS,

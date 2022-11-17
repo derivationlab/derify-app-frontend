@@ -9,9 +9,8 @@ const BSC_MAINNET_RPC_URLS = [
 ]
 
 const BSC_TESTNET_RPC_URLS = [
-  'https://data-seed-prebsc-1-s1.binance.org:8545',
-  // 'https://data-seed-prebsc-2-s1.binance.org:8545', // often error
-  'https://data-seed-prebsc-1-s3.binance.org:8545'
+  'https://bsc-testnet.public.blastapi.io',
+  'https://bsctestapi.terminet.io/rpc',
 ]
 
 const RPC_URLS: Record<string, string[]> = {

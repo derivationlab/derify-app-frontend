@@ -88,7 +88,7 @@ const Chart: FC = () => {
       const reorganize = reorganizeLastPieceOfData([store.current], [memoPairInfo], currentPair)
       kline.current.update(reorganize[0])
     }
-  }, [chartData, memoPairInfo?.spotPrice])
+  }, [chartData, memoPairInfo?.spotPrice, currentPair])
 
   useEffect(() => {
     setLoading(true)

@@ -28,14 +28,14 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
 
   const [currentPairInfo, setCurrentPairInfo] = useState<Record<string, any>>({})
 
-  const changeFunc = (pair: Record<string, any>, pairIndex: number) => {
+  const changeFunc = (pair: Record<string, any>) => {
     setCurrentPairInfo(pair)
 
     dispatch(setCurrentPair(pair.token))
 
     setShow(false)
 
-    Cache.set('currentPairIndex', pairIndex)
+    Cache.set('currentPair', pair.token)
   }
 
   const toggleFunc = () => {
@@ -45,7 +45,9 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
 
   useEffect(() => {
     if (pairs.length) {
-      setCurrentPairInfo(pairs[Cache.get('currentPairIndex') ?? 0])
+      const currentPair = Cache.get('currentPair')
+      const find = pairs.find((p) => p.token === currentPair) ?? pairs.find((p) => p.symbol === 'BTC')
+      if (find) setCurrentPairInfo(find)
     }
   }, [pairs])
 

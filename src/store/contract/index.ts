@@ -2,18 +2,16 @@ import BN from 'bignumber.js'
 import { isArray } from 'lodash'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import Cache from '@/utils/cache'
 import basePairs from '@/config/pairs'
 import { getEventsData } from '@/api'
 import { nonBigNumberInterception } from '@/utils/tools'
 import { ContractState, AppThunkDispatch } from '../types'
-import { getMyPositionsData, getTokenSpotPrice, outputDataDeal } from './helper'
+import { getDefaultValidPair, getMyPositionsData, getTokenSpotPrice, outputDataDeal } from './helper'
 
-const currentPairIndex = Cache.get('currentPairIndex') ?? 0
-
+const currentPair = getDefaultValidPair()
 const initialState: ContractState = {
   pairs: basePairs,
-  currentPair: basePairs[currentPairIndex].token,
+  currentPair,
   myOrders: [],
   myPositions: [],
   pairsLoaded: false,
@@ -32,14 +30,14 @@ export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
   if (isArray(data)) {
     const _ = data.map(
       ({
-        shortDrfPmrRate = 0,
-        shortUsdPmrRate = 0,
-        longUsdPmrRate = 0,
-        longDrfPmrRate = 0,
-        price_change_rate = 0,
-        token,
-        ...rest
-      }: Record<string, any>) => {
+         shortDrfPmrRate = 0,
+         shortUsdPmrRate = 0,
+         longUsdPmrRate = 0,
+         longDrfPmrRate = 0,
+         price_change_rate = 0,
+         token,
+         ...rest
+       }: Record<string, any>) => {
         const long = new BN(longDrfPmrRate).plus(longUsdPmrRate)
         const longPmrRate = nonBigNumberInterception(String(long))
 

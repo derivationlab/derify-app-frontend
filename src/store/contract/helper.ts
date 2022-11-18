@@ -9,6 +9,8 @@ import { getDerifyExchangeContract } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toHexString } from '@/utils/tools'
 
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import Cache from '@/utils/cache'
+import basePairs from '@/config/pairs'
 
 const BIG_TEN = new BN(10).pow(8)
 
@@ -75,11 +77,7 @@ const calcLiquidityPrice = (
   return p.isLessThanOrEqualTo(0) ? '--' : safeInterceptionValues(String(p))
 }
 
-const combineNecessaryData = async (
-  side: PositionSide,
-  params: R,
-  variables: R
-): Promise<Record<string, any>> => {
+const combineNecessaryData = async (side: PositionSide, params: R, variables: R): Promise<Record<string, any>> => {
   const contract = getDerifyExchangeContract()
   const { size, spotPrice, leverage, price } = params
   const { marginRate, marginBalance, totalPositionAmount } = variables
@@ -205,10 +203,10 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
              size: BigNumber {_hex: '0x06bed6', _isBigNumber: true}
              timestamp: BigNumb
              */
-              // console.info(`isUsed:${order.isUsed}`)
-              // console.info(`size:${String(order.size)}`)
-              // console.info(`price:${String(order.price)}`)
-              // console.info(`leverage:${String(order.leverage)}`)
+            // console.info(`isUsed:${order.isUsed}`)
+            // console.info(`size:${String(order.size)}`)
+            // console.info(`price:${String(order.price)}`)
+            // console.info(`leverage:${String(order.leverage)}`)
             const size = safeInterceptionValues(String(order.size), 8)
             const div = String(new BN(order.price._hex).times(size).div(BIG_TEN))
             const volume = nonBigNumberInterception(div)
@@ -335,4 +333,11 @@ export const outputDataDeal = (prev: R[], next: R[]) => {
   })
   // console.info(output)
   return output
+}
+
+export const getDefaultValidPair = (): string => {
+  const currentPair = Cache.get('currentPair')
+  const find = basePairs.find((p) => p.token === currentPair)
+  if (find) return currentPair
+  return basePairs.find((p) => p.symbol === 'BTC')?.token ?? ''
 }

@@ -55,7 +55,7 @@ const baseConfig: Base[] = [
   //   quoteToken: {
   //     symbol: 'MATIC',
   //     address: {
-  //       56: '',
+  //       56: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3',
   //       97: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3'
   //     },
   //     decimals: 18,
@@ -64,7 +64,7 @@ const baseConfig: Base[] = [
   //   pair: {
   //     name: `MATIC-${BASE_TOKEN_SYMBOL}`,
   //     address: {
-  //       56: '',
+  //       56: '0xf9772EDC945902FF03560Ae7A8d1899DA4116b6a',
   //       97: '0xf9772EDC945902FF03560Ae7A8d1899DA4116b6a'
   //     }
   //   }

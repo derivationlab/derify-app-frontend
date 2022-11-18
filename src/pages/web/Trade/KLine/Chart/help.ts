@@ -50,18 +50,21 @@ export const reorganizeLastPieceOfData = (
   pairs: Record<string, any>[],
   current: string
 ): Record<string, any>[] => {
-  const lastPieceOfData = data.pop() ?? {}
   const targetPairsData = pairs.find((pair) => pair.token === current) ?? {}
   const pairSpotPrice = Number(nonBigNumberInterception(targetPairsData.spotPrice ?? 0))
+
+  if (pairSpotPrice === 0) return data
+
+  const lastPieceOfData = data.pop() ?? {}
   const { high = 0, low = 0 } = lastPieceOfData
   const _low = Math.min(low, pairSpotPrice)
   const _high = Math.max(high, pairSpotPrice)
+
   return [...data, { ...lastPieceOfData, close: pairSpotPrice, high: _high, low: _low }]
 }
 
 export const getKlineEndTime = (): number => {
   const date = dayjs().format('YYYY-MM-DD')
   const hour = dayjs().hour()
-  // console.info(dayjs(`${date} 16`).valueOf())
   return dayjs(`${date} ${hour + 1}`).valueOf()
 }

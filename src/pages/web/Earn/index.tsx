@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useAccount, useBlockNumber } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
 import { getBondInfoDataAsync, getPMRewardDataAsync, getStakingInfoDataAsync } from '@/store/trader'
@@ -8,11 +8,12 @@ import { getBankBDRFPoolDataAsync, getStakingDrfPoolDataAsync } from '@/store/co
 import DRFPool from './c/DRFPool'
 import EranbDRFPool from './c/bDRFPool'
 import PositionMining from './c/PositionMining'
+import { useBlockNum } from '@/hooks/useBlockNumber'
 
 const Eran: FC = () => {
   const dispatch = useAppDispatch()
   const { data: account } = useAccount()
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { blockNumber } = useBlockNum()
 
   useEffect(() => {
     if (account?.address) {

@@ -2,13 +2,15 @@ import BN from 'bignumber.js'
 import { times, isEmpty } from 'lodash'
 import type { BigNumberish } from '@ethersproject/bignumber'
 
-import pairs from '@/config/pairs'
+import pairs, { Pair } from '@/config/pairs'
 import { multicall } from '@/utils/multicall'
 import { getTraderVariablesData } from '@/store/trader/helper'
 import { getDerifyExchangeContract } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toHexString } from '@/utils/tools'
 
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import Cache from '@/utils/cache'
+import basePairs from '@/config/pairs'
 
 const BIG_TEN = new BN(10).pow(8)
 
@@ -24,6 +26,12 @@ export enum OrderTypes {
   StopLoss
 }
 
+interface PairWithSpotPrice extends Pair {
+  spotPrice?: string
+}
+
+type R = Record<string, any>
+
 export const getPairName = (address: string): string => {
   const find = pairs.find((pair) => pair.token === address.toLowerCase())
   return find?.name ?? ''
@@ -33,23 +41,21 @@ export const getPairBaseCoinName = (address: string): string => {
   return getPairName(address).split('-')[0]
 }
 
-export const getTokenSpotPrice = async (): Promise<Record<string, string>[]> => {
+export const getTokenSpotPrice = async (): Promise<PairWithSpotPrice[]> => {
   const calls = times(pairs.length, (index) => ({ address: pairs[index].contract, name: 'getSpotPrice' }))
 
   try {
     const response = await multicall(DerifyDerivativeAbi, calls)
-    // console.info(response)
+    // console.info(String(response))
     if (!isEmpty(response)) {
-      return response.map(([price]: [BigNumberish], index: number) => {
-        return {
-          ...pairs[index],
-          spotPrice: safeInterceptionValues(price, 8)
-        }
-      })
+      return response.map(([price]: [BigNumberish], index: number) => ({
+        ...pairs[index],
+        spotPrice: safeInterceptionValues(price, 8)
+      }))
     }
     return pairs
   } catch (e) {
-    console.info(e)
+    console.info('GetTokenSpotPrice Error')
     return pairs
   }
 }
@@ -71,11 +77,7 @@ const calcLiquidityPrice = (
   return p.isLessThanOrEqualTo(0) ? '--' : safeInterceptionValues(String(p))
 }
 
-const combineNecessaryData = async (
-  side: PositionSide,
-  params: Record<string, any>,
-  variables: Record<string, any>
-): Promise<Record<string, any>> => {
+const combineNecessaryData = async (side: PositionSide, params: R, variables: R): Promise<Record<string, any>> => {
   const contract = getDerifyExchangeContract()
   const { size, spotPrice, leverage, price } = params
   const { marginRate, marginBalance, totalPositionAmount } = variables
@@ -98,14 +100,14 @@ const combineNecessaryData = async (
   return {}
 }
 
-const calcStopLossOrStopProfitPrice = ({ isUsed, stopPrice }: Record<string, any>): string => {
+const calcStopLossOrStopProfitPrice = ({ isUsed, stopPrice }: R): string => {
   if (isUsed) return safeInterceptionValues(stopPrice._hex)
   return '--'
 }
 
-export const getMyPositionsData = async (trader: string): Promise<Record<string, any>[]> => {
-  const outputMyOrders: Record<string, any>[] = []
-  const outputMyPosition: Record<string, any>[] = []
+export const getMyPositionsData = async (trader: string): Promise<R[]> => {
+  const outputMyOrders: R[] = []
+  const outputMyPosition: R[] = []
   const calls = times(pairs.length, (index) => ({
     address: pairs[index].contract,
     name: 'getTraderDerivativePositions',
@@ -131,7 +133,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
             shortOrderStopProfitPosition
           }
         ] = response[i]
-        const spotPrice = spotPrices[i]?.spotPrice
+        const spotPrice = spotPrices[i]?.spotPrice ?? 0
 
         // My Positions - long
         if (long.isUsed) {
@@ -192,7 +194,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
         }
 
         // My Order - long
-        longOrderOpenPosition.forEach((order: Record<string, any>) => {
+        longOrderOpenPosition.forEach((order: R) => {
           if (order.isUsed) {
             /**
              * isUsed: true
@@ -222,7 +224,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           }
         })
         // My Order - short
-        shortOrderOpenPosition.forEach((order: Record<string, any>) => {
+        shortOrderOpenPosition.forEach((order: R) => {
           if (order.isUsed) {
             const size = safeInterceptionValues(String(order.size), 8)
             const div = String(new BN(order.price._hex).times(size).div(BIG_TEN))
@@ -318,20 +320,24 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
     }
     return []
   } catch (e) {
-    console.info(e)
+    // console.info(e)
     return []
   }
 }
 
-export const outputDataDeal = (old: Record<string, any>[], fresh: Record<string, any>[]) => {
-  return fresh.map((pair: Record<string, any>, index: number) => {
-    if (old[index]) {
-      return {
-        ...old[index],
-        ...pair
-      }
-    } else {
-      return pair
-    }
+export const outputDataDeal = (prev: R[], next: R[]) => {
+  const output = prev.map((p) => {
+    const find = next.find((n) => p.token === n.token)
+    if (find) return { ...p, ...find }
+    return p
   })
+  // console.info(output)
+  return output
+}
+
+export const getDefaultValidPair = (): string => {
+  const currentPair = Cache.get('currentPair')
+  const find = basePairs.find((p) => p.token === currentPair)
+  if (find) return currentPair
+  return basePairs.find((p) => p.symbol === 'BTC')?.token ?? ''
 }

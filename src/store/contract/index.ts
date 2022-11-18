@@ -30,14 +30,14 @@ export const getEventsDataAsync = () => async (dispatch: AppThunkDispatch) => {
   if (isArray(data)) {
     const _ = data.map(
       ({
-         shortDrfPmrRate = 0,
-         shortUsdPmrRate = 0,
-         longUsdPmrRate = 0,
-         longDrfPmrRate = 0,
-         price_change_rate = 0,
-         token,
-         ...rest
-       }: Record<string, any>) => {
+        shortDrfPmrRate = 0,
+        shortUsdPmrRate = 0,
+        longUsdPmrRate = 0,
+        longDrfPmrRate = 0,
+        price_change_rate = 0,
+        token,
+        ...rest
+      }: Record<string, any>) => {
         const long = new BN(longDrfPmrRate).plus(longUsdPmrRate)
         const longPmrRate = nonBigNumberInterception(String(long))
 

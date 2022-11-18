@@ -50,7 +50,7 @@ const baseConfig: Base[] = [
         97: ''
       }
     }
-  },
+  }
   // {
   //   quoteToken: {
   //     symbol: 'MATIC',

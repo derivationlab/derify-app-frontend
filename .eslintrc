@@ -23,7 +23,7 @@
   },
   "extends": ["plugin:@typescript-eslint/recommended", "plugin:react-hooks/recommended", "plugin:prettier/recommended"],
   "rules": {
-    "prettier/prettier": "error",
+    "prettier/prettier": 1,
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off"

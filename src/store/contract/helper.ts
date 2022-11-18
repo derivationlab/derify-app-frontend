@@ -28,6 +28,8 @@ interface PairWithSpotPrice extends Pair {
   spotPrice?: string
 }
 
+type R = Record<string, any>
+
 export const getPairName = (address: string): string => {
   const find = pairs.find((pair) => pair.token === address.toLowerCase())
   return find?.name ?? ''
@@ -42,7 +44,7 @@ export const getTokenSpotPrice = async (): Promise<PairWithSpotPrice[]> => {
 
   try {
     const response = await multicall(DerifyDerivativeAbi, calls)
-    // console.info(response)
+    // console.info(String(response))
     if (!isEmpty(response)) {
       return response.map(([price]: [BigNumberish], index: number) => ({
         ...pairs[index],
@@ -51,7 +53,7 @@ export const getTokenSpotPrice = async (): Promise<PairWithSpotPrice[]> => {
     }
     return pairs
   } catch (e) {
-    console.info(e)
+    console.info('GetTokenSpotPrice Error')
     return pairs
   }
 }
@@ -75,8 +77,8 @@ const calcLiquidityPrice = (
 
 const combineNecessaryData = async (
   side: PositionSide,
-  params: Record<string, any>,
-  variables: Record<string, any>
+  params: R,
+  variables: R
 ): Promise<Record<string, any>> => {
   const contract = getDerifyExchangeContract()
   const { size, spotPrice, leverage, price } = params
@@ -100,14 +102,14 @@ const combineNecessaryData = async (
   return {}
 }
 
-const calcStopLossOrStopProfitPrice = ({ isUsed, stopPrice }: Record<string, any>): string => {
+const calcStopLossOrStopProfitPrice = ({ isUsed, stopPrice }: R): string => {
   if (isUsed) return safeInterceptionValues(stopPrice._hex)
   return '--'
 }
 
-export const getMyPositionsData = async (trader: string): Promise<Record<string, any>[]> => {
-  const outputMyOrders: Record<string, any>[] = []
-  const outputMyPosition: Record<string, any>[] = []
+export const getMyPositionsData = async (trader: string): Promise<R[]> => {
+  const outputMyOrders: R[] = []
+  const outputMyPosition: R[] = []
   const calls = times(pairs.length, (index) => ({
     address: pairs[index].contract,
     name: 'getTraderDerivativePositions',
@@ -194,7 +196,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
         }
 
         // My Order - long
-        longOrderOpenPosition.forEach((order: Record<string, any>) => {
+        longOrderOpenPosition.forEach((order: R) => {
           if (order.isUsed) {
             /**
              * isUsed: true
@@ -203,10 +205,10 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
              size: BigNumber {_hex: '0x06bed6', _isBigNumber: true}
              timestamp: BigNumb
              */
-            // console.info(`isUsed:${order.isUsed}`)
-            // console.info(`size:${String(order.size)}`)
-            // console.info(`price:${String(order.price)}`)
-            // console.info(`leverage:${String(order.leverage)}`)
+              // console.info(`isUsed:${order.isUsed}`)
+              // console.info(`size:${String(order.size)}`)
+              // console.info(`price:${String(order.price)}`)
+              // console.info(`leverage:${String(order.leverage)}`)
             const size = safeInterceptionValues(String(order.size), 8)
             const div = String(new BN(order.price._hex).times(size).div(BIG_TEN))
             const volume = nonBigNumberInterception(div)
@@ -224,7 +226,7 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
           }
         })
         // My Order - short
-        shortOrderOpenPosition.forEach((order: Record<string, any>) => {
+        shortOrderOpenPosition.forEach((order: R) => {
           if (order.isUsed) {
             const size = safeInterceptionValues(String(order.size), 8)
             const div = String(new BN(order.price._hex).times(size).div(BIG_TEN))
@@ -320,20 +322,17 @@ export const getMyPositionsData = async (trader: string): Promise<Record<string,
     }
     return []
   } catch (e) {
-    console.info(e)
+    // console.info(e)
     return []
   }
 }
 
-export const outputDataDeal = (old: Record<string, any>[], fresh: Record<string, any>[]) => {
-  return fresh.map((pair: Record<string, any>, index: number) => {
-    if (old[index]) {
-      return {
-        ...old[index],
-        ...pair
-      }
-    } else {
-      return pair
-    }
+export const outputDataDeal = (prev: R[], next: R[]) => {
+  const output = prev.map((p) => {
+    const find = next.find((n) => p.token === n.token)
+    if (find) return { ...p, ...find }
+    return p
   })
+  // console.info(output)
+  return output
 }

@@ -3,24 +3,6 @@ import { getEnv } from '@/config/env'
 
 // default for prod
 const tokens: { [key: string]: Token } = {
-  BTC: {
-    symbol: 'BTC',
-    address: {
-      56: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
-      97: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'
-    },
-    decimals: 18,
-    projectLink: ''
-  },
-  ETH: {
-    symbol: 'ETH',
-    address: {
-      56: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
-      97: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
-    },
-    decimals: 18,
-    projectLink: ''
-  },
   DUSD: {
     symbol: 'DUSD',
     address: {
@@ -53,15 +35,6 @@ const tokens: { [key: string]: Token } = {
     address: {
       56: '0x9d1b272B797137d3713f0bA2fA15abcc3a8C2Ef7',
       97: '0xcFC597eEDFC368c19AFD22e581468a2e69eA5E24'
-    },
-    decimals: 18,
-    projectLink: ''
-  },
-  bnb: {
-    symbol: 'BNB',
-    address: {
-      56: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52',
-      97: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52'
     },
     decimals: 18,
     projectLink: ''

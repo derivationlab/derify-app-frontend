@@ -11,7 +11,7 @@ import Loading from '@/components/common/Loading'
 import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
 import Faucet from '@/pages/web/Faucet'
-import Airdrop from '@/pages/web/Airdrop'
+// import Airdrop from '@/pages/web/Airdrop'
 import Dashboard from '@/pages/web/Dashboard'
 import BrokerRank from '@/pages/web/Broker/Rank'
 import BrokerBind from '@/pages/web/Broker/Bind'
@@ -118,7 +118,7 @@ const Web: FC = () => {
         <Route path="/earn" render={() => handleUnbindBroker(Earn)} />
         <Route path="/trade" render={() => handleUnbindBroker(Trade)} />
         <Route path="/faucet" render={() => <Faucet />} />
-        <Route path="/airdrop" render={() => handleUnbindBroker(Airdrop)} />
+        {/* <Route path="/airdrop" render={() => handleUnbindBroker(Airdrop)} />*/}
         <Route path="/dashboard" render={() => handleUnbindBroker(Dashboard)} />
 
         {!account?.address ? (

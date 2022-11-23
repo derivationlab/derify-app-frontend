@@ -9,6 +9,8 @@ import { getDerifyExchangeContract } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toHexString } from '@/utils/tools'
 
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import Cache from '@/utils/cache'
+import basePairs from '@/config/pairs'
 
 const BIG_TEN = new BN(10).pow(8)
 
@@ -331,4 +333,11 @@ export const outputDataDeal = (prev: R[], next: R[]) => {
   })
   // console.info(output)
   return output
+}
+
+export const getDefaultValidPair = (): string => {
+  const currentPair = Cache.get('currentPair')
+  const find = basePairs.find((p) => p.token === currentPair)
+  if (find) return currentPair
+  return basePairs.find((p) => p.symbol === 'BTC')?.token ?? ''
 }

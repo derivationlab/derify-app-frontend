@@ -76,11 +76,7 @@ const Chart: FC = () => {
   }, 60000)
 
   useEffect(() => {
-    if (pairsLoaded) {
-      store.current = {}
-
-      void getBaseData()
-    }
+    if (pairsLoaded) void getBaseData()
   }, [pairsLoaded, timeLine, currentPair])
 
   useEffect(() => {
@@ -88,11 +84,11 @@ const Chart: FC = () => {
       const reorganize = reorganizeLastPieceOfData([store.current], [memoPairInfo], currentPair)
       kline.current.update(reorganize[0])
     }
-  }, [chartData, memoPairInfo?.spotPrice, currentPair])
+  }, [chartData, memoPairInfo?.spotPrice])
 
   useEffect(() => {
+    kline.current && kline.current.reset()
     setLoading(true)
-    if (kline.current) kline.current.reset()
   }, [currentPair])
 
   return (

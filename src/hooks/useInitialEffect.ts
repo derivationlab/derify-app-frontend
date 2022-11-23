@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { useAccount, useBlockNumber, useConnect } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
+import { useBlockNum } from '@/hooks/useBlockNumber'
 import { getBrokerBoundDataAsync, getBrokerDataAsync } from '@/store/trader'
 import { getEventsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
 import { getIndicatorDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
@@ -10,7 +11,7 @@ export const useInitialEffect = () => {
   const dispatch = useAppDispatch()
   const { data: account } = useAccount()
   const { isConnected } = useConnect()
-  const { data: blockNumber } = useBlockNumber({ watch: true })
+  const { blockNumber } = useBlockNum()
 
   useEffect(() => {
     if (isConnected && account?.address) {
@@ -20,27 +21,27 @@ export const useInitialEffect = () => {
   }, [isConnected, account?.address, dispatch])
 
   useEffect(() => {
-    // if (blockNumber) {
-    /**
-     * spotPrice
-     */
-    dispatch(getTokenSpotPriceAsync())
+    if (blockNumber) {
+      /**
+       * spotPrice
+       */
+      dispatch(getTokenSpotPriceAsync())
 
-    /**
+      /**
        apy,
        token,
        longPmrRate,
        shortPmrRate,
        price_change_rate
        */
-    dispatch(getEventsDataAsync())
+      dispatch(getEventsDataAsync())
 
-    /**
+      /**
        position change fee ratio
        */
-    dispatch(getPositionChangeFeeRatioDataAsync())
-    // }
-  }, [blockNumber])
+      dispatch(getPositionChangeFeeRatioDataAsync())
+    }
+  }, [blockNumber, dispatch])
 
   useEffect(() => {
     /**
@@ -52,5 +53,5 @@ export const useInitialEffect = () => {
      edrfPrice: 0
      */
     dispatch(getIndicatorDataAsync())
-  }, [])
+  }, [dispatch])
 }

@@ -1,7 +1,7 @@
 import toast from 'react-hot-toast'
 import { Buffer } from 'buffer'
-import { publicProvider } from 'wagmi/providers/public'
 import { createClient, configureChains, defaultChains } from 'wagmi'
+import { publicProvider } from 'wagmi/providers/public'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'

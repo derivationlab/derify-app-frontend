@@ -29,7 +29,7 @@ const baseConfig: Base[] = [
       name: `BTC-${BASE_TOKEN_SYMBOL}`,
       address: {
         56: '',
-        97: '0x022cfc9BE1D64bf670369d1078591e6B43B47fD3'
+        97: '0x770A2794c605d7579789617deECB401258cBE286'
       }
     }
   },
@@ -47,46 +47,46 @@ const baseConfig: Base[] = [
       name: `ETH-${BASE_TOKEN_SYMBOL}`,
       address: {
         56: '',
-        97: '0xfcB8AB7C7Eb54DbB40bdC78bDB1982bA3944eE27'
+        97: '0xf20dCFF4e673dbD3Ac912D41E3561f86c3fD9fe3'
       }
     }
   },
-  {
-    quoteToken: {
-      symbol: 'BNB',
-      address: {
-        56: '',
-        97: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52'
-      },
-      decimals: 18,
-      projectLink: ''
-    },
-    pair: {
-      name: `BNB-${BASE_TOKEN_SYMBOL}`,
-      address: {
-        56: '',
-        97: '0xe7eCE523460CeB26b4f49a49399Bdf4A165d089F'
-      }
-    }
-  },
-  {
-    quoteToken: {
-      symbol: 'MATIC',
-      address: {
-        56: '',
-        97: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3'
-      },
-      decimals: 18,
-      projectLink: ''
-    },
-    pair: {
-      name: `MATIC-${BASE_TOKEN_SYMBOL}`,
-      address: {
-        56: '',
-        97: '0xf9772EDC945902FF03560Ae7A8d1899DA4116b6a'
-      }
-    }
-  }
+  // {
+  //   quoteToken: {
+  //     symbol: 'BNB',
+  //     address: {
+  //       56: '',
+  //       97: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52'
+  //     },
+  //     decimals: 18,
+  //     projectLink: ''
+  //   },
+  //   pair: {
+  //     name: `BNB-${BASE_TOKEN_SYMBOL}`,
+  //     address: {
+  //       56: '',
+  //       97: '0xe7eCE523460CeB26b4f49a49399Bdf4A165d089F'
+  //     }
+  //   }
+  // },
+  // {
+  //   quoteToken: {
+  //     symbol: 'MATIC',
+  //     address: {
+  //       56: '',
+  //       97: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3'
+  //     },
+  //     decimals: 18,
+  //     projectLink: ''
+  //   },
+  //   pair: {
+  //     name: `MATIC-${BASE_TOKEN_SYMBOL}`,
+  //     address: {
+  //       56: '',
+  //       97: '0xf9772EDC945902FF03560Ae7A8d1899DA4116b6a'
+  //     }
+  //   }
+  // }
 ]
 
 const composePairs = (): Pair[] => {

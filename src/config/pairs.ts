@@ -50,7 +50,7 @@ const baseConfig: Base[] = [
         97: '0xf20dCFF4e673dbD3Ac912D41E3561f86c3fD9fe3'
       }
     }
-  }
+  },
   // {
   //   quoteToken: {
   //     symbol: 'BNB',
@@ -69,24 +69,24 @@ const baseConfig: Base[] = [
   //     }
   //   }
   // },
-  // {
-  //   quoteToken: {
-  //     symbol: 'MATIC',
-  //     address: {
-  //       56: '',
-  //       97: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3'
-  //     },
-  //     decimals: 18,
-  //     projectLink: ''
-  //   },
-  //   pair: {
-  //     name: `MATIC-${BASE_TOKEN_SYMBOL}`,
-  //     address: {
-  //       56: '',
-  //       97: '0xf9772EDC945902FF03560Ae7A8d1899DA4116b6a'
-  //     }
-  //   }
-  // }
+  {
+    quoteToken: {
+      symbol: 'MATIC',
+      address: {
+        56: '',
+        97: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3'
+      },
+      decimals: 18,
+      projectLink: ''
+    },
+    pair: {
+      name: `MATIC-${BASE_TOKEN_SYMBOL}`,
+      address: {
+        56: '',
+        97: '0xf9772EDC945902FF03560Ae7A8d1899DA4116b6a'
+      }
+    }
+  }
 ]
 
 const composePairs = (): Pair[] => {

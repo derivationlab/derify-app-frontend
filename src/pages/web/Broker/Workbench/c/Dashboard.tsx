@@ -100,7 +100,9 @@ const Dashboard: FC = () => {
                 <BalanceShow value={memoTodayRewards} unit={BASE_TOKEN_SYMBOL} />
               </section>
               <footer>
-                <Link to="/broker-rank">{t('Broker.BV.BrokerRank', 'Broker Rank')} #{broker?.rank}</Link>
+                <Link to="/broker-rank">
+                  {t('Broker.BV.BrokerRank', 'Broker Rank')} #{broker?.rank}
+                </Link>
               </footer>
             </main>
             <hr />

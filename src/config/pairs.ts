@@ -50,7 +50,7 @@ const baseConfig: Base[] = [
         97: '0xf20dCFF4e673dbD3Ac912D41E3561f86c3fD9fe3'
       }
     }
-  },
+  }
   // {
   //   quoteToken: {
   //     symbol: 'BNB',

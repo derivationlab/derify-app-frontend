@@ -29,7 +29,7 @@ const baseConfig: Base[] = [
       name: `BTC-${BASE_TOKEN_SYMBOL}`,
       address: {
         56: '',
-        97: '0x770A2794c605d7579789617deECB401258cBE286'
+        97: '0xEfEF8789f5A268d181b6187B40a5790935ce88f1'
       }
     }
   },
@@ -47,7 +47,7 @@ const baseConfig: Base[] = [
       name: `ETH-${BASE_TOKEN_SYMBOL}`,
       address: {
         56: '',
-        97: '0xf20dCFF4e673dbD3Ac912D41E3561f86c3fD9fe3'
+        97: '0x37C737765DB1D7AfA7d81C872ABcb8675c956bcB'
       }
     }
   },

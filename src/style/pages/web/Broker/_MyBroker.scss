@@ -99,6 +99,17 @@
         }
       }
     }
+
+    &-rank {
+      font-size: 12px;
+      color: $red;
+      margin-top: 6px;
+      font-weight: bold;display: flex;align-items: center;
+      &:after {
+        content: '';display: block;width: 20px;height: 20px;margin-left: 4px;
+        background: url($res + 'icon/share.svg') center/contain no-repeat;
+      }
+    }
   }
 
   &-about {
@@ -224,6 +235,14 @@
           &:not(:last-child) {
             margin-right: rem(8);
           }
+        }
+      }
+
+      &-rank {
+        font-size: rem(12);
+        margin-top: rem(6);
+        &:after {
+          width: rem(20);height: rem(20);margin-left: rem(4);
         }
       }
     }

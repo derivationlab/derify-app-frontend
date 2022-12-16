@@ -2,15 +2,13 @@ import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-import { calcDateDuration } from '@/utils/tools'
-
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
 
 const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
   const { t } = useTranslation()
   const { id, logo, name, update_time, introduction, brokerBoundLoaded } = broker
-  // console.info(broker)
+
   return (
     <div className="web-my-broker">
       <header className="web-my-broker-header-layout">
@@ -34,6 +32,9 @@ const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
           <div className="web-my-broker-header-lang">
             <span>{broker?.language}</span>
           </div>
+          <Link className="web-my-broker-header-rank" to="/broker-rank">
+            {t('Broker.BV.RankList', 'Rank List')}
+          </Link>
         </div>
       </header>
       <article className="web-my-broker-about">{introduction}</article>

@@ -1,4 +1,5 @@
-import React, { FC, useMemo, useState, useEffect, useCallback } from 'react'
+import BN from 'bignumber.js'
+import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
@@ -21,30 +22,29 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
 
   const maxVolume = useMemo(() => (type === BASE_TOKEN_SYMBOL ? maxBUSD : maxBase), [type, maxBUSD, maxBase])
 
-  const typeOptions = useMemo(() => {
-    return [BASE_TOKEN_SYMBOL, baseCoin]
-  }, [baseCoin])
-
   const typeChangeEv = (symbol: any) => {
     if (symbol === BASE_TOKEN_SYMBOL) onChange(maxBUSD)
-    else if (symbol === baseCoin) onChange(maxBase)
-    else onChange('' as any)
+    else onChange(maxBase)
 
     setType(symbol)
     onSymbol(symbol)
   }
 
-  // set maxVolume for input
-  useEffect(() => {
-    if (value > maxVolume) onChange(maxVolume)
-  }, [maxVolume, value])
+  const validateEnteredValueCb = useCallback(
+    (amount: number) => {
+      if (new BN(amount).isGreaterThan(maxVolume)) {
+        onChange(maxVolume)
+      } else onChange(amount)
+    },
+    [maxVolume]
+  )
 
   return (
     <div className="web-trade-dialog-position-close-quantity">
       <label>{t('Trade.ClosePosition.AmountToClose', 'Amount to Close')}</label>
       <section>
-        <Input value={value} onChange={(amount) => onChange(amount)} type="number" />
-        <Select value={type} onChange={typeChangeEv} options={typeOptions} />
+        <Input value={value} onChange={validateEnteredValueCb} type="number" />
+        <Select value={type} onChange={typeChangeEv} options={[BASE_TOKEN_SYMBOL, baseCoin]} />
       </section>
       <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(Number(amount))} />
     </div>

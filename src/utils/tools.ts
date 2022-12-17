@@ -109,3 +109,15 @@ export const toFloorNum = (amount: number | string, decimals = 8) => {
 export const thousandthsDivision = (n: string | number) => {
   return n.toString().replace(/\d+/, (m) => m.replace(/(\d)(?=(\d{3})+$)/g, ($1) => $1 + ','))
 }
+
+export const isGT = (a: string | number, b: string | number): boolean => {
+  return new BN(a).isGreaterThan(b)
+}
+
+export const isLT = (a: string | number, b: string | number): boolean => {
+  return new BN(a).isLessThan(b)
+}
+
+export const isET = (a: string | number, b: string | number): boolean => {
+  return new BN(a).isEqualTo(b)
+}

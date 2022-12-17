@@ -1,7 +1,7 @@
-import BN from 'bignumber.js'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { isGT } from '@/utils/tools'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 import { Select, Input } from '@/components/common/Form'
@@ -32,7 +32,7 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
 
   const validateEnteredValueCb = useCallback(
     (amount: number) => {
-      if (new BN(amount).isGreaterThan(maxVolume)) {
+      if (isGT(amount, maxVolume)) {
         onChange(maxVolume)
       } else onChange(amount)
     },

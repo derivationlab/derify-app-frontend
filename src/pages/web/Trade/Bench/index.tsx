@@ -243,7 +243,7 @@ const Bench: FC = () => {
               >
                 <strong>{t('Trade.Bench.Long', 'Long')}</strong>
                 <em>
-                  {memoLongPosApy}%<u>APY</u>
+                  {memoLongPosApy}%<u>APR</u>
                 </em>
               </Button>
             </Col>
@@ -257,7 +257,7 @@ const Bench: FC = () => {
               >
                 <strong>{t('Trade.Bench.Short', 'Short')}</strong>
                 <em>
-                  {memoShortPosApy}%<u>APY</u>
+                  {memoShortPosApy}%<u>APR</u>
                 </em>
               </Button>
             </Col>
@@ -276,7 +276,7 @@ const Bench: FC = () => {
                 >
                   <strong>{t('Trade.Bench.TowWay', '2-Way')}</strong>
                   <em>
-                    {memo2WayPosApy}%<u>APY</u>
+                    {memo2WayPosApy}%<u>APR</u>
                   </em>
                 </Button>
               </Col>

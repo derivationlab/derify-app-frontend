@@ -29,14 +29,14 @@ const PositionVolume: FC = () => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
 
-  const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
+  const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
   const [positionData, setPositionsData] = useState<Record<string, any>[]>([])
   const [totalAmount, setTotalAmount] = useState<Record<string, any>>(base)
 
   const barColor = useMemo(() => {
-    let longColor = '#B0FBD7'
-    let shortColor = '#FFBDBD'
+    let longColor = '#16b86a'
+    let shortColor = '#ac1010'
     if (theme === 'Dark') {
       longColor = '#037c42'
       shortColor = '#9e2b2b'

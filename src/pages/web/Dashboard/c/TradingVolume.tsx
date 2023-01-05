@@ -18,7 +18,7 @@ const TradingVolume: FC = () => {
   const { t } = useTranslation()
 
   const [tradingData, setTradingData] = useState<Record<string, any>[]>([])
-  const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
+  const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
   const [tradingVolume, setTradingVolume] = useState<Record<string, any>[]>([])
 

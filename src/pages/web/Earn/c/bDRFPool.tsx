@@ -154,7 +154,7 @@ const EranbDRFPool: FC = () => {
         <section className="web-eran-item-main">
           <div className="web-eran-item-dashboard">
             <DecimalShow value={(trader?.bondAnnualInterestRatio ?? 0) * 100} percent />
-            <u>APY.</u>
+            <u>APR.</u>
           </div>
           <div className="web-eran-item-claima">
             <main>

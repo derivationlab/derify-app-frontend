@@ -9,8 +9,8 @@ export default {
       PCFRate: 'PCF Rate',
       PCFRateTip:
         'Transactions that increase system risk have to reward transactions that decrease system risk. Positive rate means PCF payment is required for opening long/closing short, and opening short/closing long gets the PCF reward, vice versa.',
-      PositionMiningAPY: 'Position Mining APY.',
-      PositionMiningAPYTip: 'The higher the leverage of positions, the higher the APY of position mining will be.'
+      PositionMiningAPY: 'Position Mining APR.',
+      PositionMiningAPYTip: 'The higher the leverage of positions, the higher the APR of position mining will be.'
     },
     MyPosition: {
       MyPosition: 'My Position',

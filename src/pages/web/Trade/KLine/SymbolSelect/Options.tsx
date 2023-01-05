@@ -36,7 +36,7 @@ const Options: FC<Props> = ({ data, onChange }) => {
               <>
                 <aside>
                   <h5>{item.name}</h5>
-                  <BalanceShow value={item?.apy ?? 0} percent unit="APY" />
+                  <BalanceShow value={item?.apy ?? 0} percent unit="APR" />
                 </aside>
                 <aside>
                   <BalanceShow value={item?.spotPrice ?? 0} unit="" />
@@ -48,7 +48,7 @@ const Options: FC<Props> = ({ data, onChange }) => {
                 <h5>{item.name}</h5>
                 <BalanceShow value={item?.spotPrice ?? 0} unit="" />
                 <ChangePercent value={item?.price_change_rate ?? 0} />
-                <BalanceShow value={item?.apy ?? 0} percent unit="APY" />
+                <BalanceShow value={item?.apy ?? 0} percent unit="APR" />
               </>
             )}
           </li>

@@ -119,7 +119,7 @@ const DRFPool: FC = () => {
         <section className="web-eran-item-main">
           <div className="web-eran-item-dashboard">
             <DecimalShow value={indicator?.drfStakingApy ?? 0} percent />
-            <u>APY.</u>
+            <u>APR.</u>
           </div>
           <div className="web-eran-item-claima">
             <main>

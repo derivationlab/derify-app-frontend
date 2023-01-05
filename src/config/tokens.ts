@@ -21,6 +21,15 @@ const tokens: { [key: string]: Token } = {
     decimals: 18,
     projectLink: ''
   },
+  MATIC: {
+    symbol: 'MATIC',
+    address: {
+      56: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3',
+      97: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3'
+    },
+    decimals: 18,
+    projectLink: ''
+  },
   DRF: {
     symbol: 'DRF',
     address: {

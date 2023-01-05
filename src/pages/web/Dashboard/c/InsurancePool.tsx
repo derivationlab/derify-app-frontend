@@ -17,7 +17,7 @@ const time = days().utc().startOf('days').format()
 const InsurancePool: FC = () => {
   const { t } = useTranslation()
 
-  const [timeSelectVal, setTimeSelectVal] = useState<string>('1M')
+  const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [insuranceData, setInsuranceData] = useState<Record<string, any>[]>([])
   const [insuranceVolume, setInsuranceVolume] = useState<Record<string, any>>({})
 

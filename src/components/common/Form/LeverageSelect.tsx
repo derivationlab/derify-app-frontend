@@ -3,6 +3,7 @@ import { useClickAway } from 'react-use'
 import classNames from 'classnames'
 
 import Button from '@/components/common/Button'
+import Slider from '@/components/common/Slider'
 
 import Stepper from './Stepper'
 
@@ -14,14 +15,16 @@ interface Props {
 
 const LeverageSelect: FC<Props> = ({ value, onChange, className }) => {
   const ref = useRef(null)
+
+  const [multiple, setMultiple] = useState(5)
   const [showOptions, setShowOptions] = useState(false)
-  const [stepperValue, setStepperValue] = useState(value)
-  useClickAway(ref, () => setShowOptions(false))
 
   const onConfirm = () => {
-    onChange(stepperValue)
+    onChange(multiple)
     setShowOptions(false)
   }
+
+  useClickAway(ref, () => setShowOptions(false))
 
   return (
     <div className={classNames('web-leverage-select', { show: showOptions }, className)} ref={ref}>
@@ -29,8 +32,9 @@ const LeverageSelect: FC<Props> = ({ value, onChange, className }) => {
         {value}x
       </div>
       <div className="web-leverage-select-stepper">
-        <Stepper value={stepperValue} min={1} onChange={(val) => setStepperValue(val)} suffix="x" input />
-        <Button size="medium" onClick={onConfirm}>
+        <Stepper value={multiple} min={1} onChange={setMultiple} suffix="X" input />
+        <Slider value={multiple} onChange={setMultiple} suffix="X" marks={[1, 5, 10, 15, 20, 25, 30]} />
+        <Button full size="medium" onClick={onConfirm}>
           Confirm
         </Button>
       </div>

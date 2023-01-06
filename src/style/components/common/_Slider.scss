@@ -1,0 +1,158 @@
+.c-slider {
+  height: 16px;
+  width: 100%;
+  cursor: pointer;
+
+  &-layout {
+    position: relative;
+    height: 40px;
+    width: 100%;
+  }
+
+  &-track {
+    height: 16px;
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    &:after {
+      content: '';
+      display: block;
+      width: 100%;
+    }
+
+    &-0, &-1 {
+      position: absolute;
+      left: 0;
+    }
+
+    &-0 {
+      &:after {
+        height: 10px;
+        border-radius: 20px;
+        background: $primary;
+      }
+    }
+
+    &-1 {
+      right: 0;
+
+      &:after {
+        height: 10px;
+        background: $ce7;
+        border-radius: 20px;
+      }
+    }
+  }
+
+  &-thumb, &-thumb-mark {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: $cff;
+    top: 2px;
+    box-shadow: 0 0 1px 4px $primary;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+  }
+
+  &-thumb-mark {
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    @include yd(50%, 0);
+  }
+
+  &-marks {
+    padding: 0 1px;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 16px;
+    align-items: center;
+    cursor: pointer;
+
+    &.pointer {
+      pointer-events: none;
+    }
+
+    span {
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 100%;
+      background: rgba($cff, 0.8);
+      position: relative;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+
+      &.active {
+        //background: rgba($cff,1);
+      }
+
+      em {
+        display: block;
+        position: absolute;
+        color: $c22;
+        font-size: 12px;
+        line-height: 24px;
+        top: 10px;
+        left: 50%;
+        @include yd(-50%, 0);
+      }
+
+      &:first-child em {
+        left: 0;
+        @include yd(0, 0);
+      }
+
+      &:last-child em {
+        right: 0;
+        @include yd(0, 0);
+        left: auto;
+      }
+
+      &.current em {
+        color: $primary;
+      }
+    }
+  }
+}
+
+.dark, .mobile-mode.dark {
+  .c-slider {
+    &-marks {
+      span {
+        em{
+          color: $cff;
+        }
+        &.current em {
+          color: $yellow;
+        }
+      }
+    }
+    &-track {
+      &-0 {
+        &:after {
+          background: $yellow;
+        }
+      }
+
+      &-1 {
+        &:after {
+          background: $c44;
+        }
+      }
+    }
+    &-thumb, &-thumb-mark {
+      background: $c44;
+      box-shadow: 0 0 1px 4px $yellow;
+    }
+  }
+}

@@ -38,7 +38,6 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
   const [leverageVolume, setLeverageVolume] = useState<string>('0')
 
   const typeOptions = useMemo(() => {
-
     const find = Object.values(tokens).find((token) => {
       console.info(currentPair, getAddress(token.address))
       return getAddress(token.address) === currentPair.toLowerCase()

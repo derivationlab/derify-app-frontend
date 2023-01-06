@@ -98,7 +98,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               </h4>
               {/*
               <p>
-                <strong>{memoApyValue}%</strong> APY.
+                <strong>{memoApyValue}%</strong> APR.
               </p>
               */}
             </header>

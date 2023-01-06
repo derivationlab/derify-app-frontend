@@ -25,28 +25,24 @@ const Stepper: FC<Props> = ({
   className,
   input
 }) => {
+  const isTouch: boolean = 'ontouchstart' in window
+
   const [currValue, setCurrValue] = useState(value)
   const [currTime, setCurrTime] = useState(0)
+
   const changeValue = (val: number): void => {
     if (val >= min && val <= max) {
       setCurrValue(val)
     }
+    if (val < min) setCurrValue(min)
+    if (val > max) setCurrValue(max)
   }
-  useEffect(() => {
-    onChange?.(currValue)
-  }, [currValue, onChange])
-
-  useImperativeHandle(cRef, () => ({
-    reset() {
-      setCurrValue(min)
-    }
-  }))
-  const isTouch: boolean = 'ontouchstart' in window
 
   const touchStart = (type: string) => {
     setCurrTime(+new Date())
     console.log(type)
   }
+
   const touchEnd = (action: string, type: string): void => {
     if (type === 'mouse' && isTouch) return
 
@@ -73,6 +69,21 @@ const Stepper: FC<Props> = ({
     const v = Number(e.target.value)
     changeValue(v > max ? max : v < min ? min : v)
   }
+
+  useEffect(() => {
+    onChange?.(currValue)
+  }, [currValue])
+
+  useEffect(() => {
+    setCurrValue(value)
+  }, [value])
+
+  useImperativeHandle(cRef, () => ({
+    reset() {
+      setCurrValue(min)
+    }
+  }))
+
   return (
     <div className={classNames('web-stepper', `web-stepper-size-${size}`, className)}>
       <button

@@ -1,5 +1,4 @@
 .web-leverage-select {
-  position: relative;
   &-curr {
     height: 48px;border: 2px solid $ce7;border-radius: 24px;padding: 0 22px;cursor: pointer;
     display: flex;align-items: center;font-size: 18px;font-weight: bold;justify-content: space-between;
@@ -10,13 +9,13 @@
     }
   }
   &-stepper {
-    position: absolute;right: 0;top: 62px;display: none;align-items: center;
+    position: absolute;left:0;right: 0;top: 90px;display: none;align-items: center;
     background: $cff;
     box-shadow: 0 0 8px rgba($c00, 0.2);
-    border-radius: 24px;padding: 32px;
+    border-radius: 24px;padding: 24px;
 
     .web-button {
-      margin-left: 12px;
+      margin-top: 16px;
     }
   }
   &.show {
@@ -29,7 +28,7 @@
     }
   }
   &.show &-stepper {
-    display: flex;
+    display: block;
   }
 }
 

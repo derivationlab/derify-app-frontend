@@ -3,10 +3,10 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
 import Trader from '@/class/Trader'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import tokens, { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useContractData } from '@/store/contract/hooks'
 import { useShareMessage } from '@/store/share/hooks'
-import { getSymbol } from '@/utils/addressHelpers'
+import { getAddress, getSymbol } from '@/utils/addressHelpers'
 
 import { Select, Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
@@ -37,7 +37,14 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
   const [isCalculating, setIsCalculating] = useState<boolean>(true)
   const [leverageVolume, setLeverageVolume] = useState<string>('0')
 
-  const typeOptions = useMemo(() => [BASE_TOKEN_SYMBOL, getSymbol(currentPair)], [currentPair])
+  const typeOptions = useMemo(() => {
+    const find = Object.values(tokens).find((token) => {
+      console.info(currentPair, getAddress(token.address))
+      return getAddress(token.address) === currentPair.toLowerCase()
+    })
+
+    return [BASE_TOKEN_SYMBOL, getSymbol(currentPair)]
+  }, [currentPair])
 
   const memoPairInfo = useMemo(() => {
     return pairs.find((pair) => pair.token === currentPair) ?? {}

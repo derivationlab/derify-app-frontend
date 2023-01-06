@@ -47,13 +47,13 @@ const MobileFixed: FC<Props> = ({ address, isKline, goBench }) => {
           <Button className="web-trade-bench-button-short" onClick={goBench} type="buy">
             <strong>{t('Trade.Bench.Long', 'Long')}</strong>
             <em>
-              {memoLongPosApy}%<u>APY</u>
+              {memoLongPosApy}%<u>APR</u>
             </em>
           </Button>
           <Button className="web-trade-bench-button-short" onClick={goBench} type="sell">
             <strong>{t('Trade.Bench.Short', 'Short')}</strong>
             <em>
-              {memoShortPosApy}%<u>APY</u>
+              {memoShortPosApy}%<u>APR</u>
             </em>
           </Button>
         </>

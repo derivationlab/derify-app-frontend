@@ -1,9 +1,10 @@
 .web-stepper {
-  display: flex;align-items: center;
+  display: flex;align-items: center;background-color: $ce7;border-radius: 8px;
+  justify-content: space-between;margin-bottom: 20px;
   button {
     position: relative;cursor: pointer;
-    width: 40px;height: 40px;border-radius: 20px;
-    border: 2px solid $ce7;background: $cff;
+    width: 40px;height: 40px;border-radius: 8px;
+    border: none;background: $ce7;appearance: none;
     @include dz();
     &:before, &:after {
       content: '';width: 16px;height: 2px;border-radius: 1px;background: $c88;
@@ -42,7 +43,7 @@
 .mobile-mode {
   .web-stepper {
     button {
-      width: rem(24);height: rem(24);border-radius: rem(12);
+      width: rem(24);height: rem(24);border-radius: rem(4);
       border-width: rem(2);
       &:before, &:after {
         width: rem(12);height: rem(2);border-radius: rem(1);
@@ -51,14 +52,15 @@
     }
 
     label, input {
-      padding: 0 rem(8);font-size: rem(14);width: rem(30);
+      padding: 0 rem(8);font-size: rem(14);width: rem(40);
     }
   }
 }
 .dark, .mobile-mode.dark {
   .web-stepper {
+    background-color: $c44;
     button {
-      border-color: $c44;background: $c22;
+      border-color: $c44;background: $c44;
       &:hover {
         border-color: $yellow;
         &:before, &:after {
@@ -68,11 +70,15 @@
 
       &:disabled, &:disabled:hover {
         background: $c44;
-        border-color: $c44;
+        border-color: $c33;
         &:before, &:after {
           background: $c33;
         }
       }
+    }
+
+    input{
+      color:$cff;
     }
   }
 }

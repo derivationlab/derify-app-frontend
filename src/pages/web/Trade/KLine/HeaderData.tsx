@@ -98,7 +98,7 @@ const HeaderData: FC = () => {
       {!mobile && <hr />}
       <section>
         <h3>
-          {t('Trade.kline.PositionMiningAPY', 'Position Mining APY.')}
+          {t('Trade.kline.PositionMiningAPY', 'Position Mining APR.')}
           <QuestionPopover size="mini" text={t('Trade.kline.PositionMiningAPYTip')} />
         </h3>
         {mobile ? (

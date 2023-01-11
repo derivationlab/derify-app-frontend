@@ -149,7 +149,7 @@ const Bench: FC = () => {
     const isLimit = minimumOpenPositionLimit(side, _price, quantity, quantityType)
 
     if (isLimit) {
-      window.toast.error(t('Trade.Bench.MinNumber', 'The minimum number is 100U'))
+      window.toast.error(t('Trade.Bench.MinNumber', 'The minimum number is 500U', { limit: 500 }))
       return
     }
 

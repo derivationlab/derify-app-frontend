@@ -99,7 +99,7 @@ export default {
       Volume: '数量',
       Max: 'Max',
       NumberError: '数值有误，请重新输入',
-      MinNumber: '最小开仓额为100U',
+      MinNumber: '最小开仓额为 {{limit}}U',
       Long: '开多',
       Short: '开空',
       TowWay: '双向对冲'

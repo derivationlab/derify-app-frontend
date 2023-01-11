@@ -17,7 +17,7 @@ const Stepper: FC<Props> = ({
   size = 'default',
   value = 0,
   min = 0,
-  max = 30,
+  max = 50,
   step = 1,
   onChange,
   cRef,

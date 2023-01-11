@@ -16,7 +16,7 @@ interface Props {
 const LeverageSelect: FC<Props> = ({ value, onChange, className }) => {
   const ref = useRef(null)
 
-  const [multiple, setMultiple] = useState(5)
+  const [multiple, setMultiple] = useState(30)
   const [showOptions, setShowOptions] = useState(false)
 
   const onConfirm = () => {
@@ -33,7 +33,7 @@ const LeverageSelect: FC<Props> = ({ value, onChange, className }) => {
       </div>
       <div className="web-leverage-select-stepper">
         <Stepper value={multiple} min={1} onChange={setMultiple} suffix="X" input />
-        <Slider value={multiple} onChange={setMultiple} suffix="X" marks={[1, 5, 10, 15, 20, 25, 30]} />
+        <Slider value={multiple} onChange={setMultiple} suffix="X" marks={[1, 15, 30, 45, 60, 75]} />
         <Button full size="medium" onClick={onConfirm}>
           Confirm
         </Button>

@@ -385,7 +385,7 @@ class Trader {
   }
 
   minimumOpenPositionLimit = (side: string, price: string, volume: string | number, symbol: string): boolean => {
-    const limit = 100
+    const limit = 500
     const calcU = symbol === BASE_TOKEN_SYMBOL ? new BN(volume) : new BN(volume).times(price) // U
 
     return calcU.isLessThan(limit)

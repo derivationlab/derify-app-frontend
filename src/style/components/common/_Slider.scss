@@ -59,6 +59,16 @@
     outline: none;
   }
 
+  &-thumb u {
+    background: $c66;border-radius: 4px;display: block;font-size: 12px;padding: 2px 3px;
+    position: absolute;top: -25px;color: $cff;
+    &:after {
+      content: '';display: block;width: 6px;height: 6px;background: $c66;
+      position: absolute;bottom: -3px;left: 50%;margin-left: -3px;
+      @include xz(45);
+    }
+  }
+
   &-thumb-mark {
     position: absolute;
     z-index: 2;

@@ -10,12 +10,35 @@
     &:first-child {
       border-radius: 13px 0 0 13px;
     }
-    &:last-child {
-      border-radius: 0 13px 13px 0;
-    }
+    // &:last-child {
+    //   border-radius: 0 13px 13px 0;
+    // }
     &:hover, &.active {
       box-shadow: 0 0 0 2px $red;color: $red;z-index: 1;
     }
+  }
+  &s {
+    display: flex; width: 80%;
+  }
+  &-switch {
+    width: 20%;border-radius: 0 13px 13px 0;box-shadow: 0 0 0 2px $ce7;
+    margin-left: 2px;height: 26px;cursor: pointer;
+    display: flex;justify-content: center;align-items: center;
+    &:hover, &.active {
+      // box-shadow: 0 0 0 2px $red;color: $red;z-index: 1;
+    }
+    &:after {
+      content: '';display: block;width: 7px;height: 7px;background: $red;
+      border-radius: 2px;
+      box-shadow: -10px 0 $red, 10px 0 $red;
+    }
+  }
+  &-slider {
+    &-layout {
+      width: 80%;border-radius: 13px 0 0 13px;box-shadow: 0 0 0 2px $ce7;
+      padding: 5px 10px;
+    }
+
   }
 }
 

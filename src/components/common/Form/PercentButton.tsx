@@ -68,7 +68,7 @@ const PercentButton: FC<Props> = ({ value, onChange, currValue, decimal = 8 }) =
         </div>
       )}
 
-      <div className="web-percent-button-switch" onClick={() => setType(!type)} />
+      <div className={classNames('web-percent-button-switch', { active: type })} onClick={() => setType(!type)} />
     </div>
   )
 }

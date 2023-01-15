@@ -25,12 +25,15 @@
     margin-left: 2px;height: 26px;cursor: pointer;
     display: flex;justify-content: center;align-items: center;
     &:hover, &.active {
-      // box-shadow: 0 0 0 2px $red;color: $red;z-index: 1;
+      &:after {
+        background: $red;
+        box-shadow: -10px 0 $red, 10px 0 $red;
+      }
     }
     &:after {
-      content: '';display: block;width: 7px;height: 7px;background: $red;
+      content: '';display: block;width: 7px;height: 7px;background: $c88;
       border-radius: 2px;
-      box-shadow: -10px 0 $red, 10px 0 $red;
+      box-shadow: -10px 0 $c88, 10px 0 $c88;
     }
   }
   &-slider {

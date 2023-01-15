@@ -28,7 +28,7 @@ export default {
       MarginTip: 'Used Position Margin = Position Held/Leverage',
       MarginRate: 'Margin Rate',
       MarginRateTip:
-        'Risk increases as the margin rate decreases. When the margin rate is smaller than the maintenance margin 3%, the auto deleveraging will be triggered. ',
+        'Risk increases as the margin rate decreases. When the margin rate is smaller than the maintenance margin 1%, the auto deleveraging will be triggered. ',
       TakeProfit: 'Take Profit',
       TakeProfitTip:
         'When the TP price is reached, system will be automatically close your position to realize your current profit.',

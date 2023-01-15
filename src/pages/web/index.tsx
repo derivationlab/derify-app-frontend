@@ -12,6 +12,7 @@ import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
 // import Faucet from '@/pages/web/Faucet'
 // import Airdrop from '@/pages/web/Airdrop'
+import Test from '@/pages/web/Test'
 import Dashboard from '@/pages/web/Dashboard'
 import BrokerRank from '@/pages/web/Broker/Rank'
 import BrokerBind from '@/pages/web/Broker/Bind'
@@ -118,6 +119,7 @@ const Web: FC = () => {
         <Route path="/earn" render={() => handleUnbindBroker(Earn)} />
         <Route path="/trade" render={() => handleUnbindBroker(Trade)} />
         <Route path="/dashboard" render={() => handleUnbindBroker(Dashboard)} />
+        <Route path="/test" render={() => <Test></Test>} />
 
         {!account?.address ? (
           <BrokerConnect />

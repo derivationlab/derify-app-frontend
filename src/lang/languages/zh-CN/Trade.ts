@@ -25,7 +25,7 @@ export default {
       Margin: '保证金',
       MarginTip: '仓位占用的保证金=持仓额/杠杆',
       MarginRate: '保证金率',
-      MarginRateTip: '保证金比例越小，风险越大。当保证金率小于维持保证金率3%时开始触发强制减仓。',
+      MarginRateTip: '保证金比例越小，风险越大。当保证金率小于维持保证金率1%时开始触发强制减仓。',
       TakeProfit: '止盈',
       TakeProfitTip: '当价格达到止盈设置的价格时，将自动平仓，此时仓位属于盈利状态，平仓防止盈利回撤。',
       StopLoss: '止损',

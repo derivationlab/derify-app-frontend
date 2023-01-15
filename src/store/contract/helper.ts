@@ -111,13 +111,13 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
   const calls = times(pairs.length, (index) => ({
     address: pairs[index].contract,
     name: 'getTraderDerivativePositions',
-    params: [trader]
+    params: ['0xa8B5719Ad76518a93828ADa2804d20D6cE4a4C55']
   }))
 
   try {
     const response = await multicall(DerifyDerivativeAbi, calls)
     const spotPrices = await getTokenSpotPrice()
-    const variables = await getTraderVariablesData(trader) // 0x8BF5722AF17ce9F25211F4Cb8DFF5639831A2250
+    const variables = await getTraderVariablesData('0xa8B5719Ad76518a93828ADa2804d20D6cE4a4C55') // 0x8BF5722AF17ce9F25211F4Cb8DFF5639831A2250
     // console.info(String(response))
     if (!isEmpty(response)) {
       for (let i = 0; i < response.length; i++) {

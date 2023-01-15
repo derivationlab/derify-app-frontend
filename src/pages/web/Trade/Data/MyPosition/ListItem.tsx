@@ -11,6 +11,7 @@ import { nonBigNumberInterception } from '@/utils/tools'
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
+import Reminder from '../c/Reminder'
 import EditButton from '../c/EditButton'
 
 interface Props {
@@ -104,17 +105,27 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     ),
     [data?.margin, t]
   )
-  const atom6Tsx = useMemo(
-    () => (
+  const atom6Tsx = useMemo(() => {
+    let alertLevel = 0
+    const base = Number(memoMarginRate)
+
+    if (base > 20) alertLevel = 0
+    else if (base > 5) alertLevel = 1
+    else if (base > 2) alertLevel = 2
+    else if (base > 1.33) alertLevel = 3
+    else if (base > 1.11) alertLevel = 4
+    else alertLevel = 5
+
+    return (
       <DataAtom label={t('Trade.MyPosition.MarginRate', 'Margin Rate')} tip={t('Trade.MyPosition.MarginRateTip')}>
-        <span className={classNames(`${Number(memoMarginRate) >= 0 ? 'up' : 'down'}`)}>
+        <span className={classNames('reminder', `${Number(memoMarginRate) >= 0 ? 'up' : 'down'}`)}>
           {judgeUpsAndDowns(memoMarginRate)}
           {memoMarginRate}%
         </span>
+        <Reminder alertLevel={alertLevel} />
       </DataAtom>
-    ),
-    [memoMarginRate, t]
-  )
+    )
+  }, [memoMarginRate, t])
   const atom7Tsx = useMemo(
     () => (
       <DataAtom

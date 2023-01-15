@@ -1,13 +1,25 @@
 .web-trade-data-atom {
   height: 60px;
+  position: relative;
+
   label, footer {
-    display: flex;align-items: center;height: 20px;font-size: 12px;
+    display: flex;
+    align-items: center;
+    height: 20px;
+    font-size: 12px;
   }
+
   section {
-    font-size: 16px;font-weight: bold;display: flex;align-items: center;height: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    height: 20px;
+
     .up {
       color: $buy;
     }
+
     .down {
       color: $sell;
     }
@@ -17,11 +29,53 @@
 .mobile-mode {
   .web-trade-data-atom {
     height: rem(48);
+
     label, footer {
-      font-size: rem(10);height: rem(16);
+      font-size: rem(10);
+      height: rem(16);
     }
+
     section {
-      font-size: rem(12);height: rem(16);
+      font-size: rem(12);
+      height: rem(16);
+    }
+  }
+}
+
+.web-trade-data-reminder {
+  position: absolute;
+  display: flex;
+  bottom: 6px;
+
+  li {
+    height: 10px;
+    width: 3px;
+    margin: 0 2px;
+    border-radius: 2px;
+    background-color: $ce7;
+
+    &.r1 {
+      background-color: $lBuy;
+    }
+
+    &.r2 {
+      background-color: $lYellow;
+    }
+
+    &.r3 {
+      background-color: $sell;
+    }
+  }
+}
+
+.mobile-mode {
+  .web-trade-data-reminder {
+    bottom: rem(4);
+    li{
+      height: rem(8);
+      width: rem(3);
+      margin: 0 rem(2);
+      border-radius: rem(2);
     }
   }
 }

@@ -117,7 +117,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     else alertLevel = 5
 
     return (
-      <DataAtom label={t('Trade.MyPosition.MarginRate', 'Margin Rate')} tip={t('Trade.MyPosition.MarginRateTip')}>
+      <DataAtom hover label={t('Trade.MyPosition.MarginRate', 'Margin Rate')} tip={t('Trade.MyPosition.MarginRateTip')}>
         <span className={classNames('reminder', `${Number(memoMarginRate) >= 0 ? 'up' : 'down'}`)}>
           {judgeUpsAndDowns(memoMarginRate)}
           {memoMarginRate}%

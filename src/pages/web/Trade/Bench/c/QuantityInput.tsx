@@ -1,48 +1,43 @@
-import React, { FC, useMemo, useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo, useState, useEffect } from 'react'
 
 import Trader from '@/class/Trader'
-import tokens, { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useContractData } from '@/store/contract/hooks'
+import { getSymbol } from '@/utils/addressHelpers'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useShareMessage } from '@/store/share/hooks'
-import { getAddress, getSymbol } from '@/utils/addressHelpers'
-
-import { Select, Input } from '@/components/common/Form'
-import PercentButton from '@/components/common/Form/PercentButton'
+import { useContractData } from '@/store/contract/hooks'
 
 import { PriceType } from '@/pages/web/Trade/Bench'
+import { Select, Input } from '@/components/common/Form'
+import PercentButton from '@/components/common/Form/PercentButton'
 
 import Row from './Row'
 import Col from './Col'
 
-// todo make types declare better
 interface Props {
-  value: number | string
-  onChange: (value: number) => void
   type: string | number
-  onTypeChange: (value: string | number) => void
+  value: number | string
+  price: number | string
   leverage: number
   openType: PriceType
-  price: number | string
+  onChange: (value: number) => void
+  onTypeChange: (value: string | number) => void
 }
+
+let onetime = false
 
 const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverage, openType, price }) => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
+  const { shareMessage } = useShareMessage()
   const { getOpenUpperBound } = Trader
   const { pairs, currentPair } = useContractData()
-  const { shareMessage } = useShareMessage()
 
   const [isCalculating, setIsCalculating] = useState<boolean>(true)
   const [leverageVolume, setLeverageVolume] = useState<string>('0')
 
   const typeOptions = useMemo(() => {
-    const find = Object.values(tokens).find((token) => {
-      console.info(currentPair, getAddress(token.address))
-      return getAddress(token.address) === currentPair.toLowerCase()
-    })
-
     return [BASE_TOKEN_SYMBOL, getSymbol(currentPair)]
   }, [currentPair])
 
@@ -50,10 +45,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
     return pairs.find((pair) => pair.token === currentPair) ?? {}
   }, [pairs, currentPair])
 
-  const memoTokenSymbol = useMemo(
-    () => (type === BASE_TOKEN_SYMBOL ? BASE_TOKEN_SYMBOL : getSymbol(currentPair)),
-    [type, currentPair]
-  )
+  const memoTokenSymbol = useMemo(() => (type === BASE_TOKEN_SYMBOL ? BASE_TOKEN_SYMBOL : getSymbol(currentPair)), [type, currentPair])
 
   const typeChangeEv = (val: string | number) => {
     onChange(0)
@@ -64,22 +56,22 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
     if (value > Number(leverageVolume)) onChange(Number(leverageVolume))
   }, [leverageVolume, value])
 
-  // todo too much Deps ?
   useEffect(() => {
     const { spotPrice } = memoPairInfo
 
     const calcMaxVolumeFunc = async () => {
-      setIsCalculating(true)
+      if (!onetime) setIsCalculating(true)
 
       try {
         const _price = openType === 0 ? spotPrice : price
 
         if (_price) {
-          // 0x8BF5722AF17ce9F25211F4Cb8DFF5639831A2250
           const [size, amount] = await getOpenUpperBound(currentPair, account!.address!, openType, _price, leverage)
-          // console.info([size, amount])
+
           setLeverageVolume(memoTokenSymbol === BASE_TOKEN_SYMBOL ? amount : size)
           setIsCalculating(false)
+
+          onetime = true
         }
       } catch (e) {
         console.info(e)

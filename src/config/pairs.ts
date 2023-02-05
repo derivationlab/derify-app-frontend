@@ -1,6 +1,6 @@
 import { Token } from '@/config/types'
 import { getAddress } from '@/utils/addressHelpers'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import tokens, { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface Base {
   quoteToken: Token
@@ -18,10 +18,7 @@ const baseConfig: Base[] = [
   {
     quoteToken: {
       symbol: 'BTC',
-      address: {
-        56: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
-        97: ''
-      },
+      address: tokens.BTC.address,
       decimals: 18,
       projectLink: ''
     },
@@ -36,10 +33,7 @@ const baseConfig: Base[] = [
   {
     quoteToken: {
       symbol: 'ETH',
-      address: {
-        56: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
-        97: ''
-      },
+      address: tokens.ETH.address,
       decimals: 18,
       projectLink: ''
     },
@@ -54,10 +48,7 @@ const baseConfig: Base[] = [
   // {
   //   quoteToken: {
   //     symbol: 'MATIC',
-  //     address: {
-  //       56: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3',
-  //       97: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3'
-  //     },
+  //     address: tokens.MATIC.address,
   //     decimals: 18,
   //     projectLink: ''
   //   },

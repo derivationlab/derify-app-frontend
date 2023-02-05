@@ -30,11 +30,16 @@ export interface ShareMessageState {
   shareMessage: any
 }
 
+export interface ContractConfigState {
+  contractConfig: Record<string, any>
+}
+
 export interface State {
   contract: ContractState
   trader: TraderState
   constant: ConstantState
   shareMessage: ShareMessageState
+  contractConfig: ContractConfigState
 }
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, State, unknown, AnyAction>

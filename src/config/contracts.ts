@@ -17,7 +17,7 @@ const addresses: Record<string, Address> = {
   },
   DerifyBroker: {
     56: '0x465e0019B1a51Ec5E4A6A26567Aff4E1806A76B6',
-    97: '0x799CE3C1bAdcFd81f99288dEA09DDcC83fd15748'
+    97: '0xC77B6bDCC2ABA23b5B968D3DE2A1aB827d9EAB07'
   }
 }
 

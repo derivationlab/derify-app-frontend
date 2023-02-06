@@ -31,15 +31,22 @@ export interface ShareMessageState {
 }
 
 export interface ContractConfigState {
-  contractConfig: Record<string, any>
+  loaded: boolean
+  marginToken: string
+  contractConfig: {
+    [key: string]: {
+      derifyRewards: '',
+      derifyExchange: ''
+    }
+  }
 }
 
 export interface State {
-  contract: ContractState
+  config: ContractConfigState
   trader: TraderState
+  contract: ContractState
   constant: ConstantState
   shareMessage: ShareMessageState
-  contractConfig: ContractConfigState
 }
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, State, unknown, AnyAction>

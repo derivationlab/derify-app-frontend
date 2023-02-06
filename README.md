@@ -7,3 +7,7 @@ npm install
 npm start
 npm run build
 ```
+
+数据流review;
+dispatch(getTraderDataAsync(;
+PubSub同类更新统一通知处理；

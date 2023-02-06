@@ -1,17 +1,17 @@
-import React, { FC, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
 import BN from 'bignumber.js'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo, useState } from 'react'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { findToken } from '@/config/tokens'
 import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { getDUSDAddress } from '@/utils/addressHelpers'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import AmountInput from '../AmountInput'
+import { useContractConfig } from '@/store/config/hooks'
 
 interface Props {
   visible: boolean
@@ -22,7 +22,10 @@ interface Props {
 const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
-  const { balance } = useTokenBalance(getDUSDAddress())
+  const { marginToken } = useContractConfig()
+
+  // todo balances redux?
+  const { balance } = useTokenBalance(findToken(marginToken).tokenAddress)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')
@@ -30,7 +33,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const memoDisabled = useMemo(() => {
     return new BN(balance).isGreaterThan(0)
   }, [balance])
-
+  console.info(memoDisabled)
   const onChangeEv = (v: string) => {
     const _v = new BN(v)
     const _balance = new BN(balance)
@@ -56,7 +59,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Trade.Deposit.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balance} unit={BASE_TOKEN_SYMBOL} />
+                <BalanceShow value={balance} unit={marginToken} />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
@@ -64,6 +67,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           <div className="amount">
             <AmountInput
               max={balance}
+              unit={marginToken}
               title={t('Trade.Deposit.AmountToDeposit', 'Amount to deposit')}
               onChange={onChangeEv}
             />

@@ -44,7 +44,7 @@ const Info: FC = () => {
           // succeed
           window.toast.success(t('common.success', 'success'))
 
-          dispatch(getBrokerValidPeriodDataAsync(account))
+          // dispatch(getBrokerValidPeriodDataAsync(account))
         } else {
           // failed
           window.toast.error(t('common.failed', 'failed'))

@@ -19,6 +19,7 @@ import Image from '@/components/common/Image'
 import Loading from '@/components/common/Loading'
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
+import { useMarginInfo } from '@/hooks/useMarginInfo'
 
 const MyOrder: FC = () => {
   const dispatch = useAppDispatch()
@@ -27,6 +28,7 @@ const MyOrder: FC = () => {
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
   const { myOrders, myOrdersLoaded } = useContractData()
+  const { config, loaded, marginToken } = useMarginInfo()
   const { cancelAllPosOrders, cancelSomePosition } = Trader
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
@@ -39,7 +41,7 @@ const MyOrder: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer) {
+    if (signer && loaded) {
       const account = await signer.getAddress()
       const status = await cancelSomePosition(
         signer,
@@ -53,7 +55,7 @@ const MyOrder: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync(account))
+          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
         })
@@ -71,7 +73,7 @@ const MyOrder: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer) {
+    if (signer && loaded) {
       const account = await signer.getAddress()
       const status = await cancelAllPosOrders(signer)
       if (status) {
@@ -79,7 +81,7 @@ const MyOrder: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync(account))
+          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
         })

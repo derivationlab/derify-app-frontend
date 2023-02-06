@@ -1,9 +1,8 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
 import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTraderData } from '@/store/trader/hooks'
 import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
@@ -13,6 +12,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '../AmountInput'
 import { getTraderWithdrawAmount } from '@/api'
 import { useAccount } from 'wagmi'
+import { useContractConfig } from '@/store/config/hooks'
 
 interface Props {
   visible: boolean
@@ -22,8 +22,9 @@ interface Props {
 
 const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
+  const { data } = useAccount()
   const { trader } = useTraderData()
-  const { data: account } = useAccount()
+  const { marginToken } = useContractConfig()
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [withdrawInfo, setWithdrawInfo] = useState<Record<string, any>>({})
@@ -68,9 +69,9 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   useEffect(() => {
-    if (account?.address && Number(withdrawAmount) > 0)
-      void getTraderWithdrawAmountFunc(account.address, withdrawAmount)
-  }, [account?.address, withdrawAmount])
+    if (data?.address && Number(withdrawAmount) > 0)
+      void getTraderWithdrawAmountFunc(data.address, withdrawAmount)
+  }, [data?.address, withdrawAmount])
 
   return (
     <Dialog
@@ -85,17 +86,18 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Trade.Withdraw.Withdrawable', 'Withdrawable')}</dt>
               <dd>
-                <BalanceShow value={trader.availableMargin} unit={BASE_TOKEN_SYMBOL} />
+                <BalanceShow value={trader.availableMargin} unit={marginToken} />
               </dd>
             </dl>
             <address>
-              {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{memoMargin[0]}</em> {BASE_TOKEN_SYMBOL}{' '}
+              {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{memoMargin[0]}</em> {marginToken}{' '}
               <em>( {memoMargin[1]}%)</em>
             </address>
           </div>
           <div className="amount">
             <AmountInput
               max={trader.availableMargin}
+              unit={marginToken}
               title={t('Trade.Withdraw.AmountToWithdraw', 'Amount to withdraw')}
               onChange={onChangeEv}
             />

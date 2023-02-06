@@ -4,31 +4,31 @@ import { useSigner } from 'wagmi'
 import { batch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useState } from 'react'
+
 import Trader from '@/class/Trader'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { PriceType } from '@/typings'
 import { useAppDispatch } from '@/store'
-import { getMyPositionsDataAsync } from '@/store/contract'
-import { PositionSide } from '@/store/contract/helper'
-import { useTraderData } from '@/store/trader/hooks'
 import { setShareMessage } from '@/store/share'
-import { useContractData } from '@/store/contract/hooks'
 import { getTraderDataAsync } from '@/store/trader'
-import { LeverageSelect } from '@/components/common/Form'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { useTraderData } from '@/store/trader/hooks'
+import { useMarginInfo } from '@/hooks/useMarginInfo'
+import { PositionSide } from '@/store/contract/helper'
+import { useContractData } from '@/store/contract/hooks'
+import { getMyPositionsDataAsync } from '@/store/contract'
+
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
+import { LeverageSelect } from '@/components/common/Form'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
-import Initializing from './c/Initializing'
-import Info from './c/Info'
+
 import Row from './c/Row'
 import Col from './c/Col'
-import OpenTypeSelect from './c/OpenTypeSelect'
+import Info from './c/Info'
 import PriceInput from './c/PriceInput'
+import Initializing from './c/Initializing'
 import QuantityInput from './c/QuantityInput'
-
-export enum PriceType {
-  Market,
-  Limit
-}
+import OpenTypeSelect from './c/OpenTypeSelect'
 
 const Bench: FC = () => {
   const dispatch = useAppDispatch()
@@ -36,6 +36,7 @@ const Bench: FC = () => {
   const { data: signer } = useSigner()
   const { brokerBound: broker } = useTraderData()
   const { pairs, currentPair } = useContractData()
+  const { config, loaded: configLoaded } = useMarginInfo()
   const { openPositionOrder, minimumOpenPositionLimit } = Trader
 
   const [openType, setOpenType] = useState<PriceType>(PriceType.Market)
@@ -102,7 +103,7 @@ const Bench: FC = () => {
 
     setDialogStatus(false)
 
-    if (signer && broker?.broker) {
+    if (signer && broker?.broker && configLoaded) {
       const _isOrderConversion = isOrderConversion(openPosParams?.openType, openPosParams?.price)
 
       const account = await signer.getAddress()
@@ -125,7 +126,7 @@ const Bench: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync(account))
+          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
         })

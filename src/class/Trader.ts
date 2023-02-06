@@ -3,18 +3,20 @@ import { isEmpty } from 'lodash'
 import type { Signer } from 'ethers'
 
 import pairs from '@/config/pairs'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { PriceType } from '@/pages/web/Trade/Bench'
+import { PriceType } from '@/typings'
+import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { getDUSDAddress, getDerifyExchangeAddress } from '@/utils/addressHelpers'
-import { getDerifyExchangeContract, getDerifyDerivativePairContract } from '@/utils/contractHelpers'
+import {
+  getDerifyExchangeContract,
+  getDerifyExchangeContract1,
+  getDerifyDerivativePairContract,
+} from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
-import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 class Trader {
-  traderWithdrawMargin = async (signer: Signer, amount: string): Promise<boolean> => {
-    const contract = getDerifyExchangeContract(signer)
+  traderWithdrawMargin = async (signer: Signer, amount: string, address: string): Promise<boolean> => {
+    const contract = getDerifyExchangeContract1(address, signer)
 
     try {
       const _amount = toHexString(amount)
@@ -29,12 +31,13 @@ class Trader {
     }
   }
 
-  traderDepositMargin = async (signer: Signer, account: string, amount: string): Promise<boolean> => {
-    const contract = getDerifyExchangeContract(signer)
-    console.info(contract.address)
+  traderDepositMargin = async (signer: Signer, account: string, amount: string, address: string, marginToken: string): Promise<boolean> => {
+    const contract = getDerifyExchangeContract1(address, signer)
+    const marToken = findToken(marginToken)
+
     try {
       const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyExchangeAddress(), getDUSDAddress(), _amount)
+      const approve = await setAllowance(signer, address, marToken.tokenAddress, _amount)
 
       if (!approve) return false
 

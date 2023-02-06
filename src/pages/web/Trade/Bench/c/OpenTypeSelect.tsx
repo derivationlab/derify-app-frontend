@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Select } from '@/components/common/Form'
-import { PriceType } from '@/pages/web/Trade/Bench'
+import { PriceType } from '@/typings'
 
 interface Props {
   value: string | number

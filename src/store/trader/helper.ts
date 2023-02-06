@@ -1,6 +1,11 @@
 import { isEmpty } from 'lodash'
 import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
-import { getDerifyBrokerContract, getDerifyExchangeContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
+import {
+  getDerifyBrokerContract,
+  getDerifyExchangeContract,
+  getDerifyExchangeContract1,
+  getDerifyRewardsContract
+} from '@/utils/contractHelpers'
 import {
   getBrokerInfoByAddr,
   getBrokerValidPeriod,
@@ -51,7 +56,8 @@ const getBrokerInfoByContract = async (trader: string) => {
   }
 }
 
-export const getTraderAccountData = async (trader: string): Promise<Record<string, string>> => {
+export const getTraderAccountData = async (trader: string, address: string): Promise<Record<string, string>> => {
+  const exchangeContract = getDerifyExchangeContract1(address)
   const defaultVal = {
     balance: '0',
     marginBalance: '0',
@@ -61,7 +67,7 @@ export const getTraderAccountData = async (trader: string): Promise<Record<strin
 
   try {
     const { balance, marginBalance, totalMargin, availableMargin } = await exchangeContract.getTraderAccount(trader)
-    // console.info(String(availableMargin), safeInterceptionValues(availableMargin))
+    console.info(`getTraderAccount-marginBalance: ${safeInterceptionValues(marginBalance)}`)
     return {
       balance: safeInterceptionValues(balance),
       marginBalance: safeInterceptionValues(marginBalance),
@@ -69,7 +75,7 @@ export const getTraderAccountData = async (trader: string): Promise<Record<strin
       availableMargin: safeInterceptionValues(availableMargin, 8)
     }
   } catch (e) {
-    // console.info(e)
+    console.info(e)
     return defaultVal
   }
 }
@@ -83,6 +89,7 @@ export const getTraderVariablesData = async (trader: string): Promise<Record<str
 
   try {
     const { marginBalance, marginRate, totalPositionAmount } = await exchangeContract.getTraderVariables(trader)
+    console.info(`getTraderVariables-marginBalance: ${safeInterceptionValues(marginBalance)}`)
     return {
       marginBalance: safeInterceptionValues(marginBalance),
       marginRate: safeInterceptionValues(marginRate, 4),

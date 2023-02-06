@@ -10,7 +10,7 @@ export interface Address {
 
 export interface Token {
   name?: string
-  symbol?: string
+  symbol: string
   address: Address
   decimals: number
   projectLink?: string

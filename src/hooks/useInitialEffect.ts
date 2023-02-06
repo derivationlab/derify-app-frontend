@@ -3,6 +3,7 @@ import { useAccount, useConnect } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
 import { useBlockNum } from '@/hooks/useBlockNumber'
+import { getMarginTokenContractConfigAsync } from '@/store/config'
 import { getBrokerBoundDataAsync, getBrokerDataAsync } from '@/store/trader'
 import { getEventsDataAsync, getTokenSpotPriceAsync } from '@/store/contract'
 import { getIndicatorDataAsync, getPositionChangeFeeRatioDataAsync } from '@/store/constant'
@@ -22,36 +23,14 @@ export const useInitialEffect = () => {
 
   useEffect(() => {
     if (blockNumber) {
-      /**
-       * spotPrice
-       */
       dispatch(getTokenSpotPriceAsync())
-
-      /**
-       apy,
-       token,
-       longPmrRate,
-       shortPmrRate,
-       price_change_rate
-       */
-      dispatch(getEventsDataAsync())
-
-      /**
-       position change fee ratio
-       */
+      // dispatch(getEventsDataAsync())
       dispatch(getPositionChangeFeeRatioDataAsync())
     }
   }, [blockNumber, dispatch])
 
   useEffect(() => {
-    /**
-     bdrfPrice: 0
-     drfBurnt: 1.1903499167890368
-     drfBuyBack: 4008.58768796
-     drfPrice: 0
-     drfStakingApy: 0
-     edrfPrice: 0
-     */
-    dispatch(getIndicatorDataAsync())
+    // dispatch(getIndicatorDataAsync())
+    dispatch(getMarginTokenContractConfigAsync())
   }, [dispatch])
 }

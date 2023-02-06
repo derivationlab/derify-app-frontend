@@ -15,9 +15,9 @@ import { getIP } from '@/api'
 const WebEntry = lazy(() => import('@/pages/web'))
 
 function App() {
-  useInitialEffect()
-
   const [visible, setVisible] = useState<boolean>(false)
+
+  useInitialEffect()
 
   useEffect(() => {
     const func = async () => {
@@ -26,12 +26,6 @@ function App() {
     }
 
     void func()
-    //
-    // if (typeof window?.geoip2 !== 'undefined') {
-    //   window.geoip2?.country(function (response: { country: { iso_code: string } }) {
-    //     if (response?.country?.iso_code.toUpperCase() === 'CN') setVisible(true)
-    //   })
-    // }
   }, [])
 
   return (

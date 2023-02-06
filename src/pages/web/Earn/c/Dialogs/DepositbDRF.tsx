@@ -4,12 +4,12 @@ import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
 import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { getbBUSDAddress } from '@/utils/addressHelpers'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '@/components/common/Wallet/AmountInput'
+import tokens from '@/config/tokens'
 
 interface Props {
   visible: boolean
@@ -20,7 +20,7 @@ interface Props {
 const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
-  const { balance } = useTokenBalance(getbBUSDAddress())
+  const { balance } = useTokenBalance(tokens.bbusd.tokenAddress)
 
   const [depositAmount, setDepositAmount] = useState<string>('0')
   const [isDisabled, setIsDisabled] = useState<boolean>(false)

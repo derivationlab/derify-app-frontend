@@ -3,13 +3,13 @@ import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
 import Broker from '@/class/Broker'
-import { getEDRFAddress } from '@/utils/addressHelpers'
 import { nonBigNumberInterception } from '@/utils/tools'
 import { useTokenBalance } from '@/hooks/useTokenBalance'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import tokens from '@/config/tokens'
 
 interface Props {
   visible: boolean
@@ -19,7 +19,7 @@ interface Props {
 
 const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { balance } = useTokenBalance(getEDRFAddress())
+  const { balance } = useTokenBalance(tokens.edrf.tokenAddress)
   const { burnLimitPerDay } = Broker
 
   const [burnAmount, setBurnAmount] = useState<string>('')

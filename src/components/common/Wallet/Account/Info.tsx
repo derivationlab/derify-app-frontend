@@ -1,15 +1,16 @@
 import React, { FC, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { getTraderDataAsync } from '@/store/trader'
 import { useTraderData } from '@/store/trader/hooks'
 import { useContractData } from '@/store/contract/hooks'
+import { useContractConfig } from '@/store/config/hooks'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '../BalanceShow'
+import { useMarginInfo } from '@/hooks/useMarginInfo'
 
 interface Props {
   size?: string
@@ -17,21 +18,23 @@ interface Props {
 
 const AccountInfo: FC<Props> = ({ size = 'default' }) => {
   const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
+  const { data } = useAccount()
   const { trader } = useTraderData()
+  const { marginToken } = useContractConfig()
+  const { config, loaded } = useMarginInfo()
   const { pairs, currentPair } = useContractData()
-  const { data: account } = useAccount()
-  const { isConnected } = useConnect()
 
   const memoPairInfo = useMemo(() => {
     return pairs.find((pair) => pair.token === currentPair)
   }, [pairs, currentPair])
 
   useEffect(() => {
-    if (isConnected && account?.address) {
-      dispatch(getTraderDataAsync(account?.address))
+    if (data?.address && loaded) {
+      dispatch(getTraderDataAsync({ trader: data.address, contract: config.derifyExchange }))
     }
-  }, [isConnected, account?.address, dispatch, memoPairInfo?.spotPrice])
+  }, [config, loaded, data, dispatch, memoPairInfo?.spotPrice])
 
   return (
     <>
@@ -41,7 +44,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
           <QuestionPopover size={size} text={t('Nav.Account.MarginBalanceTip', 'Margin Balance')} />
         </dt>
         <dd>
-          <BalanceShow value={trader?.marginBalance ?? 0} unit={BASE_TOKEN_SYMBOL} />
+          <BalanceShow value={trader?.marginBalance ?? 0} unit={marginToken} />
         </dd>
       </dl>
       <dl>
@@ -50,7 +53,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
           <QuestionPopover size={size} text={t('Nav.Account.AvaliableMarginBalanceTip', 'Available Margin Balance')} />
         </dt>
         <dd>
-          <BalanceShow value={trader?.availableMargin ?? 0} unit={BASE_TOKEN_SYMBOL} />
+          <BalanceShow value={trader?.availableMargin ?? 0} unit={marginToken} />
         </dd>
       </dl>
     </>

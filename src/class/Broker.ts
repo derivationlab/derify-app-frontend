@@ -4,7 +4,8 @@ import type { Signer } from 'ethers'
 import { setAllowance } from '@/utils/practicalMethod'
 import { getDerifyBrokerContract } from '@/utils/contractHelpers'
 import { getDecimalAmount, safeInterceptionValues } from '@/utils/tools'
-import { getDerifyBrokerAddress, getEDRFAddress } from '@/utils/addressHelpers'
+import { getDerifyBrokerAddress } from '@/utils/addressHelpers'
+import tokens from '@/config/tokens'
 
 class Broker {
   burnLimitAmount = '0'
@@ -20,7 +21,7 @@ class Broker {
     try {
       const amount_BN = getDecimalAmount(this.burnLimitAmount).toString()
 
-      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), amount_BN)
+      const approve = await setAllowance(signer, getDerifyBrokerAddress(), tokens.edrf.tokenAddress, amount_BN)
 
       if (!approve) return false
 
@@ -40,7 +41,7 @@ class Broker {
     try {
       const amount_BN = getDecimalAmount(amount).toString()
 
-      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), amount_BN)
+      const approve = await setAllowance(signer, getDerifyBrokerAddress(), tokens.edrf.tokenAddress, amount_BN)
 
       if (!approve) return false
 

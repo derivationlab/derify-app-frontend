@@ -31,33 +31,35 @@ const Trade: FC = () => {
     if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
   }, [account?.address, memoPairInfo?.spotPrice])
 
+
+
   if (mobile) {
     return (
       <>
-        <div className="web-trade">
-          <div className="web-trade-mobile-header">
-            <SymbolSelect onToggle={() => setToggle(!toggle)} />
-            <div className={classNames({ none: toggle })}>
-              <Chart />
-            </div>
-            <div className={classNames({ none: !toggle })}>
-              <Bench />
-            </div>
-            <HeaderData />
-          </div>
-          <Data />
-        </div>
-        <MobileFixed address={account?.address} isKline={!toggle} goBench={() => setToggle(true)} />
+        {/*<div className="web-trade">*/}
+        {/*  <div className="web-trade-mobile-header">*/}
+        {/*    <SymbolSelect onToggle={() => setToggle(!toggle)} />*/}
+        {/*    <div className={classNames({ none: toggle })}>*/}
+        {/*      <Chart />*/}
+        {/*    </div>*/}
+        {/*    <div className={classNames({ none: !toggle })}>*/}
+        {/*      <Bench />*/}
+        {/*    </div>*/}
+        {/*    <HeaderData />*/}
+        {/*  </div>*/}
+        {/*  <Data />*/}
+        {/*</div>*/}
+        {/*<MobileFixed address={account?.address} isKline={!toggle} goBench={() => setToggle(true)} />*/}
       </>
     )
   }
 
   return (
     <div className="web-trade">
-      <main className="web-trade-main">
-        <KLine />
-        <Data />
-      </main>
+      {/*<main className="web-trade-main">*/}
+      {/*  <KLine />*/}
+      {/*  <Data />*/}
+      {/*</main>*/}
       <Bench />
     </div>
   )

@@ -1,16 +1,16 @@
-import React, { FC, useState, useCallback } from 'react'
 import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useState, useCallback } from 'react'
 
 import Trader from '@/class/Trader'
-
-import { getTraderDataAsync } from '@/store/trader'
 import { useAppDispatch } from '@/store'
+import { setShareMessage } from '@/store/share'
+import { getTraderDataAsync } from '@/store/trader'
+import { useMarginInfo } from '@/hooks/useMarginInfo'
+import { getMyPositionsDataAsync } from '@/store/contract'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
-import { setShareMessage } from '@/store/share'
-import { getMyPositionsDataAsync } from '@/store/contract'
 
 interface Props {
   size?: string
@@ -21,6 +21,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { traderDepositMargin } = Trader
+  const { config, loaded, marginToken } = useMarginInfo()
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -31,12 +32,12 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (signer) {
+      if (signer && loaded) {
         const account = await signer.getAddress()
-        const status = await traderDepositMargin(signer, account, amount)
+        const status = await traderDepositMargin(signer, account, amount, config.derifyExchange, marginToken)
         if (status) {
           // succeed
-          dispatch(getTraderDataAsync(account))
+          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
 
@@ -49,7 +50,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       window.toast.dismiss(toast)
     },
-    [signer]
+    [signer, loaded]
   )
 
   return (

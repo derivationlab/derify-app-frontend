@@ -30,8 +30,9 @@ export const getBrokerValidPeriodDataAsync = (trader: string) => async (dispatch
   dispatch(updateValidPeriodDays(period))
 }
 
-export const getTraderDataAsync = createAsyncThunk('TraderData/getTraderDataAsync', async (trader: string) => {
-  const data1 = await getTraderAccountData(trader)
+export const getTraderDataAsync = createAsyncThunk('TraderData/getTraderDataAsync', async (params: Record<string, any>) => {
+  const { trader, contract } = params
+  const data1 = await getTraderAccountData(trader, contract)
   const data2 = await getTraderVariablesData(trader)
   return { ...data1, ...data2 }
 })

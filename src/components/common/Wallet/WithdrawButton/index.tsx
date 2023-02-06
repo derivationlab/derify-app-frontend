@@ -11,6 +11,7 @@ import Button from '@/components/common/Button'
 import WithdrawDialog from '@/components/common/Wallet/WithdrawButton/Withdraw'
 import { setShareMessage } from '@/store/share'
 import { getMyPositionsDataAsync } from '@/store/contract'
+import { useMarginInfo } from '@/hooks/useMarginInfo'
 
 interface Props {
   size?: string
@@ -21,6 +22,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { traderWithdrawMargin } = Trader
+  const { config, loaded, marginToken } = useMarginInfo()
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -31,12 +33,12 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (signer) {
-        const status = await traderWithdrawMargin(signer, amount)
+      if (signer && loaded) {
+        const status = await traderWithdrawMargin(signer, amount, config.derifyExchange)
         const account = await signer.getAddress()
         if (status) {
           // succeed
-          dispatch(getTraderDataAsync(account))
+          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
 
@@ -49,7 +51,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
 
       window.toast.dismiss(toast)
     },
-    [signer]
+    [signer, loaded]
   )
   return (
     <>

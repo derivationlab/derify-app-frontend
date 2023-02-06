@@ -25,13 +25,13 @@ const AddTokenButton: FC = () => {
   const tokens: Record<string, any>[] = [
     // todo token address???
     {
-      ...tokensInfo.DRF,
+      ...tokensInfo.drf,
       image: '',
       direction: 0,
       swap: 'swap?inputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&outputCurrency=0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F'
     },
-    { ...tokensInfo.eDRF, image: '', direction: 0 },
-    { ...tokensInfo.bBUSD, image: '', direction: 1 }
+    { ...tokensInfo.edrf, image: '', direction: 0 },
+    { ...tokensInfo.bbusd, image: '', direction: 1 }
   ]
 
   const addToken = (token: Record<string, any>) => {

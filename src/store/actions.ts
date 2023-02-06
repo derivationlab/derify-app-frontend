@@ -6,4 +6,4 @@ export {
   getBrokerValidPeriodDataAsync
 } from './trader'
 export { setShareMessage, clearShareMessage } from './share'
-export { setContractConfig } from './config'
+export { setContractConfig, setMarginToken } from './config'

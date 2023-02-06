@@ -9,7 +9,8 @@ import {
   getMultiCallAddress,
   getDerifyBrokerAddress,
   getDerifyRewardsAddress,
-  getDerifyExchangeAddress
+  getDerifyExchangeAddress,
+  getDerifyProtocolAddress
 } from '@/utils/addressHelpers'
 
 import bep20Abi from '@/config/abi/erc20.json'
@@ -17,6 +18,7 @@ import multiCallAbi from '@/config/abi/MM.json'
 import DerifyBrokerAbi from '@/config/abi/DerifyBroker.json'
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
+import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 export const getContract = (abi: ContractInterface, address: string, signer?: Signer | Provider | null): Contract => {
@@ -44,6 +46,14 @@ export const getDerifyExchangeContract = (signer?: Signer | Provider | null) => 
   return getContract(DerifyExchangeAbi, getDerifyExchangeAddress(), signer)
 }
 
+export const getDerifyExchangeContract1 = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(DerifyExchangeAbi, address, signer)
+}
+
 export const getDerifyDerivativePairContract = (pairAddress: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyDerivativeAbi, pairAddress, signer)
+}
+
+export const getDerifyProtocolContract = (signer?: Signer | Provider | null) => {
+  return getContract(DerifyProtocolAbi, getDerifyProtocolAddress(), signer)
 }

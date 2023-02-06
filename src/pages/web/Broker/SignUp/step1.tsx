@@ -8,11 +8,11 @@ import Broker from '@/class/Broker'
 import { useAppDispatch } from '@/store'
 import { thousandthsDivision } from '@/utils/tools'
 import { getBrokerDataAsync } from '@/store/actions'
-import { getEDRFAddress } from '@/utils/addressHelpers'
 import { useTokenBalance } from '@/hooks/useTokenBalance'
 
 import Button from '@/components/common/Button'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import tokens from '@/config/tokens'
 
 const BrokerSignUpStep1: FC = () => {
   const history = useHistory()
@@ -21,7 +21,7 @@ const BrokerSignUpStep1: FC = () => {
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
   const { getPrivilegeForBroker, burnLimitAmount } = Broker
-  const { balance, balanceLoaded } = useTokenBalance(getEDRFAddress())
+  const { balance, balanceLoaded } = useTokenBalance(tokens.edrf.tokenAddress)
 
   const [loading, setLoading] = useState<boolean>(false)
 

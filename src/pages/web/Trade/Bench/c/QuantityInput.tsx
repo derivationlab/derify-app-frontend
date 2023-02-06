@@ -8,7 +8,7 @@ import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useShareMessage } from '@/store/share/hooks'
 import { useContractData } from '@/store/contract/hooks'
 
-import { PriceType } from '@/pages/web/Trade/Bench'
+import { PriceType } from '@/typings'
 import { Select, Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
 
@@ -45,7 +45,10 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
     return pairs.find((pair) => pair.token === currentPair) ?? {}
   }, [pairs, currentPair])
 
-  const memoTokenSymbol = useMemo(() => (type === BASE_TOKEN_SYMBOL ? BASE_TOKEN_SYMBOL : getSymbol(currentPair)), [type, currentPair])
+  const memoTokenSymbol = useMemo(
+    () => (type === BASE_TOKEN_SYMBOL ? BASE_TOKEN_SYMBOL : getSymbol(currentPair)),
+    [type, currentPair]
+  )
 
   const typeChangeEv = (val: string | number) => {
     onChange(0)

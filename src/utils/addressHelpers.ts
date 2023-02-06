@@ -21,6 +21,10 @@ export const getDerifyRewardsAddress = (): string => {
   return getAddress(contracts.DerifyRewards)
 }
 
+export const getDerifyProtocolAddress = (): string => {
+  return getAddress(contracts.DerifyProtocol)
+}
+
 export const getDerifyExchangeAddress = () => {
   return getAddress(contracts.DerifyExchange)
 }
@@ -39,33 +43,4 @@ export const getDerifyDerivativeBNBAddress = () => {
 
 export const getDerifyBrokerAddress = () => {
   return getAddress(contracts.DerifyBroker)
-}
-
-/************** Tokens **************/
-export const getEDRFAddress = () => {
-  return getAddress(tokens.eDRF.address)
-}
-
-export const getbBUSDAddress = () => {
-  return getAddress(tokens.bBUSD.address)
-}
-
-export const getDRFAddress = () => {
-  return getAddress(tokens.DRF.address)
-}
-
-export const getDUSDAddress = () => {
-  return getAddress(tokens.DUSD.address)
-}
-
-export const getETHAddress = () => {
-  return getAddress(tokens.ETH.address)
-}
-
-export const getBTCAddress = () => {
-  return getAddress(tokens.BTC.address)
-}
-
-export const getBNBAddress = () => {
-  return getAddress(tokens.bnb.address)
 }

@@ -3,10 +3,12 @@ import React, { FC } from 'react'
 import AccountInfo from '@/components/common/Wallet/Account/Info'
 import DepositButton from '@/components/common/Wallet/DepositButton'
 import WithdrawButton from '@/components/common/Wallet/WithdrawButton'
+import Margin from '@/pages/web/Trade/Bench/c/Margin'
 
 const BenchInfo: FC = () => {
   return (
     <div className="web-trade-bench-info">
+      <Margin />
       <AccountInfo size="mini" />
       <section>
         <DepositButton size="mini" />

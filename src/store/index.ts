@@ -7,6 +7,7 @@ import shareMessageReducer from './share'
 import traderReducer from './trader'
 import constantReducer from './constant'
 import contractReducer from './contract'
+import configReducer from './config'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -23,6 +24,7 @@ const store = configureStore({
     combineReducers({
       shareMessage: shareMessageReducer,
       trader: traderReducer,
+      config: configReducer,
       contract: contractReducer,
       constant: constantReducer
     })

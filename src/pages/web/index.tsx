@@ -51,7 +51,7 @@ const Web: FC = () => {
 
   const handleUnbindBroker = useCallback(
     (C: FunctionComponent) => {
-      // return <C />
+      return <C />
       if (brokerBoundLoaded) {
         return brokerBound?.broker ? <C /> : <Redirect to="/broker-bind" />
       }

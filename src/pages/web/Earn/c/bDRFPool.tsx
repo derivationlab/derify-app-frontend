@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import Earn from '@/class/Earn'
 import { useAppDispatch } from '@/store'
+import { useBalancesStore } from '@/zustand'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderData } from '@/store/trader/hooks'
 import { getBondInfoDataAsync } from '@/store/trader'
@@ -32,6 +33,8 @@ const EranbDRFPool: FC = () => {
 
   const { traderWithdrawBond, traderPledgedBond, traderRedemptionBond, traderExchangeBond } = Earn
 
+  const fetchBalances = useBalancesStore((state) => state.fetch)
+
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
   const onCloseDialogEv = () => setVisibleStatus('')
@@ -46,10 +49,12 @@ const EranbDRFPool: FC = () => {
       const status = await traderPledgedBond(signer, amount)
       if (status) {
         // succeed
+        window.toast.success(t('common.success', 'success'))
+
         dispatch(getBankBDRFPoolDataAsync())
         dispatch(getBondInfoDataAsync(account))
 
-        window.toast.success(t('common.success', 'success'))
+        await fetchBalances(account)
       } else {
         // fail
         window.toast.error(t('common.failed', 'failed'))

@@ -5,12 +5,12 @@ import { useAccount } from 'wagmi'
 import { useAppDispatch } from '@/store'
 import { getTraderDataAsync } from '@/store/trader'
 import { useTraderData } from '@/store/trader/hooks'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
 import { useContractData } from '@/store/contract/hooks'
 import { useContractConfig } from '@/store/config/hooks'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '../BalanceShow'
-import { useMarginInfo } from '@/hooks/useMarginInfo'
 
 interface Props {
   size?: string
@@ -23,18 +23,18 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
   const { data } = useAccount()
   const { trader } = useTraderData()
   const { marginToken } = useContractConfig()
-  const { config, loaded } = useMarginInfo()
   const { pairs, currentPair } = useContractData()
+  const { protocolConfig, protocolConfigLoaded } = useMatchConfig()
 
   const memoPairInfo = useMemo(() => {
     return pairs.find((pair) => pair.token === currentPair)
   }, [pairs, currentPair])
 
   useEffect(() => {
-    if (data?.address && loaded) {
-      dispatch(getTraderDataAsync({ trader: data.address, contract: config.derifyExchange }))
+    if (data?.address && protocolConfigLoaded) {
+      dispatch(getTraderDataAsync({ trader: data.address, contract: protocolConfig.exchange }))
     }
-  }, [config, loaded, data, dispatch, memoPairInfo?.spotPrice])
+  }, [protocolConfig, protocolConfigLoaded, data, dispatch, memoPairInfo?.spotPrice])
 
   return (
     <>

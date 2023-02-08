@@ -3,17 +3,17 @@ import { useAccount } from 'wagmi'
 
 import { useAppDispatch } from '@/store'
 import { getTraderDataAsync } from '@/store/trader'
-import { useMarginInfo } from '@/hooks/useMarginInfo'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
 
 export const useSubscribe = () => {
   const dispatch = useAppDispatch()
 
   const { data } = useAccount()
-  const { config, loaded } = useMarginInfo()
-
-  useEffect(() => {
-    if (data?.address && loaded) {
-      dispatch(getTraderDataAsync({ trader: data?.address, contract: config.derifyExchange }))
-    }
-  }, [data, config, loaded, dispatch])
+  // const { config, loaded } = useMatchConfig()
+  //
+  // useEffect(() => {
+  //   if (data?.address && loaded) {
+  //     dispatch(getTraderDataAsync({ trader: data?.address, contract: config.exchange }))
+  //   }
+  // }, [data, config, loaded, dispatch])
 }

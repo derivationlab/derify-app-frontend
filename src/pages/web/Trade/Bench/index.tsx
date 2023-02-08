@@ -10,9 +10,8 @@ import { PriceType } from '@/typings'
 import { useAppDispatch } from '@/store'
 import { setShareMessage } from '@/store/share'
 import { getTraderDataAsync } from '@/store/trader'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useTraderData } from '@/store/trader/hooks'
-import { useMarginInfo } from '@/hooks/useMarginInfo'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
 import { PositionSide } from '@/store/contract/helper'
 import { useContractData } from '@/store/contract/hooks'
 import { getMyPositionsDataAsync } from '@/store/contract'
@@ -32,18 +31,20 @@ import OpenTypeSelect from './c/OpenTypeSelect'
 
 const Bench: FC = () => {
   const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { brokerBound: broker } = useTraderData()
   const { pairs, currentPair } = useContractData()
-  const { config, loaded: configLoaded } = useMarginInfo()
+  const { protocolConfig, protocolConfigLoaded, marginToken } = useMatchConfig()
+
   const { openPositionOrder, minimumOpenPositionLimit } = Trader
 
   const [openType, setOpenType] = useState<PriceType>(PriceType.Market)
   const [leverage, setLeverage] = useState<number>(30)
   const [limitPrice, setLimitPrice] = useState(0) // todo type
   const [quantity, setQuantity] = useState<number | string>('') // todo type
-  const [quantityType, setQuantityType] = useState<any>(BASE_TOKEN_SYMBOL) // todo type
+  const [quantityType, setQuantityType] = useState<any>()
   const [dialogStatus, setDialogStatus] = useState<boolean>(false)
   const [openPosParams, setOpenPosParams] = useState<Record<string, any>>({})
 
@@ -103,7 +104,7 @@ const Bench: FC = () => {
 
     setDialogStatus(false)
 
-    if (signer && broker?.broker && configLoaded) {
+    if (signer && broker?.broker && protocolConfigLoaded) {
       const _isOrderConversion = isOrderConversion(openPosParams?.openType, openPosParams?.price)
 
       const account = await signer.getAddress()
@@ -118,6 +119,7 @@ const Bench: FC = () => {
         openPosParams?.volume,
         openPosParams?.price,
         openPosParams?.leverage,
+        protocolConfig.exchange,
         _isOrderConversion
       )
 
@@ -126,7 +128,7 @@ const Bench: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
+          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
         })
@@ -178,6 +180,7 @@ const Bench: FC = () => {
       name: memoPairInfo?.name,
       price: _price,
       token: memoPairInfo?.token,
+      quote: memoPairInfo?.symbol,
       symbol: quantityType,
       volume: quantity,
       leverage: leverage,
@@ -192,12 +195,9 @@ const Bench: FC = () => {
     if (openType === 1) setLimitPrice(memoPairInfo?.spotPrice)
   }, [currentPair, openType, memoPairInfo?.spotPrice])
 
-  // todo check
   useEffect(() => {
-    if (quantityType !== BASE_TOKEN_SYMBOL) {
-      setQuantityType(memoPairInfo?.symbol)
-    }
-  }, [quantityType, memoPairInfo?.symbol])
+    setQuantityType(marginToken)
+  }, [marginToken])
 
   return (
     <>

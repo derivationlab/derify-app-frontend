@@ -69,8 +69,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   useEffect(() => {
-    if (data?.address && Number(withdrawAmount) > 0)
-      void getTraderWithdrawAmountFunc(data.address, withdrawAmount)
+    if (data?.address && Number(withdrawAmount) > 0) void getTraderWithdrawAmountFunc(data.address, withdrawAmount)
   }, [data?.address, withdrawAmount])
 
   return (

@@ -1,10 +1,10 @@
-import { ChainIdRec } from '@/typings'
+import { ChainIdRec, QuoteTokenKeys } from '@/typings'
 import { getAddress } from '@/utils/addressHelpers'
 import tokens, { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface Base {
   pairName: string
-  quoteTokenName: string
+  quoteTokenName: QuoteTokenKeys
   quoteTokenAddr: string
   pairContractAddr: ChainIdRec
 }
@@ -16,10 +16,11 @@ export interface Pair {
   contract: string
 }
 
+// todo pairContractAddr 废弃
 const baseConfig: Base[] = [
   {
     pairName: `${tokens.btc.symbol}-${BASE_TOKEN_SYMBOL}`,
-    quoteTokenName: tokens.btc.symbol,
+    quoteTokenName: tokens.btc.symbol as QuoteTokenKeys,
     quoteTokenAddr: tokens.btc.tokenAddress,
     pairContractAddr: {
       56: '0x072A504a10d0291865197AA49Ca6B30F6E7BB9EE',
@@ -28,13 +29,13 @@ const baseConfig: Base[] = [
   },
   {
     pairName: `${tokens.eth.symbol}-${BASE_TOKEN_SYMBOL}`,
-    quoteTokenName: tokens.eth.symbol,
+    quoteTokenName: tokens.eth.symbol as QuoteTokenKeys,
     quoteTokenAddr: tokens.eth.tokenAddress,
     pairContractAddr: {
       56: '0x396d8f9428387c2DBaAFDf1D9fC8abb00E055347',
       97: '0x37C737765DB1D7AfA7d81C872ABcb8675c956bcB'
     }
-  },
+  }
 ]
 
 const composePairs = (): Pair[] => {

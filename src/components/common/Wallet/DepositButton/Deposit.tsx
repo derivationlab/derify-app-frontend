@@ -1,17 +1,16 @@
-import BN from 'bignumber.js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState } from 'react'
 
-import { findToken } from '@/config/tokens'
-import { useTokenBalance } from '@/hooks/useTokenBalance'
+import { isGT, isGTET } from '@/utils/tools'
+import { useBalancesStore } from '@/zustand'
+import { useContractConfig } from '@/store/config/hooks'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import AmountInput from '../AmountInput'
-import { useContractConfig } from '@/store/config/hooks'
 
 interface Props {
   visible: boolean
@@ -24,20 +23,17 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { data: ACCOUNT } = useAccount()
   const { marginToken } = useContractConfig()
 
-  // todo balances redux?
-  const { balance } = useTokenBalance(findToken(marginToken).tokenAddress)
+  const balances = useBalancesStore((state) => state.balances)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')
 
   const memoDisabled = useMemo(() => {
-    return new BN(balance).isGreaterThan(0)
-  }, [balance])
-  console.info(memoDisabled)
+    return isGT(balances[marginToken], 0)
+  }, [balances])
+
   const onChangeEv = (v: string) => {
-    const _v = new BN(v)
-    const _balance = new BN(balance)
-    if (_balance.isGreaterThanOrEqualTo(v) && _v.isGreaterThan(0)) {
+    if (isGTET(balances[marginToken], v) && isGT(v, 0)) {
       setIsDisabled(false)
       setDepositAmount(v)
     } else {
@@ -59,14 +55,14 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Trade.Deposit.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balance} unit={marginToken} />
+                <BalanceShow value={balances[marginToken]} unit={marginToken} />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={balance}
+              max={balances[marginToken]}
               unit={marginToken}
               title={t('Trade.Deposit.AmountToDeposit', 'Amount to deposit')}
               onChange={onChangeEv}

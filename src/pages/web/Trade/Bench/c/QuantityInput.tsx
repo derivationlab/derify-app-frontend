@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useEffect } from 'react'
 
 import Trader from '@/class/Trader'
-import { getSymbol } from '@/utils/addressHelpers'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useShareMessage } from '@/store/share/hooks'
-import { useContractData } from '@/store/contract/hooks'
-
 import { PriceType } from '@/typings'
+import { getSymbol } from '@/utils/addressHelpers'
+import { useShareMessage } from '@/store/share/hooks'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
+import { useContractData } from '@/store/contract/hooks'
+import { BASE_TOKEN_SYMBOL, findMarginToken } from '@/config/tokens'
+
 import { Select, Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
 
@@ -31,15 +32,17 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { shareMessage } = useShareMessage()
-  const { getOpenUpperBound } = Trader
   const { pairs, currentPair } = useContractData()
+  const { protocolConfig, protocolConfigLoaded, marginToken } = useMatchConfig()
+
+  const { getOpenUpperBound } = Trader
 
   const [isCalculating, setIsCalculating] = useState<boolean>(true)
   const [leverageVolume, setLeverageVolume] = useState<string>('0')
 
   const typeOptions = useMemo(() => {
-    return [BASE_TOKEN_SYMBOL, getSymbol(currentPair)]
-  }, [currentPair])
+    return [marginToken, getSymbol(currentPair)]
+  }, [currentPair, marginToken])
 
   const memoPairInfo = useMemo(() => {
     return pairs.find((pair) => pair.token === currentPair) ?? {}
@@ -68,10 +71,17 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
       try {
         const _price = openType === 0 ? spotPrice : price
 
-        if (_price) {
-          const [size, amount] = await getOpenUpperBound(currentPair, account!.address!, openType, _price, leverage)
+        if (_price && protocolConfigLoaded) {
+          const [size, amount] = await getOpenUpperBound(
+            currentPair,
+            account!.address!,
+            openType,
+            _price,
+            leverage,
+            protocolConfig.exchange
+          )
 
-          setLeverageVolume(memoTokenSymbol === BASE_TOKEN_SYMBOL ? amount : size)
+          setLeverageVolume(findMarginToken(type as string) ? amount : size)
           setIsCalculating(false)
 
           onetime = true
@@ -85,7 +95,19 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
     if ((account?.address && spotPrice) || (shareMessage && shareMessage.type === 'MAX_VOLUME_UPDATE')) {
       void calcMaxVolumeFunc()
     }
-  }, [leverage, openType, price, currentPair, account?.address, memoPairInfo?.spotPrice, memoTokenSymbol, shareMessage])
+  }, [
+    leverage,
+    openType,
+    price,
+    currentPair,
+    account?.address,
+    memoPairInfo?.spotPrice,
+    memoTokenSymbol,
+    shareMessage,
+    type,
+    protocolConfigLoaded,
+    protocolConfig
+  ])
 
   return (
     <>
@@ -106,7 +128,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange, leverag
               <>
                 <span>Max: </span>
                 <em>{leverageVolume} </em>
-                <u>{memoTokenSymbol}</u>
+                <u>{type}</u>
               </>
             )}
           </div>

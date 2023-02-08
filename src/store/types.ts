@@ -1,6 +1,8 @@
 import { ThunkAction } from 'redux-thunk'
 import { AnyAction, ThunkDispatch } from '@reduxjs/toolkit'
 
+import { MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote } from '@/typings'
+
 export interface TraderState {
   trader: Record<string, any>
   broker: Record<string, any>
@@ -30,19 +32,16 @@ export interface ShareMessageState {
   shareMessage: any
 }
 
-export interface ContractConfigState {
-  loaded: boolean
-  marginToken: string
-  contractConfig: {
-    [key: string]: {
-      derifyRewards: '',
-      derifyExchange: ''
-    }
-  }
+export interface ConfigState {
+  marginToken: MarginTokenKeys
+  factoryConfig: MarginTokenWithQuote
+  protocolConfig: MarginTokenWithContract
+  factoryConfigLoaded: boolean
+  protocolConfigLoaded: boolean
 }
 
 export interface State {
-  config: ContractConfigState
+  config: ConfigState
   trader: TraderState
   contract: ContractState
   constant: ConstantState

@@ -1,13 +1,15 @@
 import { useSelector } from 'react-redux'
 
-import { ContractConfigState, State } from '@/store/types'
+import { ConfigState, State } from '@/store/types'
 
-export const useContractConfig = (): ContractConfigState => {
+export const useContractConfig = (): ConfigState => {
   return useSelector((state: State) => {
     return {
-      loaded: state.config.loaded,
-      marginToken: state.config.marginToken,
-      contractConfig: state.config.contractConfig,
+      protocolConfigLoaded: state.config.protocolConfigLoaded,
+      factoryConfigLoaded: state.config.factoryConfigLoaded,
+      protocolConfig: state.config.protocolConfig,
+      factoryConfig: state.config.factoryConfig,
+      marginToken: state.config.marginToken
     }
   })
 }

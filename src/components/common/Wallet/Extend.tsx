@@ -3,13 +3,12 @@ import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
 import Broker from '@/class/Broker'
-import { nonBigNumberInterception } from '@/utils/tools'
-import { useTokenBalance } from '@/hooks/useTokenBalance'
+import { useBalancesStore } from '@/zustand'
+import { isET, isLT, isLTET, nonBigNumberInterception } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import tokens from '@/config/tokens'
 
 interface Props {
   visible: boolean
@@ -19,18 +18,18 @@ interface Props {
 
 const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { balance } = useTokenBalance(tokens.edrf.tokenAddress)
+
   const { burnLimitPerDay } = Broker
+
+  const balances = useBalancesStore((state) => state.balances)
 
   const [burnAmount, setBurnAmount] = useState<string>('')
 
   const memoDisabled = useMemo(() => {
-    const _balance = new BN(balance)
-    const _burnAmount = new BN(burnAmount)
     return (
-      !burnAmount || _burnAmount.isLessThanOrEqualTo(0) || _balance.isEqualTo(0) || _balance.isLessThan(_burnAmount)
+      Number(burnAmount) === 0 || isLTET(burnAmount, 0) || isET(balances['edrf'], 0) || isLT(balances['edrf'], burnAmount)
     )
-  }, [balance, burnAmount])
+  }, [balances, burnAmount])
 
   const memoAddDays = useMemo(() => {
     if (Number(burnAmount) <= 0) {
@@ -49,7 +48,7 @@ const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   const setMaxValueEv = () => {
-    setBurnAmount(balance)
+    setBurnAmount(balances['edrf'])
   }
 
   return (
@@ -65,7 +64,7 @@ const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Broker.Extend.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balance} format={false} unit="eDRF" />
+                <BalanceShow value={balances['edrf']} format={false} unit="eDRF" />
               </dd>
             </dl>
             <dl>

@@ -11,6 +11,7 @@ import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
 
 interface Props {
   data?: Record<string, any>
@@ -23,6 +24,8 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { shareMessage } = useShareMessage()
+  const { factoryConfig, protocolConfig, factoryConfigLoaded, protocolConfigLoaded, marginToken } = useMatchConfig()
+
   const { calcClosePositionTradingFee, calcClosePositionChangeFee } = Trader
 
   const [tradingFee, setTradingFee] = useState<string>('0')
@@ -52,19 +55,33 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   }, [memoShareMessage?.symbol, data?.token, memoShareMessage?.amount, data?.spotPrice])
 
   const calcClosePositionChangeFeeCb = useCallback(async () => {
-    setChangeFeeCalculating(true)
+    if (factoryConfigLoaded && protocolConfigLoaded) {
+      setChangeFeeCalculating(true)
 
-    const fee = await calcClosePositionChangeFee(
-      data?.side,
-      memoShareMessage?.symbol,
-      data?.token,
-      memoShareMessage?.amount,
-      data?.spotPrice
-    )
+      const fee = await calcClosePositionChangeFee(
+        data?.side,
+        memoShareMessage?.symbol,
+        data?.token,
+        memoShareMessage?.amount,
+        data?.spotPrice,
+        protocolConfig.exchange,
+        factoryConfig[data?.quote]
+      )
 
-    setChangeFee(fee)
-    setChangeFeeCalculating(false)
-  }, [data?.spotPrice, memoShareMessage?.symbol, memoShareMessage?.amount, data?.side, data?.token])
+      setChangeFee(fee)
+      setChangeFeeCalculating(false)
+    }
+  }, [
+    protocolConfig,
+    factoryConfig,
+    factoryConfigLoaded,
+    protocolConfigLoaded,
+    data?.spotPrice,
+    memoShareMessage?.symbol,
+    memoShareMessage?.amount,
+    data?.side,
+    data?.token
+  ])
 
   useEffect(() => {
     if (!isEmpty(memoShareMessage)) {

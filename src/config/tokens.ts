@@ -1,7 +1,7 @@
 import Token from '@/class/Token'
-import { ChainId, TokenKeys } from '@/typings'
+import { ChainId, AllTokenKeys } from '@/typings'
 
-export const tokens: { [key in TokenKeys]: Token } = {
+export const tokens: { [key in AllTokenKeys]: Token } = {
   btc: new Token(
     'Bitcoin',
     'BTC',
@@ -73,19 +73,36 @@ export const tokens: { [key in TokenKeys]: Token } = {
       [ChainId.TESTNET]: '0xcFC597eEDFC368c19AFD22e581468a2e69eA5E24'
     },
     18
-  ),
+  )
 }
 
-export const BASE_TOKEN_SYMBOL = tokens.busd.symbol
+export const QUOTE_TOKENS = [tokens.btc, tokens.eth]
 
 export const MARGIN_TOKENS = [tokens.drf, tokens.busd]
 
-export const DEFAULT_MARGIN_TOKEN = tokens.busd.symbol
+export const BASE_TOKEN_SYMBOL = tokens.busd.symbol
 
 // key: (btc,eth...)/address
 export const findToken = (key: string): Token => {
   // eslint-disable-next-line
   return Object.values(tokens).find((t) => t.symbol === key.toUpperCase() || t.tokenAddress === key.toLowerCase())!
 }
+
+export const findMarginToken = (key: string): Token | undefined => {
+  return MARGIN_TOKENS.find((t) => t.symbol === key.toUpperCase() || t.tokenAddress === key.toLowerCase())
+}
+
+function _quoteTokensInitial() {
+  let quote = Object.create(null)
+  QUOTE_TOKENS.forEach((t) => {
+    quote = {
+      ...quote,
+      [t.symbol]: ''
+    }
+  })
+  return quote
+}
+
+export const quoteTokensInitial = _quoteTokensInitial()
 
 export default tokens

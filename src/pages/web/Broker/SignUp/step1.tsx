@@ -1,4 +1,3 @@
-import BN from 'bignumber.js'
 import { useAccount, useSigner } from 'wagmi'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -6,13 +5,12 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import Broker from '@/class/Broker'
 import { useAppDispatch } from '@/store'
-import { thousandthsDivision } from '@/utils/tools'
+import { useBalancesStore } from '@/zustand'
 import { getBrokerDataAsync } from '@/store/actions'
-import { useTokenBalance } from '@/hooks/useTokenBalance'
+import { isET, isLT, thousandthsDivision } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import tokens from '@/config/tokens'
 
 const BrokerSignUpStep1: FC = () => {
   const history = useHistory()
@@ -21,7 +19,9 @@ const BrokerSignUpStep1: FC = () => {
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
   const { getPrivilegeForBroker, burnLimitAmount } = Broker
-  const { balance, balanceLoaded } = useTokenBalance(tokens.edrf.tokenAddress)
+
+  const balances = useBalancesStore((state) => state.balances)
+  const balanceLoaded = useBalancesStore((state) => state.loaded)
 
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -48,15 +48,12 @@ const BrokerSignUpStep1: FC = () => {
   }, [signer, account?.address])
 
   const memoDisabled = useMemo(() => {
-    const _balance = new BN(balance)
-    const _burnLimit = new BN(burnLimitAmount)
-    return _balance.isEqualTo(0) || _burnLimit.isEqualTo(0) || _balance.isLessThan(burnLimitAmount)
-  }, [balance, burnLimitAmount])
+    return isET(balances['edrf'], 0) || isET(burnLimitAmount, 0) || isLT(balances['edrf'], burnLimitAmount)
+  }, [balances, burnLimitAmount])
 
   const memoInsufficient = useMemo(() => {
-    const _balance = new BN(balance)
-    return _balance.isEqualTo(0) || _balance.isLessThan(burnLimitAmount)
-  }, [balance, burnLimitAmount])
+    return isET(balances['edrf'], 0) || isLT(balances['edrf'], burnLimitAmount)
+  }, [balances, burnLimitAmount])
 
   return (
     <div className="web-broker-sign-up">
@@ -73,13 +70,13 @@ const BrokerSignUpStep1: FC = () => {
           </em>
           <hr />
           <span>
-            {t('Broker.Reg.WalletBalance', 'Wallet Balance')}: {thousandthsDivision(balance)} eDRF
+            {t('Broker.Reg.WalletBalance', 'Wallet Balance')}: {thousandthsDivision(balances['edrf'])} eDRF
           </span>
           <address>{account?.address}</address>
         </section>
         <footer className="web-broker-sign-up-footer">
-          <Button onClick={getPrivilegeForBrokerCb} disabled={balanceLoaded || memoDisabled} loading={loading}>
-            {!balanceLoaded && memoInsufficient
+          <Button onClick={getPrivilegeForBrokerCb} disabled={!balanceLoaded || memoDisabled} loading={loading}>
+            {balanceLoaded && memoInsufficient
               ? t('Broker.Reg.Insufficient', 'Insufficient eDRF')
               : t('Broker.Reg.Confirm', 'Confirm')}
           </Button>

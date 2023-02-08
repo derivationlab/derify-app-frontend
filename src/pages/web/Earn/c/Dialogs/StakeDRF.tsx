@@ -1,15 +1,14 @@
 import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
-import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
-import { useTokenBalance } from '@/hooks/useTokenBalance'
+import { useBalancesStore } from '@/zustand'
+import { isGT, isGTET } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '@/components/common/Wallet/AmountInput'
-import tokens from '@/config/tokens'
 
 interface Props {
   visible: boolean
@@ -20,19 +19,18 @@ interface Props {
 const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
-  const { balance } = useTokenBalance(tokens.drf.tokenAddress)
 
-  const [depositAmount, setDepositAmount] = useState<string>('0')
+  const balances = useBalancesStore((state) => state.balances)
+
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
+  const [depositAmount, setDepositAmount] = useState<string>('0')
 
   const memoDisabled = useMemo(() => {
-    return new BN(balance).isGreaterThan(0)
-  }, [balance])
+    return isGT(balances['drf'], 0)
+  }, [balances])
 
   const onChangeEv = (v: string) => {
-    const _v = new BN(v)
-    const _balance = new BN(balance)
-    if (_balance.isGreaterThanOrEqualTo(v) && _v.isGreaterThan(0)) {
+    if (isGTET(balances['drf'], v) && isGT(v,0)) {
       setIsDisabled(false)
       setDepositAmount(v)
     } else {
@@ -49,14 +47,14 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.DRFPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balance} unit="DRF" />
+                <BalanceShow value={balances['drf']} unit="DRF" />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={balance}
+              max={balances['drf']}
               title={t('Earn.DRFPool.AmountToStake', 'Amount to stake')}
               unit="DRF"
               onChange={onChangeEv}

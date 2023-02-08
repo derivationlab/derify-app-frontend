@@ -4,13 +4,14 @@ import React, { FC, useState, useCallback } from 'react'
 
 import Trader from '@/class/Trader'
 import { useAppDispatch } from '@/store'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
 import { setShareMessage } from '@/store/share'
 import { getTraderDataAsync } from '@/store/trader'
-import { useMarginInfo } from '@/hooks/useMarginInfo'
 import { getMyPositionsDataAsync } from '@/store/contract'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
+import { useBalancesStore } from '@/zustand'
 
 interface Props {
   size?: string
@@ -18,10 +19,14 @@ interface Props {
 
 const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
   const { data: signer } = useSigner()
+  const { protocolConfig, protocolConfigLoaded, marginToken } = useMatchConfig()
+
   const { traderDepositMargin } = Trader
-  const { config, loaded, marginToken } = useMarginInfo()
+
+  const fetchBalances = useBalancesStore((state) => state.fetch)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -32,16 +37,18 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (signer && loaded) {
+      if (signer && protocolConfigLoaded) {
         const account = await signer.getAddress()
-        const status = await traderDepositMargin(signer, account, amount, config.derifyExchange, marginToken)
+        const status = await traderDepositMargin(signer, account, amount, protocolConfig.exchange, marginToken)
         if (status) {
           // succeed
-          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
+          window.toast.success(t('common.success', 'success'))
+
+          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
 
-          window.toast.success(t('common.success', 'success'))
+          await fetchBalances(account)
         } else {
           // fail
           window.toast.error(t('common.failed', 'failed'))
@@ -50,7 +57,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       window.toast.dismiss(toast)
     },
-    [signer, loaded]
+    [signer, protocolConfig, protocolConfigLoaded, marginToken]
   )
 
   return (

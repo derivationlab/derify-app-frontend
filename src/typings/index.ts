@@ -1,4 +1,5 @@
 import GlobalType from '@/typings/global'
+import { contractInfo } from '@/store/config/helper'
 
 export enum ChainId {
   MAINNET = 56,
@@ -7,7 +8,15 @@ export enum ChainId {
 
 export type ChainIdRec = { [key in GlobalType.Chain]: string }
 
-export type TokenKeys = 'btc' | 'busd' | 'bbusd' | 'eth' | 'drf' | 'matic' | 'bnb' | 'edrf'
+export type QuoteTokenKeys = 'BTC' | 'ETH'
+
+export type MarginTokenKeys = 'DRF' | 'BUSD'
+
+export type AllTokenKeys = 'btc' | 'busd' | 'bbusd' | 'eth' | 'drf' | 'matic' | 'bnb' | 'edrf'
+
+export type MarginTokenWithQuote = { [key in MarginTokenKeys]: { [key in QuoteTokenKeys]: string } }
+
+export type MarginTokenWithContract = { [key in MarginTokenKeys]: typeof contractInfo }
 
 export enum PriceType {
   Market,

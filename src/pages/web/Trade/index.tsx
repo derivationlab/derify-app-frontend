@@ -14,6 +14,7 @@ import Chart from './KLine/Chart'
 import HeaderData from './KLine/HeaderData'
 import MobileFixed from './KLine/MobileFixed'
 import SymbolSelect from './KLine/SymbolSelect'
+import Updater from '@/pages/web/Trade/Updater'
 
 const Trade: FC = () => {
   const dispatch = useAppDispatch()
@@ -30,8 +31,6 @@ const Trade: FC = () => {
   useEffect(() => {
     if (account?.address) dispatch(getMyPositionsDataAsync(account.address))
   }, [account?.address, memoPairInfo?.spotPrice])
-
-
 
   if (mobile) {
     return (
@@ -56,6 +55,7 @@ const Trade: FC = () => {
 
   return (
     <div className="web-trade">
+      <Updater />
       {/*<main className="web-trade-main">*/}
       {/*  <KLine />*/}
       {/*  <Data />*/}

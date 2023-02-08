@@ -21,14 +21,15 @@ class Token {
   readonly name: string
   readonly symbol: string
   readonly address: ChainIdRec
+  readonly precision?: number
   readonly decimals?: number
   readonly projectLink?: string
 
-  constructor(name: string, symbol: string, address: ChainIdRec, decimals = 18, projectLink = '') {
+  constructor(name: string, symbol: string, address: ChainIdRec, precision = 18, decimals = 8, projectLink = '') {
     this.name = name
     this.symbol = symbol
     this.address = this.checkAddress(address)
-    this.decimals = decimals
+    this.precision = precision
     this.projectLink = projectLink
   }
 

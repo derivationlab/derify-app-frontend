@@ -4,13 +4,13 @@ import type { Signer } from 'ethers'
 
 import pairs from '@/config/pairs'
 import { PriceType } from '@/typings'
-import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, findMarginToken, findToken } from '@/config/tokens'
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import {
   getDerifyExchangeContract,
   getDerifyExchangeContract1,
-  getDerifyDerivativePairContract,
+  getDerifyDerivativePairContract
 } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
 
@@ -31,7 +31,13 @@ class Trader {
     }
   }
 
-  traderDepositMargin = async (signer: Signer, account: string, amount: string, address: string, marginToken: string): Promise<boolean> => {
+  traderDepositMargin = async (
+    signer: Signer,
+    account: string,
+    amount: string,
+    address: string,
+    marginToken: string
+  ): Promise<boolean> => {
     const contract = getDerifyExchangeContract1(address, signer)
     const marToken = findToken(marginToken)
 
@@ -73,6 +79,8 @@ class Trader {
     token: string,
     amount: string,
     spotPrice: string,
+    exchange: string,
+    derivative: string,
     isOpenPosition = false
   ): Promise<string> => {
     let nakedPositionTradingPairAfterClosing_BN: BN = new BN(0)
@@ -81,9 +89,8 @@ class Trader {
 
     const size =
       symbol === BASE_TOKEN_SYMBOL ? toFloorNum(new BN(amount).div(spotPrice).toString()) : toFloorNum(amount)
-    const pairInfo = pairs.find((pair) => pair.token === token)
-    const exchangeContract = getDerifyExchangeContract()
-    const derivativeContract = getDerifyDerivativePairContract(pairInfo!.contract)
+    const exchangeContract = getDerifyExchangeContract1(exchange)
+    const derivativeContract = getDerifyDerivativePairContract(derivative)
 
     const liquidityPool = await exchangeContract.liquidityPool()
     const longTotalSize = await derivativeContract.longTotalSize()
@@ -268,9 +275,10 @@ class Trader {
     quantity: string,
     price: string,
     leverage: string,
+    address: string,
     isOrderConversion?: boolean // limit order --> market order
   ): Promise<boolean> => {
-    const contract = getDerifyExchangeContract(signer)
+    const contract = getDerifyExchangeContract1(address, signer)
 
     const _price = toFloorNum(price)
     const _leverage = toFloorNum(leverage)
@@ -278,10 +286,18 @@ class Trader {
     const _quantityType = quantityType === BASE_TOKEN_SYMBOL ? 1 : 0
 
     try {
-      const checkQuantity = await this.checkOpenPositionSize(token, side, quantityType, _openType, quantity, price)
+      const checkQuantity = await this.checkOpenPositionSize(
+        token,
+        side,
+        quantityType,
+        _openType,
+        quantity,
+        price,
+        address
+      )
 
       const _quantity = toFloorNum(checkQuantity)
-
+      console.info(_quantity)
       const gasLimit = await estimateGas(
         contract,
         'openPosition',
@@ -325,10 +341,11 @@ class Trader {
     type: string,
     openType: PriceType,
     size: string,
-    price: string
+    price: string,
+    address: string
   ): Promise<string> => {
-    const data = await this.getSysOpenUpperBound(token, side, price)
-    // console.info(data)
+    const data = await this.getSysOpenUpperBound(token, side, price, address)
+    console.info(data)
     const [systemSizeLimit, systemAmountLimit] = data
     const size_BN = new BN(size)
 
@@ -354,32 +371,30 @@ class Trader {
     trader: string,
     openType: number,
     price: string,
-    leverage: number
+    leverage: number,
+    address: string
   ): Promise<string[]> => {
     const _price = toHexString(price)
     const _leverage = toHexString(leverage)
-    const contract = getDerifyExchangeContract()
-    // console.info(`合约地址:${contract.address}`)
-    // console.info(`getTraderOpenUpperBound()原始参数:`)
-    // console.info(`token:${token}`, `trader:${trader}`, `openType:${openType}`, `price:${price}`, `leverage:${leverage}`)
-    // console.info(`getTraderOpenUpperBound()转换参数:`)
-    // console.info(
-    //   `token:${token}`,
-    //   `trader:${trader}`,
-    //   `openType:${openType}`,
-    //   `price:${_price}`,
-    //   `leverage:${_leverage}`
-    // )
-    const data = await contract.getTraderOpenUpperBound(token, trader, openType, _price, _leverage)
+    const _contract = getDerifyExchangeContract1(address)
+
+    const data = await _contract.getTraderOpenUpperBound(token, trader, openType, _price, _leverage)
 
     const { size, amount } = data
-
     return [safeInterceptionValues(String(size), 8), safeInterceptionValues(String(amount), 8)]
   }
 
-  getSysOpenUpperBound = async (token: string, side: PositionSide, price: string): Promise<string[]> => {
-    const contract = getDerifyExchangeContract()
-    const data = await contract.getSysOpenUpperBound(token, side)
+  getSysOpenUpperBound = async (
+    token: string,
+    side: PositionSide,
+    price: string,
+    address: string
+  ): Promise<string[]> => {
+    // todo 不通保证金对应的金额转换
+
+    const c = getDerifyExchangeContract1(address)
+
+    const data = await c.getSysOpenUpperBound(token, side)
 
     const size = safeInterceptionValues(String(data), 8) // ETH/BTC
     const amount = new BN(size).times(price) // BUSD
@@ -389,7 +404,7 @@ class Trader {
 
   minimumOpenPositionLimit = (side: string, price: string, volume: string | number, symbol: string): boolean => {
     const limit = 500
-    const calcU = symbol === BASE_TOKEN_SYMBOL ? new BN(volume) : new BN(volume).times(price) // U
+    const calcU = findMarginToken(symbol) ? new BN(volume) : new BN(volume).times(price) // U
 
     return calcU.isLessThan(limit)
   }

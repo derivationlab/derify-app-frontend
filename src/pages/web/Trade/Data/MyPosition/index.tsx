@@ -28,18 +28,19 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useMarginInfo } from '@/hooks/useMarginInfo'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
 
 const MyPosition: FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { pairs } = useContractData()
+  const { shareMessage } = useShareMessage()
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
-  const { shareMessage } = useShareMessage()
   const { brokerBound: broker } = useTraderData()
-  const { config, loaded, marginToken } = useMarginInfo()
   const { myPositions, myPositionsLoaded } = useContractData()
+  const { protocolConfig, protocolConfigLoaded } = useMatchConfig()
+
   const { closeAllPositions, closeSomePosition, takeProfitOrStopLoss } = Trader
 
   const { theme } = useContext(ThemeContext)
@@ -83,7 +84,7 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && loaded) {
+    if (signer && broker?.broker && protocolConfigLoaded) {
       const { token, side, size } = targetPosOrd
       const { symbol = '', amount = 0 } = memoShareMessage
 
@@ -105,7 +106,7 @@ const MyPosition: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
+          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
         })
@@ -123,7 +124,7 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && loaded) {
+    if (signer && broker?.broker && protocolConfigLoaded) {
       const account = await signer.getAddress()
       const status = await closeAllPositions(signer, broker.broker)
 
@@ -132,7 +133,7 @@ const MyPosition: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
+          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY', 'UPDATE_POSITIONS_AMOUNT'] }))
         })
@@ -150,7 +151,7 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && loaded) {
+    if (signer && broker?.broker && protocolConfigLoaded) {
       const { token, side, TP, SL } = params
 
       const account = await signer.getAddress()
@@ -160,7 +161,7 @@ const MyPosition: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: config.derifyExchange }))
+          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
           dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_POSITIONS_AMOUNT'] }))
         })

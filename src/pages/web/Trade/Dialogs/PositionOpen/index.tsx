@@ -13,6 +13,9 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { nonBigNumberInterception } from '@/utils/tools'
+import { useContractConfig } from '@/store/config/hooks'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
+import { QuoteTokenKeys } from '@/typings'
 
 interface Props {
   data: Record<string, any>
@@ -23,6 +26,8 @@ interface Props {
 
 const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
+  const { marginToken, factoryConfig, protocolConfig, factoryConfigLoaded, protocolConfigLoaded } = useMatchConfig()
+
   const { calcClosePositionTradingFee, calcClosePositionChangeFee, checkOpenPositionSize } = Trader
 
   const [changeFee, setChangeFee] = useState<string>('0')
@@ -42,28 +47,42 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [data])
 
   const calcClosePositionChangeFeeCb = useCallback(async () => {
-    setChangeFeeCalculating(true)
+    if (factoryConfigLoaded && protocolConfigLoaded) {
+      setChangeFeeCalculating(true)
 
-    const fee = await calcClosePositionChangeFee(data?.side, data?.symbol, data?.token, data?.volume, data?.price, true)
+      const fee = await calcClosePositionChangeFee(
+        data?.side,
+        data?.symbol,
+        data?.token,
+        data?.volume,
+        data?.price,
+        protocolConfig.exchange,
+        factoryConfig[data?.quote],
+        true
+      )
 
-    setChangeFee(fee)
-    setChangeFeeCalculating(false)
-  }, [data])
+      setChangeFee(fee)
+      setChangeFeeCalculating(false)
+    }
+  }, [data, factoryConfig, protocolConfig, protocolConfigLoaded, factoryConfigLoaded])
 
   const checkOpenPositionSizeFunc = async () => {
-    setTradingVolCalculating(true)
+    if (protocolConfigLoaded) {
+      setTradingVolCalculating(true)
 
-    const volume = await checkOpenPositionSize(
-      data.token,
-      data.side,
-      data.symbol,
-      data.openType,
-      data.volume,
-      data.price
-    )
+      const volume = await checkOpenPositionSize(
+        data.token,
+        data.side,
+        data.symbol,
+        data.openType,
+        data.volume,
+        data.price,
+        protocolConfig.exchange
+      )
 
-    setValidVolume(volume)
-    setTradingVolCalculating(false)
+      setValidVolume(volume)
+      setTradingVolCalculating(false)
+    }
   }
 
   // const memoApyValue = useMemo(() => {
@@ -159,7 +178,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 ) : (
                   <div>
                     <em>{changeFee}</em>
-                    <u>{BASE_TOKEN_SYMBOL}</u>
+                    <u>{marginToken}</u>
                   </div>
                 )}
               </dd>
@@ -178,7 +197,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 ) : (
                   <div>
                     <em>-{tradingFee}</em>
-                    <u>{BASE_TOKEN_SYMBOL}</u>
+                    <u>{marginToken}</u>
                   </div>
                 )}
               </dd>

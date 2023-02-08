@@ -5,11 +5,12 @@ import BN from 'bignumber.js'
 
 import Earn from '@/class/Earn'
 import { useAppDispatch } from '@/store'
+import { useBalancesStore } from '@/zustand'
+import { MobileContext } from '@/context/Mobile'
 import { useTraderData } from '@/store/trader/hooks'
 import { getStakingInfoDataAsync } from '@/store/trader'
 import { useConstantData } from '@/store/constant/hooks'
 import { getStakingDrfPoolDataAsync } from '@/store/constant'
-import { MobileContext } from '@/context/Mobile'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import DecimalShow from '@/components/common/DecimalShow'
@@ -28,6 +29,8 @@ const DRFPool: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { traderWithdrawEDRFRewards, traderStakingDrf, traderRedeemDrf } = Earn
 
+  const fetchBalances = useBalancesStore((state) => state.fetch)
+
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
   const onCloseDialogEv = () => setVisibleStatus('')
@@ -42,10 +45,12 @@ const DRFPool: FC = () => {
       const status = await traderStakingDrf(signer, amount)
       if (status) {
         // succeed
+        window.toast.success(t('common.success', 'success'))
+
         dispatch(getStakingDrfPoolDataAsync())
         dispatch(getStakingInfoDataAsync(account))
 
-        window.toast.success(t('common.success', 'success'))
+        await fetchBalances(account)
       } else {
         // fail
         window.toast.error(t('common.failed', 'failed'))

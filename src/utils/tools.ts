@@ -121,3 +121,11 @@ export const isLT = (a: string | number, b: string | number): boolean => {
 export const isET = (a: string | number, b: string | number): boolean => {
   return new BN(a).isEqualTo(b)
 }
+
+export const isLTET = (a: string | number, b: string | number): boolean => {
+  return new BN(a).isLessThanOrEqualTo(b)
+}
+
+export const isGTET = (a: string | number, b: string | number): boolean => {
+  return new BN(a).isGreaterThanOrEqualTo(b)
+}

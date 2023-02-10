@@ -1,9 +1,9 @@
 import create from 'zustand'
 
 import multicall from '@/utils/multicall'
-import tokens, { MARGIN_TOKENS } from '@/config/tokens'
 import { BalancesState } from '@/zustand/types'
 import { baseProvider } from '@/utils/baseProvider'
+import tokens, { MARGIN_TOKENS } from '@/config/tokens'
 import { safeInterceptionValues } from '@/utils/tools'
 
 import erc20Abi from '@/config/abi/erc20.json'

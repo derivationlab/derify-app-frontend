@@ -129,3 +129,7 @@ export const isLTET = (a: string | number, b: string | number): boolean => {
 export const isGTET = (a: string | number, b: string | number): boolean => {
   return new BN(a).isGreaterThanOrEqualTo(b)
 }
+
+export const bnPlus = (a: string | number, b: string | number): string => {
+  return new BN(a).plus(b).toString()
+}

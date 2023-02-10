@@ -1,20 +1,22 @@
-import { isEmpty, flatten } from 'lodash'
+import create from 'zustand'
+import { flatten, isEmpty } from 'lodash'
 
-import { multicall } from '@/utils/multicall'
-import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import multicall from '@/utils/multicall'
+import { ConfigInfoState } from '@/zustand/types'
 import { getAddress, getDerifyProtocolAddress } from '@/utils/addressHelpers'
+import { BASE_TOKEN_SYMBOL, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 
-export const contractInfo = {
+const contractInfo = {
   factory: '',
   rewards: '',
   exchange: ''
 }
 
-export const initialConfigFromFactory = (): MarginTokenWithQuote => {
+const initialConfigFromFactory = (): MarginTokenWithQuote => {
   let value = Object.create(null)
   let quote = Object.create(null)
 
@@ -34,7 +36,7 @@ export const initialConfigFromFactory = (): MarginTokenWithQuote => {
   return value
 }
 
-export const initialConfigFromProtocol = (): MarginTokenWithContract => {
+const initialConfigFromProtocol = (): MarginTokenWithContract => {
   let value = Object.create(null)
 
   MARGIN_TOKENS.forEach((t) => {
@@ -47,7 +49,7 @@ export const initialConfigFromProtocol = (): MarginTokenWithContract => {
   return value
 }
 
-export const getConfigFromProtocol = async () => {
+const getConfigFromProtocol = async () => {
   let output = initialConfigFromProtocol()
 
   const calls = MARGIN_TOKENS.map((t) => ({
@@ -76,9 +78,8 @@ export const getConfigFromProtocol = async () => {
   }
 }
 
-export const getConfigFromFactory = async (p: Record<string, any>) => {
+const getConfigFromFactory = async (p: Record<string, any>) => {
   const output = initialConfigFromFactory()
-
   const calls = flatten(
     Object.keys(p).map((key, index) =>
       QUOTE_TOKENS.map((t) => ({
@@ -108,3 +109,26 @@ export const getConfigFromFactory = async (p: Record<string, any>) => {
     return output
   }
 }
+
+const useConfigInfo = create<ConfigInfoState>((set, get) => ({
+  marginToken: BASE_TOKEN_SYMBOL as MarginTokenKeys,
+  factoryConfig: initialConfigFromFactory(),
+  protocolConfig: initialConfigFromProtocol(),
+  factoryConfigLoaded: false,
+  protocolConfigLoaded: false,
+  getProtocolConfig: async () => {
+    const data = await getConfigFromProtocol()
+    // console.info(data)
+    set({ protocolConfig: data, protocolConfigLoaded: true })
+  },
+  getFactoryConfig: async () => {
+    const data = await getConfigFromFactory(get().protocolConfig)
+    // console.info(data)
+    set({ factoryConfig: data, factoryConfigLoaded: true })
+  },
+  setMarginToken: (token: MarginTokenKeys) => {
+    set({ marginToken: token })
+  },
+}))
+
+export { useConfigInfo }

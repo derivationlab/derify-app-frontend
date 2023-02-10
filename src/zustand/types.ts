@@ -1,27 +1,6 @@
+import { MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote } from '@/typings'
+
 export type Rec = Record<string, any>
-
-export interface RpcState {
-  rpc: string
-  fetch: () => Promise<void>
-}
-
-export interface PriceState {
-  prices: Rec
-  loaded: boolean
-  updatePrices: (data: Rec) => void
-}
-
-export interface TickerState {
-  ticker: Rec
-  loaded: boolean
-  updateTicker: (data: Rec) => void
-}
-
-export interface PosDATState {
-  orders: any[]
-  loaded: boolean
-  fetch: (account: string, quote: string) => Promise<void>
-}
 
 export interface BalancesState {
   balances: Rec
@@ -30,29 +9,22 @@ export interface BalancesState {
   reset: () => void
 }
 
-export interface ParameterState {
-  lpPrice: number
-  fundingRate: number
-  executionFee: number
-  fundingInterval: number
-  positionPrecision: number
-  fundingPrecision: number
-  maxLeverage: number
-  minCollateral: number
-  insuranceOdds: number
-  marginRate: number
-  burnLDRate: number
-  openingRate: number
-  clearingRate: number
-  cumulativeFundingRate: number
-  updateParameter: (data: Rec) => void
-  loaded: boolean
+export interface ConfigInfoState {
+  marginToken: MarginTokenKeys
+  factoryConfig: MarginTokenWithQuote
+  protocolConfig: MarginTokenWithContract
+  factoryConfigLoaded: boolean
+  protocolConfigLoaded: boolean
+  getFactoryConfig: () => Promise<void>
+  getProtocolConfig: () => Promise<void>
+  setMarginToken: (p: MarginTokenKeys) => void
 }
 
-export interface TemporaryDataState {
-  temporaryData: Rec
-  clearTemporaryData: () => void
-  updateTemporaryData: (data: Rec) => void
+export interface PairsInfoState {
+  spotPrices: Rec
+  indicators: Rec
+  indicatorsLoaded: boolean
+  spotPricesLoaded: boolean
+  updateSpotPrices: (p: Rec) => void
+  updateIndicators: (p: Rec) => void
 }
-
-export interface OrdDATState extends PosDATState {}

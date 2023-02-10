@@ -51,7 +51,7 @@ export const usePCFRatios = (p: Record<string, any>): { data?: Record<string, an
       const { marginToken, quoteToken } = calls[index]
       output[marginToken] = { ...output[marginToken], [quoteToken]: _ratio }
     })
-    console.info(output)
+    // console.info(output)
     return { data: output, isLoading }
   }
 

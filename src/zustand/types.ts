@@ -23,8 +23,11 @@ export interface ConfigInfoState {
 export interface PairsInfoState {
   spotPrices: Rec
   indicators: Rec
+  pcfRatios: Rec
+  pcfRatiosLoaded: boolean
   indicatorsLoaded: boolean
   spotPricesLoaded: boolean
   updateSpotPrices: (p: Rec) => void
   updateIndicators: (p: Rec) => void
+  updatePCFRatios: (p: Rec) => void
 }

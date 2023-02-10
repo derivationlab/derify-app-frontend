@@ -18,10 +18,11 @@ export default function Updater(): null {
   const getFactoryConfig = useConfigInfo((state) => state.getFactoryConfig)
   const getProtocolConfig = useConfigInfo((state) => state.getProtocolConfig)
   const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
+  const updatePCFRatios = usePairsInfo((state) => state.updatePCFRatios)
   const updateSpotPrices = usePairsInfo((state) => state.updateSpotPrices)
   const updateIndicators = usePairsInfo((state) => state.updateIndicators)
 
-  usePCFRatios(factoryConfig)
+  const { data: pcfRatiosDAT, isLoading: pcfRatiosDATIsLoading } = usePCFRatios(factoryConfig)
   const { data: spotPriceDAT, isLoading: spotPriceDATIsLoading } = useSpotPrice(factoryConfig)
   const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
 
@@ -53,6 +54,12 @@ export default function Updater(): null {
       updateIndicators(indicatorDAT)
     }
   }, [indicatorDATIsLoading, indicatorDAT])
+
+  useEffect(() => {
+    if (!pcfRatiosDATIsLoading && pcfRatiosDAT) {
+      updatePCFRatios(pcfRatiosDAT)
+    }
+  }, [pcfRatiosDATIsLoading, pcfRatiosDAT])
 
   return null
 }

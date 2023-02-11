@@ -3,6 +3,11 @@ import { AnyAction, ThunkDispatch } from '@reduxjs/toolkit'
 
 import { MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote } from '@/typings'
 
+export interface RpcState {
+  rpc: string
+  fetch: () => Promise<void>
+}
+
 export interface TraderState {
   trader: Record<string, any>
   broker: Record<string, any>

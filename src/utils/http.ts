@@ -2,9 +2,6 @@ import { isEmpty } from 'lodash'
 import { API_PREFIX_URL, API_AUTH_KEY } from '@/config'
 
 interface HttpResponse extends Response {
-  data: any
-  msg: string
-  code: number
   [key: string]: any
 }
 
@@ -42,17 +39,19 @@ export const externalLink = (url: string): string => {
   return host.test(url) ? url : `${API_PREFIX_URL}${url}`
 }
 
-export async function http(request: Request): Promise<HttpResponse> {
+export async function http(request: Request, latency = false): Promise<HttpResponse> {
+  const start = Date.now()
+
   // { signal: controller.signal }
   // return Promise.race([timedOutPromise(6000), fetch(request)])
   return Promise.race([timedOutPromise(8000), fetch(request)])
     .then(async (res) => {
       const json = await res.json()
-      return json
+      return latency ? { ...json, latency: start - Date.now() } : json
     })
     .catch((error) => {
       console.info(error)
-      return Promise.reject(error)
+      return null
     })
 }
 
@@ -65,9 +64,9 @@ export async function get(path: string, params?: Record<string, unknown>, args?:
   return await http(new Request(_path, { ...args, method: 'get', headers }))
 }
 
-export async function post(path: string, body?: Record<string, unknown>, args?: RequestInit): Promise<HttpResponse> {
-  const _body = isEmpty(body) ? '' : JSON.stringify(body)
+export async function post(path: string, body?: Record<string, unknown>, args?: RequestInit, latency = false): Promise<HttpResponse> {
   const headers = new Headers()
+  const _body = isEmpty(body) ? '' : JSON.stringify(body)
 
   headers.append('Content-Type', 'application/json;charset=UTF-8')
   headers.append('x-api-key', API_AUTH_KEY)
@@ -79,7 +78,8 @@ export async function post(path: string, body?: Record<string, unknown>, args?: 
       mode: 'cors',
       body: _body,
       headers
-    })
+    }),
+    latency
   )
 }
 

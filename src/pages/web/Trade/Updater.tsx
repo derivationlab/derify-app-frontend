@@ -16,6 +16,7 @@ export default function Updater(): null {
   const fetchBalances = useBalancesStore((state) => state.fetch)
   const factoryConfig = useConfigInfo((state) => state.factoryConfig)
   const getFactoryConfig = useConfigInfo((state) => state.getFactoryConfig)
+  const getOpeningMinLimit = useConfigInfo((state) => state.getOpeningMinLimit)
   const getProtocolConfig = useConfigInfo((state) => state.getProtocolConfig)
   const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
   const updatePCFRatios = usePairsInfo((state) => state.updatePCFRatios)
@@ -40,6 +41,7 @@ export default function Updater(): null {
   useEffect(() => {
     if (protocolConfigLoaded) {
       void getFactoryConfig()
+      void getOpeningMinLimit()
     }
   }, [protocolConfigLoaded])
 

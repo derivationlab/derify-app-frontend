@@ -4,10 +4,9 @@ import type { BigNumberish } from '@ethersproject/bignumber'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
 import { safeInterceptionValues } from '@/utils/tools'
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { MarginTokenKeys, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
-import { MarginTokenKeys, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
-import multicall from '@/utils/multicall'
 
 export const initial = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -29,9 +28,9 @@ export const initial = (): MarginTokenWithQuote => {
   return value
 }
 
-export const getPCFAndSpotPrice = async (
+export const usePCFAndSpotPrice = (
   p: MarginTokenWithQuote
-): Promise<{ data1: MarginTokenWithQuote, data2: MarginTokenWithQuote }> => {
+): { data1?: MarginTokenWithQuote; data2?: MarginTokenWithQuote; isLoading: boolean } => {
   let calls1: any[] = []
   let calls2: any[] = []
   let output1 = initial()
@@ -55,10 +54,10 @@ export const getPCFAndSpotPrice = async (
   }
 
   const calls = [...calls1, ...calls2]
-  const response = await multicall(DerifyDerivativeAbi, calls)
+  const { data, isLoading } = useQueryMulticall(DerifyDerivativeAbi, calls, 3000)
 
-  if (!isEmpty(response)) {
-    const _chunk = chunk(response, calls1.length) as any[]
+  if (!isLoading && !isEmpty(data)) {
+    const _chunk = chunk(data, calls1.length) as any[]
     _chunk[0].forEach((ratio: BigNumberish, index: number) => {
       const _ratio = Number(safeInterceptionValues(String(ratio), 4)) * 100
       const { marginToken, quoteToken } = calls1[index]
@@ -70,8 +69,8 @@ export const getPCFAndSpotPrice = async (
     })
     // console.info(output1)
     // console.info(output2)
-    return { data1: output1, data2: output2 }
+    return { data1: output1, data2: output2, isLoading }
   }
 
-  return { data1: output1, data2: output2 }
+  return { isLoading }
 }

@@ -13,19 +13,32 @@ const usePairsInfo = create<PairsInfoState>((set) => ({
   spotPricesLoaded: false,
   updateSpotPrices: (data: Rec) =>
     set(() => {
+      console.info('updateSpotPrices:')
       console.info(data)
       return { spotPrices: data, spotPricesLoaded: true }
     }),
   updateIndicators: (data: Rec) =>
     set(() => {
+      console.info('updateIndicators:')
       console.info(data)
       return { indicators: data, indicatorsLoaded: true }
     }),
   updatePCFRatios: (data: Rec) =>
     set(() => {
+      console.info('updatePCFRatios:')
       console.info(data)
       return { pcfRatios: data, pcfRatiosLoaded: true }
     })
 }))
 
 export { usePairsInfo }
+
+/**
+ DRF:{
+  BTC:{
+    long:0,
+    short:0,
+    twoWay:0,
+  }
+ }
+ */

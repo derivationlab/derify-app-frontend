@@ -1,4 +1,5 @@
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+import { InitialTraderVariablesType } from '@/hooks/helper'
 
 export type Rec = Record<string, any>
 
@@ -28,6 +29,18 @@ export interface MarginTokenState {
 
 export interface QuoteTokenState {
   quoteToken: QuoteTokenKeys
+}
+
+export interface PosDATState {
+  positionOrd: Rec[]
+  profitLossOrd: Rec[]
+  loaded: boolean
+}
+
+export interface TraderInfoState {
+  variables: InitialTraderVariablesType
+  variablesLoaded: boolean
+  updateVariables: (p:InitialTraderVariablesType) => void
 }
 
 export interface PairsInfoState {

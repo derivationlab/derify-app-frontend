@@ -16,16 +16,19 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
   protocolConfigLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
+      console.info('updateFactoryConfig:')
       console.info(data)
       return { factoryConfig: data, factoryConfigLoaded: true }
     }),
   updateProtocolConfig: (data: MarginTokenWithContract) =>
     set(() => {
+      console.info('updateProtocolConfig:')
       console.info(data)
       return { protocolConfig: data, protocolConfigLoaded: true }
     }),
   updateOpeningMinLimit: (data: MarginToken) =>
     set(() => {
+      console.info('updateOpeningMinLimit:')
       console.info(data)
       return { openingMinLimit: data, openingMinLimitLoaded: true }
     })

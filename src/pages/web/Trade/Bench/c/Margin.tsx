@@ -19,10 +19,13 @@ const Margin: FC = () => {
       margin select:{marginToken}
       {MARGIN_TOKENS.map((t) => {
         return (
-          <small key={t.symbol} onClick={() => {
-            updateMarginToken(t.symbol as MarginTokenKeys)
-            dispatch(setMarginToken(t.symbol as MarginTokenKeys))
-          }}>
+          <small
+            key={t.symbol}
+            onClick={() => {
+              updateMarginToken(t.symbol as MarginTokenKeys)
+              dispatch(setMarginToken(t.symbol as MarginTokenKeys))
+            }}
+          >
             {t.symbol}
           </small>
         )

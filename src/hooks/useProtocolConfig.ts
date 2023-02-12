@@ -3,9 +3,9 @@ import { isEmpty } from 'lodash'
 import { MARGIN_TOKENS } from '@/config/tokens'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
 import { MarginTokenWithContract } from '@/typings'
+import { getAddress, getDerifyProtocolAddress } from '@/utils/addressHelpers'
 
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
-import { getAddress, getDerifyProtocolAddress } from '@/utils/addressHelpers'
 
 const contractInfo = {
   factory: '',
@@ -35,7 +35,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
     address: getDerifyProtocolAddress()
   }))
 
-  const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 30000)
+  const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 50000000)
 
   if (!isLoading && !isEmpty(data)) {
     data.forEach(([, , , exchange, factory, rewards]: any[], index: number) => {

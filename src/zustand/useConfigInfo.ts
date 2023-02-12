@@ -29,7 +29,7 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
     set(() => {
       // console.info(data)
       return { openingMinLimit: data, openingMinLimitLoaded: true }
-    }),
+    })
 }))
 
 const useQuoteToken = create(

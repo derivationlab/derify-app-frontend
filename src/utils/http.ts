@@ -64,7 +64,12 @@ export async function get(path: string, params?: Record<string, unknown>, args?:
   return await http(new Request(_path, { ...args, method: 'get', headers }))
 }
 
-export async function post(path: string, body?: Record<string, unknown>, args?: RequestInit, latency = false): Promise<HttpResponse> {
+export async function post(
+  path: string,
+  body?: Record<string, unknown>,
+  args?: RequestInit,
+  latency = false
+): Promise<HttpResponse> {
   const headers = new Headers()
   const _body = isEmpty(body) ? '' : JSON.stringify(body)
 

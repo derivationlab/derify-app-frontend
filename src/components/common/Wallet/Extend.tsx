@@ -27,7 +27,10 @@ const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const memoDisabled = useMemo(() => {
     return (
-      Number(burnAmount) === 0 || isLTET(burnAmount, 0) || isET(balances['edrf'], 0) || isLT(balances['edrf'], burnAmount)
+      Number(burnAmount) === 0 ||
+      isLTET(burnAmount, 0) ||
+      isET(balances['edrf'], 0) ||
+      isLT(balances['edrf'], burnAmount)
     )
   }, [balances, burnAmount])
 

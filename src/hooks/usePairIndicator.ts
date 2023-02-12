@@ -39,14 +39,14 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
   if (!isLoading && data) {
     data.forEach(
       ({
-         token,
-         longUsdPmrRate = 0,
-         longDrfPmrRate = 0,
-         shortDrfPmrRate = 0,
-         shortUsdPmrRate = 0,
-         price_change_rate = 0,
-         ...rest
-       }: Record<string, any>) => {
+        token,
+        longUsdPmrRate = 0,
+        longDrfPmrRate = 0,
+        shortDrfPmrRate = 0,
+        shortUsdPmrRate = 0,
+        price_change_rate = 0,
+        ...rest
+      }: Record<string, any>) => {
         const quote = findToken(token).symbol
         const changeRate = nonBigNumberInterception(String(price_change_rate), 4)
         const longPmrRate = nonBigNumberInterception(bnPlus(longDrfPmrRate, longUsdPmrRate))

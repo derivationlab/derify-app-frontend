@@ -30,7 +30,7 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }, [balances])
 
   const onChangeEv = (v: string) => {
-    if (isGTET(balances['drf'], v) && isGT(v,0)) {
+    if (isGTET(balances['drf'], v) && isGT(v, 0)) {
       setIsDisabled(false)
       setDepositAmount(v)
     } else {

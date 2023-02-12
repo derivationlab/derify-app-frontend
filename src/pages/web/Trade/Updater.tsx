@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react'
 import { useAccount, useConnect } from 'wagmi'
 
-import { useSpotPrice } from '@/hooks/useSpotPrice'
-import { usePCFRatios } from '@/hooks/usePCFRatios'
+import { usePCFAndSpotPrice } from '@/hooks/usePCFAndSpotPrice'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { useFactoryConfig } from '@/hooks/useFactoryConfig'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
@@ -26,8 +25,11 @@ export default function Updater(): null {
   const updateSpotPrices = usePairsInfo((state) => state.updateSpotPrices)
   const updateIndicators = usePairsInfo((state) => state.updateIndicators)
 
-  const { data: pcfRatiosDAT, isLoading: pcfRatiosDATIsLoading } = usePCFRatios(factoryConfig)
-  const { data: spotPriceDAT, isLoading: spotPriceDATIsLoading } = useSpotPrice(factoryConfig)
+  const {
+    data1: pcfRatiosDAT,
+    data2: spotPriceDAT,
+    isLoading: pcfAndSpotPriceDATIsLoading
+  } = usePCFAndSpotPrice(factoryConfig)
   const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
   const { data: factoryConfDAT, isLoading: factoryConfDATIsLoading } = useFactoryConfig(protocolConfig)
   const { data: protocolConfDAT, isLoading: protocolConfDATIsLoading } = useProtocolConfig()
@@ -41,40 +43,35 @@ export default function Updater(): null {
   }, [isConnected, data?.address])
 
   useEffect(() => {
-    if (!spotPriceDATIsLoading && spotPriceDAT) {
+    if (!pcfAndSpotPriceDATIsLoading && spotPriceDAT && pcfRatiosDAT) {
       updateSpotPrices(spotPriceDAT)
+      updatePCFRatios(pcfRatiosDAT)
     }
-  }, [spotPriceDATIsLoading, spotPriceDAT])
+  }, [pcfAndSpotPriceDATIsLoading])
 
   useEffect(() => {
     if (!openingMinLimitDATIsLoading && openingMinLimitDAT) {
       updateOpeningMinLimit(openingMinLimitDAT)
     }
-  }, [openingMinLimitDATIsLoading, openingMinLimitDAT])
+  }, [openingMinLimitDATIsLoading])
 
   useEffect(() => {
     if (!factoryConfDATIsLoading && factoryConfDAT) {
       updateFactoryConfig(factoryConfDAT)
     }
-  }, [factoryConfDATIsLoading, factoryConfDAT])
+  }, [factoryConfDATIsLoading])
 
   useEffect(() => {
     if (!protocolConfDATIsLoading && protocolConfDAT) {
       updateProtocolConfig(protocolConfDAT)
     }
-  }, [protocolConfDATIsLoading, protocolConfDAT])
+  }, [protocolConfDATIsLoading])
 
   useEffect(() => {
     if (!indicatorDATIsLoading && indicatorDAT) {
       updateIndicators(indicatorDAT)
     }
-  }, [indicatorDATIsLoading, indicatorDAT])
-
-  useEffect(() => {
-    if (!pcfRatiosDATIsLoading && pcfRatiosDAT) {
-      updatePCFRatios(pcfRatiosDAT)
-    }
-  }, [pcfRatiosDATIsLoading, pcfRatiosDAT])
+  }, [indicatorDATIsLoading])
 
   return null
 }

@@ -16,7 +16,7 @@ const initial = (): Record<string, string> => {
     value = {
       ...value,
       [t.symbol]: '0',
-      [t.symbol.toLowerCase()]: '0',
+      [t.symbol.toLowerCase()]: '0'
     }
   })
 
@@ -32,7 +32,7 @@ export const getTokenBalances = async (account: string) => {
   const bnb = await baseProvider.getBalance(account)
 
   const bnbBalance = safeInterceptionValues(bnb, 18, 18)
-
+  console.info(bnbBalance)
   if (res.length > 0) {
     res.forEach((t: any, index: number) => {
       const precision = TOKENS[index].precision
@@ -40,7 +40,7 @@ export const getTokenBalances = async (account: string) => {
       initialVal = {
         ...initialVal,
         [TOKENS[index].symbol]: balance,
-        [TOKENS[index].symbol.toLowerCase()]: balance,
+        [TOKENS[index].symbol.toLowerCase()]: balance
       }
     })
   }

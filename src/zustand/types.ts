@@ -29,12 +29,14 @@ export interface MarginTokenState {
 
 export interface QuoteTokenState {
   quoteToken: QuoteTokenKeys
+  updateQuoteToken: (p: QuoteTokenKeys) => void
 }
 
 export interface PosDATState {
   positionOrd: Rec[]
   profitLossOrd: Rec[]
   loaded: boolean
+  fetch: (trader: string, pairAddress: string, exchange: string, spotPrice: string, variables: InitialTraderVariablesType) => Promise<void>
 }
 
 export interface TraderInfoState {

@@ -10,14 +10,14 @@ import pairs from '@/config/pairs'
 import { getTraderVariablesData } from '@/store/trader/helper'
 import BN from 'bignumber.js'
 import { getTokenSpotPrice, OrderTypes, PositionSide } from '@/store/contract/helper'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
+import {
+  getDerifyDerivativePairContract,
+  getDerifyExchangeContract,
+  getDerifyExchangeContract1
+} from '@/utils/contractHelpers'
+import { InitialTraderVariablesType } from '@/hooks/helper'
 
 const BIG_TEN = new BN(10).pow(8)
-
-const calcStopLossOrStopProfitPrice = ({ isUsed, stopPrice }: Rec): string => {
-  if (isUsed) return safeInterceptionValues(stopPrice._hex)
-  return '--'
-}
 
 const calcLiquidityPrice = (
   side: number,
@@ -36,38 +36,44 @@ const calcLiquidityPrice = (
   return p.isLessThanOrEqualTo(0) ? '--' : safeInterceptionValues(String(p))
 }
 
-const combineNecessaryData = async (side: PositionSide, params: Rec, variables: Rec): Promise<Record<string, any>> => {
-  const contract = getDerifyExchangeContract()
+const calcStopLossOrStopProfitPrice = ({ isUsed, stopPrice }: Rec): string => {
+  if (isUsed) return safeInterceptionValues(stopPrice._hex)
+  return '--'
+}
+
+const combineNecessaryData = async (address: string, side: PositionSide, params: Rec, variables: Rec): Promise<Record<string, any>> => {
+  const c = getDerifyExchangeContract1(address)
   const { size, spotPrice, leverage, price } = params
   const { marginRate, marginBalance, totalPositionAmount } = variables
   const liquidityPrice = calcLiquidityPrice(side, size, spotPrice, marginBalance, totalPositionAmount)
 
-  const data = await contract.getTraderPositionVariables(side, toHexString(spotPrice), size, leverage, price)
+  const data = await c.getTraderPositionVariables(side, toHexString(spotPrice), size, leverage, price)
 
   if (!isEmpty(data)) {
     const { margin, returnRate, unrealizedPnl } = data
 
     return {
-      marginRate,
-      liquidityPrice,
       margin: safeInterceptionValues(String(margin)),
       leverage: safeInterceptionValues(String(leverage)),
       returnRate: safeInterceptionValues(String(returnRate), 4),
-      unrealizedPnl: safeInterceptionValues(String(unrealizedPnl))
+      unrealizedPnl: safeInterceptionValues(String(unrealizedPnl)),
+      marginRate,
+      liquidityPrice
     }
   }
+
   return {}
 }
 
-const getMyPositionsData = async (trader: string, address: string, spotPrice: string): Promise<Rec[]> => {
-  const outputMyOrders: Rec[] = []
-  const outputMyPosition: Rec[] = []
-  const c = getDerifyDerivativePairContract(address)
+const getMyPositionsData = async (trader: string, pairAddress: string, exchange: string, spotPrice: string, variables: InitialTraderVariablesType): Promise<Rec[][]> => {
+  const positionOrd: Rec[] = []
+  const profitLossOrd: Rec[] = []
+
+  const c = getDerifyDerivativePairContract(pairAddress)
 
   try {
     const response = await c.getTraderDerivativePositions(trader)
-    const variables = await getTraderVariablesData(trader) // 0x8BF5722AF17ce9F25211F4Cb8DFF5639831A2250
-    // console.info(String(response))
+
     if (!isEmpty(response)) {
       for (let i = 0; i < response.length; i++) {
         const [
@@ -86,6 +92,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
         // My Positions - long
         if (long.isUsed) {
           const longPositionView = await combineNecessaryData(
+            exchange,
             PositionSide.Long,
             {
               ...long,
@@ -101,7 +108,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
           const size = safeInterceptionValues(String(long.size), 8)
           const volume = nonBigNumberInterception(String(new BN(spotPrice).times(size)), 8)
 
-          outputMyPosition.push({
+          positionOrd.push({
             size,
             volume,
             ...pairs[i],
@@ -115,6 +122,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
         // My Positions - short
         if (short.isUsed) {
           const shortPositionView = await combineNecessaryData(
+            exchange,
             PositionSide.Short,
             {
               ...short,
@@ -129,7 +137,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
           const size = safeInterceptionValues(String(short.size), 8)
           const volume = nonBigNumberInterception(String(new BN(spotPrice).times(size)), 8)
 
-          outputMyPosition.push({
+          positionOrd.push({
             size,
             volume,
             ...pairs[i],
@@ -159,7 +167,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
             const div = String(new BN(order.price._hex).times(size).div(BIG_TEN))
             const volume = nonBigNumberInterception(div)
 
-            outputMyOrders.push({
+            profitLossOrd.push({
               size,
               volume,
               ...pairs[i],
@@ -178,7 +186,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
             const div = String(new BN(order.price._hex).times(size).div(BIG_TEN))
             const volume = nonBigNumberInterception(div)
 
-            outputMyOrders.push({
+            profitLossOrd.push({
               size,
               volume,
               ...pairs[i],
@@ -196,7 +204,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
           const div = String(new BN(longOrderStopProfitPosition.stopPrice._hex).times(size).div(BIG_TEN))
           const volume = nonBigNumberInterception(div)
 
-          outputMyOrders.push({
+          profitLossOrd.push({
             size,
             volume,
             ...pairs[i],
@@ -216,7 +224,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
           const div = String(new BN(longOrderStopLossPosition.stopPrice._hex).times(size).div(BIG_TEN))
           const volume = nonBigNumberInterception(div)
 
-          outputMyOrders.push({
+          profitLossOrd.push({
             size,
             volume,
             ...pairs[i],
@@ -233,7 +241,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
           const div = String(new BN(shortOrderStopLossPosition.stopPrice._hex).times(size).div(BIG_TEN))
           const volume = nonBigNumberInterception(div)
 
-          outputMyOrders.push({
+          profitLossOrd.push({
             size,
             volume,
             ...pairs[i],
@@ -250,7 +258,7 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
           const div = String(new BN(shortOrderStopProfitPosition.stopPrice._hex).times(size).div(BIG_TEN))
           const volume = nonBigNumberInterception(div)
 
-          outputMyOrders.push({
+          profitLossOrd.push({
             size,
             volume,
             ...pairs[i],
@@ -262,9 +270,9 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
           })
         }
       }
-      // console.info(outputMyPosition)
+      // console.info(positionOrd)
 
-      return [outputMyPosition, outputMyOrders]
+      return [positionOrd, profitLossOrd]
     }
     return []
   } catch (e) {
@@ -272,14 +280,18 @@ const getMyPositionsData = async (trader: string, address: string, spotPrice: st
     return []
   }
 }
+
 const usePosDATStore = create<PosDATState>((set) => ({
   positionOrd: [],
   profitLossOrd: [],
   loaded: false,
-  fetch: async (account: string, quote: string) => {
-    // const orders = await positionOrdersFunc(account, quote)
-
-    // set({ orders, loaded: true })
+  fetch: async (trader: string, pairAddress: string, exchange: string, spotPrice: string, variables: InitialTraderVariablesType) => {
+    const [positionOrd, profitLossOrd] = await getMyPositionsData(trader, pairAddress, exchange, spotPrice, variables)
+    console.info('usePosDATStore-positionOrd:')
+    console.info(positionOrd)
+    console.info('usePosDATStore-profitLossOrd:')
+    console.info(profitLossOrd)
+    set({ positionOrd, profitLossOrd, loaded: true })
   }
 }))
 

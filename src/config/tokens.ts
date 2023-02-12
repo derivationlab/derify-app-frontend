@@ -78,7 +78,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
 
 export const QUOTE_TOKENS = [tokens.btc, tokens.eth]
 
-export const MARGIN_TOKENS = [tokens.drf, tokens.busd]
+export const MARGIN_TOKENS = [tokens.busd, tokens.drf]
 
 export const BASE_TOKEN_SYMBOL = tokens.busd.symbol
 

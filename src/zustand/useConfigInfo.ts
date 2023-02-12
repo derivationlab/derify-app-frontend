@@ -38,7 +38,11 @@ const useQuoteToken = create(
   persist<QuoteTokenState>(
     (set, get) => ({
       quoteToken: QUOTE_TOKENS[0].symbol as QuoteTokenKeys,
-      updateQuoteToken: (data: QuoteTokenKeys) => set({ quoteToken: data })
+      updateQuoteToken: (data: QuoteTokenKeys) => set(() => {
+        console.info('updateQuoteToken:')
+        console.info(data)
+        return { quoteToken: data }
+      })
     }),
     {
       name: 'QUOTE_TOKEN'
@@ -50,7 +54,11 @@ const useMarginToken = create(
   persist<MarginTokenState>(
     (set, get) => ({
       marginToken: MARGIN_TOKENS[0].symbol as MarginTokenKeys,
-      updateMarginToken: (data: MarginTokenKeys) => set({ marginToken: data })
+      updateMarginToken: (data: MarginTokenKeys) => set(() => {
+        console.info('updateMarginToken:')
+        console.info(data)
+        return { marginToken: data }
+      })
     }),
     {
       name: 'MARGIN_TOKEN'

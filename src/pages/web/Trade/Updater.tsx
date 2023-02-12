@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { usePairsInfo } from '@/zustand'
+import { usePairsInfo, useQuoteToken } from '@/zustand'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { useConfigInfo, useMarginToken } from '@/zustand/useConfigInfo'
 import { usePCFAndSpotPrice } from '@/hooks/usePCFAndSpotPrice'
@@ -8,10 +8,12 @@ import { MarginTokenWithContract } from '@/typings'
 import { getFactoryConfig, getTraderVariables } from '@/hooks/helper'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useAccount } from 'wagmi'
+import { isGT } from '@/utils/tools'
 
 export default function Updater(): null {
   const { data } = useAccount()
 
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
   const factoryConfig = useConfigInfo((state) => state.factoryConfig)
   const protocolConfig = useConfigInfo((state) => state.protocolConfig)
@@ -39,14 +41,15 @@ export default function Updater(): null {
     }
   }, [pcfAndSpotPriceDATIsLoading, pcfDAT, spotPriceDAT])
 
+  // for trader variables
   useEffect(() => {
     const func = async (account: string, protocolConfig: MarginTokenWithContract) => {
       const data = await getTraderVariables(account, protocolConfig[marginToken].exchange)
       updateVariables(data)
     }
 
-    if (data?.address && protocolConfigLoaded && protocolConfig) void func(data.address, protocolConfig)
-  }, [protocolConfigLoaded, protocolConfig, data?.address, marginToken, ])
+    if (data?.address && protocolConfigLoaded && protocolConfig && spotPriceDAT && isGT(spotPriceDAT[marginToken][quoteToken], 0)) void func(data.address, protocolConfig)
+  }, [protocolConfigLoaded, protocolConfig, data?.address, marginToken, quoteToken, spotPriceDAT])
 
   return null
 }

@@ -13,17 +13,17 @@ const usePairsInfo = create<PairsInfoState>((set) => ({
   spotPricesLoaded: false,
   updateSpotPrices: (data: Rec) =>
     set(() => {
-      // console.info(data)
+      console.info(data)
       return { spotPrices: data, spotPricesLoaded: true }
     }),
   updateIndicators: (data: Rec) =>
     set(() => {
-      // console.info(data)
+      console.info(data)
       return { indicators: data, indicatorsLoaded: true }
     }),
   updatePCFRatios: (data: Rec) =>
     set(() => {
-      // console.info(data)
+      console.info(data)
       return { pcfRatios: data, pcfRatiosLoaded: true }
     })
 }))

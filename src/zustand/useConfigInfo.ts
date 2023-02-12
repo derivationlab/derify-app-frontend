@@ -2,32 +2,31 @@ import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
-import { initial as initialOpeningMinLimit } from '@/hooks/useOpeningMinLimit'
-import { initial as initialConfigFromFactory } from '@/hooks/useFactoryConfig'
-import { initial as initialConfigFromProtocol } from '@/hooks/useProtocolConfig'
+import { initial as initialProtocolConfig } from '@/hooks/useProtocolConfig'
+import { initialOpeningMinLimit, initialFactoryConfig } from '@/hooks/helper'
 import { ConfigInfoState, MarginTokenState, QuoteTokenState } from '@/zustand/types'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 const useConfigInfo = create<ConfigInfoState>((set, get) => ({
   openingMinLimit: initialOpeningMinLimit(),
-  factoryConfig: initialConfigFromFactory(),
-  protocolConfig: initialConfigFromProtocol(),
+  factoryConfig: initialFactoryConfig(),
+  protocolConfig: initialProtocolConfig(),
   openingMinLimitLoaded: false,
   factoryConfigLoaded: false,
   protocolConfigLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
-      // console.info(data)
+      console.info(data)
       return { factoryConfig: data, factoryConfigLoaded: true }
     }),
   updateProtocolConfig: (data: MarginTokenWithContract) =>
     set(() => {
-      // console.info(data)
+      console.info(data)
       return { protocolConfig: data, protocolConfigLoaded: true }
     }),
   updateOpeningMinLimit: (data: MarginToken) =>
     set(() => {
-      // console.info(data)
+      console.info(data)
       return { openingMinLimit: data, openingMinLimitLoaded: true }
     })
 }))

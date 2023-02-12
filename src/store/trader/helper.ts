@@ -67,7 +67,7 @@ export const getTraderAccountData = async (trader: string, address: string): Pro
 
   try {
     const { balance, marginBalance, totalMargin, availableMargin } = await exchangeContract.getTraderAccount(trader)
-    console.info(`getTraderAccount-marginBalance: ${safeInterceptionValues(marginBalance)}`)
+    // console.info(`getTraderAccount-marginBalance: ${safeInterceptionValues(marginBalance)}`)
     return {
       balance: safeInterceptionValues(balance),
       marginBalance: safeInterceptionValues(marginBalance),
@@ -89,7 +89,7 @@ export const getTraderVariablesData = async (trader: string): Promise<Record<str
 
   try {
     const { marginBalance, marginRate, totalPositionAmount } = await exchangeContract.getTraderVariables(trader)
-    console.info(`getTraderVariables-marginBalance: ${safeInterceptionValues(marginBalance)}`)
+    // console.info(`getTraderVariables-marginBalance: ${safeInterceptionValues(marginBalance)}`)
     return {
       marginBalance: safeInterceptionValues(marginBalance),
       marginRate: safeInterceptionValues(marginRate, 4),

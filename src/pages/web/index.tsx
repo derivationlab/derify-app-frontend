@@ -1,6 +1,7 @@
 import { useAccount } from 'wagmi'
-import React, { FC, FunctionComponent, useCallback, useMemo } from 'react'
+import React, { FC, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 
+import { getIP } from '@/api'
 import { useTraderData } from '@/store/trader/hooks'
 import { Redirect, Switch, Route } from '@/components/common/Route'
 
@@ -10,8 +11,6 @@ import Loading from '@/components/common/Loading'
 
 import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
-// import Faucet from '@/pages/web/Faucet'
-// import Airdrop from '@/pages/web/Airdrop'
 import Test from '@/pages/web/Test'
 import Dashboard from '@/pages/web/Dashboard'
 import BrokerRank from '@/pages/web/Broker/Rank'
@@ -24,10 +23,13 @@ import BrokerSignUpStep1 from '@/pages/web/Broker/SignUp/step1'
 import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
 import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
 import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
+import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 
 const Web: FC = () => {
   const { data: account } = useAccount()
   const { broker, brokerLoaded, brokerBound, brokerBoundLoaded } = useTraderData()
+
+  const [visible, setVisible] = useState<boolean>(false)
 
   const handleBroker = useMemo(() => {
     if (brokerLoaded && brokerBoundLoaded) {
@@ -111,6 +113,15 @@ const Web: FC = () => {
     return <Loading show type="fixed" />
   }, [brokerLoaded, broker?.isBroker, broker?.broker])
 
+  useEffect(() => {
+    const func = async () => {
+      const data = await getIP()
+      setVisible(!data)
+    }
+
+    void func()
+  }, [])
+
   return (
     <>
       <Header />
@@ -141,6 +152,7 @@ const Web: FC = () => {
         <Route path="*" render={() => <Redirect to="/trade" />} />
       </Switch>
       <Toast />
+      <AccessDeniedDialog visible={visible} />
     </>
   )
 }

@@ -32,7 +32,7 @@ export const getTokenBalances = async (account: string) => {
   const bnb = await baseProvider.getBalance(account)
 
   const bnbBalance = safeInterceptionValues(bnb, 18, 18)
-  console.info(bnbBalance)
+
   if (res.length > 0) {
     res.forEach((t: any, index: number) => {
       const precision = TOKENS[index].precision

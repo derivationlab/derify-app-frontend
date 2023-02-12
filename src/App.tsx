@@ -1,32 +1,19 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react'
-import { Switch, Route } from '@/components/common/Route'
-
-import { useInitialEffect } from '@/hooks/useInitialEffect'
-import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
+import React, { lazy, Suspense } from 'react'
 
 import 'rc-dialog/assets/index.css'
 import 'rc-collapse/assets/index.css'
 import 'rc-tabs/assets/index.css'
 import 'rc-table/assets/index.css'
 
+import { useInitialDAT } from '@/hooks/useInitialDAT'
+import { Switch, Route } from '@/components/common/Route'
+
 import '@/style/style.scss'
-import { getIP } from '@/api'
 
 const WebEntry = lazy(() => import('@/pages/web'))
 
 function App() {
-  const [visible, setVisible] = useState<boolean>(false)
-
-  useInitialEffect()
-
-  useEffect(() => {
-    const func = async () => {
-      const data = await getIP()
-      setVisible(!data)
-    }
-
-    void func()
-  }, [])
+  useInitialDAT()
 
   return (
     <>
@@ -35,7 +22,6 @@ function App() {
           <Route path="/" component={WebEntry} />
         </Switch>
       </Suspense>
-      <AccessDeniedDialog visible={visible} />
     </>
   )
 }

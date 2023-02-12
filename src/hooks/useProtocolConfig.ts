@@ -35,7 +35,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
     address: getDerifyProtocolAddress()
   }))
 
-  const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 50000000)
+  const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 30000)
 
   if (!isLoading && !isEmpty(data)) {
     data.forEach(([, , , exchange, factory, rewards]: any[], index: number) => {
@@ -48,5 +48,5 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
     return { data: output, isLoading }
   }
 
-  return { isLoading: true }
+  return { isLoading }
 }

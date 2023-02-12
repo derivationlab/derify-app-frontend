@@ -1,17 +1,18 @@
 import React, { FC } from 'react'
 
 import { useAppDispatch } from '@/store'
-import { useConfigInfo } from '@/zustand'
+import { useMarginToken } from '@/zustand'
 import { MARGIN_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
 import { useContractConfig } from '@/store/config/hooks'
+import { setMarginToken } from '@/store/config'
 
 const Margin: FC = () => {
   const dispatch = useAppDispatch()
 
   const { marginToken } = useContractConfig()
 
-  const setMarginToken = useConfigInfo((state) => state.setMarginToken)
+  const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
 
   return (
     <div className="">
@@ -19,7 +20,7 @@ const Margin: FC = () => {
       {MARGIN_TOKENS.map((t) => {
         return (
           <small key={t.symbol} onClick={() => {
-            setMarginToken(t.symbol as MarginTokenKeys)
+            updateMarginToken(t.symbol as MarginTokenKeys)
             dispatch(setMarginToken(t.symbol as MarginTokenKeys))
           }}>
             {t.symbol}

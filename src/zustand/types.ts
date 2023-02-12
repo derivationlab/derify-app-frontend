@@ -10,17 +10,20 @@ export interface BalancesState {
 }
 
 export interface ConfigInfoState {
-  marginToken: MarginTokenKeys
   openingMinLimit: MarginToken
   factoryConfig: MarginTokenWithQuote
   protocolConfig: MarginTokenWithContract
   openingMinLimitLoaded: boolean
   factoryConfigLoaded: boolean
   protocolConfigLoaded: boolean
-  getFactoryConfig: () => Promise<void>
-  getProtocolConfig: () => Promise<void>
-  getOpeningMinLimit: () => Promise<void>
-  setMarginToken: (p: MarginTokenKeys) => void
+  updateFactoryConfig: (p: MarginTokenWithQuote) => void
+  updateProtocolConfig: (p: MarginTokenWithContract) => void
+  updateOpeningMinLimit: (p: MarginToken) => void
+}
+
+export interface MarginTokenState {
+  marginToken: MarginTokenKeys
+  updateMarginToken: (p: MarginTokenKeys) => void
 }
 
 export interface QuoteTokenState {

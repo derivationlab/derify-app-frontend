@@ -11,7 +11,7 @@ import { getMyPositionsDataAsync } from '@/store/contract'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
-import { useBalancesStore } from '@/zustand'
+import { useTokenBalances } from '@/zustand'
 
 interface Props {
   size?: string
@@ -26,7 +26,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
   const { traderDepositMargin } = Trader
 
-  const fetchBalances = useBalancesStore((state) => state.fetch)
+  const fetchBalances = useTokenBalances((state) => state.fetch)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 

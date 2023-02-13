@@ -9,7 +9,7 @@ import Broker from '@/class/Broker'
 import { copyText } from '@/utils/tools'
 import { useAppDispatch } from '@/store'
 import { API_PREFIX_URL } from '@/config'
-import { useBalancesStore } from '@/zustand'
+import { useTokenBalances } from '@/zustand'
 import { useTraderData } from '@/store/trader/hooks'
 import { getBrokerValidPeriodDataAsync } from '@/store/actions'
 
@@ -26,7 +26,7 @@ const Info: FC = () => {
   const { broker } = useTraderData()
   const { extendBrokerPrivilege } = Broker
 
-  const fetchBalances = useBalancesStore((state) => state.fetch)
+  const fetchBalances = useTokenBalances((state) => state.fetch)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 

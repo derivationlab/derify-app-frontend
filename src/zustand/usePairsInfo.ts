@@ -32,13 +32,3 @@ const usePairsInfo = create<PairsInfoState>((set) => ({
 }))
 
 export { usePairsInfo }
-
-/**
- DRF:{
-  BTC:{
-    long:0,
-    short:0,
-    twoWay:0,
-  }
- }
- */

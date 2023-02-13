@@ -16,7 +16,7 @@ export type AllTokenKeys = 'btc' | 'busd' | 'bbusd' | 'eth' | 'drf' | 'matic' | 
 
 export type MarginToken = { [key in MarginTokenKeys]: any }
 
-export type MarginTokenWithQuote = { [key in MarginTokenKeys]: { [key in QuoteTokenKeys]: string } }
+export type MarginTokenWithQuote = { [key in MarginTokenKeys]: { [key in QuoteTokenKeys]: any } }
 
 export type MarginTokenWithContract = { [key in MarginTokenKeys]: typeof contractInfo }
 

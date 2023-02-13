@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi'
 
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { MarginTokenWithContract } from '@/typings'
-import { useConfigInfo, useBalancesStore } from '@/zustand'
+import { useConfigInfo, useTokenBalances } from '@/zustand'
 import { getFactoryConfig, getOpeningMinLimit } from '@/hooks/helper'
 
 export const useInitialDAT = () => {
@@ -11,8 +11,8 @@ export const useInitialDAT = () => {
 
   const { data: protocolConfDAT, isLoading: protocolConfDATIsLoading } = useProtocolConfig()
 
-  const fetchBalances = useBalancesStore((state) => state.fetch)
-  const resetBalances = useBalancesStore((state) => state.reset)
+  const fetchBalances = useTokenBalances((state) => state.fetch)
+  const resetBalances = useTokenBalances((state) => state.reset)
   const updateFactoryConfig = useConfigInfo((state) => state.updateFactoryConfig)
   const updateProtocolConfig = useConfigInfo((state) => state.updateProtocolConfig)
   const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)

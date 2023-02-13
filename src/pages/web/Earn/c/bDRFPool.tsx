@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import Earn from '@/class/Earn'
 import { useAppDispatch } from '@/store'
-import { useBalancesStore } from '@/zustand'
+import { useTokenBalances } from '@/zustand'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderData } from '@/store/trader/hooks'
 import { getBondInfoDataAsync } from '@/store/trader'
@@ -33,7 +33,7 @@ const EranbDRFPool: FC = () => {
 
   const { traderWithdrawBond, traderPledgedBond, traderRedemptionBond, traderExchangeBond } = Earn
 
-  const fetchBalances = useBalancesStore((state) => state.fetch)
+  const fetchBalances = useTokenBalances((state) => state.fetch)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 

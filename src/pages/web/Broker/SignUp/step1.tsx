@@ -5,7 +5,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import Broker from '@/class/Broker'
 import { useAppDispatch } from '@/store'
-import { useBalancesStore } from '@/zustand'
+import { useTokenBalances } from '@/zustand'
 import { getBrokerDataAsync } from '@/store/actions'
 import { isET, isLT, thousandthsDivision } from '@/utils/tools'
 
@@ -20,8 +20,8 @@ const BrokerSignUpStep1: FC = () => {
   const { data: account } = useAccount()
   const { getPrivilegeForBroker, burnLimitAmount } = Broker
 
-  const balances = useBalancesStore((state) => state.balances)
-  const balanceLoaded = useBalancesStore((state) => state.loaded)
+  const balances = useTokenBalances((state) => state.balances)
+  const balanceLoaded = useTokenBalances((state) => state.loaded)
 
   const [loading, setLoading] = useState<boolean>(false)
 

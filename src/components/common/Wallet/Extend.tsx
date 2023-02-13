@@ -3,7 +3,7 @@ import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
 import Broker from '@/class/Broker'
-import { useBalancesStore } from '@/zustand'
+import { useTokenBalances } from '@/zustand'
 import { isET, isLT, isLTET, nonBigNumberInterception } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
@@ -21,7 +21,7 @@ const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const { burnLimitPerDay } = Broker
 
-  const balances = useBalancesStore((state) => state.balances)
+  const balances = useTokenBalances((state) => state.balances)
 
   const [burnAmount, setBurnAmount] = useState<string>('')
 

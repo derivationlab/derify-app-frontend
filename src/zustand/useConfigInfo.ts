@@ -3,17 +3,19 @@ import { persist } from 'zustand/middleware'
 
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { initial as initialProtocolConfig } from '@/hooks/useProtocolConfig'
-import { initialOpeningMinLimit, initialFactoryConfig } from '@/hooks/helper'
 import { ConfigInfoState, MarginTokenState, QuoteTokenState } from '@/zustand/types'
+import { initialOpeningMinLimit, initialFactoryConfig, initialOpeningMaxLimit } from '@/hooks/helper'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 const useConfigInfo = create<ConfigInfoState>((set, get) => ({
-  openingMinLimit: initialOpeningMinLimit(),
   factoryConfig: initialFactoryConfig(),
   protocolConfig: initialProtocolConfig(),
-  openingMinLimitLoaded: false,
+  openingMinLimit: initialOpeningMinLimit(),
+  openingMaxLimit: initialOpeningMaxLimit(),
   factoryConfigLoaded: false,
   protocolConfigLoaded: false,
+  openingMinLimitLoaded: false,
+  openingMaxLimitLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
       console.info('updateFactoryConfig:')
@@ -31,6 +33,12 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
       console.info('updateOpeningMinLimit:')
       console.info(data)
       return { openingMinLimit: data, openingMinLimitLoaded: true }
+    }),
+  updateOpeningMaxLimit: (data: MarginTokenWithQuote) =>
+    set(() => {
+      console.info('updateOpeningMaxLimit-size:')
+      console.info(data)
+      return { openingMaxLimit: data, openingMaxLimitLoaded: true }
     })
 }))
 
@@ -38,11 +46,12 @@ const useQuoteToken = create(
   persist<QuoteTokenState>(
     (set, get) => ({
       quoteToken: QUOTE_TOKENS[0].symbol as QuoteTokenKeys,
-      updateQuoteToken: (data: QuoteTokenKeys) => set(() => {
-        console.info('updateQuoteToken:')
-        console.info(data)
-        return { quoteToken: data }
-      })
+      updateQuoteToken: (data: QuoteTokenKeys) =>
+        set(() => {
+          console.info('updateQuoteToken:')
+          console.info(data)
+          return { quoteToken: data }
+        })
     }),
     {
       name: 'QUOTE_TOKEN'
@@ -54,11 +63,12 @@ const useMarginToken = create(
   persist<MarginTokenState>(
     (set, get) => ({
       marginToken: MARGIN_TOKENS[0].symbol as MarginTokenKeys,
-      updateMarginToken: (data: MarginTokenKeys) => set(() => {
-        console.info('updateMarginToken:')
-        console.info(data)
-        return { marginToken: data }
-      })
+      updateMarginToken: (data: MarginTokenKeys) =>
+        set(() => {
+          console.info('updateMarginToken:')
+          console.info(data)
+          return { marginToken: data }
+        })
     }),
     {
       name: 'MARGIN_TOKEN'

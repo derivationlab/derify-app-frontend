@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { useBalancesStore } from '@/zustand'
+import { useTokenBalances } from '@/zustand'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -20,7 +20,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
 
-  const balances = useBalancesStore((state) => state.balances)
+  const balances = useTokenBalances((state) => state.balances)
 
   const [depositAmount, setDepositAmount] = useState<string>('0')
   const [isDisabled, setIsDisabled] = useState<boolean>(false)

@@ -103,7 +103,9 @@ export const initialTraderVariables = {
   marginBalance: '0',
   totalPositionAmount: '0'
 }
+
 export type InitialTraderVariablesType = typeof initialTraderVariables
+
 export const getTraderVariables = async (trader: string, exchange: string): Promise<InitialTraderVariablesType> => {
   const c = getDerifyExchangeContract1(exchange)
 
@@ -122,4 +124,76 @@ export const getTraderVariables = async (trader: string, exchange: string): Prom
     // console.info(e)
     return initialTraderVariables
   }
+}
+
+const positionSideKeys = [
+  'long',
+  'short',
+  'twoWay'
+]
+
+export const initialOpeningMaxLimit = (): MarginTokenWithQuote => {
+  let value = Object.create(null)
+  let quote = Object.create(null)
+
+  QUOTE_TOKENS.forEach((t) => {
+    quote = {
+      ...quote,
+      [t.symbol]: {
+        long: '0',
+        short: '0',
+        twoWay: '0'
+      }
+    }
+  })
+  MARGIN_TOKENS.forEach((t) => {
+    value = {
+      ...value,
+      [t.symbol]: quote
+    }
+  })
+
+  return value
+}
+
+export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<MarginTokenWithQuote> => {
+  let output = initialOpeningMaxLimit()
+
+  const calls = flatten(
+    Object.keys(p).map((m, mIndex) => {
+      const exchange = p[m as MarginTokenKeys].exchange
+      const base = {
+        name: 'getSysOpenUpperBound',
+        address: exchange,
+        marginToken: m
+      }
+      return flatten(QUOTE_TOKENS.map((q, qIndex) => {
+        const quoteToken = q.symbol
+        return [
+          { ...base, params: [q.tokenAddress, 0], quoteToken },
+          { ...base, params: [q.tokenAddress, 1], quoteToken },
+          { ...base, params: [q.tokenAddress, 2], quoteToken }
+        ]
+      }))
+    })
+  )
+  // console.info(calls)
+  const response = await multicall(DerifyExchangeAbi, calls)
+  // console.info(response)
+  if (!isEmpty(response)) {
+    response.forEach((limit: BigNumberish, index: number) => {
+      const { marginToken, quoteToken } = calls[index]
+      output[marginToken as MarginTokenKeys] = {
+        ...output[marginToken as MarginTokenKeys],
+        [quoteToken]: {
+          ...output[marginToken as MarginTokenKeys][quoteToken as QuoteTokenKeys],
+          [positionSideKeys[calls[index].params[1] as number]]: safeInterceptionValues(String(limit), 8)
+        }
+      }
+    })
+    // console.info(output)
+    return output
+  }
+
+  return output
 }

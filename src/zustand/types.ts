@@ -12,14 +12,17 @@ export interface BalancesState {
 
 export interface ConfigInfoState {
   openingMinLimit: MarginToken
+  openingMaxLimit: MarginTokenWithQuote
   factoryConfig: MarginTokenWithQuote
   protocolConfig: MarginTokenWithContract
   openingMinLimitLoaded: boolean
+  openingMaxLimitLoaded: boolean
   factoryConfigLoaded: boolean
   protocolConfigLoaded: boolean
   updateFactoryConfig: (p: MarginTokenWithQuote) => void
   updateProtocolConfig: (p: MarginTokenWithContract) => void
   updateOpeningMinLimit: (p: MarginToken) => void
+  updateOpeningMaxLimit: (p: MarginTokenWithQuote) => void
 }
 
 export interface MarginTokenState {
@@ -36,13 +39,18 @@ export interface PosDATState {
   positionOrd: Rec[]
   profitLossOrd: Rec[]
   loaded: boolean
-  fetch: (trader: string, pairAddress: string, exchange: string, spotPrice: string, variables: InitialTraderVariablesType) => Promise<void>
+  fetch: (
+    trader: string,
+    pairAddress: string,
+    exchange: string,
+    spotPrice: string,
+  ) => Promise<void>
 }
 
 export interface TraderInfoState {
   variables: InitialTraderVariablesType
   variablesLoaded: boolean
-  updateVariables: (p:InitialTraderVariablesType) => void
+  updateVariables: (p: InitialTraderVariablesType) => void
 }
 
 export interface PairsInfoState {

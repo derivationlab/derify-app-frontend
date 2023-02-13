@@ -5,13 +5,14 @@ import { useTranslation } from 'react-i18next'
 import Trader from '@/class/Trader'
 import { PositionSide } from '@/store/contract/helper'
 import { useShareMessage } from '@/store/share/hooks'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import { useMatchConfig } from '@/hooks/useMatchConfig'
+import { useSpotPrice } from '@/hooks/useMatchConf'
 
 interface Props {
   data?: Record<string, any>
@@ -27,6 +28,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   const { factoryConfig, protocolConfig, factoryConfigLoaded, protocolConfigLoaded, marginToken } = useMatchConfig()
 
   const { calcClosePositionTradingFee, calcClosePositionChangeFee } = Trader
+
+  const { spotPrice, quoteToken } = useSpotPrice()
 
   const [tradingFee, setTradingFee] = useState<string>('0')
   const [changeFee, setChangeFee] = useState<string>('0')
@@ -44,15 +47,15 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     setTradingFeeCalculating(true)
 
     const fee = await calcClosePositionTradingFee(
-      memoShareMessage?.symbol,
-      data?.token,
+      marginToken,
+      findToken(quoteToken)?.tokenAddress,
       memoShareMessage?.amount,
-      data?.spotPrice
+      spotPrice
     )
 
     setTradingFee(fee)
     setTradingFeeCalculating(false)
-  }, [memoShareMessage?.symbol, data?.token, memoShareMessage?.amount, data?.spotPrice])
+  }, [marginToken, quoteToken, memoShareMessage?.amount, spotPrice])
 
   const calcClosePositionChangeFeeCb = useCallback(async () => {
     if (factoryConfigLoaded && protocolConfigLoaded) {
@@ -60,10 +63,10 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
       const fee = await calcClosePositionChangeFee(
         data?.side,
-        memoShareMessage?.symbol,
-        data?.token,
+        marginToken,
+        findToken(quoteToken)?.tokenAddress,
         memoShareMessage?.amount,
-        data?.spotPrice,
+        spotPrice,
         protocolConfig.exchange,
         factoryConfig[data?.quote]
       )
@@ -76,11 +79,11 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     factoryConfig,
     factoryConfigLoaded,
     protocolConfigLoaded,
-    data?.spotPrice,
-    memoShareMessage?.symbol,
+    spotPrice,
+    marginToken,
     memoShareMessage?.amount,
     data?.side,
-    data?.token
+    quoteToken
   ])
 
   useEffect(() => {
@@ -109,7 +112,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{data?.name}</strong>
+                <strong>{`${quoteToken}-${marginToken}`}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
               </h4>
             </header>
@@ -122,7 +125,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               <dt>{t('Trade.ClosePosition.Volume', 'Volume')}</dt>
               <dd>
                 <em>{memoShareMessage?.amount}</em>
-                <u>{memoShareMessage?.symbol}</u>
+                <u>{marginToken}</u>
               </dd>
             </dl>
             <dl>

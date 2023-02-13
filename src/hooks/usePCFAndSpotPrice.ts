@@ -65,7 +65,10 @@ export const usePCFAndSpotPrice = (
     })
     _chunk[1].forEach((spotPrice: BigNumberish, index: number) => {
       const { marginToken, quoteToken } = calls2[index]
-      output2[marginToken as MarginTokenKeys] = { ...output2[marginToken as MarginTokenKeys], [quoteToken]: safeInterceptionValues(String(spotPrice), 8) }
+      output2[marginToken as MarginTokenKeys] = {
+        ...output2[marginToken as MarginTokenKeys],
+        [quoteToken]: safeInterceptionValues(String(spotPrice), 8)
+      }
     })
     // console.info(output1)
     // console.info(output2)

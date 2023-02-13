@@ -48,15 +48,16 @@ export const getTokenBalances = async (account: string) => {
   return { ...initialVal, BNB: bnbBalance }
 }
 
-const useBalancesStore = create<BalancesState>((set) => ({
+const useTokenBalances = create<BalancesState>((set) => ({
   balances: initial(),
   loaded: false,
   fetch: async (account: string) => {
     const data = await getTokenBalances(account)
-    // console.info(data)
+    console.info(`getTokenBalances:`)
+    console.info(data)
     set({ balances: data, loaded: true })
   },
   reset: () => set(() => ({ balances: initial() }))
 }))
 
-export { useBalancesStore }
+export { useTokenBalances }

@@ -2,9 +2,11 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import BN from 'bignumber.js'
 
+import { useSpotPrice } from '@/hooks/useMatchConf'
+import { usePairsInfo } from '@/zustand'
 import { PositionSide } from '@/store/contract/helper'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { safeInterceptionValues } from '@/utils/tools'
+import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -23,14 +25,17 @@ interface Props {
 const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
+  const { spotPrice, quoteToken, marginToken } = useSpotPrice()
+  const indicators = usePairsInfo((state) => state.indicators)
+
   const [stopLossAmount, setStopLossAmount] = useState<any>()
   const [stopLossPrice, setStopLossPrice] = useState<any>('')
   const [takeProfitAmount, setTakeProfitAmount] = useState<any>()
   const [takeProfitPrice, setTakeProfitPrice] = useState<any>('')
 
   const memoChangeRate = useMemo(() => {
-    return new BN(data?.price_change_rate ?? 0).times(100).toString()
-  }, [data?.price_change_rate])
+    return Number(indicators?.price_change_rate ?? 0) * 100
+  }, [indicators])
 
   const calcProfitAmountCb = useCallback(
     (v) => {
@@ -152,7 +157,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
     }
 
     const params = {
-      token: data?.token,
+      token: findToken(quoteToken)?.tokenAddress,
       side: data?.side,
       TP,
       SL
@@ -219,13 +224,13 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{data?.name}</strong>
+                <strong>{`${quoteToken}-${marginToken}`}</strong>
                 <MultipleStatus direction={PositionSide[data?.side] as any} />
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
-              <BalanceShow value={data?.spotPrice} unit="" />
-              <span className={Number(memoChangeRate) >= 0 ? 'buy' : 'sell'}>{memoChangeRate}%</span>
+              <BalanceShow value={spotPrice} unit="" />
+              <span className={memoChangeRate >= 0 ? 'buy' : 'sell'}>{memoChangeRate}%</span>
             </section>
             <section className="web-trade-dialog-position-info-count">
               <p>

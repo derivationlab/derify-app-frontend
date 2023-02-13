@@ -1,21 +1,21 @@
-import React, { FC, useState, useMemo, useContext } from 'react'
-import { isEmpty } from 'lodash'
-import { useSigner, useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
 import BN from 'bignumber.js'
 import { batch } from 'react-redux'
+import { isEmpty } from 'lodash'
+import { useTranslation } from 'react-i18next'
+import { useSigner, useAccount } from 'wagmi'
+import React, { FC, useState, useMemo, useContext } from 'react'
 
 import Trader from '@/class/Trader'
-import { useAppDispatch } from '@/store'
+import ThemeContext from '@/context/Theme/Context'
+import { useSpotPrice } from '@/hooks/useMatchConf'
 import { useTraderData } from '@/store/trader/hooks'
-import { useContractData } from '@/store/contract/hooks'
-import { getMyPositionsDataAsync } from '@/store/contract'
-import { clearShareMessage, setShareMessage } from '@/store/share'
+import { useMatchConfig } from '@/hooks/useMatchConfig'
+import { usePosDATStore } from '@/zustand/usePosDAT'
+import { useAppDispatch } from '@/store'
 import { useShareMessage } from '@/store/share/hooks'
 import { getTraderDataAsync } from '@/store/trader'
-import { safeInterceptionValues } from '@/utils/tools'
-
-import ThemeContext from '@/context/Theme/Context'
+import { getMyPositionsDataAsync } from '@/store/contract'
+import { clearShareMessage, setShareMessage } from '@/store/share'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
@@ -28,18 +28,19 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useMatchConfig } from '@/hooks/useMatchConfig'
 
 const MyPosition: FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { pairs } = useContractData()
   const { shareMessage } = useShareMessage()
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
   const { brokerBound: broker } = useTraderData()
-  const { myPositions, myPositionsLoaded } = useContractData()
   const { protocolConfig, protocolConfigLoaded } = useMatchConfig()
+
+  const { spotPrice } = useSpotPrice()
+  const positionOrd = usePosDATStore((state) => state.positionOrd)
+  const positionOrdLoaded = usePosDATStore((state) => state.loaded)
 
   const { closeAllPositions, closeSomePosition, takeProfitOrStopLoss } = Trader
 
@@ -54,10 +55,6 @@ const MyPosition: FC = () => {
     }
     return {}
   }, [shareMessage])
-
-  const memoPairInfo = useMemo(() => {
-    return pairs.find((pair) => pair.token === targetPosOrd?.token) ?? {}
-  }, [pairs, targetPosOrd])
 
   const onCloseDialogEv = () => setDialogStatus('')
 
@@ -97,7 +94,7 @@ const MyPosition: FC = () => {
         side,
         size,
         amount,
-        memoPairInfo?.spotPrice,
+        spotPrice,
         whetherStud(targetPosOrd, amount)
       )
 
@@ -176,12 +173,12 @@ const MyPosition: FC = () => {
 
   const memoMyPositions = useMemo(() => {
     if (!account?.address) return <NoRecord show />
-    if (!myPositionsLoaded) return <Loading show type="section" />
-    if (!isEmpty(myPositions ?? [])) {
+    if (!positionOrdLoaded) return <Loading show type="section" />
+    if (!isEmpty(positionOrd)) {
       return (
         <>
           <div className="web-trade-data-list">
-            {myPositions.map((d, i) => (
+            {positionOrd.map((d, i) => (
               <ListItem
                 key={`my-positions-${i}`}
                 data={d}
@@ -198,26 +195,26 @@ const MyPosition: FC = () => {
       )
     }
     return <NoRecord show />
-  }, [account?.address, myPositionsLoaded, myPositions, theme])
+  }, [account?.address, positionOrdLoaded, positionOrd, theme])
 
   return (
     <>
       <div className="web-trade-data-wrap">{memoMyPositions}</div>
 
       <PositionClosePreviewDialog
-        data={{ ...targetPosOrd, ...memoPairInfo }}
+        data={targetPosOrd}
         visible={dialogStatus === 'preview-close-position'}
         onClose={onCloseDialogEv}
         onClick={() => setDialogStatus('confirm-close-position')}
       />
       <PositionCloseConfirmDialog
-        data={{ ...targetPosOrd, ...memoPairInfo }}
+        data={targetPosOrd}
         visible={dialogStatus === 'confirm-close-position'}
         onClose={onCloseDialogEv}
         onClick={closeOnePositionsFunc}
       />
       <TakeProfitAndStopLossDialog
-        data={{ ...targetPosOrd, ...memoPairInfo }}
+        data={targetPosOrd}
         visible={dialogStatus === 'edit-position'}
         onClose={onCloseDialogEv}
         onClick={takeProfitOrStopLossFunc}

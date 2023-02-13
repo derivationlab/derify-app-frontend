@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { useBalancesStore } from '@/zustand'
+import { useTokenBalances } from '@/zustand'
 import { isGT, isGTET } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
@@ -20,7 +20,7 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
 
-  const balances = useBalancesStore((state) => state.balances)
+  const balances = useTokenBalances((state) => state.balances)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')

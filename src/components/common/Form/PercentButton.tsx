@@ -4,7 +4,6 @@ import classNames from 'classnames'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import ReactSlider from 'react-slider'
 
-import { useContractData } from '@/store/contract/hooks'
 import { nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
@@ -19,12 +18,12 @@ const _ReactSlider = ReactSlider as any
 
 const PercentButton: FC<Props> = ({ value, onChange, currValue, decimal = 8 }) => {
   const [type, setType] = useState(false)
-  const { currentPair } = useContractData()
   const [valueIndex, setValueIndex] = useState<number>(-1)
 
   const values = useMemo(() => {
     return list.map((item) => Number(nonBigNumberInterception(String(new BN(value).times(item)), decimal)))
   }, [value])
+
   const submitChange = (index: number) => {
     onChange(values[index])
     setValueIndex(index)
@@ -35,8 +34,8 @@ const PercentButton: FC<Props> = ({ value, onChange, currValue, decimal = 8 }) =
   }
 
   useEffect(() => {
-    if (currentPair && valueIndex > -1) onChange(values[valueIndex])
-  }, [currentPair, values, valueIndex])
+    if (valueIndex > -1) onChange(values[valueIndex])
+  }, [values, valueIndex])
 
   return (
     <div className="web-percent-button">

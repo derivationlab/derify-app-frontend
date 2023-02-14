@@ -13,6 +13,7 @@ import {
   getDerifyDerivativePairContract
 } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
+import { OpeningType } from '@/zustand/useCalcMaxVolume'
 
 class Trader {
   traderWithdrawMargin = async (signer: Signer, amount: string, address: string): Promise<boolean> => {
@@ -270,11 +271,11 @@ class Trader {
     brokerId: string,
     token: string,
     side: PositionSide,
-    openType: PriceType,
+    openType: OpeningType,
     quantityType: string,
     quantity: string,
     price: string,
-    leverage: string,
+    leverage: number,
     address: string,
     isOrderConversion?: boolean // limit order --> market order
   ): Promise<boolean> => {
@@ -282,7 +283,7 @@ class Trader {
 
     const _price = toFloorNum(price)
     const _leverage = toFloorNum(leverage)
-    const _openType = isOrderConversion ? PriceType.Market : openType
+    const _openType = isOrderConversion ? OpeningType.Market : openType
     const _quantityType = quantityType === BASE_TOKEN_SYMBOL ? 1 : 0
 
     try {
@@ -339,7 +340,7 @@ class Trader {
     token: string,
     side: PositionSide,
     type: string,
-    openType: PriceType,
+    openType: OpeningType,
     size: string,
     price: string,
     address: string
@@ -351,7 +352,7 @@ class Trader {
 
     if (side === PositionSide['2-Way']) return size
 
-    if (openType !== PriceType.Market) return size
+    if (openType !== OpeningType.Market) return size
 
     if (type === BASE_TOKEN_SYMBOL) {
       if (size_BN.isGreaterThan(systemAmountLimit)) {
@@ -377,7 +378,7 @@ class Trader {
     const _price = toHexString(price)
     const _leverage = toHexString(leverage)
     const _contract = getDerifyExchangeContract1(address)
-
+    // quote token address
     const data = await _contract.getTraderOpenUpperBound(token, trader, openType, _price, _leverage)
 
     const { size, amount } = data

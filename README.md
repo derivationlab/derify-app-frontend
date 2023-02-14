@@ -9,5 +9,6 @@ sass version: ^1.52.1
 closeOnePositionsFunc
 calcClosePositionTradingFeeCb
 calcClosePositionChangeFeeCb
+minimumOpenPositionLimit
 
 

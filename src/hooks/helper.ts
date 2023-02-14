@@ -1,14 +1,13 @@
 import { flatten, isEmpty } from 'lodash'
+import { BigNumberish } from '@ethersproject/bignumber'
 
 import multicall from '@/utils/multicall'
+import { safeInterceptionValues } from '@/utils/tools'
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
-import { BigNumberish } from '@ethersproject/bignumber'
-import { safeInterceptionValues } from '@/utils/tools'
-import { getDerifyExchangeContract1 } from '@/utils/contractHelpers'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -99,38 +98,65 @@ export const getOpeningMinLimit = async (p: MarginTokenWithContract): Promise<Ma
 }
 
 export const initialTraderVariables = {
+  balance: '0',
   marginRate: '0',
+  totalMargin: '0',
   marginBalance: '0',
+  availableMargin: '0',
   totalPositionAmount: '0'
 }
 
 export type InitialTraderVariablesType = typeof initialTraderVariables
 
 export const getTraderVariables = async (trader: string, exchange: string): Promise<InitialTraderVariablesType> => {
-  const c = getDerifyExchangeContract1(exchange)
+  const calls = [
+    {
+      name: 'getTraderAccount',
+      address: exchange,
+      params: [trader]
+    },
+    {
+      name: 'getTraderVariables',
+      address: exchange,
+      params: [trader]
+    }
+  ]
 
   try {
-    const { marginRate, marginBalance, totalPositionAmount } = await c.getTraderVariables(trader)
-    // console.info('getTraderVariables:')
-    // console.info(String(marginRate))
-    // console.info(String(marginBalance))
-    // console.info(String(totalPositionAmount))
-    return {
-      marginRate: safeInterceptionValues(marginRate, 4),
-      marginBalance: safeInterceptionValues(marginBalance),
-      totalPositionAmount: safeInterceptionValues(totalPositionAmount)
+    const response = await multicall(DerifyExchangeAbi, calls)
+
+    if (!isEmpty(response)) {
+      const { balance, totalMargin, availableMargin } = response[0]
+      const { marginRate, marginBalance, totalPositionAmount } = response[1]
+
+      // console.info('getTraderVariables:')
+      // console.info({
+      //         balance: safeInterceptionValues(balance),
+      //         marginRate: safeInterceptionValues(marginRate, 4),
+      //         totalMargin: safeInterceptionValues(totalMargin),
+      //         marginBalance: safeInterceptionValues(marginBalance),
+      //         availableMargin: safeInterceptionValues(availableMargin, 8),
+      //         totalPositionAmount: safeInterceptionValues(totalPositionAmount),
+      //       })
+
+      return {
+        balance: safeInterceptionValues(balance),
+        marginRate: safeInterceptionValues(marginRate, 4),
+        totalMargin: safeInterceptionValues(totalMargin),
+        marginBalance: safeInterceptionValues(marginBalance),
+        availableMargin: safeInterceptionValues(availableMargin, 8),
+        totalPositionAmount: safeInterceptionValues(totalPositionAmount),
+      }
     }
+
+    return initialTraderVariables
   } catch (e) {
     // console.info(e)
     return initialTraderVariables
   }
 }
 
-const positionSideKeys = [
-  'long',
-  'short',
-  'twoWay'
-]
+const positionSideKeys = ['long', 'short', 'twoWay']
 
 export const initialOpeningMaxLimit = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -167,14 +193,16 @@ export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<Ma
         address: exchange,
         marginToken: m
       }
-      return flatten(QUOTE_TOKENS.map((q, qIndex) => {
-        const quoteToken = q.symbol
-        return [
-          { ...base, params: [q.tokenAddress, 0], quoteToken },
-          { ...base, params: [q.tokenAddress, 1], quoteToken },
-          { ...base, params: [q.tokenAddress, 2], quoteToken }
-        ]
-      }))
+      return flatten(
+        QUOTE_TOKENS.map((q, qIndex) => {
+          const quoteToken = q.symbol
+          return [
+            { ...base, params: [q.tokenAddress, 0], quoteToken },
+            { ...base, params: [q.tokenAddress, 1], quoteToken },
+            { ...base, params: [q.tokenAddress, 2], quoteToken }
+          ]
+        })
+      )
     })
   )
   // console.info(calls)

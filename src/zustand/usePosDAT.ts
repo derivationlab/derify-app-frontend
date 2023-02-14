@@ -18,7 +18,7 @@ const getMyPositionsData = async (
   trader: string,
   pairAddress: string,
   exchange: string,
-  spotPrice: string,
+  spotPrice: string
 ): Promise<Rec[][]> => {
   const positionOrd: Rec[] = []
   const profitLossOrd: Rec[] = []
@@ -211,17 +211,12 @@ const usePosDATStore = create<PosDATState>((set) => ({
   positionOrd: [],
   profitLossOrd: [],
   loaded: false,
-  fetch: async (
-    trader: string,
-    pairAddress: string,
-    exchange: string,
-    spotPrice: string,
-  ) => {
+  fetch: async (trader: string, pairAddress: string, exchange: string, spotPrice: string) => {
     const [positionOrd, profitLossOrd] = await getMyPositionsData(trader, pairAddress, exchange, spotPrice)
-    console.info('usePosDATStore-positionOrd:')
-    console.info(positionOrd)
-    console.info('usePosDATStore-profitLossOrd:')
-    console.info(profitLossOrd)
+    // console.info('usePosDATStore-positionOrd:')
+    // console.info(positionOrd)
+    // console.info('usePosDATStore-profitLossOrd:')
+    // console.info(profitLossOrd)
     set({ positionOrd, profitLossOrd, loaded: true })
   }
 }))

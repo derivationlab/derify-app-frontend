@@ -18,26 +18,26 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
   openingMaxLimitLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
-      console.info('updateFactoryConfig:')
-      console.info(data)
+      // console.info('updateFactoryConfig:')
+      // console.info(data)
       return { factoryConfig: data, factoryConfigLoaded: true }
     }),
   updateProtocolConfig: (data: MarginTokenWithContract) =>
     set(() => {
-      console.info('updateProtocolConfig:')
-      console.info(data)
+      // console.info('updateProtocolConfig:')
+      // console.info(data)
       return { protocolConfig: data, protocolConfigLoaded: true }
     }),
   updateOpeningMinLimit: (data: MarginToken) =>
     set(() => {
-      console.info('updateOpeningMinLimit:')
-      console.info(data)
+      // console.info('updateOpeningMinLimit:')
+      // console.info(data)
       return { openingMinLimit: data, openingMinLimitLoaded: true }
     }),
   updateOpeningMaxLimit: (data: MarginTokenWithQuote) =>
     set(() => {
-      console.info('updateOpeningMaxLimit-size:')
-      console.info(data)
+      // console.info('updateOpeningMaxLimit-size:')
+      // console.info(data)
       return { openingMaxLimit: data, openingMaxLimitLoaded: true }
     })
 }))
@@ -48,8 +48,8 @@ const useQuoteToken = create(
       quoteToken: QUOTE_TOKENS[0].symbol as QuoteTokenKeys,
       updateQuoteToken: (data: QuoteTokenKeys) =>
         set(() => {
-          console.info('updateQuoteToken:')
-          console.info(data)
+          // console.info('updateQuoteToken:')
+          // console.info(data)
           return { quoteToken: data }
         })
     }),
@@ -65,8 +65,8 @@ const useMarginToken = create(
       marginToken: MARGIN_TOKENS[0].symbol as MarginTokenKeys,
       updateMarginToken: (data: MarginTokenKeys) =>
         set(() => {
-          console.info('updateMarginToken:')
-          console.info(data)
+          // console.info('updateMarginToken:')
+          // console.info(data)
           return { marginToken: data }
         })
     }),

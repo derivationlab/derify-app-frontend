@@ -1,21 +1,19 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
+import PubSub from 'pubsub-js'
 import { isEmpty } from 'lodash'
-// import { useTranslation } from 'react-i18next'
+import { useAccount } from 'wagmi'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
+import { PubSubEvents } from '@/typings'
 import { getTraderTradeFlow } from '@/api'
 
-import Pagination from '@/components/common/Pagination'
 import Loading from '@/components/common/Loading'
+import Pagination from '@/components/common/Pagination'
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useShareMessage } from '@/store/share/hooks'
 
 const TradeHistory: FC = () => {
-  // const { t } = useTranslation()
   const { data: account } = useAccount()
-  const { shareMessage } = useShareMessage()
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [tradeFlow, setTradeFlow] = useState<Record<string, any>>({})
@@ -52,11 +50,15 @@ const TradeHistory: FC = () => {
 
   useEffect(() => {
     void getTraderTradeFlowFunc()
-  }, [])
 
-  useEffect(() => {
-    if (shareMessage && shareMessage?.type.includes('UPDATE_TRADE_HISTORY')) void getTraderTradeFlowFunc()
-  }, [shareMessage])
+    PubSub.subscribe(PubSubEvents.UPDATE_TRADE_HISTORY, () => {
+      void getTraderTradeFlowFunc()
+    })
+
+    return () => {
+      PubSub.clearAllSubscriptions()
+    }
+  }, [])
 
   return (
     <div className="web-trade-data-wrap">

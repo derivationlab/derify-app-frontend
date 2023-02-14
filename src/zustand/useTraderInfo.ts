@@ -8,8 +8,8 @@ const useTraderInfo = create<TraderInfoState>((set) => ({
   variablesLoaded: false,
   updateVariables: (data: InitialTraderVariablesType) =>
     set(() => {
-      console.info(`updateVariables:`)
-      console.info(data)
+      // console.info(`updateVariables:`)
+      // console.info(data)
       return { variables: data, variablesLoaded: true }
     })
 }))

@@ -20,6 +20,8 @@ import Image from '@/components/common/Image'
 import Loading from '@/components/common/Loading'
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
+import { useCancelAllPositions } from '@/hooks/useTrading'
+import { useMatchConf, useProtocolConf } from '@/hooks/useMatchConf'
 
 const MyOrder: FC = () => {
   const dispatch = useAppDispatch()
@@ -28,9 +30,12 @@ const MyOrder: FC = () => {
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
   const { myOrders, myOrdersLoaded } = useContractData()
-  const { protocolConfig, protocolConfigLoaded } = useMatchConfig()
+  const { protocolConfigLoaded } = useMatchConfig()
 
-  const { cancelAllPosOrders, cancelSomePosition } = Trader
+  const { protocolConfig } = useProtocolConf()
+
+  const { cancelSomePosition } = Trader
+  const { cancel: cancelAllPositions } = useCancelAllPositions()
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
@@ -42,7 +47,7 @@ const MyOrder: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && protocolConfigLoaded) {
+    if (signer && protocolConfig) {
       const account = await signer.getAddress()
       const status = await cancelSomePosition(
         signer,
@@ -74,21 +79,18 @@ const MyOrder: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && protocolConfigLoaded) {
-      const account = await signer.getAddress()
-      const status = await cancelAllPosOrders(signer)
-      if (status) {
-        // succeed
+    if (signer && protocolConfig) {
+      const status = await cancelAllPositions(protocolConfig.exchange)
+
+      if (status && account?.address) {
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
-          dispatch(getMyPositionsDataAsync(account))
+          dispatch(getTraderDataAsync({ trader: account.address, contract: protocolConfig.exchange }))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
         })
       } else {
         window.toast.error(t('common.failed', 'failed'))
-        // failed
       }
     }
 

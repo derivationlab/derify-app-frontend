@@ -30,11 +30,11 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const variables = useTraderInfo((state) => state.variables)
 
   const memoMargin = useMemo(() => {
-    return data?.size * spotPrice / data.leverage
+    return (data?.size * spotPrice) / data.leverage
   }, [data, spotPrice])
 
   const memoUnrealizedPnl = useMemo(() => {
-    if (Number(spotPrice) > 0) return ((spotPrice - data.price) * data.size * (data.side === PositionSide.Long ? 1 : -1))
+    if (Number(spotPrice) > 0) return (spotPrice - data.price) * data.size * (data.side === PositionSide.Long ? 1 : -1)
     return 0
   }, [spotPrice, data])
 
@@ -87,39 +87,35 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     ),
     [data?.averagePrice, t]
   )
-  const atom4Tsx = useMemo(
-    () => {
-      const mul = data.side === PositionSide.Short ? -1 : 1
-      const sub = spotPrice - ((Number(variables?.marginBalance ?? 0) - Number(variables?.totalPositionAmount ?? 0) * 0.03) / data.size * mul)
-      const liquidityPrice = isLTET(sub, 0) ? '--' : safeInterceptionValues(String(sub))
+  const atom4Tsx = useMemo(() => {
+    const mul = data.side === PositionSide.Short ? -1 : 1
+    const sub =
+      spotPrice -
+      ((Number(variables?.marginBalance ?? 0) - Number(variables?.totalPositionAmount ?? 0) * 0.03) / data.size) * mul
+    const liquidityPrice = isLTET(sub, 0) ? '--' : safeInterceptionValues(String(sub))
 
-      return (
-        <DataAtom
-          label={t('Trade.MyPosition.LiqPrice', 'Liq. Price')}
-          tip={t('Trade.MyPosition.LiqPriceTip')}
-          footer={BASE_TOKEN_SYMBOL}
-        >
-          <span>{liquidityPrice}</span>
-        </DataAtom>
-      )
-    },
-    [data, spotPrice, variables, t]
-  )
+    return (
+      <DataAtom
+        label={t('Trade.MyPosition.LiqPrice', 'Liq. Price')}
+        tip={t('Trade.MyPosition.LiqPriceTip')}
+        footer={BASE_TOKEN_SYMBOL}
+      >
+        <span>{liquidityPrice}</span>
+      </DataAtom>
+    )
+  }, [data, spotPrice, variables, t])
 
-  const atom5Tsx = useMemo(
-    () => {
-      return (
-        <DataAtom
-          label={t('Trade.MyPosition.Margin', 'Margin')}
-          tip={t('Trade.MyPosition.MarginTip')}
-          footer={BASE_TOKEN_SYMBOL}
-        >
-          <span>{memoMargin}</span>
-        </DataAtom>
-      )
-    },
-    [memoMargin, t]
-  )
+  const atom5Tsx = useMemo(() => {
+    return (
+      <DataAtom
+        label={t('Trade.MyPosition.Margin', 'Margin')}
+        tip={t('Trade.MyPosition.MarginTip')}
+        footer={BASE_TOKEN_SYMBOL}
+      >
+        <span>{memoMargin}</span>
+      </DataAtom>
+    )
+  }, [memoMargin, t])
 
   const atom6Tsx = useMemo(() => {
     let alertLevel = 0
@@ -170,7 +166,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
 
   return (
     <>
-      <div className='web-trade-data-item'>
+      <div className="web-trade-data-item">
         <ItemHeader
           symbol={data?.name}
           multiple={data?.leverage}

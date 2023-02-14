@@ -17,26 +17,16 @@ export const useMatchConf = () => {
 
   const _factoryConfig = useMemo(() => {
     if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken][quoteToken]
-  }, [
-    quoteToken,
-    marginToken,
-    factoryConfig,
-    factoryConfigLoaded,
-  ])
+  }, [quoteToken, marginToken, factoryConfig, factoryConfigLoaded])
 
   const _protocolConfig = useMemo(() => {
     if (protocolConfigLoaded && protocolConfig) return protocolConfig[marginToken]
-  }, [
-    quoteToken,
-    marginToken,
-    protocolConfig,
-    protocolConfigLoaded,
-  ])
+  }, [quoteToken, marginToken, protocolConfig, protocolConfigLoaded])
 
   return {
     spotPrice,
     factoryConfig: _factoryConfig,
-    protocolConfig: _protocolConfig,
+    protocolConfig: _protocolConfig
   }
 }
 
@@ -64,15 +54,10 @@ export const useFactoryConf = () => {
 
   const _factoryConfig = useMemo(() => {
     if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken][quoteToken]
-  }, [
-    quoteToken,
-    marginToken,
-    factoryConfig,
-    factoryConfigLoaded,
-  ])
+  }, [quoteToken, marginToken, factoryConfig, factoryConfigLoaded])
 
   return {
-    factoryConfig: _factoryConfig,
+    factoryConfig: _factoryConfig
   }
 }
 
@@ -84,14 +69,9 @@ export const useProtocolConf = () => {
 
   const _protocolConfig = useMemo(() => {
     if (protocolConfigLoaded && protocolConfig) return protocolConfig[marginToken]
-  }, [
-    quoteToken,
-    marginToken,
-    protocolConfig,
-    protocolConfigLoaded,
-  ])
+  }, [quoteToken, marginToken, protocolConfig, protocolConfigLoaded])
 
   return {
-    protocolConfig: _protocolConfig,
+    protocolConfig: _protocolConfig
   }
 }

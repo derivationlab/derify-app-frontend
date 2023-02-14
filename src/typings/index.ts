@@ -26,6 +26,5 @@ export enum PriceType {
 }
 
 export enum PubSubEvents {
-  kline = 'kline',
-  ticker = '24hrTicker'
+  UPDATE_TRADE_HISTORY = 'UPDATE_TRADE_HISTORY',
 }

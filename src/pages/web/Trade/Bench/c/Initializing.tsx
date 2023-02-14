@@ -12,13 +12,13 @@ const Initializing: FC<NotConnect> = ({ br = 48 }) => {
   const { data: account } = useAccount()
 
   return useMemo(() => {
-    if (account?.address && !pairsLoaded) {
-      return (
-        <section className="web-not-initializing" style={{ borderRadius: `${br}px` }}>
-          Initializing...
-        </section>
-      )
-    }
+    // if (account?.address && !pairsLoaded) {
+    //   return (
+    //     <section className="web-not-initializing" style={{ borderRadius: `${br}px` }}>
+    //       Initializing...
+    //     </section>
+    //   )
+    // }
     return null
   }, [pairsLoaded, account?.address])
 }

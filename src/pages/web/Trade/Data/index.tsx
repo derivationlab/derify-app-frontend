@@ -18,22 +18,12 @@ const Data: FC = () => {
 
   const fetchTraderPos = usePosDATStore((state) => state.fetch)
 
-  const { spotPrice, factoryConfig, protocolConfig }  = useMatchConf()
+  const { spotPrice, factoryConfig, protocolConfig } = useMatchConf()
 
   useEffect(() => {
     if (data?.address && factoryConfig && protocolConfig)
-      void fetchTraderPos(
-        data?.address,
-        factoryConfig,
-        protocolConfig.exchange,
-        spotPrice
-      )
-  }, [
-    factoryConfig,
-    protocolConfig,
-    data?.address,
-    spotPrice
-  ])
+      void fetchTraderPos(data?.address, factoryConfig, protocolConfig.exchange, spotPrice)
+  }, [factoryConfig, protocolConfig, data?.address, spotPrice])
 
   return (
     <Tabs className="web-trade-data">

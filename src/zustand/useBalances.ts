@@ -53,8 +53,8 @@ const useTokenBalances = create<BalancesState>((set) => ({
   loaded: false,
   fetch: async (account: string) => {
     const data = await getTokenBalances(account)
-    console.info(`getTokenBalances:`)
-    console.info(data)
+    // console.info(`getTokenBalances:`)
+    // console.info(data)
     set({ balances: data, loaded: true })
   },
   reset: () => set(() => ({ balances: initial() }))

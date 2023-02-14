@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react'
+import { useAccount } from 'wagmi'
 
-import { usePairsInfo, useQuoteToken } from '@/zustand'
+import { isGT } from '@/utils/tools'
+import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
-import { useConfigInfo, useMarginToken } from '@/zustand/useConfigInfo'
 import { usePCFAndSpotPrice } from '@/hooks/usePCFAndSpotPrice'
 import { MarginTokenWithContract } from '@/typings'
-import { getFactoryConfig, getOpeningMaxLimit, getTraderVariables } from '@/hooks/helper'
-import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useAccount } from 'wagmi'
-import { isGT } from '@/utils/tools'
+import { usePairsInfo, useQuoteToken } from '@/zustand'
+import { useConfigInfo, useMarginToken } from '@/zustand/useConfigInfo'
+import { getOpeningMaxLimit, getTraderVariables } from '@/hooks/helper'
+
 
 export default function Updater(): null {
   const { data } = useAccount()

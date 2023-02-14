@@ -21,7 +21,7 @@ const addresses: Record<string, Address> = {
   },
   DerifyProtocol: {
     56: '0x2e70e1C2B3660B91E07DEa476F36945aDFe1e4A1',
-    97: '0x2e70e1C2B3660B91E07DEa476F36945aDFe1e4A1'
+    97: '0x818Fd3b98ee7CD859a4DF6fd4daA52Dac7997AE8'
   }
 }
 

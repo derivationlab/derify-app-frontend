@@ -27,6 +27,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { mobile } = useContext(MobileContext)
 
   const { spotPrice } = useSpotPrice()
+
   const variables = useTraderInfo((state) => state.variables)
 
   const memoMargin = useMemo(() => {

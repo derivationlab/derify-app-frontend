@@ -34,10 +34,12 @@ export const useSpotPrice = () => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
   const spotPrices = usePairsInfo((state) => state.spotPrices)
+  const spotPricesLoaded = usePairsInfo((state) => state.spotPricesLoaded)
 
   const spotPrice = useMemo(() => {
-    return spotPrices[marginToken][quoteToken]
-  }, [spotPrices, marginToken, quoteToken])
+    if (spotPricesLoaded) return spotPrices[marginToken][quoteToken]
+    return 0
+  }, [spotPrices, marginToken, quoteToken, spotPricesLoaded])
 
   return {
     spotPrice,
@@ -57,7 +59,9 @@ export const useFactoryConf = () => {
   }, [quoteToken, marginToken, factoryConfig, factoryConfigLoaded])
 
   return {
-    factoryConfig: _factoryConfig
+    factoryConfig: _factoryConfig,
+    quoteToken,
+    marginToken
   }
 }
 
@@ -72,6 +76,25 @@ export const useProtocolConf = () => {
   }, [quoteToken, marginToken, protocolConfig, protocolConfigLoaded])
 
   return {
-    protocolConfig: _protocolConfig
+    protocolConfig: _protocolConfig,
+    quoteToken,
+    marginToken
+  }
+}
+
+export const usePCFRatioConf = () => {
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
+  const pcfRatios = usePairsInfo((state) => state.pcfRatios)
+  const pcfRatiosLoaded = usePairsInfo((state) => state.pcfRatiosLoaded)
+
+  const pcfRatio = useMemo(() => {
+    if (pcfRatiosLoaded) return pcfRatios[marginToken][quoteToken]
+  }, [quoteToken, marginToken, pcfRatios, pcfRatiosLoaded])
+
+  return {
+    pcfRatio,
+    quoteToken,
+    marginToken
   }
 }

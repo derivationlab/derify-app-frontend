@@ -53,15 +53,14 @@ const useCalcMaxVolume = create<VolumeState>((set, get) => ({
       // console.info(data)
       return { openingPrice: data }
     }),
-  fetch: async (quoteTokenAddress: string, trader: string, price: string, exchange: string, marginToken: MarginTokenKeys) => {
-    console.info(
-      quoteTokenAddress,
-      trader,
-      get().openingType,
-      get().leverageNow,
-      price,
-      exchange
-    )
+  fetch: async (
+    quoteTokenAddress: string,
+    trader: string,
+    price: string,
+    exchange: string,
+    marginToken: MarginTokenKeys
+  ) => {
+    console.info(quoteTokenAddress, trader, get().openingType, get().leverageNow, price, exchange)
     const [size, swap] = await getMaxVolume(
       quoteTokenAddress,
       trader,

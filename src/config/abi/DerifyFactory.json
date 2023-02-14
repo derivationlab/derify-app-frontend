@@ -89,11 +89,6 @@
             "type": "address"
           },
           {
-            "internalType": "address",
-            "name": "marginTokenPool",
-            "type": "address"
-          },
-          {
             "internalType": "uint256",
             "name": "tradingFeeRatio",
             "type": "uint256"

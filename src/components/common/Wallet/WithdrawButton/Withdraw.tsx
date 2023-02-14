@@ -1,18 +1,17 @@
-import BN from 'bignumber.js'
-import { isEmpty } from 'lodash'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
-import { useTraderData } from '@/store/trader/hooks'
-import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useMarginToken } from '@/zustand'
+import { reducer, stateInit } from '@/reducers/withdraw'
+import { getTraderWithdrawAmount } from '@/api'
+import { isET, isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '../AmountInput'
-import { getTraderWithdrawAmount } from '@/api'
-import { useAccount } from 'wagmi'
-import { useContractConfig } from '@/store/config/hooks'
 
 interface Props {
   visible: boolean
@@ -23,54 +22,49 @@ interface Props {
 const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data } = useAccount()
-  const { trader } = useTraderData()
-  const { marginToken } = useContractConfig()
 
-  const [isDisabled, setIsDisabled] = useState<boolean>(false)
-  const [withdrawInfo, setWithdrawInfo] = useState<Record<string, any>>({})
-  const [withdrawAmount, setWithdrawAmount] = useState<string>('0')
+  const [state, dispatch] = useReducer(reducer, stateInit)
+
+  const marginToken = useMarginToken((state) => state.marginToken)
+  const variables = useTraderInfo((state) => state.variables)
+  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
   const memoMargin = useMemo(() => {
-    if (!isEmpty(trader)) {
-      const { marginBalance, availableMargin } = trader
-      const _marginBalance = new BN(marginBalance)
-      const minus = _marginBalance.minus(availableMargin)
-      const n1 = minus.toString()
-      const n2 = n1.includes('.') ? safeInterceptionValues(n1) : n1
-      const n3 = _marginBalance.isEqualTo(0) ? 0 : minus.div(marginBalance).times(100).toFixed(2)
-      return [n2, n3]
+    if (variablesLoaded) {
+      const { marginBalance, availableMargin } = variables
+      const p1 = Number(marginBalance)- Number(availableMargin)
+      const p2 = isET(marginBalance, 0) ? 0 : p1 / Number(marginBalance) * 100
+      return [nonBigNumberInterception(p1), p2]
     }
     return [0, 0]
-  }, [trader.marginBalance, trader.availableMargin])
+  }, [variablesLoaded])
 
   const memoDisabled = useMemo(() => {
-    if (!isEmpty(trader)) {
-      const { availableMargin } = trader
-      return new BN(availableMargin).isGreaterThan(0)
+    if (variablesLoaded) {
+      const { availableMargin } = variables
+      return isGT(availableMargin, 0)
     }
     return true
-  }, [trader.availableMargin])
+  }, [variablesLoaded])
 
-  const onChangeEv = (v: string) => {
-    const _v = new BN(v)
-    const _availableMargin = new BN(trader.availableMargin)
-    if (_availableMargin.isGreaterThanOrEqualTo(v) && _v.isGreaterThan(0)) {
-      setIsDisabled(false)
-      setWithdrawAmount(v)
+  const onChange = (v: string) => {
+    if (isGTET(variables.availableMargin, v) && isGT(v, 0)) {
+      dispatch({ type: 'SET_DISABLED', payload: false })
+      dispatch({ type: 'SET_WITHDRAW_AMOUNT', payload: v })
     } else {
-      setIsDisabled(true)
-      setWithdrawAmount('0')
+      dispatch({ type: 'SET_DISABLED', payload: true })
+      dispatch({ type: 'SET_WITHDRAW_AMOUNT', payload: '0' })
     }
   }
 
-  const getTraderWithdrawAmountFunc = async (account: string, amount: string) => {
+  const funcAsync = async (account: string, amount: string) => {
     const { data } = await getTraderWithdrawAmount(account, amount)
-    setWithdrawInfo(data)
+    dispatch({ type: 'SET_WITHDRAW_DAT', payload: data })
   }
 
   useEffect(() => {
-    if (data?.address && Number(withdrawAmount) > 0) void getTraderWithdrawAmountFunc(data.address, withdrawAmount)
-  }, [data?.address, withdrawAmount])
+    if (data?.address && Number(state.withdrawAmount) > 0) void funcAsync(data.address, state.withdrawAmount)
+  }, [data?.address, state.withdrawAmount])
 
   return (
     <Dialog
@@ -85,7 +79,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Trade.Withdraw.Withdrawable', 'Withdrawable')}</dt>
               <dd>
-                <BalanceShow value={trader.availableMargin} unit={marginToken} />
+                <BalanceShow value={variables.availableMargin} unit={marginToken} />
               </dd>
             </dl>
             <address>
@@ -95,25 +89,25 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           </div>
           <div className="amount">
             <AmountInput
-              max={trader.availableMargin}
+              max={variables.availableMargin}
               unit={marginToken}
               title={t('Trade.Withdraw.AmountToWithdraw', 'Amount to withdraw')}
-              onChange={onChangeEv}
+              onChange={onChange}
             />
-            {withdrawInfo?.bdrfAmount > 0 && (
+            {state.withdrawData?.bdrfAmount > 0 && (
               <p
                 className="tips"
                 dangerouslySetInnerHTML={{
                   __html: t('Trade.Withdraw.WithdrawTip', '', {
-                    BUSD: nonBigNumberInterception(withdrawInfo?.usdAmount, 8),
-                    bBUSD: nonBigNumberInterception(withdrawInfo?.bdrfAmount, 8)
+                    BUSD: nonBigNumberInterception(state.withdrawData?.usdAmount, 8),
+                    bBUSD: nonBigNumberInterception(state.withdrawData?.bdrfAmount, 8)
                   })
                 }}
               />
             )}
           </div>
         </div>
-        <Button onClick={() => onClick(withdrawAmount)} disabled={!memoDisabled || isDisabled}>
+        <Button onClick={() => onClick(state.withdrawAmount)} disabled={!memoDisabled || state.disabled}>
           {t('Trade.Withdraw.Confirm', 'Confirm')}
         </Button>
       </div>

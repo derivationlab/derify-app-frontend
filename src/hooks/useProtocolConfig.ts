@@ -10,7 +10,8 @@ import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 const contractInfo = {
   factory: '',
   rewards: '',
-  exchange: ''
+  exchange: '',
+  priceFeed: '',
 }
 
 export const initial = (): MarginTokenWithContract => {
@@ -38,10 +39,10 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
   const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 30000)
 
   if (!isLoading && !isEmpty(data)) {
-    data.forEach(([, , , exchange, factory, rewards]: any[], index: number) => {
+    data.forEach(([priceFeed, , , , exchange, factory, rewards]: any[], index: number) => {
       output = {
         ...output,
-        [MARGIN_TOKENS[index].symbol]: { exchange, rewards, factory }
+        [MARGIN_TOKENS[index].symbol]: { priceFeed, exchange, rewards, factory }
       }
     })
     // console.info(output)

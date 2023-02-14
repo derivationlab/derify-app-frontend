@@ -145,7 +145,7 @@ export const getTraderVariables = async (trader: string, exchange: string): Prom
         totalMargin: safeInterceptionValues(totalMargin),
         marginBalance: safeInterceptionValues(marginBalance),
         availableMargin: safeInterceptionValues(availableMargin, 8),
-        totalPositionAmount: safeInterceptionValues(totalPositionAmount),
+        totalPositionAmount: safeInterceptionValues(totalPositionAmount)
       }
     }
 

@@ -19,7 +19,7 @@ interface Props {
   onTypeChange: (value: string | number) => void
 }
 
-const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange}) => {
+const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
 
@@ -45,36 +45,42 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange}) => {
   useEffect(() => {
     if (account?.address && protocolConfig) {
       const price = openingType === OpeningType.Market ? spotPrice : openingPrice
-      void fetchMaxVolume(findToken(quoteToken)?.tokenAddress, account.address, price, protocolConfig.exchange, marginToken)
+      void fetchMaxVolume(
+        findToken(quoteToken)?.tokenAddress,
+        account.address,
+        price,
+        protocolConfig.exchange,
+        marginToken
+      )
     }
   }, [spotPrice, quoteToken, openingType, leverageNow, openingPrice, protocolConfig, account?.address, marginToken])
 
   return (
     <>
-      <Row mb='16'>
+      <Row mb="16">
         <Col label={t('Trade.Bench.Volume', 'Volume')}>
           <Input
-            className='web-trade-bench-pane-volume-input'
+            className="web-trade-bench-pane-volume-input"
             value={value}
             onChange={(val) => onChange(Number(val))}
-            type='number'
+            type="number"
           />
         </Col>
         <Col>
-          <div className='web-trade-bench-pane-volume-max'>
+          <div className="web-trade-bench-pane-volume-max">
             <span>Max: </span>
             <em>{maxVolume?.[type] ?? 0} </em>
             <u>{type}</u>
           </div>
           <Select
-            className='web-trade-bench-pane-volume-type'
+            className="web-trade-bench-pane-volume-type"
             value={type}
             onChange={onSelectChange}
             options={[marginToken, quoteToken]}
           />
         </Col>
       </Row>
-      <Row mb='36'>
+      <Row mb="36">
         <PercentButton currValue={value} value={maxVolume?.[type] ?? 0} onChange={(val) => onChange(val)} />
       </Row>
     </>

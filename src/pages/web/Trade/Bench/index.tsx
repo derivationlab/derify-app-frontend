@@ -1,6 +1,4 @@
-import BN from 'bignumber.js'
 import PubSub from 'pubsub-js'
-import { isEmpty } from 'lodash'
 import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
@@ -10,7 +8,6 @@ import { PubSubEvents } from '@/typings'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { PositionSide } from '@/store/contract/helper'
 import { useTraderData } from '@/store/trader/hooks'
-import { useMatchConfig } from '@/hooks/useMatchConfig'
 import { useContractData } from '@/store/contract/hooks'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
@@ -68,7 +65,7 @@ const Bench: FC = () => {
     const p1 = Number(indicators?.shortPmrRate)
     const p2 = Number(indicators?.longPmrRate)
     if (p1 >= 0 && p2 >= 0) {
-      const apy = (p1 + p2) / 2 * 100
+      const apy = ((p1 + p2) / 2) * 100
       return isLTET(apy, 0) ? 0 : apy
     }
     return '--'
@@ -188,22 +185,15 @@ const Bench: FC = () => {
 
   return (
     <>
-      <div className='web-trade-bench'>
+      <div className="web-trade-bench">
         <Info />
-        <div className='web-trade-bench-pane'>
+        <div className="web-trade-bench-pane">
           <Row>
             <Col label={t('Trade.Bench.PriceType', 'Price Type')}>
-              <OpenTypeSelect
-                value={openingType}
-                onChange={updateOpeningType}
-              />
+              <OpenTypeSelect value={openingType} onChange={updateOpeningType} />
             </Col>
             <Col label={t('Trade.Bench.Leverage', 'Leverage')}>
-              <LeverageSelect
-                className='web-trade-bench-leverage'
-                value={leverageNow}
-                onChange={updateLeverageNow}
-              />
+              <LeverageSelect className="web-trade-bench-leverage" value={leverageNow} onChange={updateLeverageNow} />
             </Col>
           </Row>
           <Row>
@@ -225,9 +215,9 @@ const Bench: FC = () => {
             <Col>
               <Button
                 noDisabledStyle
-                className='web-trade-bench-button-short'
+                className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog('Long')}
-                type='buy'
+                type="buy"
               >
                 <strong>{t('Trade.Bench.Long', 'Long')}</strong>
                 <em>
@@ -239,9 +229,9 @@ const Bench: FC = () => {
               <Button
                 disabled={memoDisabledCondition1 || memoDisabledCondition2}
                 noDisabledStyle
-                className='web-trade-bench-button-short'
+                className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog('Short')}
-                type='sell'
+                type="sell"
               >
                 <strong>{t('Trade.Bench.Short', 'Short')}</strong>
                 <em>
@@ -256,11 +246,11 @@ const Bench: FC = () => {
                 <Button
                   disabled={memoDisabledCondition1 || memoDisabledCondition2}
                   noDisabledStyle
-                  className='web-trade-bench-button-full'
+                  className="web-trade-bench-button-full"
                   onClick={() => openPositionDialog('2-Way')}
                   outline
                   full
-                  type='blue'
+                  type="blue"
                 >
                   <strong>{t('Trade.Bench.TowWay', '2-Way')}</strong>
                   <em>

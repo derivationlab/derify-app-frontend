@@ -30,7 +30,7 @@ export const initial = (): MarginTokenWithQuote => {
 
 export const usePCFAndSpotPrice = (
   p: MarginTokenWithQuote
-): { data1?: MarginTokenWithQuote; data2?: MarginTokenWithQuote; isLoading: boolean } => {
+): { data1?: MarginTokenWithQuote, data2?: MarginTokenWithQuote, isLoading: boolean } => {
   let calls1: any[] = []
   let calls2: any[] = []
   let output1 = initial()

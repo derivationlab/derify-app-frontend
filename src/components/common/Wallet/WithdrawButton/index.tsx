@@ -1,13 +1,8 @@
 import React, { FC, useState, useCallback } from 'react'
-import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import Trader from '@/class/Trader'
-import { useAppDispatch } from '@/store'
-import { setShareMessage } from '@/store/share'
-import { getTraderDataAsync } from '@/store/trader'
-import { useMatchConfig } from '@/hooks/useMatchConfig'
-import { getMyPositionsDataAsync } from '@/store/contract'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useWithdrawMargin } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import WithdrawDialog from '@/components/common/Wallet/WithdrawButton/Withdraw'
@@ -17,12 +12,10 @@ interface Props {
 }
 
 const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { data: signer } = useSigner()
-  const { protocolConfig, protocolConfigLoaded } = useMatchConfig()
 
-  const { traderWithdrawMargin } = Trader
+  const { withdraw } = useWithdrawMargin()
+  const { protocolConfig } = useProtocolConf()
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -33,15 +26,10 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (signer && protocolConfigLoaded) {
-        const status = await traderWithdrawMargin(signer, amount, protocolConfig.exchange)
-        const account = await signer.getAddress()
+      if (protocolConfig) {
+        const status = await withdraw(protocolConfig.exchange, amount)
         if (status) {
           // succeed
-          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
-          dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
-
           window.toast.success(t('common.success', 'success'))
         } else {
           // fail
@@ -51,7 +39,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
 
       window.toast.dismiss(toast)
     },
-    [signer, protocolConfigLoaded]
+    [protocolConfig]
   )
   return (
     <>

@@ -51,7 +51,13 @@ export interface VolumeState {
   updateOpeningType: (p: OpeningType) => void
   updateLeverageNow: (p: number) => void
   updateOpeningPrice: (p: number) => void
-  fetch: (quoteTokenAddress: string, trader: string, price: string, exchange: string, marginToken: MarginTokenKeys) => Promise<void>
+  fetch: (
+    quoteTokenAddress: string,
+    trader: string,
+    price: string,
+    exchange: string,
+    marginToken: MarginTokenKeys
+  ) => Promise<void>
 }
 
 export interface TraderInfoState {

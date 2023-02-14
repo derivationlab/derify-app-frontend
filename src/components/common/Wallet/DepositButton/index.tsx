@@ -1,30 +1,23 @@
-import { useSigner } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
-
-import Trader from '@/class/Trader'
-import { useAppDispatch } from '@/store'
-import { useMatchConfig } from '@/hooks/useMatchConfig'
-import { setShareMessage } from '@/store/share'
-import { getTraderDataAsync } from '@/store/trader'
-import { getMyPositionsDataAsync } from '@/store/contract'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
 import { useTokenBalances } from '@/zustand'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useDepositMargin } from '@/hooks/useTrading'
 
 interface Props {
   size?: string
 }
 
 const DepositButton: FC<Props> = ({ size = 'default' }) => {
-  const dispatch = useAppDispatch()
-
   const { t } = useTranslation()
-  const { data: signer } = useSigner()
-  const { protocolConfig, protocolConfigLoaded, marginToken } = useMatchConfig()
+  const { data } = useAccount()
 
-  const { traderDepositMargin } = Trader
+  const { deposit } = useDepositMargin()
+  const { protocolConfig, marginToken } = useProtocolConf()
 
   const fetchBalances = useTokenBalances((state) => state.fetch)
 
@@ -37,18 +30,13 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (signer && protocolConfigLoaded) {
-        const account = await signer.getAddress()
-        const status = await traderDepositMargin(signer, account, amount, protocolConfig.exchange, marginToken)
+      if (data?.address && protocolConfig) {
+        const status = await deposit(protocolConfig.exchange, amount, marginToken)
         if (status) {
           // succeed
           window.toast.success(t('common.success', 'success'))
 
-          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
-          dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: 'MAX_VOLUME_UPDATE' }))
-
-          await fetchBalances(account)
+          await fetchBalances(data.address)
         } else {
           // fail
           window.toast.error(t('common.failed', 'failed'))
@@ -57,7 +45,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       window.toast.dismiss(toast)
     },
-    [signer, protocolConfig, protocolConfigLoaded, marginToken]
+    [data?.address, protocolConfig, marginToken]
   )
 
   return (

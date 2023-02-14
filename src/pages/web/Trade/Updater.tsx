@@ -10,7 +10,6 @@ import { usePairsInfo, useQuoteToken } from '@/zustand'
 import { useConfigInfo, useMarginToken } from '@/zustand/useConfigInfo'
 import { getOpeningMaxLimit, getTraderVariables } from '@/hooks/helper'
 
-
 export default function Updater(): null {
   const { data } = useAccount()
 

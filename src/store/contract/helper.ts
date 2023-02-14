@@ -17,7 +17,7 @@ const BIG_TEN = new BN(10).pow(8)
 export enum PositionSide {
   Long,
   Short,
-  '2-Way'
+  twoWay
 }
 
 export enum OrderTypes {

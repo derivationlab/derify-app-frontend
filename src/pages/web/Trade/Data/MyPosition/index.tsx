@@ -7,7 +7,7 @@ import React, { FC, useState, useMemo, useContext } from 'react'
 
 import Trader from '@/class/Trader'
 import ThemeContext from '@/context/Theme/Context'
-import { useSpotPrice } from '@/hooks/useMatchConf'
+import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { useTraderData } from '@/store/trader/hooks'
 import { useMatchConfig } from '@/hooks/useMatchConfig'
 import { usePosDATStore } from '@/zustand/usePosDAT'
@@ -28,23 +28,24 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
+import { useCloseAllPositions } from '@/hooks/useTrading'
 
 const MyPosition: FC = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const { theme } = useContext(ThemeContext)
   const { shareMessage } = useShareMessage()
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
   const { brokerBound: broker } = useTraderData()
-  const { protocolConfig, protocolConfigLoaded } = useMatchConfig()
 
+  const { close } = useCloseAllPositions()
   const { spotPrice } = useSpotPrice()
+  const { protocolConfig } = useProtocolConf()
   const positionOrd = usePosDATStore((state) => state.positionOrd)
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
 
-  const { closeAllPositions, closeSomePosition, takeProfitOrStopLoss } = Trader
-
-  const { theme } = useContext(ThemeContext)
+  const { closeSomePosition, takeProfitOrStopLoss } = Trader
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
@@ -81,7 +82,7 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && protocolConfigLoaded) {
+    if (signer && broker?.broker && protocolConfig) {
       const { token, side, size } = targetPosOrd
       const { symbol = '', amount = 0 } = memoShareMessage
 
@@ -121,17 +122,14 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && protocolConfigLoaded) {
-      const account = await signer.getAddress()
-      const status = await closeAllPositions(signer, broker.broker)
+    if (broker?.broker && protocolConfig) {
+      const status = await close(broker.broker, protocolConfig.exchange)
 
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
 
         batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
-          dispatch(getMyPositionsDataAsync(account))
           dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY', 'UPDATE_POSITIONS_AMOUNT'] }))
         })
       } else {
@@ -148,20 +146,14 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && protocolConfigLoaded) {
+    if (signer && broker?.broker && protocolConfig) {
       const { token, side, TP, SL } = params
 
-      const account = await signer.getAddress()
       const status = await takeProfitOrStopLoss(signer, token, side, TP, SL)
+
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
-
-        batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
-          dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_POSITIONS_AMOUNT'] }))
-        })
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed

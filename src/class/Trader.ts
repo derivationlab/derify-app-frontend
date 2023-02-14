@@ -16,48 +16,6 @@ import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexStri
 import { OpeningType } from '@/zustand/useCalcMaxVolume'
 
 class Trader {
-  traderWithdrawMargin = async (signer: Signer, amount: string, address: string): Promise<boolean> => {
-    const contract = getDerifyExchangeContract1(address, signer)
-
-    try {
-      const _amount = toHexString(amount)
-
-      const gasLimit = await estimateGas(contract, 'withdraw', [_amount], 0)
-      const res = await contract.withdraw(_amount, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  traderDepositMargin = async (
-    signer: Signer,
-    account: string,
-    amount: string,
-    address: string,
-    marginToken: string
-  ): Promise<boolean> => {
-    const contract = getDerifyExchangeContract1(address, signer)
-    const marToken = findToken(marginToken)
-
-    try {
-      const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, address, marToken.tokenAddress, _amount)
-
-      if (!approve) return false
-
-      const gasLimit = await estimateGas(contract, 'deposit', [_amount], 0)
-      const res = await contract.deposit(_amount, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
   calcClosePositionTradingFee = async (symbol: string, token: string, amount: string, spotPrice: string) => {
     const pair = pairs.find((pair) => pair.token === token)
     const contract = getDerifyDerivativePairContract(pair!.contract)
@@ -350,7 +308,7 @@ class Trader {
     const [systemSizeLimit, systemAmountLimit] = data
     const size_BN = new BN(size)
 
-    if (side === PositionSide['2-Way']) return size
+    if (side === PositionSide.twoWay) return size
 
     if (openType !== OpeningType.Market) return size
 
@@ -365,24 +323,6 @@ class Trader {
     }
 
     return size
-  }
-
-  getOpenUpperBound = async (
-    token: string,
-    trader: string,
-    openType: number,
-    price: string,
-    leverage: number,
-    address: string
-  ): Promise<string[]> => {
-    const _price = toHexString(price)
-    const _leverage = toHexString(leverage)
-    const _contract = getDerifyExchangeContract1(address)
-    // quote token address
-    const data = await _contract.getTraderOpenUpperBound(token, trader, openType, _price, _leverage)
-
-    const { size, amount } = data
-    return [safeInterceptionValues(String(size), 8), safeInterceptionValues(String(amount), 8)]
   }
 
   getSysOpenUpperBound = async (
@@ -466,34 +406,6 @@ class Trader {
     try {
       const gasLimit = await estimateGas(contract, 'closePosition', [brokerId, token, side, SIZE_OUTPUT], 0)
       const res = await contract.closePosition(brokerId, token, side, SIZE_OUTPUT, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  closeAllPositions = async (signer: Signer, brokerId: string): Promise<boolean> => {
-    const contract = getDerifyExchangeContract(signer)
-
-    try {
-      const gasLimit = await estimateGas(contract, 'closeAllPositions', [brokerId], 0)
-      const res = await contract.closeAllPositions(brokerId, { gasLimit })
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  cancelAllPosOrders = async (signer: Signer): Promise<boolean> => {
-    const contract = getDerifyExchangeContract(signer)
-
-    try {
-      const gasLimit = await estimateGas(contract, 'cancelAllOrderedPositions', [], 0)
-      const res = await contract.cancelAllOrderedPositions({ gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {

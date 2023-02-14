@@ -45,7 +45,7 @@ const Trade: FC = () => {
     <div className="web-trade">
       <Updater />
       <main className="web-trade-main">
-        {/*<KLine />*/}
+        <KLine />
         <Data />
       </main>
       <Bench />

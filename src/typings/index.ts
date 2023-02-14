@@ -27,4 +27,5 @@ export enum PriceType {
 
 export enum PubSubEvents {
   UPDATE_TRADE_HISTORY = 'UPDATE_TRADE_HISTORY',
+  UPDATE_POSITION_AMOUNT = 'UPDATE_POSITION_AMOUNT'
 }

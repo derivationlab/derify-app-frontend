@@ -1,14 +1,14 @@
-import { isEmpty } from 'lodash'
+import PubSub from 'pubsub-js'
 import { useInterval } from 'react-use'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 
+import { usePairsInfo } from '@/zustand'
+import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useShareMessage } from '@/store/share/hooks'
-import { useConstantData } from '@/store/constant/hooks'
-import { useContractData } from '@/store/contract/hooks'
+import { usePCFRatioConf } from '@/hooks/useMatchConf'
 import { nonBigNumberInterception } from '@/utils/tools'
+import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
 import { getCurrentPositionsAmountData } from '@/store/constant/helper'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -16,14 +16,28 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { posFeeRatio } = useConstantData()
-  const { shareMessage } = useShareMessage()
-  const { currentPair, pairs } = useContractData()
+  const { pcfRatio, quoteToken } = usePCFRatioConf()
+
+  const indicators = usePairsInfo((state) => state.indicators)
 
   const [positionInfo, setPositionInfo] = useState<string[]>(['0', '0'])
 
-  const getPositionsAmountFunc = async (currentPair: string) => {
-    const data = await getCurrentPositionsAmountData(currentPair)
+  const memoPosFeeRatio = useMemo(() => {
+    if (pcfRatio || Number(pcfRatio) >= 0) return pcfRatio
+    return '0'
+  }, [pcfRatio])
+
+  const memoPositionApy = useMemo(() => {
+    const longPmrRate = indicators?.longPmrRate ?? 0
+    const shortPmrRate = indicators?.shortPmrRate ?? 0
+    return [
+      Number(longPmrRate) <= 0 ? '0' : (longPmrRate * 100).toFixed(2),
+      Number(shortPmrRate) <= 0 ? '0' : (shortPmrRate * 100).toFixed(2)
+    ]
+  }, [indicators])
+
+  const funcAsync = async () => {
+    const data = await getCurrentPositionsAmountData(findToken(quoteToken).tokenAddress)
 
     if (data) {
       const { long_position_amount = 0, short_position_amount = 0 } = data
@@ -35,44 +49,30 @@ const HeaderData: FC = () => {
     }
   }
 
-  const memoPosFeeRatio = useMemo(() => {
-    if (!isEmpty(posFeeRatio)) {
-      const key = Object.keys(posFeeRatio).find((p) => p === currentPair) ?? ''
-      return posFeeRatio[key] ?? '0'
-    }
-    return '0'
-  }, [posFeeRatio, currentPair, pairs])
-
-  const memoPositionApy = useMemo(() => {
-    const find = pairs.find((p) => p.token === currentPair)
-    const longPmrRate = find?.longPmrRate ?? 0
-    const shortPmrRate = find?.shortPmrRate ?? 0
-    return [
-      Number(longPmrRate) <= 0 ? '0' : (longPmrRate * 100).toFixed(2),
-      Number(shortPmrRate) <= 0 ? '0' : (shortPmrRate * 100).toFixed(2)
-    ]
-  }, [pairs, currentPair])
-
   useInterval(() => {
-    void getPositionsAmountFunc(currentPair)
+    void funcAsync()
   }, 60000)
 
   useEffect(() => {
     setPositionInfo(['0', '0'])
 
-    void getPositionsAmountFunc(currentPair)
-  }, [currentPair])
+    void funcAsync()
 
-  useEffect(() => {
-    if (shareMessage && shareMessage?.type.includes('UPDATE_POSITIONS_AMOUNT')) void getPositionsAmountFunc(currentPair)
-  }, [shareMessage])
+    PubSub.subscribe(PubSubEvents.UPDATE_POSITION_AMOUNT, () => {
+      void funcAsync()
+    })
+
+    return () => {
+      PubSub.clearAllSubscriptions()
+    }
+  }, [quoteToken])
 
   return (
-    <div className="web-trade-kline-header-data">
+    <div className='web-trade-kline-header-data'>
       <section>
         <h3>
           {t('Trade.kline.NetPositionRate', 'Net Position Rate')}
-          <QuestionPopover size="mini" text={t('Trade.kline.NetPositionRateTip')} />
+          <QuestionPopover size='mini' text={t('Trade.kline.NetPositionRateTip')} />
         </h3>
         {!mobile ? (
           <strong>
@@ -91,7 +91,7 @@ const HeaderData: FC = () => {
       <section>
         <h3>
           {t('Trade.kline.PCFRate', 'PCF Rate')}
-          <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
+          <QuestionPopover size='mini' text={t('Trade.kline.PCFRateTip')} />
         </h3>
         <strong>{memoPosFeeRatio}%</strong>
       </section>
@@ -99,7 +99,7 @@ const HeaderData: FC = () => {
       <section>
         <h3>
           {t('Trade.kline.PositionMiningAPY', 'Position Mining APR.')}
-          <QuestionPopover size="mini" text={t('Trade.kline.PositionMiningAPYTip')} />
+          <QuestionPopover size='mini' text={t('Trade.kline.PositionMiningAPYTip')} />
         </h3>
         {mobile ? (
           <>

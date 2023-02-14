@@ -67,6 +67,11 @@
             "internalType": "address",
             "name": "derifyDerivativeDeployer",
             "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyExchangeModule",
+            "type": "address"
           }
         ],
         "internalType": "struct IDerifyProtocol.DeployDerifyProtocolParam",
@@ -461,6 +466,11 @@
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "marginTokenPriceFeed",
+        "type": "address"
+      },
+      {
         "components": [
           {
             "internalType": "address",
@@ -508,6 +518,11 @@
           },
           {
             "internalType": "address",
+            "name": "exchangeModule",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
             "name": "factory",
             "type": "address"
           },
@@ -539,11 +554,6 @@
           {
             "internalType": "address",
             "name": "tokenDRF",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "dexRouter",
             "type": "address"
           },
           {
@@ -587,6 +597,11 @@
             "internalType": "string",
             "name": "symbol",
             "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "decimals",
+            "type": "uint8"
           }
         ],
         "internalType": "struct IDeployBMarginToken.BMarginTokenParam",
@@ -844,6 +859,62 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "marginToken",
+        "type": "address"
+      }
+    ],
+    "name": "getMarginTokenContractCollections",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "marginTokenPriceFeed",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "bMarginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "communityVestingVault",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyClearing",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyExchange",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyFactory",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRewards",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IDerifyProtocol.MarginTokenContractCollection",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -964,6 +1035,11 @@
     ],
     "name": "marginTokenContractCollections",
     "outputs": [
+      {
+        "internalType": "address",
+        "name": "marginTokenPriceFeed",
+        "type": "address"
+      },
       {
         "internalType": "address",
         "name": "bMarginToken",

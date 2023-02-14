@@ -5,7 +5,7 @@ import HeaderData from './HeaderData'
 import Chart from './Chart'
 
 const KLine: FC = () => {
-  const hideChart = false
+  const hideChart = true
   return (
     <div className="web-trade-kline">
       <header className="web-trade-kline-header">

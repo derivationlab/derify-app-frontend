@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { OpeningType, useCalcMaxVolume } from '@/zustand/useCalcMaxVolume'
+import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 
 import { Select, Input } from '@/components/common/Form'
@@ -23,11 +23,11 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
 
-  const openingType = useCalcMaxVolume((state) => state.openingType)
-  const leverageNow = useCalcMaxVolume((state) => state.leverageNow)
-  const openingPrice = useCalcMaxVolume((state) => state.openingPrice)
-  const maxVolume = useCalcMaxVolume((state) => state.maxVolume)
-  const fetchMaxVolume = useCalcMaxVolume((state) => state.fetch)
+  const openingType = useCalcOpeningDAT((state) => state.openingType)
+  const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
+  const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
+  const maxVolume = useCalcOpeningDAT((state) => state.maxVolume)
+  const fetchMaxVolume = useCalcOpeningDAT((state) => state.fetchMaxVolume)
 
   const { protocolConfig } = useProtocolConf()
   const { spotPrice, quoteToken, marginToken } = useSpotPrice()

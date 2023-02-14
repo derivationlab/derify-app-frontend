@@ -20,6 +20,7 @@ import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 
 export const getContract = (abi: ContractInterface, address: string, signer?: Signer | Provider | null): Contract => {
   const signerOrProvider = signer ?? baseProvider
@@ -56,4 +57,8 @@ export const getDerifyDerivativePairContract = (pairAddress: string, signer?: Si
 
 export const getDerifyProtocolContract = (signer?: Signer | Provider | null) => {
   return getContract(DerifyProtocolAbi, getDerifyProtocolAddress(), signer)
+}
+
+export const getMarginTokenPriceFeedContract = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(MarginTokenPriceFeedAbi, address, signer)
 }

@@ -1,6 +1,6 @@
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 import { InitialTraderVariablesType } from '@/hooks/helper'
-import { OpeningType } from '@/zustand/useCalcMaxVolume'
+import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 
 export type Rec = Record<string, any>
 
@@ -44,14 +44,21 @@ export interface PosDATState {
 }
 
 export interface VolumeState {
+  tfr: number
   maxVolume: Rec
+  closingType: MarginTokenKeys
+  closingAmount: number
   openingPrice: number
+  openingAmount: number
   leverageNow: number
   openingType: OpeningType
+  updateClosingType: (p: MarginTokenKeys) => void
   updateOpeningType: (p: OpeningType) => void
   updateLeverageNow: (p: number) => void
   updateOpeningPrice: (p: number) => void
-  fetch: (
+  updateOpeningAmount: (p: number) => void
+  updateClosingAmount: (p: number) => void
+  fetchMaxVolume: (
     quoteTokenAddress: string,
     trader: string,
     price: string,

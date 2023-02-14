@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import BN from 'bignumber.js'
 import duration from 'dayjs/plugin/duration'
+import { ethers } from 'ethers'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 
@@ -95,6 +96,10 @@ export const nonBigNumberInterception = (value: string | number, decimal = 2): s
 // 1 --> 1000000000000000000
 export const getDecimalAmount = (amount: number | string | BN, decimals = 8): BN => {
   return new BN(amount).times(new BN(10).pow(decimals))
+}
+
+export const getUnitAmount = (amount: number | string, decimals = 18): string => {
+  return ethers.utils.parseUnits(String(amount), decimals).toString()
 }
 
 export const toHexString = (amount: number | string, decimals = 8) => {

@@ -13,6 +13,7 @@ import MultipleStatus from '@/components/web/MultipleStatus'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import { useMatchConfig } from '@/hooks/useMatchConfig'
 import { useSpotPrice } from '@/hooks/useMatchConf'
+import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 
 interface Props {
   data?: Record<string, any>
@@ -30,6 +31,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   const { calcClosePositionTradingFee, calcClosePositionChangeFee } = Trader
 
   const { spotPrice, quoteToken } = useSpotPrice()
+
+  const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
 
   const [tradingFee, setTradingFee] = useState<string>('0')
   const [changeFee, setChangeFee] = useState<string>('0')
@@ -49,13 +52,13 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     const fee = await calcClosePositionTradingFee(
       marginToken,
       findToken(quoteToken)?.tokenAddress,
-      memoShareMessage?.amount,
+      closingAmount,
       spotPrice
     )
 
     setTradingFee(fee)
     setTradingFeeCalculating(false)
-  }, [marginToken, quoteToken, memoShareMessage?.amount, spotPrice])
+  }, [marginToken, quoteToken, closingAmount, spotPrice])
 
   const calcClosePositionChangeFeeCb = useCallback(async () => {
     if (factoryConfigLoaded && protocolConfigLoaded) {
@@ -65,7 +68,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
         data?.side,
         marginToken,
         findToken(quoteToken)?.tokenAddress,
-        memoShareMessage?.amount,
+        closingAmount,
         spotPrice,
         protocolConfig.exchange,
         factoryConfig[data?.quote]
@@ -81,7 +84,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     protocolConfigLoaded,
     spotPrice,
     marginToken,
-    memoShareMessage?.amount,
+    closingAmount,
     data?.side,
     quoteToken
   ])

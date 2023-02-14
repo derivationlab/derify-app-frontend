@@ -6,10 +6,11 @@ import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 import { Select, Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
+import { MarginTokenKeys } from '@/typings'
 
 interface Props {
   value: number
-  onSymbol: (value: string) => void
+  onSymbol: (value: MarginTokenKeys) => void
   onChange: (value: number) => void
   maxBUSD: number
   maxBase: number

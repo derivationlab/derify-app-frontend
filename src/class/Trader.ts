@@ -3,20 +3,19 @@ import { isEmpty } from 'lodash'
 import type { Signer } from 'ethers'
 
 import pairs from '@/config/pairs'
-import { PriceType } from '@/typings'
-import { BASE_TOKEN_SYMBOL, findMarginToken, findToken } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, findMarginToken } from '@/config/tokens'
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
-import { estimateGas, setAllowance } from '@/utils/practicalMethod'
+import { estimateGas } from '@/utils/practicalMethod'
 import {
   getDerifyExchangeContract,
   getDerifyExchangeContract1,
   getDerifyDerivativePairContract
 } from '@/utils/contractHelpers'
 import { nonBigNumberInterception, safeInterceptionValues, toFloorNum, toHexString } from '@/utils/tools'
-import { OpeningType } from '@/zustand/useCalcMaxVolume'
+import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 
 class Trader {
-  calcClosePositionTradingFee = async (symbol: string, token: string, amount: string, spotPrice: string) => {
+  calcClosePositionTradingFee = async (symbol: string, token: string, amount: number, spotPrice: string) => {
     const pair = pairs.find((pair) => pair.token === token)
     const contract = getDerifyDerivativePairContract(pair!.contract)
 
@@ -36,7 +35,7 @@ class Trader {
     side: PositionSide,
     symbol: string,
     token: string,
-    amount: string,
+    amount: number,
     spotPrice: string,
     exchange: string,
     derivative: string,
@@ -44,7 +43,7 @@ class Trader {
   ): Promise<string> => {
     let nakedPositionTradingPairAfterClosing_BN: BN = new BN(0)
 
-    if (side === PositionSide['2-Way']) return '0'
+    if (side === PositionSide.twoWay) return '0'
 
     const size =
       symbol === BASE_TOKEN_SYMBOL ? toFloorNum(new BN(amount).div(spotPrice).toString()) : toFloorNum(amount)
@@ -343,39 +342,11 @@ class Trader {
     return [size, safeInterceptionValues(String(amount), 8)]
   }
 
-  minimumOpenPositionLimit = (side: string, price: string, volume: string | number, symbol: string): boolean => {
+  minimumOpenPositionLimit = (side: PositionSide, price: string, volume: string | number, symbol: string): boolean => {
     const limit = 500
     const calcU = findMarginToken(symbol) ? new BN(volume) : new BN(volume).times(price) // U
 
     return calcU.isLessThan(limit)
-  }
-
-  cancelSomePosition = async (
-    signer: Signer,
-    token: string,
-    side: string,
-    orderType: OrderTypes,
-    timestamp: string
-  ): Promise<boolean> => {
-    let response: any = null
-    const pair = pairs.find((pair) => pair.token === token)
-    const contract = getDerifyDerivativePairContract(pair!.contract, signer)
-
-    try {
-      if (orderType === OrderTypes.Limit) {
-        const gasLimit = await estimateGas(contract, 'cancelOrderedLimitPosition', [side, timestamp], 0)
-        response = await contract.cancelOrderedLimitPosition(side, timestamp, { gasLimit })
-      } else {
-        const gasLimit = await estimateGas(contract, 'cancelOrderedStopPosition', [orderType - 1, side], 0)
-        response = await contract.cancelOrderedStopPosition(orderType - 1, side, { gasLimit })
-      }
-
-      const receipt = await response.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
   }
 
   closeSomePosition = async (

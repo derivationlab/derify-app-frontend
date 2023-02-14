@@ -1,17 +1,14 @@
-import React, { FC, useMemo, useState, useContext } from 'react'
+import PubSub from 'pubsub-js'
 import { isEmpty } from 'lodash'
-import { batch } from 'react-redux'
-import { useSigner, useAccount } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo, useState, useContext } from 'react'
 
-import Trader from '@/class/Trader'
 import ThemeContext from '@/context/Theme/Context'
-import { useAppDispatch } from '@/store'
-import { setShareMessage } from '@/store/share'
-import { getTraderDataAsync } from '@/store/trader'
-import { useMatchConfig } from '@/hooks/useMatchConfig'
-import { useContractData } from '@/store/contract/hooks'
-import { getMyPositionsDataAsync } from '@/store/contract'
+import { PubSubEvents } from '@/typings'
+import { usePosDATStore } from '@/zustand/usePosDAT'
+import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
+import { useCancelAllPositions, useCloseOnePosition } from '@/hooks/useTrading'
 
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
@@ -20,22 +17,19 @@ import Image from '@/components/common/Image'
 import Loading from '@/components/common/Loading'
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useCancelAllPositions } from '@/hooks/useTrading'
-import { useMatchConf, useProtocolConf } from '@/hooks/useMatchConf'
 
 const MyOrder: FC = () => {
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
-  const { data: signer } = useSigner()
   const { data: account } = useAccount()
-  const { myOrders, myOrdersLoaded } = useContractData()
-  const { protocolConfigLoaded } = useMatchConfig()
 
+  const { closeOne } = useCloseOnePosition()
   const { protocolConfig } = useProtocolConf()
-
-  const { cancelSomePosition } = Trader
+  const { factoryConfig, marginToken, quoteToken } = useFactoryConf()
   const { cancel: cancelAllPositions } = useCancelAllPositions()
+
+  const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)
+  const profitLossOrdLoaded = usePosDATStore((state) => state.loaded)
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
@@ -47,24 +41,16 @@ const MyOrder: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && protocolConfig) {
-      const account = await signer.getAddress()
-      const status = await cancelSomePosition(
-        signer,
-        targetPosOrd?.token,
-        targetPosOrd?.side,
-        targetPosOrd?.orderType,
-        targetPosOrd?.timestamp
-      )
+    if (factoryConfig) {
+      const { side, orderType, timestamp } = targetPosOrd
+
+      const status = await closeOne(factoryConfig[marginToken][quoteToken], orderType, side, timestamp)
+
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
 
-        batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
-          dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
-        })
+        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -79,16 +65,13 @@ const MyOrder: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && protocolConfig) {
+    if (protocolConfig) {
       const status = await cancelAllPositions(protocolConfig.exchange)
 
-      if (status && account?.address) {
+      if (status) {
         window.toast.success(t('common.success', 'success'))
 
-        batch(() => {
-          dispatch(getTraderDataAsync({ trader: account.address, contract: protocolConfig.exchange }))
-          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
-        })
+        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
       } else {
         window.toast.error(t('common.failed', 'failed'))
       }
@@ -104,12 +87,12 @@ const MyOrder: FC = () => {
 
   const memoMyPosOrders = useMemo(() => {
     if (!account?.address) return <NoRecord show />
-    if (!myOrdersLoaded) return <Loading show type="section" />
-    if (!isEmpty(myOrders ?? [])) {
+    if (!profitLossOrdLoaded) return <Loading show type='section' />
+    if (!isEmpty(profitLossOrd)) {
       return (
         <>
-          <div className="web-trade-data-list">
-            {myOrders.map((d, i) => (
+          <div className='web-trade-data-list'>
+            {profitLossOrd.map((d, i) => (
               <ListItem key={`my-orders-${i}`} data={d} onClick={() => confirmCancelOnePosOrderEv(d)} />
             ))}
           </div>
@@ -121,11 +104,11 @@ const MyOrder: FC = () => {
       )
     }
     return <NoRecord show />
-  }, [account?.address, myOrdersLoaded, myOrders, theme])
+  }, [account?.address, profitLossOrdLoaded, profitLossOrd, theme])
 
   return (
     <>
-      <div className="web-trade-data-wrap">{memoMyPosOrders}</div>
+      <div className='web-trade-data-wrap'>{memoMyPosOrders}</div>
       <CancelOrderDialog
         visible={dialogStatus === 'cancel-one-position'}
         onClose={onCloseDialogEv}

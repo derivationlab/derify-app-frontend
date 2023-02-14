@@ -1,25 +1,31 @@
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
 
 import { MobileContext } from '@/context/Mobile'
+import { useMarginToken, usePairsInfo } from '@/zustand'
+import { BASE_TOKEN_SYMBOL, QUOTE_TOKENS } from '@/config/tokens'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
 
 interface Props {
-  data: Record<string, any>[]
   onChange: (item: Record<string, any>, index: number) => void
 }
 
-const Options: FC<Props> = ({ data, onChange }) => {
+const Options: FC<Props> = ({ onChange }) => {
   const { mobile } = useContext(MobileContext)
 
+  const marginToken = useMarginToken((state) => state.marginToken)
+  const spotPrices = usePairsInfo((state) => state.spotPrices)
+
   const [keyword, setKeyword] = useState<string>('')
+
+  const options = useMemo(() => {
+    return QUOTE_TOKENS.filter((item) => item.symbol.toLocaleLowerCase().includes(keyword))
+  }, [keyword])
+
   const searchFC = (e: ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value.trim().toLocaleLowerCase())
   }
-  const options = useMemo(() => {
-    return data.filter((item) => item.name.toLocaleLowerCase().includes(keyword))
-  }, [data, keyword])
 
   return (
     <div className="web-trade-symbol-select-options">
@@ -33,20 +39,20 @@ const Options: FC<Props> = ({ data, onChange }) => {
             {mobile ? (
               <>
                 <aside>
-                  <h5>{item.name}</h5>
-                  <BalanceShow value={item?.apy ?? 0} percent unit="APR" />
+                  <h5>{item.symbol}-{BASE_TOKEN_SYMBOL}</h5>
+                  <BalanceShow value={0} percent unit="APR" />
                 </aside>
                 <aside>
-                  <BalanceShow value={item?.spotPrice ?? 0} unit="" />
-                  <ChangePercent value={item?.price_change_rate ?? 0} />
+                  <BalanceShow value={spotPrices[marginToken][item.symbol] ?? 0} unit="" />
+                  <ChangePercent value={0} />
                 </aside>
               </>
             ) : (
               <>
-                <h5>{item.name}</h5>
-                <BalanceShow value={item?.spotPrice ?? 0} unit="" />
-                <ChangePercent value={item?.price_change_rate ?? 0} />
-                <BalanceShow value={item?.apy ?? 0} percent unit="APR" />
+                <h5>{item.symbol}-{BASE_TOKEN_SYMBOL}</h5>
+                <BalanceShow value={spotPrices[marginToken][item.symbol] ?? 0} unit="" />
+                <ChangePercent value={0} />
+                <BalanceShow value={0} percent unit="APR" />
               </>
             )}
           </li>

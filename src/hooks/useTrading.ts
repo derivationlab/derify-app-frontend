@@ -2,9 +2,9 @@ import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { PositionSide } from '@/store/contract/helper'
-import { getDerifyExchangeContract1 } from '@/utils/contractHelpers'
-import { OpeningType } from '@/zustand/useCalcMaxVolume'
+import { OrderTypes, PositionSide } from '@/store/contract/helper'
+import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
+import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { findMarginToken, findToken } from '@/config/tokens'
 import { toFloorNum, toHexString } from '@/utils/tools'
 
@@ -80,6 +80,39 @@ export const useCloseAllPositions = () => {
   )
 
   return { close }
+}
+
+export const useCloseOnePosition = () => {
+  const { data: signer } = useSigner()
+
+  const closeOne = useCallback(
+    async (address: string, orderType: OrderTypes, positionSide: PositionSide, timestamp: string): Promise<boolean> => {
+      let response: any = null
+
+      if (!signer) return false
+
+      const c = getDerifyDerivativePairContract(address, signer)
+
+      try {
+        if (orderType === OrderTypes.Limit) {
+          const gasLimit = await estimateGas(c, 'cancelOrderedLimitPosition', [positionSide, timestamp], 0)
+          response = await c.cancelOrderedLimitPosition(positionSide, timestamp, { gasLimit })
+        } else {
+          const gasLimit = await estimateGas(c, 'cancelOrderedStopPosition', [orderType - 1, positionSide], 0)
+          response = await c.cancelOrderedStopPosition(orderType - 1, positionSide, { gasLimit })
+        }
+
+        const receipt = await response.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { closeOne }
 }
 
 export const useCancelAllPositions = () => {

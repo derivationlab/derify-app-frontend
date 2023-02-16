@@ -23,8 +23,7 @@ export const useOpeningPosition = () => {
       pricingType: string,
       openingPrice: string,
       posLeverage: number,
-      openingSize: string,
-      openingMaxLimit: string,
+      openingSize: number,
       conversion?: boolean
     ): Promise<boolean> => {
       if (!signer) return false
@@ -34,14 +33,27 @@ export const useOpeningPosition = () => {
       const _posLeverage = toFloorNum(posLeverage)
       const _pricingType = findMarginToken(pricingType) ? 1 : 0
       const _openingType = conversion ? OpeningType.Market : openingType
+      const _openingSize = toFloorNum(openingSize)
       const _openingPrice = toFloorNum(openingPrice)
 
-      const params = [brokerId, qtAddress, positionSide, _openingType, _pricingType, _openingPrice, _posLeverage]
-
+      const params = [brokerId, qtAddress, positionSide, _openingType, _pricingType, _openingSize, _openingPrice, _posLeverage]
+      console.info([brokerId, qtAddress, positionSide, _openingType, _pricingType, _openingSize, _openingPrice, _posLeverage])
       try {
-        const gasLimit = await estimateGas(c, 'openPosition', params, 0)
-        const response = await c.cancelAllOrderedPositions({ gasLimit })
-        const receipt = await response.wait()
+        // const gasLimit = await estimateGas(c, 'openPosition', params, 0)
+        const res = await c.openPosition(
+          brokerId,
+          qtAddress,
+          positionSide,
+          _openingType,
+          _pricingType,
+          _openingSize,
+          _openingPrice,
+          _posLeverage,
+          {
+            gasLimit: 3000000000
+          }
+        )
+        const receipt = await res.wait()
         return receipt.status
       } catch (e) {
         console.info(e)

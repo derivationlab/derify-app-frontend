@@ -18,7 +18,7 @@ interface Props {
   data: Record<string, any>
   visible: boolean
   onClose: () => void
-  onClick: () => void
+  onClick: (amount: number) => void
 }
 
 const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
@@ -181,7 +181,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             </dl>
           </div>
         </div>
-        <Button onClick={onClick}>{t('Trade.COP.Confirm', 'Confirm')}</Button>
+        <Button onClick={() => onClick(state.validOpeningVol.value)}>{t('Trade.COP.Confirm', 'Confirm')}</Button>
       </div>
     </Dialog>
   )

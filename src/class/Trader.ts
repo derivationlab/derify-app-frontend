@@ -132,7 +132,7 @@ class Trader {
     side: PositionSide,
     openType: OpeningType,
     quantityType: string,
-    quantity: string,
+    quantity: number,
     price: string,
     leverage: number,
     address: string,

@@ -16,6 +16,8 @@ import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQ
 import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import BN from 'bignumber.js'
+import { Signer } from 'ethers'
+import { estimateGas } from '@/utils/practicalMethod'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)

@@ -5,12 +5,12 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
 import Trader from '@/class/Trader'
 import { findToken } from '@/config/tokens'
-import { useConfigInfo, usePairsInfo } from '@/zustand'
 import { PubSubEvents } from '@/typings'
 import { PositionSide } from '@/store/contract/helper'
 import { useTraderData } from '@/store/trader/hooks'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
+import { useConfigInfo, usePairsInfo } from '@/zustand'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 
@@ -27,6 +27,7 @@ import Initializing from './c/Initializing'
 import QuantityInput from './c/QuantityInput'
 import OpenTypeSelect from './c/OpenTypeSelect'
 import { isOpeningMinLimit } from '@/hooks/helper'
+import { useOpeningPosition } from '@/hooks/useTrading'
 
 const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -36,7 +37,7 @@ const Bench: FC = () => {
   const { protocolConfig } = useProtocolConf()
   const { brokerBound: broker } = useTraderData() // todo rewrite redux
   const { spotPrice, marginToken, quoteToken } = useSpotPrice()
-
+  const { opening } = useOpeningPosition()
   const { openPositionOrder } = Trader
 
   const indicators = usePairsInfo((state) => state.indicators)
@@ -88,25 +89,35 @@ const Bench: FC = () => {
     return openType === OpeningType.Limit ? isET(spotPrice, price) : false
   }
 
-  const openPositionFunc = async () => {
+  const openPositionFunc = async (amount: number) => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     dispatch({ type: 'SET_MODAL_STATUS', payload: false })
-
-    if (signer && broker?.broker && protocolConfig) {
+    console.info(amount, broker?.broker, protocolConfig)
+    if (broker?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
-
-      const status = await openPositionOrder(
-        signer,
+      console.info(
+        protocolConfig.exchange,
         broker.broker,
         findToken(quoteToken).tokenAddress,
         state.openingParams?.side,
         openingType,
         state.openingParams?.symbol,
-        state.openingParams?.volume,
         state.openingParams?.price,
         leverageNow,
+        amount,
+        conversion
+      )
+      const status = await opening(
         protocolConfig.exchange,
+        broker.broker,
+        findToken(quoteToken).tokenAddress,
+        state.openingParams?.side,
+        openingType,
+        state.openingParams?.symbol,
+        state.openingParams?.price,
+        leverageNow,
+        amount,
         conversion
       )
 

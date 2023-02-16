@@ -9,11 +9,13 @@ import { useInitialDAT } from '@/hooks/useInitialDAT'
 import { Switch, Route } from '@/components/common/Route'
 
 import '@/style/style.scss'
+import { useInitialEffect } from '@/hooks/useInitialEffect'
 
 const WebEntry = lazy(() => import('@/pages/web'))
 
 function App() {
   useInitialDAT()
+  useInitialEffect()
 
   return (
     <>

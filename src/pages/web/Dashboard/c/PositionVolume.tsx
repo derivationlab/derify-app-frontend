@@ -76,24 +76,24 @@ const PositionVolume: FC = () => {
   }, [timeSelectVal, pairSelectVal])
 
   const getPositionsAmountFunc = async () => {
-    const data = await getCurrentPositionsAmountData(SelectSymbolTokens[pairSelectVal])
-
-    if (data) {
-      const long = new BN(data.long_position_amount)
-      const short = new BN(data.short_position_amount)
-      const total = long.plus(short)
-
-      if (total.isGreaterThan(0)) {
-        setTotalAmount({
-          long: `${long.div(total).times(100).toFixed(2)}%`,
-          short: `${short.div(total).times(100).toFixed(2)}%`,
-          volume: total.toString(),
-          day_time: time,
-          long_position_amount: data.long_position_amount,
-          short_position_amount: data.short_position_amount
-        })
-      }
-    }
+    // const data = await getCurrentPositionsAmountData(SelectSymbolTokens[pairSelectVal])
+    //
+    // if (data) {
+    //   const long = new BN(data.long_position_amount)
+    //   const short = new BN(data.short_position_amount)
+    //   const total = long.plus(short)
+    //
+    //   if (total.isGreaterThan(0)) {
+    //     setTotalAmount({
+    //       long: `${long.div(total).times(100).toFixed(2)}%`,
+    //       short: `${short.div(total).times(100).toFixed(2)}%`,
+    //       volume: total.toString(),
+    //       day_time: time,
+    //       long_position_amount: data.long_position_amount,
+    //       short_position_amount: data.short_position_amount
+    //     })
+    //   }
+    // }
   }
 
   const memoCombineData = useMemo(() => {

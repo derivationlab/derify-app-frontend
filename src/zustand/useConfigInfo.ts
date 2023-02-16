@@ -36,8 +36,8 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
     }),
   updateOpeningMaxLimit: (data: MarginTokenWithQuote) =>
     set(() => {
-      // console.info('updateOpeningMaxLimit-size:')
-      // console.info(data)
+      console.info('updateOpeningMaxLimit-size:')
+      console.info(data)
       return { openingMaxLimit: data, openingMaxLimitLoaded: true }
     })
 }))

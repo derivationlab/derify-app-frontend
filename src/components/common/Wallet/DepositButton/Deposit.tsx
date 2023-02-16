@@ -34,23 +34,23 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const onChange = (v: string) => {
     if (isGTET(balances[marginToken], v) && isGT(v, 0)) {
       dispatch({ type: 'SET_DISABLED', payload: false })
-      dispatch({ type: 'SET_WITHDRAW_AMOUNT', payload: v })
+      dispatch({ type: 'SET_DEPOSIT_AMOUNT', payload: v })
     } else {
       dispatch({ type: 'SET_DISABLED', payload: true })
-      dispatch({ type: 'SET_WITHDRAW_AMOUNT', payload: '0' })
+      dispatch({ type: 'SET_DEPOSIT_AMOUNT', payload: '0' })
     }
   }
 
   return (
     <Dialog
-      width='540px'
+      width="540px"
       visible={visible}
       title={t('Trade.Deposit.DepositFromWallet', 'Deposit From Wallet')}
       onClose={onClose}
     >
-      <div className='web-deposit-dialog'>
-        <div className='web-deposit-dialog-info'>
-          <div className='wallet'>
+      <div className="web-deposit-dialog">
+        <div className="web-deposit-dialog-info">
+          <div className="wallet">
             <dl>
               <dt>{t('Trade.Deposit.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
@@ -59,7 +59,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             </dl>
             <address>{data?.address}</address>
           </div>
-          <div className='amount'>
+          <div className="amount">
             <AmountInput
               max={balances[marginToken]}
               unit={marginToken}

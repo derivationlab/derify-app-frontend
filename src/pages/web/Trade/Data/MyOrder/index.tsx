@@ -8,7 +8,7 @@ import ThemeContext from '@/context/Theme/Context'
 import { PubSubEvents } from '@/typings'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
-import { useCancelAllPositions, useCloseOnePosition } from '@/hooks/useTrading'
+import { useCancelAllPositions, useCancelOnePosition } from '@/hooks/useTrading'
 
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
@@ -23,7 +23,7 @@ const MyOrder: FC = () => {
   const { theme } = useContext(ThemeContext)
   const { data: account } = useAccount()
 
-  const { closeOne } = useCloseOnePosition()
+  const { close } = useCancelOnePosition()
   const { protocolConfig } = useProtocolConf()
   const { factoryConfig, marginToken, quoteToken } = useFactoryConf()
   const { cancel: cancelAllPositions } = useCancelAllPositions()
@@ -44,7 +44,7 @@ const MyOrder: FC = () => {
     if (factoryConfig) {
       const { side, orderType, timestamp } = targetPosOrd
 
-      const status = await closeOne(factoryConfig[marginToken][quoteToken], orderType, side, timestamp)
+      const status = await close(factoryConfig[marginToken][quoteToken], orderType, side, timestamp)
 
       if (status) {
         // succeed
@@ -87,11 +87,11 @@ const MyOrder: FC = () => {
 
   const memoMyPosOrders = useMemo(() => {
     if (!account?.address) return <NoRecord show />
-    if (!profitLossOrdLoaded) return <Loading show type='section' />
+    if (!profitLossOrdLoaded) return <Loading show type="section" />
     if (!isEmpty(profitLossOrd)) {
       return (
         <>
-          <div className='web-trade-data-list'>
+          <div className="web-trade-data-list">
             {profitLossOrd.map((d, i) => (
               <ListItem key={`my-orders-${i}`} data={d} onClick={() => confirmCancelOnePosOrderEv(d)} />
             ))}
@@ -108,7 +108,7 @@ const MyOrder: FC = () => {
 
   return (
     <>
-      <div className='web-trade-data-wrap'>{memoMyPosOrders}</div>
+      <div className="web-trade-data-wrap">{memoMyPosOrders}</div>
       <CancelOrderDialog
         visible={dialogStatus === 'cancel-one-position'}
         onClose={onCloseDialogEv}

@@ -33,9 +33,9 @@ const PositionMining: FC = () => {
   const [totalAmount, setTotalAmount] = useState<Record<string, any>>({})
 
   const getPositionsAmountFunc = async () => {
-    const data = await getCurrentPositionsAmountData('all')
-
-    if (data) setTotalAmount(data)
+    // const data = await getCurrentPositionsAmountData('all')
+    //
+    // if (data) setTotalAmount(data)
   }
 
   const memoPositionApy = useMemo(() => {

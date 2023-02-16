@@ -14,7 +14,7 @@ const stateInit: StateType = {
   disabled: false,
   withdrawData: {},
   depositAmount: '',
-  withdrawAmount: '',
+  withdrawAmount: ''
 }
 
 function reducer(state: StateType, action: ActionType): StateType {
@@ -22,7 +22,7 @@ function reducer(state: StateType, action: ActionType): StateType {
     case 'SET_DISABLED':
       return { ...state, disabled: action.payload }
     case 'SET_DEPOSIT_AMOUNT':
-      return { ...state, withdrawAmount: action.payload }
+      return { ...state, depositAmount: action.payload }
     case 'SET_WITHDRAW_AMOUNT':
       return { ...state, withdrawAmount: action.payload }
     case 'SET_WITHDRAW_DAT':

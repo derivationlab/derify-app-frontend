@@ -9,9 +9,12 @@ import { getDerifyRewardsContract } from '@/utils/contractHelpers'
 
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
-export const getCurrentPositionsAmountData = async (token: string): Promise<Record<string, any> | null> => {
+export const getCurrentPositionsAmountData = async (
+  token: string,
+  marginToken: string
+): Promise<Record<string, any> | null> => {
   try {
-    const { data } = await getCurrentPositionsAmount(token)
+    const { data } = await getCurrentPositionsAmount(token, marginToken)
     return data
   } catch (e) {
     console.info(e)

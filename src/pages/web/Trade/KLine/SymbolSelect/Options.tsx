@@ -39,7 +39,9 @@ const Options: FC<Props> = ({ onChange }) => {
             {mobile ? (
               <>
                 <aside>
-                  <h5>{item.symbol}-{BASE_TOKEN_SYMBOL}</h5>
+                  <h5>
+                    {item.symbol}-{BASE_TOKEN_SYMBOL}
+                  </h5>
                   <BalanceShow value={0} percent unit="APR" />
                 </aside>
                 <aside>
@@ -49,7 +51,9 @@ const Options: FC<Props> = ({ onChange }) => {
               </>
             ) : (
               <>
-                <h5>{item.symbol}-{BASE_TOKEN_SYMBOL}</h5>
+                <h5>
+                  {item.symbol}-{BASE_TOKEN_SYMBOL}
+                </h5>
                 <BalanceShow value={spotPrices[marginToken][item.symbol] ?? 0} unit="" />
                 <ChangePercent value={0} />
                 <BalanceShow value={0} percent unit="APR" />

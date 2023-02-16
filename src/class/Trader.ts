@@ -63,13 +63,13 @@ class Trader {
 
     const nakedPositionTradingPairBeforeClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN)
 
-    if (side === PositionSide.Long) {
+    if (side === PositionSide.long) {
       if (!isOpenPosition)
         nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(size).minus(shortTotalSize_BN)
       else nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.plus(size).minus(shortTotalSize_BN)
     }
 
-    if (side === PositionSide.Short) {
+    if (side === PositionSide.short) {
       if (!isOpenPosition)
         nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.minus(size))
       else {
@@ -123,104 +123,6 @@ class Trader {
     const fee = new BN(row_data_naked_final).times(radioSum.div(2).plus(row_data_roRatio)).times(-1)
 
     return nonBigNumberInterception(fee.toFixed(10), 8)
-  }
-
-  calcOrderOperateType = (TP: number, SL: number): Record<string, any> => {
-    if (TP > 0) {
-      switch (true) {
-        case SL > 0:
-          return { method: 'orderStopPosition', stopType: 2 }
-        case SL < 0:
-          return { method: 'orderAndCancelStopPosition', orderStopType: 0, cancelStopType: 1 }
-        default:
-          return { method: 'orderStopPosition', stopType: 0 }
-      }
-    } else if (TP < 0) {
-      switch (true) {
-        case SL > 0:
-          return { method: 'orderAndCancelStopPosition', orderStopType: 1, cancelStopType: 0 }
-        case SL < 0:
-          return { method: 'cancelOrderedStopPosition', stopType: 2 }
-        default:
-          return { method: 'cancelOrderedStopPosition', stopType: 0 }
-      }
-    } else {
-      switch (true) {
-        case SL > 0:
-          return { method: 'orderStopPosition', stopType: 1 }
-        case SL < 0:
-          return { method: 'cancelOrderedStopPosition', stopType: 1 }
-        default:
-          return {}
-      }
-    }
-  }
-
-  takeProfitOrStopLoss = async (
-    signer: Signer,
-    token: string,
-    side: number,
-    takeProfitPrice: number,
-    stopLossPrice: number
-  ): Promise<boolean> => {
-    const pair = pairs.find((pair) => pair.token === token)
-    const contract = getDerifyDerivativePairContract(pair!.contract, signer)
-
-    const job = this.calcOrderOperateType(takeProfitPrice, stopLossPrice)
-
-    if (isEmpty(job)) return true
-
-    const { method, stopType, orderStopType, cancelStopType } = job
-    const _takeProfitPrice = toFloorNum(takeProfitPrice)
-    const _stopLossPrice = toFloorNum(stopLossPrice)
-
-    try {
-      if (method === 'orderStopPosition') {
-        const gasLimit = await estimateGas(
-          contract,
-          'orderStopPosition',
-          [side, stopType, _takeProfitPrice, _stopLossPrice],
-          0
-        )
-        const data = await contract.orderStopPosition(side, stopType, _takeProfitPrice, _stopLossPrice, {
-          gasLimit
-        })
-        const receipt = await data.wait()
-        return receipt.status
-      }
-      /**
-       #### cancleOrderedStopPosition
-       */
-      if (method === 'cancelOrderedStopPosition') {
-        const gasLimit = await estimateGas(contract, 'cancelOrderedStopPosition', [stopType, side], 0)
-        const data = await contract.cancelOrderedStopPosition(stopType, side, { gasLimit })
-        const receipt = await data.wait()
-        return receipt.status
-      }
-      /**
-       #### orderAndCancleStopPosition
-       */
-      if (method === 'orderAndCancelStopPosition') {
-        const price = orderStopType === 0 ? _takeProfitPrice : _stopLossPrice
-
-        const gasLimit = await estimateGas(
-          contract,
-          'orderAndCancelStopPosition',
-          [side, orderStopType, price, cancelStopType],
-          0
-        )
-        const data = await contract.orderAndCancelStopPosition(side, orderStopType, price, cancelStopType, {
-          gasLimit
-        })
-        const receipt = await data.wait()
-        return receipt.status
-      }
-
-      return false
-    } catch (e) {
-      console.info(e)
-      return false
-    }
   }
 
   openPositionOrder = async (
@@ -356,7 +258,7 @@ class Trader {
     token: string,
     side: string,
     size: string,
-    amount: string,
+    amount: number,
     spotPrice: string,
     whetherStud?: boolean
   ): Promise<boolean> => {

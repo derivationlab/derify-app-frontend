@@ -10,6 +10,8 @@ export const useMatchConf = () => {
   const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
   const protocolConfig = useConfigInfo((state) => state.protocolConfig)
   const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
+  const openingMaxLimit = useConfigInfo((state) => state.openingMaxLimit)
+  const openingMaxLimitLoaded = useConfigInfo((state) => state.openingMaxLimitLoaded)
 
   const spotPrice = useMemo(() => {
     return spotPrices[marginToken][quoteToken]
@@ -23,10 +25,17 @@ export const useMatchConf = () => {
     if (protocolConfigLoaded && protocolConfig) return protocolConfig[marginToken]
   }, [quoteToken, marginToken, protocolConfig, protocolConfigLoaded])
 
+  const _openingMaxLimit = useMemo(() => {
+    if (openingMaxLimitLoaded) return openingMaxLimit[marginToken][quoteToken]
+  }, [quoteToken, marginToken, openingMaxLimit, openingMaxLimitLoaded])
+
   return {
     spotPrice,
+    quoteToken,
+    marginToken,
     factoryConfig: _factoryConfig,
-    protocolConfig: _protocolConfig
+    protocolConfig: _protocolConfig,
+    openingMaxLimit: _openingMaxLimit
   }
 }
 

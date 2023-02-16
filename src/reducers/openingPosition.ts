@@ -1,20 +1,35 @@
 interface ActionType {
-  type: 'SET_OPENING_AMOUNT' | 'SET_TOKEN_SELECT' | 'SET_MODAL_STATUS' | 'SET_OPENING_PARAMS'
+  type:
+    | 'SET_OPENING_AMOUNT'
+    | 'SET_TOKEN_SELECT'
+    | 'SET_MODAL_STATUS'
+    | 'SET_OPENING_PARAMS'
+    | 'SET_TRADING_FEE_INFO'
+    | 'SET_CHANGE_FEE_INFO'
+    | 'SET_VALID_OPENING_VOLUME'
   payload: any
 }
+
+const R = { loaded: false, value: 0 }
 
 interface StateType {
   tokenSelect: string
   modalStatus: boolean
   openingAmount: string
+  posChangeFee: typeof R
   openingParams: Record<string, any>
+  tradingFeeInfo: typeof R
+  validOpeningVol: typeof R
 }
 
 const stateInit: StateType = {
   tokenSelect: '',
   modalStatus: false,
   openingAmount: '',
-  openingParams: {}
+  openingParams: {},
+  posChangeFee: R,
+  tradingFeeInfo: R,
+  validOpeningVol: R
 }
 
 function reducer(state: StateType, action: ActionType): StateType {
@@ -27,6 +42,12 @@ function reducer(state: StateType, action: ActionType): StateType {
       return { ...state, modalStatus: action.payload }
     case 'SET_OPENING_PARAMS':
       return { ...state, openingParams: action.payload }
+    case 'SET_TRADING_FEE_INFO':
+      return { ...state, tradingFeeInfo: action.payload }
+    case 'SET_CHANGE_FEE_INFO':
+      return { ...state, posChangeFee: action.payload }
+    case 'SET_VALID_OPENING_VOLUME':
+      return { ...state, validOpeningVol: action.payload }
     default:
       return state
   }

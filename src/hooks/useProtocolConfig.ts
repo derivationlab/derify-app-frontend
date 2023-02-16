@@ -7,11 +7,11 @@ import { getAddress, getDerifyProtocolAddress } from '@/utils/addressHelpers'
 
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 
-const contractInfo = {
+export const contractInfo = {
   factory: '',
   rewards: '',
   exchange: '',
-  priceFeed: '',
+  priceFeed: ''
 }
 
 export const initial = (): MarginTokenWithContract => {

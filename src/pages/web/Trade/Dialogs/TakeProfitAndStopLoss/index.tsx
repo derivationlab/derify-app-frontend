@@ -43,7 +43,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
         const amount = new BN(v)
           .minus(data?.averagePrice)
           .times(data?.size)
-          .times(data?.side === PositionSide.Long ? 1 : -1)
+          .times(data?.side === PositionSide.long ? 1 : -1)
         setTakeProfitAmount(safeInterceptionValues(String(amount)))
       } else {
         setTakeProfitAmount(0)
@@ -58,7 +58,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
         const amount = new BN(v)
           .minus(data?.averagePrice)
           .times(data?.size)
-          .times(data?.side === PositionSide.Long ? 1 : -1)
+          .times(data?.side === PositionSide.long ? 1 : -1)
         setStopLossAmount(safeInterceptionValues(String(amount)))
       } else {
         setStopLossAmount(0)
@@ -170,7 +170,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
     return (
       <p>
         <em className="buy">
-          {data?.side === PositionSide.Long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+          {data?.side === PositionSide.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
         </em>
         <u>{BASE_TOKEN_SYMBOL}</u>
       </p>
@@ -181,7 +181,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
     return (
       <p>
         <em className="buy">
-          {data?.side === PositionSide.Short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+          {data?.side === PositionSide.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
         </em>
         <u>{BASE_TOKEN_SYMBOL}</u>
       </p>

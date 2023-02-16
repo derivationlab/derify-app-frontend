@@ -1,5 +1,4 @@
-import BN from 'bignumber.js'
-import { batch } from 'react-redux'
+import PubSub from 'pubsub-js'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { useSigner, useAccount } from 'wagmi'
@@ -7,15 +6,12 @@ import React, { FC, useState, useMemo, useContext } from 'react'
 
 import Trader from '@/class/Trader'
 import ThemeContext from '@/context/Theme/Context'
-import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { PubSubEvents } from '@/typings'
 import { useTraderData } from '@/store/trader/hooks'
-import { useMatchConfig } from '@/hooks/useMatchConfig'
 import { usePosDATStore } from '@/zustand/usePosDAT'
-import { useAppDispatch } from '@/store'
-import { useShareMessage } from '@/store/share/hooks'
-import { getTraderDataAsync } from '@/store/trader'
-import { getMyPositionsDataAsync } from '@/store/contract'
-import { clearShareMessage, setShareMessage } from '@/store/share'
+import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { useCloseAllPositions, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
+import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
@@ -28,34 +24,29 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useCloseAllPositions } from '@/hooks/useTrading'
+import { isET } from '@/utils/tools'
 
 const MyPosition: FC = () => {
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
-  const { shareMessage } = useShareMessage()
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
   const { brokerBound: broker } = useTraderData()
 
   const { close } = useCloseAllPositions()
-  const { spotPrice } = useSpotPrice()
+  const { factoryConfig } = useFactoryConf()
   const { protocolConfig } = useProtocolConf()
+  const { takeProfitOrStopLoss } = useTakeProfitOrStopLoss()
+  const { spotPrice, marginToken, quoteToken } = useSpotPrice()
   const positionOrd = usePosDATStore((state) => state.positionOrd)
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
+  const closingType = useCalcOpeningDAT((state) => state.closingType)
+  const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
 
-  const { closeSomePosition, takeProfitOrStopLoss } = Trader
+  const { closeSomePosition } = Trader
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
-
-  const memoShareMessage = useMemo(() => {
-    if (!isEmpty(shareMessage) && shareMessage?.type === 'CLOSE_POSITION') {
-      return shareMessage
-    }
-    return {}
-  }, [shareMessage])
 
   const onCloseDialogEv = () => setDialogStatus('')
 
@@ -70,44 +61,35 @@ const MyPosition: FC = () => {
   }
 
   // 100% or not
-  const whetherStud = ({ size = 0, volume = 0 }, amount: string): boolean => {
-    const amount_BN = new BN(amount)
-    return amount_BN.isEqualTo(volume) || amount_BN.isEqualTo(size)
+  const whetherStud = ({ size = 0, volume = 0 }, amount: number): boolean => {
+    return isET(amount, volume) || isET(amount, size)
   }
 
   const closeOnePositionsFunc = async () => {
-    dispatch(clearShareMessage())
-
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     onCloseDialogEv()
 
     if (signer && broker?.broker && protocolConfig) {
       const { token, side, size } = targetPosOrd
-      const { symbol = '', amount = 0 } = memoShareMessage
 
-      const account = await signer.getAddress()
       const status = await closeSomePosition(
         signer,
         broker.broker,
-        symbol,
+        closingType,
         token,
         side,
         size,
-        amount,
+        closingAmount,
         spotPrice,
-        whetherStud(targetPosOrd, amount)
+        whetherStud(targetPosOrd, closingAmount)
       )
 
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
 
-        batch(() => {
-          dispatch(getTraderDataAsync({ trader: account, contract: protocolConfig.exchange }))
-          dispatch(getMyPositionsDataAsync(account))
-          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY'] }))
-        })
+        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -129,9 +111,8 @@ const MyPosition: FC = () => {
         // succeed
         window.toast.success(t('common.success', 'success'))
 
-        batch(() => {
-          dispatch(setShareMessage({ type: ['MAX_VOLUME_UPDATE', 'UPDATE_TRADE_HISTORY', 'UPDATE_POSITIONS_AMOUNT'] }))
-        })
+        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
+        PubSub.publish(PubSubEvents.UPDATE_POSITION_AMOUNT)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -146,10 +127,10 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && protocolConfig) {
-      const { token, side, TP, SL } = params
+    if (signer && broker?.broker && factoryConfig) {
+      const { side, TP, SL } = params
 
-      const status = await takeProfitOrStopLoss(signer, token, side, TP, SL)
+      const status = await takeProfitOrStopLoss(factoryConfig[marginToken][quoteToken], side, TP, SL)
 
       if (status) {
         // succeed

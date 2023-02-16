@@ -32,6 +32,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       if (data?.address && protocolConfig) {
         const status = await deposit(protocolConfig.exchange, amount, marginToken)
+
         if (status) {
           // succeed
           window.toast.success(t('common.success', 'success'))

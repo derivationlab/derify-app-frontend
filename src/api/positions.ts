@@ -1,8 +1,8 @@
 import { get } from '@/utils/http'
 import { KLineTimes } from '@/data'
 
-export const getCurrentPositionsAmount = async (tokenAddr: string) => {
-  const response = await get(`api/current_positions_amount/${tokenAddr}`)
+export const getCurrentPositionsAmount = async (tokenAddr: string, marginToken: string) => {
+  const response = await get(`api/current_positions_amount/${tokenAddr}/${marginToken}`)
   return response
 }
 

@@ -16,7 +16,7 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { pcfRatio, quoteToken } = usePCFRatioConf()
+  const { pcfRatio, quoteToken, marginToken } = usePCFRatioConf()
 
   const indicators = usePairsInfo((state) => state.indicators)
 
@@ -37,7 +37,10 @@ const HeaderData: FC = () => {
   }, [indicators])
 
   const funcAsync = async () => {
-    const data = await getCurrentPositionsAmountData(findToken(quoteToken).tokenAddress)
+    const data = await getCurrentPositionsAmountData(
+      findToken(quoteToken).tokenAddress,
+      findToken(marginToken).tokenAddress
+    )
 
     if (data) {
       const { long_position_amount = 0, short_position_amount = 0 } = data
@@ -68,11 +71,11 @@ const HeaderData: FC = () => {
   }, [quoteToken])
 
   return (
-    <div className='web-trade-kline-header-data'>
+    <div className="web-trade-kline-header-data">
       <section>
         <h3>
           {t('Trade.kline.NetPositionRate', 'Net Position Rate')}
-          <QuestionPopover size='mini' text={t('Trade.kline.NetPositionRateTip')} />
+          <QuestionPopover size="mini" text={t('Trade.kline.NetPositionRateTip')} />
         </h3>
         {!mobile ? (
           <strong>
@@ -91,7 +94,7 @@ const HeaderData: FC = () => {
       <section>
         <h3>
           {t('Trade.kline.PCFRate', 'PCF Rate')}
-          <QuestionPopover size='mini' text={t('Trade.kline.PCFRateTip')} />
+          <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
         </h3>
         <strong>{memoPosFeeRatio}%</strong>
       </section>
@@ -99,7 +102,7 @@ const HeaderData: FC = () => {
       <section>
         <h3>
           {t('Trade.kline.PositionMiningAPY', 'Position Mining APR.')}
-          <QuestionPopover size='mini' text={t('Trade.kline.PositionMiningAPYTip')} />
+          <QuestionPopover size="mini" text={t('Trade.kline.PositionMiningAPYTip')} />
         </h3>
         {mobile ? (
           <>

@@ -49,25 +49,25 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   return (
     <>
       <Dialog
-        width='540px'
+        width="540px"
         visible={visible}
         title={t('Trade.ClosePosition.ClosePosition', 'Close Position')}
         onClose={onClose}
       >
-        <div className='web-trade-dialog web-trade-dialog-position-close'>
-          <div className='web-trade-dialog-body'>
-            <div className='web-trade-dialog-position-info'>
-              <header className='web-trade-dialog-position-info-header'>
+        <div className="web-trade-dialog web-trade-dialog-position-close">
+          <div className="web-trade-dialog-body">
+            <div className="web-trade-dialog-position-info">
+              <header className="web-trade-dialog-position-info-header">
                 <h4>
                   <strong>{`${quoteToken}-${marginToken}`}</strong>
                   <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
                 </h4>
               </header>
-              <section className='web-trade-dialog-position-info-data'>
-                <BalanceShow value={spotPrice} unit='' />
+              <section className="web-trade-dialog-position-info-data">
+                <BalanceShow value={spotPrice} unit="" />
                 <span className={memoChangeRate >= 0 ? 'buy' : 'sell'}>{memoChangeRate}%</span>
               </section>
-              <section className='web-trade-dialog-position-info-count'>
+              <section className="web-trade-dialog-position-info-count">
                 <p>
                   {t('Trade.ClosePosition.PositionAveragePrice', 'Position Average Price')} :{' '}
                   <em>{safeInterceptionValues(data?.averagePrice ?? 0)}</em>

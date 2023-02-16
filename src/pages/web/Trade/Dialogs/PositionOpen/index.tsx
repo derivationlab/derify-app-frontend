@@ -1,21 +1,18 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { isEmpty } from 'lodash'
-import BN from 'bignumber.js'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import Trader from '@/class/Trader'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { PositionSide } from '@/store/contract/helper'
+import { useMatchConf } from '@/hooks/useMatchConf'
+import { reducer, stateInit } from '@/reducers/openingPosition'
+import { nonBigNumberInterception } from '@/utils/tools'
+import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
-import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
-import { nonBigNumberInterception } from '@/utils/tools'
-import { useContractConfig } from '@/store/config/hooks'
-import { useMatchConfig } from '@/hooks/useMatchConfig'
-import { QuoteTokenKeys } from '@/typings'
+import QuestionPopover from '@/components/common/QuestionPopover'
 
 interface Props {
   data: Record<string, any>
@@ -26,84 +23,67 @@ interface Props {
 
 const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { marginToken, factoryConfig, protocolConfig, factoryConfigLoaded, protocolConfigLoaded } = useMatchConfig()
 
-  const { calcClosePositionTradingFee, calcClosePositionChangeFee, checkOpenPositionSize } = Trader
+  const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const [changeFee, setChangeFee] = useState<string>('0')
-  const [tradingFee, setTradingFee] = useState<string>('0')
-  const [validVolume, setValidVolume] = useState<string>('0')
-  const [changeFeeCalculating, setChangeFeeCalculating] = useState<boolean>(true)
-  const [tradingFeeCalculating, setTradingFeeCalculating] = useState<boolean>(true)
-  const [tradingVolCalculating, setTradingVolCalculating] = useState<boolean>(true)
+  const { spotPrice, marginToken, quoteToken, protocolConfig, factoryConfig, openingMaxLimit } = useMatchConf()
 
-  const calcClosePositionTradingFeeCb = useCallback(async () => {
-    setTradingFeeCalculating(true)
+  const calcTradingFeeFunc = useCallback(async () => {
+    if (factoryConfig) {
+      const fee = await calcTradingFee(factoryConfig, data?.symbol, state.validOpeningVol.value, spotPrice)
+      // console.info(fee)
+      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
+    }
+  }, [data, factoryConfig, spotPrice, state.validOpeningVol])
 
-    const fee = await calcClosePositionTradingFee(data?.symbol, data?.token, data?.volume, data?.price)
-
-    setTradingFee(fee)
-    setTradingFeeCalculating(false)
-  }, [data])
-
-  const calcClosePositionChangeFeeCb = useCallback(async () => {
-    if (factoryConfigLoaded && protocolConfigLoaded) {
-      setChangeFeeCalculating(true)
-
-      const fee = await calcClosePositionChangeFee(
+  const calcChangeFeeFunc = useCallback(async () => {
+    if (factoryConfig && protocolConfig) {
+      const fee = await calcChangeFee(
         data?.side,
         data?.symbol,
-        data?.token,
-        data?.volume,
-        data?.price,
+        state.validOpeningVol.value,
+        spotPrice,
         protocolConfig.exchange,
-        factoryConfig[data?.quote],
+        factoryConfig,
         true
       )
 
-      setChangeFee(fee)
-      setChangeFeeCalculating(false)
+      dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
     }
-  }, [data, factoryConfig, protocolConfig, protocolConfigLoaded, factoryConfigLoaded])
+  }, [data, spotPrice, factoryConfig, protocolConfig, state.validOpeningVol])
 
-  const checkOpenPositionSizeFunc = async () => {
-    if (protocolConfigLoaded) {
-      setTradingVolCalculating(true)
+  const checkOpeningVolFunc = async () => {
+    const volume = checkOpeningVol(
+      spotPrice,
+      data.volume,
+      data.side,
+      data.openType,
+      data.symbol,
+      openingMaxLimit[data.side]
+    )
 
-      const volume = await checkOpenPositionSize(
-        data.token,
-        data.side,
-        data.symbol,
-        data.openType,
-        data.volume,
-        data.price,
-        protocolConfig.exchange
-      )
-
-      setValidVolume(volume)
-      setTradingVolCalculating(false)
-    }
+    dispatch({ type: 'SET_VALID_OPENING_VOLUME', payload: { loaded: true, value: volume } })
   }
-
-  // const memoApyValue = useMemo(() => {
-  //   const apy = new BN(data?.apy).times(100)
-  //   return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
-  // }, [data?.apy])
 
   useEffect(() => {
     if (!isEmpty(data) && visible) {
-      void checkOpenPositionSizeFunc()
-      void calcClosePositionTradingFeeCb()
-      void calcClosePositionChangeFeeCb()
+      void checkOpeningVolFunc()
     }
   }, [data, visible])
 
   useEffect(() => {
     if (!visible) {
-      setTradingFee('0')
-      setChangeFee('0')
+      dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: false, value: 0 } })
+      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: false, value: 0 } })
     }
   }, [visible])
+
+  useEffect(() => {
+    if (visible && state.validOpeningVol.value) {
+      void calcTradingFeeFunc()
+      void calcChangeFeeFunc()
+    }
+  }, [visible, state.validOpeningVol])
 
   return (
     <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
@@ -112,14 +92,11 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{data?.name}</strong>
+                <strong>
+                  {quoteToken}-{marginToken}
+                </strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
               </h4>
-              {/*
-              <p>
-                <strong>{memoApyValue}%</strong> APR.
-              </p>
-              */}
             </header>
             <section className="web-trade-dialog-position-info-data">
               {data?.openType === 0 ? (
@@ -135,20 +112,20 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
           <div className="web-trade-dialog-position-confirm">
             <dl>
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
-              {data?.side === PositionSide['2-Way'] ? (
+              {data?.side === PositionSide.twoWay ? (
                 <dd>
-                  {tradingVolCalculating ? (
+                  {!state.validOpeningVol.loaded ? (
                     <small>calculating...</small>
                   ) : (
                     <section>
                       <aside>
                         <MultipleStatus direction="Long" />
-                        <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString(), 8)}</em>
+                        <em>{nonBigNumberInterception(state.validOpeningVol.value / 2, 8)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                       <aside>
                         <MultipleStatus direction="Short" />
-                        <em>{nonBigNumberInterception(new BN(validVolume).div(2).toString(), 8)}</em>
+                        <em>{nonBigNumberInterception(state.validOpeningVol.value / 2, 8)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                     </section>
@@ -156,11 +133,11 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 </dd>
               ) : (
                 <dd>
-                  {tradingVolCalculating ? (
+                  {!state.validOpeningVol.loaded ? (
                     <small>calculating...</small>
                   ) : (
                     <span>
-                      <em>{validVolume}</em>
+                      <em>{nonBigNumberInterception(state.validOpeningVol.value, 8)}</em>
                       <u>{data?.symbol}</u>
                     </span>
                   )}
@@ -173,11 +150,11 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 <QuestionPopover size="mini" text={t('Trade.COP.PCFEstimateTip', 'PCF(Estimate)')} />
               </dt>
               <dd>
-                {changeFeeCalculating ? (
+                {!state.posChangeFee.loaded ? (
                   <small>calculating...</small>
                 ) : (
                   <div>
-                    <em>{changeFee}</em>
+                    <em>{nonBigNumberInterception(state.posChangeFee.value, 8)}</em>
                     <u>{marginToken}</u>
                   </div>
                 )}
@@ -192,11 +169,11 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 />
               </dt>
               <dd>
-                {tradingFeeCalculating ? (
+                {!state.tradingFeeInfo.loaded ? (
                   <small>calculating...</small>
                 ) : (
                   <div>
-                    <em>-{tradingFee}</em>
+                    <em>-{nonBigNumberInterception(state.tradingFeeInfo.value, 8)}</em>
                     <u>{marginToken}</u>
                   </div>
                 )}

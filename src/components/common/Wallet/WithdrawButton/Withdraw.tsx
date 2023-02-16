@@ -32,8 +32,8 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const memoMargin = useMemo(() => {
     if (variablesLoaded) {
       const { marginBalance, availableMargin } = variables
-      const p1 = Number(marginBalance)- Number(availableMargin)
-      const p2 = isET(marginBalance, 0) ? 0 : p1 / Number(marginBalance) * 100
+      const p1 = Number(marginBalance) - Number(availableMargin)
+      const p2 = isET(marginBalance, 0) ? 0 : (p1 / Number(marginBalance)) * 100
       return [nonBigNumberInterception(p1), p2]
     }
     return [0, 0]

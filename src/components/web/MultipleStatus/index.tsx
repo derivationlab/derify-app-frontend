@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 
 export interface DirectionProps {
-  direction: 'Short' | 'SHORT' | 'short' | 'Long' | 'LONG' | 'long' | '2-way'
+  direction: 'Short' | 'SHORT' | 'short' | 'Long' | 'LONG' | 'long' | 'twoWay'
 }
 
 export interface MultipleStatusProps extends DirectionProps {

@@ -56,7 +56,7 @@ const getMyPositionsData = async (
           positionOrd.push({
             size,
             volume,
-            side: PositionSide.Long,
+            side: PositionSide.long,
             stopLossPrice: calcStopLossOrStopProfitPrice(longOrderStopLossPosition),
             takeProfitPrice: calcStopLossOrStopProfitPrice(longOrderStopProfitPosition),
             averagePrice: safeInterceptionValues(String(long.price), 8)
@@ -74,7 +74,7 @@ const getMyPositionsData = async (
           positionOrd.push({
             size,
             volume,
-            side: PositionSide.Short,
+            side: PositionSide.short,
             stopLossPrice: calcStopLossOrStopProfitPrice(shortOrderStopLossPosition),
             takeProfitPrice: calcStopLossOrStopProfitPrice(shortOrderStopProfitPosition),
             averagePrice: safeInterceptionValues(String(short.price), 8)
@@ -102,7 +102,7 @@ const getMyPositionsData = async (
             profitLossOrd.push({
               size,
               volume,
-              side: PositionSide.Long,
+              side: PositionSide.long,
               price: safeInterceptionValues(String(order.price)),
               leverage: safeInterceptionValues(String(order.leverage)),
               timestamp: String(order.timestamp),
@@ -120,7 +120,7 @@ const getMyPositionsData = async (
             profitLossOrd.push({
               size,
               volume,
-              side: PositionSide.Short,
+              side: PositionSide.short,
               price: safeInterceptionValues(String(order.price)),
               leverage: safeInterceptionValues(String(order.leverage)),
               timestamp: String(order.timestamp),
@@ -137,7 +137,7 @@ const getMyPositionsData = async (
           profitLossOrd.push({
             size,
             volume,
-            side: PositionSide.Long,
+            side: PositionSide.long,
             price: safeInterceptionValues(String(longOrderStopProfitPosition.stopPrice)),
             leverage: safeInterceptionValues(String(long.leverage)),
             orderType: OrderTypes.StopProfit,
@@ -156,7 +156,7 @@ const getMyPositionsData = async (
           profitLossOrd.push({
             size,
             volume,
-            side: PositionSide.Long,
+            side: PositionSide.long,
             price: safeInterceptionValues(String(longOrderStopLossPosition.stopPrice)),
             leverage: safeInterceptionValues(String(long.leverage)),
             orderType: OrderTypes.StopLoss,
@@ -172,7 +172,7 @@ const getMyPositionsData = async (
           profitLossOrd.push({
             size,
             volume,
-            side: PositionSide.Short,
+            side: PositionSide.short,
             price: safeInterceptionValues(String(shortOrderStopLossPosition.stopPrice)),
             leverage: safeInterceptionValues(String(short.leverage)),
             orderType: OrderTypes.StopLoss,
@@ -188,7 +188,7 @@ const getMyPositionsData = async (
           profitLossOrd.push({
             size,
             volume,
-            side: PositionSide.Short,
+            side: PositionSide.short,
             price: safeInterceptionValues(String(shortOrderStopProfitPosition.stopPrice)),
             leverage: safeInterceptionValues(String(short.leverage)),
             orderType: OrderTypes.StopProfit,

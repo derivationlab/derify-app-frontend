@@ -43,7 +43,9 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
     <div className={classNames('web-trade-symbol-select', { show })} ref={ref}>
       {mobile && <div className="web-trade-symbol-select-toggle" onClick={toggleFunc} />}
       <div className="web-trade-symbol-select-curr" onClick={() => setShow(!show)}>
-        <h4>{quoteToken}-{BASE_TOKEN_SYMBOL}</h4>
+        <h4>
+          {quoteToken}-{BASE_TOKEN_SYMBOL}
+        </h4>
         <aside>
           <BalanceShow value={spotPrice} unit="" />
           <ChangePercent value={indicators?.price_change_rate ?? 0} />

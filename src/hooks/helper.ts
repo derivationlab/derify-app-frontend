@@ -2,12 +2,20 @@ import { flatten, isEmpty } from 'lodash'
 import { BigNumberish } from '@ethersproject/bignumber'
 
 import multicall from '@/utils/multicall'
-import { safeInterceptionValues } from '@/utils/tools'
-import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { OpeningType } from '@/zustand/useCalcOpeningDAT'
+import { PositionSide } from '@/store/contract/helper'
+import {
+  getDerifyDerivativePairContract,
+  getDerifyExchangeContract1,
+  getMarginTokenPriceFeedContract
+} from '@/utils/contractHelpers'
+import { getUnitAmount, isGT, isLT, nonBigNumberInterception, safeInterceptionValues, toFloorNum } from '@/utils/tools'
+import tokens, { BASE_TOKEN_SYMBOL, findMarginToken, findToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
+import BN from 'bignumber.js'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -156,8 +164,6 @@ export const getTraderVariables = async (trader: string, exchange: string): Prom
   }
 }
 
-const positionSideKeys = ['long', 'short', 'twoWay']
-
 export const initialOpeningMaxLimit = (): MarginTokenWithQuote => {
   let value = Object.create(null)
   let quote = Object.create(null)
@@ -215,7 +221,7 @@ export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<Ma
         ...output[marginToken as MarginTokenKeys],
         [quoteToken]: {
           ...output[marginToken as MarginTokenKeys][quoteToken as QuoteTokenKeys],
-          [positionSideKeys[calls[index].params[1] as number]]: safeInterceptionValues(String(limit), 8)
+          [PositionSide[calls[index].params[1] as number]]: safeInterceptionValues(String(limit), 8)
         }
       }
     })
@@ -224,4 +230,175 @@ export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<Ma
   }
 
   return output
+}
+
+export const checkSystemQuotas = (
+  pricingType: string,
+  openingSize: string,
+  openingType: OpeningType,
+  positionSide: PositionSide,
+  openingMaxLimit: string
+) => {
+  if (positionSide === PositionSide.twoWay || openingType !== OpeningType.Market) return openingSize
+}
+
+export const calcProfitOrLoss = (TP: number, SL: number): Record<string, any> => {
+  if (TP > 0) {
+    switch (true) {
+      case SL > 0:
+        return { method: 'orderStopPosition', stopType: 2 }
+      case SL < 0:
+        return { method: 'orderAndCancelStopPosition', orderStopType: 0, cancelStopType: 1 }
+      default:
+        return { method: 'orderStopPosition', stopType: 0 }
+    }
+  } else if (TP < 0) {
+    switch (true) {
+      case SL > 0:
+        return { method: 'orderAndCancelStopPosition', orderStopType: 1, cancelStopType: 0 }
+      case SL < 0:
+        return { method: 'cancelOrderedStopPosition', stopType: 2 }
+      default:
+        return { method: 'cancelOrderedStopPosition', stopType: 0 }
+    }
+  } else {
+    switch (true) {
+      case SL > 0:
+        return { method: 'orderStopPosition', stopType: 1 }
+      case SL < 0:
+        return { method: 'cancelOrderedStopPosition', stopType: 1 }
+      default:
+        return {}
+    }
+  }
+}
+
+// todo 用单价来处理判断
+export const isOpeningMinLimit = async (
+  priceFeed: string,
+  openingMinLimit: string,
+  openingAmount: string,
+  tokenSelect: string,
+  spotPrice: string
+): Promise<boolean> => {
+  if (findMarginToken(tokenSelect)) {
+    const c = getMarginTokenPriceFeedContract(priceFeed)
+    const amount = getUnitAmount(openingMinLimit)
+
+    const response = await c.getMarginTokenAmountIn(amount) //--> margin token
+
+    const precision = findToken(tokenSelect).precision
+    const minLimit = safeInterceptionValues(response, precision, precision)
+    return isLT(openingAmount, minLimit)
+  } else {
+    const div = Number(openingMinLimit) / Number(spotPrice)
+    return isLT(openingAmount, div)
+  }
+}
+
+export const calcTradingFee = async (
+  pairAddress: string,
+  tokenSelect: string,
+  openingAmount: number,
+  spotPrice: string
+): Promise<number> => {
+  const c = getDerifyDerivativePairContract(pairAddress)
+
+  const response = await c.tradingFeeRatio()
+
+  const ratio = Number(safeInterceptionValues(String(response), 8))
+
+  if (findMarginToken(tokenSelect)) {
+    return ratio * Number(openingAmount)
+  } else {
+    const mul = Number(openingAmount) * Number(spotPrice)
+    return ratio * mul
+  }
+}
+
+export const checkOpeningVol = (
+  spotPrice: string,
+  openingSize: string,
+  positionSide: PositionSide,
+  openingType: OpeningType,
+  tokenSelect: string,
+  openingMaxLimit: string
+) => {
+  if (positionSide === PositionSide.twoWay || openingType !== OpeningType.Market) return openingSize
+  if (findMarginToken(tokenSelect)) {
+    const mul = Number(spotPrice) * Number(openingMaxLimit)
+    return isGT(openingSize, mul) ? mul : openingSize
+  } else {
+    return isGT(openingSize, openingMaxLimit) ? openingMaxLimit : openingSize
+  }
+}
+
+export const calcChangeFee = async (
+  side: PositionSide,
+  symbol: string,
+  amount: number,
+  spotPrice: string,
+  exchange: string,
+  derivative: string,
+  isOpen = false
+): Promise<string> => {
+  let nakedPositionTradingPairAfterClosing_BN: BN = new BN(0)
+
+  if (side === PositionSide.twoWay) return '0'
+
+  const size = findMarginToken(symbol) ? toFloorNum(new BN(amount).div(spotPrice).toString()) : toFloorNum(amount)
+  const exchangeContract = getDerifyExchangeContract1(exchange)
+  const derivativeContract = getDerifyDerivativePairContract(derivative)
+
+  const liquidityPool = await exchangeContract.liquidityPool()
+  const longTotalSize = await derivativeContract.longTotalSize()
+  const shortTotalSize = await derivativeContract.shortTotalSize()
+  const kRatio = await derivativeContract.kRatio()
+  const gRatio = await derivativeContract.gRatio()
+  const roRatio = await derivativeContract.roRatio()
+  const beforeRatio = await derivativeContract.getPositionChangeFeeRatio()
+
+  const longTotalSize_BN = new BN(longTotalSize._hex)
+  const shortTotalSize_BN = new BN(shortTotalSize._hex)
+
+  const nakedPositionTradingPairBeforeClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN)
+
+  if (side === PositionSide.long) {
+    if (!isOpen) nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(size).minus(shortTotalSize_BN)
+    else nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.plus(size).minus(shortTotalSize_BN)
+  }
+
+  if (side === PositionSide.short) {
+    if (!isOpen) nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.minus(size))
+    else {
+      nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.plus(size))
+    }
+  }
+
+  const raw_data_naked_after = safeInterceptionValues(
+    String(new BN(safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8)).times(spotPrice)),
+    8
+  )
+  const raw_data_naked_before = safeInterceptionValues(
+    String(new BN(safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)).times(spotPrice)),
+    8
+  )
+  const nakedPositionDiff_BN = new BN(raw_data_naked_after).abs().minus(new BN(raw_data_naked_before).abs())
+
+  const raw_data_kRatio = safeInterceptionValues(String(kRatio), 8)
+  const minimum = BN.minimum(new BN(liquidityPool._hex).times(raw_data_kRatio), new BN(gRatio._hex))
+
+  const row_data_minimum = safeInterceptionValues(String(minimum), 8)
+  const tradingFeeAfterClosing_BN = minimum.isEqualTo(0)
+    ? new BN(0)
+    : new BN(raw_data_naked_after).div(row_data_minimum)
+
+  const row_data_beforeRatio = safeInterceptionValues(beforeRatio._hex, 8)
+  const radioSum = new BN(row_data_beforeRatio).abs().plus(tradingFeeAfterClosing_BN.abs())
+
+  const row_data_roRatio = safeInterceptionValues(roRatio._hex, 8)
+  const row_data_naked_final = safeInterceptionValues(String(nakedPositionDiff_BN), 8)
+  const fee = new BN(row_data_naked_final).times(radioSum.div(2).plus(row_data_roRatio)).times(-1)
+
+  return nonBigNumberInterception(fee.toFixed(10), 8)
 }

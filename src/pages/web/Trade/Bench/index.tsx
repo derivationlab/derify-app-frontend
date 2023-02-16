@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
 import Trader from '@/class/Trader'
 import { findToken } from '@/config/tokens'
-import { usePairsInfo } from '@/zustand'
+import { useConfigInfo, usePairsInfo } from '@/zustand'
 import { PubSubEvents } from '@/typings'
 import { PositionSide } from '@/store/contract/helper'
 import { useTraderData } from '@/store/trader/hooks'
@@ -26,6 +26,7 @@ import PriceInput from './c/PriceInput'
 import Initializing from './c/Initializing'
 import QuantityInput from './c/QuantityInput'
 import OpenTypeSelect from './c/OpenTypeSelect'
+import { isOpeningMinLimit } from '@/hooks/helper'
 
 const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -36,7 +37,7 @@ const Bench: FC = () => {
   const { brokerBound: broker } = useTraderData() // todo rewrite redux
   const { spotPrice, marginToken, quoteToken } = useSpotPrice()
 
-  const { openPositionOrder, minimumOpenPositionLimit } = Trader
+  const { openPositionOrder } = Trader
 
   const indicators = usePairsInfo((state) => state.indicators)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
@@ -45,6 +46,7 @@ const Bench: FC = () => {
   const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
   const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
+  const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(indicators?.longPmrRate)
@@ -74,11 +76,11 @@ const Bench: FC = () => {
     return '--'
   }, [indicators])
 
-  const memoDisabledCondition1 = useMemo(() => {
+  const memoDisabled1 = useMemo(() => {
     return isLTET(Number(state.openingAmount), 0)
   }, [state.openingAmount])
 
-  const memoDisabledCondition2 = useMemo(() => {
+  const memoDisabled2 = useMemo(() => {
     return isLTET(openingPrice, 0)
   }, [openingPrice])
 
@@ -125,43 +127,45 @@ const Bench: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const openPositionDialog = (side: PositionSide) => {
-    let apy: any = ''
-    let _openType = openingType
-    const _realPrice = openingType === OpeningType.Market ? spotPrice : openingPrice
+  const openPositionDialog = async (side: PositionSide) => {
+    if (protocolConfig) {
+      let _openType = openingType
+      const _realPrice = openingType === OpeningType.Market ? spotPrice : openingPrice
 
-    const isLimit = minimumOpenPositionLimit(side, _realPrice, state.openingAmount, state.tokenSelect)
+      const isLimit = await isOpeningMinLimit(
+        protocolConfig.priceFeed,
+        openingMinLimit[marginToken],
+        state.openingAmount,
+        state.tokenSelect,
+        spotPrice
+      )
 
-    if (isLimit) {
-      window.toast.error(t('Trade.Bench.MinNumber', 'The minimum number is 500U', { limit: 500 }))
-      return
-    }
-
-    if (side === PositionSide.Long) apy = memoLongPosApy
-    if (side === PositionSide.Short) apy = memoShortPosApy
-    if (side === PositionSide.twoWay) apy = memo2WayPosApy
-
-    if (openingType === OpeningType.Limit) {
-      if (side === PositionSide.Long) {
-        if (isGT(openingPrice, spotPrice)) _openType = 0
+      if (isLimit) {
+        window.toast.error(t('Trade.Bench.MinNumber', '', { limit: openingMinLimit[marginToken] }))
+        return
       }
-      if (side === PositionSide.Short) {
-        if (isLT(openingPrice, spotPrice)) _openType = 0
+
+      if (openingType === OpeningType.Limit) {
+        if (side === PositionSide.long) {
+          if (isGT(openingPrice, spotPrice)) _openType = 0
+        }
+        if (side === PositionSide.short) {
+          if (isLT(openingPrice, spotPrice)) _openType = 0
+        }
       }
-    }
 
-    const openPosParams = {
-      apy,
-      side: PositionSide[side],
-      price: _realPrice,
-      symbol: state.tokenSelect,
-      volume: state.openingAmount,
-      leverage: leverageNow,
-      openType: _openType
+      const openPosParams = {
+        side,
+        price: _realPrice,
+        symbol: state.tokenSelect,
+        volume: state.openingAmount,
+        leverage: leverageNow,
+        openType: _openType
+      }
+      console.info(openPosParams)
+      dispatch({ type: 'SET_MODAL_STATUS', payload: true })
+      dispatch({ type: 'SET_OPENING_PARAMS', payload: openPosParams })
     }
-
-    dispatch({ type: 'SET_MODAL_STATUS', payload: true })
-    dispatch({ type: 'SET_OPENING_PARAMS', payload: openPosParams })
   }
 
   useEffect(() => {
@@ -207,7 +211,7 @@ const Bench: FC = () => {
               <Button
                 noDisabledStyle
                 className="web-trade-bench-button-short"
-                onClick={() => openPositionDialog(PositionSide.Long)}
+                onClick={() => openPositionDialog(PositionSide.long)}
                 type="buy"
               >
                 <strong>{t('Trade.Bench.Long', 'Long')}</strong>
@@ -218,10 +222,10 @@ const Bench: FC = () => {
             </Col>
             <Col>
               <Button
-                disabled={memoDisabledCondition1 || memoDisabledCondition2}
+                disabled={memoDisabled1 || memoDisabled2}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
-                onClick={() => openPositionDialog(PositionSide.Short)}
+                onClick={() => openPositionDialog(PositionSide.short)}
                 type="sell"
               >
                 <strong>{t('Trade.Bench.Short', 'Short')}</strong>
@@ -235,7 +239,7 @@ const Bench: FC = () => {
             <Row>
               <Col>
                 <Button
-                  disabled={memoDisabledCondition1 || memoDisabledCondition2}
+                  disabled={memoDisabled1 || memoDisabled2}
                   noDisabledStyle
                   className="web-trade-bench-button-full"
                   onClick={() => openPositionDialog(PositionSide.twoWay)}

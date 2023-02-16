@@ -1,5 +1,5 @@
 import GlobalType from '@/typings/global'
-import { contractInfo } from '@/store/config/helper'
+import { contractInfo } from '@/hooks/useProtocolConfig'
 
 export enum ChainId {
   MAINNET = 56,

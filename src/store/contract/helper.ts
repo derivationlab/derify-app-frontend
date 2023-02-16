@@ -15,8 +15,8 @@ import basePairs from '@/config/pairs'
 const BIG_TEN = new BN(10).pow(8)
 
 export enum PositionSide {
-  Long,
-  Short,
+  long,
+  short,
   twoWay
 }
 
@@ -69,7 +69,7 @@ const calcLiquidityPrice = (
 ): string => {
   // @size: todo  liquidity price
   const _size = safeInterceptionValues(String(size), 8)
-  const _side = side === PositionSide.Short ? -1 : 1
+  const _side = side === PositionSide.short ? -1 : 1
   const _spotPrice = new BN(spotPrice)
   const _marginBalance = new BN(marginBalance)
   const _totalPositionAmount = new BN(totalPositionAmount)
@@ -138,7 +138,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
         // My Positions - long
         if (long.isUsed) {
           const longPositionView = await combineNecessaryData(
-            PositionSide.Long,
+            PositionSide.long,
             {
               ...long,
               spotPrice
@@ -158,7 +158,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
             volume,
             ...pairs[i],
             ...longPositionView,
-            side: PositionSide.Long,
+            side: PositionSide.long,
             stopLossPrice: calcStopLossOrStopProfitPrice(longOrderStopLossPosition),
             takeProfitPrice: calcStopLossOrStopProfitPrice(longOrderStopProfitPosition),
             averagePrice: safeInterceptionValues(String(long.price), 8)
@@ -167,7 +167,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
         // My Positions - short
         if (short.isUsed) {
           const shortPositionView = await combineNecessaryData(
-            PositionSide.Short,
+            PositionSide.short,
             {
               ...short,
               spotPrice
@@ -186,7 +186,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
             volume,
             ...pairs[i],
             ...shortPositionView,
-            side: PositionSide.Short,
+            side: PositionSide.short,
             stopLossPrice: calcStopLossOrStopProfitPrice(shortOrderStopLossPosition),
             takeProfitPrice: calcStopLossOrStopProfitPrice(shortOrderStopProfitPosition),
             averagePrice: safeInterceptionValues(String(short.price), 8)
@@ -215,7 +215,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
               size,
               volume,
               ...pairs[i],
-              side: PositionSide.Long,
+              side: PositionSide.long,
               price: safeInterceptionValues(String(order.price)),
               leverage: safeInterceptionValues(String(order.leverage)),
               timestamp: String(order.timestamp),
@@ -234,7 +234,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
               size,
               volume,
               ...pairs[i],
-              side: PositionSide.Short,
+              side: PositionSide.short,
               price: safeInterceptionValues(String(order.price)),
               leverage: safeInterceptionValues(String(order.leverage)),
               timestamp: String(order.timestamp),
@@ -252,7 +252,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
             size,
             volume,
             ...pairs[i],
-            side: PositionSide.Long,
+            side: PositionSide.long,
             price: safeInterceptionValues(String(longOrderStopProfitPosition.stopPrice)),
             leverage: safeInterceptionValues(String(long.leverage)),
             orderType: OrderTypes.StopProfit,
@@ -272,7 +272,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
             size,
             volume,
             ...pairs[i],
-            side: PositionSide.Long,
+            side: PositionSide.long,
             price: safeInterceptionValues(String(longOrderStopLossPosition.stopPrice)),
             leverage: safeInterceptionValues(String(long.leverage)),
             orderType: OrderTypes.StopLoss,
@@ -289,7 +289,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
             size,
             volume,
             ...pairs[i],
-            side: PositionSide.Short,
+            side: PositionSide.short,
             price: safeInterceptionValues(String(shortOrderStopLossPosition.stopPrice)),
             leverage: safeInterceptionValues(String(short.leverage)),
             orderType: OrderTypes.StopLoss,
@@ -306,7 +306,7 @@ export const getMyPositionsData = async (trader: string): Promise<R[]> => {
             size,
             volume,
             ...pairs[i],
-            side: PositionSide.Short,
+            side: PositionSide.short,
             price: safeInterceptionValues(String(shortOrderStopProfitPosition.stopPrice)),
             leverage: safeInterceptionValues(String(short.leverage)),
             orderType: OrderTypes.StopProfit,

@@ -1,5 +1,6 @@
 import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
+import { isEmpty } from 'lodash'
 
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
@@ -7,11 +8,7 @@ import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/u
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { findMarginToken, findToken } from '@/config/tokens'
 import { toFloorNum, toHexString } from '@/utils/tools'
-
-const checkSystemQuotas = (pricingType: string, openingSize: string, openingType: OpeningType, positionSide: PositionSide, openingMaxLimit: string) => {
-  if (positionSide === PositionSide.twoWay || openingType !== OpeningType.Market) return openingSize
-
-}
+import { calcProfitOrLoss } from '@/hooks/helper'
 
 export const useOpeningPosition = () => {
   const { data: signer } = useSigner()
@@ -82,16 +79,21 @@ export const useCloseAllPositions = () => {
   return { close }
 }
 
-export const useCloseOnePosition = () => {
+export const useCancelOnePosition = () => {
   const { data: signer } = useSigner()
 
-  const closeOne = useCallback(
-    async (address: string, orderType: OrderTypes, positionSide: PositionSide, timestamp: string): Promise<boolean> => {
+  const close = useCallback(
+    async (
+      pairAddress: string,
+      orderType: OrderTypes,
+      positionSide: PositionSide,
+      timestamp: string
+    ): Promise<boolean> => {
       let response: any = null
 
       if (!signer) return false
 
-      const c = getDerifyDerivativePairContract(address, signer)
+      const c = getDerifyDerivativePairContract(pairAddress, signer)
 
       try {
         if (orderType === OrderTypes.Limit) {
@@ -112,7 +114,7 @@ export const useCloseOnePosition = () => {
     [signer]
   )
 
-  return { closeOne }
+  return { close }
 }
 
 export const useCancelAllPositions = () => {
@@ -146,7 +148,7 @@ export const useDepositMargin = () => {
   const deposit = useCallback(
     async (exchange: string, amount: string, marginToken: string): Promise<boolean> => {
       if (!signer) return false
-
+      console.info(amount)
       const c = getDerifyExchangeContract1(exchange, signer)
 
       try {
@@ -195,4 +197,79 @@ export const useWithdrawMargin = () => {
   )
 
   return { withdraw }
+}
+
+export const useTakeProfitOrStopLoss = () => {
+  const { data: signer } = useSigner()
+
+  const takeProfitOrStopLoss = useCallback(
+    async (
+      pairAddress: string,
+      positionSide: PositionSide,
+      takeProfitPrice: number,
+      stopLossPrice: number
+    ): Promise<boolean> => {
+      if (!signer) return false
+
+      const c = getDerifyDerivativePairContract(pairAddress, signer)
+      const job = calcProfitOrLoss(takeProfitPrice, stopLossPrice)
+
+      if (isEmpty(job)) return true
+
+      const _stopLossPrice = toFloorNum(stopLossPrice)
+      const _takeProfitPrice = toFloorNum(takeProfitPrice)
+      const { method, stopType, orderStopType, cancelStopType } = job
+
+      try {
+        if (method === 'orderStopPosition') {
+          const gasLimit = await estimateGas(
+            c,
+            'orderStopPosition',
+            [positionSide, stopType, _takeProfitPrice, _stopLossPrice],
+            0
+          )
+          const data = await c.orderStopPosition(positionSide, stopType, _takeProfitPrice, _stopLossPrice, {
+            gasLimit
+          })
+          const receipt = await data.wait()
+          return receipt.status
+        }
+        /**
+         #### cancleOrderedStopPosition
+         */
+        if (method === 'cancelOrderedStopPosition') {
+          const gasLimit = await estimateGas(c, 'cancelOrderedStopPosition', [stopType, positionSide], 0)
+          const data = await c.cancelOrderedStopPosition(stopType, positionSide, { gasLimit })
+          const receipt = await data.wait()
+          return receipt.status
+        }
+        /**
+         #### orderAndCancleStopPosition
+         */
+        if (method === 'orderAndCancelStopPosition') {
+          const price = orderStopType === 0 ? _takeProfitPrice : _stopLossPrice
+
+          const gasLimit = await estimateGas(
+            c,
+            'orderAndCancelStopPosition',
+            [positionSide, orderStopType, price, cancelStopType],
+            0
+          )
+          const data = await c.orderAndCancelStopPosition(positionSide, orderStopType, price, cancelStopType, {
+            gasLimit
+          })
+          const receipt = await data.wait()
+          return receipt.status
+        }
+
+        return false
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { takeProfitOrStopLoss }
 }

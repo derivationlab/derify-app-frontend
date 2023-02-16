@@ -35,7 +35,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   }, [data, spotPrice])
 
   const memoUnrealizedPnl = useMemo(() => {
-    if (Number(spotPrice) > 0) return (spotPrice - data.price) * data.size * (data.side === PositionSide.Long ? 1 : -1)
+    if (Number(spotPrice) > 0) return (spotPrice - data.price) * data.size * (data.side === PositionSide.long ? 1 : -1)
     return 0
   }, [spotPrice, data])
 
@@ -89,7 +89,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     [data?.averagePrice, t]
   )
   const atom4Tsx = useMemo(() => {
-    const mul = data.side === PositionSide.Short ? -1 : 1
+    const mul = data.side === PositionSide.short ? -1 : 1
     const sub =
       spotPrice -
       ((Number(variables?.marginBalance ?? 0) - Number(variables?.totalPositionAmount ?? 0) * 0.03) / data.size) * mul

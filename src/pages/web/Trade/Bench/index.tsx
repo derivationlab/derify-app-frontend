@@ -1,13 +1,13 @@
 import PubSub from 'pubsub-js'
-import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
-import Trader from '@/class/Trader'
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { PositionSide } from '@/store/contract/helper'
 import { useTraderData } from '@/store/trader/hooks'
+import { isOpeningMinLimit } from '@/hooks/helper'
+import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
 import { useConfigInfo, usePairsInfo } from '@/zustand'
@@ -26,19 +26,15 @@ import PriceInput from './c/PriceInput'
 import Initializing from './c/Initializing'
 import QuantityInput from './c/QuantityInput'
 import OpenTypeSelect from './c/OpenTypeSelect'
-import { isOpeningMinLimit } from '@/hooks/helper'
-import { useOpeningPosition } from '@/hooks/useTrading'
 
 const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
-  const { data: signer } = useSigner()
+  const { opening } = useOpeningPosition()
   const { protocolConfig } = useProtocolConf()
   const { brokerBound: broker } = useTraderData() // todo rewrite redux
   const { spotPrice, marginToken, quoteToken } = useSpotPrice()
-  const { opening } = useOpeningPosition()
-  const { openPositionOrder } = Trader
 
   const indicators = usePairsInfo((state) => state.indicators)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
@@ -93,7 +89,7 @@ const Bench: FC = () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     dispatch({ type: 'SET_MODAL_STATUS', payload: false })
-    console.info(amount, broker?.broker, protocolConfig)
+
     if (broker?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
       console.info(

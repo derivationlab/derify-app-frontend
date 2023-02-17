@@ -11,7 +11,7 @@ import { useTraderData } from '@/store/trader/hooks'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { useCloseAllPositions, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
-import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { useMatchConf } from '@/hooks/useMatchConf'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
@@ -34,10 +34,8 @@ const MyPosition: FC = () => {
   const { brokerBound: broker } = useTraderData()
 
   const { close } = useCloseAllPositions()
-  const { factoryConfig } = useFactoryConf()
-  const { protocolConfig } = useProtocolConf()
   const { takeProfitOrStopLoss } = useTakeProfitOrStopLoss()
-  const { spotPrice, marginToken, quoteToken } = useSpotPrice()
+  const { factoryConfig, protocolConfig, spotPrice, marginToken, quoteToken } = useMatchConf()
   const positionOrd = usePosDATStore((state) => state.positionOrd)
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
   const closingType = useCalcOpeningDAT((state) => state.closingType)
@@ -127,10 +125,10 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && factoryConfig) {
+    if (signer && factoryConfig) {
       const { side, TP, SL } = params
 
-      const status = await takeProfitOrStopLoss(factoryConfig[marginToken][quoteToken], side, TP, SL)
+      const status = await takeProfitOrStopLoss(factoryConfig, side, TP, SL)
 
       if (status) {
         // succeed

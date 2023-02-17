@@ -1,19 +1,18 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { isEmpty } from 'lodash'
+import React, { FC, useCallback, useEffect, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import Trader from '@/class/Trader'
 import { PositionSide } from '@/store/contract/helper'
-import { useShareMessage } from '@/store/share/hooks'
-import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
+import { useMatchConf } from '@/hooks/useMatchConf'
+import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
+import { reducer, stateInit } from '@/reducers/openingPosition'
+import { nonBigNumberInterception } from '@/utils/tools'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { useMatchConfig } from '@/hooks/useMatchConfig'
-import { useSpotPrice } from '@/hooks/useMatchConf'
-import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 
 interface Props {
   data?: Record<string, any>
@@ -25,83 +24,49 @@ interface Props {
 
 const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { shareMessage } = useShareMessage()
-  const { factoryConfig, protocolConfig, factoryConfigLoaded, protocolConfigLoaded, marginToken } = useMatchConfig()
+  const { spotPrice, factoryConfig, protocolConfig, marginToken, quoteToken } = useMatchConf()
 
-  const { calcClosePositionTradingFee, calcClosePositionChangeFee } = Trader
-
-  const { spotPrice, quoteToken } = useSpotPrice()
-
+  const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
 
-  const [tradingFee, setTradingFee] = useState<string>('0')
-  const [changeFee, setChangeFee] = useState<string>('0')
-  const [changeFeeCalculating, setChangeFeeCalculating] = useState<boolean>(true)
-  const [tradingFeeCalculating, setTradingFeeCalculating] = useState<boolean>(true)
+  const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const memoShareMessage = useMemo(() => {
-    if (visible && !isEmpty(shareMessage) && shareMessage?.type === 'CLOSE_POSITION') {
-      return shareMessage
+  const calcTradingFeeFunc = useCallback(async () => {
+    if (factoryConfig) {
+      const fee = await calcTradingFee(factoryConfig, closingType, closingAmount, spotPrice)
+      // console.info(fee)
+      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
     }
-    return {}
-  }, [shareMessage, visible])
+  }, [data, factoryConfig, spotPrice, closingAmount])
 
-  const calcClosePositionTradingFeeCb = useCallback(async () => {
-    setTradingFeeCalculating(true)
-
-    const fee = await calcClosePositionTradingFee(
-      marginToken,
-      findToken(quoteToken)?.tokenAddress,
-      closingAmount,
-      spotPrice
-    )
-
-    setTradingFee(fee)
-    setTradingFeeCalculating(false)
-  }, [marginToken, quoteToken, closingAmount, spotPrice])
-
-  const calcClosePositionChangeFeeCb = useCallback(async () => {
-    if (factoryConfigLoaded && protocolConfigLoaded) {
-      setChangeFeeCalculating(true)
-
-      const fee = await calcClosePositionChangeFee(
+  const calcChangeFeeFunc = useCallback(async () => {
+    if (factoryConfig && protocolConfig) {
+      const fee = await calcChangeFee(
         data?.side,
-        marginToken,
-        findToken(quoteToken)?.tokenAddress,
+        closingType,
         closingAmount,
         spotPrice,
         protocolConfig.exchange,
-        factoryConfig[data?.quote]
+        factoryConfig
       )
 
-      setChangeFee(fee)
-      setChangeFeeCalculating(false)
+      dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
     }
-  }, [
-    protocolConfig,
-    factoryConfig,
-    factoryConfigLoaded,
-    protocolConfigLoaded,
-    spotPrice,
-    marginToken,
-    closingAmount,
-    data?.side,
-    quoteToken
-  ])
-
-  useEffect(() => {
-    if (!isEmpty(memoShareMessage)) {
-      void calcClosePositionTradingFeeCb()
-      void calcClosePositionChangeFeeCb()
-    }
-  }, [memoShareMessage])
+  }, [data, spotPrice, factoryConfig, protocolConfig, state.validOpeningVol])
 
   useEffect(() => {
     if (!visible) {
-      setTradingFee('0')
-      setChangeFee('0')
+      dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: false, value: 0 } })
+      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: false, value: 0 } })
     }
   }, [visible])
+
+  useEffect(() => {
+    if (visible && closingAmount > 0) {
+      void calcTradingFeeFunc()
+      void calcChangeFeeFunc()
+    }
+  }, [visible, closingAmount])
 
   return (
     <Dialog
@@ -127,8 +92,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
             <dl>
               <dt>{t('Trade.ClosePosition.Volume', 'Volume')}</dt>
               <dd>
-                <em>{memoShareMessage?.amount}</em>
-                <u>{marginToken}</u>
+                <em>{closingAmount}</em>
+                <u>{closingType}</u>
               </dd>
             </dl>
             <dl>
@@ -137,11 +102,11 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                 <QuestionPopover size="mini" text={t('Trade.ClosePosition.PCFEstimateTip', 'PCF')} />
               </dt>
               <dd>
-                {changeFeeCalculating ? (
+                {!state.posChangeFee.loaded ? (
                   <small>calculating...</small>
                 ) : (
                   <>
-                    <em>{changeFee}</em>
+                    <em>{nonBigNumberInterception(state.posChangeFee.value, 8)}</em>
                     <u>{BASE_TOKEN_SYMBOL}</u>
                   </>
                 )}
@@ -156,11 +121,11 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                 />
               </dt>
               <dd>
-                {tradingFeeCalculating ? (
+                {!state.tradingFeeInfo.loaded ? (
                   <small>calculating...</small>
                 ) : (
                   <>
-                    <em>-{tradingFee}</em>
+                    <em>-{nonBigNumberInterception(state.tradingFeeInfo.value, 8)}</em>
                     <u>{BASE_TOKEN_SYMBOL}</u>
                   </>
                 )}

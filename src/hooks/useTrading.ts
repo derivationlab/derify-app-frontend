@@ -30,6 +30,7 @@ export const useOpeningPosition = () => {
 
       const c = getDerifyExchangeContract1(exchange, signer)
 
+      // getUintAmount?
       const _posLeverage = toFloorNum(posLeverage)
       const _pricingType = findMarginToken(pricingType) ? 1 : 0
       const _openingType = conversion ? OpeningType.Market : openingType
@@ -50,7 +51,7 @@ export const useOpeningPosition = () => {
           _openingPrice,
           _posLeverage,
           {
-            gasLimit: 3000000000
+            gasLimit: 3000000
           }
         )
         const receipt = await res.wait()

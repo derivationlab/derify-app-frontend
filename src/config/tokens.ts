@@ -27,7 +27,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
       [ChainId.TESTNET]: '0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba'
     },
-    18
+    18 // checked from getMarginTokenPrecision
   ),
   bbusd: new Token(
     'bBUSD',
@@ -45,7 +45,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F',
       [ChainId.TESTNET]: '0x11B876d9D5d18d70664153C84fD3084c1E71E2ef'
     },
-    18
+    18 // checked from getMarginTokenPrecision
   ),
   matic: new Token(
     'MATIC',

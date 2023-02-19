@@ -24,7 +24,7 @@
       color: $buy;
     }
   }
-  &.status-2-way {
+  &.status-twoway {
     @include jb(lighten($blue, 10), $blue, -90);
     em {
       color: $blue;

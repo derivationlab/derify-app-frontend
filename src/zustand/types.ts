@@ -12,6 +12,7 @@ export interface BalancesState {
 }
 
 export interface ConfigInfoState {
+  mTokenPrices: MarginToken
   openingMinLimit: MarginToken
   openingMaxLimit: MarginTokenWithQuote
   factoryConfig: MarginTokenWithQuote
@@ -20,9 +21,11 @@ export interface ConfigInfoState {
   openingMaxLimitLoaded: boolean
   factoryConfigLoaded: boolean
   protocolConfigLoaded: boolean
+  mTokenPricesLoaded: boolean
   updateFactoryConfig: (p: MarginTokenWithQuote) => void
   updateProtocolConfig: (p: MarginTokenWithContract) => void
   updateOpeningMinLimit: (p: MarginToken) => void
+  updateMTokenPrices: (p: MarginToken) => void
   updateOpeningMaxLimit: (p: MarginTokenWithQuote) => void
 }
 

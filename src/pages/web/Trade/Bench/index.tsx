@@ -43,6 +43,7 @@ const Bench: FC = () => {
   const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
   const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
+  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
   const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
 
   const memoLongPosApy = useMemo(() => {
@@ -139,8 +140,8 @@ const Bench: FC = () => {
       let _openType = openingType
       const _realPrice = openingType === OpeningType.Market ? spotPrice : openingPrice
 
-      const isLimit = await isOpeningMinLimit(
-        protocolConfig.priceFeed,
+      const isLimit = isOpeningMinLimit(
+        mTokenPrices[marginToken],
         openingMinLimit[marginToken],
         state.openingAmount,
         state.tokenSelect,

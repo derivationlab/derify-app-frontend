@@ -8,6 +8,7 @@ import { initialOpeningMinLimit, initialFactoryConfig, initialOpeningMaxLimit } 
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 const useConfigInfo = create<ConfigInfoState>((set, get) => ({
+  mTokenPrices: initialOpeningMinLimit(),
   factoryConfig: initialFactoryConfig(),
   protocolConfig: initialProtocolConfig(),
   openingMinLimit: initialOpeningMinLimit(),
@@ -16,6 +17,7 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
   protocolConfigLoaded: false,
   openingMinLimitLoaded: false,
   openingMaxLimitLoaded: false,
+  mTokenPricesLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
       // console.info('updateFactoryConfig:')
@@ -34,10 +36,16 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
       // console.info(data)
       return { openingMinLimit: data, openingMinLimitLoaded: true }
     }),
+  updateMTokenPrices: (data: any) =>
+    set(() => {
+      // console.info('updateMTokenPrices:')
+      // console.info(data)
+      return { mTokenPrices: data, mTokenPricesLoaded: true }
+    }),
   updateOpeningMaxLimit: (data: MarginTokenWithQuote) =>
     set(() => {
-      console.info('updateOpeningMaxLimit-size:')
-      console.info(data)
+      // console.info('updateOpeningMaxLimit-size:')
+      // console.info(data)
       return { openingMaxLimit: data, openingMaxLimitLoaded: true }
     })
 }))

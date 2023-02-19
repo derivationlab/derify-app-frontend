@@ -1,5 +1,6 @@
 import { flatten, isEmpty } from 'lodash'
 import { BigNumberish } from '@ethersproject/bignumber'
+import BN from 'bignumber.js'
 
 import multicall from '@/utils/multicall'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
@@ -10,14 +11,12 @@ import {
   getMarginTokenPriceFeedContract
 } from '@/utils/contractHelpers'
 import { getUnitAmount, isGT, isLT, nonBigNumberInterception, safeInterceptionValues, toFloorNum } from '@/utils/tools'
-import tokens, { BASE_TOKEN_SYMBOL, findMarginToken, findToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { findMarginToken, findToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
-import BN from 'bignumber.js'
-import { Signer } from 'ethers'
-import { estimateGas } from '@/utils/practicalMethod'
+import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -106,6 +105,59 @@ export const getOpeningMinLimit = async (p: MarginTokenWithContract): Promise<Ma
 
   return output
 }
+
+export const getMarginTokenPrice = async (p: MarginTokenWithContract): Promise<MarginToken> => {
+  let output = initialOpeningMinLimit()
+
+  const calls = Object.keys(p).map((key) => ({
+    name: 'getMarginTokenPrice',
+    address: p[key as MarginTokenKeys].priceFeed,
+    marginToken: key as MarginTokenKeys
+  }))
+
+  const response = await multicall(MarginTokenPriceFeedAbi, calls)
+
+  if (!isEmpty(response)) {
+    response.forEach((limit: BigNumberish, index: number) => {
+      const { marginToken } = calls[index]
+      output = {
+        ...output,
+        [marginToken]: safeInterceptionValues(String(limit), 8)
+      }
+    })
+    // console.info(output)
+    return output
+  }
+
+  return output
+}
+
+// todo debug token precision
+// export const getMarginTokenPrecision = async (p: MarginTokenWithContract): Promise<MarginToken> => {
+//   let output = initialOpeningMinLimit()
+//
+//   const calls = Object.keys(p).map((key) => ({
+//     name: 'getMarginTokenDecimals',
+//     address: p[key as MarginTokenKeys].priceFeed,
+//     marginToken: key as MarginTokenKeys
+//   }))
+//
+//   const response = await multicall(MarginTokenPriceFeedAbi, calls)
+//
+//   if (!isEmpty(response)) {
+//     response.forEach((limit: BigNumberish, index: number) => {
+//       const { marginToken } = calls[index]
+//       output = {
+//         ...output,
+//         [marginToken]: safeInterceptionValues(String(limit), 8)
+//       }
+//     })
+//     console.info(output)
+//     return output
+//   }
+//
+//   return output
+// }
 
 export const initialTraderVariables = {
   balance: '0',
@@ -234,16 +286,6 @@ export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<Ma
   return output
 }
 
-export const checkSystemQuotas = (
-  pricingType: string,
-  openingSize: string,
-  openingType: OpeningType,
-  positionSide: PositionSide,
-  openingMaxLimit: string
-) => {
-  if (positionSide === PositionSide.twoWay || openingType !== OpeningType.Market) return openingSize
-}
-
 export const calcProfitOrLoss = (TP: number, SL: number): Record<string, any> => {
   if (TP > 0) {
     switch (true) {
@@ -275,23 +317,15 @@ export const calcProfitOrLoss = (TP: number, SL: number): Record<string, any> =>
   }
 }
 
-// todo 用单价来处理判断
-export const isOpeningMinLimit = async (
-  priceFeed: string,
+export const isOpeningMinLimit = (
+  mPrice: string,
   openingMinLimit: string,
   openingAmount: string,
   tokenSelect: string,
   spotPrice: string
-): Promise<boolean> => {
+): boolean => {
   if (findMarginToken(tokenSelect)) {
-    const c = getMarginTokenPriceFeedContract(priceFeed)
-    const amount = getUnitAmount(openingMinLimit)
-
-    const response = await c.getMarginTokenAmountIn(amount) //--> margin token
-
-    const precision = findToken(tokenSelect).precision
-    const minLimit = safeInterceptionValues(response, precision, precision)
-    return isLT(openingAmount, minLimit)
+    return isLT(Number(openingAmount) * Number(mPrice), openingMinLimit)
   } else {
     const div = Number(openingMinLimit) / Number(spotPrice)
     return isLT(openingAmount, div)

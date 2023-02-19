@@ -6,6 +6,6 @@ export default {
     failed: 'failed',
     long: 'Long',
     short: 'Short',
-    '2-way': '2-Way'
+    'twoway': '2-Way'
   }
 }

@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { MarginTokenWithContract } from '@/typings'
 import { useConfigInfo, useTokenBalances } from '@/zustand'
-import { getFactoryConfig, getOpeningMinLimit } from '@/hooks/helper'
+import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit } from '@/hooks/helper'
 
 export const useInitialDAT = () => {
   const { data } = useAccount()
@@ -16,6 +16,7 @@ export const useInitialDAT = () => {
   const updateFactoryConfig = useConfigInfo((state) => state.updateFactoryConfig)
   const updateProtocolConfig = useConfigInfo((state) => state.updateProtocolConfig)
   const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)
+  const updateMTokenPrices = useConfigInfo((state) => state.updateMTokenPrices)
 
   // for tokens balance
   useEffect(() => {
@@ -45,8 +46,10 @@ export const useInitialDAT = () => {
   // for opening min limit config
   useEffect(() => {
     const func = async (protocolConfDAT: MarginTokenWithContract) => {
-      const data = await getOpeningMinLimit(protocolConfDAT)
-      updateOpeningMinLimit(data)
+      const data1 = await getOpeningMinLimit(protocolConfDAT)
+      const data2 = await getMarginTokenPrice(protocolConfDAT)
+      updateOpeningMinLimit(data1)
+      updateMTokenPrices(data2)
     }
 
     if (!protocolConfDATIsLoading && protocolConfDAT) void func(protocolConfDAT)

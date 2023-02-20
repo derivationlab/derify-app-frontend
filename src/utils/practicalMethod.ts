@@ -33,18 +33,17 @@ export const setAllowance = async (
   amount?: BigNumberish
 ): Promise<boolean> => {
   const _contract = getBep20Contract(token, signer)
-  const _amount = ethers.BigNumber.from(amount)
+  // const _amount = ethers.BigNumber.from(amount)
   try {
-    const account = await signer.getAddress()
-    const allowance = await _contract.allowance(account, spender)
-    const _allowance = ethers.BigNumber.from(allowance)
-    alert(String(_allowance))
-    if (_allowance.lt(_amount)) {
-      const tx = await _contract.approve(spender, MaxUint256)
-      const receipt = await tx.wait()
-      return receipt.status
-    }
-    return true
+    // const account = await signer.getAddress()
+    // const allowance = await _contract.allowance(account, spender)
+    // const _allowance = ethers.BigNumber.from(allowance)
+    // if (_allowance.lt(_amount)) {
+    const tx = await _contract.approve(spender, amount)
+    const receipt = await tx.wait()
+    return receipt.status
+    // }
+    // return true
   } catch (e) {
     console.error(e)
     return false

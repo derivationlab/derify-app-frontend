@@ -45,6 +45,7 @@ class Earn {
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
+      alert(e)
       console.info(e)
       return false
     }

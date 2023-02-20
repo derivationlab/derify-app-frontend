@@ -38,6 +38,7 @@ export const setAllowance = async (
     const account = await signer.getAddress()
     const allowance = await _contract.allowance(account, spender)
     const _allowance = ethers.BigNumber.from(allowance)
+    alert(String(_allowance))
     if (_allowance.lt(_amount)) {
       const tx = await _contract.approve(spender, MaxUint256)
       const receipt = await tx.wait()

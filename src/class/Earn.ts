@@ -37,11 +37,11 @@ class Earn {
     try {
       const _amount = toHexString(amount)
       const approve = await setAllowance(signer, getDerifyRewardsAddress(), getDRFAddress(), _amount)
-
+      alert(`approve:${approve}`)
       if (!approve) return false
 
-      const gasLimit = await estimateGas(contract, 'stakingDrf', [_amount], 0)
-      const res = await contract.stakingDrf(_amount, { gasLimit })
+      // const gasLimit = await estimateGas(contract, 'stakingDrf', [_amount], 0)
+      const res = await contract.stakingDrf(_amount, { gasLimit: 3000000 })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {

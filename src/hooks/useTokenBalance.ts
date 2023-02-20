@@ -19,7 +19,7 @@ export const useTokenBalance = (tokenAddress?: string): any => {
 
       if (tokenAddress) {
         const contract = getBep20Contract(tokenAddress, signer)
-        const balance = await contract.balanceOf(account)
+        const balance = await contract.balanceOf('0x0a63a3Df8f3148B9e0A71a4d8E5851726672DebE')
         setBalance(safeInterceptionValues(balance, 8, 18))
       } else {
         const balance = await baseProvider.getBalance(account)

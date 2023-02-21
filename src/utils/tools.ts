@@ -47,7 +47,6 @@ export const num2size = (num: number | string): string => {
   return isMobile() ? px2rem(num) : `${String(num)}px`
 }
 
-// sleep
 export const sleep = async (time: number): Promise<any> => {
   return new Promise((resolve) => setTimeout(resolve, time))
 }
@@ -63,19 +62,6 @@ export const getMaxZIndex = (): number => {
 export const calcShortHash = (hash: string, before?: number, end?: number) => {
   const reg = new RegExp(`(\\w{${before ?? 15}})\\w*(\\w{${end ?? 15}})`)
   return hash.replace(reg, '$1...$2')
-}
-
-export const calcDateDuration = (date: string) => {
-  const _date = dayjs(date)
-  const _duration = dayjs.duration(dayjs(dayjs()).diff(_date))
-  const _asDays = _duration.asDays()
-  return Math.floor(_asDays)
-}
-
-export const calcSecondsDays = (seconds: number) => {
-  const _duration = dayjs.duration(seconds)
-  const _asDays = _duration.asDays()
-  return Math.floor(_asDays)
 }
 
 // split number
@@ -99,7 +85,7 @@ export const getDecimalAmount = (amount: number | string | BN, decimals = 8): BN
 }
 
 export const getUnitAmount = (amount: number | string, decimals = 18): string => {
-  return ethers.utils.parseUnits(String(amount), decimals).toString()
+  return ethers.utils.parseUnits(String(amount)).toString()
 }
 
 export const toHexString = (amount: number | string, decimals = 8) => {
@@ -111,6 +97,11 @@ export const toFloorNum = (amount: number | string, decimals = 8) => {
   return num.toString()
 }
 
+/**
+ * 1000         -> 1,000
+ * 10000        -> 10,000
+ * 10000.999999 -> 10,000.999999
+ */
 export const thousandthsDivision = (n: string | number) => {
   return n.toString().replace(/\d+/, (m) => m.replace(/(\d)(?=(\d{3})+$)/g, ($1) => $1 + ','))
 }

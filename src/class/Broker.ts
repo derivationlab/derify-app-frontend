@@ -3,7 +3,7 @@ import type { Signer } from 'ethers'
 
 import { setAllowance } from '@/utils/practicalMethod'
 import { getDerifyBrokerContract } from '@/utils/contractHelpers'
-import { getDecimalAmount, safeInterceptionValues } from '@/utils/tools'
+import { getDecimalAmount, safeInterceptionValues, toHexString } from '@/utils/tools'
 import { getDerifyBrokerAddress, getEDRFAddress } from '@/utils/addressHelpers'
 
 class Broker {
@@ -18,9 +18,10 @@ class Broker {
     const contract = getDerifyBrokerContract(signer)
 
     try {
-      const amount_BN = getDecimalAmount(this.burnLimitAmount).toString()
+      // const amount1 = toHexString(this.burnLimitAmount, 8)
+      const amount2 = toHexString(this.burnLimitAmount, 18)
 
-      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), amount_BN)
+      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), amount2)
 
       if (!approve) return false
 
@@ -38,13 +39,14 @@ class Broker {
     const contract = getDerifyBrokerContract(signer)
 
     try {
-      const amount_BN = getDecimalAmount(amount).toString()
+      const amount1 = toHexString(amount, 8)
+      const amount2 = toHexString(amount, 18)
 
-      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), amount_BN)
+      const approve = await setAllowance(signer, getDerifyBrokerAddress(), getEDRFAddress(), amount2)
 
       if (!approve) return false
 
-      const response = await contract.burnEdrfExtendValidPeriod(amount_BN)
+      const response = await contract.burnEdrfExtendValidPeriod(amount1)
       const receipt = await response.wait()
 
       return receipt.status

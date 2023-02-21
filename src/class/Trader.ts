@@ -31,15 +31,17 @@ class Trader {
 
   traderDepositMargin = async (signer: Signer, account: string, amount: string): Promise<boolean> => {
     const contract = getDerifyExchangeContract(signer)
-    console.info(contract.address)
+
     try {
-      const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyExchangeAddress(), getDUSDAddress(), _amount)
+      const amount1 = toHexString(amount, 8)
+      const amount2 = toHexString(amount, 18)
+
+      const approve = await setAllowance(signer, getDerifyExchangeAddress(), getDUSDAddress(), amount2)
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(contract, 'deposit', [_amount], 0)
-      const res = await contract.deposit(_amount, { gasLimit })
+      const gasLimit = await estimateGas(contract, 'deposit', [amount1], 0)
+      const res = await contract.deposit(amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {

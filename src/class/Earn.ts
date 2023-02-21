@@ -35,13 +35,15 @@ class Earn {
   traderStakingDrf = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
-      const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getDRFAddress(), _amount)
+      const amount1 = toHexString(Number(amount), 8)
+      const amount2 = toHexString(Number(amount), 18)
+
+      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getDRFAddress(), amount2)
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(contract, 'stakingDrf', [_amount], 0)
-      const res = await contract.stakingDrf(_amount, { gasLimit })
+      const gasLimit = await estimateGas(contract, 'stakingDrf', [amount1], 0)
+      const res = await contract.stakingDrf(amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
@@ -80,13 +82,15 @@ class Earn {
   traderPledgedBond = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
-      const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getbBUSDAddress(), _amount)
+      const amount1 = toHexString(amount, 8)
+      const amount2 = toHexString(amount, 18)
+
+      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getbBUSDAddress(), amount2)
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(contract, 'depositBondToBank', [_amount], 0)
-      const res = await contract.depositBondToBank(_amount, { gasLimit })
+      const gasLimit = await estimateGas(contract, 'depositBondToBank', [amount1], 0)
+      const res = await contract.depositBondToBank(amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
@@ -113,13 +117,15 @@ class Earn {
   traderExchangeBond = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
-      const _amount = toHexString(amount)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getbBUSDAddress(), _amount)
+      const amount1 = toHexString(amount, 8)
+      const amount2 = toHexString(amount, 18)
+
+      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getbBUSDAddress(), amount2)
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(contract, 'exchangeBond', [_amount], 0)
-      const res = await contract.exchangeBond(_amount, { gasLimit })
+      const gasLimit = await estimateGas(contract, 'exchangeBond', [amount1], 0)
+      const res = await contract.exchangeBond(amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {

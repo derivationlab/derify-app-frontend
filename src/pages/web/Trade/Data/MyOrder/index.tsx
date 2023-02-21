@@ -8,7 +8,7 @@ import ThemeContext from '@/context/Theme/Context'
 import { PubSubEvents } from '@/typings'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
-import { useCancelAllPositions, useCancelOnePosition } from '@/hooks/useTrading'
+import { useCancelAllPositions, useCancelPosition, useCloseAllPositions } from '@/hooks/useTrading'
 
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
@@ -23,7 +23,7 @@ const MyOrder: FC = () => {
   const { theme } = useContext(ThemeContext)
   const { data: account } = useAccount()
 
-  const { close } = useCancelOnePosition()
+  const { close } = useCancelPosition()
   const { protocolConfig } = useProtocolConf()
   const { factoryConfig, marginToken, quoteToken } = useFactoryConf()
   const { cancel: cancelAllPositions } = useCancelAllPositions()
@@ -72,6 +72,7 @@ const MyOrder: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
+        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
       } else {
         window.toast.error(t('common.failed', 'failed'))
       }

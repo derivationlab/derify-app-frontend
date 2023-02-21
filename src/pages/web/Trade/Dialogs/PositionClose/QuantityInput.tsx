@@ -2,11 +2,12 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { isGT } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, findMarginToken } from '@/config/tokens'
 
 import { Select, Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
 import { MarginTokenKeys } from '@/typings'
+import { useMarginToken } from '@/zustand'
 
 interface Props {
   value: number
@@ -19,12 +20,15 @@ interface Props {
 
 const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase, baseCoin }) => {
   const { t } = useTranslation()
-  const [type, setType] = useState<string>(BASE_TOKEN_SYMBOL)
+
+  const marginToken = useMarginToken((state) => state.marginToken)
+
+  const [type, setType] = useState<string>(marginToken)
 
   const maxVolume = useMemo(() => (type === BASE_TOKEN_SYMBOL ? maxBUSD : maxBase), [type, maxBUSD, maxBase])
 
   const typeChangeEv = (symbol: any) => {
-    if (symbol === BASE_TOKEN_SYMBOL) onChange(maxBUSD)
+    if (findMarginToken(symbol)) onChange(maxBUSD)
     else onChange(maxBase)
 
     setType(symbol)
@@ -45,7 +49,7 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
       <label>{t('Trade.ClosePosition.AmountToClose', 'Amount to Close')}</label>
       <section>
         <Input value={value} onChange={validateEnteredValueCb} type="number" />
-        <Select value={type} onChange={typeChangeEv} options={[BASE_TOKEN_SYMBOL, baseCoin]} />
+        <Select value={type} onChange={typeChangeEv} options={[marginToken, baseCoin]} />
       </section>
       <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(Number(amount))} />
     </div>

@@ -93,18 +93,18 @@ const Bench: FC = () => {
 
     if (broker?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
-      console.info(
-        protocolConfig.exchange,
-        broker.broker,
-        findToken(quoteToken).tokenAddress,
-        state.openingParams?.side,
-        openingType,
-        state.openingParams?.symbol,
-        state.openingParams?.price,
-        leverageNow,
-        amount,
-        conversion
-      )
+      // console.info(
+      //   protocolConfig.exchange,
+      //   broker.broker,
+      //   findToken(quoteToken).tokenAddress,
+      //   state.openingParams?.side,
+      //   openingType,
+      //   state.openingParams?.symbol,
+      //   state.openingParams?.price,
+      //   leverageNow,
+      //   amount,
+      //   conversion
+      // )
       const status = await opening(
         protocolConfig.exchange,
         broker.broker,
@@ -123,6 +123,7 @@ const Bench: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
+        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed

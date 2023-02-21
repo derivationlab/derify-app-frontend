@@ -96,7 +96,7 @@ const HeaderData: FC = () => {
           {t('Trade.kline.PCFRate', 'PCF Rate')}
           <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
         </h3>
-        <strong>{memoPosFeeRatio}%</strong>
+        <strong>{nonBigNumberInterception(memoPosFeeRatio, 2)}%</strong>
       </section>
       {!mobile && <hr />}
       <section>

@@ -6,6 +6,6 @@ export default {
     failed: '执行失败',
     long: '开多',
     short: '开空',
-    'twoway': '双向对冲'
+    twoway: '双向对冲'
   }
 }

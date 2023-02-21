@@ -79,16 +79,16 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
       // console.info(data)
       return { openingPrice: data }
     }),
-  updateOpeningAmount: (data: OpeningType) =>
+  updateOpeningAmount: (data: number) =>
     set(() => {
       // console.info('updateOpeningAmount:')
       // console.info(data)
       return { openingAmount: data }
     }),
-  updateClosingAmount: (data: OpeningType) =>
+  updateClosingAmount: (data: number) =>
     set(() => {
-      // console.info('updateClosingAmount:')
-      // console.info(data)
+      console.info('updateClosingAmount:')
+      console.info(data)
       return { closingAmount: data }
     }),
   fetchMaxVolume: async (

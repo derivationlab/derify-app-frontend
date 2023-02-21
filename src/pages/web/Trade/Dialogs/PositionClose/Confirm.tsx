@@ -41,6 +41,14 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const calcChangeFeeFunc = useCallback(async () => {
     if (factoryConfig && protocolConfig) {
+      console.info(
+        data?.side,
+        closingType,
+        closingAmount,
+        spotPrice,
+        protocolConfig.exchange,
+        factoryConfig
+      )
       const fee = await calcChangeFee(
         data?.side,
         closingType,
@@ -52,7 +60,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
       dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
     }
-  }, [data, spotPrice, factoryConfig, protocolConfig, state.validOpeningVol])
+  }, [data, spotPrice, factoryConfig, protocolConfig, closingAmount, closingType])
 
   useEffect(() => {
     if (!visible) {

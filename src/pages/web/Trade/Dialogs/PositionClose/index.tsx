@@ -6,13 +6,12 @@ import { usePairsInfo } from '@/zustand'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
-import { isGT, safeInterceptionValues } from '@/utils/tools'
+import { isGT, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
-
 import QuantityInput from './QuantityInput'
 
 interface Props {
@@ -41,10 +40,15 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     return Number(indicators?.price_change_rate ?? 0) * 100
   }, [indicators])
 
+  const memoVolume = useMemo(() => {
+    return Number(spotPrice) * Number(data?.size)
+  }, [data, spotPrice])
+
   useEffect(() => {
     if (!visible) updateClosingAmount(0)
-    updateClosingAmount(Number(safeInterceptionValues(data?.volume ?? 0, 8)))
-  }, [visible, data?.volume])
+
+    updateClosingAmount(Number(nonBigNumberInterception(memoVolume, 8)))
+  }, [visible, memoVolume])
 
   return (
     <>
@@ -74,7 +78,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                 </p>
                 <p>
                   {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} : <em>{data?.size ?? 0}</em>{' '}
-                  {quoteToken} / <em>{data?.volume ?? 0}</em> {BASE_TOKEN_SYMBOL}
+                  {quoteToken} / <em>{nonBigNumberInterception(memoVolume)}</em> {BASE_TOKEN_SYMBOL}
                 </p>
               </section>
             </div>
@@ -82,7 +86,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               value={closingAmount}
               onSymbol={updateClosingType}
               onChange={updateClosingAmount}
-              maxBUSD={(data?.volume ?? 0) as any}
+              maxBUSD={Number(nonBigNumberInterception(memoVolume, 8))}
               maxBase={(data?.size ?? 0) as any}
               baseCoin={quoteToken}
             />

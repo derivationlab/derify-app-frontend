@@ -2,13 +2,14 @@ import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 import { isEmpty } from 'lodash'
 
-import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { OrderTypes, PositionSide } from '@/store/contract/helper'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
-import { findMarginToken, findToken } from '@/config/tokens'
-import { toFloorNum, toHexString } from '@/utils/tools'
 import { calcProfitOrLoss } from '@/hooks/helper'
+import { toFloorNum, toHexString } from '@/utils/tools'
+import { OrderTypes, PositionSide } from '@/store/contract/helper'
+import { estimateGas, setAllowance } from '@/utils/practicalMethod'
+import { BASE_TOKEN_SYMBOL, findMarginToken, findToken } from '@/config/tokens'
+import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
+import BN from 'bignumber.js'
 
 export const useOpeningPosition = () => {
   const { data: signer } = useSigner()
@@ -37,8 +38,26 @@ export const useOpeningPosition = () => {
       const _openingSize = toFloorNum(openingSize)
       const _openingPrice = toFloorNum(openingPrice)
 
-      const params = [brokerId, qtAddress, positionSide, _openingType, _pricingType, _openingSize, _openingPrice, _posLeverage]
-      console.info([brokerId, qtAddress, positionSide, _openingType, _pricingType, _openingSize, _openingPrice, _posLeverage])
+      const params = [
+        brokerId,
+        qtAddress,
+        positionSide,
+        _openingType,
+        _pricingType,
+        _openingSize,
+        _openingPrice,
+        _posLeverage
+      ]
+      console.info([
+        brokerId,
+        qtAddress,
+        positionSide,
+        _openingType,
+        _pricingType,
+        _openingSize,
+        _openingPrice,
+        _posLeverage
+      ])
       try {
         // const gasLimit = await estimateGas(c, 'openPosition', params, 0)
         const res = await c.openPosition(
@@ -92,7 +111,7 @@ export const useCloseAllPositions = () => {
   return { close }
 }
 
-export const useCancelOnePosition = () => {
+export const useCancelPosition = () => {
   const { data: signer } = useSigner()
 
   const close = useCallback(
@@ -285,4 +304,48 @@ export const useTakeProfitOrStopLoss = () => {
   )
 
   return { takeProfitOrStopLoss }
+}
+
+export const useClosePosition = () => {
+  const { data: signer } = useSigner()
+
+  const close = useCallback(
+    async (
+      exchange: string,
+      brokerId: string,
+      spotPrice: string,
+      quoteToken: string,
+      marginToken: string,
+      positionSize: string,
+      positionSide: PositionSide,
+      whetherStud?: boolean
+    ): Promise<boolean> => {
+      if (!signer) return false
+
+      const c = getDerifyExchangeContract1(exchange, signer)
+      const qtAddress = findToken(quoteToken).tokenAddress
+
+      let _positionSize
+
+      if (whetherStud) {
+        _positionSize = toFloorNum(positionSize)
+      } else {
+        const calc = findMarginToken(marginToken) ? Number(positionSize) / Number(spotPrice) : positionSize
+        _positionSize = toFloorNum(calc)
+      }
+
+      try {
+        const gasLimit = await estimateGas(c, 'closePosition', [brokerId, qtAddress, positionSide, _positionSize], 0)
+        const res = await c.closePosition(brokerId, qtAddress, positionSide, _positionSize, { gasLimit })
+        const receipt = await res.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { close }
 }

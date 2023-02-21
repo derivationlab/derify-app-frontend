@@ -14,7 +14,6 @@ import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
 import Reminder from '../c/Reminder'
 import EditButton from '../c/EditButton'
-import BN from 'bignumber.js'
 
 interface Props {
   data: Record<string, any>
@@ -26,16 +25,22 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const { spotPrice } = useSpotPrice()
+  const { spotPrice, quoteToken, marginToken } = useSpotPrice()
 
   const variables = useTraderInfo((state) => state.variables)
+  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
   const memoMargin = useMemo(() => {
     return (data?.size * spotPrice) / data.leverage
   }, [data, spotPrice])
 
+  const memoVolume = useMemo(() => {
+    return Number(spotPrice) * Number(data.size)
+  }, [data, spotPrice])
+
   const memoUnrealizedPnl = useMemo(() => {
-    if (Number(spotPrice) > 0) return (spotPrice - data.price) * data.size * (data.side === PositionSide.long ? 1 : -1)
+    if (Number(spotPrice) > 0)
+      return (spotPrice - data.averagePrice) * data.size * (data.side === PositionSide.long ? 1 : -1)
     return 0
   }, [spotPrice, data])
 
@@ -54,8 +59,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       >
         <span className={classNames(`${judgeUpsAndDowns(memoUnrealizedPnl) ? 'up' : 'down'}`)}>
           {judgeUpsAndDowns(memoUnrealizedPnl)}
-          {memoUnrealizedPnl * 100} ( {judgeUpsAndDowns(memoReturnRate)}
-          {memoReturnRate * 100}% )
+          {nonBigNumberInterception(memoUnrealizedPnl * 100)} ( {judgeUpsAndDowns(memoReturnRate)}
+          {nonBigNumberInterception(memoReturnRate * 100)}% )
         </span>
       </DataAtom>
     ),
@@ -70,11 +75,11 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         footer={(data?.name ?? '').replace('-', ' / ')}
       >
         <span>
-          {nonBigNumberInterception(data?.size ?? 0, 4)} / {nonBigNumberInterception(data?.volume ?? 0)}
+          {nonBigNumberInterception(data?.size ?? 0, 4)} / {nonBigNumberInterception(memoVolume)}
         </span>
       </DataAtom>
     ),
-    [data, t]
+    [data, t, memoVolume]
   )
   const atom3Tsx = useMemo(
     () => (
@@ -89,11 +94,16 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     [data?.averagePrice, t]
   )
   const atom4Tsx = useMemo(() => {
-    const mul = data.side === PositionSide.short ? -1 : 1
-    const sub =
-      spotPrice -
-      ((Number(variables?.marginBalance ?? 0) - Number(variables?.totalPositionAmount ?? 0) * 0.03) / data.size) * mul
-    const liquidityPrice = isLTET(sub, 0) ? '--' : safeInterceptionValues(String(sub))
+    let lp
+    if (variablesLoaded) {
+      const { marginBalance = 0, totalPositionAmount = 0 } = variables
+      const mul = data.side === PositionSide.short ? -1 : 1
+      const sub =
+        spotPrice - ((Number(marginBalance) - Number(totalPositionAmount) * 0.01) / data.size) * mul
+      lp = isLTET(sub, 0) ? '--' : safeInterceptionValues(String(sub))
+    } else {
+      lp = '--'
+    }
 
     return (
       <DataAtom
@@ -101,10 +111,10 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.LiqPriceTip')}
         footer={BASE_TOKEN_SYMBOL}
       >
-        <span>{liquidityPrice}</span>
+        <span>{lp}</span>
       </DataAtom>
     )
-  }, [data, spotPrice, variables, t])
+  }, [data, spotPrice, variables, variablesLoaded, t])
 
   const atom5Tsx = useMemo(() => {
     return (
@@ -113,7 +123,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.MarginTip')}
         footer={BASE_TOKEN_SYMBOL}
       >
-        <span>{memoMargin}</span>
+        <span>{nonBigNumberInterception(memoMargin)}</span>
       </DataAtom>
     )
   }, [memoMargin, t])
@@ -167,9 +177,9 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
 
   return (
     <>
-      <div className="web-trade-data-item">
+      <div className='web-trade-data-item'>
         <ItemHeader
-          symbol={data?.name}
+          symbol={`${quoteToken}-${marginToken}`}
           multiple={data?.leverage}
           direction={PositionSide[data?.side] as any}
           buttonText={t('Trade.MyPosition.Close', 'Close')}

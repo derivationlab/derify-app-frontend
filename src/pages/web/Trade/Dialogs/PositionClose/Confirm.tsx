@@ -41,14 +41,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const calcChangeFeeFunc = useCallback(async () => {
     if (factoryConfig && protocolConfig) {
-      console.info(
-        data?.side,
-        closingType,
-        closingAmount,
-        spotPrice,
-        protocolConfig.exchange,
-        factoryConfig
-      )
+      console.info(data?.side, closingType, closingAmount, spotPrice, protocolConfig.exchange, factoryConfig)
       const fee = await calcChangeFee(
         data?.side,
         closingType,

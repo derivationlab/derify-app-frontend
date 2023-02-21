@@ -98,8 +98,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     if (variablesLoaded) {
       const { marginBalance = 0, totalPositionAmount = 0 } = variables
       const mul = data.side === PositionSide.short ? -1 : 1
-      const sub =
-        spotPrice - ((Number(marginBalance) - Number(totalPositionAmount) * 0.01) / data.size) * mul
+      const sub = spotPrice - ((Number(marginBalance) - Number(totalPositionAmount) * 0.01) / data.size) * mul
       lp = isLTET(sub, 0) ? '--' : safeInterceptionValues(String(sub))
     } else {
       lp = '--'
@@ -177,7 +176,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
 
   return (
     <>
-      <div className='web-trade-data-item'>
+      <div className="web-trade-data-item">
         <ItemHeader
           symbol={`${quoteToken}-${marginToken}`}
           multiple={data?.leverage}

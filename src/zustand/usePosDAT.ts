@@ -46,7 +46,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
         const size = safeInterceptionValues(String(long.size), 8)
 
         positionOrd.push({
-          
           size,
           side: PositionSide.long,
           leverage: safeInterceptionValues(String(long.leverage), 8),
@@ -65,7 +64,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
         const size = safeInterceptionValues(String(short.size), 8)
 
         positionOrd.push({
-          
           size,
           side: PositionSide.short,
           leverage: safeInterceptionValues(String(short.leverage), 8),
@@ -94,7 +92,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
           const volume = nonBigNumberInterception(div)
 
           profitLossOrd.push({
-            
             size,
             side: PositionSide.long,
             price: safeInterceptionValues(String(order.price)),
@@ -114,7 +111,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
           const volume = nonBigNumberInterception(div)
 
           profitLossOrd.push({
-            
             size,
             side: PositionSide.short,
             price: safeInterceptionValues(String(order.price)),
@@ -133,7 +129,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
         const volume = nonBigNumberInterception(div)
 
         profitLossOrd.push({
-          
           size,
           side: PositionSide.long,
           price: safeInterceptionValues(String(longOrderStopProfitPosition.stopPrice)),
@@ -154,7 +149,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
         const volume = nonBigNumberInterception(div)
 
         profitLossOrd.push({
-          
           size,
           side: PositionSide.long,
           price: safeInterceptionValues(String(longOrderStopLossPosition.stopPrice)),
@@ -172,7 +166,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
         const volume = nonBigNumberInterception(div)
 
         profitLossOrd.push({
-          
           size,
           side: PositionSide.short,
           price: safeInterceptionValues(String(shortOrderStopLossPosition.stopPrice)),
@@ -190,7 +183,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
         const volume = nonBigNumberInterception(div)
 
         profitLossOrd.push({
-          
           size,
           side: PositionSide.short,
           price: safeInterceptionValues(String(shortOrderStopProfitPosition.stopPrice)),

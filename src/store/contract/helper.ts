@@ -73,7 +73,7 @@ const calcLiquidityPrice = (
   const _spotPrice = new BN(spotPrice)
   const _marginBalance = new BN(marginBalance)
   const _totalPositionAmount = new BN(totalPositionAmount)
-  const p = _spotPrice.minus(_marginBalance.minus(_totalPositionAmount.times(0.03)).div(_size).times(_side))
+  const p = _spotPrice.minus(_marginBalance.minus(_totalPositionAmount.times(0.01)).div(_size).times(_side))
   return p.isLessThanOrEqualTo(0) ? '--' : safeInterceptionValues(String(p))
 }
 

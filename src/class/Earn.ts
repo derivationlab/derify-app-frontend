@@ -35,19 +35,18 @@ class Earn {
   traderStakingDrf = async (signer: Signer, amount: string): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)
     try {
-      console.info(`数量：${amount}`)
-      console.info(`数量转换hex传给approve()：${toHexString(amount, 8)}`)
-      const _amount = toHexString(Number(amount), 8)
-      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getDRFAddress(), _amount)
-      console.info(approve)
+      const _amount1 = toHexString(Number(amount), 8)
+      const _amount2 = toHexString(Number(amount), 18)
+
+      const approve = await setAllowance(signer, getDerifyRewardsAddress(), getDRFAddress(), _amount2)
+
       if (!approve) return false
 
-      const gasLimit = await estimateGas(contract, 'stakingDrf', [_amount], 0)
-      const res = await contract.stakingDrf(_amount, { gasLimit })
+      const gasLimit = await estimateGas(contract, 'stakingDrf', [_amount1], 0)
+      const res = await contract.stakingDrf(_amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
-      alert(e)
       console.info(e)
       return false
     }

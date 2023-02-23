@@ -52,8 +52,8 @@ const InsurancePool: FC = () => {
   }, [])
 
   return (
-    <div className="web-dashborad-chart">
-      <header className="web-dashborad-chart-header">
+    <div className="web-data-chart">
+      <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.InsurancePool', 'Insurance Pool')} :
           <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={BASE_TOKEN_SYMBOL} format={false} />
@@ -66,7 +66,7 @@ const InsurancePool: FC = () => {
           />
         </aside>
       </header>
-      <main className="web-dashborad-chart-main">
+      <main className="web-data-chart-main">
         <AreaChart
           chartId="InsurancePool"
           data={memoCombineData}

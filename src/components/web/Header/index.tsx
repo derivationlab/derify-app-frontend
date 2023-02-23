@@ -40,6 +40,12 @@ const Header: FC = () => {
           <NavLink to="/earn" onClick={handleNavLinkEv}>
             {t('Nav.Nav.Earn', 'Earn')}
           </NavLink>
+          <NavLink to="/data" onClick={handleNavLinkEv}>
+            {t('Nav.Nav.Data', 'Data')}
+          </NavLink>
+          <NavLink to="/broker" className={classNames({ active: P.indexOf('broker') > -1 })} onClick={handleNavLinkEv}>
+            {t('Nav.Nav.Broker', 'Broker')}
+          </NavLink>
           <span className={classNames({ active: P.indexOf('dashboard') > -1 })}>
             {t('Nav.Nav.Dashboard', 'Dashboard')}
             <em />
@@ -61,9 +67,6 @@ const Header: FC = () => {
               </li>
             </ul>
           </span>
-          <NavLink to="/broker" className={classNames({ active: P.indexOf('broker') > -1 })} onClick={handleNavLinkEv}>
-            {t('Nav.Nav.Broker', 'Broker')}
-          </NavLink>
         </nav>
         <div className="web-header-tools">
           <ConnectButton />

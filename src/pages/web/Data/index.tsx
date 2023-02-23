@@ -7,7 +7,7 @@ import InsurancePool from './c/InsurancePool'
 
 const Dashborad: FC = () => {
   return (
-    <div className="web-dashborad">
+    <div className="web-data">
       <Counts />
       <TradingVolume />
       <PositionVolume />

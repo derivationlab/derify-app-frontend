@@ -56,8 +56,8 @@ const TradingVolume: FC = () => {
   }, [pairSelectVal])
 
   return (
-    <div className="web-dashborad-chart">
-      <header className="web-dashborad-chart-header">
+    <div className="web-data-chart">
+      <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.TradingVolume', 'Trading Volume')} :
           <BalanceShow value={tradingVolume[0]?.trading_amount ?? 0} unit={BASE_TOKEN_SYMBOL} format={false} />
@@ -75,7 +75,7 @@ const TradingVolume: FC = () => {
           />
         </aside>
       </header>
-      <main className="web-dashborad-chart-main">
+      <main className="web-data-chart-main">
         {/*<AreaChart*/}
         {/*  chartId="TradingVolume"*/}
         {/*  data={tradingData}*/}

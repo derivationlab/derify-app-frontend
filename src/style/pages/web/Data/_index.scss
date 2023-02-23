@@ -1,4 +1,4 @@
-.web-dashborad {
+.web-data {
   @extend .web;
   &-counts {
     display: flex;justify-content: space-between;align-items: center;margin-bottom: 48px;
@@ -68,7 +68,7 @@
 }
 
 .mobile-mode {
-  .web-dashborad {
+  .web-data {
     width: 100%;padding: 0 rem(16) rem(32);
     &-counts {
       margin-bottom: rem(24);border-radius: rem(36);background: $cf7;
@@ -151,7 +151,7 @@
   }
 }
 .dark, .mobile-mode.dark {
-  .web-dashborad {
+  .web-data {
     &-counts {
       section {
         background: $c33;
@@ -177,7 +177,7 @@
   }
 }
 .mobile-mode.dark {
-  .web-dashborad {
+  .web-data {
     &-counts {
       background: $c33;
       section {

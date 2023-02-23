@@ -40,7 +40,7 @@ const Header: FC = () => {
           <NavLink to="/earn" onClick={handleNavLinkEv}>
             {t('Nav.Nav.Earn', 'Earn')}
           </NavLink>
-          <NavLink to="/dashboard" onClick={handleNavLinkEv}>
+          <span className={classNames({ active: P.indexOf('dashboard') > -1 })}>
             {t('Nav.Nav.Dashboard', 'Dashboard')}
             <em />
             <ul>
@@ -60,7 +60,7 @@ const Header: FC = () => {
                 </NavLink>
               </li>
             </ul>
-          </NavLink>
+          </span>
           <NavLink to="/broker" className={classNames({ active: P.indexOf('broker') > -1 })} onClick={handleNavLinkEv}>
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>

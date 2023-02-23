@@ -16,11 +16,12 @@
   }
   &-nav {
     display: flex;align-items: center;
-    & > a {
+    & > a , & > span {
       margin: 0 24px;font-size: 20px;position: relative;display: flex;justify-content: center;align-items: center;
     }
-    a {
-      line-height: 40px;font-weight: 200;
+    a, span {
+      line-height: 40px;font-weight: 200;cursor: pointer;
+      @include dz();
 
       &.active {
         font-weight: bold;color: $red;
@@ -46,6 +47,7 @@
       }
 
       &:hover {
+        color: $red;
         em {
           @include xz(135);top: 2px;border-color: $red;
         }

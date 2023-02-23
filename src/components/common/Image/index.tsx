@@ -14,7 +14,7 @@ const Image: FC<ImageProps> = ({ cover, src, className, ...props }) => {
   if (cover) {
     return <div className={classNames('web-image', className)} style={{ backgroundImage: `url(${memoSrc})` }}></div>
   }
-  return <img src={memoSrc} {...props} alt="" />
+  return <img className={classNames('web-image', className)} src={memoSrc} {...props} alt="" />
 }
 
 export default Image

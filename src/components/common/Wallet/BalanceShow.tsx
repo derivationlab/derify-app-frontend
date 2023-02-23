@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import BN from 'bignumber.js'
 import classNames from 'classnames'
+import numeral from 'numeral'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { nonBigNumberInterception } from '@/utils/tools'
@@ -13,12 +14,15 @@ interface Props {
   percent?: boolean
 }
 
-const BalanceShow: FC<Props> = ({ value, unit, format = true, percent = false, decimal = 2 }) => {
+const BalanceShow: FC<Props> = ({ value, unit, format = false, percent = false, decimal = 2 }) => {
   const [int, dec] = useMemo(() => {
     const safeNumber = nonBigNumberInterception(value, decimal)
     const finalValue = percent ? new BN(safeNumber).multipliedBy(100).toString() : safeNumber
+    if (format) {
+      return numeral(finalValue).format('0.00a').split('.')
+    }
     return finalValue.split('.')
-  }, [value, format, percent])
+  }, [value, format, percent, decimal])
 
   return (
     <div className={classNames('web-balance-show million dec')}>

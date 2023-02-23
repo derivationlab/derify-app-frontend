@@ -1,9 +1,17 @@
 import React, { FC } from 'react'
 
+import TradingChart from './TradingChart'
+import PositionChart from './PositionChart'
+import MarketInfo from './MarketInfo'
+
 const Overview: FC = () => {
   return (
-    <div>
-      <p>Overview</p>
+    <div className="web-dashboard">
+      <div className="web-dashboard-overview-charts-layout">
+        <TradingChart />
+        <PositionChart />
+      </div>
+      <MarketInfo />
     </div>
   )
 }

@@ -42,7 +42,7 @@ export const initialFactoryConfig = (): MarginTokenWithQuote => {
 }
 
 export const getFactoryConfig = async (p: MarginTokenWithContract): Promise<MarginTokenWithQuote> => {
-  let output = initialFactoryConfig()
+  const output = initialFactoryConfig()
 
   const calls = flatten(
     Object.keys(p).map((key, index) =>
@@ -246,7 +246,7 @@ export const initialOpeningMaxLimit = (): MarginTokenWithQuote => {
 }
 
 export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<MarginTokenWithQuote> => {
-  let output = initialOpeningMaxLimit()
+  const output = initialOpeningMaxLimit()
 
   const calls = flatten(
     Object.keys(p).map((m, mIndex) => {

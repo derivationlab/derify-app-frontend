@@ -12,6 +12,7 @@ const urlTable: Record<string, { web: string }> = {
 
 const { NODE_ENV } = process.env
 export const getEnv = (): string => {
+  return 'dev'
   if (NODE_ENV === 'development') return 'dev'
   return Object.keys(urlTable).find((i) => JSON.stringify(urlTable[i]).includes(window.location.origin)) ?? 'prod'
 }

@@ -19,7 +19,7 @@ export const initial = (): Record<string, any> => {
 }
 
 export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<string, any>; isLoading: boolean } => {
-  let output = initial()
+  const output = initial()
 
   const { data, isLoading } = useQuery(
     ['getPairIndicator'],

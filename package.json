@@ -73,7 +73,7 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^6.4.3",
+    "@craco/craco": "^7.0.0",
     "@types/loadable__component": "^5.13.4",
     "@types/lodash": "^4.14.182",
     "@types/node": "^16.11.33",

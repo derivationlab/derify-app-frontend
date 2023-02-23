@@ -1,16 +1,10 @@
 import create from 'zustand'
 
 import { VolumeState } from '@/zustand/types'
-import { getUnitAmount, nonBigNumberInterception, safeInterceptionValues, toHexString } from '@/utils/tools'
-import {
-  getDerifyDerivativePairContract,
-  getDerifyExchangeContract1,
-  getMarginTokenPriceFeedContract
-} from '@/utils/contractHelpers'
-import { BASE_TOKEN_SYMBOL, findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
-import pairs from '@/config/pairs'
-import BN from 'bignumber.js'
+import { findToken, MARGIN_TOKENS } from '@/config/tokens'
+import { inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
+import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
 
 export enum OpeningType {
   Market,
@@ -25,8 +19,8 @@ const getMaxVolume = async (
   price: string,
   exchange: string
 ): Promise<number[]> => {
-  const _price = toHexString(price)
-  const _leverageNow = toHexString(leverageNow)
+  const _price = inputParameterConversion(price, 8)
+  const _leverageNow = inputParameterConversion(leverageNow, 8)
   const c = getDerifyExchangeContract1(exchange)
 
   const data = await c.getTraderOpenUpperBound(qtAddress, trader, openingType, _price, _leverageNow)
@@ -87,8 +81,8 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
     }),
   updateClosingAmount: (data: number) =>
     set(() => {
-      console.info('updateClosingAmount:')
-      console.info(data)
+      // console.info('updateClosingAmount:')
+      // console.info(data)
       return { closingAmount: data }
     }),
   fetchMaxVolume: async (

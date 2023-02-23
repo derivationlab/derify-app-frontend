@@ -84,17 +84,16 @@ export const getDecimalAmount = (amount: number | string | BN, decimals = 8): BN
   return new BN(amount).times(new BN(10).pow(decimals))
 }
 
-export const getUnitAmount = (amount: number | string, decimals = 18): string => {
-  return ethers.utils.parseUnits(String(amount)).toString()
-}
-
 export const toHexString = (amount: number | string, decimals = 8) => {
   return '0x' + new BN(amount).shiftedBy(decimals).integerValue(BN.ROUND_DOWN).toString(16)
 }
 
-export const toFloorNum = (amount: number | string, decimals = 8) => {
-  const num = new BN(amount).shiftedBy(decimals).integerValue(BN.ROUND_FLOOR)
-  return num.toString()
+export const inputParameterConversion = (amount: number | string, precision = 8): string => {
+  const p1 = String(amount)
+  const p2 = p1.indexOf('.') > -1 ? p1 : `${p1}.0`
+  const p3 = p2.split('.')
+  const p4 = `${p3[0]}.${p3[1].substring(0, precision)}`
+  return ethers.utils.parseUnits(p4, precision).toString()
 }
 
 /**
@@ -128,4 +127,20 @@ export const isGTET = (a: string | number, b: string | number): boolean => {
 
 export const bnPlus = (a: string | number, b: string | number): string => {
   return new BN(a).plus(b).toString()
+}
+
+export const bnMul = (a: string | number, b: string | number): string => {
+  return new BN(a).times(b).toString()
+}
+
+export const bnDiv = (a: string | number, b: string | number): string => {
+  return new BN(a).div(b).toString()
+}
+
+export const bnMinus = (a: string | number, b: string | number): string => {
+  return new BN(a).minus(b).toString()
+}
+
+export const bnAbs = (a: string | number): string => {
+  return new BN(a).abs().toString()
 }

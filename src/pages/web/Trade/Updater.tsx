@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
-import { getDecimalAmount, getUnitAmount, isGT, toFloorNum, toHexString } from '@/utils/tools'
+import { isGT } from '@/utils/tools'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { usePCFAndSpotPrice } from '@/hooks/usePCFAndSpotPrice'
@@ -71,14 +71,6 @@ export default function Updater(): null {
 
     if (protocolConfigLoaded && protocolConfig) void func(protocolConfig)
   }, [protocolConfigLoaded, protocolConfig])
-
-  useEffect(() => {
-    const b = 1000.99999999999999
-    console.info(getDecimalAmount(b, 8).toString())
-    console.info(getUnitAmount(b, 10))
-    console.info(toHexString(b, 8))
-    console.info(toFloorNum(b, 8))
-  }, [])
 
   return null
 }

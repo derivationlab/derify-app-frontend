@@ -27,13 +27,15 @@ const Data: FC = () => {
 
   useEffect(() => {
     PubSub.subscribe(PubSubEvents.UPDATE_OPENED_POSITION, () => {
-      if (data?.address && factoryConfig) void fetchTraderPos(data?.address, factoryConfig)
+      if (data?.address && factoryConfig) {
+        void fetchTraderPos(data?.address, factoryConfig)
+      }
     })
 
     return () => {
       PubSub.clearAllSubscriptions()
     }
-  }, [])
+  }, [factoryConfig, data?.address])
 
   return (
     <Tabs className="web-trade-data">

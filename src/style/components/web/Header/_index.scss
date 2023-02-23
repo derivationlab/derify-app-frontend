@@ -40,7 +40,7 @@
 
       ul {
         position: absolute;background: $cff;padding: 10px 0;border-radius: 10px;max-height: 0;overflow: hidden;left: -20px;top: 40px;
-        @include dz();z-index: 20;
+        @include dz();z-index: 20;opacity: 0;
         a {
           font-size: 16px;margin: 0;padding: 0 20px;white-space: nowrap;
         }
@@ -52,7 +52,7 @@
           @include xz(135);top: 2px;border-color: $red;
         }
         ul {
-          max-height: 140px;
+          max-height: 140px;opacity: 1;
           // box-shadow: 1px 1px 5px rgba($c88, .2) inset, 1px 1px 5px rgba($c88, .2);
         }
       }

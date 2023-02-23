@@ -73,7 +73,7 @@ export default function Updater(): null {
   }, [protocolConfigLoaded, protocolConfig])
 
   useEffect(() => {
-    const b = 1000.99999999999999
+    const b = 1000.99999999999999 // eslint-disable-line
     console.info(getDecimalAmount(b, 8).toString())
     console.info(getUnitAmount(b, 10))
     console.info(toHexString(b, 8))

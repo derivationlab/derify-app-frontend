@@ -31,13 +31,13 @@ export const initial = (): MarginTokenWithQuote => {
 export const usePCFAndSpotPrice = (
   p: MarginTokenWithQuote
 ): { data1?: MarginTokenWithQuote; data2?: MarginTokenWithQuote; isLoading: boolean } => {
-  let calls1: any[] = []
-  let calls2: any[] = []
-  let output1 = initial()
-  let output2 = initial()
+  const calls1: any[] = []
+  const calls2: any[] = []
+  const output1 = initial()
+  const output2 = initial()
 
-  for (let k in p) {
-    for (let j in p[k as MarginTokenKeys]) {
+  for (const k in p) {
+    for (const j in p[k as MarginTokenKeys]) {
       calls1.push({
         name: 'getPositionChangeFeeRatio',
         address: p[k as MarginTokenKeys][j as QuoteTokenKeys],

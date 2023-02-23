@@ -20,8 +20,8 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
   mTokenPricesLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
-      console.info('updateFactoryConfig:')
-      console.info(data)
+      // console.info('updateFactoryConfig:')
+      // console.info(data)
       return { factoryConfig: data, factoryConfigLoaded: true }
     }),
   updateProtocolConfig: (data: MarginTokenWithContract) =>

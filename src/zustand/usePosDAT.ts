@@ -24,7 +24,6 @@ const getMyPositionsData = async (trader: string, pairAddress: string): Promise<
     const response = await c.getTraderDerivativePositions(trader)
 
     if (!isEmpty(response)) {
-      console.info(response)
       const {
         long,
         short,
@@ -208,10 +207,10 @@ const usePosDATStore = create<PosDATState>((set) => ({
   loaded: false,
   fetch: async (trader: string, pairAddress: string) => {
     const [positionOrd, profitLossOrd] = await getMyPositionsData(trader, pairAddress)
-    console.info('usePosDATStore-positionOrd:')
-    console.info(positionOrd)
-    console.info('usePosDATStore-profitLossOrd:')
-    console.info(profitLossOrd)
+    // console.info('usePosDATStore-positionOrd:')
+    // console.info(positionOrd)
+    // console.info('usePosDATStore-profitLossOrd:')
+    // console.info(profitLossOrd)
     set({ positionOrd, profitLossOrd, loaded: true })
   }
 }))

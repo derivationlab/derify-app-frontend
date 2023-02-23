@@ -85,6 +85,7 @@ const MyPosition: FC = () => {
         window.toast.success(t('common.success', 'success'))
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
+        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -100,13 +101,14 @@ const MyPosition: FC = () => {
     onCloseDialogEv()
 
     if (broker?.broker && protocolConfig) {
-      const status = await close2(broker.broker, protocolConfig.exchange)
+      const status = await close2(protocolConfig.exchange, broker.broker)
 
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
+        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_AMOUNT)
       } else {
         window.toast.error(t('common.failed', 'failed'))
@@ -117,7 +119,7 @@ const MyPosition: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const takeProfitOrStopLossFunc = async (params: Record<string, any>) => {
+  const profitOrLossFunc = async (params: Record<string, any>) => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     onCloseDialogEv()
@@ -185,7 +187,7 @@ const MyPosition: FC = () => {
         data={targetPosOrd}
         visible={dialogStatus === 'edit-position'}
         onClose={onCloseDialogEv}
-        onClick={takeProfitOrStopLossFunc}
+        onClick={profitOrLossFunc}
       />
       <PositionCloseAllDialog
         visible={dialogStatus === 'close-all-position'}

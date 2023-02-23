@@ -4,12 +4,11 @@ import { isEmpty } from 'lodash'
 
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
-import { toFloorNum, toHexString } from '@/utils/tools'
+import { inputParameterConversion } from '@/utils/tools'
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { BASE_TOKEN_SYMBOL, findMarginToken, findToken } from '@/config/tokens'
+import { findMarginToken, findToken } from '@/config/tokens'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
-import BN from 'bignumber.js'
 
 export const useOpeningPosition = () => {
   const { data: signer } = useSigner()
@@ -32,11 +31,11 @@ export const useOpeningPosition = () => {
       const c = getDerifyExchangeContract1(exchange, signer)
 
       // getUintAmount?
-      const _posLeverage = toFloorNum(posLeverage)
+      const _posLeverage = inputParameterConversion(posLeverage, 8)
       const _pricingType = findMarginToken(pricingType) ? 1 : 0
       const _openingType = conversion ? OpeningType.Market : openingType
-      const _openingSize = toFloorNum(openingSize)
-      const _openingPrice = toFloorNum(openingPrice)
+      const _openingSize = inputParameterConversion(openingSize, 8)
+      const _openingPrice = inputParameterConversion(openingPrice, 8)
 
       const params = [
         brokerId,
@@ -184,7 +183,7 @@ export const useDepositMargin = () => {
       const c = getDerifyExchangeContract1(exchange, signer)
 
       try {
-        const _amount = toHexString(amount)
+        const _amount = inputParameterConversion(amount, 8)
         const approve = await setAllowance(signer, exchange, findToken(marginToken).tokenAddress, _amount)
 
         if (!approve) return false
@@ -214,7 +213,7 @@ export const useWithdrawMargin = () => {
       const c = getDerifyExchangeContract1(exchange, signer)
 
       try {
-        const _amount = toHexString(amount)
+        const _amount = inputParameterConversion(amount, 8)
 
         const gasLimit = await estimateGas(c, 'withdraw', [_amount], 0)
         const res = await c.withdraw(_amount, { gasLimit })
@@ -248,8 +247,8 @@ export const useTakeProfitOrStopLoss = () => {
 
       if (isEmpty(job)) return true
 
-      const _stopLossPrice = toFloorNum(stopLossPrice)
-      const _takeProfitPrice = toFloorNum(takeProfitPrice)
+      const _stopLossPrice = inputParameterConversion(stopLossPrice, 8)
+      const _takeProfitPrice = inputParameterConversion(takeProfitPrice, 8)
       const { method, stopType, orderStopType, cancelStopType } = job
 
       try {
@@ -328,10 +327,10 @@ export const useClosePosition = () => {
       let _positionSize
 
       if (whetherStud) {
-        _positionSize = toFloorNum(positionSize)
+        _positionSize = inputParameterConversion(positionSize, 8)
       } else {
         const calc = findMarginToken(marginToken) ? Number(positionSize) / Number(spotPrice) : positionSize
-        _positionSize = toFloorNum(calc)
+        _positionSize = inputParameterConversion(calc, 8)
       }
 
       try {

@@ -5,14 +5,17 @@ import BN from 'bignumber.js'
 import multicall from '@/utils/multicall'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { PositionSide } from '@/store/contract/helper'
-import {
-  getDerifyDerivativePairContract,
-  getDerifyExchangeContract1,
-  getMarginTokenPriceFeedContract
-} from '@/utils/contractHelpers'
-import { getUnitAmount, isGT, isLT, nonBigNumberInterception, safeInterceptionValues, toFloorNum } from '@/utils/tools'
-import { findMarginToken, findToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+import {
+  bnDiv,
+  inputParameterConversion,
+  isGT,
+  isLT,
+  nonBigNumberInterception,
+  safeInterceptionValues
+} from '@/utils/tools'
 
 import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
@@ -382,7 +385,9 @@ export const calcChangeFee = async (
 
   if (side === PositionSide.twoWay) return '0'
 
-  const size = findMarginToken(symbol) ? toFloorNum(new BN(amount).div(spotPrice).toString()) : toFloorNum(amount)
+  const size = findMarginToken(symbol)
+    ? inputParameterConversion(bnDiv(amount, spotPrice), 8)
+    : inputParameterConversion(amount, 8)
   const exchangeContract = getDerifyExchangeContract1(exchange)
   const derivativeContract = getDerifyDerivativePairContract(derivative)
 

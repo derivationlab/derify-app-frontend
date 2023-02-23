@@ -1,19 +1,21 @@
 import React, { FC } from 'react'
+import { Redirect, Switch, Route } from '@/components/common/Route'
 
-import Counts from './c/Counts'
-import TradingVolume from './c/TradingVolume'
-import PositionVolume from './c/PositionVolume'
-import InsurancePool from './c/InsurancePool'
+import Overview from './Overview'
+import BuybackPlan from './BuybackPlan'
+import GrantList from './GrantList'
 
-const Dashborad: FC = () => {
+const Dashboard: FC = () => {
   return (
-    <div className="web-dashborad">
-      <Counts />
-      <TradingVolume />
-      <PositionVolume />
-      <InsurancePool />
-    </div>
+    <>
+      <Switch>
+        <Route path="/dashboard" exact render={() => <Redirect to="/dashboard/overview" />} />
+        <Route path="/dashboard/overview" component={Overview} />
+        <Route path="/dashboard/buyback-plan" component={BuybackPlan} />
+        <Route path="/dashboard/grant-list" component={GrantList} />
+      </Switch>
+    </>
   )
 }
 
-export default Dashborad
+export default Dashboard

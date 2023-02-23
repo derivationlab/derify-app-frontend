@@ -16,10 +16,43 @@
   }
   &-nav {
     display: flex;align-items: center;
+    & > a {
+      margin: 0 24px;font-size: 20px;position: relative;display: flex;justify-content: center;align-items: center;
+    }
     a {
-      display: block;margin: 0 24px;font-size: 20px;line-height: 40px;font-weight: 200;
+      line-height: 40px;font-weight: 200;
+
       &.active {
         font-weight: bold;color: $red;
+        em {
+          border-color: $red;border-width: 0 0 2px 2px;
+        }
+      }
+
+      em {
+        display: block;width: 8px;height: 8px;margin-left: 8px;
+        border-width: 0 0 1.5px 1.5px;position: relative;top: -2px;
+        border-style: solid; border-color: $c88;
+        @include xz(-45);
+        @include dz();
+      }
+
+      ul {
+        position: absolute;background: $cff;padding: 10px 0;border-radius: 10px;max-height: 0;overflow: hidden;left: -20px;top: 40px;
+        @include dz();z-index: 20;
+        a {
+          font-size: 16px;margin: 0;padding: 0 20px;white-space: nowrap;
+        }
+      }
+
+      &:hover {
+        em {
+          @include xz(135);top: 2px;border-color: $red;
+        }
+        ul {
+          max-height: 140px;
+          // box-shadow: 1px 1px 5px rgba($c88, .2) inset, 1px 1px 5px rgba($c88, .2);
+        }
       }
     }
   }

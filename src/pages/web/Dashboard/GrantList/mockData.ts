@@ -38,3 +38,20 @@ export const StateData = [
     label: 'Closed'
   }
 ]
+
+const GrantListFunc = () => {
+  return [...new Array(8)].map((_, index) => {
+    const temp = index % 3
+    return {
+      value: index + 1,
+      Margin: 'BUSD',
+      MarginIcon: 'icon/bnb.svg',
+      Target: temp === 0 ? TargetData[1].label : temp === 1 ? TargetData[2].label : TargetData[3].label,
+      State: temp === 0 ? StateData[1].label : temp === 1 ? StateData[2].label : StateData[3].label,
+      Rewards: 1234567.9867,
+      StartTime: +new Date() - 100000000,
+      EndTime: +new Date()
+    }
+  })
+}
+export const GrantListData = GrantListFunc()

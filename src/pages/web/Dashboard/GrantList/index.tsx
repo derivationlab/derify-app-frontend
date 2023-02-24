@@ -2,7 +2,10 @@ import React, { FC, useState } from 'react'
 
 import { Select } from '@/components/common/Form'
 
-import { MarginData, TargetData, StateData } from './mockData'
+import { MarginData, TargetData, StateData, GrantListData } from './mockData'
+
+import ListItem from './ListItem'
+import AddGrant from './AddGrant'
 const GrantList: FC = () => {
   const [marginType, setMarginType] = useState<string | number>('')
   const [target, setTarget] = useState<string | number>('')
@@ -22,8 +25,11 @@ const GrantList: FC = () => {
         <Select label="Target" value={target} onChange={setTarget} large objOptions={TargetData} />
         <Select label="State" value={state} onChange={setState} large objOptions={StateData} />
       </header>
-      <div>
-        <p>GrantList</p>
+      <div className="web-dashboard-grant-list">
+        <AddGrant />
+        {GrantListData.map((item, index) => (
+          <ListItem key={index} data={item} />
+        ))}
       </div>
     </div>
   )

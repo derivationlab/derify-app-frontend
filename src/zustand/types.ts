@@ -43,7 +43,7 @@ export interface PosDATState {
   positionOrd: Rec[]
   profitLossOrd: Rec[]
   loaded: boolean
-  fetch: (trader: string, pairAddress: string) => Promise<void>
+  fetch: (trader: string, factoryConfig: Rec) => Promise<void>
 }
 
 export interface VolumeState {

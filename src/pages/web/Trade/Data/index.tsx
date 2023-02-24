@@ -1,11 +1,11 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAccount } from 'wagmi'
 import PubSub from 'pubsub-js'
 
 import { PubSubEvents } from '@/typings'
-import { useFactoryConf } from '@/hooks/useMatchConf'
 import { usePosDATStore } from '@/zustand/usePosDAT'
+import { useConfigInfo, useMarginToken } from '@/zustand'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
 
@@ -17,18 +17,23 @@ const Data: FC = () => {
   const { t } = useTranslation()
   const { data } = useAccount()
 
+  const marginToken = useMarginToken((state) => state.marginToken)
   const fetchTraderPos = usePosDATStore((state) => state.fetch)
+  const factoryConfig = useConfigInfo((state) => state.factoryConfig)
+  const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
 
-  const { factoryConfig } = useFactoryConf()
+  const _factoryConfig = useMemo(() => {
+    if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken]
+  }, [marginToken, factoryConfig, factoryConfigLoaded])
 
   useEffect(() => {
-    if (data?.address && factoryConfig) void fetchTraderPos(data?.address, factoryConfig)
-  }, [factoryConfig, data?.address])
+    if (data?.address && _factoryConfig) void fetchTraderPos(data?.address, _factoryConfig)
+  }, [_factoryConfig, data?.address])
 
   useEffect(() => {
     PubSub.subscribe(PubSubEvents.UPDATE_OPENED_POSITION, () => {
-      if (data?.address && factoryConfig) {
-        void fetchTraderPos(data?.address, factoryConfig)
+      if (data?.address && _factoryConfig) {
+        void fetchTraderPos(data?.address, _factoryConfig)
       }
     })
 

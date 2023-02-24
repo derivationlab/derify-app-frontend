@@ -40,7 +40,6 @@ const Data: FC = () => {
   return (
     <Tabs className="web-trade-data">
       <TabPane className="web-trade-data-pane" tab={t('Trade.MyPosition.MyPosition', 'My Position')} key="Position">
-        {/* @ts-ignore */}
         <MyPosition />
       </TabPane>
       <TabPane className="web-trade-data-pane" tab={t('Trade.MyOrder.MyOrder', 'My Order')} key="Order">

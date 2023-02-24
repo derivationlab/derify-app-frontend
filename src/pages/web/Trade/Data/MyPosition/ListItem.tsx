@@ -7,6 +7,7 @@ import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { isLTET, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
 import ItemHeader from '../c/ItemHeader'
@@ -25,10 +26,12 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const { spotPrice, quoteToken, marginToken } = useSpotPrice()
-
   const variables = useTraderInfo((state) => state.variables)
   const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
   const memoMargin = useMemo(() => {
     return (data?.size * spotPrice) / data.leverage

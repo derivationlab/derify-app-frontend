@@ -1,9 +1,11 @@
-import React, { FC, useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import React, { FC, useState, useCallback, useRef, useEffect } from 'react'
 import { useInterval } from 'react-use'
 import { isEmpty } from 'lodash'
 
+import { findToken } from '@/config/tokens'
 import { KLineTimes } from '@/data'
-import { useContractData } from '@/store/contract/hooks'
+import { useSpotPrice } from '@/hooks/useMatchConf'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { getKLineData, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 
 import { Select } from '@/components/common/Form'
@@ -22,15 +24,14 @@ const Chart: FC = () => {
   const store = useRef<Record<string, any>>({})
   const kline = useRef<KlineChartProps>(null)
 
-  const { currentPair, pairs, pairsLoaded } = useContractData()
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
   const [loading, setLoading] = useState<boolean>(false)
   const [timeLine, setTimeLine] = useState(60 * 60 * 1000)
   const [chartData, setChartData] = useState<Record<string, any>[]>([])
-
-  const memoPairInfo = useMemo(() => {
-    return pairs.find((pair) => pair.token === currentPair) ?? {}
-  }, [pairs, currentPair])
 
   const getBaseData = useCallback(async () => {
     if (!onetime) setLoading(true)
@@ -38,11 +39,12 @@ const Chart: FC = () => {
     if (kline.current) {
       // kline.current.reset()
 
-      const { data, more } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 130, true)
+      const tokenAddress = findToken(quoteToken).tokenAddress
+      const { data, more } = await getKLineData(tokenAddress, timeLine, getKlineEndTime(), 130, true)
 
       store.current = data[data.length - 1] // keep original data
 
-      const reorganize = reorganizeLastPieceOfData(data, pairs, currentPair)
+      const reorganize = reorganizeLastPieceOfData(data, spotPrice)
 
       setChartData(reorganize)
 
@@ -51,23 +53,30 @@ const Chart: FC = () => {
 
     onetime = true
     setLoading(false)
-  }, [pairs, timeLine, currentPair])
+  }, [spotPrice, timeLine])
 
-  const getMoreData = useCallback(async (lastTime: number) => {
-    return await getKLineData(currentPair, timeLine, lastTime, 50, false)
-  }, [])
+  const getMoreData = useCallback(
+    async (lastTime: number) => {
+      const tokenAddress = findToken(quoteToken).tokenAddress
+
+      return await getKLineData(tokenAddress, timeLine, lastTime, 50, false)
+    },
+    [quoteToken]
+  )
 
   useInterval(() => {
     const func = async () => {
       if (kline.current) {
-        const { data } = await getKLineData(currentPair, timeLine, getKlineEndTime(), 1, false)
+        const tokenAddress = findToken(quoteToken).tokenAddress
+
+        const { data } = await getKLineData(tokenAddress, timeLine, getKlineEndTime(), 1, false)
         // console.info(timestamp, data[0]?.timestamp)
         if (store.current?.timestamp !== data[0]?.timestamp) {
           kline.current.update(store.current)
           store.current = data[0]
         }
 
-        const reorganize = reorganizeLastPieceOfData(data, [memoPairInfo], currentPair)
+        const reorganize = reorganizeLastPieceOfData(data, spotPrice)
 
         kline.current.update(reorganize[0])
       }
@@ -76,20 +85,20 @@ const Chart: FC = () => {
   }, 60000)
 
   useEffect(() => {
-    if (pairsLoaded) void getBaseData()
-  }, [pairsLoaded, timeLine, currentPair])
+    void getBaseData()
+  }, [timeLine, quoteToken])
 
   useEffect(() => {
     if (!isEmpty(store.current) && kline.current) {
-      const reorganize = reorganizeLastPieceOfData([store.current], [memoPairInfo], currentPair)
+      const reorganize = reorganizeLastPieceOfData([store.current], spotPrice)
       kline.current.update(reorganize[0])
     }
-  }, [chartData, memoPairInfo?.spotPrice])
+  }, [chartData, spotPrice])
 
   useEffect(() => {
     kline.current && kline.current.reset()
     setLoading(true)
-  }, [currentPair])
+  }, [quoteToken])
 
   return (
     <div className="web-trade-kline-chart">

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import BN from 'bignumber.js'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { usePairsInfo } from '@/zustand'
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { PositionSide } from '@/store/contract/helper'
 import { safeInterceptionValues } from '@/utils/tools'
 import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
@@ -25,7 +25,10 @@ interface Props {
 const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const { spotPrice, quoteToken, marginToken } = useSpotPrice()
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const indicators = usePairsInfo((state) => state.indicators)
 
   const [stopLossAmount, setStopLossAmount] = useState<any>()

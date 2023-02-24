@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 
 import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
+import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { QuoteTokenKeys } from '@/typings'
 
 export const useMatchConf = () => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -39,9 +41,7 @@ export const useMatchConf = () => {
   }
 }
 
-export const useSpotPrice = () => {
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
+export const useSpotPrice = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
   const spotPrices = usePairsInfo((state) => state.spotPrices)
   const spotPricesLoaded = usePairsInfo((state) => state.spotPricesLoaded)
 
@@ -51,9 +51,7 @@ export const useSpotPrice = () => {
   }, [spotPrices, marginToken, quoteToken, spotPricesLoaded])
 
   return {
-    spotPrice,
-    quoteToken,
-    marginToken
+    spotPrice
   }
 }
 

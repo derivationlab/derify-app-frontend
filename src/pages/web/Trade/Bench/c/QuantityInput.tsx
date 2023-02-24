@@ -4,6 +4,7 @@ import React, { FC, useEffect } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 
 import { Select, Input } from '@/components/common/Form'
@@ -28,9 +29,11 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
   const maxVolume = useCalcOpeningDAT((state) => state.maxVolume)
   const fetchMaxVolume = useCalcOpeningDAT((state) => state.fetchMaxVolume)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
 
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf()
-  const { spotPrice, quoteToken, marginToken } = useSpotPrice()
 
   const onSelectChange = (val: string | number) => {
     onChange(0)

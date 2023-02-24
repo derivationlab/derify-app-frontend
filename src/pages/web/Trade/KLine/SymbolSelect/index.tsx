@@ -5,7 +5,7 @@ import { useClickAway } from 'react-use'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/context/Mobile'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { usePairsInfo, useQuoteToken } from '@/zustand'
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
@@ -19,10 +19,13 @@ interface Props {
 const SymbolSelect: FC<Props> = ({ onToggle }) => {
   const ref = useRef(null)
   const { mobile } = useContext(MobileContext)
-  const { spotPrice, quoteToken } = useSpotPrice()
 
   const indicators = usePairsInfo((state) => state.indicators)
   const updateQuoteToken = useQuoteToken((state) => state.updateQuoteToken)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
   const [show, setShow] = useState<boolean>(false)
 

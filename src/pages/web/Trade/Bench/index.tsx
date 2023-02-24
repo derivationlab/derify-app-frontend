@@ -10,7 +10,7 @@ import { isOpeningMinLimit } from '@/hooks/helper'
 import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
-import { useConfigInfo, usePairsInfo } from '@/zustand'
+import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 
@@ -34,7 +34,6 @@ const Bench: FC = () => {
   const { opening } = useOpeningPosition()
   const { protocolConfig } = useProtocolConf()
   const { brokerBound: broker } = useTraderData() // todo rewrite redux
-  const { spotPrice, marginToken, quoteToken } = useSpotPrice()
 
   const indicators = usePairsInfo((state) => state.indicators)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
@@ -45,6 +44,10 @@ const Bench: FC = () => {
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
   const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
   const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(indicators?.longPmrRate)

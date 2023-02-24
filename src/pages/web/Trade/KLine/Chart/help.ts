@@ -45,13 +45,8 @@ export const getKLineData = async (token: string, time: number, endTime: number,
   }
 }
 
-export const reorganizeLastPieceOfData = (
-  data: Record<string, any>[],
-  pairs: Record<string, any>[],
-  current: string
-): Record<string, any>[] => {
-  const targetPairsData = pairs.find((pair) => pair.token === current) ?? {}
-  const pairSpotPrice = Number(nonBigNumberInterception(targetPairsData.spotPrice ?? 0))
+export const reorganizeLastPieceOfData = (data: Record<string, any>[], spotPrices: string): Record<string, any>[] => {
+  const pairSpotPrice = Number(spotPrices)
 
   if (pairSpotPrice === 0) return data
 

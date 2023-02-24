@@ -2,7 +2,7 @@ import React, { FC, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { PositionSide } from '@/store/contract/helper'
-import { usePairsInfo } from '@/zustand'
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
@@ -25,12 +25,14 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const { spotPrice, marginToken, quoteToken } = useSpotPrice()
-
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const indicators = usePairsInfo((state) => state.indicators)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
   const updateClosingType = useCalcOpeningDAT((state) => state.updateClosingType)
   const updateClosingAmount = useCalcOpeningDAT((state) => state.updateClosingAmount)
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
   const memoDisabled = useMemo(() => {
     return isGT(closingAmount, 0)

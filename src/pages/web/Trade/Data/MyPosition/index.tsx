@@ -10,6 +10,7 @@ import { PubSubEvents } from '@/typings'
 import { useTraderData } from '@/store/trader/hooks'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { isET, nonBigNumberInterception } from '@/utils/tools'
 import { useCloseAllPositions, useClosePosition, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
@@ -23,7 +24,6 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { isET, nonBigNumberInterception } from '@/utils/tools'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()

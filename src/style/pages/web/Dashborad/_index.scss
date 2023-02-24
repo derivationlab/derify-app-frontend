@@ -92,7 +92,7 @@
       display: grid;grid-template-columns: 1fr 1fr 1fr;grid-gap: 70px;
     }
     &-list {
-      margin-top: 70px;
+      margin-top: 70px;margin-bottom: 60px;
       &-item {
         background: $cff;position: relative;
         border-radius: 24px;padding: 68px 32px 24px;

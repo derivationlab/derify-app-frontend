@@ -2,10 +2,13 @@ import React, { FC, useRef, useState, useMemo } from 'react'
 import { useClickAway } from 'react-use'
 import classNames from 'classnames'
 // import { toType } from '@/utils/tools'
+import Image from '@/components/common/Image'
+import { Input } from '@/components/common/Form'
 
 export interface OptionProps {
   value: string | number
   label: string
+  icon?: string
 }
 
 export interface SelectProps {
@@ -15,11 +18,25 @@ export interface SelectProps {
   onChange: (value: string | number) => void
   objOptions?: OptionProps[]
   className?: string
+  large?: boolean
+  filter?: boolean
+  filterPlaceholder?: string
 }
 
-const Select: FC<SelectProps> = ({ label, value, options = [], onChange, objOptions = [], className }) => {
+const Select: FC<SelectProps> = ({
+  label,
+  value,
+  options = [],
+  onChange,
+  objOptions = [],
+  className,
+  large,
+  filter,
+  filterPlaceholder
+}) => {
   const ref = useRef(null)
   const [showOptions, setShowOptions] = useState(false)
+  const [keywords, setKeywords] = useState('')
   useClickAway(ref, () => setShowOptions(false))
 
   const calcCurrLabel = useMemo(() => {
@@ -33,14 +50,31 @@ const Select: FC<SelectProps> = ({ label, value, options = [], onChange, objOpti
     setShowOptions(false)
   }
 
+  const objOptionsFilter = useMemo(() => {
+    return objOptions.filter(
+      (item: OptionProps) =>
+        item.label.toLocaleLowerCase().includes(keywords.toLocaleLowerCase()) ||
+        String(item.value).toLocaleLowerCase().includes(keywords.toLocaleLowerCase())
+    )
+  }, [objOptions, keywords])
+
   return (
-    <div className={classNames('web-select', { show: showOptions }, className)} ref={ref}>
-      {label && <label>{label}</label>}
+    <div className={classNames('web-select', { show: showOptions, large }, className)} ref={ref}>
+      {label && !large && <label>{label}</label>}
       <div className="web-select-show">
         <div className="web-select-show-button" onClick={() => setShowOptions(!showOptions)}>
-          {calcCurrLabel}
+          {label && large && <label>{label}</label>}
+          <span>{calcCurrLabel}</span>
         </div>
         <div className="web-select-options">
+          {filter && (
+            <Input
+              className="web-select-options-filter"
+              value={keywords}
+              onChange={setKeywords}
+              placeholder={filterPlaceholder}
+            />
+          )}
           <ul>
             {options.length
               ? options.map((item, index) => (
@@ -54,13 +88,20 @@ const Select: FC<SelectProps> = ({ label, value, options = [], onChange, objOpti
                 ))
               : null}
             {!options.length && objOptions.length
-              ? objOptions.map((item, index) => (
+              ? objOptionsFilter.map((item, index) => (
                   <li
                     key={index}
                     className={classNames({ active: item.value === value })}
                     onClick={() => onValueChange(item.value)}
                   >
-                    {item.label}
+                    {item?.icon ? (
+                      <div className="web-select-options-item">
+                        <Image src={item.icon} />
+                        {item.label}
+                      </div>
+                    ) : (
+                      item.label
+                    )}
                   </li>
                 ))
               : null}

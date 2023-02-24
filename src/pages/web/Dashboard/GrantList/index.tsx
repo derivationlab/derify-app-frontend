@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 
 import { Select } from '@/components/common/Form'
+import Image from '@/components/common/Image'
 
 import { MarginData, TargetData, StateData, GrantListData } from './mockData'
 
@@ -21,6 +22,12 @@ const GrantList: FC = () => {
           filter
           filterPlaceholder="serch name or contract address.."
           objOptions={MarginData}
+          renderer={(props) => (
+            <div className="web-select-options-item">
+              {props.icon && <Image src={props.icon} />}
+              {props.label}
+            </div>
+          )}
         />
         <Select label="Target" value={target} onChange={setTarget} large objOptions={TargetData} />
         <Select label="State" value={state} onChange={setState} large objOptions={StateData} />

@@ -2,11 +2,14 @@ const MarginDataFunc = () => {
   return [...new Array(20)].map((_, index) => ({
     value: index + 1,
     label: 'BUSD',
-    icon: 'icon/bnb.svg'
+    icon: 'icon/bnb.svg',
+    price: 123.422 * (index + 1),
+    decimals: (index % 3) + 2
   }))
 }
 const allItem = { value: '', label: 'All' }
 export const MarginData = [allItem, ...MarginDataFunc()]
+export const MarginNoAllData = [...MarginDataFunc()]
 
 export const TargetData = [
   allItem,

@@ -20,6 +20,7 @@
   textarea {
     height: 208px;padding: 24px;font-size: 18px;line-height: 1.5;
   }
+  input:focus + &-suffix { z-index: 2; }
   &-clearable, &-suffix {
     position: absolute;height: 24px;right: 16px;top: 12px;
   }

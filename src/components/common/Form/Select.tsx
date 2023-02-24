@@ -2,7 +2,6 @@ import React, { FC, useRef, useState, useMemo } from 'react'
 import { useClickAway } from 'react-use'
 import classNames from 'classnames'
 // import { toType } from '@/utils/tools'
-import Image from '@/components/common/Image'
 import { Input } from '@/components/common/Form'
 
 export interface OptionProps {
@@ -21,6 +20,8 @@ export interface SelectProps {
   large?: boolean
   filter?: boolean
   filterPlaceholder?: string
+  renderer?: (props: any) => React.ReactNode
+  labelRenderer?: (props: any) => React.ReactNode
 }
 
 const Select: FC<SelectProps> = ({
@@ -32,16 +33,18 @@ const Select: FC<SelectProps> = ({
   className,
   large,
   filter,
-  filterPlaceholder
+  filterPlaceholder,
+  renderer,
+  labelRenderer
 }) => {
   const ref = useRef(null)
   const [showOptions, setShowOptions] = useState(false)
   const [keywords, setKeywords] = useState('')
   useClickAway(ref, () => setShowOptions(false))
 
-  const calcCurrLabel = useMemo(() => {
-    if (options.length) return value
-    if (objOptions.length) return (objOptions.find((item) => item.value === value) ?? {}).label
+  const calcCurrValue = useMemo(() => {
+    if (options.length) return { label: value }
+    if (objOptions.length) return objOptions.find((item) => item.value === value) ?? {}
   }, [objOptions, options, value])
 
   const onValueChange = (val: string | number) => {
@@ -64,7 +67,7 @@ const Select: FC<SelectProps> = ({
       <div className="web-select-show">
         <div className="web-select-show-button" onClick={() => setShowOptions(!showOptions)}>
           {label && large && <label>{label}</label>}
-          <span>{calcCurrLabel}</span>
+          {labelRenderer ? labelRenderer(calcCurrValue) : <span>{calcCurrValue?.label}</span>}
         </div>
         <div className="web-select-options">
           {filter && (
@@ -94,14 +97,7 @@ const Select: FC<SelectProps> = ({
                     className={classNames({ active: item.value === value })}
                     onClick={() => onValueChange(item.value)}
                   >
-                    {item?.icon ? (
-                      <div className="web-select-options-item">
-                        <Image src={item.icon} />
-                        {item.label}
-                      </div>
-                    ) : (
-                      item.label
-                    )}
+                    {renderer ? renderer(item) : item.label}
                   </li>
                 ))
               : null}

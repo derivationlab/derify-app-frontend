@@ -5,7 +5,7 @@ import numeral from 'numeral'
 import { MobileContext } from '@/context/Mobile'
 
 export interface DecimalShowProps {
-  value: number
+  value: number | string
   percent?: boolean
   black?: boolean
   format?: string

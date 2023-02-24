@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import BN from 'bignumber.js'
 import duration from 'dayjs/plugin/duration'
 import { ethers } from 'ethers'
+import numeral from 'numeral'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 
@@ -77,6 +78,22 @@ export const safeInterceptionValues = (value: BigNumberish, decimal = 2, precisi
 export const nonBigNumberInterception = (value: string | number, decimal = 2): string => {
   const base = String(value)
   return safeInterceptionValues(base.indexOf('.') > -1 ? base : `${base}.0`, decimal)
+}
+
+export const calcDecimalsFloor = (value: string | number, decimal = 2): string => {
+  const base = String(value)
+  const zero = new Array(decimal).fill('0').join('')
+  if (base.includes('.')) {
+    const [int, dec] = base.split('.')
+    const decimals = (dec + zero).substring(0, decimal)
+    return int + '.' + decimals
+  } else {
+    return base + '.' + zero
+  }
+}
+
+export const formatNumber = (value: string | number, decimals = 8, format: string): string => {
+  return numeral(calcDecimalsFloor(value, decimals)).format(format).toUpperCase()
 }
 
 // 1 --> 1000000000000000000

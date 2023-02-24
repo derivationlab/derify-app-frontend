@@ -9,17 +9,17 @@ import { nonBigNumberInterception } from '@/utils/tools'
 interface Props {
   value: number | string
   unit: string
-  format?: boolean
+  format?: string
   decimal?: number
   percent?: boolean
 }
 
-const BalanceShow: FC<Props> = ({ value, unit, format = false, percent = false, decimal = 2 }) => {
+const BalanceShow: FC<Props> = ({ value, unit, format = '', percent = false, decimal = 2 }) => {
   const [int, dec] = useMemo(() => {
     const safeNumber = nonBigNumberInterception(value, decimal)
     const finalValue = percent ? new BN(safeNumber).multipliedBy(100).toString() : safeNumber
     if (format) {
-      return numeral(finalValue).format('0.00a').split('.')
+      return numeral(finalValue).format(format).split('.')
     }
     return finalValue.split('.')
   }, [value, format, percent, decimal])

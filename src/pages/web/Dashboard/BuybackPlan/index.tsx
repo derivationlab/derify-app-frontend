@@ -1,9 +1,13 @@
 import React, { FC } from 'react'
 
+import Datas from './Datas'
+import Plan from './Plan'
+
 const BuybackPlan: FC = () => {
   return (
-    <div>
-      <p>BuybackPlan</p>
+    <div className="web-dashboard">
+      <Datas />
+      <Plan />
     </div>
   )
 }

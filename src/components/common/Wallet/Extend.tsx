@@ -67,7 +67,7 @@ const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Broker.Extend.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balances['edrf']} format={false} unit="eDRF" />
+                <BalanceShow value={balances['edrf']} unit="eDRF" />
               </dd>
             </dl>
             <dl>

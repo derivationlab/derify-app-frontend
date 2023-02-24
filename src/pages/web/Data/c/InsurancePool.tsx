@@ -56,7 +56,7 @@ const InsurancePool: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.InsurancePool', 'Insurance Pool')} :
-          <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={BASE_TOKEN_SYMBOL} format={false} />
+          <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={BASE_TOKEN_SYMBOL} />
         </h3>
         <aside>
           <Select

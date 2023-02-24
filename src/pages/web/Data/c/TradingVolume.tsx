@@ -60,7 +60,7 @@ const TradingVolume: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.TradingVolume', 'Trading Volume')} :
-          <BalanceShow value={tradingVolume[0]?.trading_amount ?? 0} unit={BASE_TOKEN_SYMBOL} format={false} />
+          <BalanceShow value={tradingVolume[0]?.trading_amount ?? 0} unit={BASE_TOKEN_SYMBOL} />
         </h3>
         <aside>
           <Select

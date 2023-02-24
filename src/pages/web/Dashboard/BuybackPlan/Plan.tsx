@@ -4,14 +4,12 @@ import Table from 'rc-table'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { Input } from '@/components/common/Form'
-import Button from '@/components/common/Button'
-import DecimalShow from '@/components/common/DecimalShow'
 import Pagination from '@/components/common/Pagination'
 
-import { TableMargin } from '../c/TableCol'
-import { MarketInfoData as data } from './mockData'
+import { TableMargin, TableCountDown } from '../c/TableCol'
+import { PlanData as data } from './mockData'
 
-const MarketInfo: FC = () => {
+const Plan: FC = () => {
   const [keyword, setKeyword] = useState('')
   const [pageIndex, setPageIndex] = useState<number>(0)
   const isLoading = false
@@ -27,26 +25,10 @@ const MarketInfo: FC = () => {
       render: (_: string, data: Record<string, any>) => <TableMargin icon={data.icon} name={data.name} />
     },
     {
-      title: 'Max Position Mining APY',
-      dataIndex: 'maxApy',
-      width: 300,
-      render: (value: number) => <DecimalShow value={value} percent black />
-    },
-    {
-      title: 'Trading Volume',
-      dataIndex: 'tradingVolume',
+      title: 'Buyback Cycle',
+      dataIndex: 'BuybackCycle',
       width: 220,
-      render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
-      )
-    },
-    {
-      title: 'Position Volume',
-      dataIndex: 'positionVolume',
-      width: 220,
-      render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
-      )
+      render: (value: number) => <BalanceShow value={value} format="0.00a" unit="Block" />
     },
     {
       title: 'Buyback Pool',
@@ -57,12 +39,22 @@ const MarketInfo: FC = () => {
       )
     },
     {
-      title: 'Detail Info',
-      dataIndex: 'Margin',
-      width: 150,
-
-      align: 'right',
-      render: () => <Button size="medium">GO</Button>
+      title: 'DRF Price(Last Cycle)',
+      dataIndex: 'DRFPrice',
+      width: 240,
+      render: (value: number) => <BalanceShow value={value} format="0.00" unit="BUSD" />
+    },
+    {
+      title: 'Remaining block',
+      dataIndex: 'RemainingBlock',
+      width: 220,
+      render: (value: number) => <BalanceShow value={value} format="0,0" unit="Block" />
+    },
+    {
+      title: 'Estimated Time',
+      dataIndex: 'EstimatedTime',
+      width: 240,
+      render: (value: number) => <TableCountDown date={value} />
     }
   ]
 
@@ -78,9 +70,9 @@ const MarketInfo: FC = () => {
   }
 
   return (
-    <div className="web-dashboard-overview-market">
+    <div className="web-dashboard-plan-list">
       <header className="web-dashboard-section-header">
-        <h3>Market Info</h3>
+        <h3>Buyback Plan</h3>
         <div className="web-dashboard-section-header-search">
           <Input value={keyword} onChange={setKeyword} placeholder="serch name or contract address..">
             <button className="web-dashboard-section-header-search-button" onClick={onSearch} />
@@ -94,5 +86,5 @@ const MarketInfo: FC = () => {
   )
 }
 
-export default MarketInfo
+export default Plan
 // <BalanceShow value={12345.4567} unit="USD" />

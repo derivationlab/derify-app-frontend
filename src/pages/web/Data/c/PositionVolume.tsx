@@ -119,7 +119,7 @@ const PositionVolume: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.PositionVolume', 'Position Volume')} :
-          <BalanceShow value={totalAmount?.volume} unit={BASE_TOKEN_SYMBOL} format={false} />
+          <BalanceShow value={totalAmount?.volume} unit={BASE_TOKEN_SYMBOL} />
         </h3>
         <aside>
           <Select

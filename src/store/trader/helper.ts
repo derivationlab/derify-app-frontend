@@ -179,7 +179,10 @@ export const getBondInfoData = async (trader: string) => {
 
   try {
     const bondInfo = await rewardsContract.getBondInfo(trader)
+
+    // ************
     const bondBalance = await getTraderBondBalanceData(trader) // '0x12f756f0FD6E3C13A51223b1B0040fE914680908'
+
     const exchangeable = await rewardsContract.getExchangeBondSizeUpperBound(trader)
     // console.info(bondBalance)
     const _bondBalance = nonBigNumberInterception(bondBalance.toFixed(8), 4) // todo
@@ -211,7 +214,9 @@ export const getStakingInfoData = async (trader: string) => {
   const base = { stakingDRFBalance: '0', stakingEDRFBalance: '0' }
 
   try {
+    // **************
     const eDRFBalance = await getTraderEDRFBalanceData(trader)
+
     const stakingInfo = await rewardsContract.getStakingInfo(trader)
 
     const { drfBalance } = stakingInfo

@@ -71,9 +71,13 @@ export interface VolumeState {
 }
 
 export interface TraderInfoState {
+  rewardsInfo: Rec,
+  stakingInfo: Rec,
   variables: InitialTraderVariablesType
   variablesLoaded: boolean
   updateVariables: (p: InitialTraderVariablesType) => void
+  updateStakingInfo: (p: Rec) => void
+  updateRewardsInfo: (p: Rec) => void
 }
 
 export interface PairsInfoState {
@@ -86,4 +90,11 @@ export interface PairsInfoState {
   updateSpotPrices: (p: Rec) => void
   updateIndicators: (p: Rec) => void
   updatePCFRatios: (p: Rec) => void
+}
+
+export interface PoolsInfoState {
+  drfPoolBalance: string
+  bondPoolBalance: string
+  updateDrfPoolBalance: (p: string) => void
+  updateBondPoolBalance: (p: string) => void
 }

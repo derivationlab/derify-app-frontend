@@ -39,6 +39,10 @@ export const getDerifyRewardsContract = (signer?: Signer | Provider | null) => {
   return getContract(DerifyRewardsAbi, getDerifyRewardsAddress(), signer)
 }
 
+export const getDerifyRewardsContract1 = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(DerifyRewardsAbi, address, signer)
+}
+
 export const getDerifyBrokerContract = (signer?: Signer | Provider | null) => {
   return getContract(DerifyBrokerAbi, getDerifyBrokerAddress(), signer)
 }

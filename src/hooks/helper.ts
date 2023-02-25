@@ -5,8 +5,12 @@ import BN from 'bignumber.js'
 import multicall from '@/utils/multicall'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { PositionSide } from '@/store/contract/helper'
+import { getDerifyProtocolAddress } from '@/utils/addressHelpers'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
+import {
+  getDerifyDerivativePairContract,
+  getDerifyExchangeContract1, getDerifyProtocolContract, getDerifyRewardsContract1
+} from '@/utils/contractHelpers'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 import {
   bnDiv,
@@ -18,7 +22,9 @@ import {
 } from '@/utils/tools'
 
 import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
+import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
+import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
@@ -442,4 +448,104 @@ export const calcChangeFee = async (
   const fee = new BN(row_data_naked_final).times(radioSum.div(2).plus(row_data_roRatio)).times(-1)
 
   return nonBigNumberInterception(fee.toFixed(10), 8)
+}
+
+export const getTraderRewardDAT = async (
+  trader: string,
+  reward: string
+): Promise<Record<string, any>> => {
+  let output = {}
+  const calls = [
+    {
+      name: 'getPositionReward',
+      address: reward,
+      params: [trader]
+    },
+    {
+      name: 'getBondInfo',
+      address: reward,
+      params: [trader]
+    },
+    {
+      name: 'getExchangeBondSizeUpperBound',
+      address: reward,
+      params: [trader]
+    },
+    {
+      name: 'bankBondPool',
+      address: reward,
+    }
+  ]
+
+  const response = await multicall(DerifyRewardsAbi, calls)
+
+  if (!isEmpty(response)) {
+    const [getPositionReward, getBondInfo, getExchangeBondSizeUpperBound, bankBondPool] = response
+
+    const [bankBalance] = bankBondPool
+    const [maxBondSize] = getExchangeBondSizeUpperBound
+    // todo bondBalance 用了中心化接口 api/trader_latest_bond_balance - 待处理
+    const [bondAnnualInterestRatio, bondBalance, bondReturnBalance, bondWalletBalance] = getBondInfo
+    const [drfAccumulatedBalance, drfBalance, marginTokenAccumulatedBalance, marginTokenBalance] = getPositionReward
+
+    output = {
+      drfBalance: safeInterceptionValues(drfBalance, 8),
+      bankBalance: safeInterceptionValues(bankBalance, 8),
+      bondBalance: safeInterceptionValues(bondBalance, 8),
+      exchangeable: safeInterceptionValues(maxBondSize, 8),
+      bondReturnBalance: safeInterceptionValues(bondReturnBalance, 8),
+      bondWalletBalance: safeInterceptionValues(bondWalletBalance, 8),
+      marginTokenBalance: safeInterceptionValues(marginTokenBalance, 8),
+      drfAccumulatedBalance: safeInterceptionValues(drfAccumulatedBalance, 8),
+      bondAnnualInterestRatio: safeInterceptionValues(bondAnnualInterestRatio, 8),
+      marginTokenAccumulatedBalance: safeInterceptionValues(marginTokenAccumulatedBalance, 8),
+    }
+
+    // console.info(output)
+    return output
+  }
+
+  return output
+}
+
+export const getTraderStakingDAT = async (
+  trader: string,
+): Promise<Record<string, any>> => {
+  let output = {}
+  const calls = [
+    {
+      name: 'getStakingInfo',
+      address: getDerifyProtocolAddress(),
+      params: [trader]
+    }
+  ]
+
+  const response = await multicall(DerifyProtocolAbi, calls)
+
+  if (!isEmpty(response)) {
+    // todo edrfBalance 用了中心化接口 api/trader_latest_edrf_balance - 待处理
+    const [{drfBalance, edrfBalance}] = response
+
+    output = {
+      drfBalance: safeInterceptionValues(drfBalance, 8),
+      edrfBalance: safeInterceptionValues(edrfBalance, 8),
+    }
+
+    // console.info(output)
+    return output
+  }
+
+  return output
+}
+
+export const getStakingDrfPoolDAT = async () => {
+  const c = getDerifyProtocolContract()
+  const d = await c.stakingDrfPool()
+  return safeInterceptionValues(String(d), 8)
+}
+
+export const getBankBDRFPoolDAT = async (reward: string) => {
+  const c = getDerifyRewardsContract1(reward)
+  const d = await c.bankBondPool()
+  return safeInterceptionValues(String(d), 8)
 }

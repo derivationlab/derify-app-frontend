@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
-import { QuoteTokenKeys } from '@/typings'
+import { MarginTokenKeys, QuoteTokenKeys } from '@/typings'
 
 export const useMatchConf = () => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -80,6 +80,21 @@ export const useProtocolConf = () => {
 
   const _protocolConfig = useMemo(() => {
     if (protocolConfigLoaded && protocolConfig) return protocolConfig[marginToken]
+  }, [quoteToken, marginToken, protocolConfig, protocolConfigLoaded])
+
+  return {
+    protocolConfig: _protocolConfig,
+    quoteToken,
+    marginToken
+  }
+}
+
+export const useProtocolConf1 = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
+  const protocolConfig = useConfigInfo((state) => state.protocolConfig)
+  const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
+
+  const _protocolConfig = useMemo(() => {
+    if (protocolConfigLoaded && protocolConfig) return protocolConfig[marginToken as MarginTokenKeys]
   }, [quoteToken, marginToken, protocolConfig, protocolConfigLoaded])
 
   return {

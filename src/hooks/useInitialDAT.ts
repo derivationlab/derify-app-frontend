@@ -1,3 +1,4 @@
+import PubSub from 'pubsub-js'
 import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -6,10 +7,11 @@ import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
-import { MarginTokenWithContract } from '@/typings'
-import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { useCurrentIndexDAT, useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { MarginTokenWithContract, PubSubEvents } from '@/typings'
 import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken, useTokenBalances } from '@/zustand'
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
+import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 
 export const useInitialDAT = () => {
   const { data } = useAccount()
@@ -29,9 +31,27 @@ export const useInitialDAT = () => {
   const updateVariables = useTraderInfo((state) => state.updateVariables)
   const protocolConfig = useConfigInfo((state) => state.protocolConfig)
   const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
+  const updateDashboardDAT = useDashboardDAT((state) => state.updateDashboardDAT)
 
   const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
-  const { data: positionsDAT, isLoading: positionsDATIsLoading } = useCurrentPositionsAmount(findToken(quoteToken).tokenAddress, findToken(marginToken).tokenAddress)
+  const {
+    data: positionsDAT,
+    isLoading: positionsDATIsLoading,
+    refetch: positionsDATRefetch
+  } = useCurrentPositionsAmount(findToken(quoteToken).tokenAddress, findToken(marginToken).tokenAddress)
+  const {
+    data: currentIndexDAT,
+    isLoading: currentIndexDATIsLoading,
+    refetch: currentIndexDATRefetch
+  } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
+
+  useEffect(() => {
+    void positionsDATRefetch()
+  }, [quoteToken, marginToken])
+
+  useEffect(() => {
+    void currentIndexDATRefetch()
+  }, [marginToken])
 
   // for tokens balance
   useEffect(() => {
@@ -81,7 +101,13 @@ export const useInitialDAT = () => {
     if (!positionsDATIsLoading && positionsDAT) {
       updatePositionsAmount(positionsDAT.data)
     }
-  }, [positionsDATIsLoading])
+  }, [positionsDATIsLoading, positionsDAT])
+
+  useEffect(() => {
+    if (!currentIndexDATIsLoading && currentIndexDAT) {
+      updateDashboardDAT(currentIndexDAT.data)
+    }
+  }, [currentIndexDATIsLoading, currentIndexDAT])
 
   // for trader variables
   useEffect(() => {
@@ -90,11 +116,17 @@ export const useInitialDAT = () => {
       updateVariables(data)
     }
 
-    if (
-      data?.address &&
-      protocolConfigLoaded &&
-      protocolConfig
-    )
-      void func(data.address, protocolConfig)
+    if (data?.address && protocolConfigLoaded && protocolConfig) void func(data.address, protocolConfig)
   }, [protocolConfigLoaded, protocolConfig, data?.address, marginToken, quoteToken])
+
+  useEffect(() => {
+    PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
+      console.info('PubSubEvents.UPDATE_BALANCE')
+      if (data?.address) void fetchBalances(data.address)
+    })
+
+    return () => {
+      PubSub.clearAllSubscriptions()
+    }
+  }, [])
 }

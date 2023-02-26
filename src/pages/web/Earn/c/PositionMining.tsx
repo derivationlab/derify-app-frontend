@@ -5,8 +5,6 @@ import React, { FC, useContext, useMemo } from 'react'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useTraderData } from '@/store/trader/hooks'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnPlus, isGT, nonBigNumberInterception } from '@/utils/tools'
 import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
@@ -30,8 +28,8 @@ const PositionMining: FC = () => {
   const variables = useTraderInfo((state) => state.variables)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const positionsAmount = usePoolsInfo((state) => state.positionsAmount)
-  console.info(variables)
-  console.info(positionsAmount)
+  // console.info(variables)
+  // console.info(positionsAmount)
   const { withdraw } = useWithdrawPositionReward()
   const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
 

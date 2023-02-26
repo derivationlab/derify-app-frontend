@@ -92,6 +92,11 @@ export interface PairsInfoState {
   updatePCFRatios: (p: Rec) => void
 }
 
+export interface DashboardDATState {
+  dashboardDAT: Rec
+  updateDashboardDAT: (p: Rec) => void
+}
+
 export interface PoolsInfoState {
   drfPoolBalance: string
   bondPoolBalance: string

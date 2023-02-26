@@ -1,18 +1,10 @@
 import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
-import { isEmpty } from 'lodash'
 
-import { OpeningType } from '@/zustand/useCalcOpeningDAT'
-import { calcProfitOrLoss } from '@/hooks/helper'
+import tokens from '@/config/tokens'
 import { inputParameterConversion } from '@/utils/tools'
-import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { findMarginToken, findToken } from '@/config/tokens'
-import {
-  getDerifyDerivativePairContract,
-  getDerifyExchangeContract1,
-  getDerifyRewardsContract1
-} from '@/utils/contractHelpers'
+import { getDerifyRewardsContract1 } from '@/utils/contractHelpers'
 
 export const useWithdrawPositionReward = () => {
   const { data: signer } = useSigner()
@@ -37,20 +29,16 @@ export const useWithdrawPositionReward = () => {
   return { withdraw }
 }
 
-export const useWithdrawMargin = () => {
+export const useWithdrawAllEdrf = () => {
   const { data: signer } = useSigner()
 
   const withdraw = useCallback(
-    async (exchange: string, amount: string): Promise<boolean> => {
+    async (rewards: string): Promise<boolean> => {
       if (!signer) return false
-
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyRewardsContract1(rewards, signer)
 
       try {
-        const _amount = inputParameterConversion(amount, 8)
-
-        const gasLimit = await estimateGas(c, 'withdraw', [_amount], 0)
-        const res = await c.withdraw(_amount, { gasLimit })
+        const res = await c.withdrawAllEdrf()
         const receipt = await res.wait()
         return receipt.status
       } catch (e) {
@@ -64,112 +52,16 @@ export const useWithdrawMargin = () => {
   return { withdraw }
 }
 
-export const useTakeProfitOrStopLoss = () => {
+export const useWithdrawAllBond = () => {
   const { data: signer } = useSigner()
 
-  const takeProfitOrStopLoss = useCallback(
-    async (
-      pairAddress: string,
-      positionSide: PositionSide,
-      takeProfitPrice: number,
-      stopLossPrice: number
-    ): Promise<boolean> => {
+  const withdraw = useCallback(
+    async (rewards: string): Promise<boolean> => {
       if (!signer) return false
-
-      const c = getDerifyDerivativePairContract(pairAddress, signer)
-      const job = calcProfitOrLoss(takeProfitPrice, stopLossPrice)
-
-      if (isEmpty(job)) return true
-
-      const _stopLossPrice = inputParameterConversion(stopLossPrice, 8)
-      const _takeProfitPrice = inputParameterConversion(takeProfitPrice, 8)
-      const { method, stopType, orderStopType, cancelStopType } = job
+      const c = getDerifyRewardsContract1(rewards, signer)
 
       try {
-        if (method === 'orderStopPosition') {
-          const gasLimit = await estimateGas(
-            c,
-            'orderStopPosition',
-            [positionSide, stopType, _takeProfitPrice, _stopLossPrice],
-            0
-          )
-          const data = await c.orderStopPosition(positionSide, stopType, _takeProfitPrice, _stopLossPrice, {
-            gasLimit
-          })
-          const receipt = await data.wait()
-          return receipt.status
-        }
-        /**
-         #### cancleOrderedStopPosition
-         */
-        if (method === 'cancelOrderedStopPosition') {
-          const gasLimit = await estimateGas(c, 'cancelOrderedStopPosition', [stopType, positionSide], 0)
-          const data = await c.cancelOrderedStopPosition(stopType, positionSide, { gasLimit })
-          const receipt = await data.wait()
-          return receipt.status
-        }
-        /**
-         #### orderAndCancleStopPosition
-         */
-        if (method === 'orderAndCancelStopPosition') {
-          const price = orderStopType === 0 ? _takeProfitPrice : _stopLossPrice
-
-          const gasLimit = await estimateGas(
-            c,
-            'orderAndCancelStopPosition',
-            [positionSide, orderStopType, price, cancelStopType],
-            0
-          )
-          const data = await c.orderAndCancelStopPosition(positionSide, orderStopType, price, cancelStopType, {
-            gasLimit
-          })
-          const receipt = await data.wait()
-          return receipt.status
-        }
-
-        return false
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
-
-  return { takeProfitOrStopLoss }
-}
-
-export const useClosePosition = () => {
-  const { data: signer } = useSigner()
-
-  const close = useCallback(
-    async (
-      exchange: string,
-      brokerId: string,
-      spotPrice: string,
-      quoteToken: string,
-      marginToken: string,
-      positionSize: string,
-      positionSide: PositionSide,
-      whetherStud?: boolean
-    ): Promise<boolean> => {
-      if (!signer) return false
-
-      const c = getDerifyExchangeContract1(exchange, signer)
-      const qtAddress = findToken(quoteToken).tokenAddress
-
-      let _positionSize
-
-      if (whetherStud) {
-        _positionSize = inputParameterConversion(positionSize, 8)
-      } else {
-        const calc = findMarginToken(marginToken) ? Number(positionSize) / Number(spotPrice) : positionSize
-        _positionSize = inputParameterConversion(calc, 8)
-      }
-
-      try {
-        const gasLimit = await estimateGas(c, 'closePosition', [brokerId, qtAddress, positionSide, _positionSize], 0)
-        const res = await c.closePosition(brokerId, qtAddress, positionSide, _positionSize, { gasLimit })
+        const res = await c.withdrawAllBond()
         const receipt = await res.wait()
         return receipt.status
       } catch (e) {
@@ -180,5 +72,147 @@ export const useClosePosition = () => {
     [signer]
   )
 
-  return { close }
+  return { withdraw }
+}
+
+export const useStakingDrf = () => {
+  const { data: signer } = useSigner()
+
+  const staking = useCallback(
+    async (rewards: string, amount: string): Promise<boolean> => {
+      if (!signer) return false
+
+      const c = getDerifyRewardsContract1(rewards, signer)
+      const _amount = inputParameterConversion(amount, 8)
+
+      try {
+        const approve = await setAllowance(signer, rewards, tokens.drf.tokenAddress, _amount)
+
+        if (!approve) return false
+
+        const gasLimit = await estimateGas(c, 'stakingDrf', [_amount], 0)
+        const res = await c.stakingDrf(_amount, { gasLimit })
+        const receipt = await res.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { staking }
+}
+
+export const useExchangeBond = () => {
+  const { data: signer } = useSigner()
+
+  const exchange = useCallback(
+    async (rewards: string, amount: string): Promise<boolean> => {
+      if (!signer) return false
+
+      const c = getDerifyRewardsContract1(rewards, signer)
+      const _amount = inputParameterConversion(amount, 8)
+
+      try {
+        const approve = await setAllowance(signer, rewards, tokens.bbusd.tokenAddress, _amount)
+
+        if (!approve) return false
+
+        const gasLimit = await estimateGas(c, 'exchangeBond', [_amount], 0)
+        const res = await c.exchangeBond(_amount, { gasLimit })
+        const receipt = await res.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { exchange }
+}
+
+export const useRedeemDrf = () => {
+  const { data: signer } = useSigner()
+
+  const redeem = useCallback(
+    async (rewards: string, amount: string): Promise<boolean> => {
+      if (!signer) return false
+
+      const c = getDerifyRewardsContract1(rewards, signer)
+      const _amount = inputParameterConversion(amount, 8)
+
+      try {
+        const gasLimit = await estimateGas(c, 'redeemDrf', [_amount], 0)
+        const res = await c.redeemDrf(_amount, { gasLimit })
+        const receipt = await res.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { redeem }
+}
+
+export const useRedeemBondFromBank = () => {
+  const { data: signer } = useSigner()
+
+  const redeem = useCallback(
+    async (rewards: string, amount: string): Promise<boolean> => {
+      if (!signer) return false
+
+      const c = getDerifyRewardsContract1(rewards, signer)
+      const _amount = inputParameterConversion(amount, 8)
+
+      try {
+        const gasLimit = await estimateGas(c, 'redeemBondFromBank', [_amount], 0)
+        const res = await c.redeemBondFromBank(_amount, { gasLimit })
+        const receipt = await res.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { redeem }
+}
+
+export const useDepositBondToBank = () => {
+  const { data: signer } = useSigner()
+
+  const deposit = useCallback(
+    async (rewards: string, amount: string): Promise<boolean> => {
+      if (!signer) return false
+
+      const c = getDerifyRewardsContract1(rewards, signer)
+      const _amount = inputParameterConversion(amount, 8)
+
+      try {
+        const approve = await setAllowance(signer, rewards, tokens.bbusd.tokenAddress, _amount)
+
+        if (!approve) return false
+
+        const gasLimit = await estimateGas(c, 'depositBondToBank', [_amount], 0)
+        const res = await c.depositBondToBank(_amount, { gasLimit })
+        const receipt = await res.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { deposit }
 }

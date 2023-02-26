@@ -15,7 +15,7 @@ const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const { pcfRatio} = usePCFRatioConf()
+  const { pcfRatio } = usePCFRatioConf()
 
   const indicators = usePairsInfo((state) => state.indicators)
   const positionsAmount = usePoolsInfo((state) => state.positionsAmount)
@@ -40,17 +40,17 @@ const HeaderData: FC = () => {
       const m = long_position_amount - short_position_amount
       const n = long_position_amount + short_position_amount
       const x = ((m / n) * 100).toFixed(2)
-      return ([nonBigNumberInterception(m), n === 0 || m === 0 ? '0' : nonBigNumberInterception(x)])
+      return [nonBigNumberInterception(m), n === 0 || m === 0 ? '0' : nonBigNumberInterception(x)]
     }
     return [0, 0]
   }, [positionsAmount])
 
   return (
-    <div className='web-trade-kline-header-data'>
+    <div className="web-trade-kline-header-data">
       <section>
         <h3>
           {t('Trade.kline.NetPositionRate', 'Net Position Rate')}
-          <QuestionPopover size='mini' text={t('Trade.kline.NetPositionRateTip')} />
+          <QuestionPopover size="mini" text={t('Trade.kline.NetPositionRateTip')} />
         </h3>
         {!mobile ? (
           <strong>
@@ -69,7 +69,7 @@ const HeaderData: FC = () => {
       <section>
         <h3>
           {t('Trade.kline.PCFRate', 'PCF Rate')}
-          <QuestionPopover size='mini' text={t('Trade.kline.PCFRateTip')} />
+          <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
         </h3>
         <strong>{nonBigNumberInterception(memoPosFeeRatio, 2)}%</strong>
       </section>
@@ -77,7 +77,7 @@ const HeaderData: FC = () => {
       <section>
         <h3>
           {t('Trade.kline.PositionMiningAPY', 'Position Mining APR.')}
-          <QuestionPopover size='mini' text={t('Trade.kline.PositionMiningAPYTip')} />
+          <QuestionPopover size="mini" text={t('Trade.kline.PositionMiningAPYTip')} />
         </h3>
         {mobile ? (
           <>

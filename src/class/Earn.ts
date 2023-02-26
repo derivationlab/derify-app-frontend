@@ -7,19 +7,19 @@ import { getDerifyRewardsAddress } from '@/utils/addressHelpers'
 import tokens from '@/config/tokens'
 
 class Earn {
-  traderWithdrawPMRewards = async (signer: Signer): Promise<boolean> => {
-    const contract = getDerifyRewardsContract(signer)
-
-    try {
-      const res = await contract.withdrawPositionReward()
-      const receipt = await res.wait()
-
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
+  // traderWithdrawPMRewards = async (signer: Signer): Promise<boolean> => {
+  //   const contract = getDerifyRewardsContract(signer)
+  //
+  //   try {
+  //     const res = await contract.withdrawPositionReward()
+  //     const receipt = await res.wait()
+  //
+  //     return receipt.status
+  //   } catch (e) {
+  //     console.info(e)
+  //     return false
+  //   }
+  // }
 
   traderWithdrawEDRFRewards = async (signer: Signer): Promise<boolean> => {
     const contract = getDerifyRewardsContract(signer)

@@ -32,6 +32,7 @@
     "rc-table": "^7.25.0",
     "rc-tabs": "^11.16.0",
     "react": "^17.0.2",
+    "react-countdown": "^2.3.5",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.33.1",
     "react-hot-toast": "^2.2.0",

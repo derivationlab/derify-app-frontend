@@ -115,11 +115,11 @@ const PositionVolume: FC = () => {
   }, [pairSelectVal])
 
   return (
-    <div className="web-dashborad-chart">
-      <header className="web-dashborad-chart-header">
+    <div className="web-data-chart">
+      <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.PositionVolume', 'Position Volume')} :
-          <BalanceShow value={totalAmount?.volume} unit={BASE_TOKEN_SYMBOL} format={false} />
+          <BalanceShow value={totalAmount?.volume} unit={BASE_TOKEN_SYMBOL} />
         </h3>
         <aside>
           <Select
@@ -134,8 +134,8 @@ const PositionVolume: FC = () => {
           />
         </aside>
       </header>
-      <main className="web-dashborad-chart-main">
-        <div className="web-dashborad-chart-position-tip">
+      <main className="web-data-chart-main">
+        <div className="web-data-chart-position-tip">
           {/*{positionVolume.long}*/}
           <span className="long">
             Long<i>{totalAmount?.long}</i>

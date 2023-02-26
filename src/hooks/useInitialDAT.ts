@@ -1,17 +1,22 @@
 import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
+import { findToken } from '@/config/tokens'
+import { usePoolsInfo } from '@/zustand/usePoolsInfo'
+import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { MarginTokenWithContract } from '@/typings'
-import { useConfigInfo, useMarginToken, usePairsInfo, useTokenBalances } from '@/zustand'
-import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit } from '@/hooks/helper'
-import { usePairIndicator } from '@/hooks/usePairIndicator'
+import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken, useTokenBalances } from '@/zustand'
+import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
 
 export const useInitialDAT = () => {
   const { data } = useAccount()
 
   const { data: protocolConfDAT, isLoading: protocolConfDATIsLoading } = useProtocolConfig()
 
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
   const fetchBalances = useTokenBalances((state) => state.fetch)
   const resetBalances = useTokenBalances((state) => state.reset)
@@ -20,8 +25,13 @@ export const useInitialDAT = () => {
   const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)
   const updateMTokenPrices = useConfigInfo((state) => state.updateMTokenPrices)
   const updateIndicators = usePairsInfo((state) => state.updateIndicators)
+  const updatePositionsAmount = usePoolsInfo((state) => state.updatePositionsAmount)
+  const updateVariables = useTraderInfo((state) => state.updateVariables)
+  const protocolConfig = useConfigInfo((state) => state.protocolConfig)
+  const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
 
   const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
+  const { data: positionsDAT, isLoading: positionsDATIsLoading } = useCurrentPositionsAmount(findToken(quoteToken).tokenAddress, findToken(marginToken).tokenAddress)
 
   // for tokens balance
   useEffect(() => {
@@ -66,4 +76,25 @@ export const useInitialDAT = () => {
       updateIndicators(indicatorDAT)
     }
   }, [indicatorDATIsLoading])
+
+  useEffect(() => {
+    if (!positionsDATIsLoading && positionsDAT) {
+      updatePositionsAmount(positionsDAT.data)
+    }
+  }, [positionsDATIsLoading])
+
+  // for trader variables
+  useEffect(() => {
+    const func = async (account: string, protocolConfig: MarginTokenWithContract) => {
+      const data = await getTraderVariables(account, protocolConfig[marginToken].exchange)
+      updateVariables(data)
+    }
+
+    if (
+      data?.address &&
+      protocolConfigLoaded &&
+      protocolConfig
+    )
+      void func(data.address, protocolConfig)
+  }, [protocolConfigLoaded, protocolConfig, data?.address, marginToken, quoteToken])
 }

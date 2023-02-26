@@ -1,12 +1,16 @@
 .web-decimal-show {
   font-weight: 800;
-  color:$buy;
+  color:$buy;text-transform: uppercase;
   em {
     font-size: 1.45em;
   }
 
   small {
     font-size: 1em;
+  }
+
+  &.black {
+    color: $c22;
   }
 }
 .mobile-mode {
@@ -19,7 +23,7 @@
 }
 
 .dark, .mobile-mode.dark {
-  .web-decimal-show {
+  .web-decimal-show, .web-decimal-show.black {
     color:$cff;
   }
 }

@@ -1,19 +1,23 @@
 import React, { FC } from 'react'
+import { useAccount } from 'wagmi'
+import { Redirect, Switch, Route } from '@/components/common/Route'
 
-import Counts from './c/Counts'
-import TradingVolume from './c/TradingVolume'
-import PositionVolume from './c/PositionVolume'
-import InsurancePool from './c/InsurancePool'
+import BrokerConnect from '@/pages/web/Broker/c/Connect'
 
-const Dashborad: FC = () => {
+import Overview from './Overview'
+import BuybackPlan from './BuybackPlan'
+import GrantList from './GrantList'
+
+const Dashboard: FC = () => {
+  const { data: account } = useAccount()
   return (
-    <div className="web-dashborad">
-      <Counts />
-      <TradingVolume />
-      <PositionVolume />
-      <InsurancePool />
-    </div>
+    <Switch>
+      <Route path="/dashboard" exact render={() => <Redirect to="/dashboard/overview" />} />
+      <Route path="/dashboard/overview" component={Overview} />
+      <Route path="/dashboard/buyback-plan" component={BuybackPlan} />
+      <Route path="/dashboard/grant-list" component={account?.address ? GrantList : BrokerConnect} />
+    </Switch>
   )
 }
 
-export default Dashborad
+export default Dashboard

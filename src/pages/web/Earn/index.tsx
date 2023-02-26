@@ -63,7 +63,7 @@ const Eran: FC = () => {
     }
     if (protocolConfig) void _getBankBDRFPoolDAT(protocolConfig.rewards)
     void _getStakingDrfPoolDAT()
-  }, 3000)
+  }, 6000)
 
   return (
     <div className="web-eran">

@@ -1,26 +1,24 @@
-import PubSub from 'pubsub-js'
-import { useInterval } from 'react-use'
+import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useMemo } from 'react'
 
 import { usePairsInfo } from '@/zustand'
-import { PubSubEvents } from '@/typings'
+import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { nonBigNumberInterception } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
-import { getCurrentPositionsAmountData } from '@/store/constant/helper'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 
 const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { pcfRatio, quoteToken, marginToken } = usePCFRatioConf()
+
+  const { pcfRatio} = usePCFRatioConf()
 
   const indicators = usePairsInfo((state) => state.indicators)
-
-  const [positionInfo, setPositionInfo] = useState<string[]>(['0', '0'])
+  const positionsAmount = usePoolsInfo((state) => state.positionsAmount)
 
   const memoPosFeeRatio = useMemo(() => {
     if (pcfRatio || Number(pcfRatio) >= 0) return pcfRatio
@@ -36,46 +34,23 @@ const HeaderData: FC = () => {
     ]
   }, [indicators])
 
-  const funcAsync = async () => {
-    const data = await getCurrentPositionsAmountData(
-      findToken(quoteToken).tokenAddress,
-      findToken(marginToken).tokenAddress
-    )
-
-    if (data) {
-      const { long_position_amount = 0, short_position_amount = 0 } = data
+  const positionInfo = useMemo(() => {
+    if (!isEmpty(positionsAmount)) {
+      const { long_position_amount = 0, short_position_amount = 0 } = positionsAmount
       const m = long_position_amount - short_position_amount
       const n = long_position_amount + short_position_amount
       const x = ((m / n) * 100).toFixed(2)
-
-      setPositionInfo([nonBigNumberInterception(m), n === 0 || m === 0 ? '0' : nonBigNumberInterception(x)])
+      return ([nonBigNumberInterception(m), n === 0 || m === 0 ? '0' : nonBigNumberInterception(x)])
     }
-  }
-
-  useInterval(() => {
-    void funcAsync()
-  }, 60000)
-
-  useEffect(() => {
-    setPositionInfo(['0', '0'])
-
-    void funcAsync()
-
-    PubSub.subscribe(PubSubEvents.UPDATE_POSITION_AMOUNT, () => {
-      void funcAsync()
-    })
-
-    return () => {
-      PubSub.clearAllSubscriptions()
-    }
-  }, [quoteToken])
+    return [0, 0]
+  }, [positionsAmount])
 
   return (
-    <div className="web-trade-kline-header-data">
+    <div className='web-trade-kline-header-data'>
       <section>
         <h3>
           {t('Trade.kline.NetPositionRate', 'Net Position Rate')}
-          <QuestionPopover size="mini" text={t('Trade.kline.NetPositionRateTip')} />
+          <QuestionPopover size='mini' text={t('Trade.kline.NetPositionRateTip')} />
         </h3>
         {!mobile ? (
           <strong>
@@ -94,7 +69,7 @@ const HeaderData: FC = () => {
       <section>
         <h3>
           {t('Trade.kline.PCFRate', 'PCF Rate')}
-          <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
+          <QuestionPopover size='mini' text={t('Trade.kline.PCFRateTip')} />
         </h3>
         <strong>{nonBigNumberInterception(memoPosFeeRatio, 2)}%</strong>
       </section>
@@ -102,7 +77,7 @@ const HeaderData: FC = () => {
       <section>
         <h3>
           {t('Trade.kline.PositionMiningAPY', 'Position Mining APR.')}
-          <QuestionPopover size="mini" text={t('Trade.kline.PositionMiningAPYTip')} />
+          <QuestionPopover size='mini' text={t('Trade.kline.PositionMiningAPYTip')} />
         </h3>
         {mobile ? (
           <>

@@ -95,6 +95,8 @@ export interface PairsInfoState {
 export interface PoolsInfoState {
   drfPoolBalance: string
   bondPoolBalance: string
+  positionsAmount: Rec
   updateDrfPoolBalance: (p: string) => void
   updateBondPoolBalance: (p: string) => void
+  updatePositionsAmount: (p: Rec) => void
 }

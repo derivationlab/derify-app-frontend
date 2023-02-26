@@ -40,12 +40,33 @@ const Header: FC = () => {
           <NavLink to="/earn" onClick={handleNavLinkEv}>
             {t('Nav.Nav.Earn', 'Earn')}
           </NavLink>
-          <NavLink to="/dashboard" onClick={handleNavLinkEv}>
-            {t('Nav.Nav.Dashboard', 'Dashboard')}
+          <NavLink to="/data" onClick={handleNavLinkEv}>
+            {t('Nav.Nav.Data', 'Data')}
           </NavLink>
           <NavLink to="/broker" className={classNames({ active: P.indexOf('broker') > -1 })} onClick={handleNavLinkEv}>
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>
+          <span className={classNames({ active: P.indexOf('dashboard') > -1 })}>
+            {t('Nav.Nav.Dashboard', 'Dashboard')}
+            <em />
+            <ul>
+              <li>
+                <NavLink to="/dashboard/overview" onClick={handleNavLinkEv}>
+                  Overview
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/buyback-plan" onClick={handleNavLinkEv}>
+                  Buyback Plan
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/grant-list" onClick={handleNavLinkEv}>
+                  Grant List
+                </NavLink>
+              </li>
+            </ul>
+          </span>
         </nav>
         <div className="web-header-tools">
           <ConnectButton />

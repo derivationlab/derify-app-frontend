@@ -1,4 +1,4 @@
-import React, { FC, ChangeEvent } from 'react'
+import React, { FC, ChangeEvent, ReactNode } from 'react'
 import classNames from 'classnames'
 import { isNaN } from 'lodash'
 interface InputProps {
@@ -11,6 +11,7 @@ interface InputProps {
   placeholder?: string
   suffix?: string
   maxLength?: number
+  children?: ReactNode
 }
 
 const Input: FC<InputProps> = ({
@@ -22,7 +23,8 @@ const Input: FC<InputProps> = ({
   placeholder,
   readOnly,
   maxLength,
-  suffix
+  suffix,
+  children
 }) => {
   const changeFunc = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const v = e.target.value
@@ -48,6 +50,7 @@ const Input: FC<InputProps> = ({
         />
       )}
       {suffix && <span className="web-form-input-suffix">{suffix}</span>}
+      {children && children}
     </div>
   )
 }

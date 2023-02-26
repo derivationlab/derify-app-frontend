@@ -12,7 +12,7 @@ const Counts: FC = () => {
   const { indicator } = useConstantData()
 
   return (
-    <div className="web-dashborad-counts">
+    <div className="web-data-counts">
       <section>
         <h3>{t('Dashboard.DRFPrice', 'DRF Price')}</h3>
         <main className="web-balance-show">

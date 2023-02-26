@@ -16,14 +16,14 @@ const useTraderInfo = create<TraderInfoState>((set) => ({
     }),
   updateStakingInfo: (data: Rec) =>
     set(() => {
-      console.info(`updateStakingInfo:`)
-      console.info(data)
+      // console.info(`updateStakingInfo:`)
+      // console.info(data)
       return { stakingInfo: data }
     }),
   updateRewardsInfo: (data: Rec) =>
     set(() => {
-      console.info(`updateRewardsInfo:`)
-      console.info(data)
+      // console.info(`updateRewardsInfo:`)
+      // console.info(data)
       return { rewardsInfo: data }
     })
 }))

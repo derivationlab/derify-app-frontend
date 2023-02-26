@@ -3,7 +3,6 @@ import { useAccount } from 'wagmi'
 
 import { isGT } from '@/utils/tools'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { usePCFAndSpotPrice } from '@/hooks/usePCFAndSpotPrice'
 import { MarginTokenWithContract } from '@/typings'
 import { usePairsInfo, useQuoteToken } from '@/zustand'
@@ -21,22 +20,13 @@ export default function Updater(): null {
   const updateOpeningMaxLimit = useConfigInfo((state) => state.updateOpeningMaxLimit)
   const updatePCFRatios = usePairsInfo((state) => state.updatePCFRatios)
   const updateSpotPrices = usePairsInfo((state) => state.updateSpotPrices)
-  const updateIndicators = usePairsInfo((state) => state.updateIndicators)
   const updateVariables = useTraderInfo((state) => state.updateVariables)
 
-  const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
   const {
     data1: pcfDAT,
     data2: spotPriceDAT,
     isLoading: pcfAndSpotPriceDATIsLoading
   } = usePCFAndSpotPrice(factoryConfig)
-
-  // for quote token indicators
-  useEffect(() => {
-    if (!indicatorDATIsLoading && indicatorDAT) {
-      updateIndicators(indicatorDAT)
-    }
-  }, [indicatorDATIsLoading])
 
   // for pcf and spot price
   useEffect(() => {

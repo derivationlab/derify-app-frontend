@@ -20,6 +20,7 @@ import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { usePairsInfo } from '@/zustand'
 
 const PositionMining: FC = () => {
   const dispatch = useAppDispatch()
@@ -32,6 +33,8 @@ const PositionMining: FC = () => {
 
   const [totalAmount, setTotalAmount] = useState<Record<string, any>>({})
 
+  const indicators = usePairsInfo((state) => state.indicators)
+  console.info(indicators)
   const getPositionsAmountFunc = async () => {
     // const data = await getCurrentPositionsAmountData('all')
     //
@@ -41,6 +44,7 @@ const PositionMining: FC = () => {
   const memoPositionApy = useMemo(() => {
     if (pairsLoaded) {
       const apy = pairs.map((d) => d.apy ?? 0)
+      console.info(apy)
       const max = String(Math.max.apply(null, apy) * 100)
       return nonBigNumberInterception(max)
     }

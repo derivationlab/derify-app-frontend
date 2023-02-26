@@ -6,12 +6,7 @@ import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf1 } from '@/hooks/useMatchConf'
 import { useMarginToken, useQuoteToken } from '@/zustand'
-import {
-  getBankBDRFPoolDAT,
-  getStakingDrfPoolDAT,
-  getTraderRewardDAT,
-  getTraderStakingDAT
-} from '@/hooks/helper'
+import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
 
 import DRFPool from './c/DRFPool'
 import EranbDRFPool from './c/bDRFPool'
@@ -22,10 +17,10 @@ const Eran: FC = () => {
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
-  const updateRewardsInfo = useTraderInfo(state => state.updateRewardsInfo)
-  const updateStakingInfo = useTraderInfo(state => state.updateStakingInfo)
-  const updateDrfPoolBalance = usePoolsInfo(state => state.updateDrfPoolBalance)
-  const updateBondPoolBalance = usePoolsInfo(state => state.updateBondPoolBalance)
+  const updateRewardsInfo = useTraderInfo((state) => state.updateRewardsInfo)
+  const updateStakingInfo = useTraderInfo((state) => state.updateStakingInfo)
+  const updateDrfPoolBalance = usePoolsInfo((state) => state.updateDrfPoolBalance)
+  const updateBondPoolBalance = usePoolsInfo((state) => state.updateBondPoolBalance)
 
   const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
 

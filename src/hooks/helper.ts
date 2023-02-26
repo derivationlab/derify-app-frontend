@@ -9,7 +9,9 @@ import { getDerifyProtocolAddress } from '@/utils/addressHelpers'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {
   getDerifyDerivativePairContract,
-  getDerifyExchangeContract1, getDerifyProtocolContract, getDerifyRewardsContract1
+  getDerifyExchangeContract1,
+  getDerifyProtocolContract,
+  getDerifyRewardsContract1
 } from '@/utils/contractHelpers'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 import {
@@ -450,10 +452,7 @@ export const calcChangeFee = async (
   return nonBigNumberInterception(fee.toFixed(10), 8)
 }
 
-export const getTraderRewardDAT = async (
-  trader: string,
-  reward: string
-): Promise<Record<string, any>> => {
+export const getTraderRewardDAT = async (trader: string, reward: string): Promise<Record<string, any>> => {
   let output = {}
   const calls = [
     {
@@ -473,7 +472,7 @@ export const getTraderRewardDAT = async (
     },
     {
       name: 'bankBondPool',
-      address: reward,
+      address: reward
     }
   ]
 
@@ -498,7 +497,7 @@ export const getTraderRewardDAT = async (
       marginTokenBalance: safeInterceptionValues(marginTokenBalance, 8),
       drfAccumulatedBalance: safeInterceptionValues(drfAccumulatedBalance, 8),
       bondAnnualInterestRatio: safeInterceptionValues(bondAnnualInterestRatio, 8),
-      marginTokenAccumulatedBalance: safeInterceptionValues(marginTokenAccumulatedBalance, 8),
+      marginTokenAccumulatedBalance: safeInterceptionValues(marginTokenAccumulatedBalance, 8)
     }
 
     // console.info(output)
@@ -508,9 +507,7 @@ export const getTraderRewardDAT = async (
   return output
 }
 
-export const getTraderStakingDAT = async (
-  trader: string,
-): Promise<Record<string, any>> => {
+export const getTraderStakingDAT = async (trader: string): Promise<Record<string, any>> => {
   let output = {}
   const calls = [
     {
@@ -524,11 +521,11 @@ export const getTraderStakingDAT = async (
 
   if (!isEmpty(response)) {
     // todo edrfBalance 用了中心化接口 api/trader_latest_edrf_balance - 待处理
-    const [{drfBalance, edrfBalance}] = response
+    const [{ drfBalance, edrfBalance }] = response
 
     output = {
       drfBalance: safeInterceptionValues(drfBalance, 8),
-      edrfBalance: safeInterceptionValues(edrfBalance, 8),
+      edrfBalance: safeInterceptionValues(edrfBalance, 8)
     }
 
     // console.info(output)

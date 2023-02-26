@@ -71,8 +71,8 @@ export interface VolumeState {
 }
 
 export interface TraderInfoState {
-  rewardsInfo: Rec,
-  stakingInfo: Rec,
+  rewardsInfo: Rec
+  stakingInfo: Rec
   variables: InitialTraderVariablesType
   variablesLoaded: boolean
   updateVariables: (p: InitialTraderVariablesType) => void

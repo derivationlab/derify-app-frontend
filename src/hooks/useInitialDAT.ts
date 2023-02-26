@@ -3,20 +3,25 @@ import { useAccount } from 'wagmi'
 
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { MarginTokenWithContract } from '@/typings'
-import { useConfigInfo, useTokenBalances } from '@/zustand'
+import { useConfigInfo, useMarginToken, usePairsInfo, useTokenBalances } from '@/zustand'
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit } from '@/hooks/helper'
+import { usePairIndicator } from '@/hooks/usePairIndicator'
 
 export const useInitialDAT = () => {
   const { data } = useAccount()
 
   const { data: protocolConfDAT, isLoading: protocolConfDATIsLoading } = useProtocolConfig()
 
+  const marginToken = useMarginToken((state) => state.marginToken)
   const fetchBalances = useTokenBalances((state) => state.fetch)
   const resetBalances = useTokenBalances((state) => state.reset)
   const updateFactoryConfig = useConfigInfo((state) => state.updateFactoryConfig)
   const updateProtocolConfig = useConfigInfo((state) => state.updateProtocolConfig)
   const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)
   const updateMTokenPrices = useConfigInfo((state) => state.updateMTokenPrices)
+  const updateIndicators = usePairsInfo((state) => state.updateIndicators)
+
+  const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
 
   // for tokens balance
   useEffect(() => {
@@ -54,4 +59,11 @@ export const useInitialDAT = () => {
 
     if (!protocolConfDATIsLoading && protocolConfDAT) void func(protocolConfDAT)
   }, [protocolConfDATIsLoading, protocolConfDAT])
+
+  // for quote token indicators
+  useEffect(() => {
+    if (!indicatorDATIsLoading && indicatorDAT) {
+      updateIndicators(indicatorDAT)
+    }
+  }, [indicatorDATIsLoading])
 }

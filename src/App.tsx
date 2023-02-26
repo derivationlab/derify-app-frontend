@@ -15,6 +15,8 @@ const WebEntry = lazy(() => import('@/pages/web'))
 
 function App() {
   useInitialDAT()
+
+  // todo
   useInitialEffect()
 
   return (

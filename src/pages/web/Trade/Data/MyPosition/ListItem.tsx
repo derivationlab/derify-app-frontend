@@ -3,12 +3,12 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 
 import { PositionSide } from '@/store/contract/helper'
-import { useSpotPrice } from '@/hooks/useMatchConf'
+import { useSpotPrice1 } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useMarginToken } from '@/zustand'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginToken, useQuoteToken } from '@/zustand'
-import { isLTET, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { bnDiv, bnMinus, bnMul, isGT, isLTET, nonBigNumberInterception } from '@/utils/tools'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
@@ -27,31 +27,34 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { mobile } = useContext(MobileContext)
 
   const variables = useTraderInfo((state) => state.variables)
-  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { spotPrice } = useSpotPrice1(marginToken)
 
   const memoMargin = useMemo(() => {
-    return (data?.size * spotPrice) / data.leverage
+    return bnDiv(bnMul(data.size, spotPrice[data.quoteToken]), data.leverage)
   }, [data, spotPrice])
 
   const memoVolume = useMemo(() => {
-    return Number(spotPrice) * Number(data.size)
+    return bnMul(data.size, spotPrice[data.quoteToken])
   }, [data, spotPrice])
 
   const memoUnrealizedPnl = useMemo(() => {
-    if (Number(spotPrice) > 0)
-      return (spotPrice - data.averagePrice) * data.size * (data.side === PositionSide.long ? 1 : -1)
-    return 0
+    if (isGT(spotPrice[data.quoteToken], 0)) {
+      const p1 = bnMinus(spotPrice[data.quoteToken], data.averagePrice)
+      const p2 = bnMul(p1, data.size)
+      const p3 = data.side === PositionSide.long ? 1 : -1
+      return bnMul(p2, p3)
+    }
+    return '0'
   }, [spotPrice, data])
 
   const memoReturnRate = useMemo(() => {
-    return memoUnrealizedPnl / memoMargin
+    return bnDiv(memoUnrealizedPnl, memoMargin)
   }, [memoUnrealizedPnl, memoMargin])
 
-  const judgeUpsAndDowns = (data: number): string => (data > 0 ? '+' : '')
+  const judgeUpsAndDowns = (data: string): string => (isGT(data, 0) ? '+' : '')
 
   const atom1Tsx = useMemo(
     () => (
@@ -62,8 +65,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       >
         <span className={classNames(`${judgeUpsAndDowns(memoUnrealizedPnl) ? 'up' : 'down'}`)}>
           {judgeUpsAndDowns(memoUnrealizedPnl)}
-          {nonBigNumberInterception(memoUnrealizedPnl * 100)} ( {judgeUpsAndDowns(memoReturnRate)}
-          {nonBigNumberInterception(memoReturnRate * 100)}% )
+          {nonBigNumberInterception(bnMul(memoUnrealizedPnl, 100))} ( {judgeUpsAndDowns(memoReturnRate)}
+          {nonBigNumberInterception(bnMul(memoReturnRate, 100))}% )
         </span>
       </DataAtom>
     ),
@@ -101,8 +104,13 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     if (variablesLoaded) {
       const { marginBalance = 0, totalPositionAmount = 0 } = variables
       const mul = data.side === PositionSide.short ? -1 : 1
-      const sub = spotPrice - ((Number(marginBalance) - Number(totalPositionAmount) * 0.01) / data.size) * mul
-      lp = isLTET(sub, 0) ? '--' : safeInterceptionValues(String(sub))
+
+      const p1 = bnMul(totalPositionAmount, 0.01)
+      const p2 = bnMinus(marginBalance, p1)
+      const p3 = bnDiv(p2, data.size)
+      const p4 = bnMul(p3, mul)
+      const p5 = bnMinus(spotPrice[data.quoteToken], p4)
+      lp = isLTET(p5, 0) ? '--' : nonBigNumberInterception(p5)
     } else {
       lp = '--'
     }
@@ -144,7 +152,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     return (
       <DataAtom hover label={t('Trade.MyPosition.MarginRate', 'Margin Rate')} tip={t('Trade.MyPosition.MarginRateTip')}>
         <span className={classNames('reminder', `${base >= 0 ? 'up' : 'down'}`)}>
-          {judgeUpsAndDowns(base)}
+          {judgeUpsAndDowns(base as any)}
           {base.toFixed(2)}%
         </span>
         <Reminder alertLevel={alertLevel} />

@@ -129,6 +129,7 @@
     }
   }
   &-margin{
+    position: relative;
     label{font-size: 18px}
     border-bottom: 1px solid $ce7;padding-bottom:8px;margin-bottom: 20px;
     display: flex;align-items: center;justify-content: space-between;
@@ -137,9 +138,10 @@
         border: 0;min-width: auto;
       }
       .web-select-options {
-        left: auto;right: -36px;
+        left: 0;right: 0;
       }
     }
+    .web-select-show{position: static}
   }
   .web-form-input input {
     font-weight: bold;

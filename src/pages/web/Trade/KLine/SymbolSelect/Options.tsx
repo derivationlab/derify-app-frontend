@@ -1,8 +1,8 @@
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
 
+import { QUOTE_TOKENS } from '@/config/tokens'
 import { MobileContext } from '@/context/Mobile'
 import { useMarginToken, usePairsInfo } from '@/zustand'
-import { BASE_TOKEN_SYMBOL, QUOTE_TOKENS } from '@/config/tokens'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
@@ -39,9 +39,7 @@ const Options: FC<Props> = ({ onChange }) => {
             {mobile ? (
               <>
                 <aside>
-                  <h5>
-                    {item.symbol}-{BASE_TOKEN_SYMBOL}
-                  </h5>
+                  <h5>{item.symbol}USD</h5>
                   <BalanceShow value={0} percent unit="APR" />
                 </aside>
                 <aside>
@@ -51,9 +49,7 @@ const Options: FC<Props> = ({ onChange }) => {
               </>
             ) : (
               <>
-                <h5>
-                  {item.symbol}-{BASE_TOKEN_SYMBOL}
-                </h5>
+                <h5>{item.symbol}USD</h5>
                 <BalanceShow value={spotPrices[marginToken][item.symbol] ?? 0} unit="" />
                 <ChangePercent value={0} />
                 <BalanceShow value={0} percent unit="APR" />

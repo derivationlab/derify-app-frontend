@@ -26,6 +26,7 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
     async (): Promise<Record<string, any>> => {
       const m = findMarginToken(marginToken)!
       const { data } = await getPairIndicator(m.tokenAddress)
+      // console.info(data)
       return data
     },
     {

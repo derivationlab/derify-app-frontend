@@ -22,6 +22,7 @@ export const useInitialDAT = () => {
   const marginToken = useMarginToken((state) => state.marginToken)
   const fetchBalances = useTokenBalances((state) => state.fetch)
   const resetBalances = useTokenBalances((state) => state.reset)
+  const fetchBalance = useTokenBalances((state) => state.fetchBalance)
   const updateFactoryConfig = useConfigInfo((state) => state.updateFactoryConfig)
   const updateProtocolConfig = useConfigInfo((state) => state.updateProtocolConfig)
   const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)
@@ -29,8 +30,6 @@ export const useInitialDAT = () => {
   const updateIndicators = usePairsInfo((state) => state.updateIndicators)
   const updatePositionsAmount = usePoolsInfo((state) => state.updatePositionsAmount)
   const updateVariables = useTraderInfo((state) => state.updateVariables)
-  const protocolConfig = useConfigInfo((state) => state.protocolConfig)
-  const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
   const updateDashboardDAT = useDashboardDAT((state) => state.updateDashboardDAT)
 
   const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
@@ -60,6 +59,12 @@ export const useInitialDAT = () => {
       void fetchBalances(data?.address)
     }
   }, [data?.address])
+
+  useEffect(() => {
+    if (data?.address && !protocolConfDATIsLoading && protocolConfDAT) {
+      void fetchBalance(data.address, protocolConfDAT[marginToken].bMarginToken, 'bBUSD')
+    }
+  }, [data?.address, protocolConfDAT, protocolConfDATIsLoading])
 
   // for protocol abi config
   useEffect(() => {
@@ -116,8 +121,8 @@ export const useInitialDAT = () => {
       updateVariables(data)
     }
 
-    if (data?.address && protocolConfigLoaded && protocolConfig) void func(data.address, protocolConfig)
-  }, [protocolConfigLoaded, protocolConfig, data?.address, marginToken, quoteToken])
+    if (data?.address && !protocolConfDATIsLoading && protocolConfDAT) void func(data.address, protocolConfDAT)
+  }, [protocolConfDATIsLoading, protocolConfDAT, data?.address, marginToken, quoteToken])
 
   useEffect(() => {
     PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {

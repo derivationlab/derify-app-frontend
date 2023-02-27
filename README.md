@@ -13,3 +13,15 @@ todo:
 4. usePairIndicator 指标数据被 api/app_data 参数限制了，影响了k线币对选择的下拉数据；
 
 5. api/trader_latest_bond_balance
+
+BTC-BUSD BTCUSD
+
+PnL Volume 计算错误
+
+Data 里的池子改名子跟随保证金名字
+
+broker里的资金单位显示数据显示
+
+路由链接带上保证金名字
+
+bbusd的完整信息；

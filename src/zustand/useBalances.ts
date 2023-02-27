@@ -7,8 +7,9 @@ import tokens, { MARGIN_TOKENS } from '@/config/tokens'
 import { safeInterceptionValues } from '@/utils/tools'
 
 import erc20Abi from '@/config/abi/erc20.json'
+import { getBep20Contract } from '@/utils/contractHelpers'
 
-const TOKENS = [tokens.bbusd, tokens.edrf, ...MARGIN_TOKENS]
+const TOKENS = [tokens.edrf, ...MARGIN_TOKENS]
 const initial = (): Record<string, string> => {
   let value = Object.create(null)
 
@@ -21,6 +22,14 @@ const initial = (): Record<string, string> => {
   })
 
   return value
+}
+
+export const getTokenBalance = async (account: string, address: string, symbol: string) => {
+  const c = getBep20Contract(address)
+  const res = await c.balanceOf(account)
+
+  const balance = safeInterceptionValues(res, 18, 18)
+  return { [symbol]: balance, [symbol.toLowerCase()]: balance, [address.toLowerCase()]: balance }
 }
 
 export const getTokenBalances = async (account: string) => {
@@ -49,6 +58,7 @@ export const getTokenBalances = async (account: string) => {
 }
 
 const useTokenBalances = create<BalancesState>((set) => ({
+  extraBalances: {},
   balances: initial(),
   loaded: false,
   fetch: async (account: string) => {
@@ -57,7 +67,13 @@ const useTokenBalances = create<BalancesState>((set) => ({
     // console.info(data)
     set({ balances: data, loaded: true })
   },
-  reset: () => set(() => ({ balances: initial() }))
+  fetchBalance: async (account: string, address: string, symbol: string) => {
+    const data = await getTokenBalance(account, address, symbol)
+    // console.info(`getTokenBalance:`)
+    // console.info(data)
+    set((state) => ({ ...state.extraBalances, ...data }))
+  },
+  reset: () => set(() => ({ balances: initial(), extraBalances: {} }))
 }))
 
 export { useTokenBalances }

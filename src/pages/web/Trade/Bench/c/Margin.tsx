@@ -2,31 +2,52 @@ import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { MARGIN_TOKENS } from '@/config/tokens'
-import { useMarginToken } from '@/zustand'
 import { MarginTokenKeys } from '@/typings'
-import { useContractConfig } from '@/store/config/hooks'
+import { useMarginToken, useTokenBalances } from '@/zustand'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 import { Select } from '@/components/common/Form'
+import Image from '@/components/common/Image'
 
 const Margin: FC = () => {
   const { t } = useTranslation()
 
-  const { marginToken } = useContractConfig()
-
+  const balances = useTokenBalances((state) => state.balances)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
 
-  const marginSelect = MARGIN_TOKENS.map((t) => t.symbol)
+  // console.info(balances)
 
+  const marginSelect = MARGIN_TOKENS.map((t) => {
+    return {
+      value: t.symbol,
+      label: t.symbol,
+      icon: 'icon/bnb.svg',
+      price: balances[t.symbol] ?? 0,
+      decimals: 2
+    }
+  })
+
+  // todo 完善ui
   return (
     <div className="web-trade-bench-margin">
       <label htmlFor="Margin">{t('Trade.Bench.Margin')}</label>
       <Select
-        className="web-trade-bench-margin-select"
         value={marginToken}
-        options={marginSelect}
         onChange={(v) => {
           updateMarginToken(v as MarginTokenKeys)
         }}
+        objOptions={marginSelect}
+        renderer={(props) => (
+          <div className="web-select-options-item">
+            <span>
+              {props.icon && <Image src={props.icon} />}
+              {props.label}
+            </span>
+            {nonBigNumberInterception(props.price)}
+          </div>
+        )}
+        className="web-trade-bench-margin-select"
       />
     </div>
   )

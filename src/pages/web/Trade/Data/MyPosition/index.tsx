@@ -36,6 +36,7 @@ const MyPosition: FC = () => {
   const { close: close2 } = useCloseAllPositions()
   const { takeProfitOrStopLoss } = useTakeProfitOrStopLoss()
   const { factoryConfig, protocolConfig, spotPrice, quoteToken } = useMatchConf()
+
   const positionOrd = usePosDATStore((state) => state.positionOrd)
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
   const closingType = useCalcOpeningDAT((state) => state.closingType)

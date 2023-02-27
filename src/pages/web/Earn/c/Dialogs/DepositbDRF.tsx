@@ -16,21 +16,23 @@ interface Props {
   onClick: (amount: string) => void
 }
 
+const token = 'bBUSD'
+
 const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
 
-  const balances = useTokenBalances((state) => state.balances)
+  const extraBalances = useTokenBalances((state) => state.extraBalances)
 
-  const [depositAmount, setDepositAmount] = useState<string>('0')
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
+  const [depositAmount, setDepositAmount] = useState<string>('0')
 
   const memoDisabled = useMemo(() => {
-    return isGT(balances['bbusd'], 0)
-  }, [balances])
+    return isGT(extraBalances[token], 0)
+  }, [extraBalances])
 
   const onChangeEv = (v: string) => {
-    if (isGTET(balances['bbusd'], v) && isGT(v, 0)) {
+    if (isGTET(extraBalances[token], v) && isGT(v, 0)) {
       setIsDisabled(false)
       setDepositAmount(v)
     } else {
@@ -47,16 +49,16 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.bDRFPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balances['bbusd']} unit="bBUSD" />
+                <BalanceShow value={extraBalances[token]} unit={token} />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={balances['bbusd']}
+              max={extraBalances[token]}
               title={t('Earn.bDRFPool.AmountToDeposit', 'Amount to deposit')}
-              unit="bBUSD"
+              unit={token}
               onChange={onChangeEv}
             />
           </div>

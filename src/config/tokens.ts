@@ -29,15 +29,15 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
     },
     18 // checked from getMarginTokenPrecision
   ),
-  bbusd: new Token(
-    'bBUSD',
-    'bBUSD',
-    {
-      [ChainId.MAINNET]: '0x301BdA168374AfF1F29640E88b68fFDe76d3479F',
-      [ChainId.TESTNET]: '0x1DaDCC4EfA178D98C04d7EeA6c41df16712fEa61'
-    },
-    18
-  ),
+  // bbusd: new Token(
+  //   'bBUSD',
+  //   'bBUSD',
+  //   {
+  //     [ChainId.MAINNET]: '0x301BdA168374AfF1F29640E88b68fFDe76d3479F',
+  //     [ChainId.TESTNET]: '0x1DaDCC4EfA178D98C04d7EeA6c41df16712fEa61'
+  //   },
+  //   18
+  // ),
   drf: new Token(
     'DRF',
     'DRF',

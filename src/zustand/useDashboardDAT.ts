@@ -6,8 +6,8 @@ const useDashboardDAT = create<DashboardDATState>((set) => ({
   dashboardDAT: {},
   updateDashboardDAT: (data: Rec) =>
     set(() => {
-      // console.info(`updateDashboardDAT:`)
-      // console.info(data)
+      console.info(`updateDashboardDAT:`)
+      console.info(data)
       return { dashboardDAT: data }
     })
 }))

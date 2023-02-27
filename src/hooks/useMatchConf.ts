@@ -55,6 +55,20 @@ export const useSpotPrice = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = 
   }
 }
 
+export const useSpotPrice1 = (marginToken = MARGIN_TOKENS[0].symbol) => {
+  const spotPrices = usePairsInfo((state) => state.spotPrices)
+  const spotPricesLoaded = usePairsInfo((state) => state.spotPricesLoaded)
+
+  const spotPrice = useMemo(() => {
+    if (spotPricesLoaded) return spotPrices[marginToken]
+    return 0
+  }, [spotPrices, marginToken, spotPricesLoaded])
+
+  return {
+    spotPrice
+  }
+}
+
 export const useFactoryConf = () => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)

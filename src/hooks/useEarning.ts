@@ -115,14 +115,14 @@ export const useExchangeBond = () => {
   const { data: signer } = useSigner()
 
   const exchange = useCallback(
-    async (rewards: string, amount: string): Promise<boolean> => {
+    async (rewards: string, bMarginToken: string, amount: string): Promise<boolean> => {
       if (!signer) return false
 
       const c = getDerifyRewardsContract1(rewards, signer)
       const _amount = inputParameterConversion(amount, 8)
 
       try {
-        const approve = await setAllowance(signer, rewards, tokens.bbusd.tokenAddress, _amount)
+        const approve = await setAllowance(signer, rewards, bMarginToken, _amount)
 
         if (!approve) return false
 
@@ -197,14 +197,14 @@ export const useDepositBondToBank = () => {
   const { data: signer } = useSigner()
 
   const deposit = useCallback(
-    async (rewards: string, amount: string): Promise<boolean> => {
+    async (rewards: string, bMarginToken: string, amount: string): Promise<boolean> => {
       if (!signer) return false
 
       const c = getDerifyRewardsContract1(rewards, signer)
       const _amount = inputParameterConversion(amount, 8)
 
       try {
-        const approve = await setAllowance(signer, rewards, tokens.bbusd.tokenAddress, _amount)
+        const approve = await setAllowance(signer, rewards, bMarginToken, _amount)
 
         if (!approve) return false
 

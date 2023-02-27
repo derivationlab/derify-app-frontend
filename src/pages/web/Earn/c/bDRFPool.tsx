@@ -47,7 +47,7 @@ const EranbDRFPool: FC = () => {
     closeDialog()
 
     if (protocolConfig) {
-      const status = await deposit(protocolConfig.rewards, amount)
+      const status = await deposit(protocolConfig.rewards, protocolConfig.bMarginToken, amount)
 
       if (status) {
         // succeed
@@ -96,7 +96,7 @@ const EranbDRFPool: FC = () => {
     closeDialog()
 
     if (protocolConfig) {
-      const status = await exchange(protocolConfig.rewards, amount)
+      const status = await exchange(protocolConfig.rewards, protocolConfig.bMarginToken, amount)
 
       if (status) {
         // succeed

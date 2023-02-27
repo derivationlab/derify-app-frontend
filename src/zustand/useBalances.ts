@@ -1,8 +1,8 @@
 import create from 'zustand'
 
 import multicall from '@/utils/multicall'
-import { BalancesState } from '@/zustand/types'
 import { baseProvider } from '@/utils/baseProvider'
+import { BalancesState } from '@/zustand/types'
 import tokens, { MARGIN_TOKENS } from '@/config/tokens'
 import { safeInterceptionValues } from '@/utils/tools'
 
@@ -24,12 +24,12 @@ const initial = (): Record<string, string> => {
   return value
 }
 
-export const getTokenBalance = async (account: string, address: string, symbol: string) => {
+export const getTokenBalance = async (account: string, address: string) => {
   const c = getBep20Contract(address)
+
   const res = await c.balanceOf(account)
 
-  const balance = safeInterceptionValues(res, 18, 18)
-  return { [symbol]: balance, [symbol.toLowerCase()]: balance, [address.toLowerCase()]: balance }
+  return safeInterceptionValues(res, 18, 18)
 }
 
 export const getTokenBalances = async (account: string) => {
@@ -58,7 +58,7 @@ export const getTokenBalances = async (account: string) => {
 }
 
 const useTokenBalances = create<BalancesState>((set) => ({
-  extraBalances: {},
+  bMarginToken: '0', // maybe bBUSD bDRF ...
   balances: initial(),
   loaded: false,
   fetch: async (account: string) => {
@@ -67,13 +67,13 @@ const useTokenBalances = create<BalancesState>((set) => ({
     // console.info(data)
     set({ balances: data, loaded: true })
   },
-  fetchBalance: async (account: string, address: string, symbol: string) => {
-    const data = await getTokenBalance(account, address, symbol)
+  fetchBalance: async (account: string, address: string) => {
+    const data = await getTokenBalance(account, address)
     // console.info(`getTokenBalance:`)
     // console.info(data)
-    set((state) => ({ ...state.extraBalances, ...data }))
+    set(() => ({ bMarginToken: data }))
   },
-  reset: () => set(() => ({ balances: initial(), extraBalances: {} }))
+  reset: () => set(() => ({ balances: initial(), bMarginToken: '0' }))
 }))
 
 export { useTokenBalances }

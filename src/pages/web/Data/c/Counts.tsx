@@ -5,10 +5,12 @@ import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 
 import { nonBigNumberInterception } from '@/utils/tools'
+import { useMarginToken } from '@/zustand'
 
 const Counts: FC = () => {
   const { t } = useTranslation()
 
+  const marginToken = useMarginToken((state) => state.marginToken)
   const dashboardDAT = useDashboardDAT((state) => state.dashboardDAT)
 
   return (
@@ -42,7 +44,7 @@ const Counts: FC = () => {
         </main>
       </section>
       <section>
-        <h3>{t('Dashboard.bDRFPrice', 'bBUSD Price')}</h3>
+        <h3>{t('Dashboard.bDRFPrice', { Token: `b${marginToken}` })}</h3>
         <main className="web-balance-show">
           <strong>{nonBigNumberInterception(dashboardDAT?.bdrfPrice ?? 0)}</strong>
           <u>{BASE_TOKEN_SYMBOL}</u>

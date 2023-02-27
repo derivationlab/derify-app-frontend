@@ -134,15 +134,10 @@ const EranbDRFPool: FC = () => {
       <div className="web-eran-item">
         <header className="web-eran-item-header">
           <h3>
-            {t('Earn.bDRFPool.bDRFPool', 'bBUSD Pool')}
-            <QuestionPopover text={t('Earn.bDRFPool.bDRFPoolTip', 'bBUSD Pool', { APR: memoAPY })} />
+            {t('Earn.bDRFPool.bDRFPool', { Token: `b${marginToken}` })}
+            <QuestionPopover text={t('Earn.bDRFPool.bDRFPoolTip', { APR: memoAPY, Token: `b${marginToken}` })} />
           </h3>
-          <p>
-            {t(
-              'Earn.bDRFPool.bDRFPoolTitle',
-              'Deposit bBUSD to earn stable interests, or exchange bBUSD to stable coin.'
-            )}
-          </p>
+          <p>{t('Earn.bDRFPool.bDRFPoolTitle', { Token: `b${marginToken}` })}</p>
         </header>
         <section className="web-eran-item-main">
           <div className="web-eran-item-dashboard">
@@ -152,11 +147,11 @@ const EranbDRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow value={rewardsInfo?.bondBalance ?? 0} unit="bBUSD" decimal={4} />
+              <BalanceShow value={rewardsInfo?.bondBalance ?? 0} unit={`b${marginToken}`} decimal={4} />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} : <strong>{rewardsInfo?.exchangeable ?? 0}</strong>{' '}
-                bBUSD
+                {`b${marginToken}`}
               </p>
             </main>
             <aside>
@@ -171,10 +166,11 @@ const EranbDRFPool: FC = () => {
           <div className="web-eran-item-card">
             <main>
               <h4>{t('Earn.bDRFPool.Deposited', 'Deposited')}</h4>
-              <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit="bBUSD" />
+              <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken}`} />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{bondPoolBalance}</strong> bBUSD
+                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{bondPoolBalance}</strong>{' '}
+                {`b${marginToken}`}
               </p>
             </main>
             <aside>

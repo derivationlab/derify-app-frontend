@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { useTokenBalances } from '@/zustand'
+import { useMarginToken, useTokenBalances } from '@/zustand'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -16,23 +16,26 @@ interface Props {
   onClick: (amount: string) => void
 }
 
-const token = 'bBUSD'
-
 const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
 
-  const extraBalances = useTokenBalances((state) => state.extraBalances)
+  const marginToken = useMarginToken((state) => state.marginToken)
+  const bMarginToken = useTokenBalances((state) => state.bMarginToken)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')
 
+  const tokenName = useMemo(() => {
+    return `b${marginToken}`
+  }, [marginToken])
+
   const memoDisabled = useMemo(() => {
-    return isGT(extraBalances[token], 0)
-  }, [extraBalances])
+    return isGT(bMarginToken, 0)
+  }, [bMarginToken])
 
   const onChangeEv = (v: string) => {
-    if (isGTET(extraBalances[token], v) && isGT(v, 0)) {
+    if (isGTET(bMarginToken, v) && isGT(v, 0)) {
       setIsDisabled(false)
       setDepositAmount(v)
     } else {
@@ -42,23 +45,28 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   return (
-    <Dialog width="540px" visible={visible} title={t('Earn.bDRFPool.DepositbDRF', 'Deposit bBUSD')} onClose={onClose}>
+    <Dialog
+      width="540px"
+      visible={visible}
+      title={t('Earn.bDRFPool.DepositbDRF', { Token: tokenName })}
+      onClose={onClose}
+    >
       <div className="web-deposit-dialog">
         <div className="web-deposit-dialog-info">
           <div className="wallet">
             <dl>
               <dt>{t('Earn.bDRFPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={extraBalances[token]} unit={token} />
+                <BalanceShow value={bMarginToken} unit={tokenName} />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={extraBalances[token]}
+              max={bMarginToken}
               title={t('Earn.bDRFPool.AmountToDeposit', 'Amount to deposit')}
-              unit={token}
+              unit={tokenName}
               onChange={onChangeEv}
             />
           </div>

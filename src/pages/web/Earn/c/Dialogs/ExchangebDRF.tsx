@@ -1,10 +1,10 @@
 import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
-import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useTraderData } from '@/store/trader/hooks'
+import { useMarginToken } from '@/zustand'
+import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { isGT, isGTET } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -19,20 +19,20 @@ interface Props {
 
 const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { trader } = useTraderData()
   const { data: ACCOUNT } = useAccount()
 
-  const [depositAmount, setDepositAmount] = useState<string>('0')
+  const marginToken = useMarginToken((state) => state.marginToken)
+  const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
+
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
+  const [depositAmount, setDepositAmount] = useState<string>('0')
 
   const memoDisabled = useMemo(() => {
-    return new BN(trader?.exchangeable).isGreaterThan(0)
-  }, [trader?.exchangeable])
+    return isGT(rewardsInfo?.exchangeable ?? 0, 0)
+  }, [rewardsInfo?.exchangeable])
 
   const onChangeEv = (v: string) => {
-    const _v = new BN(v)
-    const _balance = new BN(trader?.exchangeable)
-    if (_balance.isGreaterThanOrEqualTo(v) && _v.isGreaterThan(0)) {
+    if (isGTET(rewardsInfo?.exchangeable ?? 0, v) && isGT(v, 0)) {
       setIsDisabled(false)
       setDepositAmount(v)
     } else {
@@ -42,23 +42,28 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   return (
-    <Dialog width="540px" visible={visible} title={t('Earn.bDRFPool.ExchangeBDRF', 'Exchange bBUSD')} onClose={onClose}>
+    <Dialog
+      width="540px"
+      visible={visible}
+      title={t('Earn.bDRFPool.ExchangeBDRF', { Token: `b${marginToken}` })}
+      onClose={onClose}
+    >
       <div className="web-deposit-dialog">
         <div className="web-deposit-dialog-info">
           <div className="wallet">
             <dl>
               <dt>{t('Earn.bDRFPool.Exchangeable', 'Exchangeable')}</dt>
               <dd>
-                <BalanceShow value={trader?.exchangeable ?? 0} unit={`bBUSD→${BASE_TOKEN_SYMBOL}`} />
+                <BalanceShow value={rewardsInfo?.exchangeable ?? 0} unit={`b${marginToken}→${marginToken}`} />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={trader?.exchangeable ?? 0}
+              max={rewardsInfo?.exchangeable ?? 0}
               title={t('Earn.bDRFPool.AmountToExchange', 'Amount to exchange')}
-              unit="bBUSD"
+              unit={`b${marginToken}`}
               onChange={onChangeEv}
             />
           </div>

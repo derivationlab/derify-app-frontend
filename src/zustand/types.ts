@@ -7,9 +7,9 @@ export type Rec = Record<string, any>
 export interface BalancesState {
   loaded: boolean
   balances: Rec
-  extraBalances: Rec
+  bMarginToken: string
   fetch: (account: string) => Promise<void>
-  fetchBalance: (account: string, address: string, symbol: string) => Promise<void>
+  fetchBalance: (account: string, address: string) => Promise<void>
   reset: () => void
 }
 

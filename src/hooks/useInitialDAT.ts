@@ -5,13 +5,13 @@ import { useAccount } from 'wagmi'
 import { findToken } from '@/config/tokens'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { useCurrentIndexDAT, useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { MarginTokenWithContract, PubSubEvents } from '@/typings'
 import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken, useTokenBalances } from '@/zustand'
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
-import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 
 export const useInitialDAT = () => {
   const { data } = useAccount()
@@ -62,7 +62,7 @@ export const useInitialDAT = () => {
 
   useEffect(() => {
     if (data?.address && !protocolConfDATIsLoading && protocolConfDAT) {
-      void fetchBalance(data.address, protocolConfDAT[marginToken].bMarginToken, 'bBUSD')
+      void fetchBalance(data.address, protocolConfDAT[marginToken].bMarginToken)
     }
   }, [data?.address, protocolConfDAT, protocolConfDATIsLoading])
 

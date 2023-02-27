@@ -2,9 +2,10 @@ import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
 import tokens from '@/config/tokens'
+import contracts1 from '@/config/contracts1'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { getDerifyRewardsContract1 } from '@/utils/contractHelpers'
+import { getDerifyProtocolContract, getDerifyRewardsContract1 } from '@/utils/contractHelpers'
 
 export const useWithdrawPositionReward = () => {
   const { data: signer } = useSigner()
@@ -79,14 +80,14 @@ export const useStakingDrf = () => {
   const { data: signer } = useSigner()
 
   const staking = useCallback(
-    async (rewards: string, amount: string): Promise<boolean> => {
+    async (amount: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyRewardsContract1(rewards, signer)
+      const c = getDerifyProtocolContract(signer)
       const _amount = inputParameterConversion(amount, 8)
 
       try {
-        const approve = await setAllowance(signer, rewards, tokens.drf.tokenAddress, _amount)
+        const approve = await setAllowance(signer, contracts1.derifyProtocol.contractAddress, tokens.drf.tokenAddress, _amount)
 
         if (!approve) return false
 

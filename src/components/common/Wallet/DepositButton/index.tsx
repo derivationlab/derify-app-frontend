@@ -1,12 +1,13 @@
-import { useAccount } from 'wagmi'
+import PubSub from 'pubsub-js'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
 
-import Button from '@/components/common/Button'
-import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
-import { useTokenBalances } from '@/zustand'
+import { PubSubEvents } from '@/typings'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useDepositMargin } from '@/hooks/useTrading'
+
+import Button from '@/components/common/Button'
+import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
 
 interface Props {
   size?: string
@@ -14,12 +15,9 @@ interface Props {
 
 const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
-  const { data } = useAccount()
 
   const { deposit } = useDepositMargin()
   const { protocolConfig, marginToken } = useProtocolConf()
-
-  const fetchBalances = useTokenBalances((state) => state.fetch)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -30,14 +28,14 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (data?.address && protocolConfig) {
+      if (protocolConfig) {
         const status = await deposit(protocolConfig.exchange, amount, marginToken)
 
         if (status) {
           // succeed
           window.toast.success(t('common.success', 'success'))
 
-          await fetchBalances(data.address)
+          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
         } else {
           // fail
           window.toast.error(t('common.failed', 'failed'))
@@ -46,7 +44,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       window.toast.dismiss(toast)
     },
-    [data?.address, protocolConfig, marginToken]
+    [protocolConfig, marginToken]
   )
 
   return (

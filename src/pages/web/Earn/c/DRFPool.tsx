@@ -48,17 +48,15 @@ const DRFPool: FC = () => {
 
     closeDialog()
 
-    if (protocolConfig) {
-      const status = await staking(protocolConfig.rewards, amount)
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
+    const status = await staking(amount)
+    if (status) {
+      // succeed
+      window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_BALANCE)
-      } else {
-        // fail
-        window.toast.error(t('common.failed', 'failed'))
-      }
+      PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+    } else {
+      // fail
+      window.toast.error(t('common.failed', 'failed'))
     }
 
     window.toast.dismiss(toast)

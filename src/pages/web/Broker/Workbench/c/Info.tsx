@@ -9,7 +9,6 @@ import Broker from '@/class/Broker'
 import { copyText } from '@/utils/tools'
 import { useAppDispatch } from '@/store'
 import { API_PREFIX_URL } from '@/config'
-import { useTokenBalances } from '@/zustand'
 import { useTraderData } from '@/store/trader/hooks'
 import { getBrokerValidPeriodDataAsync } from '@/store/actions'
 
@@ -17,6 +16,8 @@ import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
 import ExtendDialog from '@/components/common/Wallet/Extend'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import PubSub from 'pubsub-js'
+import { PubSubEvents } from '@/typings'
 
 const Info: FC = () => {
   const history = useHistory()
@@ -25,8 +26,6 @@ const Info: FC = () => {
   const { data: signer } = useSigner()
   const { broker } = useTraderData()
   const { extendBrokerPrivilege } = Broker
-
-  const fetchBalances = useTokenBalances((state) => state.fetch)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -47,9 +46,9 @@ const Info: FC = () => {
           // succeed
           window.toast.success(t('common.success', 'success'))
 
-          // dispatch(getBrokerValidPeriodDataAsync(account))
+          dispatch(getBrokerValidPeriodDataAsync(account))
 
-          await fetchBalances(account)
+          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
         } else {
           // failed
           window.toast.error(t('common.failed', 'failed'))

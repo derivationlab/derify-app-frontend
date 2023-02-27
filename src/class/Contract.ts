@@ -2,12 +2,8 @@ import warning from 'tiny-warning'
 import invariant from 'tiny-invariant'
 import { getAddress } from '@ethersproject/address'
 
-import { ChainId, ChainIdRec } from '@/typings'
-
-export const _getAddress = (address: ChainIdRec): string => {
-  const chainId = process.env.REACT_APP_CHAIN_ID ?? ChainId.MAINNET
-  return address[chainId].toLowerCase()
-}
+import { ChainIdRec } from '@/typings'
+import { _getAddress } from '@/class/Token'
 
 export function addressCheck(address: string) {
   try {
@@ -21,27 +17,16 @@ export function addressCheck(address: string) {
   }
 }
 
-class Token {
+class Contract {
   readonly name: string
-  readonly symbol: string
   readonly address: ChainIdRec
-  readonly precision?: number
-  readonly decimals?: number
-  readonly projectLink?: string
 
-  constructor(name: string, symbol: string, address: ChainIdRec, precision = 18, decimals = 8, projectLink = '') {
+  constructor(name: string, address: ChainIdRec) {
     this.name = name
-    this.symbol = symbol
     this.address = this.checkAddress(address)
-    this.precision = precision
-    this.projectLink = projectLink
   }
 
-  get icon() {
-    return `symbol/${this.symbol.toLowerCase()}.svg`
-  }
-
-  get tokenAddress() {
+  get contractAddress() {
     return _getAddress(this.address)
   }
 
@@ -55,4 +40,4 @@ class Token {
   }
 }
 
-export default Token
+export default Contract

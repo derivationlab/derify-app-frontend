@@ -75,6 +75,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
             <em>{maxVolume?.[type] ?? 0} </em>
             <u>{type}</u>
           </div>
+          试试
           <Select
             className="web-trade-bench-pane-volume-type"
             value={type}

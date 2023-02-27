@@ -81,6 +81,7 @@ export default {
       Time: '时间'
     },
     Bench: {
+      Margin: '保证金',
       MarginBalance: '保证金余额',
       MarginBalanceTip: '保证金余额=账户余额+总未实现盈亏，是用户账户的账面资产额',
       AvaliableMarginBalance: '可用保证金',

@@ -13,5 +13,3 @@ todo:
 4. usePairIndicator 指标数据被 api/app_data 参数限制了，影响了k线币对选择的下拉数据；
 
 5. api/trader_latest_bond_balance
-
-

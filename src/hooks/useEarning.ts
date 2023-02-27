@@ -87,7 +87,12 @@ export const useStakingDrf = () => {
       const _amount = inputParameterConversion(amount, 8)
 
       try {
-        const approve = await setAllowance(signer, contracts1.derifyProtocol.contractAddress, tokens.drf.tokenAddress, _amount)
+        const approve = await setAllowance(
+          signer,
+          contracts1.derifyProtocol.contractAddress,
+          tokens.drf.tokenAddress,
+          _amount
+        )
 
         if (!approve) return false
 

@@ -44,6 +44,6 @@ export const getEventsData = async () => {
 }
 
 export const getPairIndicator = async (token: string) => {
-  const response = await get(`api/app_data/${token}`)
+  const response = await get(`api/app_data`)
   return response
 }

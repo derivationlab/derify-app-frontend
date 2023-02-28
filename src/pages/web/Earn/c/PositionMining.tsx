@@ -21,15 +21,17 @@ const PositionMining: FC = () => {
 
   const { mobile } = useContext(MobileContext)
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const indicators = usePairsInfo((state) => state.indicators)
-  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
   const variables = useTraderInfo((state) => state.variables)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const indicators = usePairsInfo((state) => state.indicators)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const positionsAmount = usePoolsInfo((state) => state.positionsAmount)
+  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
+
   // console.info(variables)
   // console.info(positionsAmount)
+
   const { withdraw } = useWithdrawPositionReward()
   const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
 

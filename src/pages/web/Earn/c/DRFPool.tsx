@@ -19,9 +19,12 @@ import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
+import { useTraderEDRFBalance } from '@/hooks/useQueryApi'
+import { useAccount } from 'wagmi'
 
 const DRFPool: FC = () => {
   const { t } = useTranslation()
+  const { data } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -34,12 +37,13 @@ const DRFPool: FC = () => {
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
   const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
+  const { data: edrfBalance } = useTraderEDRFBalance(data?.address)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
   const memoDisabled = useMemo(() => {
-    return isGT(stakingInfo?.edrfBalance ?? 0, 0)
-  }, [stakingInfo])
+    return isGT(edrfBalance?.data ?? 0, 0)
+  }, [edrfBalance])
 
   const closeDialog = () => setVisibleStatus('')
 
@@ -118,7 +122,7 @@ const DRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.DRFPool.Claimable', 'Claimable')}</h4>
-              <BalanceShow value={stakingInfo?.edrfBalance ?? 0} unit="eDRF" decimal={4} />
+              <BalanceShow value={edrfBalance?.data ?? 0} unit="eDRF" decimal={4} />
             </main>
             <aside>
               <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>

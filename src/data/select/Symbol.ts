@@ -1,23 +1,14 @@
-import pairs from '@/config/pairs'
+import { QUOTE_TOKENS } from '@/config/tokens'
 
-let combine = {}
+let OUTPUT = {}
 
-pairs.forEach((pair) => {
-  combine = { ...combine, [pair.name]: pair.token }
+QUOTE_TOKENS.forEach((t) => {
+  OUTPUT = { ...OUTPUT, [`${t.symbol}USD`]: t.tokenAddress }
 })
 
-export const SymbolTokens: Record<string, string> = combine
-
-export const SymbolOptions = Object.keys(SymbolTokens)
-
-export const SelectSymbolOptions = ['All Derivatives', ...SymbolOptions]
-
-export const SymbolTokensOptions: Record<string, any>[] = SymbolOptions.map((name: string) => ({
-  name,
-  token: SymbolTokens[name]
-}))
+export const SelectSymbolOptions = ['All Derivatives', ...Object.keys(OUTPUT)]
 
 export const SelectSymbolTokens: Record<string, string> = {
   'All Derivatives': 'all',
-  ...SymbolTokens
+  ...OUTPUT
 }

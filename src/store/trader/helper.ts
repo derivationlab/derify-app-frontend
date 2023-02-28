@@ -161,7 +161,7 @@ export const getPMRewardData = async (trader: string) => {
 
 const getTraderBondBalanceData = async (trader: string): Promise<number> => {
   try {
-    const { data } = await getTraderBondBalance(trader)
+    const { data } = await getTraderBondBalance(trader, '')
     return data
   } catch (e) {
     return 0

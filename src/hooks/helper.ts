@@ -483,10 +483,9 @@ export const getTraderRewardDAT = async (trader: string, reward: string): Promis
 
     const [bankBalance] = bankBondPool
     const [maxBondSize] = getExchangeBondSizeUpperBound
-    // todo bondBalance 用了中心化接口 api/trader_latest_bond_balance - 待处理
     const [bondAnnualInterestRatio, bondBalance, bondReturnBalance, bondWalletBalance] = getBondInfo
     const [drfAccumulatedBalance, drfBalance, marginTokenAccumulatedBalance, marginTokenBalance] = getPositionReward
-
+    console.info('bondBalance:', safeInterceptionValues(bondBalance, 8))
     output = {
       drfBalance: safeInterceptionValues(drfBalance, 8),
       bankBalance: safeInterceptionValues(bankBalance, 8),
@@ -520,9 +519,8 @@ export const getTraderStakingDAT = async (trader: string): Promise<Record<string
   const response = await multicall(DerifyProtocolAbi, calls)
 
   if (!isEmpty(response)) {
-    // todo edrfBalance 用了中心化接口 api/trader_latest_edrf_balance - 待处理
     const [{ drfBalance, edrfBalance }] = response
-
+    console.info('edrfBalance:', safeInterceptionValues(edrfBalance, 8))
     output = {
       drfBalance: safeInterceptionValues(drfBalance, 8),
       edrfBalance: safeInterceptionValues(edrfBalance, 8)

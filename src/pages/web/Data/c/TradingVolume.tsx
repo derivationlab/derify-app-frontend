@@ -1,11 +1,12 @@
 import days from 'dayjs'
 import { isArray } from 'lodash'
-import { useInterval } from 'react-use'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { getCurrentTradingAmount, getHistoryTradingData } from '@/api'
+import { findToken } from '@/config/tokens'
+import { useMarginToken } from '@/zustand'
+import { getHistoryTradingData } from '@/api'
+import { useCurrentTradingAmount } from '@/hooks/useQueryApi'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 
 import { BarChart } from '@/components/common/Chart'
@@ -13,19 +14,26 @@ import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const time = days().utc().startOf('days').format()
-
 const TradingVolume: FC = () => {
   const { t } = useTranslation()
 
   const [tradingData, setTradingData] = useState<Record<string, any>[]>([])
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
-  const [tradingVolume, setTradingVolume] = useState<Record<string, any>[]>([])
 
-  const getHistoryTradingDataCb = useCallback(async () => {
+  const marginToken = useMarginToken((state) => state.marginToken)
+
+  const {
+    data: tradingVolume,
+    isLoading,
+    refetch
+  } = useCurrentTradingAmount(SelectSymbolTokens[pairSelectVal], findToken(marginToken).tokenAddress)
+
+  const historyDAT = useCallback(async () => {
     const { data: trading } = await getHistoryTradingData(
       SelectSymbolTokens[pairSelectVal],
-      SelectTimesValues[timeSelectVal]
+      SelectTimesValues[timeSelectVal],
+      findToken(marginToken).tokenAddress
     )
 
     if (isArray(trading)) {
@@ -35,24 +43,21 @@ const TradingVolume: FC = () => {
     }
   }, [timeSelectVal, pairSelectVal])
 
-  const getTradingVolumeDataFunc = async () => {
-    const { data: volume } = await getCurrentTradingAmount(SelectSymbolTokens[pairSelectVal])
-
-    if (isArray(volume)) setTradingVolume([{ ...volume[0], day_time: time }])
-  }
-
-  const memoCombineData = useMemo(() => [...tradingData, ...tradingVolume], [tradingData, tradingVolume])
-
-  useInterval(() => {
-    void getTradingVolumeDataFunc()
-  }, 10000)
+  const combineDAT = useMemo(() => {
+    let output
+    if (!isLoading && tradingVolume) {
+      // console.info({ day_time: time, ...data[0] })
+      output = { day_time: time, ...tradingVolume[0] }
+    }
+    return [...tradingData, output]
+  }, [tradingData, isLoading, tradingVolume])
 
   useEffect(() => {
-    void getHistoryTradingDataCb()
-  }, [getHistoryTradingDataCb, timeSelectVal, pairSelectVal])
+    void historyDAT()
+  }, [historyDAT, timeSelectVal, pairSelectVal])
 
   useEffect(() => {
-    void getTradingVolumeDataFunc()
+    void refetch()
   }, [pairSelectVal])
 
   return (
@@ -60,7 +65,7 @@ const TradingVolume: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.TradingVolume', 'Trading Volume')} :
-          <BalanceShow value={tradingVolume[0]?.trading_amount ?? 0} unit={BASE_TOKEN_SYMBOL} />
+          <BalanceShow value={tradingVolume?.[0]?.trading_amount ?? 0} unit={marginToken} />
         </h3>
         <aside>
           <Select
@@ -86,7 +91,7 @@ const TradingVolume: FC = () => {
         {/*/>*/}
         <BarChart
           chartId="PositionVolume"
-          data={memoCombineData}
+          data={combineDAT}
           xKey="day_time"
           enableLegend={false}
           timeFormatStr={timeSelectVal !== '1D' ? 'MM/DD' : 'HH:mm'}

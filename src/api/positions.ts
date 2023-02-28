@@ -6,8 +6,8 @@ export const getCurrentPositionsAmount = async (tokenAddr: string, marginToken: 
   return response
 }
 
-export const getHistoryPositionsData = async (tokenAddr: string, days: number) => {
-  const response = await get(`api/history_positions_amount/${tokenAddr}/${days}`)
+export const getHistoryPositionsData = async (tokenAddr: string, days: number, address: string) => {
+  const response = await get(`api/history_positions_amount/${tokenAddr}/${days}/${address}`)
   return response
 }
 
@@ -33,8 +33,8 @@ export const getTraderEDRFBalance = async (trader: string) => {
   return response
 }
 
-export const getTraderBondBalance = async (trader: string) => {
-  const response = await get(`api/trader_latest_bond_balance/${trader}`)
+export const getTraderBondBalance = async (trader: string, address: string) => {
+  const response = await get(`api/trader_latest_bond_balance/${trader}/${address}`)
   return response
 }
 

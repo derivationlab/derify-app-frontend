@@ -104,7 +104,7 @@ export const useInitialDAT = () => {
 
   useEffect(() => {
     if (!positionsDATIsLoading && positionsDAT) {
-      updatePositionsAmount(positionsDAT.data)
+      updatePositionsAmount(positionsDAT)
     }
   }, [positionsDATIsLoading, positionsDAT])
 

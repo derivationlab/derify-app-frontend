@@ -1,14 +1,17 @@
 import numeral from 'numeral'
 import PubSub from 'pubsub-js'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
 
 import { isGT } from '@/utils/tools'
+import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf1 } from '@/hooks/useMatchConf'
+import { useTraderBondBalance } from '@/hooks/useQueryApi'
 import { useMarginToken, useQuoteToken } from '@/zustand'
 import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useEarning'
 
@@ -24,6 +27,7 @@ import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
 
 const EranbDRFPool: FC = () => {
   const { t } = useTranslation()
+  const { data } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -36,6 +40,7 @@ const EranbDRFPool: FC = () => {
   const { exchange } = useExchangeBond()
   const { withdraw } = useWithdrawAllBond()
   const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
+  const { data: bondBalance } = useTraderBondBalance(data?.address, findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -83,8 +88,8 @@ const EranbDRFPool: FC = () => {
   }
 
   const memoDisabled = useMemo(() => {
-    return isGT(rewardsInfo?.bondBalance ?? 0, 0)
-  }, [rewardsInfo])
+    return isGT(bondBalance?.data ?? 0, 0)
+  }, [bondBalance])
 
   const memoAPY = useMemo(() => {
     return numeral((rewardsInfo?.bondAnnualInterestRatio ?? 0) * 100).format('0.00')
@@ -147,7 +152,7 @@ const EranbDRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow value={rewardsInfo?.bondBalance ?? 0} unit={`b${marginToken}`} decimal={4} />
+              <BalanceShow value={bondBalance?.data ?? 0} unit={`b${marginToken}`} decimal={4} />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} : <strong>{rewardsInfo?.exchangeable ?? 0}</strong>{' '}

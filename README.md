@@ -25,3 +25,6 @@ broker里的资金单位显示数据显示
 路由链接带上保证金名字
 
 bbusd的完整信息；
+
+/Users/wugongwei/1-project/derify-app-frontend/src/pages/web/Data/c/TradingVolume.tsx 接口是否少了marginToken
+getCurrentTradingAmount

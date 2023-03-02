@@ -20,16 +20,18 @@ const initialState: TraderState = {
   brokerBoundLoaded: false
 }
 
+// done
 export const getBrokerBaseInfoAsync = (trader: string) => async (dispatch: Dispatch) => {
   const { data } = await getBrokerInfoByAddr(trader)
   dispatch(updateBrokerBaseInfo(data))
 }
-
+// done
 export const getBrokerValidPeriodDataAsync = (trader: string) => async (dispatch: Dispatch) => {
   const period = await getBrokerValidPeriodData(trader)
   dispatch(updateValidPeriodDays(period))
 }
 
+// done
 export const getTraderDataAsync = createAsyncThunk(
   'TraderData/getTraderDataAsync',
   async (params: Record<string, any>) => {
@@ -39,12 +41,12 @@ export const getTraderDataAsync = createAsyncThunk(
     return { ...data1, ...data2 }
   }
 )
-
+// done
 export const getBrokerDataAsync = createAsyncThunk('TraderData/getBrokerDataAsync', async (trader: string) => {
   const data = await getTraderAsBrokerData(trader)
   return data
 })
-
+// done
 export const getBrokerBoundDataAsync = createAsyncThunk(
   'TraderData/getBrokerBoundDataAsync',
   async (trader: string) => {
@@ -52,19 +54,19 @@ export const getBrokerBoundDataAsync = createAsyncThunk(
     return data
   }
 )
-
+// done
 export const getPMRewardDataAsync = createAsyncThunk('TraderData/getPMRewardDataAsync', async (trader: string) => {
   const data = await getPMRewardData(trader)
   // console.info(data)
   return data
 })
-
+// done
 export const getBondInfoDataAsync = createAsyncThunk('TraderData/getBondInfoDataAsync', async (trader: string) => {
   const data = await getBondInfoData(trader)
   // console.info(data)
   return data
 })
-
+// done
 export const getStakingInfoDataAsync = createAsyncThunk(
   'TraderData/getStakingInfoDataAsync',
   async (trader: string) => {

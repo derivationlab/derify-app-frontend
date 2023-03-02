@@ -107,3 +107,11 @@ export interface PoolsInfoState {
   updateBondPoolBalance: (p: string) => void
   updatePositionsAmount: (p: Rec) => void
 }
+
+export interface BrokerInfoState{
+  brokerInfo: Rec
+  brokerAssets: Rec
+  brokerInfoLoaded: boolean
+  updateBrokerAssets: (p: Rec) => void
+  fetchBrokerInfoByAddr: (account: string) => Promise<void>
+}

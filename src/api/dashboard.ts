@@ -26,7 +26,6 @@ export const getCurrentInsuranceData = async (address: string) => {
 }
 
 export const getCurrentTradingAmount = async (address: string, marginToken: string) => {
-  const response = await get(`api/current_trading_amount/${address}`)
-  // const response = await get(`api/current_trading_amount/${address}/${marginToken}`)
+  const response = await get(`api/current_trading_amount/${address}/${marginToken}`)
   return response
 }

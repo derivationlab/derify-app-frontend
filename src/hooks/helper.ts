@@ -8,6 +8,7 @@ import { PositionSide } from '@/store/contract/helper'
 import { getDerifyProtocolAddress } from '@/utils/addressHelpers'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {
+  getDerifyBrokerContract,
   getDerifyDerivativePairContract,
   getDerifyExchangeContract1,
   getDerifyProtocolContract,
@@ -28,6 +29,7 @@ import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
+import { getBrokerValidPeriodData } from '@/store/trader/helper'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -199,18 +201,9 @@ export const getTraderVariables = async (trader: string, exchange: string): Prom
     const response = await multicall(DerifyExchangeAbi, calls)
 
     if (!isEmpty(response)) {
-      const { balance, totalMargin, availableMargin } = response[0]
-      const { marginRate, marginBalance, totalPositionAmount } = response[1]
-
-      // console.info('getTraderVariables:')
-      // console.info({
-      //         balance: safeInterceptionValues(balance),
-      //         marginRate: safeInterceptionValues(marginRate, 4),
-      //         totalMargin: safeInterceptionValues(totalMargin),
-      //         marginBalance: safeInterceptionValues(marginBalance),
-      //         availableMargin: safeInterceptionValues(availableMargin, 8),
-      //         totalPositionAmount: safeInterceptionValues(totalPositionAmount),
-      //       })
+      const [getTraderAccount, getTraderVariables] = response
+      const { balance, totalMargin, availableMargin } = getTraderAccount
+      const { marginRate, marginBalance, totalPositionAmount } = getTraderVariables
 
       return {
         balance: safeInterceptionValues(balance),
@@ -481,10 +474,10 @@ export const getTraderRewardDAT = async (trader: string, reward: string): Promis
   if (!isEmpty(response)) {
     const [getPositionReward, getBondInfo, getExchangeBondSizeUpperBound, bankBondPool] = response
 
-    const [bankBalance] = bankBondPool
-    const [maxBondSize] = getExchangeBondSizeUpperBound
-    const [bondAnnualInterestRatio, bondBalance, bondReturnBalance, bondWalletBalance] = getBondInfo
-    const [drfAccumulatedBalance, drfBalance, marginTokenAccumulatedBalance, marginTokenBalance] = getPositionReward
+    const { bankBalance } = bankBondPool
+    const { maxBondSize } = getExchangeBondSizeUpperBound
+    const { bondAnnualInterestRatio, bondBalance, bondReturnBalance, bondWalletBalance } = getBondInfo
+    const { drfAccumulatedBalance, drfBalance, marginTokenAccumulatedBalance, marginTokenBalance } = getPositionReward
     console.info('bondBalance:', safeInterceptionValues(bondBalance, 8))
     output = {
       drfBalance: safeInterceptionValues(drfBalance, 8),
@@ -543,4 +536,33 @@ export const getBankBDRFPoolDAT = async (reward: string) => {
   const c = getDerifyRewardsContract1(reward)
   const d = await c.bankBondPool()
   return safeInterceptionValues(String(d), 8)
+}
+
+export const getBrokerInfo = async (trader: string) => {
+  const base = {
+    isBroker: false,
+    usdRewardBalance: '0',
+    drfRewardBalance: '0',
+    accumulatedDrfReward: '0',
+    accumulatedUsdReward: '0',
+  }
+  const c = getDerifyBrokerContract()
+
+  try {
+    const res = await c.getBrokerInfo(trader)
+    console.info(res)
+    const { usdRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedUsdReward } = res
+
+    return {
+      isBroker: true,
+      usdRewardBalance: safeInterceptionValues(usdRewardBalance),
+      drfRewardBalance: safeInterceptionValues(drfRewardBalance),
+      accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
+      accumulatedUsdReward: safeInterceptionValues(accumulatedUsdReward)
+    }
+  } catch (e) {
+    // DBroker: GBI_NOT_BROKER
+    console.info(e)
+    return base
+  }
 }

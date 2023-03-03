@@ -1,67 +1,43 @@
-import { isEmpty } from 'lodash'
-import { useSigner } from 'wagmi'
-import { useParams } from 'react-router-dom'
-import { useCallback, useMemo } from 'react'
-
-import { OpeningType } from '@/zustand/useCalcOpeningDAT'
-import { calcProfitOrLoss } from '@/hooks/helper'
-import {
-  bnDiv,
-  bnMul,
-  formatUnits,
-  getDecimalAmount,
-  inputParameterConversion,
-  nonBigNumberInterception
-} from '@/utils/tools'
-import { OrderTypes, PositionSide } from '@/store/contract/helper'
-import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import tokens, { BASE_TOKEN_SYMBOL, findMarginToken, findToken, MARGIN_TOKENS } from '@/config/tokens'
-import {
-  getDerifyBrokerContract,
-  getDerifyDerivativePairContract,
-  getDerifyExchangeContract1
-} from '@/utils/contractHelpers'
-import { getAddress, getDerifyBrokerAddress, getDerifyProtocolAddress } from '@/utils/addressHelpers'
-import { MarginTokenWithContract } from '@/typings'
-import { useQueryMulticall } from '@/hooks/useQueryContract'
-import DerifyBrokerAbi from '@/config/abi/DerifyBroker.json'
-import { initial } from '@/hooks/useProtocolConfig'
 import { Signer } from 'ethers'
+import { isEmpty } from 'lodash'
+import { useCallback } from 'react'
+
+import tokens from '@/config/tokens'
+import { setAllowance } from '@/utils/practicalMethod'
+import { useQueryMulticall } from '@/hooks/useQueryContract'
+import { getDerifyBrokerAddress } from '@/utils/addressHelpers'
+import { getDerifyBrokerContract } from '@/utils/contractHelpers'
+import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
+
+import DerifyBrokerAbi from '@/config/abi/DerifyBroker.json'
 
 export const useApplyBroker = () => {
-  const { data: signer } = useSigner()
+  const applyBroker = useCallback(async (burnLimitAmount: string, signer: Signer): Promise<boolean> => {
+    if (!signer) return false
 
-  const applyBroker = useCallback(
-    async (burnLimitAmount: string): Promise<boolean> => {
-      if (!signer) return false
+    const c = getDerifyBrokerContract(signer)
+    const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 8)
 
-      const c = getDerifyBrokerContract(signer)
-      const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 8)
+    try {
+      const approve = await setAllowance(signer, getDerifyBrokerAddress(), tokens.edrf.tokenAddress, _burnLimitAmount)
 
-      try {
-        const approve = await setAllowance(signer, getDerifyBrokerAddress(), tokens.edrf.tokenAddress, _burnLimitAmount)
+      if (!approve) return false
 
-        if (!approve) return false
+      const response = await c.applyBroker()
+      const receipt = await response.wait()
 
-        const response = await c.applyBroker()
-        const receipt = await response.wait()
-
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }, [])
 
   return { applyBroker }
 }
 
 export const useWithdrawReward = () => {
-  const { data: signer } = useSigner()
-
-  const withdraw = useCallback(async (): Promise<boolean> => {
+  const withdraw = useCallback(async (signer: Signer): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyBrokerContract(signer)
@@ -75,37 +51,30 @@ export const useWithdrawReward = () => {
       console.info(e)
       return false
     }
-  }, [signer])
+  }, [])
 
   return { withdraw }
 }
 
 export const useExtendPeriod = () => {
-  const { data: signer } = useSigner()
+  const extend = useCallback(async (amount: string, signer: Signer): Promise<boolean> => {
+    const c = getDerifyBrokerContract(signer)
+    const _amount = inputParameterConversion(amount, 8)
 
-  const extend = useCallback(
-    async (amount: string): Promise<boolean> => {
-      if (!signer) return false
+    try {
+      const approve = await setAllowance(signer, getDerifyBrokerAddress(), tokens.edrf.tokenAddress, amount)
 
-      const c = getDerifyBrokerContract(signer)
-      const _amount = inputParameterConversion(amount, 8)
+      if (!approve) return false
 
-      try {
-        const approve = await setAllowance(signer, getDerifyBrokerAddress(), tokens.edrf.tokenAddress, amount)
+      const response = await c.burnEdrfExtendValidPeriod(_amount)
+      const receipt = await response.wait()
 
-        if (!approve) return false
-
-        const response = await c.burnEdrfExtendValidPeriod(_amount)
-        const receipt = await response.wait()
-
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }, [])
 
   return { extend }
 }

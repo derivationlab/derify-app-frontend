@@ -98,7 +98,7 @@ const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
 
 const Transaction: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
-  
+
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
@@ -116,7 +116,7 @@ const Transaction: FC = () => {
 
   const pageChange = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-    
+
     void fetchData(index)
   }
 

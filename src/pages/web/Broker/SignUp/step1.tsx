@@ -1,5 +1,5 @@
 import PubSub from 'pubsub-js'
-import { useAccount } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useMemo, useState } from 'react'
@@ -16,6 +16,7 @@ const BrokerSignUpStep1: FC = () => {
   const history = useHistory()
 
   const { t } = useTranslation()
+  const { data: signer } = useSigner()
   const { data: account } = useAccount()
 
   const { applyBroker } = useApplyBroker()
@@ -31,22 +32,24 @@ const BrokerSignUpStep1: FC = () => {
 
     setLoading(true)
 
-    const status = await applyBroker(brokerParams.burnLimitAmount)
+    if (signer) {
+      const status = await applyBroker(brokerParams.burnLimitAmount, signer)
 
-    if (status) {
-      // succeed
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+      if (status) {
+        // succeed
+        PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
 
-      history.push('/broker/sign-up/step2')
-    } else {
-      // failed
-      window.toast.error(t('common.failed', 'failed'))
+        history.push('/broker/sign-up/step2')
+      } else {
+        // failed
+        window.toast.error(t('common.failed', 'failed'))
+      }
     }
 
     setLoading(false)
 
     window.toast.dismiss(toast)
-  }, [account?.address])
+  }, [account?.address, signer])
 
   const memoDisabled = useMemo(() => {
     return (

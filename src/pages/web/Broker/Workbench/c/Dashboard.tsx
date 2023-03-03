@@ -6,26 +6,25 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useContext, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useTraderData } from '@/store/trader/hooks'
 import { MobileContext } from '@/context/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { useDashboardDAT } from '@/zustand/useDashboardDAT'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useWithdrawReward } from '@/hooks/useBroker'
 import { useMarginTokenFromRoute } from '@/hooks/useTrading'
 import { nonBigNumberInterception } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useSigner } from 'wagmi'
 
 const Dashboard: FC = () => {
   const { t } = useTranslation()
-  const { broker } = useTraderData()
+  const { data: signer } = useSigner()
+
   const { mobile } = useContext(MobileContext)
+  const { withdraw } = useWithdrawReward()
 
   const marginToken = useMarginTokenFromRoute()
-
-  const { withdraw } = useWithdrawReward()
 
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
   const brokerAssets = useBrokerInfo((state) => state.brokerAssets)
@@ -34,38 +33,40 @@ const Dashboard: FC = () => {
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    const status = await withdraw()
+    if (signer) {
+      const status = await withdraw(signer)
 
-    if (status) {
-      // succeed
-      window.toast.success(t('common.success', 'success'))
+      if (status) {
+        // succeed
+        window.toast.success(t('common.success', 'success'))
 
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
-    } else {
-      window.toast.error(t('common.failed', 'failed'))
-      // failed
+        PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+      } else {
+        window.toast.error(t('common.failed', 'failed'))
+        // failed
+      }
     }
 
     window.toast.dismiss(toast)
-  }, [])
+  }, [signer])
 
   const memoTotalBalance = useMemo(() => {
     const drf = String(brokerAssets?.drfRewardBalance ?? 0)
     const usd = String(brokerAssets?.usdRewardBalance ?? 0)
     return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]
-  }, [broker])
+  }, [brokerAssets])
 
   const memoHistoryBalance = useMemo(() => {
     const drf = String(brokerAssets?.accumulatedDrfReward ?? 0)
     const usd = String(brokerAssets?.accumulatedUsdReward ?? 0)
     return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]
-  }, [broker])
+  }, [brokerAssets])
 
   const memoTodayRewards = useMemo(() => {
     const drf_reward = new BN(brokerAssets?.drf_reward ?? 0).times(dashboardDAT?.drfPrice ?? 0)
     const rewards_plus = drf_reward.plus(brokerAssets?.usd_reward ?? 0).toString()
     return nonBigNumberInterception(rewards_plus)
-  }, [broker, dashboardDAT])
+  }, [brokerAssets, dashboardDAT])
 
   const memoDisabled = useMemo(() => {
     const [usd, drf] = memoTotalBalance

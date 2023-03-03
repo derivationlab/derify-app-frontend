@@ -50,7 +50,7 @@ const RowLastTransaction: FC<RowProps> = ({ text }) => (
 
 const Trader: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
-  
+
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
@@ -68,7 +68,7 @@ const Trader: FC = () => {
 
   const pageChange = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-    
+
     void fetchData(index)
   }
 

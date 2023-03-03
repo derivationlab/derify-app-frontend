@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import PubSub from 'pubsub-js'
 import classNames from 'classnames'
+import { useSigner } from 'wagmi'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useState, useMemo } from 'react'
@@ -20,6 +21,8 @@ const Info: FC = () => {
   const history = useHistory()
 
   const { t } = useTranslation()
+  const { data: signer } = useSigner()
+
   const { extend } = useExtendPeriod()
 
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
@@ -30,26 +33,31 @@ const Info: FC = () => {
     history.push('/broker-edit')
   }
 
-  const extendFunc = useCallback(async (amount: string) => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+  const extendFunc = useCallback(
+    async (amount: string) => {
+      const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    setVisibleStatus('')
+      setVisibleStatus('')
 
-    const status = await extend(amount)
+      if (signer) {
+        const status = await extend(amount, signer)
 
-    if (status) {
-      // succeed
-      window.toast.success(t('common.success', 'success'))
+        if (status) {
+          // succeed
+          window.toast.success(t('common.success', 'success'))
 
-      PubSub.publish(PubSubEvents.UPDATE_BALANCE)
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
-    } else {
-      // failed
-      window.toast.error(t('common.failed', 'failed'))
-    }
+          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+          PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+        } else {
+          // failed
+          window.toast.error(t('common.failed', 'failed'))
+        }
+      }
 
-    window.toast.dismiss(toast)
-  }, [])
+      window.toast.dismiss(toast)
+    },
+    [signer]
+  )
 
   const copyTextEv = () => {
     copyText(`${window.location.origin}/broker/${brokerInfo?.id}`).then((res) => {

@@ -96,7 +96,7 @@ const History: FC = () => {
 
   const pageChange = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-    
+
     void fetchData(index)
   }
 

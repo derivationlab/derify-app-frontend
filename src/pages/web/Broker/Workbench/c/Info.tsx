@@ -130,7 +130,7 @@ const Info: FC = () => {
               </dd>
             ) : (
               <dd>
-                {brokerInfo?.validPeriodDays}
+                {brokerInfo?.validPeriodDays ?? 0}
                 <small>{t('Broker.BV.days', 'days')}</small>
               </dd>
             )}

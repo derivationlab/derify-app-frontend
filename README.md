@@ -17,3 +17,5 @@ todo:
 . 保证金参数变为url-id;
 . brokers_rank_list 支持 marginToken;
 . 检测如果路由id不是marginToken，则跳转；
+. getBrokerInfo 分mt；
+. broker_reward_transactions 分mt；

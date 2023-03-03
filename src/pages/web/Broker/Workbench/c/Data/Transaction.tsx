@@ -1,14 +1,15 @@
-import React, { FC, useState, useMemo, useContext, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import Table from 'rc-table'
 import classNames from 'classnames'
-import { useAccount } from 'wagmi'
 import { isEmpty } from 'lodash'
+import { useAccount } from 'wagmi'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 
 import { BSC_SCAN_URL } from '@/config'
 import { MobileContext } from '@/context/Mobile'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { getBrokerRewardTx } from '@/api'
+import { reducer, stateInit } from '@/reducers/brokerTable'
 import { nonBigNumberInterception } from '@/utils/tools'
 
 import Pagination from '@/components/common/Pagination'
@@ -96,37 +97,34 @@ const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
 }
 
 const Transaction: FC = () => {
+  const [state, dispatch] = useReducer(reducer, stateInit)
+  
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [tradeFlow, setTradeFlow] = useState<Record<string, any>>({})
-  const [pageIndex, setPageIndex] = useState<number>(0)
-
-  const getBrokerRewardTxFunc = async (index = 0) => {
-    setTradeFlow({})
-    setIsLoading(true)
-
+  const fetchData = async (index = 0) => {
     if (account?.address) {
       const { data } = await getBrokerRewardTx(account.address, index, 10)
 
-      setTradeFlow(data)
+      dispatch({
+        type: 'SET_TABLE_DAT',
+        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+      })
     }
-
-    setIsLoading(false)
   }
 
-  const onPageChangeEv = (index: number) => {
-    setPageIndex(index)
-    void getBrokerRewardTxFunc(index)
+  const pageChange = (index: number) => {
+    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
+    
+    void fetchData(index)
   }
 
   const memoEmptyText = useMemo(() => {
-    if (isLoading) return 'Loading'
-    if (isEmpty(tradeFlow?.records)) return 'No Record'
+    if (state.tableDAT.isLoaded) return 'Loading'
+    if (isEmpty(state.tableDAT?.records)) return 'No Record'
     return ''
-  }, [isLoading, tradeFlow?.records])
+  }, [state.tableDAT])
 
   const mobileColumns = [
     {
@@ -159,7 +157,7 @@ const Transaction: FC = () => {
   ]
 
   useEffect(() => {
-    void getBrokerRewardTxFunc()
+    void fetchData()
   }, [])
 
   return (
@@ -168,10 +166,10 @@ const Transaction: FC = () => {
         className="web-broker-table"
         columns={mobile ? mobileColumns : webColumns}
         emptyText={memoEmptyText}
-        data={tradeFlow?.records ?? []}
+        data={state.tableDAT.records}
         rowKey="id"
       />
-      <Pagination page={pageIndex} total={tradeFlow?.totalItems ?? 0} onChange={onPageChangeEv} />
+      <Pagination page={state.pageIndex} total={state.tableDAT.totalItems} onChange={pageChange} />
     </>
   )
 }

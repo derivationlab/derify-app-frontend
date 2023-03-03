@@ -19,7 +19,7 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
   fetchBrokerBound: async (trader: string) => {
     const data = await getBrokerInfoByTrader(trader)
 
-    console.info(`fetchBrokerBound`)
+    // console.info(`fetchBrokerBound`)
     // console.info(data)
 
     set({ brokerBound: data?.data, brokerBoundLoaded: true })
@@ -38,18 +38,18 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
      * txs_num: 日交易笔数
      * traders_num: 日活用户数
      */
-    console.info(`fetchBrokerInfo`)
-    console.info(data1)
-    console.info(data2)
+    // console.info(`fetchBrokerInfo`)
+    // console.info(data1)
+    // console.info(data2)
     // console.info(data3.data)
-    console.info(data4)
+    // console.info(data4)
     // console.info(data5.data)
 
     set({
       brokerInfo: {
         ...data1?.data,
         ...data3?.data,
-        registerTime: data4?.data, // todo check 字段更名
+        registerTime: data4?.data,
         validPeriodDays: data2?.data
       },
       brokerInfoLoaded: true

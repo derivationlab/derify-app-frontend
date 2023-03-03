@@ -195,6 +195,7 @@ const Web: FC = () => {
             <Route path="/broker-bind/list" render={() => handleBrokerBindList} />
             <Route path="/:id/broker-rank" exact component={BrokerRank} />
             <Route path="/broker-workbench" render={() => handleBrokerWorkbench} />
+            <Route path="/:id/broker-workbench" render={() => handleBrokerWorkbench} />
           </>
         )}
 

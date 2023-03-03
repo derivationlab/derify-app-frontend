@@ -31,7 +31,7 @@ const Dashboard: FC = () => {
   const brokerAssets = useBrokerInfo((state) => state.brokerAssets)
   const dashboardDAT = useDashboardDAT((state) => state.dashboardDAT)
 
-  const withdrawRewardsCb = useCallback(async () => {
+  const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     const status = await withdraw()
@@ -77,19 +77,20 @@ const Dashboard: FC = () => {
       <div className="web-broker-dashboard-balance">
         <section>
           <h3>{t('Broker.BV.BrokerAccountBalance', 'Broker Account Balance')}</h3>
-          <BalanceShow value={memoTotalBalance[0]} unit={BASE_TOKEN_SYMBOL} />
+          <BalanceShow value={memoTotalBalance[0]} unit={marginToken} />
           <BalanceShow value={memoTotalBalance[1]} unit="DRF" />
           <p
             dangerouslySetInnerHTML={{
               __html: t('Broker.BV.EarnedTip', '', {
-                [BASE_TOKEN_SYMBOL]: memoHistoryBalance[0],
+                Amount: memoHistoryBalance[0],
+                Margin: marginToken,
                 DRF: memoHistoryBalance[1],
                 time: brokerInfo?.registerTime ? dayjs(brokerInfo?.registerTime).format('MMM DD, YYYY') : '--'
               })
             }}
           />
         </section>
-        <Button size={mobile ? 'mini' : 'default'} onClick={withdrawRewardsCb} disabled={!memoDisabled}>
+        <Button size={mobile ? 'mini' : 'default'} onClick={withdrawFunc} disabled={!memoDisabled}>
           {t('Broker.BV.ClaimAll', 'Claim All')}
         </Button>
       </div>
@@ -99,7 +100,7 @@ const Dashboard: FC = () => {
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>
               <section>
-                <BalanceShow value={memoTodayRewards} unit={BASE_TOKEN_SYMBOL} />
+                <BalanceShow value={memoTodayRewards} unit={marginToken} />
               </section>
               <footer>
                 <Link to={`/${marginToken}/broker-rank`}>
@@ -125,7 +126,7 @@ const Dashboard: FC = () => {
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>
               <section>
-                <BalanceShow value={memoTodayRewards} unit={BASE_TOKEN_SYMBOL} />
+                <BalanceShow value={memoTodayRewards} unit={marginToken} />
               </section>
               <footer
                 dangerouslySetInnerHTML={{

@@ -1,17 +1,15 @@
-import BN from 'bignumber.js'
-import React, { FC, useEffect, useState, useMemo, useContext } from 'react'
+import Table from 'rc-table'
 import { isEmpty } from 'lodash'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import Table from 'rc-table'
+import React, { FC, useEffect, useState, useMemo, useContext, useReducer } from 'react'
 
 import { BSC_SCAN_URL } from '@/config'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { getBrokerAccountFlow } from '@/api'
-import { getDecimalAmount, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
-import { useConstantData } from '@/store/constant/hooks'
-
 import { MobileContext } from '@/context/Mobile'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { reducer, stateInit } from '@/reducers/brokerTable'
+import { getBrokerAccountFlow } from '@/api'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 import Pagination from '@/components/common/Pagination'
 
@@ -79,42 +77,37 @@ const RowBalance: FC<Record<string, any>> = ({ text = 0, coin = BASE_TOKEN_SYMBO
 
 // loading ui todo
 const History: FC = () => {
+  const [state, dispatch] = useReducer(reducer, stateInit)
+
   const { t } = useTranslation()
-  const { indicator } = useConstantData()
-
-  const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
+  const { data: account } = useAccount()
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [tradeFlow, setTradeFlow] = useState<Record<string, any>>({})
-  const [pageIndex, setPageIndex] = useState<number>(0)
-
-  const getBrokerAccountFlowFunc = async (index = 0) => {
-    setTradeFlow({})
-    setIsLoading(true)
-
+  const fetchData = async (index = 0) => {
     if (account?.address) {
-      const { data } = await getBrokerAccountFlow(account.address, index, 10)
+      const { data } = await getBrokerAccountFlow('0x34D2F68529CCE3080A2eF473BC35Fa95FFaB4589', index, 10)
 
-      setTradeFlow(data)
+      dispatch({
+        type: 'SET_TABLE_DAT',
+        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+      })
     }
-
-    setIsLoading(false)
   }
 
-  const onPageChangeEv = (index: number) => {
-    setPageIndex(index)
-    void getBrokerAccountFlowFunc(index)
+  const pageChange = (index: number) => {
+    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
+    
+    void fetchData(index)
   }
 
   const memoEmptyText = useMemo(() => {
-    if (isLoading) return 'Loading'
-    if (isEmpty(tradeFlow?.records)) return 'No Record'
+    if (state.tableDAT.isLoaded) return 'Loading'
+    if (isEmpty(state.tableDAT?.records)) return 'No Record'
     return ''
-  }, [isLoading, tradeFlow?.records])
+  }, [state.tableDAT])
 
   useEffect(() => {
-    void getBrokerAccountFlowFunc()
+    void fetchData()
   }, [])
 
   const mobileColums = [
@@ -172,10 +165,10 @@ const History: FC = () => {
         className="web-broker-table"
         columns={mobile ? mobileColums : webColumns}
         emptyText={memoEmptyText}
-        data={tradeFlow?.records ?? []}
+        data={state.tableDAT.records}
         rowKey="id"
       />
-      <Pagination page={pageIndex} total={tradeFlow?.totalItems ?? 0} onChange={onPageChangeEv} />
+      <Pagination page={state.pageIndex} total={state.tableDAT.totalItems} onChange={pageChange} />
     </>
   )
 }

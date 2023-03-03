@@ -544,19 +544,27 @@ export const getBrokerInfo = async (trader: string) => {
     usdRewardBalance: '0',
     drfRewardBalance: '0',
     accumulatedDrfReward: '0',
-    accumulatedUsdReward: '0',
+    accumulatedUsdReward: '0'
   }
   const c = getDerifyBrokerContract()
 
   try {
     const res = await c.getBrokerInfo(trader)
-    console.info(res)
-    const { usdRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedUsdReward } = res
 
+    const { usdRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedUsdReward, validPeriodInBlocks } = res
+    // console.info({
+    //   isBroker: true,
+    //   usdRewardBalance: safeInterceptionValues(usdRewardBalance),
+    //   drfRewardBalance: safeInterceptionValues(drfRewardBalance),
+    //   validPeriodInBlocks: Number(validPeriodInBlocks),
+    //   accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
+    //   accumulatedUsdReward: safeInterceptionValues(accumulatedUsdReward)
+    // })
     return {
       isBroker: true,
       usdRewardBalance: safeInterceptionValues(usdRewardBalance),
       drfRewardBalance: safeInterceptionValues(drfRewardBalance),
+      validPeriodInBlocks: Number(validPeriodInBlocks),
       accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
       accumulatedUsdReward: safeInterceptionValues(accumulatedUsdReward)
     }

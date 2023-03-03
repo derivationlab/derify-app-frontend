@@ -13,12 +13,15 @@ import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 
 import Tool from './Tool'
 import MHeader from './MHeader'
+import { useMarginToken } from '@/zustand'
 
 const Header: FC = () => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { pathname: P } = useLocation()
   const { mobile } = useContext(MobileContext)
+
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const handleNavLinkEv = (e: any) => {
     if (!account?.address && /^\/broker\/[0-9a-zA-Z_@$]+$/.test(P)) {
@@ -34,16 +37,20 @@ const Header: FC = () => {
           <a href={WEBSITE_URL}>Derify protocol</a>
         </h1>
         <nav className="web-header-nav">
-          <NavLink to="/trade" onClick={handleNavLinkEv}>
+          <NavLink to={`/${marginToken}/trade`} onClick={handleNavLinkEv}>
             {t('Nav.Nav.Trade', 'Trade')}
           </NavLink>
-          <NavLink to="/earn" onClick={handleNavLinkEv}>
+          <NavLink to={`/${marginToken}/earn`} onClick={handleNavLinkEv}>
             {t('Nav.Nav.Earn', 'Earn')}
           </NavLink>
-          <NavLink to="/data" onClick={handleNavLinkEv}>
+          <NavLink to={`/${marginToken}/data`} onClick={handleNavLinkEv}>
             {t('Nav.Nav.Data', 'Data')}
           </NavLink>
-          <NavLink to="/broker" className={classNames({ active: P.indexOf('broker') > -1 })} onClick={handleNavLinkEv}>
+          <NavLink
+            to={`/broker`}
+            className={classNames({ active: P.indexOf('broker') > -1 })}
+            onClick={handleNavLinkEv}
+          >
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>
           <span className={classNames({ active: P.indexOf('dashboard') > -1 })}>

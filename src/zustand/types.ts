@@ -14,6 +14,7 @@ export interface BalancesState {
 }
 
 export interface ConfigInfoState {
+  brokerParams: { burnLimitAmount: string; burnLimitPerDay: string }
   mTokenPrices: MarginToken
   openingMinLimit: MarginToken
   openingMaxLimit: MarginTokenWithQuote
@@ -29,6 +30,7 @@ export interface ConfigInfoState {
   updateOpeningMinLimit: (p: MarginToken) => void
   updateMTokenPrices: (p: MarginToken) => void
   updateOpeningMaxLimit: (p: MarginTokenWithQuote) => void
+  updateBrokerParams: (p: Rec) => void
 }
 
 export interface MarginTokenState {
@@ -108,10 +110,13 @@ export interface PoolsInfoState {
   updatePositionsAmount: (p: Rec) => void
 }
 
-export interface BrokerInfoState{
+export interface BrokerInfoState {
   brokerInfo: Rec
+  brokerBound: Rec
   brokerAssets: Rec
+  brokerBoundLoaded: boolean
   brokerInfoLoaded: boolean
   updateBrokerAssets: (p: Rec) => void
-  fetchBrokerInfoByAddr: (account: string) => Promise<void>
+  fetchBrokerInfo: (account: string) => Promise<void>
+  fetchBrokerBound: (account: string) => Promise<void>
 }

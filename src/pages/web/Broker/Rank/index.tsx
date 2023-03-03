@@ -1,15 +1,18 @@
-import React, { FC, useCallback, useEffect, useState, useMemo, useContext } from 'react'
 import Table from 'rc-table'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
 
-import { getBrokersRankList } from '@/api'
+import { findToken } from '@/config/tokens'
 import { MobileContext } from '@/context/Mobile'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { useMarginToken } from '@/zustand'
+import { getBrokersRankList } from '@/api'
+import { reducer, stateInit } from '@/reducers/brokerRank'
 import { nonBigNumberInterception } from '@/utils/tools'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
+import { useMarginTokenFromRoute } from '@/hooks/useTrading'
 
 interface RowTextProps {
   value: string | number
@@ -34,35 +37,37 @@ const RowText: FC<RowTextProps> = ({ value, unit }) => (
 )
 
 const Rank: FC = () => {
+  const [state, dispatch] = useReducer(reducer, stateInit)
+
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const [brokerList, setBrokerList] = useState<Record<string, any>>({})
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [pageIndex, setPageIndex] = useState<number>(0)
+  const marginToken = useMarginTokenFromRoute()
 
-  const getBrokersListCb = useCallback(async (index = 0) => {
-    setBrokerList({})
-    setIsLoading(true)
-    const { data } = await getBrokersRankList(index, 10)
+  const fetchData = useCallback(async (index = 0) => {
+    const { data } = await getBrokersRankList(index, 10, findToken(marginToken).tokenAddress)
+
     console.info(data)
 
-    setBrokerList(data)
-    setIsLoading(false)
+    dispatch({
+      type: 'SET_RANK_DAT',
+      payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+    })
   }, [])
 
-  const onPageChangeEv = (index: number) => {
-    setPageIndex(index)
-    void getBrokersListCb(index)
+  const pageChange = (index: number) => {
+    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
+
+    void fetchData(index)
   }
 
-  const memoEmptyText = useMemo(() => {
-    if (isLoading) return 'Loading'
-    if (isEmpty(brokerList?.records)) return 'No Record'
+  const emptyText = useMemo(() => {
+    if (state.rankData.isLoaded) return 'Loading'
+    if (isEmpty(state.rankData.records)) return 'No Record'
     return ''
-  }, [isLoading, brokerList?.records])
+  }, [state.rankData])
 
-  const mobileColumns = [
+  const mColumns = [
     {
       title: t('Broker.RankList.Name', 'Name'),
       dataIndex: 'name',
@@ -77,21 +82,20 @@ const Rank: FC = () => {
     }
   ]
 
-  const webColumns = [
-    mobileColumns[0],
+  const wColumns = [
+    mColumns[0],
     {
       title: t('Broker.RankList.TotalRewards', 'Total Rewards'),
       dataIndex: '',
       width: 250,
       render: (_: string, data: Record<string, any>) => {
-        const usd = String(data?.accumulated_usd_reward)
-        const accumulated_usd_reward = nonBigNumberInterception(usd)
-        const drf = String(data?.accumulated_drf_reward)
-        const accumulated_drf_reward = nonBigNumberInterception(drf)
+        const { accumulated_margin_token_reward = 0, accumulated_drf_reward = 0 } = data ?? {}
+        const drf = nonBigNumberInterception(accumulated_drf_reward)
+        const margin = nonBigNumberInterception(accumulated_margin_token_reward)
         return (
           <>
-            <RowText value={accumulated_usd_reward} unit={BASE_TOKEN_SYMBOL} />
-            <RowText value={accumulated_drf_reward} unit="DRF" />
+            <RowText value={margin} unit={marginToken} />
+            <RowText value={drf} unit="DRF" />
           </>
         )
       }
@@ -101,14 +105,13 @@ const Rank: FC = () => {
       dataIndex: '',
       width: 250,
       render: (_: string, data: Record<string, any>) => {
-        const usd = String(data?.today_usd_reward)
-        const today_usd_reward = nonBigNumberInterception(usd)
-        const drf = String(data?.today_drf_reward)
-        const today_drf_reward = nonBigNumberInterception(drf)
+        const { today_margin_token_reward = 0, today_drf_reward = 0 } = data ?? {}
+        const margin = nonBigNumberInterception(today_margin_token_reward)
+        const drf = nonBigNumberInterception(today_drf_reward)
         return (
           <>
-            <RowText value={today_usd_reward} unit={BASE_TOKEN_SYMBOL} />
-            <RowText value={today_drf_reward} unit="DRF" />
+            <RowText value={margin} unit={marginToken} />
+            <RowText value={drf} unit="DRF" />
           </>
         )
       }
@@ -119,11 +122,11 @@ const Rank: FC = () => {
       width: 220,
       render: (text: string) => <RowText value={text} />
     },
-    mobileColumns[1]
+    mColumns[1]
   ]
 
   useEffect(() => {
-    void getBrokersListCb()
+    void fetchData()
   }, [])
 
   return (
@@ -131,12 +134,12 @@ const Rank: FC = () => {
       <h2>{t('Broker.RankList.BrokerRank', 'Broker Rank')}</h2>
       <Table
         className="web-broker-table"
-        emptyText={memoEmptyText}
-        columns={mobile ? mobileColumns : webColumns}
-        data={brokerList?.records ?? []}
+        emptyText={emptyText}
+        columns={mobile ? mColumns : wColumns}
+        data={state.rankData.records}
         rowKey="id"
       />
-      <Pagination page={pageIndex} total={brokerList?.totalItems ?? 0} onChange={onPageChangeEv} />
+      <Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />
     </div>
   )
 }

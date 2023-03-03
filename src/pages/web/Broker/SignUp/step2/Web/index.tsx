@@ -1,19 +1,21 @@
-import React, { FC, useContext, useEffect } from 'react'
+import PubSub from 'pubsub-js'
+import { isEmpty } from 'lodash'
+import { useAccount } from 'wagmi'
+import { useTranslation } from 'react-i18next'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useAccount } from 'wagmi'
-import { isEmpty } from 'lodash'
-import { useTranslation } from 'react-i18next'
+import React, { FC, useContext, useEffect } from 'react'
+
+import ThemeContext from '@/context/Theme/Context'
+import { PubSubEvents } from '@/typings'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { API_PREFIX_URL } from '@/config'
+import { SelectLangOptions } from '@/data'
 import { getBrokerInfoById, updateBrokerInfo } from '@/api'
-import { useAppDispatch } from '@/store'
-import { useTraderData } from '@/store/trader/hooks'
-import { getBrokerBaseInfoAsync } from '@/store/trader'
+import { defaultValues, FormInputProps, patterns, rules } from '../config'
+
 import Button from '@/components/common/Button'
 import { Form, FormInput, FormItem, FormSelect, FormUploadImage } from '@/components/common/Form'
-import { defaultValues, FormInputProps, patterns, rules } from '../config'
-import { SelectLangOptions } from '@/data'
-import ThemeContext from '@/context/Theme/Context'
-import { API_PREFIX_URL } from '@/config'
 
 export const AccountTip: FC = () => {
   const { t } = useTranslation()
@@ -27,14 +29,17 @@ export const AccountTip: FC = () => {
 
 const BrokerSignUpStep2: FC = () => {
   const history = useHistory()
-  const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
   const { pathname } = useLocation()
   const { data: account } = useAccount()
-  const { broker, brokerLoaded } = useTraderData()
+
   const formMode = useForm({ defaultValues })
   const { handleSubmit, setValue } = formMode
+
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
 
   const goSubmit: SubmitHandler<FormInputProps> = async (form: FormInputProps) => {
     // console.log(form)
@@ -103,13 +108,14 @@ const BrokerSignUpStep2: FC = () => {
     })
 
     if (data.code === 0) {
-      if (account?.address) dispatch(getBrokerBaseInfoAsync(account?.address))
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+
       history.push('/broker/sign-up/step3')
     }
   }
 
   useEffect(() => {
-    if (pathname === '/broker-edit' && brokerLoaded && !isEmpty(broker)) {
+    if (pathname === '/broker-edit' && brokerInfoLoaded && !isEmpty(brokerInfo)) {
       const {
         id,
         logo,
@@ -122,7 +128,7 @@ const BrokerSignUpStep2: FC = () => {
         reddit,
         wechat,
         introduction
-      } = broker
+      } = brokerInfo
 
       if (logo) {
         const index = logo.lastIndexOf('/')
@@ -142,7 +148,7 @@ const BrokerSignUpStep2: FC = () => {
     } else {
       setValue('language', 'English')
     }
-  }, [pathname, broker, brokerLoaded])
+  }, [pathname, brokerInfo, brokerInfoLoaded])
 
   useEffect(() => {
     if (account?.address) setValue('broker', account.address)

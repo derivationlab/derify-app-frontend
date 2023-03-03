@@ -1,26 +1,27 @@
-import { useAccount } from 'wagmi'
+import PubSub from 'pubsub-js'
 import { isEmpty } from 'lodash'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import { useHistory, useLocation } from 'react-router-dom'
 import React, { FC, useState, useEffect } from 'react'
-import { SelectLangOptions } from '@/data'
+
+import { PubSubEvents } from '@/typings'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { calcShortHash } from '@/utils/tools'
-import { useTraderData } from '@/store/trader/hooks'
-import { patterns, rules } from '../config'
-// import { AccountTip } from '../Web'
-import MFormItem from './c/FormItem'
-import Button from '@/components/common/Button'
+import { SelectLangOptions } from '@/data'
 import { getBrokerInfoById, updateBrokerInfo } from '@/api'
-import { getBrokerDataAsync } from '@/store/trader'
-import { useAppDispatch } from '@/store'
+
+import Button from '@/components/common/Button'
+
+import MFormItem from './c/FormItem'
+import { patterns, rules } from '../config'
 
 const BrokerSignUpStep2Mobile: FC = () => {
   const history = useHistory()
-  const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const { data: account } = useAccount()
-  const { broker, brokerLoaded } = useTraderData()
 
   const [brokerId, setBrokerId] = useState<string>('')
   const [brokerLang, setBrokerLang] = useState<string>(SelectLangOptions[0])
@@ -30,6 +31,9 @@ const BrokerSignUpStep2Mobile: FC = () => {
   const [fileObject, setFileObject] = useState<File>()
   const [brokerIntr, setBrokerIntr] = useState<string>('')
   const [brokerAcco, setBrokerAcco] = useState<string>('')
+
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
 
   const onSubmitFunc = async () => {
     const {
@@ -109,13 +113,14 @@ const BrokerSignUpStep2Mobile: FC = () => {
     })
 
     if (data.code === 0) {
-      if (account?.address) dispatch(getBrokerDataAsync(account?.address))
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+
       history.push('/broker/sign-up/step3')
     }
   }
 
   useEffect(() => {
-    if (pathname === '/broker-edit' && brokerLoaded && !isEmpty(broker)) {
+    if (pathname === '/broker-edit' && brokerInfoLoaded && !isEmpty(brokerInfo)) {
       const {
         introduction,
         language,
@@ -128,7 +133,7 @@ const BrokerSignUpStep2Mobile: FC = () => {
         twitter,
         reddit,
         wechat
-      } = broker
+      } = brokerInfo
 
       const index = SelectLangOptions.findIndex((l: string) => l === language) ?? 0
 
@@ -148,7 +153,7 @@ const BrokerSignUpStep2Mobile: FC = () => {
         })
       )
     }
-  }, [pathname, broker, brokerLoaded])
+  }, [pathname, brokerInfo, brokerInfoLoaded])
 
   useEffect(() => {
     if (account?.address) setBrokerAcco(account.address)

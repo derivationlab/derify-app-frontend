@@ -4,7 +4,7 @@ import duration from 'dayjs/plugin/duration'
 import { ethers } from 'ethers'
 import numeral from 'numeral'
 import { BigNumberish } from '@ethersproject/bignumber'
-import { formatUnits } from '@ethersproject/units'
+import { formatUnits as _formatUnits } from '@ethersproject/units'
 
 dayjs.extend(duration)
 
@@ -69,7 +69,7 @@ export const calcShortHash = (hash: string, before?: number, end?: number) => {
 export const safeInterceptionValues = (value: BigNumberish, decimal = 2, precision = 8): string => {
   const isDecimal = Object.prototype.toString.call(value) === '[object String]' && String(value).includes('.')
   const regexp = /(?:\.0*|(\.\d+?)0+)$/
-  const _value = isDecimal ? (value as string) : formatUnits(value, precision)
+  const _value = isDecimal ? (value as string) : _formatUnits(value, precision)
   const _split = _value.split('.')
   const handle = `${_split[0]}.${_split[1].substring(0, decimal)}`
   return handle.replace(regexp, '$1')
@@ -111,6 +111,10 @@ export const inputParameterConversion = (amount: number | string, precision = 8)
   const p3 = p2.split('.')
   const p4 = `${p3[0]}.${p3[1].substring(0, precision)}`
   return ethers.utils.parseUnits(p4, precision).toString()
+}
+
+export const formatUnits = (value: BigNumberish, precision = 8): string => {
+  return _formatUnits(value, precision)
 }
 
 /**

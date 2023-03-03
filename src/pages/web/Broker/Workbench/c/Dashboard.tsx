@@ -1,75 +1,77 @@
-import dayjs from 'dayjs'
 import BN from 'bignumber.js'
-import { useSigner } from 'wagmi'
+import dayjs from 'dayjs'
+import PubSub from 'pubsub-js'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useContext, useMemo } from 'react'
 
-import Broker from '@/class/Broker'
-import { useAppDispatch } from '@/store'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { PubSubEvents } from '@/typings'
 import { useTraderData } from '@/store/trader/hooks'
-import { getBrokerDataAsync } from '@/store/trader'
-import { useConstantData } from '@/store/constant/hooks'
 import { MobileContext } from '@/context/Mobile'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useDashboardDAT } from '@/zustand/useDashboardDAT'
+import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { useWithdrawReward } from '@/hooks/useBroker'
+import { useMarginTokenFromRoute } from '@/hooks/useTrading'
 import { nonBigNumberInterception } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const Dashboard: FC = () => {
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { broker } = useTraderData()
-  const { indicator } = useConstantData()
-  const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
-  const { withdrawBrokerReward } = Broker
+
+  const marginToken = useMarginTokenFromRoute()
+
+  const { withdraw } = useWithdrawReward()
+
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerAssets = useBrokerInfo((state) => state.brokerAssets)
+  const dashboardDAT = useDashboardDAT((state) => state.dashboardDAT)
 
   const withdrawRewardsCb = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    if (signer) {
-      const status = await withdrawBrokerReward(signer)
-      const account = await signer.getAddress()
+    const status = await withdraw()
 
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
+    if (status) {
+      // succeed
+      window.toast.success(t('common.success', 'success'))
 
-        dispatch(getBrokerDataAsync(account))
-      } else {
-        window.toast.error(t('common.failed', 'failed'))
-        // failed
-      }
-
-      window.toast.dismiss(toast)
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+    } else {
+      window.toast.error(t('common.failed', 'failed'))
+      // failed
     }
-  }, [signer])
+
+    window.toast.dismiss(toast)
+  }, [])
 
   const memoTotalBalance = useMemo(() => {
-    const drf = String(broker?.drfRewardBalance ?? 0)
-    const usd = String(broker?.usdRewardBalance ?? 0)
+    const drf = String(brokerAssets?.drfRewardBalance ?? 0)
+    const usd = String(brokerAssets?.usdRewardBalance ?? 0)
     return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]
-  }, [broker?.usdRewardBalance, broker?.drfRewardBalance])
+  }, [broker])
 
   const memoHistoryBalance = useMemo(() => {
-    const drf = String(broker?.accumulatedDrfReward ?? 0)
-    const usd = String(broker?.accumulatedUsdReward ?? 0)
+    const drf = String(brokerAssets?.accumulatedDrfReward ?? 0)
+    const usd = String(brokerAssets?.accumulatedUsdReward ?? 0)
     return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]
-  }, [broker?.accumulatedDrfReward, broker?.accumulatedUsdReward])
+  }, [broker])
 
   const memoTodayRewards = useMemo(() => {
-    const drf_reward = new BN(broker?.drf_reward ?? 0).times(indicator?.drfPrice ?? 0)
-    const rewards_plus = drf_reward.plus(broker?.usd_reward ?? 0).toString()
+    const drf_reward = new BN(brokerAssets?.drf_reward ?? 0).times(dashboardDAT?.drfPrice ?? 0)
+    const rewards_plus = drf_reward.plus(brokerAssets?.usd_reward ?? 0).toString()
     return nonBigNumberInterception(rewards_plus)
-  }, [broker?.usd_reward, broker?.drf_reward])
+  }, [broker, dashboardDAT])
 
   const memoDisabled = useMemo(() => {
     const [usd, drf] = memoTotalBalance
     return Number(usd) > 0 || Number(drf) > 0
   }, [memoTotalBalance])
-  // console.info(broker)
+
   return (
     <div className="web-broker-dashboard">
       <div className="web-broker-dashboard-balance">
@@ -82,7 +84,7 @@ const Dashboard: FC = () => {
               __html: t('Broker.BV.EarnedTip', '', {
                 [BASE_TOKEN_SYMBOL]: memoHistoryBalance[0],
                 DRF: memoHistoryBalance[1],
-                time: broker?.update_time ? dayjs(broker?.update_time).format('MMM DD, YYYY') : '--'
+                time: brokerInfo?.registerTime ? dayjs(brokerInfo?.registerTime).format('MMM DD, YYYY') : '--'
               })
             }}
           />
@@ -100,19 +102,19 @@ const Dashboard: FC = () => {
                 <BalanceShow value={memoTodayRewards} unit={BASE_TOKEN_SYMBOL} />
               </section>
               <footer>
-                <Link to="/broker-rank">
-                  {t('Broker.BV.BrokerRank', 'Broker Rank')} #{broker?.rank}
+                <Link to={`/${marginToken}/broker-rank`}>
+                  {t('Broker.BV.BrokerRank', 'Broker Rank')} #{brokerInfo?.rank}
                 </Link>
               </footer>
             </main>
             <hr />
             <main>
               <header>{t('Broker.BV.DailyActiveTrader', 'Daily Active Trader')}</header>
-              <section>{broker?.traders_num ?? 0}</section>
+              <section>{brokerInfo?.traders_num ?? 0}</section>
               <footer
                 dangerouslySetInnerHTML={{
                   __html: t('Broker.BV.Transactions', '', {
-                    data: broker?.txs_num ?? 0
+                    data: brokerInfo?.txs_num ?? 0
                   })
                 }}
               />
@@ -128,27 +130,27 @@ const Dashboard: FC = () => {
               <footer
                 dangerouslySetInnerHTML={{
                   __html: t('Broker.BV.TotalRewards', '', {
-                    data: `${(broker.usd_reward_rate * 100).toFixed(2)}%`
+                    data: `${((brokerInfo.usd_reward_rate ?? 0) * 100).toFixed(2)}%`
                   })
                 }}
               />
             </main>
             <main>
               <header>{t('Broker.BV.DailyActiveTrader', 'Daily Active Trader')}</header>
-              <section>{broker?.traders_num ?? 0}</section>
+              <section>{brokerInfo?.traders_num ?? 0}</section>
               <footer
                 dangerouslySetInnerHTML={{
                   __html: t('Broker.BV.Transactions', '', {
-                    data: broker?.txs_num ?? 0
+                    data: brokerInfo?.txs_num ?? 0
                   })
                 }}
               />
             </main>
             <main>
               <header>{t('Broker.BV.BrokerRank', 'Broker Rank')}</header>
-              <section>#{broker?.rank}</section>
+              <section>#{brokerInfo?.rank}</section>
               <footer>
-                <Link to="/broker-rank">{t('Broker.BV.RankList', 'Rank List')}</Link>
+                <Link to={`/${marginToken}/broker-rank`}>{t('Broker.BV.RankList', 'Rank List')}</Link>
               </footer>
             </main>
           </>

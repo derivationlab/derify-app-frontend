@@ -118,7 +118,7 @@ const PositionMining: FC = () => {
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} to="/trade">
+            <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken}/trade`}>
               {t('Earn.PositionMining.OpenPosition', 'Open Position')}
             </Button>
           </aside>

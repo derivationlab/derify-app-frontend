@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, Suspense, useEffect } from 'react'
 
 import 'rc-dialog/assets/index.css'
 import 'rc-collapse/assets/index.css'
@@ -12,6 +12,12 @@ import '@/style/style.scss'
 import { useInitialEffect } from '@/hooks/useInitialEffect'
 import { getBrokerInfo, getTraderStakingDAT } from '@/hooks/helper'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useInterval } from 'react-use'
+import { useAccount } from 'wagmi'
+import { useBrokerParams } from '@/hooks/useBroker'
+import { useConfigInfo } from '@/zustand'
+import PubSub from 'pubsub-js'
+import { PubSubEvents } from '@/typings'
 
 const WebEntry = lazy(() => import('@/pages/web'))
 
@@ -19,11 +25,46 @@ function App() {
   useInitialDAT()
 
   // todo 临时位置，后面要转移到 broker
-  // useBrokerInfo((state) => state.b)
+  const { data: account } = useAccount()
+  const { data: brokerParams, isLoading } = useBrokerParams()
+  const updateBrokerAssets = useBrokerInfo((state) => state.updateBrokerAssets)
+  const updateBrokerParams = useConfigInfo((state) => state.updateBrokerParams)
+  const fetchBrokerInfo = useBrokerInfo((state) => state.fetchBrokerInfo)
+  const fetchBrokerBound = useBrokerInfo((state) => state.fetchBrokerBound)
   const _getBrokerInfo = async (trader: string) => {
     const staking = await getBrokerInfo(trader)
-    // updateStakingInfo(staking)
+    updateBrokerAssets(staking)
   }
+
+  useEffect(() => {
+    if (account?.address) {
+      void _getBrokerInfo(account?.address)
+      void fetchBrokerInfo(account?.address)
+      void fetchBrokerBound(account?.address)
+    }
+  }, [account?.address])
+  useInterval(() => {
+    if (account?.address) {
+      void _getBrokerInfo(account?.address)
+    }
+  }, 6000)
+  useEffect(() => {
+    if (!isLoading && brokerParams) {
+      updateBrokerParams(brokerParams)
+    }
+  }, [brokerParams, isLoading])
+  useEffect(() => {
+    PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {
+      if (account?.address) {
+        void fetchBrokerInfo(account.address)
+      }
+    })
+
+    return () => {
+      PubSub.clearAllSubscriptions()
+    }
+  }, [account?.address])
+  // todo 临时位置，后面要转移到 broker--end
 
   return (
     <>

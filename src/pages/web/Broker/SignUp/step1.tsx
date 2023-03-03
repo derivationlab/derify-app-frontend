@@ -1,12 +1,12 @@
-import { useAccount, useSigner } from 'wagmi'
+import PubSub from 'pubsub-js'
+import { useAccount } from 'wagmi'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
-import Broker from '@/class/Broker'
-import { useAppDispatch } from '@/store'
-import { useTokenBalances } from '@/zustand'
-import { getBrokerDataAsync } from '@/store/actions'
+import { PubSubEvents } from '@/typings'
+import { useApplyBroker } from '@/hooks/useBroker'
+import { useConfigInfo, useTokenBalances } from '@/zustand'
 import { isET, isLT, thousandthsDivision } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
@@ -14,46 +14,51 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 
 const BrokerSignUpStep1: FC = () => {
   const history = useHistory()
-  const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
-  const { data: signer } = useSigner()
   const { data: account } = useAccount()
-  const { getPrivilegeForBroker, burnLimitAmount } = Broker
+
+  const { applyBroker } = useApplyBroker()
 
   const balances = useTokenBalances((state) => state.balances)
+  const brokerParams = useConfigInfo((state) => state.brokerParams)
   const balanceLoaded = useTokenBalances((state) => state.loaded)
 
   const [loading, setLoading] = useState<boolean>(false)
 
-  const getPrivilegeForBrokerCb = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     setLoading(true)
 
-    if (signer && account?.address) {
-      const status = await getPrivilegeForBroker(signer)
-      if (status) {
-        // succeed
-        dispatch(getBrokerDataAsync(account?.address))
-        history.push('/broker/sign-up/step2')
-      } else {
-        // failed
-        window.toast.error(t('common.failed', 'failed'))
-      }
+    const status = await applyBroker(brokerParams.burnLimitAmount)
+
+    if (status) {
+      // succeed
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+
+      history.push('/broker/sign-up/step2')
+    } else {
+      // failed
+      window.toast.error(t('common.failed', 'failed'))
     }
 
     setLoading(false)
 
     window.toast.dismiss(toast)
-  }, [signer, account?.address])
+  }, [account?.address])
 
   const memoDisabled = useMemo(() => {
-    return isET(balances['edrf'], 0) || isET(burnLimitAmount, 0) || isLT(balances['edrf'], burnLimitAmount)
-  }, [balances, burnLimitAmount])
+    return (
+      isET(balances['edrf'], 0) ||
+      isET(brokerParams.burnLimitAmount, 0) ||
+      isLT(balances['edrf'], brokerParams.burnLimitAmount)
+    )
+  }, [balances, brokerParams.burnLimitAmount])
 
   const memoInsufficient = useMemo(() => {
-    return isET(balances['edrf'], 0) || isLT(balances['edrf'], burnLimitAmount)
-  }, [balances, burnLimitAmount])
+    return isET(balances['edrf'], 0) || isLT(balances['edrf'], brokerParams.burnLimitAmount)
+  }, [balances, brokerParams.burnLimitAmount])
 
   return (
     <div className="web-broker-sign-up">
@@ -65,7 +70,7 @@ const BrokerSignUpStep1: FC = () => {
         <section className="web-broker-sign-up-step-1">
           <p>{t('Broker.Reg.Getting', 'Getting broker privilege will cost you')}</p>
           <em>
-            {thousandthsDivision(burnLimitAmount)}
+            {thousandthsDivision(brokerParams.burnLimitAmount)}
             <u>eDRF</u>
           </em>
           <hr />
@@ -75,7 +80,7 @@ const BrokerSignUpStep1: FC = () => {
           <address>{account?.address}</address>
         </section>
         <footer className="web-broker-sign-up-footer">
-          <Button onClick={getPrivilegeForBrokerCb} disabled={!balanceLoaded || memoDisabled} loading={loading}>
+          <Button onClick={fetchData} disabled={!balanceLoaded || memoDisabled} loading={loading}>
             {balanceLoaded && memoInsufficient
               ? t('Broker.Reg.Insufficient', 'Insufficient eDRF')
               : t('Broker.Reg.Confirm', 'Confirm')}

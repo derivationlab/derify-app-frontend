@@ -1,13 +1,14 @@
-import { useSigner } from 'wagmi'
-import { useCallback } from 'react'
 import { isEmpty } from 'lodash'
+import { useSigner } from 'wagmi'
+import { useParams } from 'react-router-dom'
+import { useCallback, useMemo } from 'react'
 
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
 import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { findMarginToken, findToken } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, findMarginToken, findToken } from '@/config/tokens'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
 
 export const useOpeningPosition = () => {
@@ -347,4 +348,15 @@ export const useClosePosition = () => {
   )
 
   return { close }
+}
+
+export const useMarginTokenFromRoute = () => {
+  const params: any = useParams()
+
+  return useMemo(() => {
+    if (params?.id) {
+      return params.id
+    }
+    return BASE_TOKEN_SYMBOL
+  }, [params.id])
 }

@@ -1,31 +1,28 @@
 import dayjs from 'dayjs'
-import { useSigner } from 'wagmi'
+import PubSub from 'pubsub-js'
 import classNames from 'classnames'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useState, useMemo } from 'react'
 
-import Broker from '@/class/Broker'
 import { copyText } from '@/utils/tools'
-import { useAppDispatch } from '@/store'
+import { PubSubEvents } from '@/typings'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { API_PREFIX_URL } from '@/config'
-import { useTraderData } from '@/store/trader/hooks'
-import { getBrokerValidPeriodDataAsync } from '@/store/actions'
+import { useExtendPeriod } from '@/hooks/useBroker'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
 import ExtendDialog from '@/components/common/Wallet/Extend'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import PubSub from 'pubsub-js'
-import { PubSubEvents } from '@/typings'
 
 const Info: FC = () => {
   const history = useHistory()
-  const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
-  const { data: signer } = useSigner()
-  const { broker } = useTraderData()
-  const { extendBrokerPrivilege } = Broker
+  const { extend } = useExtendPeriod()
+
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -33,58 +30,52 @@ const Info: FC = () => {
     history.push('/broker-edit')
   }
 
-  const extendBrokerPrivilegeCb = useCallback(
-    async (amount: string) => {
-      const toast = window.toast.loading(t('common.pending', 'pending...'))
+  const extendFunc = useCallback(async (amount: string) => {
+    const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-      setVisibleStatus('')
+    setVisibleStatus('')
 
-      if (signer) {
-        const status = await extendBrokerPrivilege(signer, amount)
-        const account = await signer.getAddress()
-        if (status) {
-          // succeed
-          window.toast.success(t('common.success', 'success'))
+    const status = await extend(amount)
 
-          dispatch(getBrokerValidPeriodDataAsync(account))
+    if (status) {
+      // succeed
+      window.toast.success(t('common.success', 'success'))
 
-          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
-        } else {
-          // failed
-          window.toast.error(t('common.failed', 'failed'))
-        }
-      }
+      PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+    } else {
+      // failed
+      window.toast.error(t('common.failed', 'failed'))
+    }
 
-      window.toast.dismiss(toast)
-    },
-    [signer]
-  )
+    window.toast.dismiss(toast)
+  }, [])
 
   const copyTextEv = () => {
-    copyText(broker?.reference).then((res) => {
+    copyText(`${window.location.origin}/broker/${brokerInfo?.id}`).then((res) => {
       if (res) window.toast.success('Copy successfully')
     })
   }
 
   const memoIsExpired = useMemo(() => {
-    return broker?.validPeriodDays <= 0
-  }, [broker?.validPeriodDays])
+    return brokerInfo?.validPeriodDays <= 0
+  }, [brokerInfo])
 
   const memoExpireDate = useMemo(() => {
-    const days = broker?.validPeriodDays
+    const days = brokerInfo?.validPeriodDays
     if (days && days >= 0) {
       return dayjs().add(days, 'days').format('YYYY-MM-DD')
     }
     return '0000-00-00'
-  }, [broker?.validPeriodDays])
+  }, [brokerInfo])
 
   const memoLogo = useMemo(() => {
-    if (broker?.logo) {
-      const index = broker.logo.lastIndexOf('/')
-      return `${API_PREFIX_URL}${broker.logo.substring(index + 1)}`
+    if (brokerInfo?.logo) {
+      const index = brokerInfo.logo.lastIndexOf('/')
+      return `${API_PREFIX_URL}${brokerInfo.logo.substring(index + 1)}`
     }
     return 'icon/normal-ico.svg'
-  }, [])
+  }, [brokerInfo])
 
   return (
     <div className="web-broker-info">
@@ -94,31 +85,31 @@ const Info: FC = () => {
         </div>
         <div className="web-broker-info-header">
           <h3>
-            {broker?.name || '--'} <i className="web-broker-info-edit" onClick={goEdit} />
+            {brokerInfo?.name || '--'} <i className="web-broker-info-edit" onClick={goEdit} />
           </h3>
-          {broker?.id && (
+          {brokerInfo?.id && (
             <>
-              <small>@{broker?.id}</small>
+              <small>@{brokerInfo?.id}</small>
               <div className="web-broker-info-header-sns">
-                {broker?.telegram && <a href={broker?.telegram} target="_blank" className="telegram" />}
-                {broker?.discord && <a href={broker?.discord} target="_blank" className="discord" />}
-                {broker?.twitter && <a href={broker?.twitter} target="_blank" className="twitter" />}
-                {broker?.reddit && <a href={broker?.reddit} target="_blank" className="reddit" />}
-                {broker?.wechat && (
-                  <QuestionPopover text={`WeChat: ${broker?.wechat}`} size="inline">
+                {brokerInfo?.telegram && <a href={brokerInfo?.telegram} target="_blank" className="telegram" />}
+                {brokerInfo?.discord && <a href={brokerInfo?.discord} target="_blank" className="discord" />}
+                {brokerInfo?.twitter && <a href={brokerInfo?.twitter} target="_blank" className="twitter" />}
+                {brokerInfo?.reddit && <a href={brokerInfo?.reddit} target="_blank" className="reddit" />}
+                {brokerInfo?.wechat && (
+                  <QuestionPopover text={`WeChat: ${brokerInfo?.wechat}`} size="inline">
                     <a className="wechat" />
                   </QuestionPopover>
                 )}
               </div>
               <div className="web-broker-info-header-lang">
-                <span>{broker?.language}</span>
+                <span>{brokerInfo?.language}</span>
               </div>
             </>
           )}
         </div>
       </header>
       <article className="web-broker-info-about" title="The development team of Derify Protocol">
-        {broker?.introduction}
+        {brokerInfo?.introduction}
       </article>
       <section className="web-broker-info-data">
         <main>
@@ -139,7 +130,7 @@ const Info: FC = () => {
               </dd>
             ) : (
               <dd>
-                {broker?.validPeriodDays}
+                {brokerInfo?.validPeriodDays}
                 <small>{t('Broker.BV.days', 'days')}</small>
               </dd>
             )}
@@ -154,22 +145,18 @@ const Info: FC = () => {
             <time>{memoExpireDate}</time>
           </p>
           <aside>
-            <a href={broker?.reference} target="_blank">
+            <a href={`${window.location.origin}/broker/${brokerInfo?.id}`} target="_blank">
               {t('Broker.BV.MyPromotionLink', 'My promotion link')}
             </a>
             <button onClick={copyTextEv} />
-            <a href={broker?.reference} target="_blank">
+            <a href={`${window.location.origin}/broker/${brokerInfo?.id}`} target="_blank">
               <i />
             </a>
           </aside>
         </footer>
       </section>
 
-      <ExtendDialog
-        visible={visibleStatus === 'extend'}
-        onClick={extendBrokerPrivilegeCb}
-        onClose={() => setVisibleStatus('')}
-      />
+      <ExtendDialog visible={visibleStatus === 'extend'} onClick={extendFunc} onClose={() => setVisibleStatus('')} />
     </div>
   )
 }

@@ -7,17 +7,20 @@ import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 
 import Tool from './Tool'
 import MNav from './MNav'
+import { useMarginToken } from '@/zustand'
 
 const MHeader: FC = () => {
   const { t } = useTranslation()
   const { pathname: P } = useLocation()
 
+  const marginToken = useMarginToken((state) => state.marginToken)
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const navList = [
-    { url: '/trade', name: t('Nav.Nav.Trade', 'Trade') },
-    { url: '/earn', name: t('Nav.Nav.Earn', 'Earn') },
-    { url: '/dashboard', name: t('Nav.Nav.Dashboard', 'Dashboard') },
-    { url: '/broker', name: t('Nav.Nav.Broker', 'Broker') }
+    { url: `/${marginToken}/earn`, name: t('Nav.Nav.Earn', 'Earn') },
+    { url: `/${marginToken}/trade`, name: t('Nav.Nav.Trade', 'Trade') },
+    { url: `/broker`, name: t('Nav.Nav.Broker', 'Broker') },
+    { url: `/${marginToken}/dashboard`, name: t('Nav.Nav.Dashboard', 'Dashboard') }
   ]
 
   const [showMenu, setShowMenu] = useState<boolean>(false)

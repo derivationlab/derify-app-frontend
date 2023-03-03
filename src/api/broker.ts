@@ -14,8 +14,8 @@ export const getBrokersList = async (page: number, offset: number, language: str
   return response
 }
 
-export const getBrokersRankList = async (page: number, offset: number) => {
-  const response = await get(`api/brokers_rank_list/${page}/${offset}`)
+export const getBrokersRankList = async (page: number, offset: number, address: string) => {
+  const response = await get(`api/brokers_rank_list/${address}/${page}/${offset}`)
   return response
 }
 

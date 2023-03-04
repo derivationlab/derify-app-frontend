@@ -3,7 +3,6 @@ import storage from 'redux-persist/lib/storage'
 import { persistStore, persistReducer } from 'redux-persist'
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 
-import shareMessageReducer from './share'
 import traderReducer from './trader'
 import constantReducer from './constant'
 import contractReducer from './contract'
@@ -22,7 +21,6 @@ const store = configureStore({
   reducer: persistReducer(
     persistConfig,
     combineReducers({
-      shareMessage: shareMessageReducer,
       trader: traderReducer,
       config: configReducer,
       contract: contractReducer,

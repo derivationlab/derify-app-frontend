@@ -1,26 +1,29 @@
-import React, { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
+import React, { FC, useMemo } from 'react'
 
-import { useContractData } from '@/store/contract/hooks'
+import { usePairsInfo } from '@/zustand'
 
 export interface NotConnect {
   br?: number
 }
 
 const Initializing: FC<NotConnect> = ({ br = 48 }) => {
-  const { pairsLoaded } = useContractData()
   const { data: account } = useAccount()
 
+  const pcfRatiosLoaded = usePairsInfo((state) => state.pcfRatiosLoaded)
+  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
+  const spotPricesLoaded = usePairsInfo((state) => state.spotPricesLoaded)
+
   return useMemo(() => {
-    // if (account?.address && !pairsLoaded) {
-    //   return (
-    //     <section className="web-not-initializing" style={{ borderRadius: `${br}px` }}>
-    //       Initializing...
-    //     </section>
-    //   )
-    // }
+    if (account?.address && (!spotPricesLoaded || !indicatorsLoaded || !pcfRatiosLoaded)) {
+      return (
+        <section className="web-not-initializing" style={{ borderRadius: `${br}px` }}>
+          Initializing...
+        </section>
+      )
+    }
     return null
-  }, [pairsLoaded, account?.address])
+  }, [spotPricesLoaded, indicatorsLoaded, pcfRatiosLoaded, account?.address])
 }
 
 export default Initializing

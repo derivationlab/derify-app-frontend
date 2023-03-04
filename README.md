@@ -20,3 +20,4 @@ todo:
 . 检测如果路由id不是marginToken，则跳转；
 . getBrokerInfo 分mt；
 . broker_reward_transactions 分mt；
+. 由于加了mt参数，需要全局检查路由跳转；

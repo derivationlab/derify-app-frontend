@@ -24,23 +24,24 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
-  const { brokerBound: broker } = useTraderData()
 
   const { close: close1 } = useClosePosition()
   const { close: close2 } = useCloseAllPositions()
   const { takeProfitOrStopLoss } = useTakeProfitOrStopLoss()
   const { factoryConfig, protocolConfig, spotPrice, quoteToken } = useMatchConf()
 
+  const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const positionOrd = usePosDATStore((state) => state.positionOrd)
-  const positionOrdLoaded = usePosDATStore((state) => state.loaded)
   const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
+  const positionOrdLoaded = usePosDATStore((state) => state.loaded)
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
@@ -67,12 +68,12 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && protocolConfig) {
+    if (signer && brokerBound?.broker && protocolConfig) {
       const { side, size } = targetPosOrd
 
       const status = await close1(
         protocolConfig.exchange,
-        broker.broker,
+        brokerBound.broker,
         spotPrice,
         quoteToken,
         closingType,
@@ -101,8 +102,8 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (broker?.broker && protocolConfig) {
-      const status = await close2(protocolConfig.exchange, broker.broker)
+    if (brokerBound?.broker && protocolConfig) {
+      const status = await close2(protocolConfig.exchange, brokerBound.broker)
 
       if (status) {
         // succeed

@@ -43,11 +43,6 @@ function App() {
       void fetchBrokerBound(account?.address)
     }
   }, [account?.address])
-  useInterval(() => {
-    if (account?.address) {
-      void _getBrokerInfo(account?.address)
-    }
-  }, 6000)
   useEffect(() => {
     if (!isLoading && brokerParams) {
       updateBrokerParams(brokerParams)
@@ -64,6 +59,11 @@ function App() {
       PubSub.clearAllSubscriptions()
     }
   }, [account?.address])
+  useInterval(() => {
+    if (account?.address) {
+      void _getBrokerInfo(account?.address)
+    }
+  }, 6000)
   // todo 临时位置，后面要转移到 broker--end
 
   return (

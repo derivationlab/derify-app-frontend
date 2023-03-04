@@ -5,14 +5,14 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { PositionSide } from '@/store/contract/helper'
-import { useTraderData } from '@/store/trader/hooks'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { isOpeningMinLimit } from '@/hooks/helper'
 import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
-import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -33,7 +33,6 @@ const Bench: FC = () => {
   const { t } = useTranslation()
   const { opening } = useOpeningPosition()
   const { protocolConfig } = useProtocolConf()
-  const { brokerBound: broker } = useTraderData() // todo rewrite redux
 
   const indicators = usePairsInfo((state) => state.indicators)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
@@ -46,6 +45,7 @@ const Bench: FC = () => {
   const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const brokerBound = useBrokerInfo((state) => state.brokerBound)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
@@ -94,7 +94,7 @@ const Bench: FC = () => {
 
     dispatch({ type: 'SET_MODAL_STATUS', payload: false })
 
-    if (broker?.broker && protocolConfig) {
+    if (brokerBound?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
       // console.info(
       //   protocolConfig.exchange,
@@ -110,7 +110,7 @@ const Bench: FC = () => {
       // )
       const status = await opening(
         protocolConfig.exchange,
-        broker.broker,
+        brokerBound.broker,
         findToken(quoteToken).tokenAddress,
         state.openingParams?.side,
         openingType,

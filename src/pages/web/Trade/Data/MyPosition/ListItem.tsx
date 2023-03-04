@@ -189,7 +189,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     <>
       <div className="web-trade-data-item">
         <ItemHeader
-          symbol={`${data.quoteToken}-${marginToken}`}
+          symbol={`${data.quoteToken}${marginToken}`}
           multiple={data?.leverage}
           direction={PositionSide[data?.side] as any}
           buttonText={t('Trade.MyPosition.Close', 'Close')}

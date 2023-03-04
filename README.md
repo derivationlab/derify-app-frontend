@@ -4,6 +4,7 @@ sass version: ^1.52.1
 
 
 const marginToken = useMarginToken((state) => state.marginToken)
+const brokerBound = useBrokerInfo((state) => state.brokerBound)
 const [state, dispatch] = useReducer(reducer, stateInit)
 
 

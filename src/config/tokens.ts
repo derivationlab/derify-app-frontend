@@ -67,7 +67,8 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0x9d1b272B797137d3713f0bA2fA15abcc3a8C2Ef7',
       [ChainId.TESTNET]: '0xcFC597eEDFC368c19AFD22e581468a2e69eA5E24'
     },
-    18
+    18,
+    2
   )
 }
 
@@ -89,17 +90,4 @@ export const findMarginToken = (key: string): Token | undefined => {
   return MARGIN_TOKENS.find((t) => t.symbol === key.toUpperCase() || t.tokenAddress === key.toLowerCase())
 }
 
-function _quoteTokensInitial() {
-  let quote = Object.create(null)
-  QUOTE_TOKENS.forEach((t) => {
-    quote = {
-      ...quote,
-      [t.symbol]: ''
-    }
-  })
-  return quote
-}
-
-export const quoteTokensInitial = _quoteTokensInitial()
-console.info(tokens)
 export default tokens

@@ -14,6 +14,7 @@ import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const time = days().utc().startOf('days').format()
+
 const TradingVolume: FC = () => {
   const { t } = useTranslation()
 

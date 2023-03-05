@@ -89,7 +89,6 @@ export const useCurrentTradingAmount = (address: string, marginToken: string) =>
   const query = useQuery(
     ['getCurrentTradingAmount'],
     async (): Promise<any[]> => {
-      console.info(address, marginToken)
       const data = await getCurrentTradingAmount(address, marginToken)
       return data?.data
     },

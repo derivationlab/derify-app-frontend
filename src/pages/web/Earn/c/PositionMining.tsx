@@ -5,7 +5,7 @@ import React, { FC, useContext, useMemo } from 'react'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { bnPlus, isGT, nonBigNumberInterception } from '@/utils/tools'
+import { bnPlus, isGT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
@@ -15,6 +15,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import { useWithdrawPositionReward } from '@/hooks/useEarning'
 import { useProtocolConf1 } from '@/hooks/useMatchConf'
+import tokens, { findToken } from '@/config/tokens'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
@@ -73,7 +74,7 @@ const PositionMining: FC = () => {
 
     window.toast.dismiss(toast)
   }
-
+  console.info(rewardsInfo)
   return (
     <div className="web-eran-item">
       <header className="web-eran-item-header">
@@ -93,12 +94,19 @@ const PositionMining: FC = () => {
         <div className="web-eran-item-claima">
           <main>
             <h4>{t('Earn.PositionMining.Claimable', 'Claimable')}</h4>
-            <BalanceShow value={rewardsInfo?.marginTokenBalance ?? 0} unit={marginToken} decimal={4} />
-            <BalanceShow value={rewardsInfo?.drfBalance ?? 0} unit="DRF" decimal={4} />
+            <BalanceShow
+              value={rewardsInfo?.marginTokenBalance ?? 0}
+              unit={marginToken}
+              decimal={findToken(marginToken).decimals}
+            />
+            <BalanceShow value={rewardsInfo?.drfBalance ?? 0} unit="DRF" decimal={tokens.drf.decimals} />
             <p>
               {t('Earn.PositionMining.TotalEarned', 'Total earned :')}{' '}
-              <strong>{rewardsInfo?.marginTokenAccumulatedBalance ?? 0}</strong> {marginToken}{' '}
-              {t('Earn.PositionMining.And', 'and')} <strong>{rewardsInfo?.drfAccumulatedBalance ?? 0}</strong> DRF
+              <strong>
+                {keepDecimals(rewardsInfo?.marginTokenAccumulatedBalance ?? 0, findToken(marginToken).decimals)}
+              </strong>{' '}
+              {marginToken} {t('Earn.PositionMining.And', 'and')}{' '}
+              <strong>{keepDecimals(rewardsInfo?.drfAccumulatedBalance ?? 0, tokens.drf.decimals)}</strong> DRF
             </p>
           </main>
           <aside>
@@ -113,8 +121,8 @@ const PositionMining: FC = () => {
             <BalanceShow value={variables?.totalPositionAmount ?? 0} unit={marginToken} />
             <div className="block" />
             <p>
-              {t('Earn.PositionMining.TotalPositions', 'Total positions')} : <strong>{memoPositionsAm}</strong>{' '}
-              {marginToken}
+              {t('Earn.PositionMining.TotalPositions', 'Total positions')} :{' '}
+              <strong>{keepDecimals(memoPositionsAm, findToken(marginToken).decimals)}</strong> {marginToken}
             </p>
           </main>
           <aside>

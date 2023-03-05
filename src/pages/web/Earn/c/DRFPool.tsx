@@ -2,7 +2,7 @@ import PubSub from 'pubsub-js'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
 
-import { isGT } from '@/utils/tools'
+import { isGT, keepDecimals } from '@/utils/tools'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
@@ -21,6 +21,7 @@ import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
 import { useTraderEDRFBalance } from '@/hooks/useQueryApi'
 import { useAccount } from 'wagmi'
+import tokens from '@/config/tokens'
 
 const DRFPool: FC = () => {
   const { t } = useTranslation()
@@ -122,7 +123,7 @@ const DRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.DRFPool.Claimable', 'Claimable')}</h4>
-              <BalanceShow value={edrfBalance?.data ?? 0} unit="eDRF" decimal={4} />
+              <BalanceShow value={edrfBalance?.data ?? 0} unit="eDRF" decimal={tokens.edrf.decimals} />
             </main>
             <aside>
               <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
@@ -136,7 +137,8 @@ const DRFPool: FC = () => {
               <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit="DRF" />
               <div className="block" />
               <p>
-                {t('Earn.DRFPool.CurrentPoolSize', 'Current pool size')} : <strong>{drfPoolBalance}</strong> DRF
+                {t('Earn.DRFPool.CurrentPoolSize', 'Current pool size')} :{' '}
+                <strong>{keepDecimals(drfPoolBalance, tokens.drf.decimals)}</strong> DRF
               </p>
             </main>
             <aside>

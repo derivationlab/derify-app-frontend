@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
 
-import { isGT } from '@/utils/tools'
+import { isGT, keepDecimals } from '@/utils/tools'
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
@@ -152,11 +152,11 @@ const EranbDRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow value={bondBalance?.data ?? 0} unit={`b${marginToken}`} decimal={4} />
+              <BalanceShow value={bondBalance?.data ?? 0} unit={`b${marginToken}`} decimal={2} />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} : <strong>{rewardsInfo?.exchangeable ?? 0}</strong>{' '}
-                {`b${marginToken}`}
+                {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} :{' '}
+                <strong>{keepDecimals(rewardsInfo?.exchangeable ?? 0, 2)}</strong> {`b${marginToken}`}
               </p>
             </main>
             <aside>
@@ -174,8 +174,8 @@ const EranbDRFPool: FC = () => {
               <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken}`} />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{bondPoolBalance}</strong>{' '}
-                {`b${marginToken}`}
+                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} :{' '}
+                <strong>{keepDecimals(bondPoolBalance, 2)}</strong> {`b${marginToken}`}
               </p>
             </main>
             <aside>

@@ -65,7 +65,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
             <div className="web-trade-dialog-position-info">
               <header className="web-trade-dialog-position-info-header">
                 <h4>
-                  <strong>{`${quoteToken}-${marginToken}`}</strong>
+                  <strong>{`${quoteToken}${marginToken}`}</strong>
                   <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
                 </h4>
               </header>

@@ -93,7 +93,8 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             <header className="web-trade-dialog-position-info-header">
               <h4>
                 <strong>
-                  {quoteToken}-{marginToken}
+                  {quoteToken}
+                  {marginToken}
                 </strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
               </h4>

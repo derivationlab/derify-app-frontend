@@ -19,8 +19,8 @@ const BrokerInfo: FC = () => {
   const [brokerInfo, setBrokerInfo] = useState<Record<string, any>>({})
   const [infoLoaded, setInfoLoaded] = useState<boolean>(true)
 
-  const brokerBound = useBrokerInfo((state) => state.brokerBound)
-  const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
+  const bound = useBrokerInfo((state) => state.brokerBound)
+  const loaded = useBrokerInfo((state) => state.brokerBoundLoaded)
 
   const bindBrokerFunc = async () => {
     const toast = window.toast.loading('binding...')
@@ -41,21 +41,24 @@ const BrokerInfo: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const getBrokerInfoByIdFunc = async () => {
+  const brokerInfoFunc = async () => {
     setInfoLoaded(true)
 
-    if (brokerBound?.broker) {
+    if (bound?.broker) {
       history.push('/broker')
     } else {
       const { data } = await getBrokerInfoById(brokerId)
 
-      if (data.length > 0 && data[0]?.is_enable === 1) {
-        setBrokerInfo(data[0])
+      if (data.length > 0) {
+        const [info] = data
+        if (info?.is_enable === 1) {
+          setBrokerInfo(data[0])
 
-        // auto bind broker
-        await bindBrokerFunc()
+          // auto bind broker
+          await bindBrokerFunc()
 
-        setInfoLoaded(false)
+          setInfoLoaded(false)
+        }
       } else {
         history.push('/broker')
       }
@@ -63,8 +66,8 @@ const BrokerInfo: FC = () => {
   }
 
   useEffect(() => {
-    if (brokerBoundLoaded) void getBrokerInfoByIdFunc()
-  }, [brokerBoundLoaded])
+    if (loaded) void brokerInfoFunc()
+  }, [loaded, account?.address])
 
   return infoLoaded ? <Loading show type="fixed" /> : <BrokerCard broker={brokerInfo} />
 }

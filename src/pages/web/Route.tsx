@@ -16,9 +16,9 @@ export const BrokerBindRoute = (props: PropsWithChildren<any>) => {
   return useMemo(() => {
     if (brokerBoundLoaded) {
       if (!isEmpty(brokerBound)) return children
-      return <Redirect to='/broker/bind' />
+      return <Redirect to="/broker/bind" />
     }
-    return <Loading show type='fixed' />
+    return <Loading show type="fixed" />
   }, [brokerBoundLoaded, brokerBound, pathname])
 }
 
@@ -33,12 +33,12 @@ export const BWorkbenchRoute = (props: PropsWithChildren<any>) => {
   return useMemo(() => {
     if (brokerAssetsLoaded && brokerBoundLoaded) {
       if (brokerAssets?.isBroker) {
-        return (children)
+        return children
       } else if (!isEmpty(brokerBound)) {
-        return (<Redirect to='/broker' />)
+        return <Redirect to="/broker" />
       }
-      return <Redirect to='/broker/bind' />
+      return <Redirect to="/broker/bind" />
     }
-    return <Loading show type='fixed' />
+    return <Loading show type="fixed" />
   }, [brokerAssetsLoaded, brokerBoundLoaded, brokerAssets, brokerBound])
 }

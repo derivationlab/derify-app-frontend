@@ -2,12 +2,12 @@ import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useContext, useMemo } from 'react'
 
-import { usePairsInfo } from '@/zustand'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { nonBigNumberInterception } from '@/utils/tools'
+import { useMarginToken, usePairsInfo } from '@/zustand'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 
@@ -18,6 +18,7 @@ const HeaderData: FC = () => {
   const { pcfRatio } = usePCFRatioConf()
 
   const indicators = usePairsInfo((state) => state.indicators)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const positionsAmount = usePoolsInfo((state) => state.positionsAmount)
 
   const memoPosFeeRatio = useMemo(() => {
@@ -54,7 +55,7 @@ const HeaderData: FC = () => {
         </h3>
         {!mobile ? (
           <strong>
-            {positionInfo[1]}% ( {positionInfo[0]} {BASE_TOKEN_SYMBOL} )
+            {positionInfo[1]}% ( {positionInfo[0]} {marginToken} )
           </strong>
         ) : (
           <>

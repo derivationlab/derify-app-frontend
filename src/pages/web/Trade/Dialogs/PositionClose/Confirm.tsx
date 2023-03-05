@@ -81,7 +81,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{`${quoteToken}-${marginToken}`}</strong>
+                <strong>{`${data?.quoteToken}${marginToken}`}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
               </h4>
             </header>
@@ -108,7 +108,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                 ) : (
                   <>
                     <em>{nonBigNumberInterception(state.posChangeFee.value, 8)}</em>
-                    <u>{BASE_TOKEN_SYMBOL}</u>
+                    <u>{marginToken}</u>
                   </>
                 )}
               </dd>
@@ -127,7 +127,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                 ) : (
                   <>
                     <em>-{nonBigNumberInterception(state.tradingFeeInfo.value, 8)}</em>
-                    <u>{BASE_TOKEN_SYMBOL}</u>
+                    <u>{marginToken}</u>
                   </>
                 )}
               </dd>

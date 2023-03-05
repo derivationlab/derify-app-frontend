@@ -21,3 +21,4 @@ todo:
 . getBrokerInfo 分mt；
 . broker_reward_transactions 分mt；
 . 由于加了mt参数，需要全局检查路由跳转；
+. Close Position 数据问题；

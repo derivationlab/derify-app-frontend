@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 
 import { getPairName, PositionSide, getPairBaseCoinName } from '@/store/contract/helper'
 import { safeInterceptionValues } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, findMarginToken, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { MobileContext } from '@/context/Mobile'
 
 import ItemHeader from '../c/ItemHeader'
@@ -19,6 +19,14 @@ interface Props {
 const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
+
+  const memoQuoteToken = useMemo(() => {
+    return findToken(data?.token)?.symbol
+  }, [data?.token])
+
+  const memoMarginToken = useMemo(() => {
+    return findMarginToken(data?.margin_token)?.symbol
+  }, [data?.margin_token])
 
   const memoTimestamp = useMemo(() => {
     return dayjs(data?.event_time ?? 0)
@@ -80,38 +88,38 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
       <DataAtom
         label={t('Trade.TradeHistory.RealizedPnL', 'Realized PnL')}
         tip={t('Trade.TradeHistory.RealizedPnLTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={memoMarginToken}
       >
         <span className={classNames({ up: data?.pnl_usdt > 0, down: data?.pnl_usdt < 0 })}>
           {data?.pnl_usdt ? safeInterceptionValues(data?.pnl_usdt) : '--'}
         </span>
       </DataAtom>
     ),
-    [data?.pnl_usdt, t]
+    [memoMarginToken, data?.pnl_usdt, t]
   )
   const atom3Tsx = useMemo(
     () => (
       <DataAtom
         label={t('Trade.TradeHistory.TradingFee', 'Trading Fee')}
         tip={t('Trade.TradeHistory.TradingFeeTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={memoMarginToken}
       >
         <span className={classNames({ up: memoTradingFee > 0, down: memoTradingFee < 0 })}>{memoTradingFee}</span>
       </DataAtom>
     ),
-    [memoTradingFee, t]
+    [memoMarginToken, memoTradingFee, t]
   )
   const atom4Tsx = useMemo(
     () => (
       <DataAtom
         label={t('Trade.TradeHistory.PositionChangeFee', 'Position Change Fee')}
         tip={t('Trade.TradeHistory.PositionChangeFeeTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={memoMarginToken}
       >
         <span className={classNames({ up: memoChangeFee > 0, down: memoChangeFee < 0 })}>{memoChangeFee}</span>
       </DataAtom>
     ),
-    [memoChangeFee, t]
+    [memoChangeFee, memoMarginToken, t]
   )
   const atom5Tsx = useMemo(
     () => (
@@ -130,16 +138,16 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
       <DataAtom
         label={t('Trade.TradeHistory.VolumeQuoted', 'Volume (Quoted)')}
         tip={t('Trade.TradeHistory.VolumeQuotedTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={memoMarginToken}
       >
         {safeInterceptionValues(data?.amount)}
       </DataAtom>
     ),
-    [data?.amount, t]
+    [data?.amount, memoMarginToken, t]
   )
   const atom7Tsx = useMemo(
     () => (
-      <DataAtom label={t('Trade.TradeHistory.Price', 'Price')} footer={BASE_TOKEN_SYMBOL}>
+      <DataAtom label={t('Trade.TradeHistory.Price', 'Price')} footer={VALUATION_TOKEN_SYMBOL}>
         {safeInterceptionValues(data?.price)}
       </DataAtom>
     ),
@@ -156,7 +164,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
 
   return (
     <div className="web-trade-data-item">
-      <ItemHeader symbol={getPairName(data?.token)} direction={PositionSide[data?.side] as any} />
+      <ItemHeader symbol={`${memoQuoteToken}${memoMarginToken}`} direction={PositionSide[data?.side] as any} />
       {mobile ? (
         <>
           <AtomWrap>

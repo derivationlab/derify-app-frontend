@@ -2,10 +2,9 @@ import React, { FC, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { PositionSide } from '@/store/contract/helper'
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { useMarginToken, usePairsInfo } from '@/zustand'
 import { isGT, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
@@ -25,14 +24,13 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
   const indicators = usePairsInfo((state) => state.indicators)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
   const updateClosingType = useCalcOpeningDAT((state) => state.updateClosingType)
   const updateClosingAmount = useCalcOpeningDAT((state) => state.updateClosingAmount)
 
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { spotPrice } = useSpotPrice(data?.quoteToken, marginToken)
 
   const memoDisabled = useMemo(() => {
     return isGT(closingAmount, 0)
@@ -65,7 +63,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
             <div className="web-trade-dialog-position-info">
               <header className="web-trade-dialog-position-info-header">
                 <h4>
-                  <strong>{`${quoteToken}${marginToken}`}</strong>
+                  <strong>{`${data?.quoteToken}${marginToken}`}</strong>
                   <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
                 </h4>
               </header>
@@ -80,7 +78,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                 </p>
                 <p>
                   {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} : <em>{data?.size ?? 0}</em>{' '}
-                  {quoteToken} / <em>{nonBigNumberInterception(memoVolume)}</em> {BASE_TOKEN_SYMBOL}
+                  {data?.quoteToken} / <em>{nonBigNumberInterception(memoVolume)}</em> {marginToken}
                 </p>
               </section>
             </div>
@@ -90,7 +88,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               onChange={updateClosingAmount}
               maxBUSD={Number(nonBigNumberInterception(memoVolume, 8))}
               maxBase={(data?.size ?? 0) as any}
-              baseCoin={quoteToken}
+              baseCoin={data?.quoteToken}
             />
           </div>
           <Button disabled={!memoDisabled} onClick={onClick}>

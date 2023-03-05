@@ -61,7 +61,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.UnrealizedPnL', 'Unrealized PnL')}
         tip={t('Trade.MyPosition.UnrealizedPnLTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={marginToken}
       >
         <span className={classNames(`${judgeUpsAndDowns(memoUnrealizedPnl) ? 'up' : 'down'}`)}>
           {judgeUpsAndDowns(memoUnrealizedPnl)}
@@ -78,7 +78,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.Volume', 'Volume')}
         tip={t('Trade.MyPosition.VolumeTip')}
-        footer={(data?.name ?? '').replace('-', ' / ')}
+        footer={`${data.quoteToken} / ${marginToken}`}
       >
         <span>
           {nonBigNumberInterception(data?.size ?? 0, 4)} / {nonBigNumberInterception(memoVolume)}
@@ -131,7 +131,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.Margin', 'Margin')}
         tip={t('Trade.MyPosition.MarginTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={marginToken}
       >
         <span>{nonBigNumberInterception(memoMargin)}</span>
       </DataAtom>

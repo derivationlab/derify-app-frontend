@@ -1,12 +1,12 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import BN from 'bignumber.js'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { PositionSide } from '@/store/contract/helper'
-import { safeInterceptionValues } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -22,7 +22,7 @@ interface Props {
   onClick: (params: Record<string, any>) => void
 }
 
-const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
+const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -43,11 +43,10 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
   const calcProfitAmountCb = useCallback(
     (v) => {
       if (v && data) {
-        const amount = new BN(v)
-          .minus(data?.averagePrice)
-          .times(data?.size)
-          .times(data?.side === PositionSide.long ? 1 : -1)
-        setTakeProfitAmount(safeInterceptionValues(String(amount)))
+        const p1 = bnMinus(v, data?.averagePrice)
+        const p2 = bnMul(data?.side === PositionSide.long ? 1 : -1, data?.size)
+        const amount = bnMul(p1, p2)
+        setTakeProfitAmount(keepDecimals(amount, 2))
       } else {
         setTakeProfitAmount(0)
       }
@@ -258,7 +257,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
               />
               <p>
                 {t('Trade.TPSL.TakeProfitTip1', 'When market price reaches')}{' '}
-                <strong>{calcPriceShowFunc(takeProfitPrice)}</strong> {marginToken},
+                <strong>{calcPriceShowFunc(takeProfitPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.TakeProfitTip2',
                   'it will trigger Take Profit order to close this position. Estimated profit will be'
@@ -282,7 +281,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
               />
               <p>
                 {t('Trade.TPSL.StopLossTip1', 'When market price reaches')}{' '}
-                <strong>{calcPriceShowFunc(stopLossPrice)}</strong> {marginToken},
+                <strong>{calcPriceShowFunc(stopLossPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.StopLossTip2',
                   'it will trigger Stop Loss order to close this position. Estimated loss will be'

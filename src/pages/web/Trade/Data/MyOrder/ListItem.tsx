@@ -1,13 +1,12 @@
-import React, { FC, useState, useMemo, useContext } from 'react'
-import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
 import dayjs from 'dayjs'
+import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo, useContext } from 'react'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { PositionSide } from '@/store/contract/helper'
 import { MobileContext } from '@/context/Mobile'
-
-import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
+import { useMarginToken } from '@/zustand'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
@@ -22,20 +21,20 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const memoPairName = useMemo(() => {
-    return data?.name ? (data?.name).replace('-', ' / ') : '-'
-  }, [data?.name])
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const memoTimestamp = useMemo(() => {
     return dayjs((data?.timestamp ?? 0) * 1000)
   }, [data?.timestamp])
 
   // OrderDesc[data?.orderType][1]}
-  const OrderDescLang = [
-    ['Open', t('Trade.MyOrder.LimitPrice', 'Limit Price')], // Limit
-    ['Close', t('Trade.MyOrder.TakeProfit', 'Take Profit')], // StopProfit
-    ['Close', t('Trade.MyOrder.StopLoss', 'Stop Loss')] // StopLoss
-  ]
+  const OrderDescLang = useMemo(() => {
+    return [
+      ['Open', t('Trade.MyOrder.LimitPrice', 'Limit Price')], // Limit
+      ['Close', t('Trade.MyOrder.TakeProfit', 'Take Profit')], // StopProfit
+      ['Close', t('Trade.MyOrder.StopLoss', 'Stop Loss')] // StopLoss
+    ]
+  }, [t])
 
   const atom1Tsx = useMemo(
     () => (
@@ -50,17 +49,21 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
 
   const atom2Tsx = useMemo(
     () => (
-      <DataAtom label={t('Trade.MyOrder.Volume', 'Volume')} tip={t('Trade.MyOrder.VolumeTip')} footer={memoPairName}>
+      <DataAtom
+        label={t('Trade.MyOrder.Volume', 'Volume')}
+        tip={t('Trade.MyOrder.VolumeTip')}
+        footer={`${data?.quoteToken} / ${marginToken}`}
+      >
         <span>
           {data?.size} / {data?.volume}
         </span>
       </DataAtom>
     ),
-    [data?.size, data?.volume, memoPairName, t]
+    [data, marginToken, t]
   )
   const atom3Tsx = useMemo(
     () => (
-      <DataAtom label={t('Trade.MyOrder.Price', 'Price')} footer={BASE_TOKEN_SYMBOL}>
+      <DataAtom label={t('Trade.MyOrder.Price', 'Price')} footer={VALUATION_TOKEN_SYMBOL}>
         <span>{data?.price}</span>
       </DataAtom>
     ),
@@ -79,7 +82,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
     <>
       <div className="web-trade-data-item">
         <ItemHeader
-          symbol={data?.name}
+          symbol={`${data?.quoteToken}${marginToken}`}
           multiple={data?.leverage}
           direction={PositionSide[data?.side] as any}
           buttonText={t('Trade.MyOrder.Cancel', 'Cancel')}

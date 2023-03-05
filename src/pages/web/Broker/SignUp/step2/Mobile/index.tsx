@@ -120,7 +120,7 @@ const BrokerSignUpStep2Mobile: FC = () => {
   }
 
   useEffect(() => {
-    if (pathname === '/broker-edit' && brokerInfoLoaded && !isEmpty(brokerInfo)) {
+    if (pathname === '/broker/edit' && brokerInfoLoaded && !isEmpty(brokerInfo)) {
       const {
         introduction,
         language,

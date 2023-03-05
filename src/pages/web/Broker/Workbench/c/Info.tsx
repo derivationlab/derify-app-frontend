@@ -60,7 +60,7 @@ const Info: FC = () => {
   )
 
   const copyTextEv = () => {
-    copyText(`${window.location.origin}/broker/${brokerInfo?.id}`).then((res) => {
+    copyText(`${window.location.origin}/broker/profile/${brokerInfo?.id}`).then((res) => {
       if (res) window.toast.success('Copy successfully')
     })
   }
@@ -153,11 +153,11 @@ const Info: FC = () => {
             <time>{memoExpireDate}</time>
           </p>
           <aside>
-            <a href={`${window.location.origin}/broker/${brokerInfo?.id}`} target="_blank">
+            <a href={`${window.location.origin}/broker/profile/${brokerInfo?.id}`} target="_blank">
               {t('Broker.BV.MyPromotionLink', 'My promotion link')}
             </a>
             <button onClick={copyTextEv} />
-            <a href={`${window.location.origin}/broker/${brokerInfo?.id}`} target="_blank">
+            <a href={`${window.location.origin}/broker/profile/${brokerInfo?.id}`} target="_blank">
               <i />
             </a>
           </aside>

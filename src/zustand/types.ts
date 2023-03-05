@@ -116,6 +116,7 @@ export interface BrokerInfoState {
   brokerAssets: Rec
   brokerBoundLoaded: boolean
   brokerInfoLoaded: boolean
+  brokerAssetsLoaded: boolean
   updateBrokerAssets: (p: Rec) => void
   fetchBrokerInfo: (account: string) => Promise<void>
   fetchBrokerBound: (account: string) => Promise<void>

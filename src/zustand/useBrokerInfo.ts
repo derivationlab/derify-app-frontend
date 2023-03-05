@@ -39,19 +39,18 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
      * traders_num: 日活用户数
      */
     // console.info(`fetchBrokerInfo`)
-    // console.info(data1)
-    // console.info(data2)
-    // console.info(data3.data)
-    // console.info(data4)
-    // console.info(data5.data)
+    console.info(data1.data)
+    console.info(data2.data)
+    console.info(data3.data)
+    console.info(data4.data)
 
     set({
-      brokerInfo: {
+      brokerInfo: data1.data ? {
         ...data1?.data,
         ...data3?.data,
         registerTime: data4?.data,
         validPeriodDays: data2?.data
-      },
+      } : {},
       brokerInfoLoaded: true
     })
   },

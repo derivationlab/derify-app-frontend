@@ -115,7 +115,7 @@ const BrokerSignUpStep2: FC = () => {
   }
 
   useEffect(() => {
-    if (pathname === '/broker-edit' && brokerInfoLoaded && !isEmpty(brokerInfo)) {
+    if (pathname === '/broker/edit' && brokerInfoLoaded && !isEmpty(brokerInfo)) {
       const {
         id,
         logo,
@@ -157,7 +157,7 @@ const BrokerSignUpStep2: FC = () => {
   return (
     <div className="web-broker-sign-up">
       <header className="web-broker-sign-up-header">
-        {pathname === '/broker-edit'
+        {pathname === '/broker/edit'
           ? t('Broker.Reg.EditBrokerInfo', 'Edit broker info')
           : t('Broker.Reg.RegisterForBroker', 'Register for broker')}
       </header>

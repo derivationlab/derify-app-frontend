@@ -175,27 +175,32 @@ const Web: FC = () => {
           )}
         />
 
-        {/*<Route path="/broker">*/}
-        {/*  <Route path='/' render={() => <BWorkbenchRoute><BrokerBound /></BWorkbenchRoute>} />*/}
-        {/*  <Route path='/broker/:id' exact component={BrokerInfo} />*/}
-        {/*  <Route path='/broker/workbench' exact component={BrokerWorkbench} />*/}
-        {/*</Route>*/}
+        <Route path="/broker" exact render={() => <BrokerBound />} />
+        <Route path="/broker/bind" exact render={() => <BrokerBind />} />
+        <Route path="/broker/list" exact render={() => <BrokerBindList />} />
+        <Route path="/broker/edit" exact render={() => <BrokerSignUpStep2 />} />
+        <Route path="/broker/sign-up/step1" render={() => <BrokerSignUpStep1 />} />
+        <Route path="/broker/sign-up/step2" render={() => <BrokerSignUpStep2 />} />
+        <Route path="/broker/sign-up/step3" render={() => <BrokerSignUpStep3 />} />
+        <Route path="/:id/broker/rank" exact render={() => <BrokerRank />} />
+        <Route path="/:id/broker/workbench" exact render={() => <BWorkbenchRoute><BrokerWorkbench /></BWorkbenchRoute>} />
+        <Route path="/broker/profile/:id" exact render={() => <BrokerInfo /> } />
 
-        {!account?.address ? (
+        {account?.address ? (
           <BrokerConnect />
         ) : (
           <>
-            <Route path="/broker" exact render={() => handleBroker} />
-            <Route path="/broker/:id" exact component={BrokerInfo} />
-            <Route path="/broker/sign-up/step1" render={() => handleBrokerSignUpStep1} />
-            <Route path="/broker/sign-up/step2" render={() => handleBrokerSignUpStep2} />
-            <Route path="/broker/sign-up/step3" component={BrokerSignUpStep3} />
-            <Route path="/broker-edit" render={() => handleBrokerInfoEdit} />
-            <Route path="/broker-bind" exact render={() => handleBrokerBind} />
-            <Route path="/broker-bind/list" render={() => handleBrokerBindList} />
-            <Route path="/:id/broker-rank" exact component={BrokerRank} />
-            <Route path="/broker-workbench" render={() => handleBrokerWorkbench} />
-            <Route path="/:id/broker-workbench" render={() => handleBrokerWorkbench} />
+            {/*<Route path="/broker" exact render={() => handleBroker} />*/}
+            {/*<Route path="/broker/:id" exact component={BrokerInfo} />*/}
+            {/*<Route path="/broker/sign-up/step1" render={() => handleBrokerSignUpStep1} />*/}
+            {/*<Route path="/broker/sign-up/step2" render={() => handleBrokerSignUpStep2} />*/}
+            {/*<Route path="/broker/sign-up/step3" component={BrokerSignUpStep3} />*/}
+            {/*<Route path="/broker-edit" render={() => handleBrokerInfoEdit} />*/}
+            {/*<Route path="/broker-bind" exact render={() => handleBrokerBind} />*/}
+            {/*<Route path="/broker-bind/list" render={() => handleBrokerBindList} />*/}
+            {/*<Route path="/:id/broker-rank" exact component={BrokerRank} />*/}
+            {/*<Route path="/broker-workbench" render={() => handleBrokerWorkbench} />*/}
+            {/*<Route path="/:id/broker-workbench" render={() => handleBrokerWorkbench} />*/}
           </>
         )}
 

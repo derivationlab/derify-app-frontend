@@ -72,7 +72,7 @@ const Bind: FC = () => {
         <Button full={mobile} disabled={!brokerId.trim()} loading={loading} onClick={onConfirmEv}>
           {t('Nav.BindBroker.Confirm', 'Confirm')}
         </Button>
-        <Button full={mobile} outline to="/broker-bind/list">
+        <Button full={mobile} outline to="/broker/list">
           {t('Nav.BindBroker.NoCode', "I don't have a code ...")}
         </Button>
       </div>

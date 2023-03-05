@@ -12,7 +12,6 @@ const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
 
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  console.info(broker)
   return (
     <div className="web-my-broker">
       <header className="web-my-broker-header-layout">
@@ -36,7 +35,7 @@ const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
           <div className="web-my-broker-header-lang">
             <span>{broker?.language}</span>
           </div>
-          <Link className="web-my-broker-header-rank" to={`/${marginToken}/broker-rank`}>
+          <Link className="web-my-broker-header-rank" to={`/${marginToken}/broker/rank`}>
             {t('Broker.BV.RankList', 'Rank List')}
           </Link>
         </div>

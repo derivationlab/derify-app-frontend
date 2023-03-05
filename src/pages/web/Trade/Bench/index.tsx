@@ -207,7 +207,7 @@ const Bench: FC = () => {
             <Col label={t('Trade.Bench.Price', 'Price')}>
               <PriceInput
                 value={openingPrice}
-                onChange={updateOpeningPrice}
+                onChange={(v) => updateOpeningPrice(v as any)}
                 disabled={openingType === OpeningType.Market}
               />
             </Col>

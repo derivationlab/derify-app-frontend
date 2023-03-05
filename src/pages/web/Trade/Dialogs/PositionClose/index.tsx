@@ -5,12 +5,14 @@ import { PositionSide } from '@/store/contract/helper'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { useMarginToken, usePairsInfo } from '@/zustand'
-import { isGT, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
+
 import QuantityInput from './QuantityInput'
 
 interface Props {
@@ -24,8 +26,8 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
   const indicators = usePairsInfo((state) => state.indicators)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
   const updateClosingType = useCalcOpeningDAT((state) => state.updateClosingType)
   const updateClosingAmount = useCalcOpeningDAT((state) => state.updateClosingAmount)
@@ -36,19 +38,23 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     return isGT(closingAmount, 0)
   }, [closingAmount])
 
+  const memoVolume = useMemo(() => {
+    return nonBigNumberInterception(bnMul(spotPrice, data?.size), findToken(marginToken).decimals)
+  }, [data, spotPrice, marginToken])
+
   const memoChangeRate = useMemo(() => {
-    return Number(indicators?.price_change_rate ?? 0) * 100
+    return bnMul(indicators?.price_change_rate ?? 0, 100)
   }, [indicators])
 
-  const memoVolume = useMemo(() => {
-    return Number(spotPrice) * Number(data?.size)
-  }, [data, spotPrice])
+  useEffect(() => {
+    if (!visible) updateClosingAmount('0')
+
+    updateClosingAmount(memoVolume)
+  }, [visible, memoVolume])
 
   useEffect(() => {
-    if (!visible) updateClosingAmount(0)
-
-    updateClosingAmount(Number(nonBigNumberInterception(memoVolume, 8)))
-  }, [visible, memoVolume])
+    updateClosingType(marginToken)
+  }, [marginToken])
 
   return (
     <>
@@ -69,26 +75,28 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               </header>
               <section className="web-trade-dialog-position-info-data">
                 <BalanceShow value={spotPrice} unit="" />
-                <span className={memoChangeRate >= 0 ? 'buy' : 'sell'}>{memoChangeRate}%</span>
+                <span className={isGTET(memoChangeRate, 0) ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
               </section>
               <section className="web-trade-dialog-position-info-count">
                 <p>
                   {t('Trade.ClosePosition.PositionAveragePrice', 'Position Average Price')} :{' '}
-                  <em>{safeInterceptionValues(data?.averagePrice ?? 0)}</em>
+                  <em>{keepDecimals(data?.averagePrice ?? 0, 2)}</em> {VALUATION_TOKEN_SYMBOL}
                 </p>
                 <p>
-                  {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} : <em>{data?.size ?? 0}</em>{' '}
-                  {data?.quoteToken} / <em>{nonBigNumberInterception(memoVolume)}</em> {marginToken}
+                  {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} :{' '}
+                  <em>{keepDecimals(data?.size ?? 0, findToken(data?.quoteToken).decimals)}</em> {data?.quoteToken} /{' '}
+                  <em>{keepDecimals(memoVolume, findToken(marginToken).decimals)}</em> {marginToken}
                 </p>
               </section>
             </div>
             <QuantityInput
               value={closingAmount}
+              maxSwap={memoVolume}
+              maxSize={data?.size}
+              quoteToken={data?.quoteToken}
+              marginToken={marginToken}
               onSymbol={updateClosingType}
-              onChange={updateClosingAmount}
-              maxBUSD={Number(nonBigNumberInterception(memoVolume, 8))}
-              maxBase={(data?.size ?? 0) as any}
-              baseCoin={data?.quoteToken}
+              onChange={(v) => updateClosingAmount(v as any)}
             />
           </div>
           <Button disabled={!memoDisabled} onClick={onClick}>

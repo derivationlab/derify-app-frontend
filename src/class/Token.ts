@@ -33,6 +33,7 @@ class Token {
     this.name = name
     this.symbol = symbol
     this.address = this.checkAddress(address)
+    this.decimals = decimals
     this.precision = precision
     this.projectLink = projectLink
   }

@@ -43,19 +43,19 @@ const getTFRValue = async (address: string) => {
 const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
   tfr: 0, // trading fee ratio
   maxVolume: {},
-  closingType: MARGIN_TOKENS[0].symbol as MarginTokenKeys,
-  closingAmount: 0,
+  closingType: '',
+  closingAmount: '0',
   openingType: OpeningType.Market,
   leverageNow: 30,
-  openingPrice: 0,
-  openingAmount: 0,
+  openingPrice: '0',
+  openingAmount: '0',
   updateOpeningType: (data: OpeningType) =>
     set(() => {
       // console.info('updateOpeningType:')
       // console.info(data)
       return { openingType: data }
     }),
-  updateClosingType: (data: MarginTokenKeys) =>
+  updateClosingType: (data: string) =>
     set(() => {
       // console.info('updateClosingType:')
       // console.info(data)
@@ -67,19 +67,19 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
       // console.info(data)
       return { leverageNow: data }
     }),
-  updateOpeningPrice: (data: OpeningType) =>
+  updateOpeningPrice: (data: string) =>
     set(() => {
       // console.info('updateOpeningPrice:')
       // console.info(data)
       return { openingPrice: data }
     }),
-  updateOpeningAmount: (data: number) =>
+  updateOpeningAmount: (data: string) =>
     set(() => {
       // console.info('updateOpeningAmount:')
       // console.info(data)
       return { openingAmount: data }
     }),
-  updateClosingAmount: (data: number) =>
+  updateClosingAmount: (data: string) =>
     set(() => {
       // console.info('updateClosingAmount:')
       // console.info(data)

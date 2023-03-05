@@ -9,6 +9,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
       [ChainId.TESTNET]: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'
     },
+    8,
     8
   ),
   eth: new Token(
@@ -18,7 +19,8 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
       [ChainId.TESTNET]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
     },
-    18
+    18,
+    8
   ),
   busd: new Token(
     'BUSD',
@@ -27,7 +29,8 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
       [ChainId.TESTNET]: '0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba'
     },
-    18 // checked from getMarginTokenPrecision
+    18, // checked from getMarginTokenPrecision
+    2
   ),
   drf: new Token(
     'DRF',
@@ -36,7 +39,8 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F',
       [ChainId.TESTNET]: '0x11B876d9D5d18d70664153C84fD3084c1E71E2ef'
     },
-    18 // checked from getMarginTokenPrecision
+    18, // checked from getMarginTokenPrecision
+    2
   ),
   matic: new Token(
     'MATIC',
@@ -97,5 +101,5 @@ function _quoteTokensInitial() {
 }
 
 export const quoteTokensInitial = _quoteTokensInitial()
-
+console.info(tokens)
 export default tokens

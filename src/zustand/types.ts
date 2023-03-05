@@ -53,18 +53,18 @@ export interface PosDATState {
 export interface VolumeState {
   tfr: number
   maxVolume: Rec
-  closingType: MarginTokenKeys
-  closingAmount: number
-  openingPrice: number
-  openingAmount: number
+  closingType: string
+  closingAmount: string
+  openingPrice: string
+  openingAmount: string
   leverageNow: number
   openingType: OpeningType
   updateClosingType: (p: MarginTokenKeys) => void
   updateOpeningType: (p: OpeningType) => void
   updateLeverageNow: (p: number) => void
-  updateOpeningPrice: (p: number) => void
-  updateOpeningAmount: (p: number) => void
-  updateClosingAmount: (p: number) => void
+  updateOpeningPrice: (p: string) => void
+  updateOpeningAmount: (p: string) => void
+  updateClosingAmount: (p: string) => void
   fetchMaxVolume: (
     quoteTokenAddress: string,
     trader: string,

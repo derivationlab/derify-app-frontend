@@ -96,6 +96,15 @@ export const formatNumber = (value: string | number, decimals = 8, format: strin
   return numeral(calcDecimalsFloor(value, decimals)).format(format).toUpperCase()
 }
 
+export const keepDecimals = (value: string | number, decimal = 2, format = false): string => {
+  const base = String(value)
+  const _value = base.indexOf('.') > -1 ? base : `${base}.0`
+  const [a, b] = _value.split('.')
+  const padEnd = decimal > b.length ? b.padEnd(decimal, '0') : b
+  const substr = `${a}.${padEnd.substring(0, decimal)}`
+  return format ? thousandthsDivision(substr) : substr
+}
+
 // 1 --> 1000000000000000000
 export const getDecimalAmount = (amount: number | string | BN, decimals = 8): BN => {
   return new BN(amount).times(new BN(10).pow(decimals))

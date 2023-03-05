@@ -10,7 +10,7 @@ import { PubSubEvents } from '@/typings'
 import { useTraderData } from '@/store/trader/hooks'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
-import { isET, nonBigNumberInterception } from '@/utils/tools'
+import { bnMul, isET, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useCloseAllPositions, useClosePosition, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
@@ -59,8 +59,8 @@ const MyPosition: FC = () => {
   }
 
   // 100% or not
-  const whetherStud = ({ size = 0 }, amount: number): boolean => {
-    return isET(amount, nonBigNumberInterception(Number(spotPrice) * size, 8)) || isET(amount, size)
+  const whetherStud = ({ size = 0 }, amount: string): boolean => {
+    return isGTET(amount, nonBigNumberInterception(bnMul(spotPrice, size), 8)) || isGTET(amount, size)
   }
 
   const closeOneFunc = async () => {
@@ -173,29 +173,37 @@ const MyPosition: FC = () => {
     <>
       <div className="web-trade-data-wrap">{memoMyPositions}</div>
 
-      <PositionClosePreviewDialog
-        data={targetPosOrd}
-        visible={dialogStatus === 'preview-close-position'}
-        onClose={onCloseDialogEv}
-        onClick={() => setDialogStatus('confirm-close-position')}
-      />
-      <PositionCloseConfirmDialog
-        data={targetPosOrd}
-        visible={dialogStatus === 'confirm-close-position'}
-        onClose={onCloseDialogEv}
-        onClick={closeOneFunc}
-      />
-      <TakeProfitAndStopLossDialog
-        data={targetPosOrd}
-        visible={dialogStatus === 'edit-position'}
-        onClose={onCloseDialogEv}
-        onClick={profitOrLossFunc}
-      />
-      <PositionCloseAllDialog
-        visible={dialogStatus === 'close-all-position'}
-        onClose={onCloseDialogEv}
-        onClick={closeAllFunc}
-      />
+      {dialogStatus === 'preview-close-position' && (
+        <PositionClosePreviewDialog
+          data={targetPosOrd}
+          visible={dialogStatus === 'preview-close-position'}
+          onClose={onCloseDialogEv}
+          onClick={() => setDialogStatus('confirm-close-position')}
+        />
+      )}
+      {dialogStatus === 'confirm-close-position' && (
+        <PositionCloseConfirmDialog
+          data={targetPosOrd}
+          visible={dialogStatus === 'confirm-close-position'}
+          onClose={onCloseDialogEv}
+          onClick={closeOneFunc}
+        />
+      )}
+      {dialogStatus === 'edit-position' && (
+        <TakeProfitAndStopLossDialog
+          data={targetPosOrd}
+          visible={dialogStatus === 'edit-position'}
+          onClose={onCloseDialogEv}
+          onClick={profitOrLossFunc}
+        />
+      )}
+      {dialogStatus === 'close-all-position' && (
+        <PositionCloseAllDialog
+          visible={dialogStatus === 'close-all-position'}
+          onClose={onCloseDialogEv}
+          onClick={closeAllFunc}
+        />
+      )}
     </>
   )
 }

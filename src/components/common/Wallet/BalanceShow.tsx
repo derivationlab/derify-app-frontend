@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import numeral from 'numeral'
 
 import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { nonBigNumberInterception } from '@/utils/tools'
+import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   value: number | string
@@ -16,7 +16,7 @@ interface Props {
 
 const BalanceShow: FC<Props> = ({ value, unit, format = '', percent = false, decimal = 2 }) => {
   const [int, dec] = useMemo(() => {
-    const safeNumber = nonBigNumberInterception(value, decimal)
+    const safeNumber = keepDecimals(value, decimal)
     const finalValue = percent ? new BN(safeNumber).multipliedBy(100).toString() : safeNumber
     if (format) {
       return numeral(finalValue).format(format).split('.')

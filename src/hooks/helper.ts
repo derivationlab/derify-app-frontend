@@ -339,7 +339,7 @@ export const isOpeningMinLimit = (
 export const calcTradingFee = async (
   pairAddress: string,
   tokenSelect: string,
-  openingAmount: number,
+  openingAmount: string | number,
   spotPrice: string
 ): Promise<number> => {
   const c = getDerifyDerivativePairContract(pairAddress)
@@ -376,7 +376,7 @@ export const checkOpeningVol = (
 export const calcChangeFee = async (
   side: PositionSide,
   symbol: string,
-  amount: number,
+  amount: string | number,
   spotPrice: string,
   exchange: string,
   derivative: string,

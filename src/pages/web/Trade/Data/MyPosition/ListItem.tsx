@@ -7,8 +7,8 @@ import { useSpotPrice1 } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useMarginToken } from '@/zustand'
-import { BASE_TOKEN_SYMBOL, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { bnDiv, bnMinus, bnMul, isGT, isLTET, nonBigNumberInterception } from '@/utils/tools'
+import { BASE_TOKEN_SYMBOL, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
@@ -65,8 +65,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       >
         <span className={classNames(`${judgeUpsAndDowns(memoUnrealizedPnl) ? 'up' : 'down'}`)}>
           {judgeUpsAndDowns(memoUnrealizedPnl)}
-          {nonBigNumberInterception(bnMul(memoUnrealizedPnl, 100))} ( {judgeUpsAndDowns(memoReturnRate)}
-          {nonBigNumberInterception(bnMul(memoReturnRate, 100))}% )
+          {keepDecimals(memoUnrealizedPnl, findToken(marginToken).decimals)} ( {judgeUpsAndDowns(memoReturnRate)}
+          {keepDecimals(bnMul(memoReturnRate, 100), 2)}% )
         </span>
       </DataAtom>
     ),
@@ -81,7 +81,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         footer={`${data.quoteToken} / ${marginToken}`}
       >
         <span>
-          {nonBigNumberInterception(data?.size ?? 0, 4)} / {nonBigNumberInterception(memoVolume)}
+          {keepDecimals(data?.size ?? 0, 4)} / {keepDecimals(memoVolume, findToken(marginToken).decimals)}
         </span>
       </DataAtom>
     ),
@@ -94,7 +94,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.AvgPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>{nonBigNumberInterception(data?.averagePrice ?? 0)}</span>
+        <span>{keepDecimals(data?.averagePrice ?? 0, 2)}</span>
       </DataAtom>
     ),
     [data?.averagePrice, t]
@@ -110,7 +110,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       const p3 = bnDiv(p2, data.size)
       const p4 = bnMul(p3, mul)
       const p5 = bnMinus(spotPrice[data.quoteToken], p4)
-      lp = isLTET(p5, 0) ? '--' : nonBigNumberInterception(p5)
+      lp = isLTET(p5, 0) ? '--' : keepDecimals(p5, 2)
     } else {
       lp = '--'
     }
@@ -133,7 +133,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.MarginTip')}
         footer={marginToken}
       >
-        <span>{nonBigNumberInterception(memoMargin)}</span>
+        <span>{keepDecimals(memoMargin, findToken(marginToken).decimals)}</span>
       </DataAtom>
     )
   }, [memoMargin, t])
@@ -153,7 +153,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom hover label={t('Trade.MyPosition.MarginRate', 'Margin Rate')} tip={t('Trade.MyPosition.MarginRateTip')}>
         <span className={classNames('reminder', `${base >= 0 ? 'up' : 'down'}`)}>
           {judgeUpsAndDowns(base as any)}
-          {base.toFixed(2)}%
+          {keepDecimals(base, 2)}%
         </span>
         <Reminder alertLevel={alertLevel} />
       </DataAtom>

@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Input } from '@/components/common/Form'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface InputProps {
   value: number | string
@@ -21,7 +21,7 @@ const PriceInput: FC<InputProps> = ({ value, disabled, onChange }) => {
           type="number"
           value={value}
           onChange={(val) => onChange(Number(val))}
-          suffix={BASE_TOKEN_SYMBOL}
+          suffix={VALUATION_TOKEN_SYMBOL}
           placeholder=""
         />
       )}

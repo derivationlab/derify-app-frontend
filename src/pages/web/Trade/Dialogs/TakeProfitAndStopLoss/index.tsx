@@ -6,7 +6,7 @@ import { useSpotPrice } from '@/hooks/useMatchConf'
 import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { PositionSide } from '@/store/contract/helper'
 import { safeInterceptionValues } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -175,7 +175,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
         <em className="buy">
           {data?.side === PositionSide.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
         </em>
-        <u>{BASE_TOKEN_SYMBOL}</u>
+        <u>{VALUATION_TOKEN_SYMBOL}</u>
       </p>
     )
   }, [data])
@@ -186,7 +186,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
         <em className="buy">
           {data?.side === PositionSide.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
         </em>
-        <u>{BASE_TOKEN_SYMBOL}</u>
+        <u>{VALUATION_TOKEN_SYMBOL}</u>
       </p>
     )
   }, [data])
@@ -251,12 +251,12 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
               <Input
                 value={takeProfitPrice}
                 onChange={onChangeTakeProfitPriceEv}
-                suffix={BASE_TOKEN_SYMBOL}
+                suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
               />
               <p>
                 {t('Trade.TPSL.TakeProfitTip1', 'When market price reaches')}{' '}
-                <strong>{calcPriceShowFunc(takeProfitPrice)}</strong> {BASE_TOKEN_SYMBOL},
+                <strong>{calcPriceShowFunc(takeProfitPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.TakeProfitTip2',
                   'it will trigger Take Profit order to close this position. Estimated profit will be'
@@ -264,7 +264,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
                 <em className={Number(takeProfitAmount) > 0 ? 'buy' : 'sell'}>
                   {calcAmountShowFunc(takeProfitPrice, takeProfitAmount)}
                 </em>{' '}
-                {BASE_TOKEN_SYMBOL}.
+                {VALUATION_TOKEN_SYMBOL}.
               </p>
             </section>
             <header>
@@ -275,12 +275,12 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
               <Input
                 value={stopLossPrice}
                 onChange={onChangeStopLossPriceEv}
-                suffix={BASE_TOKEN_SYMBOL}
+                suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
               />
               <p>
                 {t('Trade.TPSL.StopLossTip1', 'When market price reaches')}{' '}
-                <strong>{calcPriceShowFunc(stopLossPrice)}</strong> {BASE_TOKEN_SYMBOL},
+                <strong>{calcPriceShowFunc(stopLossPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.StopLossTip2',
                   'it will trigger Stop Loss order to close this position. Estimated loss will be'
@@ -288,7 +288,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
                 <em className={Number(stopLossAmount) > 0 ? 'buy' : 'sell'}>
                   {calcAmountShowFunc(stopLossPrice, stopLossAmount)}
                 </em>{' '}
-                {BASE_TOKEN_SYMBOL}.
+                {VALUATION_TOKEN_SYMBOL}.
               </p>
             </section>
           </div>

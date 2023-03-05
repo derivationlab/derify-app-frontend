@@ -7,7 +7,7 @@ import { useSpotPrice1 } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useMarginToken } from '@/zustand'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { BASE_TOKEN_SYMBOL, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, nonBigNumberInterception } from '@/utils/tools'
 
 import ItemHeader from '../c/ItemHeader'
@@ -92,7 +92,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.AvgPrice', 'Avg. Price')}
         tip={t('Trade.MyPosition.AvgPriceTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={VALUATION_TOKEN_SYMBOL}
       >
         <span>{nonBigNumberInterception(data?.averagePrice ?? 0)}</span>
       </DataAtom>
@@ -119,7 +119,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.LiqPrice', 'Liq. Price')}
         tip={t('Trade.MyPosition.LiqPriceTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={VALUATION_TOKEN_SYMBOL}
       >
         <span>{lp}</span>
       </DataAtom>
@@ -165,7 +165,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.TakeProfit', 'Take Profit')}
         tip={t('Trade.MyPosition.TakeProfitTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={VALUATION_TOKEN_SYMBOL}
       >
         {data?.takeProfitPrice} <EditButton onClick={() => onEdit(data)} />
       </DataAtom>
@@ -177,7 +177,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.StopLoss', 'Stop Loss')}
         tip={t('Trade.MyPosition.StopLossTip')}
-        footer={BASE_TOKEN_SYMBOL}
+        footer={VALUATION_TOKEN_SYMBOL}
       >
         {data?.stopLossPrice} <EditButton onClick={() => onEdit(data)} />
       </DataAtom>

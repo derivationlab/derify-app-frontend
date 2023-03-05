@@ -73,6 +73,8 @@ export const MARGIN_TOKENS = [tokens.busd, tokens.drf]
 
 export const BASE_TOKEN_SYMBOL = tokens.busd.symbol
 
+export const VALUATION_TOKEN_SYMBOL = 'USD'
+
 // key: (btc,eth...)/address
 export const findToken = (key: string): Token => {
   // eslint-disable-next-line

@@ -1,11 +1,12 @@
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useMemo } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { useMarginToken, useQuoteToken } from '@/zustand'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import { Select, Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
@@ -14,9 +15,9 @@ import Row from './Row'
 import Col from './Col'
 
 interface Props {
-  type: string | number
+  type: string
   value: number | string
-  onChange: (value: number) => void
+  onChange: (value: number | string) => void
   onTypeChange: (value: string | number) => void
 }
 
@@ -24,13 +25,13 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
 
+  const maxVolume = useCalcOpeningDAT((state) => state.maxVolume)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
   const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
-  const maxVolume = useCalcOpeningDAT((state) => state.maxVolume)
   const fetchMaxVolume = useCalcOpeningDAT((state) => state.fetchMaxVolume)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf()
@@ -40,10 +41,13 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
     onTypeChange(val)
   }
 
+  const visibleMaxVol = useMemo(() => {
+    return nonBigNumberInterception(maxVolume?.[type] ?? 0, findToken(type)?.decimals ?? 2)
+  }, [maxVolume, type])
+
   useEffect(() => {
-    const p = maxVolume?.[type] ?? 0
-    if (value > p) onChange(p)
-  }, [value, maxVolume])
+    if (value > visibleMaxVol) onChange(visibleMaxVol)
+  }, [value, visibleMaxVol])
 
   useEffect(() => {
     if (account?.address && protocolConfig) {
@@ -72,7 +76,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
         <Col>
           <div className="web-trade-bench-pane-volume-max">
             <span>Max: </span>
-            <em>{maxVolume?.[type] ?? 0} </em>
+            <em>{keepDecimals(maxVolume?.[type] ?? 0, findToken(type)?.decimals ?? 2)} </em>
             <u>{type}</u>
           </div>
           <Select
@@ -84,7 +88,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
         </Col>
       </Row>
       <Row mb="36">
-        <PercentButton currValue={value} value={maxVolume?.[type] ?? 0} onChange={(val) => onChange(val)} />
+        <PercentButton currValue={value} value={visibleMaxVol} onChange={(val) => onChange(val)} />
       </Row>
     </>
   )

@@ -1,11 +1,12 @@
-import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { isEmpty, debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
+import { findToken } from '@/config/tokens'
+import { keepDecimals } from '@/utils/tools'
 import { PositionSide } from '@/store/contract/helper'
 import { useMatchConf } from '@/hooks/useMatchConf'
 import { reducer, stateInit } from '@/reducers/openingPosition'
-import { nonBigNumberInterception } from '@/utils/tools'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
 
 import Dialog from '@/components/common/Dialog'
@@ -22,35 +23,11 @@ interface Props {
 }
 
 const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
-  const { t } = useTranslation()
-
   const [state, dispatch] = useReducer(reducer, stateInit)
 
+  const { t } = useTranslation()
+
   const { spotPrice, marginToken, quoteToken, protocolConfig, factoryConfig, openingMaxLimit } = useMatchConf()
-
-  const calcTradingFeeFunc = useCallback(async () => {
-    if (factoryConfig) {
-      const fee = await calcTradingFee(factoryConfig, data?.symbol, state.validOpeningVol.value, spotPrice)
-      // console.info(fee)
-      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
-    }
-  }, [data, factoryConfig, spotPrice, state.validOpeningVol])
-
-  const calcChangeFeeFunc = useCallback(async () => {
-    if (factoryConfig && protocolConfig) {
-      const fee = await calcChangeFee(
-        data?.side,
-        data?.symbol,
-        state.validOpeningVol.value,
-        spotPrice,
-        protocolConfig.exchange,
-        factoryConfig,
-        true
-      )
-
-      dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
-    }
-  }, [data, spotPrice, factoryConfig, protocolConfig, state.validOpeningVol])
 
   const checkOpeningVolFunc = async () => {
     const volume = checkOpeningVol(
@@ -64,6 +41,34 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
     dispatch({ type: 'SET_VALID_OPENING_VOLUME', payload: { loaded: true, value: volume } })
   }
+
+  const calcTFeeFunc = useCallback(
+    debounce(async (value: number, symbol: string, spotPrice: string, factoryConfig: string) => {
+      const fee = await calcTradingFee(factoryConfig, symbol, value, spotPrice)
+
+      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
+    }, 1000),
+    []
+  )
+
+  const calcCFeeFunc = useCallback(
+    debounce(
+      async (
+        side: PositionSide,
+        value: number,
+        symbol: string,
+        spotPrice: string,
+        factoryConfig: string,
+        protocolConfig: string
+      ) => {
+        const fee = await calcChangeFee(side, symbol, value, spotPrice, protocolConfig, factoryConfig, true)
+
+        dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
+      },
+      1000
+    ),
+    []
+  )
 
   useEffect(() => {
     if (!isEmpty(data) && visible) {
@@ -79,11 +84,18 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible])
 
   useEffect(() => {
-    if (visible && state.validOpeningVol.value) {
-      void calcTradingFeeFunc()
-      void calcChangeFeeFunc()
+    if (visible && state.validOpeningVol && protocolConfig && factoryConfig && spotPrice) {
+      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrice, factoryConfig)
+      void calcCFeeFunc(
+        data?.side,
+        state.validOpeningVol.value,
+        data?.symbol,
+        spotPrice,
+        factoryConfig,
+        protocolConfig.exchange
+      )
     }
-  }, [visible, state.validOpeningVol])
+  }, [visible, spotPrice, factoryConfig, protocolConfig, state.validOpeningVol])
 
   return (
     <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
@@ -121,12 +133,12 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <section>
                       <aside>
                         <MultipleStatus direction="Long" />
-                        <em>{nonBigNumberInterception(state.validOpeningVol.value / 2, 8)}</em>
+                        <em>{keepDecimals(state.validOpeningVol.value / 2, findToken(data?.symbol).decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                       <aside>
                         <MultipleStatus direction="Short" />
-                        <em>{nonBigNumberInterception(state.validOpeningVol.value / 2, 8)}</em>
+                        <em>{keepDecimals(state.validOpeningVol.value / 2, findToken(data?.symbol).decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                     </section>
@@ -138,7 +150,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <small>calculating...</small>
                   ) : (
                     <span>
-                      <em>{nonBigNumberInterception(state.validOpeningVol.value, 8)}</em>
+                      <em>{keepDecimals(state.validOpeningVol.value, findToken(data?.symbol).decimals)}</em>
                       <u>{data?.symbol}</u>
                     </span>
                   )}
@@ -155,7 +167,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>calculating...</small>
                 ) : (
                   <div>
-                    <em>{nonBigNumberInterception(state.posChangeFee.value, 8)}</em>
+                    <em>{keepDecimals(state.posChangeFee.value, findToken(marginToken).decimals)}</em>
                     <u>{marginToken}</u>
                   </div>
                 )}
@@ -174,7 +186,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>calculating...</small>
                 ) : (
                   <div>
-                    <em>-{nonBigNumberInterception(state.tradingFeeInfo.value, 8)}</em>
+                    <em>-{keepDecimals(state.tradingFeeInfo.value, findToken(marginToken).decimals)}</em>
                     <u>{marginToken}</u>
                   </div>
                 )}

@@ -35,17 +35,17 @@ const Bench: FC = () => {
   const { protocolConfig } = useProtocolConf()
 
   const indicators = usePairsInfo((state) => state.indicators)
-  const openingType = useCalcOpeningDAT((state) => state.openingType)
-  const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
-  const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
-  const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
-  const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
-  const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
-  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
-  const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
+  const openingType = useCalcOpeningDAT((state) => state.openingType)
+  const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
+  const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
+  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
+  const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
+  const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
+  const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
+  const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
@@ -174,14 +174,13 @@ const Bench: FC = () => {
         leverage: leverageNow,
         openType: _openType
       }
-      console.info(openPosParams)
       dispatch({ type: 'SET_MODAL_STATUS', payload: true })
       dispatch({ type: 'SET_OPENING_PARAMS', payload: openPosParams })
     }
   }
 
   useEffect(() => {
-    if (Number(spotPrice) > 0) {
+    if (isGT(spotPrice, 0)) {
       updateOpeningPrice(spotPrice)
     }
   }, [spotPrice])

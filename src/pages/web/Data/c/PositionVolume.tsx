@@ -8,7 +8,7 @@ import { findToken } from '@/config/tokens'
 import { useMarginToken } from '@/zustand'
 import { getHistoryPositionsData } from '@/api'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { bnDiv, bnMul, bnPlus, isGT, nonBigNumberInterception } from '@/utils/tools'
+import { bnDiv, bnMul, bnPlus, isGT, keepDecimals } from '@/utils/tools'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 
 import Select from '@/components/common/Form/Select'
@@ -16,7 +16,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
 
 const time = days().utc().startOf('days').format()
-const base = {
+let output: Record<string, any> = {
   long: '0%',
   short: '0%',
   volume: '0',
@@ -90,17 +90,18 @@ const PositionVolume: FC = () => {
       if (isGT(volume, 0)) {
         const p1 = bnMul(bnDiv(long_position_amount, volume), 100)
         const p2 = bnMul(bnDiv(short_position_amount, volume), 100)
-        return {
-          long: `${nonBigNumberInterception(p1, 2)}%`,
-          short: `${nonBigNumberInterception(p2, 2)}%`,
+        output = {
+          long: `${keepDecimals(p1, 2)}%`,
+          short: `${keepDecimals(p2, 2)}%`,
           volume,
           day_time: time,
           long_position_amount: long_position_amount,
           short_position_amount: short_position_amount
         }
+        return output
       }
     }
-    return base
+    return output
   }, [positionsDAT])
 
   const combineDAT = useMemo(() => {

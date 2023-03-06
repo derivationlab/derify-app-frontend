@@ -13,6 +13,7 @@ import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
+let output: Record<string, any> = {}
 const time = days().utc().startOf('days').format()
 
 const TradingVolume: FC = () => {
@@ -44,11 +45,7 @@ const TradingVolume: FC = () => {
   }, [timeSelectVal, pairSelectVal])
 
   const combineDAT = useMemo(() => {
-    let output
-    if (tradingVolume) {
-      // console.info({ day_time: time, ...data[0] })
-      output = { day_time: time, ...tradingVolume[0] }
-    }
+    if (tradingVolume) output = { day_time: time, ...tradingVolume[0] }
     return [...tradingData, output]
   }, [tradingData, tradingVolume])
 

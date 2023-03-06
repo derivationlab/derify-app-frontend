@@ -52,7 +52,7 @@ export const useTraderEDRFBalance = (trader = '') => {
     ['getTraderEDRFBalance'],
     async (): Promise<Record<string, any>> => {
       const data = await getTraderEDRFBalance(trader)
-      console.info('edrfBalance:', data?.data)
+      // console.info('edrfBalance:', data?.data)
       return data
     },
     {
@@ -71,7 +71,7 @@ export const useTraderBondBalance = (trader = '', address: string) => {
     ['getTraderBondBalance'],
     async (): Promise<Record<string, any>> => {
       const data = await getTraderBondBalance(trader, address)
-      console.info('bondBalance:', data?.data)
+      // console.info('bondBalance:', data?.data)
       return data
     },
     {
@@ -90,7 +90,7 @@ export const useCurrentTradingAmount = (address: string, marginToken: string) =>
     ['getCurrentTradingAmount'],
     async (): Promise<any[]> => {
       const data = await getCurrentTradingAmount(address, marginToken)
-      return data?.data
+      return data?.data ?? {}
     },
     {
       retry: 0,
@@ -108,11 +108,10 @@ export const useCurrentInsuranceDAT = (address: string) => {
     ['getCurrentInsuranceData'],
     async (): Promise<Rec> => {
       const data = await getCurrentInsuranceData(address)
-      return data?.data
+      return data?.data ?? {}
     },
     {
       retry: 0,
-      placeholderData: {},
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false

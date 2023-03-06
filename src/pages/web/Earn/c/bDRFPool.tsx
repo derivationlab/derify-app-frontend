@@ -78,6 +78,8 @@ const EranbDRFPool: FC = () => {
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
+
+        PubSub.publish(PubSubEvents.UPDATE_BALANCE)
       } else {
         // fail
         window.toast.error(t('common.failed', 'failed'))
@@ -125,6 +127,8 @@ const EranbDRFPool: FC = () => {
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
+
+        PubSub.publish(PubSubEvents.UPDATE_BALANCE)
       } else {
         // fail
         window.toast.error(t('common.failed', 'failed'))

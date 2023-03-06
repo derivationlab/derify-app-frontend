@@ -480,8 +480,6 @@ export const getTraderRewardDAT = async (trader: string, reward: string): Promis
     const { bondAnnualInterestRatio, bondBalance, bondReturnBalance, bondWalletBalance } = getBondInfo
     const { drfAccumulatedBalance, drfBalance, marginTokenAccumulatedBalance, marginTokenBalance } = getPositionReward
 
-    console.info('bondBalance:', formatUnits(String(bankBalance), 8))
-
     output = {
       drfBalance: formatUnits(String(drfBalance), 8),
       bankBalance: formatUnits(String(bankBalance), 8),

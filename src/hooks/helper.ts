@@ -1,8 +1,9 @@
-import { flatten, isEmpty } from 'lodash'
-import { BigNumberish } from '@ethersproject/bignumber'
 import BN from 'bignumber.js'
+import { BigNumberish } from '@ethersproject/bignumber'
+import { chunk, flatten, isEmpty } from 'lodash'
 
 import multicall from '@/utils/multicall'
+import contracts from '@/config/contracts'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { PositionSide } from '@/typings'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
@@ -28,7 +29,7 @@ import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
-import contracts from '@/config/contracts'
+import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -655,4 +656,72 @@ export const getBrokerInfo = async (trader: string) => {
     console.info(e)
     return base
   }
+}
+
+export const initialPCFAndSpotPrice = (): MarginTokenWithQuote => {
+  let value = Object.create(null)
+  let quote = Object.create(null)
+
+  QUOTE_TOKENS.forEach((t) => {
+    quote = {
+      ...quote,
+      [t.symbol]: '0'
+    }
+  })
+  MARGIN_TOKENS.forEach((t) => {
+    value = {
+      ...value,
+      [t.symbol]: quote
+    }
+  })
+
+  return value
+}
+
+export const getPCFAndSpotPrice = async (p: MarginTokenWithQuote) => {
+  const calls1: any[] = []
+  const calls2: any[] = []
+  const output1 = initialPCFAndSpotPrice()
+  const output2 = initialPCFAndSpotPrice()
+
+  for (const k in p) {
+    for (const j in p[k as MarginTokenKeys]) {
+      calls1.push({
+        name: 'getPositionChangeFeeRatio',
+        address: p[k as MarginTokenKeys][j as QuoteTokenKeys],
+        quoteToken: j,
+        marginToken: k
+      })
+      calls2.push({
+        name: 'getSpotPrice',
+        address: p[k as MarginTokenKeys][j as QuoteTokenKeys],
+        quoteToken: j,
+        marginToken: k
+      })
+    }
+  }
+
+  const calls = [...calls1, ...calls2]
+
+  const response = await multicall(DerifyDerivativeAbi, calls)
+
+  if (!isEmpty(response)) {
+    const _chunk = chunk(response, calls1.length) as any[]
+    _chunk[0].forEach((ratio: BigNumberish, index: number) => {
+      const _ratio = Number(safeInterceptionValues(String(ratio), 4)) * 100
+      const { marginToken, quoteToken } = calls1[index]
+      output1[marginToken as MarginTokenKeys] = { ...output1[marginToken as MarginTokenKeys], [quoteToken]: _ratio }
+    })
+    _chunk[1].forEach((spotPrice: BigNumberish, index: number) => {
+      const { marginToken, quoteToken } = calls2[index]
+      output2[marginToken as MarginTokenKeys] = {
+        ...output2[marginToken as MarginTokenKeys],
+        [quoteToken]: safeInterceptionValues(String(spotPrice), 8)
+      }
+    })
+
+    return { data1: output1, data2: output2 }
+  }
+
+  return { data1: output1, data2: output2 }
 }

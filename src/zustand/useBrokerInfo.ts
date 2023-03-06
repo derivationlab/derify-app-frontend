@@ -20,7 +20,7 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
     const data = await getBrokerInfoByTrader(trader)
 
     // console.info(`fetchBrokerBound`)
-    // console.info(data)
+    console.info(data?.data)
 
     set({ brokerBound: data?.data, brokerBoundLoaded: true })
   },

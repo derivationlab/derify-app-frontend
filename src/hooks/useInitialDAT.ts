@@ -20,17 +20,17 @@ export const useInitialDAT = () => {
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const fetchBalance = useTokenBalances((state) => state.fetchBalance)
   const fetchBalances = useTokenBalances((state) => state.fetch)
   const resetBalances = useTokenBalances((state) => state.reset)
-  const fetchBalance = useTokenBalances((state) => state.fetchBalance)
+  const updateVariables = useTraderInfo((state) => state.updateVariables)
+  const updateIndicators = usePairsInfo((state) => state.updateIndicators)
+  const updateMTokenPrices = useConfigInfo((state) => state.updateMTokenPrices)
+  const updateDashboardDAT = useDashboardDAT((state) => state.updateDashboardDAT)
   const updateFactoryConfig = useConfigInfo((state) => state.updateFactoryConfig)
   const updateProtocolConfig = useConfigInfo((state) => state.updateProtocolConfig)
   const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)
-  const updateMTokenPrices = useConfigInfo((state) => state.updateMTokenPrices)
-  const updateIndicators = usePairsInfo((state) => state.updateIndicators)
   const updatePositionsAmount = usePoolsInfo((state) => state.updatePositionsAmount)
-  const updateVariables = useTraderInfo((state) => state.updateVariables)
-  const updateDashboardDAT = useDashboardDAT((state) => state.updateDashboardDAT)
 
   const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
   const {

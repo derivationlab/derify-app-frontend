@@ -19,6 +19,7 @@ export const useCurrentPositionsAmount = (quoteToken: string, marginToken: strin
     },
     {
       retry: 0,
+      placeholderData: {},
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false

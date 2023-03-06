@@ -3,7 +3,7 @@ import create from 'zustand'
 import { VolumeState } from '@/zustand/types'
 import { MarginTokenKeys } from '@/typings'
 import { findToken, MARGIN_TOKENS } from '@/config/tokens'
-import { inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
+import { formatUnits, inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export enum OpeningType {
@@ -18,16 +18,21 @@ const getMaxVolume = async (
   leverageNow: number,
   price: string,
   exchange: string
-): Promise<number[]> => {
+): Promise<string[]> => {
   const _price = inputParameterConversion(price, 8)
   const _leverageNow = inputParameterConversion(leverageNow, 8)
   const c = getDerifyExchangeContract(exchange)
 
-  const data = await c.getTraderOpenUpperBound(qtAddress, trader, openingType, _price, _leverageNow)
+  try {
+    const data = await c.getTraderOpenUpperBound(qtAddress, trader, openingType, _price, _leverageNow)
 
-  const { size, amount } = data
+    const { size, amount } = data
 
-  return [Number(safeInterceptionValues(String(size), 8)), Number(safeInterceptionValues(String(amount), 8))]
+    return [formatUnits(String(size), 8), formatUnits(String(amount), 8)]
+  } catch (e) {
+    console.info(e)
+    return ['0', '0']
+  }
 }
 
 const getTFRValue = async (address: string) => {

@@ -46,6 +46,7 @@ export function useQueryMulticall(abi: any[], calls: Call[], refetchInterval = 3
     {
       retry: false,
       refetchInterval,
+      placeholderData: [],
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }

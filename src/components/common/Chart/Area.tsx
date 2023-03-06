@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import numeral from 'numeral'
 
 import ThemeContext from '@/context/Theme/Context'
+import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   data: any[]
@@ -19,7 +20,7 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yKey, yLabel, timeFormatStr }) 
   const formatTime = (value: string) => {
     return dayjs(value).format(timeFormatStr)
   }
-  const formatValue = (value: number) => numeral(value).format('0,0.00')
+  const formatValue = (value: number) => keepDecimals(value, 2)
   const formatTip = (value: any) => [formatValue(value) as typeof value, yLabel]
   const toolTipStyle = theme === 'Dark' ? { backgroundColor: '#222', color: '#fff', borderColor: '#444' } : {}
 

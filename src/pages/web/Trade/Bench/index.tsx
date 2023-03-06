@@ -8,7 +8,7 @@ import { isOpeningMinLimit } from '@/hooks/helper'
 import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
-import { PubSubEvents, PositionSide } from '@/typings'
+import { PubSubEvents, PositionSideTypes } from '@/typings'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
@@ -128,7 +128,7 @@ const Bench: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const openPositionDialog = async (side: PositionSide) => {
+  const openPositionDialog = async (side: PositionSideTypes) => {
     if (protocolConfig) {
       let _openType = openingType
       const _realPrice = openingType === OpeningType.Market ? spotPrice : openingPrice
@@ -147,10 +147,10 @@ const Bench: FC = () => {
       }
 
       if (openingType === OpeningType.Limit) {
-        if (side === PositionSide.long) {
+        if (side === PositionSideTypes.long) {
           if (isGT(openingPrice, spotPrice)) _openType = 0
         }
-        if (side === PositionSide.short) {
+        if (side === PositionSideTypes.short) {
           if (isLT(openingPrice, spotPrice)) _openType = 0
         }
       }
@@ -212,7 +212,7 @@ const Bench: FC = () => {
                 loading={!maxVolumeLoaded}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
-                onClick={() => openPositionDialog(PositionSide.long)}
+                onClick={() => openPositionDialog(PositionSideTypes.long)}
                 type="buy"
               >
                 <strong>{t('Trade.Bench.Long', 'Long')}</strong>
@@ -227,7 +227,7 @@ const Bench: FC = () => {
                 disabled={memoDisabled1 || memoDisabled2}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
-                onClick={() => openPositionDialog(PositionSide.short)}
+                onClick={() => openPositionDialog(PositionSideTypes.short)}
                 type="sell"
               >
                 <strong>{t('Trade.Bench.Short', 'Short')}</strong>
@@ -245,7 +245,7 @@ const Bench: FC = () => {
                   disabled={memoDisabled1 || memoDisabled2}
                   noDisabledStyle
                   className="web-trade-bench-button-full"
-                  onClick={() => openPositionDialog(PositionSide.twoWay)}
+                  onClick={() => openPositionDialog(PositionSideTypes.twoWay)}
                   outline
                   full
                   type="blue"

@@ -3,7 +3,7 @@ import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 
 import { PosDATState, Rec } from '@/zustand/types'
-import { OrderTypes, PositionSide } from '@/typings'
+import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
 import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
 import multicall from '@/utils/multicall'
@@ -58,7 +58,7 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
 
           positionOrd.push({
             size,
-            side: PositionSide.long,
+            side: PositionSideTypes.long,
             leverage: safeInterceptionValues(String(long.leverage), 8),
             stopLossPrice: calcStopLossOrStopProfitPrice(longOrderStopLossPosition),
             takeProfitPrice: calcStopLossOrStopProfitPrice(longOrderStopProfitPosition),
@@ -77,7 +77,7 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
 
           positionOrd.push({
             size,
-            side: PositionSide.short,
+            side: PositionSideTypes.short,
             leverage: safeInterceptionValues(String(short.leverage), 8),
             stopLossPrice: calcStopLossOrStopProfitPrice(shortOrderStopLossPosition),
             takeProfitPrice: calcStopLossOrStopProfitPrice(shortOrderStopProfitPosition),
@@ -106,12 +106,12 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
 
             profitLossOrd.push({
               size,
-              side: PositionSide.long,
+              side: PositionSideTypes.long,
               price: safeInterceptionValues(String(order.price)),
               volume,
               leverage: safeInterceptionValues(String(order.leverage)),
               timestamp: String(order.timestamp),
-              orderType: OrderTypes.Limit,
+              orderType: PositionTriggerTypes.Limit,
               quoteToken: calls[i].quoteToken
             })
           }
@@ -126,12 +126,12 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
 
             profitLossOrd.push({
               size,
-              side: PositionSide.short,
+              side: PositionSideTypes.short,
               price: safeInterceptionValues(String(order.price)),
               volume,
               leverage: safeInterceptionValues(String(order.leverage)),
               timestamp: String(order.timestamp),
-              orderType: OrderTypes.Limit,
+              orderType: PositionTriggerTypes.Limit,
               quoteToken: calls[i].quoteToken
             })
           }
@@ -145,11 +145,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
 
           profitLossOrd.push({
             size,
-            side: PositionSide.long,
+            side: PositionSideTypes.long,
             price: safeInterceptionValues(String(longOrderStopProfitPosition.stopPrice)),
             volume,
             leverage: safeInterceptionValues(String(long.leverage)),
-            orderType: OrderTypes.StopProfit,
+            orderType: PositionTriggerTypes.StopProfit,
             timestamp: String(longOrderStopProfitPosition.timestamp),
             quoteToken: calls[i].quoteToken
           })
@@ -166,11 +166,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
 
           profitLossOrd.push({
             size,
-            side: PositionSide.long,
+            side: PositionSideTypes.long,
             price: safeInterceptionValues(String(longOrderStopLossPosition.stopPrice)),
             volume,
             leverage: safeInterceptionValues(String(long.leverage)),
-            orderType: OrderTypes.StopLoss,
+            orderType: PositionTriggerTypes.StopLoss,
             timestamp: String(longOrderStopLossPosition.timestamp),
             quoteToken: calls[i].quoteToken
           })
@@ -184,11 +184,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
 
           profitLossOrd.push({
             size,
-            side: PositionSide.short,
+            side: PositionSideTypes.short,
             price: safeInterceptionValues(String(shortOrderStopLossPosition.stopPrice)),
             volume,
             leverage: safeInterceptionValues(String(short.leverage)),
-            orderType: OrderTypes.StopLoss,
+            orderType: PositionTriggerTypes.StopLoss,
             timestamp: String(shortOrderStopLossPosition.timestamp),
             quoteToken: calls[i].quoteToken
           })
@@ -202,11 +202,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
 
           profitLossOrd.push({
             size,
-            side: PositionSide.short,
+            side: PositionSideTypes.short,
             price: safeInterceptionValues(String(shortOrderStopProfitPosition.stopPrice)),
             volume,
             leverage: safeInterceptionValues(String(short.leverage)),
-            orderType: OrderTypes.StopProfit,
+            orderType: PositionTriggerTypes.StopProfit,
             timestamp: String(shortOrderStopProfitPosition.timestamp),
             quoteToken: calls[i].quoteToken
           })

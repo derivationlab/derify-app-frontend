@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Select } from '@/components/common/Form'
-import { PriceType } from '@/typings'
+import { PositionOrderTypes } from '@/typings'
 
 interface Props {
   value: string | number
@@ -15,11 +15,11 @@ const OpenTypeSelect: FC<Props> = ({ value, onChange }) => {
   const openTypeOptions = [
     {
       label: t('Trade.Bench.MarketPrice', 'Market Price'),
-      value: PriceType.Market
+      value: PositionOrderTypes.Market
     },
     {
       label: t('Trade.Bench.LimitPrice', 'Limit Price'),
-      value: PriceType.Limit
+      value: PositionOrderTypes.Limit
     }
   ]
 

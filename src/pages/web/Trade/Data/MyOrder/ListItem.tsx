@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
 
-import { PositionSide } from '@/typings'
+import { PositionSideTypes } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
 import { useMarginToken } from '@/zustand'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
@@ -84,7 +84,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
         <ItemHeader
           symbol={`${data?.quoteToken}${marginToken}`}
           multiple={data?.leverage}
-          direction={PositionSide[data?.side] as any}
+          direction={PositionSideTypes[data?.side] as any}
           buttonText={t('Trade.MyOrder.Cancel', 'Cancel')}
           onButtonClick={onClick}
         />

@@ -10,6 +10,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
 
 import Options from './Options'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface Props {
   onToggle?: () => void
@@ -17,6 +18,7 @@ interface Props {
 
 const SymbolSelect: FC<Props> = ({ onToggle }) => {
   const ref = useRef(null)
+
   const { mobile } = useContext(MobileContext)
 
   const indicators = usePairsInfo((state) => state.indicators)
@@ -45,10 +47,13 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
     <div className={classNames('web-trade-symbol-select', { show })} ref={ref}>
       {mobile && <div className="web-trade-symbol-select-toggle" onClick={toggleFunc} />}
       <div className="web-trade-symbol-select-curr" onClick={() => setShow(!show)}>
-        <h4>{quoteToken}USD</h4>
+        <h4>
+          {quoteToken}
+          {VALUATION_TOKEN_SYMBOL}
+        </h4>
         <aside>
           <BalanceShow value={spotPrice} unit="" />
-          <ChangePercent value={indicators?.price_change_rate ?? 0} />
+          <ChangePercent value={indicators[quoteToken]?.price_change_rate ?? 0} />
         </aside>
       </div>
       {show && <Options onChange={changeFunc} />}

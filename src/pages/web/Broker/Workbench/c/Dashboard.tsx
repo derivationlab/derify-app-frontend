@@ -41,6 +41,7 @@ const Dashboard: FC = () => {
         // succeed
         window.toast.success(t('common.success', 'success'))
 
+        PubSub.publish(PubSubEvents.UPDATE_BALANCE)
         PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
       } else {
         window.toast.error(t('common.failed', 'failed'))
@@ -105,7 +106,7 @@ const Dashboard: FC = () => {
                 <BalanceShow value={memoTodayRewards} unit={marginToken} />
               </section>
               <footer>
-                <Link to={`/${marginToken}/broker-rank`}>
+                <Link to={`/${marginToken}/broker/rank`}>
                   {t('Broker.BV.BrokerRank', 'Broker Rank')} #{brokerInfo?.rank}
                 </Link>
               </footer>
@@ -153,7 +154,7 @@ const Dashboard: FC = () => {
               <header>{t('Broker.BV.BrokerRank', 'Broker Rank')}</header>
               <section>#{brokerInfo?.rank}</section>
               <footer>
-                <Link to={`/${marginToken}/broker-rank`}>{t('Broker.BV.RankList', 'Rank List')}</Link>
+                <Link to={`/${marginToken}/broker/rank`}>{t('Broker.BV.RankList', 'Rank List')}</Link>
               </footer>
             </main>
           </>

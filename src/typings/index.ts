@@ -22,18 +22,18 @@ export type MarginTokenWithQuote = { [key in MarginTokenKeys]: { [key in QuoteTo
 
 export type MarginTokenWithContract = { [key in MarginTokenKeys]: typeof contractInfo }
 
-export enum PriceType {
+export enum PositionOrderTypes {
   Market,
   Limit
 }
 
-export enum PositionSide {
+export enum PositionSideTypes {
   long,
   short,
   twoWay
 }
 
-export enum OrderTypes {
+export enum PositionTriggerTypes {
   Limit,
   StopProfit,
   StopLoss
@@ -44,5 +44,6 @@ export enum PubSubEvents {
   UPDATE_BROKER_DAT = 'UPDATE_BROKER_DAT',
   UPDATE_TRADE_HISTORY = 'UPDATE_TRADE_HISTORY',
   UPDATE_OPENED_POSITION = 'UPDATE_OPENED_POSITION',
-  UPDATE_POSITION_VOLUME = 'UPDATE_POSITION_VOLUME'
+  UPDATE_POSITION_VOLUME = 'UPDATE_POSITION_VOLUME',
+  UPDATE_TRADER_VARIABLES = 'UPDATE_TRADER_VARIABLES'
 }

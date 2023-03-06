@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { PositionSide } from '@/typings'
+import { PositionSideTypes } from '@/typings'
 import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
@@ -44,7 +44,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     (v) => {
       if (v && data) {
         const p1 = bnMinus(v, data?.averagePrice)
-        const p2 = bnMul(data?.side === PositionSide.long ? 1 : -1, data?.size)
+        const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data?.size)
         const amount = bnMul(p1, p2)
         setTakeProfitAmount(keepDecimals(amount, 2))
       } else {
@@ -60,7 +60,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
         const amount = new BN(v)
           .minus(data?.averagePrice)
           .times(data?.size)
-          .times(data?.side === PositionSide.long ? 1 : -1)
+          .times(data?.side === PositionSideTypes.long ? 1 : -1)
         setStopLossAmount(safeInterceptionValues(String(amount)))
       } else {
         setStopLossAmount(0)
@@ -172,7 +172,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     return (
       <p>
         <em className="buy">
-          {data?.side === PositionSide.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+          {data?.side === PositionSideTypes.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
         </em>
         <u>{VALUATION_TOKEN_SYMBOL}</u>
       </p>
@@ -183,7 +183,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     return (
       <p>
         <em className="buy">
-          {data?.side === PositionSide.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+          {data?.side === PositionSideTypes.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
         </em>
         <u>{VALUATION_TOKEN_SYMBOL}</u>
       </p>
@@ -227,7 +227,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
             <header className="web-trade-dialog-position-info-header">
               <h4>
                 <strong>{`${data?.quoteToken}${marginToken}`}</strong>
-                <MultipleStatus direction={PositionSide[data?.side] as any} />
+                <MultipleStatus direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">

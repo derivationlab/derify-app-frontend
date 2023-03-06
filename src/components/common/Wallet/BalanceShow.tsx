@@ -1,9 +1,8 @@
-import BN from 'bignumber.js'
 import numeral from 'numeral'
 import classNames from 'classnames'
 import React, { FC, useMemo } from 'react'
 
-import { keepDecimals } from '@/utils/tools'
+import { bnMul, keepDecimals } from '@/utils/tools'
 
 interface Props {
   value: number | string
@@ -16,7 +15,7 @@ interface Props {
 const BalanceShow: FC<Props> = ({ value, unit, format = '', percent = false, decimal = 2 }) => {
   const [int, dec] = useMemo(() => {
     const safeNumber = keepDecimals(value, decimal)
-    const finalValue = percent ? new BN(safeNumber).multipliedBy(100).toString() : safeNumber
+    const finalValue = percent ? bnMul(safeNumber, 100) : safeNumber
     if (format) {
       return numeral(finalValue).format(format).split('.')
     }

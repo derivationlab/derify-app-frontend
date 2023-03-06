@@ -1,9 +1,9 @@
+import dayjs from 'dayjs'
 import React, { FC, useContext } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import dayjs from 'dayjs'
-import numeral from 'numeral'
 
 import ThemeContext from '@/context/Theme/Context'
+import { keepDecimals } from '@/utils/tools'
 
 interface FormatProps {
   label: string
@@ -27,7 +27,7 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yFormat, timeFormatStr, enableL
     return dayjs(value).format(timeFormatStr)
   }
 
-  const formatValue = (value: number) => numeral(value).format('0,0.00')
+  const formatValue = (value: number) => keepDecimals(value, 2)
   const formatLegend = (value: string) => {
     const o = yFormat.find((item) => item.value === value)
     return o?.label

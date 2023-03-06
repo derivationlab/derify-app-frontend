@@ -4,7 +4,7 @@ import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { keepDecimals } from '@/utils/tools'
-import { PositionSide } from '@/typings'
+import { PositionSideTypes } from '@/typings'
 import { useMatchConf } from '@/hooks/useMatchConf'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
@@ -54,7 +54,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const calcCFeeFunc = useCallback(
     debounce(
       async (
-        side: PositionSide,
+        side: PositionSideTypes,
         value: number,
         symbol: string,
         spotPrice: string,
@@ -108,7 +108,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   {quoteToken}
                   {marginToken}
                 </strong>
-                <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
+                <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
@@ -125,7 +125,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
           <div className="web-trade-dialog-position-confirm">
             <dl>
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
-              {data?.side === PositionSide.twoWay ? (
+              {data?.side === PositionSideTypes.twoWay ? (
                 <dd>
                   {!state.validOpeningVol.loaded ? (
                     <small>calculating...</small>

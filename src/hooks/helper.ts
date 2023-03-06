@@ -5,7 +5,7 @@ import { chunk, flatten, isEmpty } from 'lodash'
 import multicall from '@/utils/multicall'
 import contracts from '@/config/contracts'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
-import { PositionSide } from '@/typings'
+import { PositionSideTypes } from '@/typings'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {
   getDerifyBrokerContract,
@@ -280,7 +280,7 @@ export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<Ma
         ...output[marginToken as MarginTokenKeys],
         [quoteToken]: {
           ...output[marginToken as MarginTokenKeys][quoteToken as QuoteTokenKeys],
-          [PositionSide[calls[index].params[1] as number]]: safeInterceptionValues(String(limit), 8)
+          [PositionSideTypes[calls[index].params[1] as number]]: safeInterceptionValues(String(limit), 8)
         }
       }
     })
@@ -360,12 +360,12 @@ export const calcTradingFee = async (
 export const checkOpeningVol = (
   spotPrice: string,
   openingSize: string,
-  positionSide: PositionSide,
+  positionSide: PositionSideTypes,
   openingType: OpeningType,
   tokenSelect: string,
   openingMaxLimit: string
 ) => {
-  if (positionSide === PositionSide.twoWay || openingType !== OpeningType.Market) return openingSize
+  if (positionSide === PositionSideTypes.twoWay || openingType !== OpeningType.Market) return openingSize
   if (findMarginToken(tokenSelect)) {
     const mul = Number(spotPrice) * Number(openingMaxLimit)
     return isGT(openingSize, mul) ? mul : openingSize
@@ -375,7 +375,7 @@ export const checkOpeningVol = (
 }
 
 export const calcChangeFee = async (
-  side: PositionSide,
+  side: PositionSideTypes,
   symbol: string,
   amount: string | number,
   spotPrice: string,
@@ -385,7 +385,7 @@ export const calcChangeFee = async (
 ): Promise<string> => {
   let nakedPositionTradingPairAfterClosing_BN: BN = new BN(0)
 
-  if (side === PositionSide.twoWay) return '0'
+  if (side === PositionSideTypes.twoWay) return '0'
 
   const size = findMarginToken(symbol)
     ? inputParameterConversion(bnDiv(amount, spotPrice), 8)
@@ -406,12 +406,12 @@ export const calcChangeFee = async (
 
   const nakedPositionTradingPairBeforeClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN)
 
-  if (side === PositionSide.long) {
+  if (side === PositionSideTypes.long) {
     if (!isOpen) nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(size).minus(shortTotalSize_BN)
     else nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.plus(size).minus(shortTotalSize_BN)
   }
 
-  if (side === PositionSide.short) {
+  if (side === PositionSideTypes.short) {
     if (!isOpen) nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.minus(size))
     else {
       nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.plus(size))

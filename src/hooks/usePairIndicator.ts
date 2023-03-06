@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 
 import { MarginTokenKeys } from '@/typings'
 import { getPairIndicator } from '@/api'
+import { bnPlus, keepDecimals } from '@/utils/tools'
 import { findMarginToken, findToken, QUOTE_TOKENS } from '@/config/tokens'
-import { bnPlus, nonBigNumberInterception } from '@/utils/tools'
 
 export const initial = (): Record<string, any> => {
   let quote = Object.create(null)
@@ -24,8 +24,8 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
   const { data, isLoading } = useQuery(
     ['getPairIndicator'],
     async (): Promise<Record<string, any>> => {
-      const m = findMarginToken(marginToken)!
-      const { data } = await getPairIndicator(m.tokenAddress)
+      const m = findMarginToken(marginToken)
+      const { data } = await getPairIndicator(m?.tokenAddress ?? '')
       // console.info(data)
       return data
     },
@@ -41,27 +41,26 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
     data.forEach(
       ({
         token,
-        longUsdPmrRate = 0,
+        longMarginTokenPmrRate = 0,
         longDrfPmrRate = 0,
         shortDrfPmrRate = 0,
-        shortUsdPmrRate = 0,
+        shortMarginTokenPmrRate = 0,
         price_change_rate = 0,
         ...rest
       }: Record<string, any>) => {
         const quote = findToken(token).symbol
-        const changeRate = nonBigNumberInterception(String(price_change_rate), 4)
-        const longPmrRate = nonBigNumberInterception(bnPlus(longDrfPmrRate, longUsdPmrRate))
-        const shortPmrRate = nonBigNumberInterception(bnPlus(shortDrfPmrRate, shortUsdPmrRate))
-        const apyMax = Math.max(Number(longPmrRate), Number(shortPmrRate))
+        const longPmrRate = bnPlus(longDrfPmrRate, longMarginTokenPmrRate)
+        const shortPmrRate = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
+        const pmrRateMax = keepDecimals(Math.max(Number(longPmrRate), Number(shortPmrRate)), 4)
 
         output[quote] = {
           ...output[quote],
           ...rest,
-          apy: apyMax,
+          apy: pmrRateMax,
           token,
           longPmrRate,
           shortPmrRate,
-          price_change_rate: changeRate
+          price_change_rate
         }
       }
     )

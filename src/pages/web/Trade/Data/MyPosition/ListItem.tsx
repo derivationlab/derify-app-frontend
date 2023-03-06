@@ -2,11 +2,11 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
 
-import { PositionSide } from '@/typings'
-import { useSpotPrice1 } from '@/hooks/useMatchConf'
+import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useMarginToken } from '@/zustand'
+import { PositionSideTypes } from '@/typings'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'
 
@@ -27,28 +27,29 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { mobile } = useContext(MobileContext)
 
   const variables = useTraderInfo((state) => state.variables)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
   const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
-  const { spotPrice } = useSpotPrice1(marginToken)
+  const { spotPrices } = useSpotPrice(quoteToken, marginToken)
 
   const memoMargin = useMemo(() => {
-    return bnDiv(bnMul(data.size, spotPrice[data.quoteToken]), data.leverage)
-  }, [data, spotPrice])
+    return bnDiv(bnMul(data.size, spotPrices[data.quoteToken]), data.leverage)
+  }, [data, spotPrices])
 
   const memoVolume = useMemo(() => {
-    return bnMul(data.size, spotPrice[data.quoteToken])
-  }, [data, spotPrice])
+    return bnMul(data.size, spotPrices[data.quoteToken])
+  }, [data, spotPrices])
 
   const memoUnrealizedPnl = useMemo(() => {
-    if (isGT(spotPrice[data.quoteToken], 0)) {
-      const p1 = bnMinus(spotPrice[data.quoteToken], data.averagePrice)
+    if (isGT(spotPrices[data.quoteToken], 0)) {
+      const p1 = bnMinus(spotPrices[data.quoteToken], data.averagePrice)
       const p2 = bnMul(p1, data.size)
-      const p3 = data.side === PositionSide.long ? 1 : -1
+      const p3 = data.side === PositionSideTypes.long ? 1 : -1
       return bnMul(p2, p3)
     }
     return '0'
-  }, [spotPrice, data])
+  }, [spotPrices, data])
 
   const memoReturnRate = useMemo(() => {
     return isGT(memoMargin, 0) ? bnDiv(memoUnrealizedPnl, memoMargin) : '0'
@@ -103,13 +104,13 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     let lp
     if (variablesLoaded) {
       const { marginBalance = 0, totalPositionAmount = 0 } = variables
-      const mul = data.side === PositionSide.short ? -1 : 1
+      const mul = data.side === PositionSideTypes.short ? -1 : 1
 
       const p1 = bnMul(totalPositionAmount, 0.01)
       const p2 = bnMinus(marginBalance, p1)
       const p3 = bnDiv(p2, data.size)
       const p4 = bnMul(p3, mul)
-      const p5 = bnMinus(spotPrice[data.quoteToken], p4)
+      const p5 = bnMinus(spotPrices[data.quoteToken], p4)
       lp = isLTET(p5, 0) ? '--' : keepDecimals(p5, 2)
     } else {
       lp = '--'
@@ -124,7 +125,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         <span>{lp}</span>
       </DataAtom>
     )
-  }, [data, spotPrice, variables, variablesLoaded, t])
+  }, [data, spotPrices, variables, variablesLoaded, t])
 
   const atom5Tsx = useMemo(() => {
     return (
@@ -191,7 +192,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         <ItemHeader
           symbol={`${data.quoteToken}${marginToken}`}
           multiple={data?.leverage}
-          direction={PositionSide[data?.side] as any}
+          direction={PositionSideTypes[data?.side] as any}
           buttonText={t('Trade.MyPosition.Close', 'Close')}
           onButtonClick={() => onClick(data)}
         />

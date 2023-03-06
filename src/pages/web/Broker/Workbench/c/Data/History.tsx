@@ -79,7 +79,7 @@ const History: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (account?.address) {
-      const { data } = await getBrokerAccountFlow('0x34D2F68529CCE3080A2eF473BC35Fa95FFaB4589', index, 10)
+      const { data } = await getBrokerAccountFlow(account.address, index, 10)
 
       dispatch({
         type: 'SET_TABLE_DAT',

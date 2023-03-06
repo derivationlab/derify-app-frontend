@@ -6,8 +6,8 @@ import { useCallback, useMemo } from 'react'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
-import { OrderTypes, PositionSide } from '@/typings'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
+import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
 import { DEFAULT_MARGIN_TOKEN, findMarginToken, findToken } from '@/config/tokens'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
@@ -19,7 +19,7 @@ export const useOpeningPosition = () => {
       exchange: string,
       brokerId: string,
       qtAddress: string, // quote token address
-      positionSide: PositionSide,
+      positionSide: PositionSideTypes,
       openingType: OpeningType,
       pricingType: string,
       openingPrice: string,
@@ -107,8 +107,8 @@ export const useCancelPosition = () => {
   const close = useCallback(
     async (
       pairAddress: string,
-      orderType: OrderTypes,
-      positionSide: PositionSide,
+      orderType: PositionTriggerTypes,
+      positionSide: PositionSideTypes,
       timestamp: string
     ): Promise<boolean> => {
       let response: any = null
@@ -118,7 +118,7 @@ export const useCancelPosition = () => {
       const c = getDerifyDerivativePairContract(pairAddress, signer)
 
       try {
-        if (orderType === OrderTypes.Limit) {
+        if (orderType === PositionTriggerTypes.Limit) {
           const gasLimit = await estimateGas(c, 'cancelOrderedLimitPosition', [positionSide, timestamp], 0)
           response = await c.cancelOrderedLimitPosition(positionSide, timestamp, { gasLimit })
         } else {
@@ -227,7 +227,7 @@ export const useTakeProfitOrStopLoss = () => {
   const takeProfitOrStopLoss = useCallback(
     async (
       pairAddress: string,
-      positionSide: PositionSide,
+      positionSide: PositionSideTypes,
       takeProfitPrice: number,
       stopLossPrice: number
     ): Promise<boolean> => {
@@ -307,7 +307,7 @@ export const useClosePosition = () => {
       quoteToken: string,
       marginToken: string,
       positionSize: string,
-      positionSide: PositionSide,
+      positionSide: PositionSideTypes,
       whetherStud?: boolean
     ): Promise<boolean> => {
       if (!signer) return false

@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import classNames from 'classnames'
 import BN from 'bignumber.js'
+import { bnMul, keepDecimals } from '@/utils/tools'
 
 interface Props {
   value: number
@@ -10,7 +11,7 @@ interface Props {
 const ChangePercent: FC<Props> = ({ value, size }) => {
   const [valStr, isUp] = useMemo(() => {
     const isUp = value >= 0
-    const valStr = `${isUp ? '+' : ''}${new BN(value).multipliedBy(100)}%`
+    const valStr = `${isUp ? '+' : ''}${keepDecimals(bnMul(value, 100), 2)}%`
     return [valStr, isUp]
   }, [value])
   return (

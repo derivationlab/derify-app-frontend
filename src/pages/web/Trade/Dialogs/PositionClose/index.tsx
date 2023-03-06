@@ -1,7 +1,7 @@
 import React, { FC, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { PositionSide } from '@/typings'
+import { PositionSideTypes } from '@/typings'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { useMarginToken, usePairsInfo } from '@/zustand'
@@ -70,7 +70,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               <header className="web-trade-dialog-position-info-header">
                 <h4>
                   <strong>{`${data?.quoteToken}${marginToken}`}</strong>
-                  <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
+                  <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
                 </h4>
               </header>
               <section className="web-trade-dialog-position-info-data">

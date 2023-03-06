@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 
-import { PositionSide } from '@/typings'
+import { PositionSideTypes } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
 import { safeInterceptionValues } from '@/utils/tools'
 import { findMarginToken, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
@@ -164,7 +164,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
 
   return (
     <div className="web-trade-data-item">
-      <ItemHeader symbol={`${memoQuoteToken}${memoMarginToken}`} direction={PositionSide[data?.side] as any} />
+      <ItemHeader symbol={`${memoQuoteToken}${memoMarginToken}`} direction={PositionSideTypes[data?.side] as any} />
       {mobile ? (
         <>
           <AtomWrap>

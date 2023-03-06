@@ -36,6 +36,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
           window.toast.success(t('common.success', 'success'))
 
           PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+          PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
         } else {
           // fail
           window.toast.error(t('common.failed', 'failed'))

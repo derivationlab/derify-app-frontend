@@ -74,7 +74,7 @@ const PositionMining: FC = () => {
 
     window.toast.dismiss(toast)
   }
-  console.info(rewardsInfo)
+
   return (
     <div className="web-eran-item">
       <header className="web-eran-item-header">

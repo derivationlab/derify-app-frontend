@@ -1,6 +1,8 @@
-import React, { FC, useState, useCallback } from 'react'
+import PubSub from 'pubsub-js'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useState, useCallback } from 'react'
 
+import { PubSubEvents } from '@/typings'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useWithdrawMargin } from '@/hooks/useTrading'
 
@@ -31,6 +33,9 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
         if (status) {
           // succeed
           window.toast.success(t('common.success', 'success'))
+
+          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+          PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
         } else {
           // fail
           window.toast.error(t('common.failed', 'failed'))

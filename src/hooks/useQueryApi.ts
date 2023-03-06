@@ -15,11 +15,10 @@ export const useCurrentPositionsAmount = (quoteToken: string, marginToken: strin
     ['getCurrentPositionsAmount'],
     async (): Promise<Record<string, any>> => {
       const data = await getCurrentPositionsAmount(quoteToken, marginToken)
-      return data?.data
+      return data?.data ?? {}
     },
     {
       retry: 0,
-      placeholderData: {},
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false

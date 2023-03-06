@@ -36,10 +36,6 @@ const Data: FC = () => {
         void fetchTraderPos(data?.address, _factoryConfig)
       }
     })
-
-    return () => {
-      PubSub.clearAllSubscriptions()
-    }
   }, [factoryConfig, data?.address])
 
   return (

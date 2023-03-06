@@ -53,10 +53,6 @@ function App() {
         void fetchBrokerInfo(account.address)
       }
     })
-
-    return () => {
-      PubSub.clearAllSubscriptions()
-    }
   }, [account?.address])
   useInterval(() => {
     if (account?.address) {

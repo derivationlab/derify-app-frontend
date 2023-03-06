@@ -1,8 +1,10 @@
+import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
 
 import { findToken } from '@/config/tokens'
+import { MarginTokenKeys, PubSubEvents } from '@/typings'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { useMarginToken, useQuoteToken } from '@/zustand'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
@@ -49,18 +51,48 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
     if (value > visibleMaxVol) onChange(visibleMaxVol)
   }, [value, visibleMaxVol])
 
+  const _fetchMaxVolume = (
+    account: string,
+    protocolConfig: string,
+    spotPrice: string,
+    openingPrice: string,
+    openingType: OpeningType,
+    quoteToken: string,
+    marginToken: MarginTokenKeys
+  ) => {
+    const price = openingType === OpeningType.Market ? spotPrice : openingPrice
+    const qtAddress = findToken(quoteToken)?.tokenAddress
+
+    void fetchMaxVolume(qtAddress, account, price, protocolConfig, marginToken)
+  }
+
   useEffect(() => {
     if (account?.address && protocolConfig) {
-      const price = openingType === OpeningType.Market ? spotPrice : openingPrice
-      void fetchMaxVolume(
-        findToken(quoteToken)?.tokenAddress,
+      void _fetchMaxVolume(
         account.address,
-        price,
         protocolConfig.exchange,
+        spotPrice,
+        openingPrice,
+        openingType,
+        quoteToken,
         marginToken
       )
     }
-  }, [spotPrice, quoteToken, openingType, leverageNow, openingPrice, protocolConfig, account?.address, marginToken])
+
+    PubSub.subscribe(PubSubEvents.UPDATE_POSITION_VOLUME, () => {
+      if (account?.address && protocolConfig) {
+        void _fetchMaxVolume(
+          account.address,
+          protocolConfig.exchange,
+          spotPrice,
+          openingPrice,
+          openingType,
+          quoteToken,
+          marginToken
+        )
+      }
+    })
+  }, [account?.address, spotPrice, quoteToken, openingType, leverageNow, marginToken, openingPrice, protocolConfig])
 
   return (
     <>

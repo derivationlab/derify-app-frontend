@@ -23,7 +23,7 @@ export const getKLineData = async (token: string, time: number, endTime: number,
   return data
 }
 
-export const getTraderWithdrawAmount = async (trader: string, amount: string) => {
+export const getTraderWithdrawAmount = async (trader: string, amount: number) => {
   const response = await get(`api/trader_withdraw_amounts/${trader}/${amount}`)
   return response
 }

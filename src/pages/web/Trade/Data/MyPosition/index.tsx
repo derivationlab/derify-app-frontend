@@ -87,6 +87,7 @@ const MyPosition: FC = () => {
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+        PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -110,7 +111,7 @@ const MyPosition: FC = () => {
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
-        PubSub.publish(PubSubEvents.UPDATE_POSITION_AMOUNT)
+        PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed

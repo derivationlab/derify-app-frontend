@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { MARGIN_TOKENS } from '@/config/tokens'
@@ -16,17 +16,17 @@ const Margin: FC = () => {
   const marginToken = useMarginToken((state) => state.marginToken)
   const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
 
-  // console.info(balances)
-
-  const marginSelect = MARGIN_TOKENS.map((t) => {
-    return {
-      value: t.symbol,
-      label: t.symbol,
-      icon: 'icon/bnb.svg',
-      price: balances[t.symbol] ?? 0,
-      decimals: 2
-    }
-  })
+  const marginSelect = useMemo(() => {
+    return MARGIN_TOKENS.map((t) => {
+      return {
+        value: t.symbol,
+        label: t.symbol,
+        icon: 'icon/bnb.svg',
+        price: balances[t.symbol] ?? 0,
+        decimals: 2
+      }
+    })
+  }, [balances])
 
   // todo 完善ui
   return (

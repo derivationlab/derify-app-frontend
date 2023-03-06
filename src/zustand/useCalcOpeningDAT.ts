@@ -48,6 +48,7 @@ const getTFRValue = async (address: string) => {
 const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
   tfr: 0, // trading fee ratio
   maxVolume: {},
+  maxVolumeLoaded: false,
   closingType: '',
   closingAmount: '0',
   openingType: OpeningType.Market,
@@ -107,7 +108,8 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
       maxVolume: {
         [marginToken]: swap,
         [findToken(qtAddress).symbol]: size
-      }
+      },
+      maxVolumeLoaded: true
     })
   },
   fetchTFRValue: async (address: string) => {

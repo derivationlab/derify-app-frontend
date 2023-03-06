@@ -64,6 +64,7 @@ export interface VolumeState {
   openingAmount: string
   leverageNow: number
   openingType: OpeningType
+  maxVolumeLoaded: boolean
   updateClosingType: (p: MarginTokenKeys) => void
   updateOpeningType: (p: OpeningType) => void
   updateLeverageNow: (p: number) => void

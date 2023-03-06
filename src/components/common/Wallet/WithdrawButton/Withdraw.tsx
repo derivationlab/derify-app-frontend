@@ -25,8 +25,8 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
   const variables = useTraderInfo((state) => state.variables)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
   const memoMargin = useMemo(() => {
@@ -57,13 +57,13 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     }
   }
 
-  const funcAsync = async (account: string, amount: string) => {
+  const funcAsync = async (account: string, amount: number) => {
     const { data } = await getTraderWithdrawAmount(account, amount)
     dispatch({ type: 'SET_WITHDRAW_DAT', payload: data })
   }
 
   useEffect(() => {
-    if (data?.address && Number(state.withdrawAmount) > 0) void funcAsync(data.address, state.withdrawAmount)
+    if (data?.address && Number(state.withdrawAmount) > 0) void funcAsync(data.address, Number(state.withdrawAmount))
   }, [data?.address, state.withdrawAmount])
 
   return (

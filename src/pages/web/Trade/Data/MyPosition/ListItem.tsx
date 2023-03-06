@@ -51,7 +51,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   }, [spotPrice, data])
 
   const memoReturnRate = useMemo(() => {
-    return bnDiv(memoUnrealizedPnl, memoMargin)
+    return isGT(memoMargin, 0) ? bnDiv(memoUnrealizedPnl, memoMargin) : '0'
   }, [memoUnrealizedPnl, memoMargin])
 
   const judgeUpsAndDowns = (data: string): string => (isGT(data, 0) ? '+' : '')

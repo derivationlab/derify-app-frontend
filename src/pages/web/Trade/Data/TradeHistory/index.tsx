@@ -56,10 +56,6 @@ const TradeHistory: FC = () => {
     PubSub.subscribe(PubSubEvents.UPDATE_TRADE_HISTORY, () => {
       void fetchData()
     })
-
-    return () => {
-      PubSub.clearAllSubscriptions()
-    }
   }, [])
 
   return (

@@ -2,6 +2,7 @@ import BN from 'bignumber.js'
 import dayjs from 'dayjs'
 import PubSub from 'pubsub-js'
 import { Link } from 'react-router-dom'
+import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useContext, useMemo } from 'react'
 
@@ -9,13 +10,13 @@ import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { useDashboardDAT } from '@/zustand/useDashboardDAT'
+import tokens, { findToken } from '@/config/tokens'
 import { useWithdrawReward } from '@/hooks/useBroker'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
-import { nonBigNumberInterception } from '@/utils/tools'
+import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useSigner } from 'wagmi'
 
 const Dashboard: FC = () => {
   const { t } = useTranslation()
@@ -83,9 +84,9 @@ const Dashboard: FC = () => {
           <p
             dangerouslySetInnerHTML={{
               __html: t('Broker.BV.EarnedTip', '', {
-                Amount: memoHistoryBalance[0],
+                Amount: keepDecimals(memoHistoryBalance[0], findToken(marginToken).decimals),
                 Margin: marginToken,
-                DRF: memoHistoryBalance[1],
+                DRF: keepDecimals(memoHistoryBalance[1], tokens.drf.decimals),
                 time: brokerInfo?.registerTime ? dayjs(brokerInfo?.registerTime).format('MMM DD, YYYY') : '--'
               })
             }}

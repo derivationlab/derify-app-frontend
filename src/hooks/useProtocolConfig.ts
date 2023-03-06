@@ -51,6 +51,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
         derifyAwardsBroker,
         marginTokenPriceFeed
       } = addresses
+
       output = {
         ...output,
         [MARGIN_TOKENS[index].symbol]: {

@@ -12,9 +12,9 @@ interface Props {
 
 const AccountInfo: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
-  const marginToken = useMarginToken((state) => state.marginToken)
 
   const variables = useTraderInfo((state) => state.variables)
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   return (
     <>

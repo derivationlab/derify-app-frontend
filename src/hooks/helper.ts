@@ -17,6 +17,7 @@ import {
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 import {
   bnDiv,
+  formatUnits,
   inputParameterConversion,
   isGT,
   isLT,
@@ -474,22 +475,24 @@ export const getTraderRewardDAT = async (trader: string, reward: string): Promis
   if (!isEmpty(response)) {
     const [getPositionReward, getBondInfo, getExchangeBondSizeUpperBound, bankBondPool] = response
 
-    const { bankBalance } = bankBondPool
+    const [bankBalance] = bankBondPool
     const { maxBondSize } = getExchangeBondSizeUpperBound
     const { bondAnnualInterestRatio, bondBalance, bondReturnBalance, bondWalletBalance } = getBondInfo
     const { drfAccumulatedBalance, drfBalance, marginTokenAccumulatedBalance, marginTokenBalance } = getPositionReward
-    console.info('bondBalance:', safeInterceptionValues(bondBalance, 8))
+
+    console.info('bondBalance:', formatUnits(String(bankBalance), 8))
+
     output = {
-      drfBalance: safeInterceptionValues(drfBalance, 8),
-      bankBalance: safeInterceptionValues(bankBalance, 8),
-      bondBalance: safeInterceptionValues(bondBalance, 8),
-      exchangeable: safeInterceptionValues(maxBondSize, 8),
-      bondReturnBalance: safeInterceptionValues(bondReturnBalance, 8),
-      bondWalletBalance: safeInterceptionValues(bondWalletBalance, 8),
-      marginTokenBalance: safeInterceptionValues(marginTokenBalance, 8),
-      drfAccumulatedBalance: safeInterceptionValues(drfAccumulatedBalance, 8),
-      bondAnnualInterestRatio: safeInterceptionValues(bondAnnualInterestRatio, 8),
-      marginTokenAccumulatedBalance: safeInterceptionValues(marginTokenAccumulatedBalance, 8)
+      drfBalance: formatUnits(String(drfBalance), 8),
+      bankBalance: formatUnits(String(bankBalance), 8),
+      bondBalance: formatUnits(String(bondBalance), 8),
+      exchangeable: formatUnits(String(maxBondSize), 8),
+      bondReturnBalance: formatUnits(String(bondReturnBalance), 8),
+      bondWalletBalance: formatUnits(String(bondWalletBalance), 8),
+      marginTokenBalance: formatUnits(String(marginTokenBalance), 8),
+      drfAccumulatedBalance: formatUnits(String(drfAccumulatedBalance), 8),
+      bondAnnualInterestRatio: formatUnits(String(bondAnnualInterestRatio), 8),
+      marginTokenAccumulatedBalance: formatUnits(String(marginTokenAccumulatedBalance), 8)
     }
 
     // console.info(output)

@@ -7,6 +7,11 @@ const marginToken = useMarginToken((state) => state.marginToken)
 const brokerBound = useBrokerInfo((state) => state.brokerBound)
 const [state, dispatch] = useReducer(reducer, stateInit)
 
+PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)   // 持仓历史数据
+PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION) // 持仓数据
+PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME) // 贷款额度
+PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES) // 保证金变化
+
 
 todo:
 . 现货价格更新频率带来的数据更新不及时问题；
@@ -19,10 +24,13 @@ todo:
 . brokers_rank_list 支持 marginToken;
 . 检测如果路由id不是marginToken，则跳转；
 . getBrokerInfo 分mt；
+. broker里面要分mt；
 . broker_reward_transactions 分mt；
 . 由于加了mt参数，需要全局检查路由跳转；
 . Close Position 数据问题；
 . api/trade_records分mt；
-. /Users/wugongwei/1-project/derify-app-frontend/src/reducers/brokerBind.ts
+. /Users/wugongwei/1-project/derify-app-frontend/src/reducers/brokerBind.ts 
 . BN数据解析方法简化；
 . /Users/wugongwei/1-project/derify-app-frontend/src/pages/web/Broker/Workbench/c/Data/Transaction.tsx
+. 平仓开仓之后的数据显示；
+. PubSub.publish风险

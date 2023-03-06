@@ -22,7 +22,6 @@ import Row from './c/Row'
 import Col from './c/Col'
 import Info from './c/Info'
 import PriceInput from './c/PriceInput'
-import Initializing from './c/Initializing'
 import QuantityInput from './c/QuantityInput'
 import OpenTypeSelect from './c/OpenTypeSelect'
 
@@ -42,6 +41,7 @@ const Bench: FC = () => {
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
   const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
   const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
+  const maxVolumeLoaded = useCalcOpeningDAT((state) => state.maxVolumeLoaded)
   const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
   const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
@@ -95,18 +95,7 @@ const Bench: FC = () => {
 
     if (brokerBound?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
-      // console.info(
-      //   protocolConfig.exchange,
-      //   broker.broker,
-      //   findToken(quoteToken).tokenAddress,
-      //   state.openingParams?.side,
-      //   openingType,
-      //   state.openingParams?.symbol,
-      //   state.openingParams?.price,
-      //   leverageNow,
-      //   amount,
-      //   conversion
-      // )
+
       const status = await opening(
         protocolConfig.exchange,
         brokerBound.broker,
@@ -126,6 +115,7 @@ const Bench: FC = () => {
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+        PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -219,6 +209,7 @@ const Bench: FC = () => {
           <Row>
             <Col>
               <Button
+                loading={!maxVolumeLoaded}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSide.long)}
@@ -232,6 +223,7 @@ const Bench: FC = () => {
             </Col>
             <Col>
               <Button
+                loading={!maxVolumeLoaded}
                 disabled={memoDisabled1 || memoDisabled2}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
@@ -249,6 +241,7 @@ const Bench: FC = () => {
             <Row>
               <Col>
                 <Button
+                  loading={!maxVolumeLoaded}
                   disabled={memoDisabled1 || memoDisabled2}
                   noDisabledStyle
                   className="web-trade-bench-button-full"
@@ -267,7 +260,6 @@ const Bench: FC = () => {
           )}
         </div>
         <NotConnect />
-        <Initializing />
       </div>
       <PositionOpenDialog
         data={state.openingParams}

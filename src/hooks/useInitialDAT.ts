@@ -8,8 +8,8 @@ import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
-import { useCurrentIndexDAT, useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { MarginTokenWithContract, PubSubEvents } from '@/typings'
+import { useCurrentIndexDAT, useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken, useTokenBalances } from '@/zustand'
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
 
@@ -54,10 +54,15 @@ export const useInitialDAT = () => {
 
   // for tokens balance
   useEffect(() => {
-    if (!data?.address) void resetBalances()
-    else {
+    if (!data?.address) {
+      void resetBalances()
+    } else {
       void fetchBalances(data?.address)
     }
+
+    PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
+      if (data?.address) void fetchBalances(data.address)
+    })
   }, [data?.address])
 
   useEffect(() => {
@@ -121,17 +126,8 @@ export const useInitialDAT = () => {
       updateVariables(data)
     }
 
-    if (data?.address && !protocolConfDATIsLoading && protocolConfDAT) void func(data.address, protocolConfDAT)
-  }, [protocolConfDATIsLoading, protocolConfDAT, data?.address, marginToken, quoteToken])
-
-  useEffect(() => {
-    PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
-      console.info('PubSubEvents.UPDATE_BALANCE')
-      if (data?.address) void fetchBalances(data.address)
-    })
-
-    return () => {
-      PubSub.clearAllSubscriptions()
+    if (data?.address && !protocolConfDATIsLoading && protocolConfDAT) {
+      void func(data.address, protocolConfDAT)
     }
-  }, [])
+  }, [protocolConfDATIsLoading, protocolConfDAT, data?.address, marginToken, quoteToken])
 }

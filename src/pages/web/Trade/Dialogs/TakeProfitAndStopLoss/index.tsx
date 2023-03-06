@@ -226,7 +226,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{`${data?.quoteToken}${marginToken}`}</strong>
+                <strong>{`${data?.quoteToken}${VALUATION_TOKEN_SYMBOL}`}</strong>
                 <MultipleStatus direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>

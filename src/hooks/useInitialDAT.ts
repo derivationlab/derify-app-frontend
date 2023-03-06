@@ -1,15 +1,15 @@
 import PubSub from 'pubsub-js'
+import { isEmpty } from 'lodash'
 import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
 import { findToken } from '@/config/tokens'
-import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
+import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { MarginTokenWithContract, PubSubEvents } from '@/typings'
-import { useCurrentIndexDAT, useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken, useTokenBalances } from '@/zustand'
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
 
@@ -30,23 +30,11 @@ export const useInitialDAT = () => {
   const updateFactoryConfig = useConfigInfo((state) => state.updateFactoryConfig)
   const updateProtocolConfig = useConfigInfo((state) => state.updateProtocolConfig)
   const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)
-  const updatePositionsAmount = usePoolsInfo((state) => state.updatePositionsAmount)
 
-  const { data: indicatorDAT, isLoading: indicatorDATIsLoading } = usePairIndicator(marginToken)
-  const {
-    data: positionsDAT,
-    isLoading: positionsDATIsLoading,
-    refetch: positionsDATRefetch
-  } = useCurrentPositionsAmount(findToken(quoteToken).tokenAddress, findToken(marginToken).tokenAddress)
-  const {
-    data: currentIndexDAT,
-    isLoading: currentIndexDATIsLoading,
-    refetch: currentIndexDATRefetch
-  } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
-
-  useEffect(() => {
-    void positionsDATRefetch()
-  }, [quoteToken, marginToken])
+  const { data: indicatorDAT } = usePairIndicator(marginToken)
+  const { data: currentIndexDAT, refetch: currentIndexDATRefetch } = useCurrentIndexDAT(
+    findToken(marginToken).tokenAddress
+  )
 
   useEffect(() => {
     void currentIndexDATRefetch()
@@ -102,22 +90,14 @@ export const useInitialDAT = () => {
 
   // for quote token indicators
   useEffect(() => {
-    if (!indicatorDATIsLoading && indicatorDAT) {
+    if (!isEmpty(indicatorDAT)) {
       updateIndicators(indicatorDAT)
     }
-  }, [indicatorDATIsLoading])
+  }, [indicatorDAT])
 
   useEffect(() => {
-    if (!positionsDATIsLoading && positionsDAT) {
-      updatePositionsAmount(positionsDAT)
-    }
-  }, [positionsDATIsLoading, positionsDAT])
-
-  useEffect(() => {
-    if (!currentIndexDATIsLoading && currentIndexDAT) {
-      updateDashboardDAT(currentIndexDAT.data)
-    }
-  }, [currentIndexDATIsLoading, currentIndexDAT])
+    if (currentIndexDAT) updateDashboardDAT(currentIndexDAT)
+  }, [currentIndexDAT])
 
   // for trader variables
   useEffect(() => {

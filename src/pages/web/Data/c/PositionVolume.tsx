@@ -5,9 +5,9 @@ import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from
 
 import ThemeContext from '@/context/Theme/Context'
 import { findToken } from '@/config/tokens'
+import { useMarginToken } from '@/zustand'
 import { getHistoryPositionsData } from '@/api'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { useMarginToken, useQuoteToken } from '@/zustand'
 import { bnDiv, bnMul, bnPlus, isGT, nonBigNumberInterception } from '@/utils/tools'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 
@@ -33,14 +33,12 @@ const PositionVolume: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const {
-    data: positionsDAT,
-    refetch: positionsDATRefetch,
-    isLoading: positionsDATIsLoading
-  } = useCurrentPositionsAmount(findToken(quoteToken).tokenAddress, findToken(marginToken).tokenAddress)
+  const { data: positionsDAT, refetch } = useCurrentPositionsAmount(
+    SelectSymbolTokens[pairSelectVal],
+    findToken(marginToken).tokenAddress
+  )
 
   const barColor = useMemo(() => {
     let longColor = '#24ce7d'
@@ -85,7 +83,7 @@ const PositionVolume: FC = () => {
   }, [timeSelectVal, pairSelectVal])
 
   const totalAmount = useMemo(() => {
-    if (!positionsDATIsLoading && positionsDAT) {
+    if (positionsDAT) {
       const { long_position_amount = 0, short_position_amount = 0 } = positionsDAT
       const volume = bnPlus(long_position_amount, short_position_amount)
 
@@ -103,7 +101,7 @@ const PositionVolume: FC = () => {
       }
     }
     return base
-  }, [positionsDAT, positionsDATIsLoading])
+  }, [positionsDAT])
 
   const combineDAT = useMemo(() => {
     return [...positionData, totalAmount]
@@ -114,7 +112,7 @@ const PositionVolume: FC = () => {
   }, [historyDAT, timeSelectVal, pairSelectVal])
 
   useEffect(() => {
-    void positionsDATRefetch()
+    void refetch()
   }, [pairSelectVal])
 
   return (

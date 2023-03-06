@@ -18,26 +18,27 @@ export const initial = (): Record<string, any> => {
   return quote
 }
 
-export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<string, any>; isLoading: boolean } => {
+export const usePairIndicator = (marginToken: MarginTokenKeys): { data: Record<string, any> } => {
   const output = initial()
 
-  const { data, isLoading } = useQuery(
+  const { data } = useQuery(
     ['getPairIndicator'],
-    async (): Promise<Record<string, any>> => {
-      const m = findMarginToken(marginToken)
-      const { data } = await getPairIndicator(m?.tokenAddress ?? '')
-      // console.info(data)
-      return data
+    async (): Promise<Record<string, any>[]> => {
+      const m = findMarginToken(marginToken)!
+      const data = await getPairIndicator(m.tokenAddress)
+      // console.info(data?.data)
+      return data?.data ?? []
     },
     {
       retry: false,
+      initialData: [],
       refetchInterval: 3000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  if (!isLoading && data) {
+  if (data.length > 0) {
     data.forEach(
       ({
         token,
@@ -65,8 +66,8 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
       }
     )
     // console.info(output)
-    return { data: output, isLoading }
+    return { data: output }
   }
 
-  return { isLoading: true }
+  return { data: output }
 }

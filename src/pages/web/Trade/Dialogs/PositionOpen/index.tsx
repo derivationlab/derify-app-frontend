@@ -2,11 +2,11 @@ import { useTranslation } from 'react-i18next'
 import { isEmpty, debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import { findToken } from '@/config/tokens'
 import { keepDecimals } from '@/utils/tools'
-import { PositionSideTypes } from '@/typings'
 import { useMatchConf } from '@/hooks/useMatchConf'
+import { PositionSideTypes } from '@/typings'
 import { reducer, stateInit } from '@/reducers/openingPosition'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
 
 import Dialog from '@/components/common/Dialog'
@@ -106,7 +106,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               <h4>
                 <strong>
                   {quoteToken}
-                  {marginToken}
+                  {VALUATION_TOKEN_SYMBOL}
                 </strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
               </h4>

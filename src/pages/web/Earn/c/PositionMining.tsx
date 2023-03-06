@@ -1,11 +1,13 @@
-import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useContext, useMemo } from 'react'
 
-import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { bnPlus, isGT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { useProtocolConf1 } from '@/hooks/useMatchConf'
+import tokens, { findToken } from '@/config/tokens'
+import { useWithdrawPositionReward } from '@/hooks/useEarning'
+import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { bnPlus, isGT, keepDecimals } from '@/utils/tools'
 import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
@@ -13,9 +15,6 @@ import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { useWithdrawPositionReward } from '@/hooks/useEarning'
-import { useProtocolConf1 } from '@/hooks/useMatchConf'
-import tokens, { findToken } from '@/config/tokens'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
@@ -27,29 +26,24 @@ const PositionMining: FC = () => {
   const indicators = usePairsInfo((state) => state.indicators)
   const marginToken = useMarginToken((state) => state.marginToken)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
-  const positionsAmount = usePoolsInfo((state) => state.positionsAmount)
   const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
-
-  // console.info(variables)
-  // console.info(positionsAmount)
 
   const { withdraw } = useWithdrawPositionReward()
   const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
+  const { data: positionsAmount } = useCurrentPositionsAmount('all', findToken(marginToken).tokenAddress)
 
   const memoPositionApy = useMemo(() => {
     if (indicatorsLoaded) {
       const apy = Object.values(indicators).map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))
-      const max = String(Math.max.apply(null, apy) * 100)
-      return nonBigNumberInterception(max)
+      return Math.max.apply(null, apy) * 100
     }
     return '0'
   }, [indicatorsLoaded, indicators])
 
   const memoPositionsAm = useMemo(() => {
-    if (!isEmpty(positionsAmount)) {
+    if (positionsAmount) {
       const { long_position_amount, short_position_amount } = positionsAmount
-      const s = bnPlus(long_position_amount, short_position_amount)
-      return nonBigNumberInterception(s)
+      return bnPlus(long_position_amount, short_position_amount)
     }
     return '0'
   }, [positionsAmount])

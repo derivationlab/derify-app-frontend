@@ -23,22 +23,18 @@ const InsurancePool: FC = () => {
 
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const {
-    data: insuranceVolume,
-    // refetch,
-    isLoading
-  } = useCurrentInsuranceDAT(findToken(marginToken).tokenAddress)
+  const { data: insuranceVolume } = useCurrentInsuranceDAT(findToken(marginToken).tokenAddress)
 
   const combineDAT = useMemo(() => {
     let output
-    if (!isLoading && insuranceVolume) {
+    if (insuranceVolume) {
       // console.info({ day_time: time, ...insuranceVolume })
       output = { day_time: time, ...insuranceVolume }
     }
     return [...insuranceData, output]
-  }, [isLoading, insuranceData, insuranceVolume])
+  }, [insuranceData, insuranceVolume])
 
-  const insuranceDAT = useCallback(async () => {
+  const historyDAT = useCallback(async () => {
     const { data: history } = await getHistoryInsuranceData(
       SelectTimesValues[timeSelectVal],
       findToken(marginToken).tokenAddress
@@ -52,8 +48,8 @@ const InsurancePool: FC = () => {
   }, [timeSelectVal, marginToken])
 
   useEffect(() => {
-    void insuranceDAT()
-  }, [insuranceDAT, timeSelectVal])
+    void historyDAT()
+  }, [historyDAT, timeSelectVal])
 
   return (
     <div className="web-data-chart">

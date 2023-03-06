@@ -109,9 +109,7 @@ export const useProtocolConf1 = (quoteToken = QUOTE_TOKENS[0].symbol, marginToke
   }
 }
 
-export const usePCFRatioConf = () => {
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
+export const usePCFRatioConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
   const pcfRatios = usePairsInfo((state) => state.pcfRatios)
   const pcfRatiosLoaded = usePairsInfo((state) => state.pcfRatiosLoaded)
 
@@ -120,8 +118,6 @@ export const usePCFRatioConf = () => {
   }, [quoteToken, marginToken, pcfRatios, pcfRatiosLoaded])
 
   return {
-    pcfRatio,
-    quoteToken,
-    marginToken
+    pcfRatio
   }
 }

@@ -1,14 +1,17 @@
 import PubSub from 'pubsub-js'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
 
-import { isGT, keepDecimals } from '@/utils/tools'
+import tokens from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 import { useProtocolConf1 } from '@/hooks/useMatchConf'
+import { isGT, keepDecimals } from '@/utils/tools'
+import { useTraderEDRFBalance } from '@/hooks/useQueryApi'
 import { useMarginToken, useQuoteToken } from '@/zustand'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
 
@@ -19,9 +22,6 @@ import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
-import { useTraderEDRFBalance } from '@/hooks/useQueryApi'
-import { useAccount } from 'wagmi'
-import tokens from '@/config/tokens'
 
 const DRFPool: FC = () => {
   const { t } = useTranslation()
@@ -43,7 +43,7 @@ const DRFPool: FC = () => {
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
   const memoDisabled = useMemo(() => {
-    return isGT(edrfBalance?.data ?? 0, 0)
+    return isGT(edrfBalance ?? 0, 0)
   }, [edrfBalance])
 
   const closeDialog = () => setVisibleStatus('')
@@ -123,7 +123,7 @@ const DRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.DRFPool.Claimable', 'Claimable')}</h4>
-              <BalanceShow value={edrfBalance?.data ?? 0} unit="eDRF" decimal={tokens.edrf.decimals} />
+              <BalanceShow value={edrfBalance ?? 0} unit="eDRF" decimal={tokens.edrf.decimals} />
             </main>
             <aside>
               <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>

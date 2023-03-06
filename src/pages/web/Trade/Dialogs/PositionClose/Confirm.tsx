@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import { findToken } from '@/config/tokens'
-import { PositionSideTypes } from '@/typings'
 import { useMatchConf } from '@/hooks/useMatchConf'
+import { PositionSideTypes } from '@/typings'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isGT, keepDecimals } from '@/utils/tools'
 import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -27,7 +27,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const { t } = useTranslation()
 
-  const { spotPrice, factoryConfig, protocolConfig, marginToken, quoteToken } = useMatchConf()
+  const { spotPrice, factoryConfig, protocolConfig, marginToken } = useMatchConf()
 
   const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
@@ -80,7 +80,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{`${data?.quoteToken}${marginToken}`}</strong>
+                <strong>{`${data?.quoteToken}${VALUATION_TOKEN_SYMBOL}`}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>

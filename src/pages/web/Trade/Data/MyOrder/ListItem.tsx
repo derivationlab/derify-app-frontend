@@ -82,7 +82,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
     <>
       <div className="web-trade-data-item">
         <ItemHeader
-          symbol={`${data?.quoteToken}${marginToken}`}
+          symbol={`${data?.quoteToken}${VALUATION_TOKEN_SYMBOL}`}
           multiple={data?.leverage}
           direction={PositionSideTypes[data?.side] as any}
           buttonText={t('Trade.MyOrder.Cancel', 'Cancel')}

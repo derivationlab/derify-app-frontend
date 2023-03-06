@@ -1,13 +1,12 @@
-import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useContext, useMemo } from 'react'
+import React, { FC, useContext, useEffect, useMemo } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { keepDecimals } from '@/utils/tools'
-import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
-import { useMarginToken, usePairsInfo } from '@/zustand'
+import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 
@@ -15,11 +14,15 @@ const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const { pcfRatio } = usePCFRatioConf()
-
   const indicators = usePairsInfo((state) => state.indicators)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
-  const positionsAmount = usePoolsInfo((state) => state.positionsAmount)
+
+  const { pcfRatio } = usePCFRatioConf(quoteToken, marginToken)
+  const { data: positionsAmount, refetch } = useCurrentPositionsAmount(
+    findToken(quoteToken).tokenAddress,
+    findToken(marginToken).tokenAddress
+  )
 
   const memoPosFeeRatio = useMemo(() => {
     if (pcfRatio || Number(pcfRatio) >= 0) return pcfRatio
@@ -36,15 +39,19 @@ const HeaderData: FC = () => {
   }, [indicators])
 
   const positionInfo = useMemo(() => {
-    if (!isEmpty(positionsAmount)) {
+    if (positionsAmount) {
       const { long_position_amount = 0, short_position_amount = 0 } = positionsAmount
       const m = long_position_amount - short_position_amount
       const n = long_position_amount + short_position_amount
       const x = ((m / n) * 100).toFixed(2)
-      return [keepDecimals(m, findToken(marginToken).decimals), n === 0 || m === 0 ? '0' : keepDecimals(x, 2)]
+      return [m, n === 0 || m === 0 ? 0 : x]
     }
     return [0, 0]
   }, [positionsAmount])
+
+  useEffect(() => {
+    void refetch()
+  }, [quoteToken, marginToken])
 
   return (
     <div className="web-trade-kline-header-data">
@@ -55,13 +62,14 @@ const HeaderData: FC = () => {
         </h3>
         {!mobile ? (
           <strong>
-            {positionInfo[1]}% ( {positionInfo[0]} {marginToken} )
+            {keepDecimals(positionInfo[1], 2)}% ( {keepDecimals(positionInfo[0], findToken(marginToken).decimals)}{' '}
+            {marginToken} )
           </strong>
         ) : (
           <>
-            <strong>{positionInfo[1]}%</strong>
+            <strong>{keepDecimals(positionInfo[1], 2)}%</strong>
             <small>
-              ({positionInfo[0]} {marginToken})
+              ({keepDecimals(positionInfo[0], findToken(marginToken).decimals)} {marginToken})
             </small>
           </>
         )}

@@ -25,3 +25,4 @@ todo:
 . api/trade_records分mt；
 . 加载效果；
 . BN数据解析方法简化；
+. api/current_positions_amount 要支持

@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash'
 import { useQuery } from 'react-query'
 
 import { Rec } from '@/zustand/types'
@@ -11,7 +12,7 @@ import {
 } from '@/api'
 
 export const useCurrentPositionsAmount = (quoteToken: string, marginToken: string) => {
-  const query = useQuery(
+  const { data, refetch } = useQuery(
     ['getCurrentPositionsAmount'],
     async (): Promise<Record<string, any>> => {
       const data = await getCurrentPositionsAmount(quoteToken, marginToken)
@@ -19,92 +20,101 @@ export const useCurrentPositionsAmount = (quoteToken: string, marginToken: strin
     },
     {
       retry: 0,
+      initialData: {},
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  return query
+  if (!isEmpty(data)) return { refetch, data }
+
+  return { refetch }
 }
 
 export const useCurrentIndexDAT = (marginToken: string) => {
-  const query = useQuery(
+  const { data, refetch } = useQuery(
     ['getCurrentIndexDAT'],
     async (): Promise<Record<string, any>> => {
       const data = await getCurrentIndexDAT(marginToken)
       // console.info(data)
-      return data
-    },
-    {
-      retry: 0,
-      refetchInterval: 10000,
-      keepPreviousData: true,
-      refetchOnWindowFocus: false
-    }
-  )
-
-  return query
-}
-
-export const useTraderEDRFBalance = (trader = '') => {
-  const query = useQuery(
-    ['getTraderEDRFBalance'],
-    async (): Promise<Record<string, any>> => {
-      const data = await getTraderEDRFBalance(trader)
-      // console.info('edrfBalance:', data?.data)
-      return data
-    },
-    {
-      retry: 0,
-      refetchInterval: 10000,
-      keepPreviousData: true,
-      refetchOnWindowFocus: false
-    }
-  )
-
-  return query
-}
-
-export const useTraderBondBalance = (trader = '', address: string) => {
-  const query = useQuery(
-    ['getTraderBondBalance'],
-    async (): Promise<Record<string, any>> => {
-      const data = await getTraderBondBalance(trader, address)
-      // console.info('bondBalance:', data?.data)
-      return data
-    },
-    {
-      retry: 0,
-      refetchInterval: 10000,
-      keepPreviousData: true,
-      refetchOnWindowFocus: false
-    }
-  )
-
-  return query
-}
-
-export const useCurrentTradingAmount = (address: string, marginToken: string) => {
-  const query = useQuery(
-    ['getCurrentTradingAmount'],
-    async (): Promise<any[]> => {
-      const data = await getCurrentTradingAmount(address, marginToken)
       return data?.data ?? {}
     },
     {
       retry: 0,
+      initialData: {},
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  return query
+  if (!isEmpty(data)) return { refetch, data }
+
+  return { refetch }
+}
+
+export const useTraderEDRFBalance = (trader = '') => {
+  const { data } = useQuery(
+    ['getTraderEDRFBalance'],
+    async (): Promise<number> => {
+      const data = await getTraderEDRFBalance(trader)
+      return data?.data
+    },
+    {
+      retry: 0,
+      initialData: 0,
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data }
+}
+
+export const useTraderBondBalance = (trader = '', address: string) => {
+  const { data } = useQuery(
+    ['getTraderBondBalance'],
+    async (): Promise<number> => {
+      const data = await getTraderBondBalance(trader, address)
+      return data?.data
+    },
+    {
+      retry: 0,
+      initialData: 0,
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data }
+}
+
+export const useCurrentTradingAmount = (address: string, marginToken: string) => {
+  const { data, refetch } = useQuery(
+    ['getCurrentTradingAmount'],
+    async (): Promise<any[]> => {
+      const data = await getCurrentTradingAmount(address, marginToken)
+      return data?.data ?? []
+    },
+    {
+      retry: 0,
+      initialData: [],
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  if (!isEmpty(data)) return { refetch, data }
+
+  return { refetch }
 }
 
 export const useCurrentInsuranceDAT = (address: string) => {
-  const query = useQuery(
+  const { data, refetch } = useQuery(
     ['getCurrentInsuranceData'],
     async (): Promise<Rec> => {
       const data = await getCurrentInsuranceData(address)
@@ -112,11 +122,14 @@ export const useCurrentInsuranceDAT = (address: string) => {
     },
     {
       retry: 0,
+      initialData: {},
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  return query
+  if (!isEmpty(data)) return { data, refetch }
+
+  return { refetch }
 }

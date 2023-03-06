@@ -24,11 +24,10 @@ const TradingVolume: FC = () => {
 
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const {
-    data: tradingVolume,
-    isLoading,
-    refetch
-  } = useCurrentTradingAmount(SelectSymbolTokens[pairSelectVal], findToken(marginToken).tokenAddress)
+  const { data: tradingVolume, refetch } = useCurrentTradingAmount(
+    SelectSymbolTokens[pairSelectVal],
+    findToken(marginToken).tokenAddress
+  )
 
   const historyDAT = useCallback(async () => {
     const { data: trading } = await getHistoryTradingData(
@@ -46,12 +45,12 @@ const TradingVolume: FC = () => {
 
   const combineDAT = useMemo(() => {
     let output
-    if (!isLoading && tradingVolume) {
+    if (tradingVolume) {
       // console.info({ day_time: time, ...data[0] })
       output = { day_time: time, ...tradingVolume[0] }
     }
     return [...tradingData, output]
-  }, [tradingData, isLoading, tradingVolume])
+  }, [tradingData, tradingVolume])
 
   useEffect(() => {
     void historyDAT()

@@ -90,7 +90,7 @@ const EranbDRFPool: FC = () => {
   }
 
   const memoDisabled = useMemo(() => {
-    return isGT(bondBalance?.data ?? 0, 0)
+    return isGT(bondBalance ?? 0, 0)
   }, [bondBalance])
 
   const memoAPY = useMemo(() => {
@@ -156,7 +156,7 @@ const EranbDRFPool: FC = () => {
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow value={bondBalance?.data ?? 0} unit={`b${marginToken}`} decimal={2} />
+              <BalanceShow value={bondBalance ?? 0} unit={`b${marginToken}`} decimal={2} />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} :{' '}

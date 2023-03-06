@@ -14,7 +14,7 @@ export type MarginTokenKeys = 'DRF' | 'BUSD'
 
 export type AllTokenKeys = 'btc' | 'busd' | 'eth' | 'drf' | 'matic' | 'bnb' | 'edrf'
 
-export type ContractKeys = 'multicall' | 'derifyProtocol'
+export type ContractKeys = 'multicall' | 'derifyProtocol' | 'derifyBroker'
 
 export type MarginToken = { [key in MarginTokenKeys]: any }
 

@@ -2,10 +2,10 @@ import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
 import tokens from '@/config/tokens'
-import contracts1 from '@/config/contracts1'
+import contracts from '@/config/contracts'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { getDerifyProtocolContract, getDerifyRewardsContract1 } from '@/utils/contractHelpers'
+import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 
 export const useWithdrawPositionReward = () => {
   const { data: signer } = useSigner()
@@ -13,7 +13,7 @@ export const useWithdrawPositionReward = () => {
   const withdraw = useCallback(
     async (rewards: string): Promise<boolean> => {
       if (!signer) return false
-      const c = getDerifyRewardsContract1(rewards, signer)
+      const c = getDerifyRewardsContract(rewards, signer)
 
       try {
         const res = await c.withdrawPositionReward()
@@ -36,7 +36,7 @@ export const useWithdrawAllEdrf = () => {
   const withdraw = useCallback(
     async (rewards: string): Promise<boolean> => {
       if (!signer) return false
-      const c = getDerifyRewardsContract1(rewards, signer)
+      const c = getDerifyRewardsContract(rewards, signer)
 
       try {
         const res = await c.withdrawAllEdrf()
@@ -59,7 +59,7 @@ export const useWithdrawAllBond = () => {
   const withdraw = useCallback(
     async (rewards: string): Promise<boolean> => {
       if (!signer) return false
-      const c = getDerifyRewardsContract1(rewards, signer)
+      const c = getDerifyRewardsContract(rewards, signer)
 
       try {
         const res = await c.withdrawAllBond()
@@ -89,7 +89,7 @@ export const useStakingDrf = () => {
       try {
         const approve = await setAllowance(
           signer,
-          contracts1.derifyProtocol.contractAddress,
+          contracts.derifyProtocol.contractAddress,
           tokens.drf.tokenAddress,
           _amount
         )
@@ -118,7 +118,7 @@ export const useExchangeBond = () => {
     async (rewards: string, bMarginToken: string, amount: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyRewardsContract1(rewards, signer)
+      const c = getDerifyRewardsContract(rewards, signer)
       const _amount = inputParameterConversion(amount, 8)
 
       try {
@@ -148,7 +148,7 @@ export const useRedeemDrf = () => {
     async (rewards: string, amount: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyRewardsContract1(rewards, signer)
+      const c = getDerifyRewardsContract(rewards, signer)
       const _amount = inputParameterConversion(amount, 8)
 
       try {
@@ -174,7 +174,7 @@ export const useRedeemBondFromBank = () => {
     async (rewards: string, amount: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyRewardsContract1(rewards, signer)
+      const c = getDerifyRewardsContract(rewards, signer)
       const _amount = inputParameterConversion(amount, 8)
 
       try {
@@ -200,7 +200,7 @@ export const useDepositBondToBank = () => {
     async (rewards: string, bMarginToken: string, amount: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyRewardsContract1(rewards, signer)
+      const c = getDerifyRewardsContract(rewards, signer)
       const _amount = inputParameterConversion(amount, 8)
 
       try {

@@ -5,14 +5,13 @@ import BN from 'bignumber.js'
 import multicall from '@/utils/multicall'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { PositionSide } from '@/typings'
-import { getDerifyProtocolAddress } from '@/utils/addressHelpers'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {
   getDerifyBrokerContract,
   getDerifyDerivativePairContract,
-  getDerifyExchangeContract1,
+  getDerifyExchangeContract,
   getDerifyProtocolContract,
-  getDerifyRewardsContract1
+  getDerifyRewardsContract
 } from '@/utils/contractHelpers'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 import {
@@ -29,6 +28,7 @@ import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
+import contracts from '@/config/contracts'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -388,7 +388,7 @@ export const calcChangeFee = async (
   const size = findMarginToken(symbol)
     ? inputParameterConversion(bnDiv(amount, spotPrice), 8)
     : inputParameterConversion(amount, 8)
-  const exchangeContract = getDerifyExchangeContract1(exchange)
+  const exchangeContract = getDerifyExchangeContract(exchange)
   const derivativeContract = getDerifyDerivativePairContract(derivative)
 
   const liquidityPool = await exchangeContract.liquidityPool()
@@ -503,7 +503,7 @@ export const getTraderStakingDAT = async (trader: string): Promise<Record<string
   const calls = [
     {
       name: 'getStakingInfo',
-      address: getDerifyProtocolAddress(),
+      address: contracts.derifyProtocol.contractAddress,
       params: [trader]
     }
   ]
@@ -615,7 +615,7 @@ export const getStakingDrfPoolDAT = async () => {
 }
 
 export const getBankBDRFPoolDAT = async (reward: string) => {
-  const c = getDerifyRewardsContract1(reward)
+  const c = getDerifyRewardsContract(reward)
   const d = await c.bankBondPool()
   return safeInterceptionValues(String(d), 8)
 }

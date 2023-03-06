@@ -4,7 +4,7 @@ import { VolumeState } from '@/zustand/types'
 import { MarginTokenKeys } from '@/typings'
 import { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
+import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export enum OpeningType {
   Market,
@@ -21,7 +21,7 @@ const getMaxVolume = async (
 ): Promise<number[]> => {
   const _price = inputParameterConversion(price, 8)
   const _leverageNow = inputParameterConversion(leverageNow, 8)
-  const c = getDerifyExchangeContract1(exchange)
+  const c = getDerifyExchangeContract(exchange)
 
   const data = await c.getTraderOpenUpperBound(qtAddress, trader, openingType, _price, _leverageNow)
 

@@ -1,16 +1,16 @@
 import { Signer } from 'ethers'
 import { isEmpty } from 'lodash'
+import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
 import tokens from '@/config/tokens'
+import contracts from '@/config/contracts'
 import { setAllowance } from '@/utils/practicalMethod'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
-import { getDerifyBrokerAddress } from '@/utils/addressHelpers'
 import { getDerifyBrokerContract } from '@/utils/contractHelpers'
 import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
 
 import DerifyBrokerAbi from '@/config/abi/DerifyBroker.json'
-import { useSigner } from 'wagmi'
 
 export const useApplyBroker = () => {
   const { data: s } = useSigner()
@@ -23,7 +23,12 @@ export const useApplyBroker = () => {
       const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 8)
 
       try {
-        const approve = await setAllowance(signer, getDerifyBrokerAddress(), tokens.edrf.tokenAddress, _burnLimitAmount)
+        const approve = await setAllowance(
+          signer,
+          contracts.derifyBroker.contractAddress,
+          tokens.edrf.tokenAddress,
+          _burnLimitAmount
+        )
 
         if (!approve) return false
 
@@ -71,7 +76,12 @@ export const useExtendPeriod = () => {
       const _amount = inputParameterConversion(amount, 8)
 
       try {
-        const approve = await setAllowance(signer, getDerifyBrokerAddress(), tokens.edrf.tokenAddress, amount)
+        const approve = await setAllowance(
+          signer,
+          contracts.derifyBroker.contractAddress,
+          tokens.edrf.tokenAddress,
+          amount
+        )
 
         if (!approve) return false
 
@@ -94,11 +104,11 @@ export const useBrokerParams = (): { data?: Record<string, any>; isLoading: bool
   const calls = [
     {
       name: 'brokerApplyNumber',
-      address: getDerifyBrokerAddress()
+      address: contracts.derifyBroker.contractAddress
     },
     {
       name: 'brokerValidUnitNumber',
-      address: getDerifyBrokerAddress()
+      address: contracts.derifyBroker.contractAddress
     }
   ]
 

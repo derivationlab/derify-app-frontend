@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 
 import tokens from '@/config/tokens'
-import { getAddress } from '@/utils/addressHelpers'
 import { addToken2Wallet } from '@/utils/practicalMethod'
 import { PANCAKE_SWAP_URL } from '@/config'
 import { useProtocolConf1 } from '@/hooks/useMatchConf'
@@ -60,7 +59,7 @@ const AddTokenButton: FC = () => {
 
   const buyToken = (token: Record<string, any>) => {
     if (token.direction === 'Sell') {
-      window.open(`${PANCAKE_SWAP_URL}swap?inputCurrency=${getAddress(token.address)}`)
+      window.open(`${PANCAKE_SWAP_URL}swap?inputCurrency=${token.address}`)
     } else {
       window.open(`${PANCAKE_SWAP_URL}${token.swap}`)
     }

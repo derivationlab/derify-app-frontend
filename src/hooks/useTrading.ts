@@ -9,7 +9,7 @@ import { inputParameterConversion } from '@/utils/tools'
 import { OrderTypes, PositionSide } from '@/typings'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { DEFAULT_MARGIN_TOKEN, findMarginToken, findToken } from '@/config/tokens'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
+import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export const useOpeningPosition = () => {
   const { data: signer } = useSigner()
@@ -29,7 +29,7 @@ export const useOpeningPosition = () => {
     ): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       // getUintAmount?
       const _posLeverage = inputParameterConversion(posLeverage, 8)
@@ -83,7 +83,7 @@ export const useCloseAllPositions = () => {
     async (exchange: string, brokerId: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       try {
         const gasLimit = await estimateGas(c, 'closeAllPositions', [brokerId], 0)
@@ -146,7 +146,7 @@ export const useCancelAllPositions = () => {
     async (exchange: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       try {
         const gasLimit = await estimateGas(c, 'cancelAllOrderedPositions', [], 0)
@@ -171,7 +171,7 @@ export const useDepositMargin = () => {
     async (exchange: string, amount: string, marginToken: string): Promise<boolean> => {
       if (!signer) return false
       console.info(amount)
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       try {
         const _amount = inputParameterConversion(amount, 8)
@@ -201,7 +201,7 @@ export const useWithdrawMargin = () => {
     async (exchange: string, amount: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       try {
         const _amount = inputParameterConversion(amount, 8)
@@ -312,7 +312,7 @@ export const useClosePosition = () => {
     ): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
       const qtAddress = findToken(quoteToken).tokenAddress
 
       let _positionSize

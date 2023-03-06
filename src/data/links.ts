@@ -1,4 +1,4 @@
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
 
 export const Feedback = 'https://discord.com/channels/822422051099902053/827112242449350686'
 export const Tutorial = 'https://docs.derify.finance/getting-started/tutorial'
@@ -21,7 +21,7 @@ export const Communitys: Record<string, string> = {
 }
 
 export const FaucetLinks: Record<string, string> = {
-  [BASE_TOKEN_SYMBOL]:
+  [DEFAULT_MARGIN_TOKEN.symbol]:
     'https://docs.google.com/forms/d/e/1FAIpQLSesoXfNkoXbF9KoDf_cCq-CqND4xD62GLVcf2F1jUGk3D3WZA/viewform',
   rETH: 'https://www.rinkeby.io/#faucet',
   BNB: 'https://testnet.binance.org/faucet-smart'

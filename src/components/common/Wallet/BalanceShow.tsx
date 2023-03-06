@@ -1,10 +1,9 @@
-import React, { FC, useMemo } from 'react'
 import BN from 'bignumber.js'
-import classNames from 'classnames'
 import numeral from 'numeral'
+import classNames from 'classnames'
+import React, { FC, useMemo } from 'react'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   value: number | string
@@ -37,8 +36,7 @@ const BalanceShow: FC<Props> = ({ value, unit, format = '', percent = false, dec
 }
 
 BalanceShow.defaultProps = {
-  value: 0,
-  unit: BASE_TOKEN_SYMBOL
+  value: 0
 }
 
 export default BalanceShow

@@ -6,9 +6,9 @@ import { useCallback, useMemo } from 'react'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
-import { OrderTypes, PositionSide } from '@/store/contract/helper'
+import { OrderTypes, PositionSide } from '@/typings'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { BASE_TOKEN_SYMBOL, findMarginToken, findToken } from '@/config/tokens'
+import { DEFAULT_MARGIN_TOKEN, findMarginToken, findToken } from '@/config/tokens'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
 
 export const useOpeningPosition = () => {
@@ -38,16 +38,6 @@ export const useOpeningPosition = () => {
       const _openingSize = inputParameterConversion(openingSize, 8)
       const _openingPrice = inputParameterConversion(openingPrice, 8)
 
-      const params = [
-        brokerId,
-        qtAddress,
-        positionSide,
-        _openingType,
-        _pricingType,
-        _openingSize,
-        _openingPrice,
-        _posLeverage
-      ]
       console.info([
         brokerId,
         qtAddress,
@@ -350,13 +340,21 @@ export const useClosePosition = () => {
   return { close }
 }
 
-export const useMarginTokenFromRoute = () => {
+export const useMTokenFromRoute = () => {
   const params: any = useParams()
 
   return useMemo(() => {
     if (params?.id) {
-      return params.id
+      const id = params.id
+      const find = findMarginToken(id)
+
+      if (find) {
+        return id
+      } else {
+        const local = localStorage.getItem('MARGIN_TOKEN')
+        return local ? JSON.parse(local).state.marginToken : DEFAULT_MARGIN_TOKEN.symbol
+      }
     }
-    return BASE_TOKEN_SYMBOL
+    return DEFAULT_MARGIN_TOKEN.symbol
   }, [params.id])
 }

@@ -1,66 +1,60 @@
-import React, { FC, useCallback, useEffect, useState, useContext } from 'react'
+import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
-import { useHistory, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useHistory, Link } from 'react-router-dom'
+import React, { FC, useCallback, useEffect, useContext, useReducer } from 'react'
+
+import { PubSubEvents } from '@/typings'
+import { MobileContext } from '@/context/Mobile'
+import { reducer, stateInit } from '@/reducers/brokerBind'
 import { bindYourBroker, getBrokersList } from '@/api'
-import { useAppDispatch } from '@/store'
-import { getBrokerBoundDataAsync } from '@/store/trader'
 import {
   SelectLangOptionsForFilter as SelectLangOptions,
   SelectCommunityOptionsForFilter as SelectCommunityOptions
 } from '@/data'
-import { MobileContext } from '@/context/Mobile'
+
 import Pagination from '@/components/common/Pagination'
 import Loading from '@/components/common/Loading'
 import Select from '@/components/common/Form/Select'
 import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
 
+const pageSize = 10
+
 const List: FC = () => {
+  const [state, dispatch] = useReducer(reducer, stateInit)
+
   const history = useHistory()
-  const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const pageSize = 10
+  const pageChange = async (index: number) => {
+    dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: true, pageIndex: index } })
 
-  const [language, setLanguage] = useState<string>('ALL')
-  const [community, setCommunity] = useState<string>('ALL')
-  const [operating, setOperating] = useState<string>('-')
-  const [pageIndex, setPageIndex] = useState<number>(0)
-  const [totalItems, setTotalItems] = useState<number>(0)
-  const [brokerList, setBrokerList] = useState<Array<Record<string, any>>>([])
-  const [brokerData, setBrokerData] = useState<Record<string, any>>({})
-  const [visibleStatus, setVisibleStatus] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
-
-  const onPageChangeEv = async (index: number) => {
-    if (!loading) {
-      setLoading(true)
-      setPageIndex(index)
-      await getBrokersListCb(index)
-      setLoading(false)
-    }
+    await getBrokersListCb(index)
   }
 
   const confirmBrokerEv = async (broker: Record<string, any>) => {
-    setBrokerData(broker)
-    setVisibleStatus('broker')
+    dispatch({ type: 'SET_TO_BIND_DAT', payload: broker })
+    dispatch({ type: 'SET_SHOW_MODAL', payload: 'broker' })
   }
 
   const bindBrokerFunc = async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    setOperating(brokerData.id)
-    setVisibleStatus('')
+    dispatch({ type: 'SET_OPT_SELECT', payload: { i: state.toBindDAT.id } })
+    dispatch({ type: 'SET_SHOW_MODAL', payload: '' })
 
-    const data = await bindYourBroker({ trader: account?.address, brokerId: brokerData.id })
+    const data = await bindYourBroker({ trader: account?.address, brokerId: state.toBindDAT.id })
 
     if (data.code === 0) {
       // succeed
       window.toast.success(t('common.success', 'success'))
-      if (account?.address) dispatch(getBrokerBoundDataAsync(account.address))
+
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+
       history.push('/broker')
     } else {
       // failed
@@ -68,7 +62,7 @@ const List: FC = () => {
       // window.toast.error(data.msg, { duration: 40000 })
     }
 
-    setOperating('')
+    dispatch({ type: 'SET_OPT_SELECT', payload: { i: '' } })
 
     window.toast.dismiss(toast)
   }
@@ -77,22 +71,21 @@ const List: FC = () => {
     async (index: number) => {
       const {
         data: { records, totalItems }
-      } = await getBrokersList(index, pageSize, language, community)
-      setBrokerList(records ?? [])
-      setTotalItems(totalItems ?? 0)
+      } = await getBrokersList(index, pageSize, state.optSelect.l, state.optSelect.c)
+      dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: false, records, totalItems } })
     },
-    [language, community, pageIndex]
+    [state.optSelect]
   )
 
   useEffect(() => {
     void getBrokersListCb(0)
-  }, [language, community])
+  }, [state.optSelect])
 
   return (
     <div className="web-broker-list">
       <header className="web-broker-list-header">
         <h2>{t('Nav.BindBroker.SelectBroker', 'Select a broker')}</h2>
-        <Link to="/broker-bind">
+        <Link to="/broker/bind">
           {!mobile ? t('Nav.BindBroker.InputCode', 'I want to input my broker code ...') : ''}
         </Link>
       </header>
@@ -100,39 +93,44 @@ const List: FC = () => {
         <main>
           <Select
             label={t('Nav.BindBroker.Language', 'Language')}
-            value={language}
+            value={state.optSelect.l}
             options={SelectLangOptions}
-            onChange={(value) => setLanguage(String(value))}
+            onChange={(value) => dispatch({ type: 'SET_OPT_SELECT', payload: { l: value } })}
           />
           <Select
             label={t('Nav.BindBroker.Community', 'Community')}
-            value={community}
+            value={state.optSelect.c}
             options={SelectCommunityOptions}
-            onChange={(value) => setCommunity(String(value))}
+            onChange={(value) => dispatch({ type: 'SET_OPT_SELECT', payload: { c: value } })}
           />
         </main>
         {!mobile && (
-          <Pagination page={pageIndex} pageSize={pageSize} total={totalItems ?? 0} onChange={onPageChangeEv} />
+          <Pagination
+            page={state.brokerDAT.pageIndex}
+            pageSize={pageSize}
+            total={state.brokerDAT.totalItems}
+            onChange={pageChange}
+          />
         )}
       </section>
       <main className="web-broker-list-main">
-        {brokerList.map((broker: Record<string, any>, index) => (
-          <BrokerItem operating={operating} data={broker} key={index} onClick={() => confirmBrokerEv(broker)} />
+        {state.brokerDAT.records.map((broker: Record<string, any>, index) => (
+          <BrokerItem operating={state.optSelect.i} data={broker} key={index} onClick={() => confirmBrokerEv(broker)} />
         ))}
       </main>
       <Pagination
         pageSize={pageSize}
         full={!mobile}
-        page={pageIndex}
-        total={totalItems ?? 0}
-        onChange={onPageChangeEv}
+        page={state.brokerDAT.pageIndex}
+        total={state.brokerDAT.totalItems}
+        onChange={pageChange}
       />
-      <Loading type="fixed" show={loading} />
+      <Loading type="fixed" show={state.brokerDAT.isLoaded} />
       <BrokerDialog
-        visible={visibleStatus === 'broker'}
-        data={brokerData}
+        visible={state.showModal === 'broker'}
+        data={state.toBindDAT}
         onClick={bindBrokerFunc}
-        onClose={() => setVisibleStatus('')}
+        onClose={() => dispatch({ type: 'SET_SHOW_MODAL', payload: '' })}
       />
     </div>
   )

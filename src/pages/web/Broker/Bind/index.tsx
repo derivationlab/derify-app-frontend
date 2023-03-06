@@ -1,11 +1,11 @@
-import React, { ChangeEvent, FC, useState, useContext } from 'react'
+import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import React, { ChangeEvent, FC, useState, useContext } from 'react'
 
-import { useAppDispatch } from '@/store'
+import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
-import { getBrokerBoundDataAsync } from '@/store/trader'
 import { bindYourBroker, getBrokerInfoById } from '@/api'
 
 import Button from '@/components/common/Button'
@@ -13,7 +13,7 @@ import BrokerDialog from './BrokerDialog'
 
 const Bind: FC = () => {
   const history = useHistory()
-  const dispatch = useAppDispatch()
+
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
   const { data: account } = useAccount()
@@ -36,7 +36,8 @@ const Bind: FC = () => {
     const data = await bindYourBroker({ trader: account?.address, brokerId })
     if (data.code === 0) {
       // succeed
-      if (account?.address) dispatch(getBrokerBoundDataAsync(account.address))
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+
       history.push('/broker')
     } else {
       // failed

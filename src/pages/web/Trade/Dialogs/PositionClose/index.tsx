@@ -1,7 +1,7 @@
 import React, { FC, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { PositionSide } from '@/store/contract/helper'
+import { PositionSide } from '@/typings'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { useMarginToken, usePairsInfo } from '@/zustand'

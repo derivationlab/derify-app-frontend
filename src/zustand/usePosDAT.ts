@@ -3,10 +3,9 @@ import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 
 import { PosDATState, Rec } from '@/zustand/types'
-import { OrderTypes, PositionSide } from '@/store/contract/helper'
-import { getDerifyDerivativePairContract } from '@/utils/contractHelpers'
+import { OrderTypes, PositionSide } from '@/typings'
 import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
-import { MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+
 import multicall from '@/utils/multicall'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 

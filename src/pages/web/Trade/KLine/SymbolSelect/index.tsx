@@ -20,9 +20,9 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
   const { mobile } = useContext(MobileContext)
 
   const indicators = usePairsInfo((state) => state.indicators)
-  const updateQuoteToken = useQuoteToken((state) => state.updateQuoteToken)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const updateQuoteToken = useQuoteToken((state) => state.updateQuoteToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 

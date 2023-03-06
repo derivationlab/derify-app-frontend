@@ -4,6 +4,11 @@ import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 
 export type Rec = Record<string, any>
 
+export interface RpcState {
+  rpc: string
+  fetch: () => Promise<void>
+}
+
 export interface BalancesState {
   loaded: boolean
   balances: Rec

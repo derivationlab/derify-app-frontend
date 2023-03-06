@@ -7,10 +7,10 @@ import React, { FC, useState, useMemo, useContext } from 'react'
 import ThemeContext from '@/context/Theme/Context'
 import { useMatchConf } from '@/hooks/useMatchConf'
 import { PubSubEvents } from '@/typings'
-import { useTraderData } from '@/store/trader/hooks'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
-import { bnMul, isET, isGTET, nonBigNumberInterception } from '@/utils/tools'
+import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useCloseAllPositions, useClosePosition, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
@@ -24,7 +24,6 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()

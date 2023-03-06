@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { PositionSide } from '@/store/contract/helper'
+import { PositionSide } from '@/typings'
 import { useMatchConf } from '@/hooks/useMatchConf'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { reducer, stateInit } from '@/reducers/openingPosition'

@@ -12,7 +12,7 @@ import { nonBigNumberInterception } from '@/utils/tools'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-import { useMarginTokenFromRoute } from '@/hooks/useTrading'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 interface RowTextProps {
   value: string | number
@@ -42,7 +42,7 @@ const Rank: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginTokenFromRoute()
+  const marginToken = useMTokenFromRoute()
 
   const fetchData = useCallback(async (index = 0) => {
     const { data } = await getBrokersRankList(index, 10, findToken(marginToken).tokenAddress)

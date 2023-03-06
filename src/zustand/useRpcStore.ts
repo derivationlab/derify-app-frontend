@@ -1,7 +1,7 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { RpcState } from '@/store/types'
+import { RpcState } from '@/zustand/types'
 import { defaultPrc, getHealthyNode } from '@/utils/chainSupport'
 
 export const BEST_RPC_KEY = 'best-rpc'

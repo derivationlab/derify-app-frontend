@@ -76,9 +76,9 @@ export const QUOTE_TOKENS = [tokens.btc, tokens.eth]
 
 export const MARGIN_TOKENS = [tokens.busd, tokens.drf]
 
-export const BASE_TOKEN_SYMBOL = tokens.busd.symbol
-
 export const VALUATION_TOKEN_SYMBOL = 'USD'
+
+export const DEFAULT_MARGIN_TOKEN = tokens.busd
 
 // key: (btc,eth...)/address
 export const findToken = (key: string): Token => {

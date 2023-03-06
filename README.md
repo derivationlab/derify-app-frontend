@@ -23,3 +23,6 @@ todo:
 . 由于加了mt参数，需要全局检查路由跳转；
 . Close Position 数据问题；
 . api/trade_records分mt；
+. /Users/wugongwei/1-project/derify-app-frontend/src/reducers/brokerBind.ts
+. BN数据解析方法简化；
+. /Users/wugongwei/1-project/derify-app-frontend/src/pages/web/Broker/Workbench/c/Data/Transaction.tsx

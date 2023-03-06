@@ -27,6 +27,18 @@ export enum PriceType {
   Limit
 }
 
+export enum PositionSide {
+  long,
+  short,
+  twoWay
+}
+
+export enum OrderTypes {
+  Limit,
+  StopProfit,
+  StopLoss
+}
+
 export enum PubSubEvents {
   UPDATE_BALANCE = 'UPDATE_BALANCE',
   UPDATE_BROKER_DAT = 'UPDATE_BROKER_DAT',

@@ -2,7 +2,6 @@ import { useAccount } from 'wagmi'
 import React, { FC, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { getIP } from '@/api'
-import { useTraderData } from '@/store/trader/hooks'
 import { Redirect, Switch, Route } from '@/components/common/Route'
 
 import Header from '@/components/web/Header'
@@ -29,7 +28,12 @@ import { useMarginToken } from '@/zustand'
 // todo 改造
 const Web: FC = () => {
   const { data: account } = useAccount()
-  const { broker, brokerLoaded, brokerBound, brokerBoundLoaded } = useTraderData()
+  const { broker, brokerLoaded, brokerBound, brokerBoundLoaded } = {
+    broker: {},
+    brokerLoaded: true,
+    brokerBound: {},
+    brokerBoundLoaded: true
+  } as any
 
   const marginToken = useMarginToken((state) => state.marginToken)
 

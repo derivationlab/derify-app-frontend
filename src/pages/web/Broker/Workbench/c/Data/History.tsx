@@ -2,11 +2,10 @@ import Table from 'rc-table'
 import { isEmpty } from 'lodash'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect, useState, useMemo, useContext, useReducer } from 'react'
+import React, { FC, useEffect, useMemo, useContext, useReducer } from 'react'
 
 import { BSC_SCAN_URL } from '@/config'
 import { MobileContext } from '@/context/Mobile'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/brokerTable'
 import { getBrokerAccountFlow } from '@/api'
 import { nonBigNumberInterception } from '@/utils/tools'
@@ -25,11 +24,6 @@ interface DataProps {
   update_type: string | number
   event_time: string
   update_time: string
-}
-
-interface RowProps {
-  text?: string
-  data?: DataProps
 }
 
 const RowType: FC<{ data: DataProps }> = ({ data }) => {
@@ -61,14 +55,14 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
   )
 }
 
-const RowAmount: FC<Record<string, any>> = ({ text = 0, coin = BASE_TOKEN_SYMBOL }) => (
+const RowAmount: FC<Record<string, any>> = ({ text = 0, coin }) => (
   <div className="web-broker-table-history-amount">
     <strong>{text}</strong>
     <u>{coin}</u>
   </div>
 )
 
-const RowBalance: FC<Record<string, any>> = ({ text = 0, coin = BASE_TOKEN_SYMBOL }) => (
+const RowBalance: FC<Record<string, any>> = ({ text = 0, coin }) => (
   <div className="web-broker-table-history-balance">
     <strong>{text}</strong>
     <u>{coin}</u>

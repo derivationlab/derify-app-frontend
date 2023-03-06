@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
 
-import { PositionSide } from '@/store/contract/helper'
+import { PositionSide } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
 import { useMarginToken } from '@/zustand'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'

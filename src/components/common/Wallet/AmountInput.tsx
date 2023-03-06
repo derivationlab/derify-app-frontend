@@ -2,7 +2,6 @@ import React, { ChangeEvent, FC, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface Props {
   title: string
@@ -42,10 +41,6 @@ const AmountInput: FC<Props> = ({ title, unit, max, onChange }) => {
       </div>
     </div>
   )
-}
-
-AmountInput.defaultProps = {
-  unit: BASE_TOKEN_SYMBOL
 }
 
 export default AmountInput

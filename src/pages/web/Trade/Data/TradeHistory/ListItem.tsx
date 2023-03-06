@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 
-import { getPairName, PositionSide, getPairBaseCoinName } from '@/store/contract/helper'
-import { safeInterceptionValues } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL, findMarginToken, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { PositionSide } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
+import { safeInterceptionValues } from '@/utils/tools'
+import { findMarginToken, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
@@ -126,7 +126,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
       <DataAtom
         label={t('Trade.TradeHistory.VolumeBase', 'Volume (Base)')}
         tip={t('Trade.TradeHistory.VolumeBaseTip')}
-        footer={getPairBaseCoinName(data?.token)}
+        footer={findToken(data?.token).symbol}
       >
         {safeInterceptionValues(data?.size, 4)}
       </DataAtom>

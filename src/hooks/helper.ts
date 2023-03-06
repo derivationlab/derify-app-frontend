@@ -4,7 +4,7 @@ import BN from 'bignumber.js'
 
 import multicall from '@/utils/multicall'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
-import { PositionSide } from '@/store/contract/helper'
+import { PositionSide } from '@/typings'
 import { getDerifyProtocolAddress } from '@/utils/addressHelpers'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {
@@ -29,7 +29,6 @@ import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
-import { getBrokerValidPeriodData } from '@/store/trader/helper'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -55,7 +54,7 @@ export const getFactoryConfig = async (p: MarginTokenWithContract): Promise<Marg
   const output = initialFactoryConfig()
 
   const calls = flatten(
-    Object.keys(p).map((key, index) =>
+    Object.keys(p).map((key) =>
       QUOTE_TOKENS.map((t) => ({
         name: 'getDerivative',
         params: [t.tokenAddress],
@@ -250,7 +249,7 @@ export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<Ma
   const output = initialOpeningMaxLimit()
 
   const calls = flatten(
-    Object.keys(p).map((m, mIndex) => {
+    Object.keys(p).map((m) => {
       const exchange = p[m as MarginTokenKeys].exchange
       const base = {
         name: 'getSysOpenUpperBound',
@@ -258,7 +257,7 @@ export const getOpeningMaxLimit = async (p: MarginTokenWithContract): Promise<Ma
         marginToken: m
       }
       return flatten(
-        QUOTE_TOKENS.map((q, qIndex) => {
+        QUOTE_TOKENS.map((q) => {
           const quoteToken = q.symbol
           return [
             { ...base, params: [q.tokenAddress, 0], quoteToken },

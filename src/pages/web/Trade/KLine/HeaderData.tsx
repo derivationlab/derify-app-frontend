@@ -2,11 +2,11 @@ import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useContext, useMemo } from 'react'
 
+import { findToken } from '@/config/tokens'
+import { keepDecimals } from '@/utils/tools'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { nonBigNumberInterception } from '@/utils/tools'
 import { useMarginToken, usePairsInfo } from '@/zustand'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -30,8 +30,8 @@ const HeaderData: FC = () => {
     const longPmrRate = indicators?.longPmrRate ?? 0
     const shortPmrRate = indicators?.shortPmrRate ?? 0
     return [
-      Number(longPmrRate) <= 0 ? '0' : (longPmrRate * 100).toFixed(2),
-      Number(shortPmrRate) <= 0 ? '0' : (shortPmrRate * 100).toFixed(2)
+      Number(longPmrRate) <= 0 ? '0.00' : keepDecimals(longPmrRate * 100, 2),
+      Number(shortPmrRate) <= 0 ? '0.00' : keepDecimals(shortPmrRate * 100, 2)
     ]
   }, [indicators])
 
@@ -41,7 +41,7 @@ const HeaderData: FC = () => {
       const m = long_position_amount - short_position_amount
       const n = long_position_amount + short_position_amount
       const x = ((m / n) * 100).toFixed(2)
-      return [nonBigNumberInterception(m), n === 0 || m === 0 ? '0' : nonBigNumberInterception(x)]
+      return [keepDecimals(m, findToken(marginToken).decimals), n === 0 || m === 0 ? '0' : keepDecimals(x, 2)]
     }
     return [0, 0]
   }, [positionsAmount])
@@ -61,7 +61,7 @@ const HeaderData: FC = () => {
           <>
             <strong>{positionInfo[1]}%</strong>
             <small>
-              ({positionInfo[0]} {BASE_TOKEN_SYMBOL})
+              ({positionInfo[0]} {marginToken})
             </small>
           </>
         )}
@@ -72,7 +72,7 @@ const HeaderData: FC = () => {
           {t('Trade.kline.PCFRate', 'PCF Rate')}
           <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
         </h3>
-        <strong>{nonBigNumberInterception(memoPosFeeRatio, 2)}%</strong>
+        <strong>{keepDecimals(memoPosFeeRatio, 2)}%</strong>
       </section>
       {!mobile && <hr />}
       <section>

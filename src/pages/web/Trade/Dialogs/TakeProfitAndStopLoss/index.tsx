@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { PositionSide } from '@/store/contract/helper'
+import { PositionSide } from '@/typings'
 import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'

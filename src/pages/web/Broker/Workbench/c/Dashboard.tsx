@@ -10,7 +10,7 @@ import { MobileContext } from '@/context/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 import { useWithdrawReward } from '@/hooks/useBroker'
-import { useMarginTokenFromRoute } from '@/hooks/useTrading'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { nonBigNumberInterception } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
@@ -24,7 +24,7 @@ const Dashboard: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { withdraw } = useWithdrawReward()
 
-  const marginToken = useMarginTokenFromRoute()
+  const marginToken = useMTokenFromRoute()
 
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
   const brokerAssets = useBrokerInfo((state) => state.brokerAssets)

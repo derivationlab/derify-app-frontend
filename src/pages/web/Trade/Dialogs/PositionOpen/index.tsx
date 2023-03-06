@@ -4,7 +4,7 @@ import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { keepDecimals } from '@/utils/tools'
-import { PositionSide } from '@/store/contract/helper'
+import { PositionSide } from '@/typings'
 import { useMatchConf } from '@/hooks/useMatchConf'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'

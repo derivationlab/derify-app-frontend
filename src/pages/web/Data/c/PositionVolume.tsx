@@ -5,7 +5,7 @@ import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from
 
 import ThemeContext from '@/context/Theme/Context'
 import { findToken } from '@/config/tokens'
-import { useMarginToken } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { getHistoryPositionsData } from '@/api'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { bnDiv, bnMul, bnPlus, isGT, keepDecimals } from '@/utils/tools'
@@ -33,7 +33,7 @@ const PositionVolume: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMTokenFromRoute()
 
   const { data: positionsDAT, refetch } = useCurrentPositionsAmount(
     SelectSymbolTokens[pairSelectVal],

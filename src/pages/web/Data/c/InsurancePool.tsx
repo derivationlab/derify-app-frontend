@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useMarginToken } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useCurrentInsuranceDAT } from '@/hooks/useQueryApi'
 import { getHistoryInsuranceData } from '@/api'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
@@ -21,7 +21,7 @@ const InsurancePool: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [insuranceData, setInsuranceData] = useState<Record<string, any>[]>([])
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMTokenFromRoute()
 
   const { data: insuranceVolume } = useCurrentInsuranceDAT(findToken(marginToken).tokenAddress)
 

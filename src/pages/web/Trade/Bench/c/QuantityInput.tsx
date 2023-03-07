@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
 
 import { findToken } from '@/config/tokens'
+import { useQuoteToken } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { MarginTokenKeys, PubSubEvents } from '@/typings'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
-import { useMarginToken, useQuoteToken } from '@/zustand'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
@@ -29,14 +30,15 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
 
   const maxVolume = useCalcOpeningDAT((state) => state.maxVolume)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
   const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
   const fetchMaxVolume = useCalcOpeningDAT((state) => state.fetchMaxVolume)
 
+  const marginToken = useMTokenFromRoute()
+
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
-  const { protocolConfig } = useProtocolConf()
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const onSelectChange = (val: string | number) => {
     onChange(0)

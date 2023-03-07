@@ -6,7 +6,7 @@ import { useConfigInfo } from '@/zustand/useConfigInfo'
 import { getOpeningMaxLimit, getPCFAndSpotPrice } from '@/hooks/helper'
 import { MarginTokenWithContract, MarginTokenWithQuote } from '@/typings'
 
-export default function Updater(): null {
+export default function TradingUpdater(): null {
   const factoryConfig = useConfigInfo((state) => state.factoryConfig)
   const protocolConfig = useConfigInfo((state) => state.protocolConfig)
   const updatePCFRatios = usePairsInfo((state) => state.updatePCFRatios)

@@ -3,12 +3,13 @@ import React, { FC, useContext, useMemo } from 'react'
 
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useProtocolConf1 } from '@/hooks/useMatchConf'
+import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useWithdrawPositionReward } from '@/hooks/useEarning'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { bnPlus, isGT, keepDecimals } from '@/utils/tools'
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
+import { usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -24,12 +25,13 @@ const PositionMining: FC = () => {
   const variables = useTraderInfo((state) => state.variables)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const indicators = usePairsInfo((state) => state.indicators)
-  const marginToken = useMarginToken((state) => state.marginToken)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
 
+  const marginToken = useMTokenFromRoute()
+
   const { withdraw } = useWithdrawPositionReward()
-  const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
   const { data: positionsAmount } = useCurrentPositionsAmount('all', findToken(marginToken).tokenAddress)
 
   const memoPositionApy = useMemo(() => {

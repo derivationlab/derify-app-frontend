@@ -1,20 +1,24 @@
-import React, { FC, useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo } from 'react'
 
 import { MARGIN_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
-import { useMarginToken, useTokenBalances } from '@/zustand'
+import { useTokenBalances } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { nonBigNumberInterception } from '@/utils/tools'
 
 import { Select } from '@/components/common/Form'
 import Image from '@/components/common/Image'
 
 const Margin: FC = () => {
+  const history = useHistory()
+
   const { t } = useTranslation()
 
   const balances = useTokenBalances((state) => state.balances)
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
+
+  const marginToken = useMTokenFromRoute()
 
   const marginSelect = useMemo(() => {
     return MARGIN_TOKENS.map((t) => {
@@ -35,7 +39,7 @@ const Margin: FC = () => {
       <Select
         value={marginToken}
         onChange={(v) => {
-          updateMarginToken(v as MarginTokenKeys)
+          history.push(`/${v}/trade`)
         }}
         objOptions={marginSelect}
         renderer={(props) => (

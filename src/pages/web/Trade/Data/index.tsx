@@ -1,11 +1,12 @@
-import React, { FC, useEffect, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useAccount } from 'wagmi'
 import PubSub from 'pubsub-js'
+import { useAccount } from 'wagmi'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useEffect, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
+import { useConfigInfo } from '@/zustand'
 import { usePosDATStore } from '@/zustand/usePosDAT'
-import { useConfigInfo, useMarginToken } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
 
@@ -17,10 +18,11 @@ const Data: FC = () => {
   const { t } = useTranslation()
   const { data } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
   const fetchTraderPos = usePosDATStore((state) => state.fetch)
   const factoryConfig = useConfigInfo((state) => state.factoryConfig)
   const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
+
+  const marginToken = useMTokenFromRoute()
 
   const _factoryConfig = useMemo(() => {
     if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken]

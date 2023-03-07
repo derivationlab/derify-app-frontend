@@ -22,7 +22,7 @@ import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
 import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
 import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
-import { BrokerBindRoute, BWorkbenchRoute } from '@/pages/web/Route'
+import { BrokerBindRoute, BWorkbenchRoute, TradingRoute } from '@/pages/web/Route'
 import { useMarginToken } from '@/zustand'
 
 // todo 改造
@@ -164,9 +164,9 @@ const Web: FC = () => {
           path="/:id/trade"
           exact
           render={() => (
-            <BrokerBindRoute>
+            <TradingRoute>
               <Trade />
-            </BrokerBindRoute>
+            </TradingRoute>
           )}
         />
         <Route

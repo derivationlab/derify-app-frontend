@@ -3,10 +3,13 @@ import { useAccount } from 'wagmi'
 import { useInterval } from 'react-use'
 
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
+import { useQuoteToken } from '@/zustand'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useProtocolConf1 } from '@/hooks/useMatchConf'
-import { useMarginToken, useQuoteToken } from '@/zustand'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
+
+import UpdateIndicators from '@/pages/Updater/UpdateIndicators'
 
 import DRFPool from './c/DRFPool'
 import EranbDRFPool from './c/bDRFPool'
@@ -16,13 +19,14 @@ const Eran: FC = () => {
   const { data: account } = useAccount()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
   const updateRewardsInfo = useTraderInfo((state) => state.updateRewardsInfo)
   const updateStakingInfo = useTraderInfo((state) => state.updateStakingInfo)
   const updateDrfPoolBalance = usePoolsInfo((state) => state.updateDrfPoolBalance)
   const updateBondPoolBalance = usePoolsInfo((state) => state.updateBondPoolBalance)
 
-  const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
+  const marginToken = useMTokenFromRoute()
+
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const _getTraderRewardDAT = async (trader: string, protocolConfig: string) => {
     const rewards = await getTraderRewardDAT(trader, protocolConfig)
@@ -67,6 +71,8 @@ const Eran: FC = () => {
 
   return (
     <div className="web-eran">
+      <UpdateIndicators />
+
       <PositionMining />
       <DRFPool />
       <EranbDRFPool />

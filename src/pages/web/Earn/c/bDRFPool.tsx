@@ -4,15 +4,16 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
 
-import { isGT, keepDecimals } from '@/utils/tools'
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
+import { useQuoteToken } from '@/zustand'
 import { MobileContext } from '@/context/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useProtocolConf1 } from '@/hooks/useMatchConf'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { isGT, keepDecimals } from '@/utils/tools'
 import { useTraderBondBalance } from '@/hooks/useQueryApi'
-import { useMarginToken, useQuoteToken } from '@/zustand'
 import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useEarning'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -32,14 +33,15 @@ const EranbDRFPool: FC = () => {
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
-  const marginToken = useMarginToken((state) => state.marginToken)
   const bondPoolBalance = usePoolsInfo((state) => state.bondPoolBalance)
+
+  const marginToken = useMTokenFromRoute()
 
   const { redeem } = useRedeemBondFromBank()
   const { deposit } = useDepositBondToBank()
   const { exchange } = useExchangeBond()
   const { withdraw } = useWithdrawAllBond()
-  const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
   const { data: bondBalance } = useTraderBondBalance(data?.address, findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')

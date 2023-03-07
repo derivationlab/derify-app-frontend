@@ -5,7 +5,7 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
-import { useMarginToken } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/positionDAT'
 import { getTraderTradeFlow } from '@/api'
 
@@ -20,7 +20,7 @@ const TradeHistory: FC = () => {
 
   const { data: account } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMTokenFromRoute()
 
   const fetchData = async (index = 0) => {
     if (account?.address) {

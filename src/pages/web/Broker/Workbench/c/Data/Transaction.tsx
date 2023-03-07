@@ -7,8 +7,8 @@ import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 
 import { BSC_SCAN_URL } from '@/config'
 import { MobileContext } from '@/context/Mobile'
-import { useMarginToken } from '@/zustand'
 import { getBrokerRewardTx } from '@/api'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/brokerTable'
 import { nonBigNumberInterception } from '@/utils/tools'
 
@@ -81,7 +81,7 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
 const judgeUpsAndDowns = (data: string): string => (Number(data) > 0 ? '+' : '')
 
 const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMTokenFromRoute()
 
   // const { mobile } = useContext(MobileContext)
   const up = useMemo(() => Number(data.pnl_usdt) > 0, [data.pnl_usdt])

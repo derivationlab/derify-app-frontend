@@ -1,13 +1,15 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import { useMatchConf } from '@/hooks/useMatchConf'
+import { useQuoteToken } from '@/zustand'
 import { PositionSideTypes } from '@/typings'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isGT, keepDecimals } from '@/utils/tools'
 import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -27,10 +29,15 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const { t } = useTranslation()
 
-  const { spotPrice, factoryConfig, protocolConfig, marginToken } = useMatchConf()
+  const marginToken = useMTokenFromRoute()
 
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const calcTFeeFunc = useCallback(async () => {
     if (factoryConfig) {

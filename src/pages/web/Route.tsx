@@ -1,25 +1,52 @@
 import { isEmpty } from 'lodash'
-import { Redirect, useLocation } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 import React, { PropsWithChildren, useMemo } from 'react'
 
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useMTokenFromRoute1 } from '@/hooks/useTrading'
 
 import Loading from '@/components/common/Loading'
 
-export const BrokerBindRoute = (props: PropsWithChildren<any>) => {
+export const TradingRoute = (props: PropsWithChildren<any>) => {
+  const { data } = useAccount()
   const { children } = props
-  const { pathname } = useLocation()
+
+  const { find, marginToken } = useMTokenFromRoute1()
 
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
 
   return useMemo(() => {
+    if (!data?.address) return children
     if (brokerBoundLoaded) {
-      if (!isEmpty(brokerBound)) return children
+      if (!isEmpty(brokerBound)) {
+        return find ? children : <Redirect to={`/${marginToken}/trade`} />
+      }
       return <Redirect to="/broker/bind" />
     }
     return <Loading show type="fixed" />
-  }, [brokerBoundLoaded, brokerBound, pathname])
+  }, [brokerBoundLoaded, brokerBound, find, marginToken])
+}
+
+export const BrokerBindRoute = (props: PropsWithChildren<any>) => {
+  const { children } = props
+
+  const { find, marginToken } = useMTokenFromRoute1()
+
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerBound = useBrokerInfo((state) => state.brokerBound)
+  const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
+  console.info(brokerInfo)
+  return useMemo(() => {
+    if (brokerBoundLoaded) {
+      if (!isEmpty(brokerBound)) {
+        return find ? children : <Redirect to={`/${marginToken}/trade`} />
+      }
+      return <Redirect to="/broker/bind" />
+    }
+    return <Loading show type="fixed" />
+  }, [brokerBoundLoaded, brokerBound, find, marginToken])
 }
 
 export const BWorkbenchRoute = (props: PropsWithChildren<any>) => {

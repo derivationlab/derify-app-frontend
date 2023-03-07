@@ -7,7 +7,7 @@ import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
+import { PositionTriggerTypes, PositionSideTypes, MarginTokenKeys } from '@/typings'
 import { DEFAULT_MARGIN_TOKEN, findMarginToken, findToken } from '@/config/tokens'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
@@ -356,5 +356,29 @@ export const useMTokenFromRoute = () => {
       }
     }
     return DEFAULT_MARGIN_TOKEN.symbol
-  }, [params.id])
+  }, [params.id]) as MarginTokenKeys
+}
+
+export const useMTokenFromRoute1 = () => {
+  const params: any = useParams()
+
+  const find = useMemo(() => {
+    if (params?.id) {
+      return findMarginToken(params.id)
+    }
+  }, [params?.id])
+
+  const marginToken = useMemo(() => {
+    if (find) {
+      return find.symbol
+    } else {
+      const local = localStorage.getItem('MARGIN_TOKEN')
+      return local ? JSON.parse(local).state.marginToken : DEFAULT_MARGIN_TOKEN.symbol
+    }
+  }, [find])
+
+  return {
+    find,
+    marginToken
+  }
 }

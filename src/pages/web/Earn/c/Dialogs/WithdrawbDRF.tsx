@@ -2,9 +2,9 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { useMarginToken } from '@/zustand'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { isGT, isGTET } from '@/utils/tools'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -21,7 +21,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMTokenFromRoute()
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)

@@ -5,13 +5,13 @@ import { useSigner, useAccount } from 'wagmi'
 import React, { FC, useState, useMemo, useContext } from 'react'
 
 import ThemeContext from '@/context/Theme/Context'
-import { useMatchConf } from '@/hooks/useMatchConf'
 import { PubSubEvents } from '@/typings'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
-import { useCloseAllPositions, useClosePosition, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
+import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { useCloseAllPositions, useClosePosition, useMTokenFromRoute, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
@@ -24,6 +24,7 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
+import { useQuoteToken } from '@/zustand'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()
@@ -34,13 +35,19 @@ const MyPosition: FC = () => {
   const { close: close1 } = useClosePosition()
   const { close: close2 } = useCloseAllPositions()
   const { takeProfitOrStopLoss } = useTakeProfitOrStopLoss()
-  const { factoryConfig, protocolConfig, spotPrice, quoteToken } = useMatchConf()
 
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const positionOrd = usePosDATStore((state) => state.positionOrd)
   const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
+
+  const marginToken = useMTokenFromRoute()
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')

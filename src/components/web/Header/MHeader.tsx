@@ -2,18 +2,19 @@ import React, { FC, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 
 import Tool from './Tool'
 import MNav from './MNav'
-import { useMarginToken } from '@/zustand'
 
 const MHeader: FC = () => {
   const { t } = useTranslation()
   const { pathname: P } = useLocation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMTokenFromRoute()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const navList = [

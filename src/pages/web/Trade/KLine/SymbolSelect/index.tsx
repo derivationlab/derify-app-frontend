@@ -1,16 +1,17 @@
-import React, { FC, useState, useRef, useContext } from 'react'
 import classNames from 'classnames'
 import { useClickAway } from 'react-use'
+import React, { FC, useState, useRef, useContext } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/context/Mobile'
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { usePairsInfo, useQuoteToken } from '@/zustand'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
 
 import Options from './Options'
-import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface Props {
   onToggle?: () => void
@@ -23,8 +24,9 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
 
   const indicators = usePairsInfo((state) => state.indicators)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
   const updateQuoteToken = useQuoteToken((state) => state.updateQuoteToken)
+
+  const marginToken = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 

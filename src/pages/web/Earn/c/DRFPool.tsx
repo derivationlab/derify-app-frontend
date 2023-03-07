@@ -7,12 +7,13 @@ import tokens from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
+import { useQuoteToken } from '@/zustand'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useDashboardDAT } from '@/zustand/useDashboardDAT'
-import { useProtocolConf1 } from '@/hooks/useMatchConf'
+import { useProtocolConf } from '@/hooks/useMatchConf'
 import { isGT, keepDecimals } from '@/utils/tools'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useTraderEDRFBalance } from '@/hooks/useQueryApi'
-import { useMarginToken, useQuoteToken } from '@/zustand'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -29,15 +30,16 @@ const DRFPool: FC = () => {
   const { mobile } = useContext(MobileContext)
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
   const stakingInfo = useTraderInfo((state) => state.stakingInfo)
   const dashboardDAT = useDashboardDAT((state) => state.dashboardDAT)
   const drfPoolBalance = usePoolsInfo((state) => state.drfPoolBalance)
 
+  const marginToken = useMTokenFromRoute()
+
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
-  const { protocolConfig } = useProtocolConf1(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
   const { data: edrfBalance } = useTraderEDRFBalance(data?.address)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')

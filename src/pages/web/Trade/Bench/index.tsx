@@ -5,13 +5,13 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { findToken } from '@/config/tokens'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { isOpeningMinLimit } from '@/hooks/helper'
-import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
-import { PubSubEvents, PositionSideTypes } from '@/typings'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
-import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
+import { PubSubEvents, PositionSideTypes } from '@/typings'
+import { useMTokenFromRoute, useOpeningPosition } from '@/hooks/useTrading'
+import { useConfigInfo, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -29,12 +29,9 @@ const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
-  const { opening } = useOpeningPosition()
-  const { protocolConfig } = useProtocolConf()
 
   const indicators = usePairsInfo((state) => state.indicators)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
   const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
@@ -46,7 +43,11 @@ const Bench: FC = () => {
   const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
 
+  const marginToken = useMTokenFromRoute()
+
+  const { opening } = useOpeningPosition()
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(indicators?.longPmrRate)

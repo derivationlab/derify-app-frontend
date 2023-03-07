@@ -3,11 +3,13 @@ import { isEmpty, debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
 import { keepDecimals } from '@/utils/tools'
-import { useMatchConf } from '@/hooks/useMatchConf'
+import { useQuoteToken } from '@/zustand'
 import { PositionSideTypes } from '@/typings'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
+import { useFactoryConf, useOpeningMaxLimit, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -27,7 +29,14 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const { t } = useTranslation()
 
-  const { spotPrice, marginToken, quoteToken, protocolConfig, factoryConfig, openingMaxLimit } = useMatchConf()
+  const marginToken = useMTokenFromRoute()
+
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { openingMaxLimit } = useOpeningMaxLimit(quoteToken, marginToken)
 
   const checkOpeningVolFunc = async () => {
     const volume = checkOpeningVol(

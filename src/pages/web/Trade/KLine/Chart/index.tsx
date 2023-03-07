@@ -1,11 +1,12 @@
-import React, { FC, useState, useCallback, useRef, useEffect } from 'react'
-import { useInterval } from 'react-use'
 import { isEmpty } from 'lodash'
+import { useInterval } from 'react-use'
+import React, { FC, useState, useCallback, useRef, useEffect } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { KLineTimes } from '@/data'
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { useMarginToken, useQuoteToken } from '@/zustand'
+import { useQuoteToken } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { getKLineData, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 
 import { Select } from '@/components/common/Form'
@@ -25,7 +26,8 @@ const Chart: FC = () => {
   const kline = useRef<KlineChartProps>(null)
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
+
+  const marginToken = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 

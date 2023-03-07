@@ -6,9 +6,10 @@ import React, { FC, useMemo, useState, useContext } from 'react'
 
 import ThemeContext from '@/context/Theme/Context'
 import { PubSubEvents } from '@/typings'
+import { useQuoteToken } from '@/zustand'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
-import { useCancelAllPositions, useCancelPosition, useCloseAllPositions } from '@/hooks/useTrading'
+import { useCancelAllPositions, useCancelPosition, useMTokenFromRoute } from '@/hooks/useTrading'
 
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
@@ -23,13 +24,16 @@ const MyOrder: FC = () => {
   const { theme } = useContext(ThemeContext)
   const { data: account } = useAccount()
 
-  const { close } = useCancelPosition()
-  const { protocolConfig } = useProtocolConf()
-  const { factoryConfig, marginToken, quoteToken } = useFactoryConf()
-  const { cancel: cancelAllPositions } = useCancelAllPositions()
+  const marginToken = useMTokenFromRoute()
 
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)
   const profitLossOrdLoaded = usePosDATStore((state) => state.loaded)
+
+  const { close } = useCancelPosition()
+  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { cancel: cancelAllPositions } = useCancelAllPositions()
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')

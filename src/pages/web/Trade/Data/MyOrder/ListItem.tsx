@@ -3,9 +3,9 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
 
-import { PositionSideTypes } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
-import { useMarginToken } from '@/zustand'
+import { PositionSideTypes } from '@/typings'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import ItemHeader from '../c/ItemHeader'
@@ -21,7 +21,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMTokenFromRoute()
 
   const memoTimestamp = useMemo(() => {
     return dayjs((data?.timestamp ?? 0) * 1000)

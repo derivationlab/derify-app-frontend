@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { WEBSITE_URL } from '@/config'
 import { MobileContext } from '@/context/Mobile'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import AddTokenButton from '@/components/common/Wallet/AddTokenButton'
@@ -13,7 +14,6 @@ import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 
 import Tool from './Tool'
 import MHeader from './MHeader'
-import { useMarginToken } from '@/zustand'
 
 const Header: FC = () => {
   const { t } = useTranslation()
@@ -21,7 +21,7 @@ const Header: FC = () => {
   const { pathname: P } = useLocation()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMTokenFromRoute()
 
   const handleNavLinkEv = (e: any) => {
     if (!account?.address && /^\/broker\/[0-9a-zA-Z_@$]+$/.test(P)) {

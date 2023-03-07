@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import classNames from 'classnames'
-import BN from 'bignumber.js'
+
 import { bnMul, keepDecimals } from '@/utils/tools'
 
 interface Props {

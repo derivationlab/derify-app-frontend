@@ -170,7 +170,7 @@ const Web: FC = () => {
           )}
         />
         <Route
-          path="/:id/dashboard"
+          path="/dashboard"
           exact
           render={() => (
             <BrokerBindRoute>

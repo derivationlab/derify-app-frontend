@@ -23,6 +23,7 @@ export const useInitialDAT = () => {
   const fetchBalance = useTokenBalances((state) => state.fetchBalance)
   const fetchBalances = useTokenBalances((state) => state.fetch)
   const resetBalances = useTokenBalances((state) => state.reset)
+  const resetVariables = useTraderInfo((state) => state.reset)
   const updateVariables = useTraderInfo((state) => state.updateVariables)
   const updateIndicators = usePairsInfo((state) => state.updateIndicators)
   const updateMTokenPrices = useConfigInfo((state) => state.updateMTokenPrices)
@@ -110,4 +111,9 @@ export const useInitialDAT = () => {
       void func(data.address, protocolConfDAT)
     }
   }, [protocolConfDATIsLoading, protocolConfDAT, data?.address, marginToken, quoteToken])
+
+  // switch margin token need reset trader variables
+  useEffect(() => {
+    resetVariables()
+  }, [marginToken])
 }

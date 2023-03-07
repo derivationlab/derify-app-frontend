@@ -25,7 +25,10 @@ const useTraderInfo = create<TraderInfoState>((set) => ({
       // console.info(`updateRewardsInfo:`)
       // console.info(data)
       return { rewardsInfo: data }
-    })
+    }),
+  reset: () => {
+    set({ variables: initialTraderVariables, variablesLoaded: false })
+  }
 }))
 
 export { useTraderInfo }

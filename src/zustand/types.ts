@@ -88,6 +88,7 @@ export interface TraderInfoState {
   updateVariables: (p: InitialTraderVariablesType) => void
   updateStakingInfo: (p: Rec) => void
   updateRewardsInfo: (p: Rec) => void
+  reset: () => void
 }
 
 export interface PairsInfoState {

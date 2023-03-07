@@ -56,7 +56,7 @@ const TradeHistory: FC = () => {
     PubSub.subscribe(PubSubEvents.UPDATE_TRADE_HISTORY, () => {
       void fetchData()
     })
-  }, [])
+  }, [marginToken])
 
   return (
     <div className="web-trade-data-wrap">

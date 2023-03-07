@@ -12,7 +12,7 @@ export const getHistoryPositionsData = async (tokenAddr: string, days: number, a
 }
 
 export const getTraderTradeFlow = async (address: string, trader: string, page: number, offset: number) => {
-  const response = await get(`api/trade_records/${address}/${trader}/${page}/${offset}`)
+  const response = await get(`api/trade_records/${trader}/${address}/${page}/${offset}`)
   return response
 }
 

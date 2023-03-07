@@ -59,9 +59,7 @@ export const useProtocolConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken
   }, [quoteToken, marginToken, protocolConfig, protocolConfigLoaded])
 
   return {
-    protocolConfig: _protocolConfig,
-    quoteToken,
-    marginToken
+    protocolConfig: _protocolConfig
   }
 }
 

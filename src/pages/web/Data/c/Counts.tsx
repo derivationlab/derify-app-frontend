@@ -1,14 +1,21 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useDashboardDAT } from '@/zustand/useDashboardDAT'
-import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
+import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { nonBigNumberInterception } from '@/utils/tools'
+import { DEFAULT_MARGIN_TOKEN, findToken } from '@/config/tokens'
 
 const Counts: FC = () => {
   const { t } = useTranslation()
 
-  const dashboardDAT = useDashboardDAT((state) => state.dashboardDAT)
+  const marginToken = useMTokenFromRoute()
+
+  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
+
+  useEffect(() => {
+    void dashboardDATRefetch()
+  }, [marginToken])
 
   return (
     <div className="web-data-counts">

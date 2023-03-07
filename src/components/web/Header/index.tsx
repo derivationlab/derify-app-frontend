@@ -1,12 +1,12 @@
-import React, { FC, useContext } from 'react'
 import classNames from 'classnames'
 import { useAccount } from 'wagmi'
-import { NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { NavLink, useLocation } from 'react-router-dom'
+import React, { FC, useContext, useMemo } from 'react'
 
 import { WEBSITE_URL } from '@/config'
 import { MobileContext } from '@/context/Mobile'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import AddTokenButton from '@/components/common/Wallet/AddTokenButton'
@@ -21,7 +21,10 @@ const Header: FC = () => {
   const { pathname: P } = useLocation()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMTokenFromRoute()
+  const marginToken = useMemo(() => {
+    const find = MARGIN_TOKENS.find((m) => P.includes(m.symbol))
+    return find?.symbol ?? DEFAULT_MARGIN_TOKEN.symbol
+  }, [P])
 
   const handleNavLinkEv = (e: any) => {
     if (!account?.address && /^\/broker\/[0-9a-zA-Z_@$]+$/.test(P)) {
@@ -29,7 +32,9 @@ const Header: FC = () => {
       return
     }
   }
+
   if (mobile) return <MHeader />
+
   return (
     <>
       <header className="web-header">

@@ -5,7 +5,7 @@ import 'rc-collapse/assets/index.css'
 import 'rc-tabs/assets/index.css'
 import 'rc-table/assets/index.css'
 
-import { useInitialDAT } from '@/hooks/useInitialDAT'
+import InitialUpdater from '@/pages/Updater/InitialUpdater'
 import { Switch, Route } from '@/components/common/Route'
 
 import '@/style/style.scss'
@@ -21,8 +21,6 @@ import { PubSubEvents } from '@/typings'
 const WebEntry = lazy(() => import('@/pages/web'))
 
 function App() {
-  useInitialDAT()
-
   // todo 临时位置，后面要转移到 broker
   const { data: account } = useAccount()
   const { data: brokerParams, isLoading } = useBrokerParams()
@@ -34,7 +32,6 @@ function App() {
     const staking = await getBrokerInfo(trader)
     updateBrokerAssets(staking)
   }
-
   useEffect(() => {
     if (account?.address) {
       void _getBrokerInfo(account?.address)
@@ -63,6 +60,8 @@ function App() {
 
   return (
     <>
+      <InitialUpdater />
+
       <Suspense fallback={null}>
         <Switch>
           <Route path="/" component={WebEntry} />

@@ -3,11 +3,11 @@ import create from 'zustand'
 import multicall from '@/utils/multicall'
 import { baseProvider } from '@/utils/baseProvider'
 import { BalancesState } from '@/zustand/types'
+import { getBep20Contract } from '@/utils/contractHelpers'
 import tokens, { MARGIN_TOKENS } from '@/config/tokens'
 import { safeInterceptionValues } from '@/utils/tools'
 
 import erc20Abi from '@/config/abi/erc20.json'
-import { getBep20Contract } from '@/utils/contractHelpers'
 
 const TOKENS = [tokens.edrf, ...MARGIN_TOKENS]
 const initial = (): Record<string, string> => {
@@ -58,7 +58,6 @@ export const getTokenBalances = async (account: string) => {
 }
 
 const useTokenBalances = create<BalancesState>((set) => ({
-  bMarginToken: '0', // maybe bBUSD bDRF ...
   balances: initial(),
   loaded: false,
   fetch: async (account: string) => {
@@ -67,13 +66,7 @@ const useTokenBalances = create<BalancesState>((set) => ({
     // console.info(data)
     set({ balances: data, loaded: true })
   },
-  fetchBalance: async (account: string, address: string) => {
-    const data = await getTokenBalance(account, address)
-    // console.info(`getTokenBalance:`)
-    // console.info(data)
-    set(() => ({ bMarginToken: data }))
-  },
-  reset: () => set(() => ({ balances: initial(), bMarginToken: '0' }))
+  reset: () => set(() => ({ balances: initial() }))
 }))
 
 export { useTokenBalances }

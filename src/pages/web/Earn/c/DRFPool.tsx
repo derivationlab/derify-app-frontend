@@ -1,19 +1,18 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useState, useContext } from 'react'
+import React, { FC, useMemo, useState, useContext, useEffect } from 'react'
 
-import tokens from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
 import { useQuoteToken } from '@/zustand'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 import { useProtocolConf } from '@/hooks/useMatchConf'
+import tokens, { findToken } from '@/config/tokens'
 import { isGT, keepDecimals } from '@/utils/tools'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
-import { useTraderEDRFBalance } from '@/hooks/useQueryApi'
+import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -31,7 +30,6 @@ const DRFPool: FC = () => {
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const stakingInfo = useTraderInfo((state) => state.stakingInfo)
-  const dashboardDAT = useDashboardDAT((state) => state.dashboardDAT)
   const drfPoolBalance = usePoolsInfo((state) => state.drfPoolBalance)
 
   const marginToken = useMTokenFromRoute()
@@ -41,6 +39,8 @@ const DRFPool: FC = () => {
   const { withdraw } = useWithdrawAllEdrf()
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
   const { data: edrfBalance } = useTraderEDRFBalance(data?.address)
+
+  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -104,6 +104,10 @@ const DRFPool: FC = () => {
 
     window.toast.dismiss(toast)
   }
+
+  useEffect(() => {
+    void dashboardDATRefetch()
+  }, [marginToken])
 
   return (
     <>

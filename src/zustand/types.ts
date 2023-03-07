@@ -12,9 +12,7 @@ export interface RpcState {
 export interface BalancesState {
   loaded: boolean
   balances: Rec
-  bMarginToken: string
   fetch: (account: string) => Promise<void>
-  fetchBalance: (account: string, address: string) => Promise<void>
   reset: () => void
 }
 

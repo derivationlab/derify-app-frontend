@@ -359,7 +359,7 @@ export const useMTokenFromRoute = () => {
   }, [params.id]) as MarginTokenKeys
 }
 
-export const useMTokenFromRoute1 = () => {
+export const useMTokenForRoute = () => {
   const params: any = useParams()
 
   const find = useMemo(() => {

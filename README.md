@@ -27,3 +27,4 @@ todo:
 . api/current_positions_amount 要支持
 . /Users/wugongwei/1-project/derify-app-frontend/src/pages/web/Trade/Bench/c/Margin.tsx ui
 . 路由改造
+. /Users/wugongwei/1-project/derify-app-frontend/src/App.tsx

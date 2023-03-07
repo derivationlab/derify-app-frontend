@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import React, { PropsWithChildren, useMemo } from 'react'
 
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
-import { useMTokenFromRoute1 } from '@/hooks/useTrading'
+import { useMTokenForRoute } from '@/hooks/useTrading'
 
 import Loading from '@/components/common/Loading'
 
@@ -12,7 +12,7 @@ export const TradingRoute = (props: PropsWithChildren<any>) => {
   const { data } = useAccount()
   const { children } = props
 
-  const { find, marginToken } = useMTokenFromRoute1()
+  const { find, marginToken } = useMTokenForRoute()
 
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
@@ -32,12 +32,11 @@ export const TradingRoute = (props: PropsWithChildren<any>) => {
 export const BrokerBindRoute = (props: PropsWithChildren<any>) => {
   const { children } = props
 
-  const { find, marginToken } = useMTokenFromRoute1()
+  const { find, marginToken } = useMTokenForRoute()
 
-  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
-  console.info(brokerInfo)
+
   return useMemo(() => {
     if (brokerBoundLoaded) {
       if (!isEmpty(brokerBound)) {

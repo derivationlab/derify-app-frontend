@@ -4,12 +4,11 @@ import PubSub from 'pubsub-js'
 import { Link } from 'react-router-dom'
 import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useCallback, useContext, useMemo } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
-import { useDashboardDAT } from '@/zustand/useDashboardDAT'
 import tokens, { findToken } from '@/config/tokens'
 import { useWithdrawReward } from '@/hooks/useBroker'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
@@ -17,6 +16,7 @@ import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
 
 const Dashboard: FC = () => {
   const { t } = useTranslation()
@@ -29,7 +29,8 @@ const Dashboard: FC = () => {
 
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
   const brokerAssets = useBrokerInfo((state) => state.brokerAssets)
-  const dashboardDAT = useDashboardDAT((state) => state.dashboardDAT)
+
+  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
@@ -74,6 +75,10 @@ const Dashboard: FC = () => {
     const [usd, drf] = memoTotalBalance
     return Number(usd) > 0 || Number(drf) > 0
   }, [memoTotalBalance])
+
+  useEffect(() => {
+    void dashboardDATRefetch()
+  }, [marginToken])
 
   return (
     <div className="web-broker-dashboard">

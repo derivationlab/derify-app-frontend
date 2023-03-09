@@ -9,7 +9,7 @@ import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
 
-import UpdateIndicators from '@/pages/Updater/UpdateIndicators'
+import UpdateIndicators from '@/pages/updater/UpdateIndicators'
 
 import DRFPool from './c/DRFPool'
 import EranbDRFPool from './c/bDRFPool'

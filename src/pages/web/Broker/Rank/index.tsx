@@ -3,12 +3,11 @@ import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
 
-import { findToken } from '@/config/tokens'
+import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/context/Mobile'
-import { useMarginToken } from '@/zustand'
+import tokens, { findToken } from '@/config/tokens'
 import { getBrokersRankList } from '@/api'
 import { reducer, stateInit } from '@/reducers/brokerRank'
-import { nonBigNumberInterception } from '@/utils/tools'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
@@ -90,8 +89,8 @@ const Rank: FC = () => {
       width: 250,
       render: (_: string, data: Record<string, any>) => {
         const { accumulated_margin_token_reward = 0, accumulated_drf_reward = 0 } = data ?? {}
-        const drf = nonBigNumberInterception(accumulated_drf_reward)
-        const margin = nonBigNumberInterception(accumulated_margin_token_reward)
+        const drf = keepDecimals(accumulated_drf_reward, tokens.drf.decimals)
+        const margin = keepDecimals(accumulated_margin_token_reward, findToken(marginToken).decimals)
         return (
           <>
             <RowText value={margin} unit={marginToken} />
@@ -106,8 +105,8 @@ const Rank: FC = () => {
       width: 250,
       render: (_: string, data: Record<string, any>) => {
         const { today_margin_token_reward = 0, today_drf_reward = 0 } = data ?? {}
-        const margin = nonBigNumberInterception(today_margin_token_reward)
-        const drf = nonBigNumberInterception(today_drf_reward)
+        const margin = keepDecimals(today_margin_token_reward, findToken(marginToken).decimals)
+        const drf = keepDecimals(today_drf_reward, tokens.drf.decimals)
         return (
           <>
             <RowText value={margin} unit={marginToken} />

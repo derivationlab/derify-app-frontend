@@ -5,7 +5,7 @@ import 'rc-collapse/assets/index.css'
 import 'rc-tabs/assets/index.css'
 import 'rc-table/assets/index.css'
 
-import InitialUpdater from '@/pages/Updater/InitialUpdater'
+import InitialUpdater from '@/pages/updater/InitialUpdater'
 import { Switch, Route } from '@/components/common/Route'
 
 import '@/style/style.scss'

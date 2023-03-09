@@ -4,8 +4,8 @@ import React, { FC, useState, useContext } from 'react'
 
 import { MobileContext } from '@/context/Mobile'
 
-import TradingUpdater from '@/pages/Updater/TradingUpdater'
-import UpdateIndicators from '@/pages/Updater/UpdateIndicators'
+import TradingUpdater from '@/pages/updater/TradingUpdater'
+import UpdateIndicators from '@/pages/updater/UpdateIndicators'
 
 import Data from './Data'
 import KLine from './KLine'

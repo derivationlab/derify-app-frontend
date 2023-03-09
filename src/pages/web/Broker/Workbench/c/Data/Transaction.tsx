@@ -10,11 +10,12 @@ import { MobileContext } from '@/context/Mobile'
 import { getBrokerRewardTx } from '@/api'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/brokerTable'
-import { nonBigNumberInterception } from '@/utils/tools'
+import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Pagination from '@/components/common/Pagination'
 
 import { RowTime, calcShortHash, calcTimeStr } from './common'
+import { findToken } from '@/config/tokens'
 
 interface DataProps {
   id: string
@@ -84,14 +85,14 @@ const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
   const marginToken = useMTokenFromRoute()
 
   // const { mobile } = useContext(MobileContext)
-  const up = useMemo(() => Number(data.pnl_usdt) > 0, [data.pnl_usdt])
-  const down = useMemo(() => Number(data.pnl_usdt) < 0, [data.pnl_usdt])
-  const pnl_usdt = nonBigNumberInterception(data.pnl_usdt)
+  const up = useMemo(() => Number(data.pnl_margin_token) > 0, [data.pnl_margin_token])
+  const down = useMemo(() => Number(data.pnl_margin_token) < 0, [data.pnl_margin_token])
+  const pnl_margin_token = keepDecimals(data.pnl_margin_token, 2)
 
   return (
     <div className="web-broker-table-transaction-pnl">
       <strong className={classNames({ up }, { down })}>
-        {Math.abs(data.pnl_usdt) === 0 ? '-' : `${judgeUpsAndDowns(data.pnl_usdt)}${pnl_usdt}`}
+        {Math.abs(data.pnl_margin_token) === 0 ? '-' : `${judgeUpsAndDowns(data.pnl_margin_token)}${pnl_margin_token}`}
       </strong>
       <em>{marginToken}</em>
     </div>
@@ -105,9 +106,11 @@ const Transaction: FC = () => {
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
 
+  const marginToken = useMTokenFromRoute()
+
   const fetchData = async (index = 0) => {
     if (account?.address) {
-      const { data } = await getBrokerRewardTx(account.address, index, 10)
+      const { data } = await getBrokerRewardTx(account.address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_TABLE_DAT',

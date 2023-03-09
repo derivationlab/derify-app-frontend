@@ -14,17 +14,28 @@ PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION) // 持仓数据
 PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME) // 贷款额度
 PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES) // 保证金变化
 
+async getBrokerInfo(broker, marginToken) {
+    const brokerInfo = await this.protocolInstance.methods.getBrokerInfo(broker).call();
+    let marginTokenContractCollection = await this.protocolInstance.methods.marginTokenContractCollections(marginToken).call();
+    const rewardsInstance = new this.web3.eth.Contract(abiRewards, marginTokenContractCollection.derifyRewards);
+    const brokerReward = await rewardsInstance.methods.getBrokerReward(broker).call()
+
+    return {
+        "marginTokenRewardBalance": parseInt(brokerReward.marginTokenRewardBalance) / CONTRACT_DECIMAL,
+        "accumulatedMarginTokenReward": parseInt(brokerReward.accumulatedMarginTokenReward) / CONTRACT_DECIMAL,
+        "drfRewardBalance": parseInt(brokerReward.drfRewardBalance) / CONTRACT_DECIMAL,
+        "accumulatedDrfReward": parseInt(brokerReward.accumulatedDrfReward) / CONTRACT_DECIMAL,
+        "validPeriodInBlocks": parseInt(brokerInfo.validPeriodInBlocks),
+        "lastUpdatedBlockNumber": parseInt(brokerInfo.lastUpdatedBlockNumber),
+    };
+}
 
 todo:
 . 现货价格更新频率带来的数据更新不及时问题；
-. 质押授权修改-全额还是限额；
-. bbusd的完整信息 bMarginToken；
-. brokers_rank_list 支持 marginToken;
-. http://localhost:3890/BUSD/broker/workbench 分mt；
+. 质押授权修改，全额还是限额；
+. bMarginToken动态代币的完整信息；
+
 . 由于加了mt参数，需要全局检查路由跳转；
-. 加载效果；
-. BN数据解析方法简化；
-. api/current_positions_amount 要支持
-. /Users/wugongwei/1-project/derify-app-frontend/src/pages/web/Trade/Bench/c/Margin.tsx ui
-. 路由改造
-. /Users/wugongwei/1-project/derify-app-frontend/src/App.tsx
+. http://localhost:3890/BUSD/broker/workbench 分了mt，数据还空白；
+. /Users/wugongwei/1-project/derify-app-frontend/src/pages/web/Trade/Bench/c/Margin.tsx UI；
+. /Users/wugongwei/1-project/derify-app-frontend/src/App.tsx 改造；

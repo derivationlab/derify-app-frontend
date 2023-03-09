@@ -51,13 +51,13 @@ export const getBrokerRewardsToday = async (trader: string) => {
   return response
 }
 
-export const getBrokerAccountFlow = async (broker: string, page: number, offset: number) => {
-  const response = await get(`api/broker_reward_balance/${broker}/${page}/${offset}`)
+export const getBrokerAccountFlow = async (broker: string, address: string, page: number, offset: number) => {
+  const response = await get(`api/broker_reward_balance/${broker}/${address}/${page}/${offset}`)
   return response
 }
 
-export const getBrokerRewardTx = async (broker: string, page: number, offset: number) => {
-  const response = await get(`api/broker_reward_transactions/${broker}/${page}/${offset}`)
+export const getBrokerRewardTx = async (broker: string, address: string, page: number, offset: number) => {
+  const response = await get(`api/broker_reward_transactions/${broker}/${address}/${page}/${offset}`)
   return response
 }
 

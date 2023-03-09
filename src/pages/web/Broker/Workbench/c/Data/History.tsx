@@ -13,6 +13,8 @@ import { nonBigNumberInterception } from '@/utils/tools'
 import Pagination from '@/components/common/Pagination'
 
 import { RowTime, calcShortHash, calcTimeStr } from './common'
+import { findToken } from '@/config/tokens'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 interface DataProps {
   id: string
@@ -77,9 +79,11 @@ const History: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { data: account } = useAccount()
 
+  const marginToken = useMTokenFromRoute()
+
   const fetchData = async (index = 0) => {
     if (account?.address) {
-      const { data } = await getBrokerAccountFlow(account.address, index, 10)
+      const { data } = await getBrokerAccountFlow(account.address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_TABLE_DAT',

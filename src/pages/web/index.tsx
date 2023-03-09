@@ -27,7 +27,7 @@ import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 const Web: FC = () => {
   const { data: account } = useAccount()
 
-  const marginToken = useMTokenForRoute()
+  const { marginToken } = useMTokenForRoute()
 
   const [visible, setVisible] = useState<boolean>(false)
 
@@ -73,7 +73,7 @@ const Web: FC = () => {
           )}
         />
         <Route path="/dashboard" exact render={() => <Dashboard />} />
-
+        <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
         {account?.address ? (
           <>
             <Route
@@ -114,6 +114,7 @@ const Web: FC = () => {
             />
             <Route
               path="/broker/sign-up/step1"
+              exact
               render={() => (
                 <R3>
                   <BrokerSignUpStep1 />
@@ -122,13 +123,14 @@ const Web: FC = () => {
             />
             <Route
               path="/broker/sign-up/step2"
+              exact
               render={() => (
                 <R3>
                   <BrokerSignUpStep2 />
                 </R3>
               )}
             />
-            <Route path="/broker/sign-up/step3" render={() => <BrokerSignUpStep3 />} />
+            <Route path="/broker/sign-up/step3" exact render={() => <BrokerSignUpStep3 />} />
             <Route path="/:id/broker/rank" exact render={() => <BrokerRank />} />
             <Route
               path="/:id/broker/workbench"
@@ -144,7 +146,6 @@ const Web: FC = () => {
         ) : (
           <BrokerConnect />
         )}
-        <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
       </Switch>
       <Toast />
       <AccessDeniedDialog visible={visible} />

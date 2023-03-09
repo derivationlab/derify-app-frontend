@@ -73,79 +73,73 @@ const Web: FC = () => {
           )}
         />
         <Route path="/dashboard" exact render={() => <Dashboard />} />
+        <Route
+          path="/broker"
+          exact
+          render={() => (
+            <R1>
+              <BrokerBound />
+            </R1>
+          )}
+        />
+        <Route
+          path="/broker/bind"
+          exact
+          render={() => (
+            <R2>
+              <BrokerBind />
+            </R2>
+          )}
+        />
+        <Route
+          path="/broker/list"
+          exact
+          render={() => (
+            <R2>
+              <BrokerBindList />
+            </R2>
+          )}
+        />
+        <Route
+          path="/broker/edit"
+          exact
+          render={() => (
+            <R3>
+              <BrokerSignUpStep2 />
+            </R3>
+          )}
+        />
+        <Route
+          path="/broker/sign-up/step1"
+          exact
+          render={() => (
+            <R3>
+              <BrokerSignUpStep1 />
+            </R3>
+          )}
+        />
+        <Route
+          path="/broker/sign-up/step2"
+          exact
+          render={() => (
+            <R3>
+              <BrokerSignUpStep2 />
+            </R3>
+          )}
+        />
+        <Route path="/broker/sign-up/step3" exact render={() => <BrokerSignUpStep3 />} />
+        <Route path="/:id/broker/rank" exact render={() => <BrokerRank />} />
+        <Route
+          path="/:id/broker/workbench"
+          exact
+          render={() => (
+            <R3 pathKey="broker/workbench">
+              <BrokerWorkbench />
+            </R3>
+          )}
+        />
+        <Route path="/broker/profile/:id" exact render={() => <BrokerInfo />} />
         <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
-        {account?.address ? (
-          <>
-            <Route
-              path="/broker"
-              exact
-              render={() => (
-                <R1>
-                  <BrokerBound />
-                </R1>
-              )}
-            />
-            <Route
-              path="/broker/bind"
-              exact
-              render={() => (
-                <R2>
-                  <BrokerBind />
-                </R2>
-              )}
-            />
-            <Route
-              path="/broker/list"
-              exact
-              render={() => (
-                <R2>
-                  <BrokerBindList />
-                </R2>
-              )}
-            />
-            <Route
-              path="/broker/edit"
-              exact
-              render={() => (
-                <R3>
-                  <BrokerSignUpStep2 />
-                </R3>
-              )}
-            />
-            <Route
-              path="/broker/sign-up/step1"
-              exact
-              render={() => (
-                <R3>
-                  <BrokerSignUpStep1 />
-                </R3>
-              )}
-            />
-            <Route
-              path="/broker/sign-up/step2"
-              exact
-              render={() => (
-                <R3>
-                  <BrokerSignUpStep2 />
-                </R3>
-              )}
-            />
-            <Route path="/broker/sign-up/step3" exact render={() => <BrokerSignUpStep3 />} />
-            <Route path="/:id/broker/rank" exact render={() => <BrokerRank />} />
-            <Route
-              path="/:id/broker/workbench"
-              exact
-              render={() => (
-                <R3 pathKey="broker/workbench">
-                  <BrokerWorkbench />
-                </R3>
-              )}
-            />
-            <Route path="/broker/profile/:id" exact render={() => <BrokerInfo />} />
-          </>
-        ) : (
-          <BrokerConnect />
-        )}
       </Switch>
       <Toast />
       <AccessDeniedDialog visible={visible} />

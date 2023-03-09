@@ -36,6 +36,7 @@ const PositionVolume: FC = () => {
   const marginToken = useMTokenFromRoute()
 
   const { data: positionsDAT, refetch } = useCurrentPositionsAmount(
+    'PositionVolume-useCurrentPositionsAmount',
     SelectSymbolTokens[pairSelectVal],
     findToken(marginToken).tokenAddress
   )

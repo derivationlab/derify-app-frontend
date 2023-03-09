@@ -32,7 +32,11 @@ const PositionMining: FC = () => {
 
   const { withdraw } = useWithdrawPositionReward()
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
-  const { data: positionsAmount } = useCurrentPositionsAmount('all', findToken(marginToken).tokenAddress)
+  const { data: positionsAmount } = useCurrentPositionsAmount(
+    'PositionMining-useCurrentPositionsAmount',
+    'all',
+    findToken(marginToken).tokenAddress
+  )
 
   const memoPositionApy = useMemo(() => {
     if (indicatorsLoaded) {
@@ -45,6 +49,7 @@ const PositionMining: FC = () => {
   const memoPositionsAm = useMemo(() => {
     if (positionsAmount) {
       const { long_position_amount, short_position_amount } = positionsAmount
+      console.info(long_position_amount, short_position_amount)
       return bnPlus(long_position_amount, short_position_amount)
     }
     return '0'

@@ -11,9 +11,9 @@ import {
   getTraderEDRFBalance
 } from '@/api'
 
-export const useCurrentPositionsAmount = (quoteToken: string, marginToken: string) => {
+export const useCurrentPositionsAmount = (queryKey: string, quoteToken: string, marginToken: string) => {
   const { data, refetch } = useQuery(
-    ['getCurrentPositionsAmount'],
+    [queryKey],
     async (): Promise<Record<string, any>> => {
       const data = await getCurrentPositionsAmount(quoteToken, marginToken)
       return data?.data ?? {}
@@ -21,7 +21,7 @@ export const useCurrentPositionsAmount = (quoteToken: string, marginToken: strin
     {
       retry: 0,
       initialData: {},
-      refetchInterval: 10000,
+      refetchInterval: 5000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }

@@ -5,7 +5,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
-import { getHistoryTradingData } from '@/api'
+import { getHistoryTradingDAT } from '@/api'
 import { useCurrentTradingAmount } from '@/hooks/useQueryApi'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 
@@ -31,7 +31,7 @@ const TradingVolume: FC = () => {
   )
 
   const historyDAT = useCallback(async () => {
-    const { data: trading } = await getHistoryTradingData(
+    const { data: trading } = await getHistoryTradingDAT(
       SelectSymbolTokens[pairSelectVal],
       SelectTimesValues[timeSelectVal],
       findToken(marginToken).tokenAddress

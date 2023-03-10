@@ -6,7 +6,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { findToken } from '@/config/tokens'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useCurrentInsuranceDAT } from '@/hooks/useQueryApi'
-import { getHistoryInsuranceData } from '@/api'
+import { getHistoryInsuranceDAT } from '@/api'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
 
 import { AreaChart } from '@/components/common/Chart'
@@ -35,7 +35,7 @@ const InsurancePool: FC = () => {
   }, [insuranceData, insuranceVolume])
 
   const historyDAT = useCallback(async () => {
-    const { data: history } = await getHistoryInsuranceData(
+    const { data: history } = await getHistoryInsuranceDAT(
       SelectTimesValues[timeSelectVal],
       findToken(marginToken).tokenAddress
     )

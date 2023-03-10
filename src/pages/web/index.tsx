@@ -1,7 +1,7 @@
 import { useAccount } from 'wagmi'
 import React, { FC, useEffect, useState } from 'react'
 
-import { getIP } from '@/api'
+import { getIpLocation } from '@/api'
 import { useMTokenForRoute } from '@/hooks/useTrading'
 import { R0, R1, R2, R3 } from '@/pages/web/Route'
 import { Redirect, Switch, Route } from '@/components/common/Route'
@@ -33,7 +33,7 @@ const Web: FC = () => {
 
   useEffect(() => {
     const func = async () => {
-      const data = await getIP()
+      const data = await getIpLocation()
       setVisible(!data)
     }
 

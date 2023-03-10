@@ -6,7 +6,7 @@ import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from
 import ThemeContext from '@/context/Theme/Context'
 import { findToken } from '@/config/tokens'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
-import { getHistoryPositionsData } from '@/api'
+import { getHistoryPositionsDAT } from '@/api'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { bnDiv, bnMul, bnPlus, isGT, keepDecimals } from '@/utils/tools'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
@@ -63,7 +63,7 @@ const PositionVolume: FC = () => {
   }, [theme])
 
   const historyDAT = useCallback(async () => {
-    const { data: history } = await getHistoryPositionsData(
+    const { data: history } = await getHistoryPositionsDAT(
       SelectSymbolTokens[pairSelectVal],
       SelectTimesValues[timeSelectVal],
       findToken(marginToken).tokenAddress

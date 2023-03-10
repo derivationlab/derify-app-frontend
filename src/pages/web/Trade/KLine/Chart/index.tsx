@@ -7,7 +7,7 @@ import { KLineTimes } from '@/data'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { useQuoteToken } from '@/zustand'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
-import { getKLineData, getKlineEndTime, reorganizeLastPieceOfData } from './help'
+import { getKLineDAT, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 
 import { Select } from '@/components/common/Form'
 import Loading from '@/components/common/Loading'
@@ -42,7 +42,7 @@ const Chart: FC = () => {
       // kline.current.reset()
 
       const tokenAddress = findToken(quoteToken).tokenAddress
-      const { data, more } = await getKLineData(tokenAddress, timeLine, getKlineEndTime(), 130, true)
+      const { data, more } = await getKLineDAT(tokenAddress, timeLine, getKlineEndTime(), 130, true)
 
       store.current = data[data.length - 1] // keep original data
 
@@ -61,7 +61,7 @@ const Chart: FC = () => {
     async (lastTime: number) => {
       const tokenAddress = findToken(quoteToken).tokenAddress
 
-      return await getKLineData(tokenAddress, timeLine, lastTime, 50, false)
+      return await getKLineDAT(tokenAddress, timeLine, lastTime, 50, false)
     },
     [quoteToken]
   )
@@ -71,7 +71,7 @@ const Chart: FC = () => {
       if (kline.current) {
         const tokenAddress = findToken(quoteToken).tokenAddress
 
-        const { data } = await getKLineData(tokenAddress, timeLine, getKlineEndTime(), 1, false)
+        const { data } = await getKLineDAT(tokenAddress, timeLine, getKlineEndTime(), 1, false)
         // console.info(timestamp, data[0]?.timestamp)
         if (store.current?.timestamp !== data[0]?.timestamp) {
           kline.current.update(store.current)

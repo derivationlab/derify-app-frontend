@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 
-import { getKLineData as getKLineDataApi } from '@/api'
+import { getKLineDAT as getKLineDataApi } from '@/api'
 import { nonBigNumberInterception, sleep } from '@/utils/tools'
 
 interface klineData {
@@ -30,7 +30,7 @@ export const calcKlineData = (data: [number, number, number, number, number][]):
 
 let initToken = ''
 
-export const getKLineData = async (token: string, time: number, endTime: number, limit = 10, isInit: boolean) => {
+export const getKLineDAT = async (token: string, time: number, endTime: number, limit = 10, isInit: boolean) => {
   if (isInit) initToken = token
   if (token !== initToken) {
     await sleep(3000)

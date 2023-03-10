@@ -4,7 +4,7 @@ import { useQuery } from 'react-query'
 import { Rec } from '@/zustand/types'
 import {
   getCurrentIndexDAT,
-  getCurrentInsuranceData,
+  getCurrentInsuranceDAT,
   getCurrentPositionsAmount,
   getCurrentTradingAmount,
   getTraderBondBalance,
@@ -116,9 +116,9 @@ export const useCurrentTradingAmount = (address: string, marginToken: string) =>
 
 export const useCurrentInsuranceDAT = (address: string) => {
   const { data, refetch } = useQuery(
-    ['getCurrentInsuranceData'],
+    ['getCurrentInsuranceDAT'],
     async (): Promise<Rec> => {
-      const data = await getCurrentInsuranceData(address)
+      const data = await getCurrentInsuranceDAT(address)
       return data?.data ?? {}
     },
     {

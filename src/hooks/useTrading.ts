@@ -1,14 +1,15 @@
-import { useSigner } from 'wagmi'
-import { useCallback } from 'react'
 import { isEmpty } from 'lodash'
+import { useSigner } from 'wagmi'
+import { useParams } from 'react-router-dom'
+import { useCallback, useMemo } from 'react'
 
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
-import { OrderTypes, PositionSide } from '@/store/contract/helper'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { findMarginToken, findToken } from '@/config/tokens'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
+import { PositionTriggerTypes, PositionSideTypes, MarginTokenKeys } from '@/typings'
+import { DEFAULT_MARGIN_TOKEN, findMarginToken, findToken } from '@/config/tokens'
+import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export const useOpeningPosition = () => {
   const { data: signer } = useSigner()
@@ -18,7 +19,7 @@ export const useOpeningPosition = () => {
       exchange: string,
       brokerId: string,
       qtAddress: string, // quote token address
-      positionSide: PositionSide,
+      positionSide: PositionSideTypes,
       openingType: OpeningType,
       pricingType: string,
       openingPrice: string,
@@ -28,7 +29,7 @@ export const useOpeningPosition = () => {
     ): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       // getUintAmount?
       const _posLeverage = inputParameterConversion(posLeverage, 8)
@@ -37,16 +38,6 @@ export const useOpeningPosition = () => {
       const _openingSize = inputParameterConversion(openingSize, 8)
       const _openingPrice = inputParameterConversion(openingPrice, 8)
 
-      const params = [
-        brokerId,
-        qtAddress,
-        positionSide,
-        _openingType,
-        _pricingType,
-        _openingSize,
-        _openingPrice,
-        _posLeverage
-      ]
       console.info([
         brokerId,
         qtAddress,
@@ -92,7 +83,7 @@ export const useCloseAllPositions = () => {
     async (exchange: string, brokerId: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       try {
         const gasLimit = await estimateGas(c, 'closeAllPositions', [brokerId], 0)
@@ -116,8 +107,8 @@ export const useCancelPosition = () => {
   const close = useCallback(
     async (
       pairAddress: string,
-      orderType: OrderTypes,
-      positionSide: PositionSide,
+      orderType: PositionTriggerTypes,
+      positionSide: PositionSideTypes,
       timestamp: string
     ): Promise<boolean> => {
       let response: any = null
@@ -127,7 +118,7 @@ export const useCancelPosition = () => {
       const c = getDerifyDerivativePairContract(pairAddress, signer)
 
       try {
-        if (orderType === OrderTypes.Limit) {
+        if (orderType === PositionTriggerTypes.Limit) {
           const gasLimit = await estimateGas(c, 'cancelOrderedLimitPosition', [positionSide, timestamp], 0)
           response = await c.cancelOrderedLimitPosition(positionSide, timestamp, { gasLimit })
         } else {
@@ -155,7 +146,7 @@ export const useCancelAllPositions = () => {
     async (exchange: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       try {
         const gasLimit = await estimateGas(c, 'cancelAllOrderedPositions', [], 0)
@@ -180,7 +171,7 @@ export const useDepositMargin = () => {
     async (exchange: string, amount: string, marginToken: string): Promise<boolean> => {
       if (!signer) return false
       console.info(amount)
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       try {
         const _amount = inputParameterConversion(amount, 8)
@@ -210,7 +201,7 @@ export const useWithdrawMargin = () => {
     async (exchange: string, amount: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
 
       try {
         const _amount = inputParameterConversion(amount, 8)
@@ -236,7 +227,7 @@ export const useTakeProfitOrStopLoss = () => {
   const takeProfitOrStopLoss = useCallback(
     async (
       pairAddress: string,
-      positionSide: PositionSide,
+      positionSide: PositionSideTypes,
       takeProfitPrice: number,
       stopLossPrice: number
     ): Promise<boolean> => {
@@ -316,12 +307,12 @@ export const useClosePosition = () => {
       quoteToken: string,
       marginToken: string,
       positionSize: string,
-      positionSide: PositionSide,
+      positionSide: PositionSideTypes,
       whetherStud?: boolean
     ): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract1(exchange, signer)
+      const c = getDerifyExchangeContract(exchange, signer)
       const qtAddress = findToken(quoteToken).tokenAddress
 
       let _positionSize
@@ -347,4 +338,47 @@ export const useClosePosition = () => {
   )
 
   return { close }
+}
+
+export const useMTokenFromRoute = () => {
+  const params: any = useParams()
+
+  return useMemo(() => {
+    if (params?.id) {
+      const id = params.id
+      const find = findMarginToken(id)
+
+      if (find) {
+        return id
+      } else {
+        const local = localStorage.getItem('MARGIN_TOKEN')
+        return local ? JSON.parse(local).state.marginToken : DEFAULT_MARGIN_TOKEN.symbol
+      }
+    }
+    return DEFAULT_MARGIN_TOKEN.symbol
+  }, [params.id]) as MarginTokenKeys
+}
+
+export const useMTokenForRoute = () => {
+  const params: any = useParams()
+
+  const find = useMemo(() => {
+    if (params?.id) {
+      return findMarginToken(params.id)
+    }
+  }, [params?.id])
+
+  const marginToken = useMemo(() => {
+    if (find) {
+      return find.symbol
+    } else {
+      const local = localStorage.getItem('MARGIN_TOKEN')
+      return local ? JSON.parse(local).state.marginToken : DEFAULT_MARGIN_TOKEN.symbol
+    }
+  }, [find])
+
+  return {
+    find,
+    marginToken
+  }
 }

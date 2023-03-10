@@ -2,7 +2,7 @@
   width: 376px;border-radius: 48px;padding: 12px;position: relative;
   @include jb(#FFF4F7, #F2FBFF, 135);
   &-info {
-    padding: 36px;background: $cff;border-radius: 36px;
+    padding: 12px 36px 36px;background: $cff;border-radius: 36px;
     dl {
       margin-bottom: 32px;
       dt {
@@ -127,6 +127,21 @@
         }
       }
     }
+  }
+  &-margin{
+    position: relative;
+    label{font-size: 18px}
+    border-bottom: 1px solid $ce7;padding-bottom:8px;margin-bottom: 20px;
+    display: flex;align-items: center;justify-content: space-between;
+    &-select{
+      .web-select-show-button {
+        border: 0;min-width: auto;
+      }
+      .web-select-options {
+        left: 0;right: 0;
+      }
+    }
+    .web-select-show{position: static}
   }
   .web-form-input input {
     font-weight: bold;

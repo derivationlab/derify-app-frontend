@@ -89,7 +89,7 @@ export default {
     BV: {
       BrokerAccountBalance: 'Broker Account Balance',
       EarnedTip:
-        "You've earned a total of <strong>{{BUSD}}</strong> BUSD and <strong>{{DRF}}</strong> DRF since <strong>{{time}}</strong>",
+        "You've earned a total of <strong>{{Amount}}</strong> {{ Margin }} and <strong>{{DRF}}</strong> DRF since <strong>{{time}}</strong>",
       ClaimAll: 'Claim All',
       DailyRewards: 'Daily Rewards',
       TotalRewards: '<em>{{data}}</em> in total rewards',

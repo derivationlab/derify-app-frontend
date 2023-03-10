@@ -2,44 +2,47 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { isGT } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL, findMarginToken } from '@/config/tokens'
+import { MarginTokenKeys } from '@/typings'
+import { findMarginToken } from '@/config/tokens'
 
 import { Select, Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
-import { MarginTokenKeys } from '@/typings'
-import { useMarginToken } from '@/zustand'
 
 interface Props {
-  value: number
+  value: string
+  maxSwap: string
+  maxSize: string
+  quoteToken: string
+  marginToken: string
   onSymbol: (value: MarginTokenKeys) => void
-  onChange: (value: number) => void
-  maxBUSD: number
-  maxBase: number
-  baseCoin: string
+  onChange: (value: string | number) => void
 }
 
-const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase, baseCoin }) => {
+const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxSwap, maxSize, quoteToken, marginToken }) => {
   const { t } = useTranslation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const [closingType, setClosingType] = useState<string>(marginToken)
 
-  const [type, setType] = useState<string>(marginToken)
+  const maxVolume = useMemo(() => (findMarginToken(closingType) ? maxSwap : maxSize), [closingType, maxSwap, maxSize])
 
-  const maxVolume = useMemo(() => (type === BASE_TOKEN_SYMBOL ? maxBUSD : maxBase), [type, maxBUSD, maxBase])
+  const closingTypeChange = (symbol: any) => {
+    if (findMarginToken(symbol)) {
+      onChange(maxSwap)
+    } else {
+      onChange(maxSize)
+    }
 
-  const typeChangeEv = (symbol: any) => {
-    if (findMarginToken(symbol)) onChange(maxBUSD)
-    else onChange(maxBase)
-
-    setType(symbol)
     onSymbol(symbol)
+    setClosingType(symbol)
   }
 
   const validateEnteredValueCb = useCallback(
-    (amount: number) => {
+    (amount: string) => {
       if (isGT(amount, maxVolume)) {
         onChange(maxVolume)
-      } else onChange(amount)
+      } else {
+        onChange(amount)
+      }
     },
     [maxVolume]
   )
@@ -49,9 +52,9 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxBUSD, maxBase,
       <label>{t('Trade.ClosePosition.AmountToClose', 'Amount to Close')}</label>
       <section>
         <Input value={value} onChange={validateEnteredValueCb} type="number" />
-        <Select value={type} onChange={typeChangeEv} options={[marginToken, baseCoin]} />
+        <Select value={closingType} onChange={closingTypeChange} options={[marginToken, quoteToken]} />
       </section>
-      <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(Number(amount))} />
+      <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(amount)} />
     </div>
   )
 }

@@ -1,26 +1,31 @@
-import PubSub from 'pubsub-js'
-import { useInterval } from 'react-use'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo } from 'react'
 
-import { usePairsInfo } from '@/zustand'
-import { PubSubEvents } from '@/typings'
+import { findToken } from '@/config/tokens'
+import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/context/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
-import { nonBigNumberInterception } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
-import { getCurrentPositionsAmountData } from '@/store/constant/helper'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { usePairsInfo, useQuoteToken } from '@/zustand'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 
 const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { pcfRatio, quoteToken, marginToken } = usePCFRatioConf()
 
   const indicators = usePairsInfo((state) => state.indicators)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-  const [positionInfo, setPositionInfo] = useState<string[]>(['0', '0'])
+  const marginToken = useMTokenFromRoute()
+
+  const { pcfRatio } = usePCFRatioConf(quoteToken, marginToken)
+  const { data: positionsAmount, refetch } = useCurrentPositionsAmount(
+    'HeaderData-useCurrentPositionsAmount',
+    findToken(quoteToken).tokenAddress,
+    findToken(marginToken).tokenAddress
+  )
 
   const memoPosFeeRatio = useMemo(() => {
     if (pcfRatio || Number(pcfRatio) >= 0) return pcfRatio
@@ -31,44 +36,25 @@ const HeaderData: FC = () => {
     const longPmrRate = indicators?.longPmrRate ?? 0
     const shortPmrRate = indicators?.shortPmrRate ?? 0
     return [
-      Number(longPmrRate) <= 0 ? '0' : (longPmrRate * 100).toFixed(2),
-      Number(shortPmrRate) <= 0 ? '0' : (shortPmrRate * 100).toFixed(2)
+      Number(longPmrRate) <= 0 ? '0.00' : keepDecimals(longPmrRate * 100, 2),
+      Number(shortPmrRate) <= 0 ? '0.00' : keepDecimals(shortPmrRate * 100, 2)
     ]
   }, [indicators])
 
-  const funcAsync = async () => {
-    const data = await getCurrentPositionsAmountData(
-      findToken(quoteToken).tokenAddress,
-      findToken(marginToken).tokenAddress
-    )
-
-    if (data) {
-      const { long_position_amount = 0, short_position_amount = 0 } = data
+  const positionInfo = useMemo(() => {
+    if (positionsAmount) {
+      const { long_position_amount = 0, short_position_amount = 0 } = positionsAmount
       const m = long_position_amount - short_position_amount
       const n = long_position_amount + short_position_amount
       const x = ((m / n) * 100).toFixed(2)
-
-      setPositionInfo([nonBigNumberInterception(m), n === 0 || m === 0 ? '0' : nonBigNumberInterception(x)])
+      return [m, n === 0 || m === 0 ? 0 : x]
     }
-  }
-
-  useInterval(() => {
-    void funcAsync()
-  }, 60000)
+    return [0, 0]
+  }, [positionsAmount])
 
   useEffect(() => {
-    setPositionInfo(['0', '0'])
-
-    void funcAsync()
-
-    PubSub.subscribe(PubSubEvents.UPDATE_POSITION_AMOUNT, () => {
-      void funcAsync()
-    })
-
-    return () => {
-      PubSub.clearAllSubscriptions()
-    }
-  }, [quoteToken])
+    void refetch()
+  }, [quoteToken, marginToken])
 
   return (
     <div className="web-trade-kline-header-data">
@@ -79,13 +65,14 @@ const HeaderData: FC = () => {
         </h3>
         {!mobile ? (
           <strong>
-            {positionInfo[1]}% ( {positionInfo[0]} {BASE_TOKEN_SYMBOL} )
+            {keepDecimals(positionInfo[1], 2)}% ( {keepDecimals(positionInfo[0], findToken(marginToken).decimals)}{' '}
+            {marginToken} )
           </strong>
         ) : (
           <>
-            <strong>{positionInfo[1]}%</strong>
+            <strong>{keepDecimals(positionInfo[1], 2)}%</strong>
             <small>
-              ({positionInfo[0]} {BASE_TOKEN_SYMBOL})
+              ({keepDecimals(positionInfo[0], findToken(marginToken).decimals)} {marginToken})
             </small>
           </>
         )}
@@ -96,7 +83,7 @@ const HeaderData: FC = () => {
           {t('Trade.kline.PCFRate', 'PCF Rate')}
           <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
         </h3>
-        <strong>{nonBigNumberInterception(memoPosFeeRatio, 2)}%</strong>
+        <strong>{keepDecimals(memoPosFeeRatio, 2)}%</strong>
       </section>
       {!mobile && <hr />}
       <section>

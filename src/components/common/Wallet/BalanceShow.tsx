@@ -1,10 +1,8 @@
-import React, { FC, useMemo } from 'react'
-import BN from 'bignumber.js'
-import classNames from 'classnames'
 import numeral from 'numeral'
+import classNames from 'classnames'
+import React, { FC, useMemo } from 'react'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { nonBigNumberInterception } from '@/utils/tools'
+import { bnMul, keepDecimals } from '@/utils/tools'
 
 interface Props {
   value: number | string
@@ -16,8 +14,8 @@ interface Props {
 
 const BalanceShow: FC<Props> = ({ value, unit, format = '', percent = false, decimal = 2 }) => {
   const [int, dec] = useMemo(() => {
-    const safeNumber = nonBigNumberInterception(value, decimal)
-    const finalValue = percent ? new BN(safeNumber).multipliedBy(100).toString() : safeNumber
+    const safeNumber = keepDecimals(value, decimal)
+    const finalValue = percent ? bnMul(safeNumber, 100) : safeNumber
     if (format) {
       return numeral(finalValue).format(format).split('.')
     }
@@ -37,8 +35,7 @@ const BalanceShow: FC<Props> = ({ value, unit, format = '', percent = false, dec
 }
 
 BalanceShow.defaultProps = {
-  value: 0,
-  unit: BASE_TOKEN_SYMBOL
+  value: 0
 }
 
 export default BalanceShow

@@ -86,6 +86,7 @@ export default {
       Time: 'Time'
     },
     Bench: {
+      Margin: 'Margin',
       MarginBalance: 'Margin Balance',
       MarginBalanceTip:
         'The amount of money you actually have in your margin account.Margin balance = account balance + total unrealized PNL',

@@ -1,14 +1,15 @@
 import create from 'zustand'
 
 import multicall from '@/utils/multicall'
-import { BalancesState } from '@/zustand/types'
 import { baseProvider } from '@/utils/baseProvider'
+import { BalancesState } from '@/zustand/types'
+import { getBep20Contract } from '@/utils/contractHelpers'
 import tokens, { MARGIN_TOKENS } from '@/config/tokens'
 import { safeInterceptionValues } from '@/utils/tools'
 
 import erc20Abi from '@/config/abi/erc20.json'
 
-const TOKENS = [tokens.bbusd, tokens.edrf, ...MARGIN_TOKENS]
+const TOKENS = [tokens.edrf, ...MARGIN_TOKENS]
 const initial = (): Record<string, string> => {
   let value = Object.create(null)
 
@@ -21,6 +22,14 @@ const initial = (): Record<string, string> => {
   })
 
   return value
+}
+
+export const getTokenBalance = async (account: string, address: string) => {
+  const c = getBep20Contract(address)
+
+  const res = await c.balanceOf(account)
+
+  return safeInterceptionValues(res, 18, 18)
 }
 
 export const getTokenBalances = async (account: string) => {

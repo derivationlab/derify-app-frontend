@@ -1,8 +1,9 @@
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
 
+import { usePairsInfo } from '@/zustand'
 import { MobileContext } from '@/context/Mobile'
-import { useMarginToken, usePairsInfo } from '@/zustand'
-import { BASE_TOKEN_SYMBOL, QUOTE_TOKENS } from '@/config/tokens'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { QUOTE_TOKENS, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
@@ -14,8 +15,10 @@ interface Props {
 const Options: FC<Props> = ({ onChange }) => {
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const indicators = usePairsInfo((state) => state.indicators)
   const spotPrices = usePairsInfo((state) => state.spotPrices)
+
+  const marginToken = useMTokenFromRoute()
 
   const [keyword, setKeyword] = useState<string>('')
 
@@ -40,23 +43,25 @@ const Options: FC<Props> = ({ onChange }) => {
               <>
                 <aside>
                   <h5>
-                    {item.symbol}-{BASE_TOKEN_SYMBOL}
+                    {item.symbol}
+                    {VALUATION_TOKEN_SYMBOL}
                   </h5>
-                  <BalanceShow value={0} percent unit="APR" />
+                  <BalanceShow value={indicators[item.symbol]?.apy} percent decimal={4} unit="APR" />
                 </aside>
                 <aside>
                   <BalanceShow value={spotPrices[marginToken][item.symbol] ?? 0} unit="" />
-                  <ChangePercent value={0} />
+                  <ChangePercent value={indicators[item.symbol]?.price_change_rate} />
                 </aside>
               </>
             ) : (
               <>
                 <h5>
-                  {item.symbol}-{BASE_TOKEN_SYMBOL}
+                  {item.symbol}
+                  {VALUATION_TOKEN_SYMBOL}
                 </h5>
                 <BalanceShow value={spotPrices[marginToken][item.symbol] ?? 0} unit="" />
-                <ChangePercent value={0} />
-                <BalanceShow value={0} percent unit="APR" />
+                <ChangePercent value={indicators[item.symbol]?.price_change_rate} />
+                <BalanceShow value={indicators[item.symbol]?.apy} percent decimal={4} unit="APR" />
               </>
             )}
           </li>

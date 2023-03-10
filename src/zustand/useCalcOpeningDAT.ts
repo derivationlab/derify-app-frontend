@@ -3,8 +3,8 @@ import create from 'zustand'
 import { VolumeState } from '@/zustand/types'
 import { MarginTokenKeys } from '@/typings'
 import { findToken, MARGIN_TOKENS } from '@/config/tokens'
-import { inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract1 } from '@/utils/contractHelpers'
+import { formatUnits, inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
+import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export enum OpeningType {
   Market,
@@ -18,16 +18,21 @@ const getMaxVolume = async (
   leverageNow: number,
   price: string,
   exchange: string
-): Promise<number[]> => {
+): Promise<string[]> => {
   const _price = inputParameterConversion(price, 8)
   const _leverageNow = inputParameterConversion(leverageNow, 8)
-  const c = getDerifyExchangeContract1(exchange)
+  const c = getDerifyExchangeContract(exchange)
 
-  const data = await c.getTraderOpenUpperBound(qtAddress, trader, openingType, _price, _leverageNow)
+  try {
+    const data = await c.getTraderOpenUpperBound(qtAddress, trader, openingType, _price, _leverageNow)
 
-  const { size, amount } = data
+    const { size, amount } = data
 
-  return [Number(safeInterceptionValues(String(size), 8)), Number(safeInterceptionValues(String(amount), 8))]
+    return [formatUnits(String(size), 8), formatUnits(String(amount), 8)]
+  } catch (e) {
+    console.info(e)
+    return ['0', '0']
+  }
 }
 
 const getTFRValue = async (address: string) => {
@@ -43,19 +48,20 @@ const getTFRValue = async (address: string) => {
 const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
   tfr: 0, // trading fee ratio
   maxVolume: {},
-  closingType: MARGIN_TOKENS[0].symbol as MarginTokenKeys,
-  closingAmount: 0,
+  maxVolumeLoaded: false,
+  closingType: '',
+  closingAmount: '0',
   openingType: OpeningType.Market,
   leverageNow: 30,
-  openingPrice: 0,
-  openingAmount: 0,
+  openingPrice: '0',
+  openingAmount: '0',
   updateOpeningType: (data: OpeningType) =>
     set(() => {
       // console.info('updateOpeningType:')
       // console.info(data)
       return { openingType: data }
     }),
-  updateClosingType: (data: MarginTokenKeys) =>
+  updateClosingType: (data: string) =>
     set(() => {
       // console.info('updateClosingType:')
       // console.info(data)
@@ -67,19 +73,19 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
       // console.info(data)
       return { leverageNow: data }
     }),
-  updateOpeningPrice: (data: OpeningType) =>
+  updateOpeningPrice: (data: string) =>
     set(() => {
       // console.info('updateOpeningPrice:')
       // console.info(data)
       return { openingPrice: data }
     }),
-  updateOpeningAmount: (data: number) =>
+  updateOpeningAmount: (data: string) =>
     set(() => {
       // console.info('updateOpeningAmount:')
       // console.info(data)
       return { openingAmount: data }
     }),
-  updateClosingAmount: (data: number) =>
+  updateClosingAmount: (data: string) =>
     set(() => {
       // console.info('updateClosingAmount:')
       // console.info(data)
@@ -102,7 +108,8 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
       maxVolume: {
         [marginToken]: swap,
         [findToken(qtAddress).symbol]: size
-      }
+      },
+      maxVolumeLoaded: true
     })
   },
   fetchTFRValue: async (address: string) => {

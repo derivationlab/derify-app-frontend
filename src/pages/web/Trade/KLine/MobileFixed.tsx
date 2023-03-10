@@ -1,9 +1,9 @@
-import React, { FC, useMemo } from 'react'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import BN from 'bignumber.js'
+import React, { FC, useMemo } from 'react'
 
-import { useContractData } from '@/store/contract/hooks'
+import { usePairsInfo } from '@/zustand'
+import { bnMul, isLTET } from '@/utils/tools'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import Button from '@/components/common/Button'
@@ -16,27 +16,24 @@ interface Props {
 
 const MobileFixed: FC<Props> = ({ address, isKline, goBench }) => {
   const { t } = useTranslation()
-  const { pairs, currentPair } = useContractData()
 
-  const memoPairInfo = useMemo(() => {
-    return pairs.find((pair) => pair.token === currentPair)
-  }, [pairs, currentPair])
+  const indicators = usePairsInfo((state) => state.indicators)
 
   const memoLongPosApy = useMemo(() => {
-    if (!isEmpty(memoPairInfo) && memoPairInfo?.longPmrRate) {
-      const apy = new BN(memoPairInfo?.longPmrRate).times(100)
-      return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
+    if (!isEmpty(indicators) && indicators?.longPmrRate) {
+      const apy = bnMul(indicators?.longPmrRate, 100)
+      return isLTET(apy, 0) ? '--' : apy
     }
     return '--'
-  }, [memoPairInfo])
+  }, [indicators])
 
   const memoShortPosApy = useMemo(() => {
-    if (!isEmpty(memoPairInfo) && memoPairInfo?.shortPmrRate) {
-      const apy = new BN(memoPairInfo?.shortPmrRate).times(100)
-      return apy.isLessThanOrEqualTo(0) ? '--' : String(apy)
+    if (!isEmpty(indicators) && indicators?.shortPmrRate) {
+      const apy = bnMul(indicators?.shortPmrRate, 100)
+      return isLTET(apy, 0) ? '--' : apy
     }
     return '--'
-  }, [memoPairInfo])
+  }, [indicators])
 
   if (!isKline) return null
 

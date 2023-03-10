@@ -1,11 +1,11 @@
-import React, { FC, useContext } from 'react'
 import classNames from 'classnames'
-import { useAccount } from 'wagmi'
-import { NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { NavLink, useLocation } from 'react-router-dom'
+import React, { FC, useContext, useMemo } from 'react'
 
 import { WEBSITE_URL } from '@/config'
 import { MobileContext } from '@/context/Mobile'
+import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import AddTokenButton from '@/components/common/Wallet/AddTokenButton'
@@ -16,17 +16,16 @@ import MHeader from './MHeader'
 
 const Header: FC = () => {
   const { t } = useTranslation()
-  const { data: account } = useAccount()
   const { pathname: P } = useLocation()
   const { mobile } = useContext(MobileContext)
 
-  const handleNavLinkEv = (e: any) => {
-    if (!account?.address && /^\/broker\/[0-9a-zA-Z_@$]+$/.test(P)) {
-      e.preventDefault()
-      return
-    }
-  }
+  const marginToken = useMemo(() => {
+    const find = MARGIN_TOKENS.find((m) => P.includes(m.symbol))
+    return find?.symbol ?? DEFAULT_MARGIN_TOKEN.symbol
+  }, [P])
+
   if (mobile) return <MHeader />
+
   return (
     <>
       <header className="web-header">
@@ -34,16 +33,10 @@ const Header: FC = () => {
           <a href={WEBSITE_URL}>Derify protocol</a>
         </h1>
         <nav className="web-header-nav">
-          <NavLink to="/trade" onClick={handleNavLinkEv}>
-            {t('Nav.Nav.Trade', 'Trade')}
-          </NavLink>
-          <NavLink to="/earn" onClick={handleNavLinkEv}>
-            {t('Nav.Nav.Earn', 'Earn')}
-          </NavLink>
-          <NavLink to="/data" onClick={handleNavLinkEv}>
-            {t('Nav.Nav.Data', 'Data')}
-          </NavLink>
-          <NavLink to="/broker" className={classNames({ active: P.indexOf('broker') > -1 })} onClick={handleNavLinkEv}>
+          <NavLink to={`/${marginToken}/trade`}>{t('Nav.Nav.Trade', 'Trade')}</NavLink>
+          <NavLink to={`/${marginToken}/earn`}>{t('Nav.Nav.Earn', 'Earn')}</NavLink>
+          <NavLink to={`/${marginToken}/data`}>{t('Nav.Nav.Data', 'Data')}</NavLink>
+          <NavLink to={`/broker`} className={classNames({ active: P.indexOf('broker') > -1 })}>
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>
           <span className={classNames({ active: P.indexOf('dashboard') > -1 })}>
@@ -51,19 +44,13 @@ const Header: FC = () => {
             <em />
             <ul>
               <li>
-                <NavLink to="/dashboard/overview" onClick={handleNavLinkEv}>
-                  Overview
-                </NavLink>
+                <NavLink to="/dashboard/overview">Overview</NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/buyback-plan" onClick={handleNavLinkEv}>
-                  Buyback Plan
-                </NavLink>
+                <NavLink to="/dashboard/buyback-plan">Buyback Plan</NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/grant-list" onClick={handleNavLinkEv}>
-                  Grant List
-                </NavLink>
+                <NavLink to="/dashboard/grant-list">Grant List</NavLink>
               </li>
             </ul>
           </span>

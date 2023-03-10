@@ -2,6 +2,8 @@ import React, { FC, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 
@@ -12,12 +14,14 @@ const MHeader: FC = () => {
   const { t } = useTranslation()
   const { pathname: P } = useLocation()
 
+  const marginToken = useMTokenFromRoute()
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const navList = [
-    { url: '/trade', name: t('Nav.Nav.Trade', 'Trade') },
-    { url: '/earn', name: t('Nav.Nav.Earn', 'Earn') },
-    { url: '/dashboard', name: t('Nav.Nav.Dashboard', 'Dashboard') },
-    { url: '/broker', name: t('Nav.Nav.Broker', 'Broker') }
+    { url: `/${marginToken}/earn`, name: t('Nav.Nav.Earn', 'Earn') },
+    { url: `/${marginToken}/trade`, name: t('Nav.Nav.Trade', 'Trade') },
+    { url: `/broker`, name: t('Nav.Nav.Broker', 'Broker') },
+    { url: `/${marginToken}/dashboard`, name: t('Nav.Nav.Dashboard', 'Dashboard') }
   ]
 
   const [showMenu, setShowMenu] = useState<boolean>(false)

@@ -1,16 +1,19 @@
-import React, { FC, useMemo, useState, useContext } from 'react'
+import PubSub from 'pubsub-js'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import { useSigner } from 'wagmi'
-import BN from 'bignumber.js'
+import React, { FC, useMemo, useState, useContext, useEffect } from 'react'
 
-import Earn from '@/class/Earn'
-import { useAppDispatch } from '@/store'
-import { useTokenBalances } from '@/zustand'
+import { PubSubEvents } from '@/typings'
+import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/context/Mobile'
-import { useTraderData } from '@/store/trader/hooks'
-import { getStakingInfoDataAsync } from '@/store/trader'
-import { useConstantData } from '@/store/constant/hooks'
-import { getStakingDrfPoolDataAsync } from '@/store/constant'
+import { useQuoteToken } from '@/zustand'
+import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import tokens, { findToken } from '@/config/tokens'
+import { isGT, keepDecimals } from '@/utils/tools'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
+import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import DecimalShow from '@/components/common/DecimalShow'
@@ -21,40 +24,46 @@ import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
 
 const DRFPool: FC = () => {
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { data: signer } = useSigner()
-  const { trader } = useTraderData()
-  const { DRFPool, indicator } = useConstantData()
+  const { data } = useAccount()
   const { mobile } = useContext(MobileContext)
-  const { traderWithdrawEDRFRewards, traderStakingDrf, traderRedeemDrf } = Earn
 
-  const fetchBalances = useTokenBalances((state) => state.fetch)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const stakingInfo = useTraderInfo((state) => state.stakingInfo)
+  const drfPoolBalance = usePoolsInfo((state) => state.drfPoolBalance)
+
+  const marginToken = useMTokenFromRoute()
+
+  const { redeem } = useRedeemDrf()
+  const { staking } = useStakingDrf()
+  const { withdraw } = useWithdrawAllEdrf()
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { data: edrfBalance } = useTraderEDRFBalance(data?.address)
+
+  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
-  const onCloseDialogEv = () => setVisibleStatus('')
+  const memoDisabled = useMemo(() => {
+    return isGT(edrfBalance ?? 0, 0)
+  }, [edrfBalance])
+
+  const closeDialog = () => setVisibleStatus('')
 
   const stakeDrfFunc = async (amount: string) => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    onCloseDialogEv()
+    closeDialog()
 
-    if (signer) {
-      const account = await signer.getAddress()
-      const status = await traderStakingDrf(signer, amount)
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
+    const status = await staking(amount)
+    if (status) {
+      // succeed
+      window.toast.success(t('common.success', 'success'))
 
-        dispatch(getStakingDrfPoolDataAsync())
-        dispatch(getStakingInfoDataAsync(account))
-
-        await fetchBalances(account)
-      } else {
-        // fail
-        window.toast.error(t('common.failed', 'failed'))
-      }
+      PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+    } else {
+      // fail
+      window.toast.error(t('common.failed', 'failed'))
     }
 
     window.toast.dismiss(toast)
@@ -63,16 +72,12 @@ const DRFPool: FC = () => {
   const redeemDrfFunc = async (amount: string) => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    onCloseDialogEv()
+    closeDialog()
 
-    if (signer) {
-      const account = await signer.getAddress()
-      const status = await traderRedeemDrf(signer, amount)
+    if (protocolConfig) {
+      const status = await redeem(protocolConfig.rewards, amount)
       if (status) {
         // succeed
-        dispatch(getStakingDrfPoolDataAsync())
-        dispatch(getStakingInfoDataAsync(account))
-
         window.toast.success(t('common.success', 'success'))
       } else {
         // fail
@@ -83,22 +88,13 @@ const DRFPool: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const memoDisabled = useMemo(() => {
-    if (trader?.stakingEDRFBalance) {
-      const n = new BN(trader.stakingEDRFBalance)
-      return n.isGreaterThan(0)
-    }
-  }, [trader?.stakingEDRFBalance])
-
-  const withdrawEDRFRewardsFunc = async () => {
+  const withdrawFunc = async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    if (signer) {
-      const status = await traderWithdrawEDRFRewards(signer)
-      const account = await signer.getAddress()
+    if (protocolConfig) {
+      const status = await withdraw(protocolConfig.rewards)
       if (status) {
         // succeed
-        dispatch(getStakingInfoDataAsync(account))
         window.toast.success(t('common.success', 'success'))
       } else {
         // fail
@@ -108,6 +104,10 @@ const DRFPool: FC = () => {
 
     window.toast.dismiss(toast)
   }
+
+  useEffect(() => {
+    void dashboardDATRefetch()
+  }, [marginToken])
 
   return (
     <>
@@ -123,16 +123,16 @@ const DRFPool: FC = () => {
         </header>
         <section className="web-eran-item-main">
           <div className="web-eran-item-dashboard">
-            <DecimalShow value={indicator?.drfStakingApy ?? 0} percent />
+            <DecimalShow value={dashboardDAT?.drfStakingApy ?? 0} percent />
             <u>APR.</u>
           </div>
           <div className="web-eran-item-claima">
             <main>
               <h4>{t('Earn.DRFPool.Claimable', 'Claimable')}</h4>
-              <BalanceShow value={trader?.stakingEDRFBalance ?? 0} unit="eDRF" decimal={4} />
+              <BalanceShow value={edrfBalance ?? 0} unit="eDRF" decimal={tokens.edrf.decimals} />
             </main>
             <aside>
-              <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawEDRFRewardsFunc}>
+              <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
                 {t('Earn.DRFPool.ClaimAll', 'Claim All')}
               </Button>
             </aside>
@@ -140,10 +140,11 @@ const DRFPool: FC = () => {
           <div className="web-eran-item-card">
             <main>
               <h4>{t('Earn.DRFPool.Staked', 'Staked')}</h4>
-              <BalanceShow value={trader?.stakingDRFBalance ?? 0} unit="DRF" />
+              <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit="DRF" />
               <div className="block" />
               <p>
-                {t('Earn.DRFPool.CurrentPoolSize', 'Current pool size')} : <strong>{DRFPool}</strong> DRF
+                {t('Earn.DRFPool.CurrentPoolSize', 'Current pool size')} :{' '}
+                <strong>{keepDecimals(drfPoolBalance, tokens.drf.decimals)}</strong> DRF
               </p>
             </main>
             <aside>
@@ -158,8 +159,8 @@ const DRFPool: FC = () => {
           <NotConnect />
         </section>
       </div>
-      <StakeDRFDialog visible={visibleStatus === 'stake'} onClose={onCloseDialogEv} onClick={stakeDrfFunc} />
-      <UnstakeDRFDialog visible={visibleStatus === 'redeem'} onClose={onCloseDialogEv} onClick={redeemDrfFunc} />
+      <StakeDRFDialog visible={visibleStatus === 'stake'} onClose={closeDialog} onClick={stakeDrfFunc} />
+      <UnstakeDRFDialog visible={visibleStatus === 'redeem'} onClose={closeDialog} onClick={redeemDrfFunc} />
     </>
   )
 }

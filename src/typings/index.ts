@@ -12,7 +12,9 @@ export type QuoteTokenKeys = 'BTC' | 'ETH'
 
 export type MarginTokenKeys = 'DRF' | 'BUSD'
 
-export type AllTokenKeys = 'btc' | 'busd' | 'bbusd' | 'eth' | 'drf' | 'matic' | 'bnb' | 'edrf'
+export type AllTokenKeys = 'btc' | 'busd' | 'eth' | 'drf' | 'matic' | 'bnb' | 'edrf'
+
+export type ContractKeys = 'multicall' | 'derifyProtocol' | 'derifyBroker'
 
 export type MarginToken = { [key in MarginTokenKeys]: any }
 
@@ -20,13 +22,28 @@ export type MarginTokenWithQuote = { [key in MarginTokenKeys]: { [key in QuoteTo
 
 export type MarginTokenWithContract = { [key in MarginTokenKeys]: typeof contractInfo }
 
-export enum PriceType {
+export enum PositionOrderTypes {
   Market,
   Limit
 }
 
+export enum PositionSideTypes {
+  long,
+  short,
+  twoWay
+}
+
+export enum PositionTriggerTypes {
+  Limit,
+  StopProfit,
+  StopLoss
+}
+
 export enum PubSubEvents {
+  UPDATE_BALANCE = 'UPDATE_BALANCE',
+  UPDATE_BROKER_DAT = 'UPDATE_BROKER_DAT',
   UPDATE_TRADE_HISTORY = 'UPDATE_TRADE_HISTORY',
   UPDATE_OPENED_POSITION = 'UPDATE_OPENED_POSITION',
-  UPDATE_POSITION_AMOUNT = 'UPDATE_POSITION_AMOUNT'
+  UPDATE_POSITION_VOLUME = 'UPDATE_POSITION_VOLUME',
+  UPDATE_TRADER_VARIABLES = 'UPDATE_TRADER_VARIABLES'
 }

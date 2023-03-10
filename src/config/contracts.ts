@@ -1,33 +1,24 @@
-import { Address } from '@/config/types'
-import { getEnv } from '@/config/env'
+import Contract from '@/class/Contract'
+import { ChainId, ContractKeys } from '@/typings'
 
-// default address for prod
-const addresses: Record<string, Address> = {
-  multiCall: {
-    56: '0xfF6FD90A470Aaa0c1B8A54681746b07AcdFedc9B',
-    97: '0x8F3273Fb89B075b1645095ABaC6ed17B2d4Bc576'
-  },
-  DerifyRewards: {
-    56: '0x755BAEeeE6F506278C2BD692F89e1aa25FE3f394',
-    97: '0x4922D9769197d3FE27c3c6c4372D3fb76C49B27E'
-  },
-  DerifyExchange: {
-    56: '0x75777494496f6250DdB9A1B96a6203e219d3698f',
-    97: '0x4a8021a4f721D650754864c349Df570De061a8c3'
-  },
-  DerifyBroker: {
-    56: '0x465e0019B1a51Ec5E4A6A26567Aff4E1806A76B6',
-    97: '0xC77B6bDCC2ABA23b5B968D3DE2A1aB827d9EAB07'
-  },
-  DerifyProtocol: {
-    56: '0x2e70e1C2B3660B91E07DEa476F36945aDFe1e4A1',
-    97: '0x0a5F5FA5717C0e2247A989032cBfc8d17A2a8A9F'
-  }
+export const contracts: { [key in ContractKeys]: Contract } = {
+  multicall: new Contract('multicall', {
+    [ChainId.MAINNET]: '0xfF6FD90A470Aaa0c1B8A54681746b07AcdFedc9B',
+    [ChainId.TESTNET]: '0x8F3273Fb89B075b1645095ABaC6ed17B2d4Bc576'
+  }),
+  derifyProtocol: new Contract('DerifyProtocol', {
+    [ChainId.MAINNET]: '0x2e70e1C2B3660B91E07DEa476F36945aDFe1e4A1',
+    [ChainId.TESTNET]: '0x516b21CB14522d5aCF336aff3907E6730846D620'
+  }),
+  derifyBroker: new Contract('DerifyBroker', {
+    [ChainId.MAINNET]: '0x465e0019B1a51Ec5E4A6A26567Aff4E1806A76B6',
+    [ChainId.TESTNET]: '0xC77B6bDCC2ABA23b5B968D3DE2A1aB827d9EAB07'
+  })
 }
 
-const envTable: { [string: string]: Record<string, Address> } = {
-  dev: {},
-  prod: {}
-}
+export default contracts
 
-export default Object.assign(addresses, envTable[getEnv()])
+export const findContract = (key: string): Contract => {
+  // eslint-disable-next-line
+  return Object.values(contracts).find((t) => t.contractAddress === key.toLowerCase())!
+}

@@ -1,35 +1,58 @@
-import React, { FC } from 'react'
+import { useHistory } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo } from 'react'
 
-import { useAppDispatch } from '@/store'
-import { useMarginToken } from '@/zustand'
 import { MARGIN_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
-import { useContractConfig } from '@/store/config/hooks'
-import { setMarginToken } from '@/store/config'
+import { useTokenBalances } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { nonBigNumberInterception } from '@/utils/tools'
+
+import { Select } from '@/components/common/Form'
+import Image from '@/components/common/Image'
 
 const Margin: FC = () => {
-  const dispatch = useAppDispatch()
+  const history = useHistory()
 
-  const { marginToken } = useContractConfig()
+  const { t } = useTranslation()
 
-  const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
+  const balances = useTokenBalances((state) => state.balances)
 
+  const marginToken = useMTokenFromRoute()
+
+  const marginSelect = useMemo(() => {
+    return MARGIN_TOKENS.map((t) => {
+      return {
+        value: t.symbol,
+        label: t.symbol,
+        icon: 'icon/bnb.svg',
+        price: balances[t.symbol] ?? 0,
+        decimals: 2
+      }
+    })
+  }, [balances])
+
+  // todo 完善ui
   return (
-    <div className="">
-      margin select:{marginToken}
-      {MARGIN_TOKENS.map((t) => {
-        return (
-          <small
-            key={t.symbol}
-            onClick={() => {
-              updateMarginToken(t.symbol as MarginTokenKeys)
-              dispatch(setMarginToken(t.symbol as MarginTokenKeys))
-            }}
-          >
-            {t.symbol}
-          </small>
-        )
-      })}
+    <div className="web-trade-bench-margin">
+      <label htmlFor="Margin">{t('Trade.Bench.Margin')}</label>
+      <Select
+        value={marginToken}
+        onChange={(v) => {
+          history.push(`/${v}/trade`)
+        }}
+        objOptions={marginSelect}
+        renderer={(props) => (
+          <div className="web-select-options-item">
+            <span>
+              {props.icon && <Image src={props.icon} />}
+              {props.label}
+            </span>
+            {nonBigNumberInterception(props.price)}
+          </div>
+        )}
+        className="web-trade-bench-margin-select"
+      />
     </div>
   )
 }

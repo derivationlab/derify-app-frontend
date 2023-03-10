@@ -1,19 +1,15 @@
-import { useSigner } from 'wagmi'
-import BN from 'bignumber.js'
-import { isEmpty } from 'lodash'
-import { useInterval } from 'react-use'
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useContext, useMemo } from 'react'
 
-import Earn from '@/class/Earn'
-import { useAppDispatch } from '@/store'
 import { MobileContext } from '@/context/Mobile'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
-import { useTraderData } from '@/store/trader/hooks'
-import { nonBigNumberInterception } from '@/utils/tools'
-import { useContractData } from '@/store/contract/hooks'
-import { getCurrentPositionsAmountData } from '@/store/constant/helper'
-import { getPMRewardDataAsync, getStakingInfoDataAsync } from '@/store/actions'
+import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import tokens, { findToken } from '@/config/tokens'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useWithdrawPositionReward } from '@/hooks/useEarning'
+import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { bnPlus, isGT, keepDecimals } from '@/utils/tools'
+import { usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -22,63 +18,54 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
 
 const PositionMining: FC = () => {
-  const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const { trader } = useTraderData()
-  const { data: signer } = useSigner()
+
   const { mobile } = useContext(MobileContext)
-  const { pairs, pairsLoaded } = useContractData()
-  const { traderWithdrawPMRewards } = Earn
 
-  const [totalAmount, setTotalAmount] = useState<Record<string, any>>({})
+  const variables = useTraderInfo((state) => state.variables)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const indicators = usePairsInfo((state) => state.indicators)
+  const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
+  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
 
-  const getPositionsAmountFunc = async () => {
-    // const data = await getCurrentPositionsAmountData('all')
-    //
-    // if (data) setTotalAmount(data)
-  }
+  const marginToken = useMTokenFromRoute()
+
+  const { withdraw } = useWithdrawPositionReward()
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { data: positionsAmount } = useCurrentPositionsAmount(
+    'PositionMining-useCurrentPositionsAmount',
+    'all',
+    findToken(marginToken).tokenAddress
+  )
 
   const memoPositionApy = useMemo(() => {
-    if (pairsLoaded) {
-      const apy = pairs.map((d) => d.apy ?? 0)
-      const max = String(Math.max.apply(null, apy) * 100)
-      return nonBigNumberInterception(max)
+    if (indicatorsLoaded) {
+      const apy = Object.values(indicators).map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))
+      return Math.max.apply(null, apy) * 100
     }
     return '0'
-  }, [pairsLoaded, pairs])
+  }, [indicatorsLoaded, indicators])
 
   const memoPositionsAm = useMemo(() => {
-    if (!isEmpty(totalAmount)) {
-      const { long_position_amount, short_position_amount } = totalAmount
-      if (long_position_amount && short_position_amount) {
-        const m = new BN(long_position_amount)
-        const n = new BN(short_position_amount)
-        const s = m.plus(n).toString()
-        return nonBigNumberInterception(s)
-      }
+    if (positionsAmount) {
+      const { long_position_amount, short_position_amount } = positionsAmount
+      console.info(long_position_amount, short_position_amount)
+      return bnPlus(long_position_amount, short_position_amount)
     }
     return '0'
-  }, [totalAmount])
+  }, [positionsAmount])
 
   const memoDisabled = useMemo(() => {
-    const m = new BN(trader?.drfBalance ?? 0)
-    const n = new BN(trader?.usdBalance ?? 0)
-    return n.isGreaterThan(0) || m.isGreaterThan(0)
-  }, [trader?.usdBalance, trader?.drfBalance])
+    return isGT(rewardsInfo?.drfBalance ?? 0, 0) || isGT(rewardsInfo?.marginTokenBalance ?? 0, 0)
+  }, [rewardsInfo])
 
-  const withdrawPMRewardsFunc = async () => {
+  const withdrawFunc = async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    if (signer) {
-      // + trader?.drfBalance? todo
-      const amount = new BN(trader?.usdBalance ?? 0).plus(new BN(trader?.drfBalance ?? 0)).toString()
-      // const amount = trader?.usdBalance ?? 0
-      const status = await traderWithdrawPMRewards(signer)
-      const account = await signer.getAddress()
+    if (protocolConfig) {
+      const status = await withdraw(protocolConfig.rewards)
       if (status) {
         // succeed
-        dispatch(getPMRewardDataAsync(account))
-        dispatch(getStakingInfoDataAsync(account))
         window.toast.success(t('common.success', 'success'))
       } else {
         // fail
@@ -88,14 +75,6 @@ const PositionMining: FC = () => {
 
     window.toast.dismiss(toast)
   }
-
-  useInterval(() => {
-    void getPositionsAmountFunc()
-  }, 60000)
-
-  useEffect(() => {
-    void getPositionsAmountFunc()
-  }, [])
 
   return (
     <div className="web-eran-item">
@@ -116,16 +95,23 @@ const PositionMining: FC = () => {
         <div className="web-eran-item-claima">
           <main>
             <h4>{t('Earn.PositionMining.Claimable', 'Claimable')}</h4>
-            <BalanceShow value={trader?.usdBalance ?? 0} unit={BASE_TOKEN_SYMBOL} decimal={4} />
-            <BalanceShow value={trader?.drfBalance ?? 0} unit="DRF" decimal={4} />
+            <BalanceShow
+              value={rewardsInfo?.marginTokenBalance ?? 0}
+              unit={marginToken}
+              decimal={findToken(marginToken).decimals}
+            />
+            <BalanceShow value={rewardsInfo?.drfBalance ?? 0} unit="DRF" decimal={tokens.drf.decimals} />
             <p>
               {t('Earn.PositionMining.TotalEarned', 'Total earned :')}{' '}
-              <strong>{trader?.usdAccumulatedBalance ?? 0}</strong> {BASE_TOKEN_SYMBOL}{' '}
-              {t('Earn.PositionMining.And', 'and')} <strong>{trader?.drfAccumulatedBalance ?? 0}</strong> DRF
+              <strong>
+                {keepDecimals(rewardsInfo?.marginTokenAccumulatedBalance ?? 0, findToken(marginToken).decimals)}
+              </strong>{' '}
+              {marginToken} {t('Earn.PositionMining.And', 'and')}{' '}
+              <strong>{keepDecimals(rewardsInfo?.drfAccumulatedBalance ?? 0, tokens.drf.decimals)}</strong> DRF
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawPMRewardsFunc}>
+            <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
               {t('Earn.PositionMining.ClaimAll', 'Claim All')}
             </Button>
           </aside>
@@ -133,15 +119,15 @@ const PositionMining: FC = () => {
         <div className="web-eran-item-card">
           <main>
             <h4>{t('Earn.PositionMining.Positions', 'Positions')}</h4>
-            <BalanceShow value={trader?.totalPositionAmount ?? 0} unit={BASE_TOKEN_SYMBOL} />
+            <BalanceShow value={variables?.totalPositionAmount ?? 0} unit={marginToken} />
             <div className="block" />
             <p>
-              {t('Earn.PositionMining.TotalPositions', 'Total positions')} : <strong>{memoPositionsAm}</strong>{' '}
-              {BASE_TOKEN_SYMBOL}
+              {t('Earn.PositionMining.TotalPositions', 'Total positions')} :{' '}
+              <strong>{keepDecimals(memoPositionsAm, findToken(marginToken).decimals)}</strong> {marginToken}
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} to="/trade">
+            <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken}/trade`}>
               {t('Earn.PositionMining.OpenPosition', 'Open Position')}
             </Button>
           </aside>

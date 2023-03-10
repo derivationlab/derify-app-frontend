@@ -5,12 +5,13 @@ import { useSigner, useAccount } from 'wagmi'
 import React, { FC, useState, useMemo, useContext } from 'react'
 
 import ThemeContext from '@/context/Theme/Context'
-import { useMatchConf } from '@/hooks/useMatchConf'
 import { PubSubEvents } from '@/typings'
-import { useTraderData } from '@/store/trader/hooks'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
-import { useCloseAllPositions, useClosePosition, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
+import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
+import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { useCloseAllPositions, useClosePosition, useMTokenFromRoute, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
@@ -23,23 +24,30 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { isET, nonBigNumberInterception } from '@/utils/tools'
+import { useQuoteToken } from '@/zustand'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
   const { data: signer } = useSigner()
   const { data: account } = useAccount()
-  const { brokerBound: broker } = useTraderData()
 
   const { close: close1 } = useClosePosition()
   const { close: close2 } = useCloseAllPositions()
   const { takeProfitOrStopLoss } = useTakeProfitOrStopLoss()
-  const { factoryConfig, protocolConfig, spotPrice, quoteToken } = useMatchConf()
+
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const positionOrd = usePosDATStore((state) => state.positionOrd)
-  const positionOrdLoaded = usePosDATStore((state) => state.loaded)
   const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
+  const positionOrdLoaded = usePosDATStore((state) => state.loaded)
+
+  const marginToken = useMTokenFromRoute()
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
@@ -57,8 +65,8 @@ const MyPosition: FC = () => {
   }
 
   // 100% or not
-  const whetherStud = ({ size = 0 }, amount: number): boolean => {
-    return isET(amount, nonBigNumberInterception(Number(spotPrice) * size, 8)) || isET(amount, size)
+  const whetherStud = ({ size = 0 }, amount: string): boolean => {
+    return isGTET(amount, nonBigNumberInterception(bnMul(spotPrice, size), 8)) || isGTET(amount, size)
   }
 
   const closeOneFunc = async () => {
@@ -66,12 +74,12 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && broker?.broker && protocolConfig) {
+    if (signer && brokerBound?.broker && protocolConfig) {
       const { side, size } = targetPosOrd
 
       const status = await close1(
         protocolConfig.exchange,
-        broker.broker,
+        brokerBound.broker,
         spotPrice,
         quoteToken,
         closingType,
@@ -86,6 +94,7 @@ const MyPosition: FC = () => {
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+        PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -100,8 +109,8 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (broker?.broker && protocolConfig) {
-      const status = await close2(protocolConfig.exchange, broker.broker)
+    if (brokerBound?.broker && protocolConfig) {
+      const status = await close2(protocolConfig.exchange, brokerBound.broker)
 
       if (status) {
         // succeed
@@ -109,7 +118,7 @@ const MyPosition: FC = () => {
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
-        PubSub.publish(PubSubEvents.UPDATE_POSITION_AMOUNT)
+        PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -171,29 +180,37 @@ const MyPosition: FC = () => {
     <>
       <div className="web-trade-data-wrap">{memoMyPositions}</div>
 
-      <PositionClosePreviewDialog
-        data={targetPosOrd}
-        visible={dialogStatus === 'preview-close-position'}
-        onClose={onCloseDialogEv}
-        onClick={() => setDialogStatus('confirm-close-position')}
-      />
-      <PositionCloseConfirmDialog
-        data={targetPosOrd}
-        visible={dialogStatus === 'confirm-close-position'}
-        onClose={onCloseDialogEv}
-        onClick={closeOneFunc}
-      />
-      <TakeProfitAndStopLossDialog
-        data={targetPosOrd}
-        visible={dialogStatus === 'edit-position'}
-        onClose={onCloseDialogEv}
-        onClick={profitOrLossFunc}
-      />
-      <PositionCloseAllDialog
-        visible={dialogStatus === 'close-all-position'}
-        onClose={onCloseDialogEv}
-        onClick={closeAllFunc}
-      />
+      {dialogStatus === 'preview-close-position' && (
+        <PositionClosePreviewDialog
+          data={targetPosOrd}
+          visible={dialogStatus === 'preview-close-position'}
+          onClose={onCloseDialogEv}
+          onClick={() => setDialogStatus('confirm-close-position')}
+        />
+      )}
+      {dialogStatus === 'confirm-close-position' && (
+        <PositionCloseConfirmDialog
+          data={targetPosOrd}
+          visible={dialogStatus === 'confirm-close-position'}
+          onClose={onCloseDialogEv}
+          onClick={closeOneFunc}
+        />
+      )}
+      {dialogStatus === 'edit-position' && (
+        <TakeProfitAndStopLossDialog
+          data={targetPosOrd}
+          visible={dialogStatus === 'edit-position'}
+          onClose={onCloseDialogEv}
+          onClick={profitOrLossFunc}
+        />
+      )}
+      {dialogStatus === 'close-all-position' && (
+        <PositionCloseAllDialog
+          visible={dialogStatus === 'close-all-position'}
+          onClose={onCloseDialogEv}
+          onClick={closeAllFunc}
+        />
+      )}
     </>
   )
 }

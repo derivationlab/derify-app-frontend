@@ -1,11 +1,12 @@
-import React, { FC, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useAccount } from 'wagmi'
 import PubSub from 'pubsub-js'
+import { useAccount } from 'wagmi'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useEffect, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useFactoryConf } from '@/hooks/useMatchConf'
+import { useConfigInfo } from '@/zustand'
 import { usePosDATStore } from '@/zustand/usePosDAT'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
 
@@ -18,29 +19,30 @@ const Data: FC = () => {
   const { data } = useAccount()
 
   const fetchTraderPos = usePosDATStore((state) => state.fetch)
+  const factoryConfig = useConfigInfo((state) => state.factoryConfig)
+  const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
 
-  const { factoryConfig } = useFactoryConf()
+  const marginToken = useMTokenFromRoute()
+
+  const _factoryConfig = useMemo(() => {
+    if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken]
+  }, [marginToken, factoryConfig, factoryConfigLoaded])
 
   useEffect(() => {
-    if (data?.address && factoryConfig) void fetchTraderPos(data?.address, factoryConfig)
-  }, [factoryConfig, data?.address])
+    if (data?.address && _factoryConfig) void fetchTraderPos(data?.address, _factoryConfig)
+  }, [_factoryConfig, data?.address])
 
   useEffect(() => {
     PubSub.subscribe(PubSubEvents.UPDATE_OPENED_POSITION, () => {
-      if (data?.address && factoryConfig) {
-        void fetchTraderPos(data?.address, factoryConfig)
+      if (data?.address && _factoryConfig) {
+        void fetchTraderPos(data?.address, _factoryConfig)
       }
     })
-
-    return () => {
-      PubSub.clearAllSubscriptions()
-    }
   }, [factoryConfig, data?.address])
 
   return (
     <Tabs className="web-trade-data">
       <TabPane className="web-trade-data-pane" tab={t('Trade.MyPosition.MyPosition', 'My Position')} key="Position">
-        {/* @ts-ignore */}
         <MyPosition />
       </TabPane>
       <TabPane className="web-trade-data-pane" tab={t('Trade.MyOrder.MyOrder', 'My Order')} key="Order">

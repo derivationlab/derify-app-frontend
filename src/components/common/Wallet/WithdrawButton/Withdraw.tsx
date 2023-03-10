@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useMarginToken } from '@/zustand'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/withdraw'
 import { getTraderWithdrawAmount } from '@/api'
 import { isET, isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
@@ -25,9 +25,10 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
   const variables = useTraderInfo((state) => state.variables)
   const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
+
+  const marginToken = useMTokenFromRoute()
 
   const memoMargin = useMemo(() => {
     if (variablesLoaded) {
@@ -57,13 +58,13 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     }
   }
 
-  const funcAsync = async (account: string, amount: string) => {
+  const funcAsync = async (account: string, amount: number) => {
     const { data } = await getTraderWithdrawAmount(account, amount)
     dispatch({ type: 'SET_WITHDRAW_DAT', payload: data })
   }
 
   useEffect(() => {
-    if (data?.address && Number(state.withdrawAmount) > 0) void funcAsync(data.address, state.withdrawAmount)
+    if (data?.address && Number(state.withdrawAmount) > 0) void funcAsync(data.address, Number(state.withdrawAmount))
   }, [data?.address, state.withdrawAmount])
 
   return (
@@ -77,6 +78,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
         <div className="web-deposit-dialog-info web-withdraw-dialog-info">
           <div className="wallet">
             <dl>
+              <dt>{t('Trade.Withdraw.Withdrawable', 'Withdrawable')}</dt>
               <dt>{t('Trade.Withdraw.Withdrawable', 'Withdrawable')}</dt>
               <dd>
                 <BalanceShow value={variables.availableMargin} unit={marginToken} />

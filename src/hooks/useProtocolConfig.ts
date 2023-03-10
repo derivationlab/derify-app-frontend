@@ -1,9 +1,9 @@
 import { isEmpty } from 'lodash'
 
+import contracts from '@/config/contracts'
 import { MARGIN_TOKENS } from '@/config/tokens'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
 import { MarginTokenWithContract } from '@/typings'
-import { getAddress, getDerifyProtocolAddress } from '@/utils/addressHelpers'
 
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 
@@ -11,7 +11,8 @@ export const contractInfo = {
   factory: '',
   rewards: '',
   exchange: '',
-  priceFeed: ''
+  priceFeed: '',
+  bMarginToken: ''
 }
 
 export const initial = (): MarginTokenWithContract => {
@@ -32,17 +33,37 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
 
   const calls = MARGIN_TOKENS.map((t) => ({
     name: 'marginTokenContractCollections',
-    params: [getAddress(t.address)],
-    address: getDerifyProtocolAddress()
+    params: [t.tokenAddress],
+    address: contracts.derifyProtocol.contractAddress
   }))
 
   const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 30000)
 
   if (!isLoading && !isEmpty(data)) {
-    data.forEach(([priceFeed, , , , exchange, factory, rewards]: any[], index: number) => {
+    data.forEach((addresses: any, index: number) => {
+      const {
+        derifyRank,
+        bMarginToken,
+        derifyFactory,
+        derifyRewards,
+        derifyExchange,
+        derifyAwardsPmr,
+        derifyAwardsBroker,
+        marginTokenPriceFeed
+      } = addresses
+
       output = {
         ...output,
-        [MARGIN_TOKENS[index].symbol]: { priceFeed, exchange, rewards, factory }
+        [MARGIN_TOKENS[index].symbol]: {
+          rank: derifyRank,
+          awards: derifyAwardsBroker,
+          mining: derifyAwardsPmr,
+          rewards: derifyRewards,
+          factory: derifyFactory,
+          exchange: derifyExchange,
+          priceFeed: marginTokenPriceFeed,
+          bMarginToken
+        }
       }
     })
     // console.info(output)

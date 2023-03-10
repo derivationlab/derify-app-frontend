@@ -1,13 +1,15 @@
-import React, { FC, useCallback, useEffect, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import { PositionSide } from '@/store/contract/helper'
-import { useMatchConf } from '@/hooks/useMatchConf'
+import { useQuoteToken } from '@/zustand'
+import { PositionSideTypes } from '@/typings'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
-import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
 import { reducer, stateInit } from '@/reducers/openingPosition'
-import { nonBigNumberInterception } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { isGT, keepDecimals } from '@/utils/tools'
+import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -23,25 +25,29 @@ interface Props {
 }
 
 const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
-  const { t } = useTranslation()
-  const { spotPrice, factoryConfig, protocolConfig, marginToken, quoteToken } = useMatchConf()
+  const [state, dispatch] = useReducer(reducer, stateInit)
 
+  const { t } = useTranslation()
+
+  const marginToken = useMTokenFromRoute()
+
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
 
-  const [state, dispatch] = useReducer(reducer, stateInit)
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
-  const calcTradingFeeFunc = useCallback(async () => {
+  const calcTFeeFunc = useCallback(async () => {
     if (factoryConfig) {
       const fee = await calcTradingFee(factoryConfig, closingType, closingAmount, spotPrice)
-      // console.info(fee)
       dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
     }
   }, [data, factoryConfig, spotPrice, closingAmount])
 
-  const calcChangeFeeFunc = useCallback(async () => {
+  const calcCFeeFunc = useCallback(async () => {
     if (factoryConfig && protocolConfig) {
-      console.info(data?.side, closingType, closingAmount, spotPrice, protocolConfig.exchange, factoryConfig)
       const fee = await calcChangeFee(
         data?.side,
         closingType,
@@ -63,9 +69,9 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   }, [visible])
 
   useEffect(() => {
-    if (visible && closingAmount > 0) {
-      void calcTradingFeeFunc()
-      void calcChangeFeeFunc()
+    if (visible && isGT(closingAmount, 0)) {
+      void calcTFeeFunc()
+      void calcCFeeFunc()
     }
   }, [visible, closingAmount])
 
@@ -81,8 +87,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{`${quoteToken}-${marginToken}`}</strong>
-                <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
+                <strong>{`${data?.quoteToken}${VALUATION_TOKEN_SYMBOL}`}</strong>
+                <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
@@ -93,7 +99,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
             <dl>
               <dt>{t('Trade.ClosePosition.Volume', 'Volume')}</dt>
               <dd>
-                <em>{closingAmount}</em>
+                <em>{keepDecimals(closingAmount, findToken(closingType).decimals)}</em>
                 <u>{closingType}</u>
               </dd>
             </dl>
@@ -107,8 +113,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                   <small>calculating...</small>
                 ) : (
                   <>
-                    <em>{nonBigNumberInterception(state.posChangeFee.value, 8)}</em>
-                    <u>{BASE_TOKEN_SYMBOL}</u>
+                    <em>{keepDecimals(state.posChangeFee.value, findToken(marginToken).decimals)}</em>
+                    <u>{marginToken}</u>
                   </>
                 )}
               </dd>
@@ -126,8 +132,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                   <small>calculating...</small>
                 ) : (
                   <>
-                    <em>-{nonBigNumberInterception(state.tradingFeeInfo.value, 8)}</em>
-                    <u>{BASE_TOKEN_SYMBOL}</u>
+                    <em>-{keepDecimals(state.tradingFeeInfo.value, findToken(marginToken).decimals)}</em>
+                    <u>{marginToken}</u>
                   </>
                 )}
               </dd>

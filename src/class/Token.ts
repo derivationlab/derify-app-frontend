@@ -2,8 +2,12 @@ import warning from 'tiny-warning'
 import invariant from 'tiny-invariant'
 import { getAddress } from '@ethersproject/address'
 
-import { ChainIdRec } from '@/typings'
-import { getAddress as _getAddress } from '@/utils/addressHelpers'
+import { ChainId, ChainIdRec } from '@/typings'
+
+export const _getAddress = (address: ChainIdRec): string => {
+  const chainId = process.env.REACT_APP_CHAIN_ID ?? ChainId.MAINNET
+  return address[chainId].toLowerCase()
+}
 
 export function addressCheck(address: string) {
   try {
@@ -29,6 +33,7 @@ class Token {
     this.name = name
     this.symbol = symbol
     this.address = this.checkAddress(address)
+    this.decimals = decimals
     this.precision = precision
     this.projectLink = projectLink
   }

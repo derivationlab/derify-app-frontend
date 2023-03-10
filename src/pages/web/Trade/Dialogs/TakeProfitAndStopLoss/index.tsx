@@ -1,12 +1,13 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import BN from 'bignumber.js'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { usePairsInfo } from '@/zustand'
-import { PositionSide } from '@/store/contract/helper'
-import { safeInterceptionValues } from '@/utils/tools'
-import { BASE_TOKEN_SYMBOL, findToken } from '@/config/tokens'
+import { PositionSideTypes } from '@/typings'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { usePairsInfo, useQuoteToken } from '@/zustand'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -22,10 +23,14 @@ interface Props {
   onClick: (params: Record<string, any>) => void
 }
 
-const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
+const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const { spotPrice, quoteToken, marginToken } = useSpotPrice()
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+
+  const marginToken = useMTokenFromRoute()
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const indicators = usePairsInfo((state) => state.indicators)
 
   const [stopLossAmount, setStopLossAmount] = useState<any>()
@@ -40,11 +45,10 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
   const calcProfitAmountCb = useCallback(
     (v) => {
       if (v && data) {
-        const amount = new BN(v)
-          .minus(data?.averagePrice)
-          .times(data?.size)
-          .times(data?.side === PositionSide.long ? 1 : -1)
-        setTakeProfitAmount(safeInterceptionValues(String(amount)))
+        const p1 = bnMinus(v, data?.averagePrice)
+        const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data?.size)
+        const amount = bnMul(p1, p2)
+        setTakeProfitAmount(keepDecimals(amount, 2))
       } else {
         setTakeProfitAmount(0)
       }
@@ -58,7 +62,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
         const amount = new BN(v)
           .minus(data?.averagePrice)
           .times(data?.size)
-          .times(data?.side === PositionSide.long ? 1 : -1)
+          .times(data?.side === PositionSideTypes.long ? 1 : -1)
         setStopLossAmount(safeInterceptionValues(String(amount)))
       } else {
         setStopLossAmount(0)
@@ -170,9 +174,9 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
     return (
       <p>
         <em className="buy">
-          {data?.side === PositionSide.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+          {data?.side === PositionSideTypes.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
         </em>
-        <u>{BASE_TOKEN_SYMBOL}</u>
+        <u>{VALUATION_TOKEN_SYMBOL}</u>
       </p>
     )
   }, [data])
@@ -181,9 +185,9 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
     return (
       <p>
         <em className="buy">
-          {data?.side === PositionSide.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+          {data?.side === PositionSideTypes.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
         </em>
-        <u>{BASE_TOKEN_SYMBOL}</u>
+        <u>{VALUATION_TOKEN_SYMBOL}</u>
       </p>
     )
   }, [data])
@@ -224,8 +228,8 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{`${quoteToken}-${marginToken}`}</strong>
-                <MultipleStatus direction={PositionSide[data?.side] as any} />
+                <strong>{`${data?.quoteToken}${VALUATION_TOKEN_SYMBOL}`}</strong>
+                <MultipleStatus direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
@@ -235,7 +239,9 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
             <section className="web-trade-dialog-position-info-count">
               <p>
                 {t('Trade.TPSL.PositionAveragePrice', 'Position Average Price')} :{' '}
-                <em>{safeInterceptionValues(data?.averagePrice ?? 0)}</em>
+                <em>
+                  {safeInterceptionValues(data?.averagePrice ?? 0)} {VALUATION_TOKEN_SYMBOL}
+                </em>
               </p>
             </section>
           </div>
@@ -248,12 +254,12 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
               <Input
                 value={takeProfitPrice}
                 onChange={onChangeTakeProfitPriceEv}
-                suffix={BASE_TOKEN_SYMBOL}
+                suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
               />
               <p>
                 {t('Trade.TPSL.TakeProfitTip1', 'When market price reaches')}{' '}
-                <strong>{calcPriceShowFunc(takeProfitPrice)}</strong> {BASE_TOKEN_SYMBOL},
+                <strong>{calcPriceShowFunc(takeProfitPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.TakeProfitTip2',
                   'it will trigger Take Profit order to close this position. Estimated profit will be'
@@ -261,7 +267,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
                 <em className={Number(takeProfitAmount) > 0 ? 'buy' : 'sell'}>
                   {calcAmountShowFunc(takeProfitPrice, takeProfitAmount)}
                 </em>{' '}
-                {BASE_TOKEN_SYMBOL}.
+                {marginToken}.
               </p>
             </section>
             <header>
@@ -272,12 +278,12 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
               <Input
                 value={stopLossPrice}
                 onChange={onChangeStopLossPriceEv}
-                suffix={BASE_TOKEN_SYMBOL}
+                suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
               />
               <p>
                 {t('Trade.TPSL.StopLossTip1', 'When market price reaches')}{' '}
-                <strong>{calcPriceShowFunc(stopLossPrice)}</strong> {BASE_TOKEN_SYMBOL},
+                <strong>{calcPriceShowFunc(stopLossPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.StopLossTip2',
                   'it will trigger Stop Loss order to close this position. Estimated loss will be'
@@ -285,7 +291,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, loading, visible, onClose, onC
                 <em className={Number(stopLossAmount) > 0 ? 'buy' : 'sell'}>
                   {calcAmountShowFunc(stopLossPrice, stopLossAmount)}
                 </em>{' '}
-                {BASE_TOKEN_SYMBOL}.
+                {marginToken}.
               </p>
             </section>
           </div>

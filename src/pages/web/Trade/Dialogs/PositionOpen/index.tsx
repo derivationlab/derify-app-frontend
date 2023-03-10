@@ -1,12 +1,15 @@
-import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { isEmpty, debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import { PositionSide } from '@/store/contract/helper'
-import { useMatchConf } from '@/hooks/useMatchConf'
+import { keepDecimals } from '@/utils/tools'
+import { useQuoteToken } from '@/zustand'
+import { PositionSideTypes } from '@/typings'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
-import { nonBigNumberInterception } from '@/utils/tools'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
+import { useFactoryConf, useOpeningMaxLimit, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -22,35 +25,18 @@ interface Props {
 }
 
 const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
-  const { t } = useTranslation()
-
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const { spotPrice, marginToken, quoteToken, protocolConfig, factoryConfig, openingMaxLimit } = useMatchConf()
+  const { t } = useTranslation()
 
-  const calcTradingFeeFunc = useCallback(async () => {
-    if (factoryConfig) {
-      const fee = await calcTradingFee(factoryConfig, data?.symbol, state.validOpeningVol.value, spotPrice)
-      // console.info(fee)
-      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
-    }
-  }, [data, factoryConfig, spotPrice, state.validOpeningVol])
+  const marginToken = useMTokenFromRoute()
 
-  const calcChangeFeeFunc = useCallback(async () => {
-    if (factoryConfig && protocolConfig) {
-      const fee = await calcChangeFee(
-        data?.side,
-        data?.symbol,
-        state.validOpeningVol.value,
-        spotPrice,
-        protocolConfig.exchange,
-        factoryConfig,
-        true
-      )
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-      dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
-    }
-  }, [data, spotPrice, factoryConfig, protocolConfig, state.validOpeningVol])
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { openingMaxLimit } = useOpeningMaxLimit(quoteToken, marginToken)
 
   const checkOpeningVolFunc = async () => {
     const volume = checkOpeningVol(
@@ -64,6 +50,34 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
     dispatch({ type: 'SET_VALID_OPENING_VOLUME', payload: { loaded: true, value: volume } })
   }
+
+  const calcTFeeFunc = useCallback(
+    debounce(async (value: number, symbol: string, spotPrice: string, factoryConfig: string) => {
+      const fee = await calcTradingFee(factoryConfig, symbol, value, spotPrice)
+
+      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
+    }, 1000),
+    []
+  )
+
+  const calcCFeeFunc = useCallback(
+    debounce(
+      async (
+        side: PositionSideTypes,
+        value: number,
+        symbol: string,
+        spotPrice: string,
+        factoryConfig: string,
+        protocolConfig: string
+      ) => {
+        const fee = await calcChangeFee(side, symbol, value, spotPrice, protocolConfig, factoryConfig, true)
+
+        dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
+      },
+      1000
+    ),
+    []
+  )
 
   useEffect(() => {
     if (!isEmpty(data) && visible) {
@@ -79,11 +93,18 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible])
 
   useEffect(() => {
-    if (visible && state.validOpeningVol.value) {
-      void calcTradingFeeFunc()
-      void calcChangeFeeFunc()
+    if (visible && state.validOpeningVol && protocolConfig && factoryConfig && spotPrice) {
+      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrice, factoryConfig)
+      void calcCFeeFunc(
+        data?.side,
+        state.validOpeningVol.value,
+        data?.symbol,
+        spotPrice,
+        factoryConfig,
+        protocolConfig.exchange
+      )
     }
-  }, [visible, state.validOpeningVol])
+  }, [visible, spotPrice, factoryConfig, protocolConfig, state.validOpeningVol])
 
   return (
     <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
@@ -93,9 +114,10 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             <header className="web-trade-dialog-position-info-header">
               <h4>
                 <strong>
-                  {quoteToken}-{marginToken}
+                  {quoteToken}
+                  {VALUATION_TOKEN_SYMBOL}
                 </strong>
-                <MultipleStatus multiple={data?.leverage} direction={PositionSide[data?.side] as any} />
+                <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
@@ -112,7 +134,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
           <div className="web-trade-dialog-position-confirm">
             <dl>
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
-              {data?.side === PositionSide.twoWay ? (
+              {data?.side === PositionSideTypes.twoWay ? (
                 <dd>
                   {!state.validOpeningVol.loaded ? (
                     <small>calculating...</small>
@@ -120,12 +142,12 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <section>
                       <aside>
                         <MultipleStatus direction="Long" />
-                        <em>{nonBigNumberInterception(state.validOpeningVol.value / 2, 8)}</em>
+                        <em>{keepDecimals(state.validOpeningVol.value / 2, findToken(data?.symbol).decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                       <aside>
                         <MultipleStatus direction="Short" />
-                        <em>{nonBigNumberInterception(state.validOpeningVol.value / 2, 8)}</em>
+                        <em>{keepDecimals(state.validOpeningVol.value / 2, findToken(data?.symbol).decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                     </section>
@@ -137,7 +159,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <small>calculating...</small>
                   ) : (
                     <span>
-                      <em>{nonBigNumberInterception(state.validOpeningVol.value, 8)}</em>
+                      <em>{keepDecimals(state.validOpeningVol.value, findToken(data?.symbol).decimals)}</em>
                       <u>{data?.symbol}</u>
                     </span>
                   )}
@@ -154,7 +176,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>calculating...</small>
                 ) : (
                   <div>
-                    <em>{nonBigNumberInterception(state.posChangeFee.value, 8)}</em>
+                    <em>{keepDecimals(state.posChangeFee.value, findToken(marginToken).decimals)}</em>
                     <u>{marginToken}</u>
                   </div>
                 )}
@@ -173,7 +195,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>calculating...</small>
                 ) : (
                   <div>
-                    <em>-{nonBigNumberInterception(state.tradingFeeInfo.value, 8)}</em>
+                    <em>-{keepDecimals(state.tradingFeeInfo.value, findToken(marginToken).decimals)}</em>
                     <u>{marginToken}</u>
                   </div>
                 )}

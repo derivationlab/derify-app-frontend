@@ -1,12 +1,14 @@
-import { useAccount } from 'wagmi'
+import PubSub from 'pubsub-js'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
 
+import { PubSubEvents } from '@/typings'
+import { useQuoteToken } from '@/zustand'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useDepositMargin, useMTokenFromRoute } from '@/hooks/useTrading'
+
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
-import { useTokenBalances } from '@/zustand'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useDepositMargin } from '@/hooks/useTrading'
 
 interface Props {
   size?: string
@@ -14,12 +16,13 @@ interface Props {
 
 const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
-  const { data } = useAccount()
+
+  const marginToken = useMTokenFromRoute()
+
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
 
   const { deposit } = useDepositMargin()
-  const { protocolConfig, marginToken } = useProtocolConf()
-
-  const fetchBalances = useTokenBalances((state) => state.fetch)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -30,14 +33,15 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (data?.address && protocolConfig) {
+      if (protocolConfig) {
         const status = await deposit(protocolConfig.exchange, amount, marginToken)
 
         if (status) {
           // succeed
           window.toast.success(t('common.success', 'success'))
 
-          await fetchBalances(data.address)
+          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+          PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
         } else {
           // fail
           window.toast.error(t('common.failed', 'failed'))
@@ -46,7 +50,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       window.toast.dismiss(toast)
     },
-    [data?.address, protocolConfig, marginToken]
+    [protocolConfig, marginToken]
   )
 
   return (

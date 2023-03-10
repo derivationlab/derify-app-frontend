@@ -1,8 +1,11 @@
-import React, { FC, useState, useCallback } from 'react'
+import PubSub from 'pubsub-js'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useState, useCallback } from 'react'
 
+import { PubSubEvents } from '@/typings'
+import { useQuoteToken } from '@/zustand'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useWithdrawMargin } from '@/hooks/useTrading'
+import { useMTokenFromRoute, useWithdrawMargin } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import WithdrawDialog from '@/components/common/Wallet/WithdrawButton/Withdraw'
@@ -14,8 +17,12 @@ interface Props {
 const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
 
+  const marginToken = useMTokenFromRoute()
+
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+
   const { withdraw } = useWithdrawMargin()
-  const { protocolConfig } = useProtocolConf()
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -31,6 +38,9 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
         if (status) {
           // succeed
           window.toast.success(t('common.success', 'success'))
+
+          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+          PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
         } else {
           // fail
           window.toast.error(t('common.failed', 'failed'))

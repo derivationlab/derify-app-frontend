@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
 import { FaucetLinks } from '@/data/links'
 
 import NotConnect from '@/components/web/NotConnect'
@@ -27,7 +27,7 @@ const Faucet: FC = () => {
 
   return (
     <div className="web-faucet">
-      <Button size="mini" onClick={() => window.open(FaucetLinks[BASE_TOKEN_SYMBOL])}>
+      <Button size="mini" onClick={() => window.open(FaucetLinks[DEFAULT_MARGIN_TOKEN.symbol])}>
         Get 100,000 tBUSD
       </Button>
       {/*<Button type="gray" size="mini">*/}

@@ -1,10 +1,11 @@
-import React, { FC, useState, useRef, useContext } from 'react'
 import classNames from 'classnames'
 import { useClickAway } from 'react-use'
+import React, { FC, useState, useRef, useContext } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/context/Mobile'
-import { BASE_TOKEN_SYMBOL } from '@/config/tokens'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { usePairsInfo, useQuoteToken } from '@/zustand'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -18,11 +19,16 @@ interface Props {
 
 const SymbolSelect: FC<Props> = ({ onToggle }) => {
   const ref = useRef(null)
+
   const { mobile } = useContext(MobileContext)
-  const { spotPrice, quoteToken } = useSpotPrice()
 
   const indicators = usePairsInfo((state) => state.indicators)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const updateQuoteToken = useQuoteToken((state) => state.updateQuoteToken)
+
+  const marginToken = useMTokenFromRoute()
+
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
   const [show, setShow] = useState<boolean>(false)
 
@@ -44,11 +50,12 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
       {mobile && <div className="web-trade-symbol-select-toggle" onClick={toggleFunc} />}
       <div className="web-trade-symbol-select-curr" onClick={() => setShow(!show)}>
         <h4>
-          {quoteToken}-{BASE_TOKEN_SYMBOL}
+          {quoteToken}
+          {VALUATION_TOKEN_SYMBOL}
         </h4>
         <aside>
           <BalanceShow value={spotPrice} unit="" />
-          <ChangePercent value={indicators?.price_change_rate ?? 0} />
+          <ChangePercent value={indicators[quoteToken]?.price_change_rate ?? 0} />
         </aside>
       </div>
       {show && <Options onChange={changeFunc} />}

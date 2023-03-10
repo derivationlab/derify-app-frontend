@@ -1,9 +1,12 @@
-import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo, useReducer, useEffect } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { useTokenBalances } from '@/zustand'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { reducer, stateInit } from '@/reducers/earn'
+import { getTokenBalance, useQuoteToken } from '@/zustand'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -17,51 +20,69 @@ interface Props {
 }
 
 const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
+  const [state, dispatch] = useReducer(reducer, stateInit)
+
   const { t } = useTranslation()
   const { data: ACCOUNT } = useAccount()
 
-  const balances = useTokenBalances((state) => state.balances)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-  const [depositAmount, setDepositAmount] = useState<string>('0')
-  const [isDisabled, setIsDisabled] = useState<boolean>(false)
+  const marginToken = useMTokenFromRoute()
+
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const memoDisabled = useMemo(() => {
-    return isGT(balances['bbusd'], 0)
-  }, [balances])
+    return isGT(state.balance, 0)
+  }, [state.balance])
 
   const onChangeEv = (v: string) => {
-    if (isGTET(balances['bbusd'], v) && isGT(v, 0)) {
-      setIsDisabled(false)
-      setDepositAmount(v)
+    if (isGTET(state.balance, v) && isGT(v, 0)) {
+      dispatch({ type: 'SET_DISABLED', payload: false })
+      dispatch({ type: 'SET_IN_AMOUNT', payload: v })
     } else {
-      setIsDisabled(true)
-      setDepositAmount('0')
+      dispatch({ type: 'SET_DISABLED', payload: true })
+      dispatch({ type: 'SET_IN_AMOUNT', payload: '0' })
     }
   }
 
+  useEffect(() => {
+    const func = async (account: string, protocolConfig: string) => {
+      const data = await getTokenBalance(account, protocolConfig)
+
+      dispatch({ type: 'SET_BALANCE', payload: data })
+    }
+
+    if (ACCOUNT?.address && protocolConfig) void func(ACCOUNT.address, protocolConfig.bMarginToken)
+  }, [])
+
   return (
-    <Dialog width="540px" visible={visible} title={t('Earn.bDRFPool.DepositbDRF', 'Deposit bBUSD')} onClose={onClose}>
+    <Dialog
+      width="540px"
+      visible={visible}
+      title={t('Earn.bDRFPool.DepositbDRF', { Token: `b${marginToken}` })}
+      onClose={onClose}
+    >
       <div className="web-deposit-dialog">
         <div className="web-deposit-dialog-info">
           <div className="wallet">
             <dl>
               <dt>{t('Earn.bDRFPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balances['bbusd']} unit="bBUSD" />
+                <BalanceShow value={state.balance} unit={`b${marginToken}`} />
               </dd>
             </dl>
             <address>{ACCOUNT?.address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={balances['bbusd']}
+              max={state.balance}
               title={t('Earn.bDRFPool.AmountToDeposit', 'Amount to deposit')}
-              unit="bBUSD"
+              unit={`b${marginToken}`}
               onChange={onChangeEv}
             />
           </div>
         </div>
-        <Button onClick={() => onClick(depositAmount)} disabled={!memoDisabled || isDisabled}>
+        <Button onClick={() => onClick(state.inAmount)} disabled={!memoDisabled || state.disabled}>
           {t('Earn.bDRFPool.Deposit', 'Deposit')}
         </Button>
       </div>

@@ -40,7 +40,12 @@
           },
           {
             "internalType": "address",
-            "name": "communityVestingVaultDeployer",
+            "name": "derifyAwardsDeployer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRankDeployer",
             "type": "address"
           },
           {
@@ -479,12 +484,91 @@
           },
           {
             "internalType": "address",
+            "name": "marginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
             "name": "tokenDRF",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minGrantAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRewards",
             "type": "address"
           }
         ],
-        "internalType": "struct IDeployCommunityVestingVault.CommunityVestingVaultParam",
-        "name": "communityVestingVaultParam",
+        "internalType": "struct IDeployDerifyAwards.DerifyAwardsParam",
+        "name": "derifyAwardsPmrParam",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "marginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenDRF",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minGrantAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRewards",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IDeployDerifyAwards.DerifyAwardsParam",
+        "name": "derifyAwardsBrokerParam",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "marginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenDRF",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minGrantAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRewards",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IDeployDerifyRank.DerifyRankParam",
+        "name": "derifyRankParam",
         "type": "tuple"
       },
       {
@@ -647,7 +731,17 @@
           },
           {
             "internalType": "address",
-            "name": "communityVestingVault",
+            "name": "derifyAwardsPmr",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyAwardsBroker",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRank",
             "type": "address"
           },
           {
@@ -807,6 +901,59 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "marginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "traders",
+            "type": "address[]"
+          },
+          {
+            "internalType": "int256[]",
+            "name": "balances",
+            "type": "int256[]"
+          }
+        ],
+        "internalType": "struct IDerifyProtocol.MarginBalances[]",
+        "name": "allMarginBalances",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "getAllMarginBalances",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "marginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "traders",
+            "type": "address[]"
+          },
+          {
+            "internalType": "int256[]",
+            "name": "balances",
+            "type": "int256[]"
+          }
+        ],
+        "internalType": "struct IDerifyProtocol.MarginBalances[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getAllMarginTokens",
     "outputs": [
@@ -880,7 +1027,17 @@
           },
           {
             "internalType": "address",
-            "name": "communityVestingVault",
+            "name": "derifyAwardsPmr",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyAwardsBroker",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRank",
             "type": "address"
           },
           {
@@ -1047,7 +1204,17 @@
       },
       {
         "internalType": "address",
-        "name": "communityVestingVault",
+        "name": "derifyAwardsPmr",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "derifyAwardsBroker",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "derifyRank",
         "type": "address"
       },
       {

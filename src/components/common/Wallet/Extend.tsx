@@ -1,10 +1,8 @@
-import React, { ChangeEvent, FC, useMemo, useState } from 'react'
-import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
+import React, { ChangeEvent, FC, useMemo, useState } from 'react'
 
-import Broker from '@/class/Broker'
-import { useTokenBalances } from '@/zustand'
-import { isET, isLT, isLTET, nonBigNumberInterception } from '@/utils/tools'
+import { bnDiv, isET, isLT, isLTET } from '@/utils/tools'
+import { useConfigInfo, useTokenBalances } from '@/zustand'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -19,31 +17,23 @@ interface Props {
 const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const { burnLimitPerDay } = Broker
-
   const balances = useTokenBalances((state) => state.balances)
+  const brokerParams = useConfigInfo((state) => state.brokerParams)
 
   const [burnAmount, setBurnAmount] = useState<string>('')
 
   const memoDisabled = useMemo(() => {
-    return (
-      Number(burnAmount) === 0 ||
-      isLTET(burnAmount, 0) ||
-      isET(balances['edrf'], 0) ||
-      isLT(balances['edrf'], burnAmount)
-    )
+    return isLTET(burnAmount, 0) || isET(balances['edrf'], 0) || isLT(balances['edrf'], burnAmount)
   }, [balances, burnAmount])
 
   const memoAddDays = useMemo(() => {
     if (Number(burnAmount) <= 0) {
       return '0'
     } else {
-      const _burnAmount = new BN(burnAmount)
-      const _burnLimitPerDay = new BN(burnLimitPerDay)
-      const div = _burnAmount.div(_burnLimitPerDay).toString()
-      return nonBigNumberInterception(div, 0)
+      const div = bnDiv(burnAmount, brokerParams.burnLimitPerDay)
+      return Math.floor(div as any)
     }
-  }, [burnAmount])
+  }, [burnAmount, brokerParams])
 
   const onChangeEv = (e: ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value
@@ -73,7 +63,7 @@ const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Broker.Extend.BrokerPrivilegePricePerDay', 'Broker privilege price per day')}</dt>
               <dd>
-                <BalanceShow value={burnLimitPerDay} unit="eDRF" />
+                <BalanceShow value={brokerParams.burnLimitPerDay} unit="eDRF" />
               </dd>
             </dl>
           </div>

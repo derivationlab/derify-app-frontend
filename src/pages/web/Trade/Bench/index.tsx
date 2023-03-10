@@ -3,16 +3,15 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { PubSubEvents } from '@/typings'
-import { PositionSide } from '@/store/contract/helper'
-import { useTraderData } from '@/store/trader/hooks'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { isOpeningMinLimit } from '@/hooks/helper'
-import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
-import { useConfigInfo, usePairsInfo } from '@/zustand'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { PubSubEvents, PositionSideTypes } from '@/typings'
+import { useMTokenFromRoute, useOpeningPosition } from '@/hooks/useTrading'
+import { useConfigInfo, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -23,7 +22,6 @@ import Row from './c/Row'
 import Col from './c/Col'
 import Info from './c/Info'
 import PriceInput from './c/PriceInput'
-import Initializing from './c/Initializing'
 import QuantityInput from './c/QuantityInput'
 import OpenTypeSelect from './c/OpenTypeSelect'
 
@@ -31,20 +29,25 @@ const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
-  const { opening } = useOpeningPosition()
-  const { protocolConfig } = useProtocolConf()
-  const { brokerBound: broker } = useTraderData() // todo rewrite redux
-  const { spotPrice, marginToken, quoteToken } = useSpotPrice()
 
   const indicators = usePairsInfo((state) => state.indicators)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
   const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
+  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
+  const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
+  const maxVolumeLoaded = useCalcOpeningDAT((state) => state.maxVolumeLoaded)
   const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
   const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
-  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
-  const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
+
+  const marginToken = useMTokenFromRoute()
+
+  const { opening } = useOpeningPosition()
+  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(indicators?.longPmrRate)
@@ -91,23 +94,12 @@ const Bench: FC = () => {
 
     dispatch({ type: 'SET_MODAL_STATUS', payload: false })
 
-    if (broker?.broker && protocolConfig) {
+    if (brokerBound?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
-      // console.info(
-      //   protocolConfig.exchange,
-      //   broker.broker,
-      //   findToken(quoteToken).tokenAddress,
-      //   state.openingParams?.side,
-      //   openingType,
-      //   state.openingParams?.symbol,
-      //   state.openingParams?.price,
-      //   leverageNow,
-      //   amount,
-      //   conversion
-      // )
+
       const status = await opening(
         protocolConfig.exchange,
-        broker.broker,
+        brokerBound.broker,
         findToken(quoteToken).tokenAddress,
         state.openingParams?.side,
         openingType,
@@ -124,6 +116,7 @@ const Bench: FC = () => {
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+        PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -136,7 +129,7 @@ const Bench: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const openPositionDialog = async (side: PositionSide) => {
+  const openPositionDialog = async (side: PositionSideTypes) => {
     if (protocolConfig) {
       let _openType = openingType
       const _realPrice = openingType === OpeningType.Market ? spotPrice : openingPrice
@@ -155,10 +148,10 @@ const Bench: FC = () => {
       }
 
       if (openingType === OpeningType.Limit) {
-        if (side === PositionSide.long) {
+        if (side === PositionSideTypes.long) {
           if (isGT(openingPrice, spotPrice)) _openType = 0
         }
-        if (side === PositionSide.short) {
+        if (side === PositionSideTypes.short) {
           if (isLT(openingPrice, spotPrice)) _openType = 0
         }
       }
@@ -171,14 +164,13 @@ const Bench: FC = () => {
         leverage: leverageNow,
         openType: _openType
       }
-      console.info(openPosParams)
       dispatch({ type: 'SET_MODAL_STATUS', payload: true })
       dispatch({ type: 'SET_OPENING_PARAMS', payload: openPosParams })
     }
   }
 
   useEffect(() => {
-    if (Number(spotPrice) > 0) {
+    if (isGT(spotPrice, 0)) {
       updateOpeningPrice(spotPrice)
     }
   }, [spotPrice])
@@ -204,7 +196,7 @@ const Bench: FC = () => {
             <Col label={t('Trade.Bench.Price', 'Price')}>
               <PriceInput
                 value={openingPrice}
-                onChange={updateOpeningPrice}
+                onChange={(v) => updateOpeningPrice(v as any)}
                 disabled={openingType === OpeningType.Market}
               />
             </Col>
@@ -218,9 +210,10 @@ const Bench: FC = () => {
           <Row>
             <Col>
               <Button
+                loading={!maxVolumeLoaded}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
-                onClick={() => openPositionDialog(PositionSide.long)}
+                onClick={() => openPositionDialog(PositionSideTypes.long)}
                 type="buy"
               >
                 <strong>{t('Trade.Bench.Long', 'Long')}</strong>
@@ -231,10 +224,11 @@ const Bench: FC = () => {
             </Col>
             <Col>
               <Button
+                loading={!maxVolumeLoaded}
                 disabled={memoDisabled1 || memoDisabled2}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
-                onClick={() => openPositionDialog(PositionSide.short)}
+                onClick={() => openPositionDialog(PositionSideTypes.short)}
                 type="sell"
               >
                 <strong>{t('Trade.Bench.Short', 'Short')}</strong>
@@ -248,10 +242,11 @@ const Bench: FC = () => {
             <Row>
               <Col>
                 <Button
+                  loading={!maxVolumeLoaded}
                   disabled={memoDisabled1 || memoDisabled2}
                   noDisabledStyle
                   className="web-trade-bench-button-full"
-                  onClick={() => openPositionDialog(PositionSide.twoWay)}
+                  onClick={() => openPositionDialog(PositionSideTypes.twoWay)}
                   outline
                   full
                   type="blue"
@@ -266,7 +261,6 @@ const Bench: FC = () => {
           )}
         </div>
         <NotConnect />
-        <Initializing />
       </div>
       <PositionOpenDialog
         data={state.openingParams}

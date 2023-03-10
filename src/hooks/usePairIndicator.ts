@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 
 import { MarginTokenKeys } from '@/typings'
 import { getPairIndicator } from '@/api'
+import { bnPlus, keepDecimals } from '@/utils/tools'
 import { findMarginToken, findToken, QUOTE_TOKENS } from '@/config/tokens'
-import { bnPlus, nonBigNumberInterception } from '@/utils/tools'
 
 export const initial = (): Record<string, any> => {
   let quote = Object.create(null)
@@ -18,55 +18,56 @@ export const initial = (): Record<string, any> => {
   return quote
 }
 
-export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<string, any>; isLoading: boolean } => {
+export const usePairIndicator = (marginToken: MarginTokenKeys): { data: Record<string, any> } => {
   const output = initial()
 
-  const { data, isLoading } = useQuery(
+  const { data } = useQuery(
     ['getPairIndicator'],
-    async (): Promise<Record<string, any>> => {
+    async (): Promise<Record<string, any>[]> => {
       const m = findMarginToken(marginToken)!
-      const { data } = await getPairIndicator(m.tokenAddress)
-      return data
+      const data = await getPairIndicator(m.tokenAddress)
+      // console.info(data?.data)
+      return data?.data ?? []
     },
     {
       retry: false,
+      initialData: [],
       refetchInterval: 3000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  if (!isLoading && data) {
+  if (data.length > 0) {
     data.forEach(
       ({
         token,
-        longUsdPmrRate = 0,
+        longMarginTokenPmrRate = 0,
         longDrfPmrRate = 0,
         shortDrfPmrRate = 0,
-        shortUsdPmrRate = 0,
+        shortMarginTokenPmrRate = 0,
         price_change_rate = 0,
         ...rest
       }: Record<string, any>) => {
         const quote = findToken(token).symbol
-        const changeRate = nonBigNumberInterception(String(price_change_rate), 4)
-        const longPmrRate = nonBigNumberInterception(bnPlus(longDrfPmrRate, longUsdPmrRate))
-        const shortPmrRate = nonBigNumberInterception(bnPlus(shortDrfPmrRate, shortUsdPmrRate))
-        const apyMax = Math.max(Number(longPmrRate), Number(shortPmrRate))
+        const longPmrRate = bnPlus(longDrfPmrRate, longMarginTokenPmrRate)
+        const shortPmrRate = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
+        const pmrRateMax = keepDecimals(Math.max(Number(longPmrRate), Number(shortPmrRate)), 4)
 
         output[quote] = {
           ...output[quote],
           ...rest,
-          apy: apyMax,
+          apy: pmrRateMax,
           token,
           longPmrRate,
           shortPmrRate,
-          price_change_rate: changeRate
+          price_change_rate
         }
       }
     )
     // console.info(output)
-    return { data: output, isLoading }
+    return { data: output }
   }
 
-  return { isLoading: true }
+  return { data: output }
 }

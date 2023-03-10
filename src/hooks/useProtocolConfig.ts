@@ -66,7 +66,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
         }
       }
     })
-    // console.info(output)
+    console.info(output)
     return { data: output, isLoading }
   }
 

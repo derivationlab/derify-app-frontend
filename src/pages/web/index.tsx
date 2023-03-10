@@ -15,7 +15,6 @@ import Data from '@/pages/web/Data'
 import BrokerRank from '@/pages/web/Broker/Rank'
 import BrokerBind from '@/pages/web/Broker/Bind'
 import BrokerBound from '@/pages/web/Broker/MyBroker'
-import BrokerConnect from '@/pages/web/Broker/c/Connect'
 import BrokerBindList from '@/pages/web/Broker/Bind/List'
 import BrokerWorkbench from '@/pages/web/Broker/Workbench'
 import BrokerSignUpStep1 from '@/pages/web/Broker/SignUp/step1'
@@ -25,8 +24,6 @@ import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 
 const Web: FC = () => {
-  const { data: account } = useAccount()
-
   const { marginToken } = useMTokenForRoute()
 
   const [visible, setVisible] = useState<boolean>(false)

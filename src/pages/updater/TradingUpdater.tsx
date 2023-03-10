@@ -30,6 +30,7 @@ export default function TradingUpdater(): null {
     updatePCFRatios(pcfDAT)
     updateSpotPrices(spotPriceDAT)
   }
+
   // for pcf and spot price
   useInterval(() => {
     if (factoryConfig && factoryConfigLoaded) void _getPCFAndSpotPrice(factoryConfig)

@@ -5,7 +5,7 @@ import React, { FC, useState, useContext } from 'react'
 import { MobileContext } from '@/context/Mobile'
 
 import TradingUpdater from '@/pages/updater/TradingUpdater'
-import UpdateIndicators from '@/pages/updater/UpdateIndicators'
+import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
 
 import Data from './Data'
 import KLine from './KLine'
@@ -26,7 +26,7 @@ const Trade: FC = () => {
       <>
         <div className="web-trade">
           <TradingUpdater />
-          <UpdateIndicators />
+          <IndicatorsUpdater />
 
           <div className="web-trade-mobile-header">
             <SymbolSelect onToggle={() => setToggle(!toggle)} />
@@ -48,7 +48,7 @@ const Trade: FC = () => {
   return (
     <div className="web-trade">
       <TradingUpdater />
-      <UpdateIndicators />
+      <IndicatorsUpdater />
 
       <main className="web-trade-main">
         <KLine />

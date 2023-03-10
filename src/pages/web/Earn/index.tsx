@@ -9,7 +9,7 @@ import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
 
-import UpdateIndicators from '@/pages/updater/UpdateIndicators'
+import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
 
 import DRFPool from './c/DRFPool'
 import EranbDRFPool from './c/bDRFPool'
@@ -71,7 +71,7 @@ const Eran: FC = () => {
 
   return (
     <div className="web-eran">
-      <UpdateIndicators />
+      <IndicatorsUpdater />
 
       <PositionMining />
       <DRFPool />

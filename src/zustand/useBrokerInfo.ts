@@ -12,10 +12,8 @@ import {
 const useBrokerInfo = create<BrokerInfoState>((set) => ({
   brokerInfo: {},
   brokerBound: {},
-  brokerAssets: {},
   brokerInfoLoaded: false,
   brokerBoundLoaded: false,
-  brokerAssetsLoaded: false,
   fetchBrokerBound: async (trader: string) => {
     const data = await getBrokerInfoByTrader(trader)
 
@@ -55,13 +53,7 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
         : {},
       brokerInfoLoaded: true
     })
-  },
-  updateBrokerAssets: (data: Rec) =>
-    set(() => {
-      // console.info('updateBrokerAssets:')
-      // console.info(data)
-      return { brokerAssets: data, brokerAssetsLoaded: true }
-    })
+  }
 }))
 
 export { useBrokerInfo }

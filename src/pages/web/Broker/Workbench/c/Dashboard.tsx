@@ -2,13 +2,15 @@ import BN from 'bignumber.js'
 import dayjs from 'dayjs'
 import PubSub from 'pubsub-js'
 import { Link } from 'react-router-dom'
-import { useSigner } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/context/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useQuoteToken } from '@/zustand'
+import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
 import { useWithdrawReward } from '@/hooks/useBroker'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
@@ -21,6 +23,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const Dashboard: FC = () => {
   const { t } = useTranslation()
+  const { data } = useAccount()
   const { data: signer } = useSigner()
 
   const { mobile } = useContext(MobileContext)
@@ -29,8 +32,10 @@ const Dashboard: FC = () => {
   const marginToken = useMTokenFromRoute()
 
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-  const { brokerAssets } = useBrokerInfoFromC()
+  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { data: brokerAssets } = useBrokerInfoFromC(data?.address, protocolConfig?.rewards)
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
   const withdrawFunc = useCallback(async () => {
@@ -67,10 +72,10 @@ const Dashboard: FC = () => {
   }, [brokerAssets])
 
   const memoTodayRewards = useMemo(() => {
-    const drf_reward = new BN(brokerAssets?.drf_reward ?? 0).times(dashboardDAT?.drfPrice ?? 0)
-    const rewards_plus = drf_reward.plus(brokerAssets?.usd_reward ?? 0).toString()
+    const drf_reward = new BN(brokerInfo?.drf_reward ?? 0).times(dashboardDAT?.drfPrice ?? 0)
+    const rewards_plus = drf_reward.plus(brokerInfo?.usd_reward ?? 0).toString()
     return nonBigNumberInterception(rewards_plus)
-  }, [brokerAssets, dashboardDAT])
+  }, [brokerInfo, dashboardDAT])
 
   const memoDisabled = useMemo(() => {
     const [usd, drf] = memoTotalBalance

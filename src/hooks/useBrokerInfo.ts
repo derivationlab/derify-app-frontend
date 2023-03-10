@@ -1,48 +1,57 @@
-import { useAccount } from 'wagmi'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-import { useInterval } from 'react-use'
-import { getBrokerInfo } from '@/hooks/helper'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useQuoteToken } from '@/zustand'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { getDerifyBrokerContract } from '@/utils/contractHelpers'
 
 const init = {
   isBroker: false,
   drfRewardBalance: '0',
+  validPeriodInBlocks: 0,
   accumulatedDrfReward: '0',
   marginTokenRewardBalance: '0',
   accumulatedMarginTokenReward: '0'
 }
 
-export const useBrokerInfoFromC = () => {
-  const { data } = useAccount()
+export const useBrokerInfoFromC = (trader = '', rewards = ''): { data: Record<string, any>; isLoading: boolean } => {
+  const { data, isLoading } = useQuery(
+    ['useRankReward'],
+    async () => {
+      if (trader && rewards) {
+        const c1 = getDerifyBrokerContract()
+        // const c2 = getDerifyRewardsContract(rewards)
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
+        const res1 = await c1.getBrokerInfo(trader)
+        // const res2 = await c2.getBrokerReward(trader)
 
-  const marginToken = useMTokenFromRoute()
-
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
-
-  const [brokerAssets, setBrokerAssets] = useState<typeof init>(init)
-
-  const _getBrokerInfo = async (trader: string, rewards: string) => {
-    const staking = await getBrokerInfo(trader, rewards)
-    // console.info(staking)
-    setBrokerAssets(staking)
-  }
-
-  useEffect(() => {
-    if (data?.address && protocolConfig) {
-      void _getBrokerInfo(data?.address, protocolConfig.rewards)
+        const { validPeriodInBlocks } = res1
+        // const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } = res2
+        // console.info({
+        //   isBroker: true,
+        //   marginTokenRewardBalance: safeInterceptionValues(marginTokenRewardBalance),
+        //   drfRewardBalance: safeInterceptionValues(drfRewardBalance),
+        //   validPeriodInBlocks: Number(validPeriodInBlocks),
+        //   accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
+        //   accumulatedMarginTokenReward: safeInterceptionValues(accumulatedMarginTokenReward)
+        // })
+        return {
+          ...init,
+          isBroker: true,
+          // drfRewardBalance: safeInterceptionValues(drfRewardBalance),
+          validPeriodInBlocks: Number(validPeriodInBlocks)
+          // accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
+          // marginTokenRewardBalance: safeInterceptionValues(marginTokenRewardBalance),
+          // accumulatedMarginTokenReward: safeInterceptionValues(accumulatedMarginTokenReward)
+        }
+      }
+      return init
+    },
+    {
+      retry: false,
+      initialData: init,
+      refetchInterval: 6000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
     }
-  }, [data?.address, protocolConfig])
+  )
 
-  useInterval(() => {
-    if (data?.address && protocolConfig) {
-      void _getBrokerInfo(data?.address, protocolConfig.rewards)
-    }
-  }, 6000)
-
-  return { brokerAssets }
+  return { data, isLoading }
 }

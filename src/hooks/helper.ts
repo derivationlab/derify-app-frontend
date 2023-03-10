@@ -8,7 +8,6 @@ import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { PositionSideTypes } from '@/typings'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {
-  getDerifyBrokerContract,
   getDerifyDerivativePairContract,
   getDerifyExchangeContract,
   getDerifyProtocolContract,
@@ -539,46 +538,6 @@ export const getBankBDRFPoolDAT = async (reward: string) => {
   const c = getDerifyRewardsContract(reward)
   const d = await c.bankBondPool()
   return safeInterceptionValues(String(d), 8)
-}
-
-export const getBrokerInfo = async (trader: string, rewards: string) => {
-  const base = {
-    isBroker: false,
-    drfRewardBalance: '0',
-    accumulatedDrfReward: '0',
-    marginTokenRewardBalance: '0',
-    accumulatedMarginTokenReward: '0'
-  }
-  const c1 = getDerifyBrokerContract()
-  const c2 = getDerifyRewardsContract(rewards)
-
-  try {
-    const res1 = await c1.getBrokerInfo(trader)
-    const res2 = await c2.getBrokerReward(trader)
-
-    const { validPeriodInBlocks } = res1
-    const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } = res2
-    // console.info({
-    //   isBroker: true,
-    //   marginTokenRewardBalance: safeInterceptionValues(marginTokenRewardBalance),
-    //   drfRewardBalance: safeInterceptionValues(drfRewardBalance),
-    //   validPeriodInBlocks: Number(validPeriodInBlocks),
-    //   accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
-    //   accumulatedMarginTokenReward: safeInterceptionValues(accumulatedMarginTokenReward)
-    // })
-    return {
-      isBroker: true,
-      drfRewardBalance: safeInterceptionValues(drfRewardBalance),
-      validPeriodInBlocks: Number(validPeriodInBlocks),
-      accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
-      marginTokenRewardBalance: safeInterceptionValues(marginTokenRewardBalance),
-      accumulatedMarginTokenReward: safeInterceptionValues(accumulatedMarginTokenReward)
-    }
-  } catch (e) {
-    // DBroker: GBI_NOT_BROKER
-    console.info(e)
-    return base
-  }
 }
 
 export const initialPCFAndSpotPrice = (): MarginTokenWithQuote => {

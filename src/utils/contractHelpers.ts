@@ -9,6 +9,9 @@ import { baseProvider } from '@/utils/baseProvider'
 
 import bep20Abi from '@/config/abi/erc20.json'
 import multiCallAbi from '@/config/abi/MM.json'
+import DerifyPmrAbi from '@/config/abi/DerifyPmr.json'
+import DerifyRankAbi from '@/config/abi/DerifyRank.json'
+import DerifyAwardsAbi from '@/config/abi/DerifyAwards.json'
 import DerifyBrokerAbi from '@/config/abi/DerifyBroker.json'
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
@@ -46,4 +49,16 @@ export const getDerifyDerivativePairContract = (pairAddress: string, signer?: Si
 
 export const getDerifyProtocolContract = (signer?: Signer | Provider | null) => {
   return getContract(DerifyProtocolAbi, contracts.derifyProtocol.contractAddress, signer)
+}
+
+export const getDerifyPmrContract = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(DerifyPmrAbi, address, signer)
+}
+
+export const getDerifyRankContract = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(DerifyRankAbi, address, signer)
+}
+
+export const getDerifyAwardsContract = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(DerifyAwardsAbi, address, signer)
 }

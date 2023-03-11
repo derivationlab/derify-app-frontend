@@ -163,7 +163,7 @@ export const getTraderMarginBalance = async (trader: string, page: number, offse
 export const getRankGrantList = async (
   marginToken: string,
   trader: string,
-  status: number,
+  status: string,
   page: number,
   offset: number
 ) => {

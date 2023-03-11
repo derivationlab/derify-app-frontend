@@ -16,7 +16,7 @@ export const useApplyBroker = () => {
   const { data: s } = useSigner()
   const applyBroker = useCallback(
     async (burnLimitAmount: string, signer: Signer): Promise<boolean> => {
-      console.info(s)
+      // console.info(s)
       if (!signer) return false
 
       const c = getDerifyBrokerContract(signer)

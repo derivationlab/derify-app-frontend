@@ -1,13 +1,16 @@
 import { isEmpty } from 'lodash'
+import { useSigner } from 'wagmi'
+import { useCallback } from 'react'
 
 import multicall from '@/utils/multicall'
 import { useQuery } from '@tanstack/react-query'
-import { formatUnits } from '@/utils/tools'
+import { estimateGas, setAllowance } from '@/utils/practicalMethod'
+import { formatUnits, inputParameterConversion } from '@/utils/tools'
+import { getDerifyPmrContract, getDerifyRankContract, getDerifyAwardsContract } from '@/utils/contractHelpers'
 
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
-import { useSigner } from 'wagmi'
-import { useCallback } from 'react'
-import { getDerifyRewardsContract } from '@/utils/contractHelpers'
+import contracts from '@/config/contracts'
+import tokens from '@/config/tokens'
 
 export const useRankReward = (trader: string, rewards: string): { data?: Record<string, any>; isLoading: boolean } => {
   const { data, isLoading } = useQuery(
@@ -60,14 +63,33 @@ export const useRankReward = (trader: string, rewards: string): { data?: Record<
 export const useAddGrant = () => {
   const { data: signer } = useSigner()
 
-  const addGrant1 = useCallback(
-    async (rewards: string): Promise<boolean> => {
+  const addGrantPlan = useCallback(
+    async (type: number, address: string, amount: string, days1: string, days2: string): Promise<boolean> => {
       if (!signer) return false
-      const c = getDerifyRewardsContract(rewards, signer)
+
+      let c: any
+
+      if (type === 0) {
+        c = getDerifyPmrContract(address, signer)
+      }
+      if (type === 1) {
+        c = getDerifyAwardsContract(address, signer)
+      }
+      if (type === 2) {
+        c = getDerifyRankContract(address, signer)
+      }
+
+      const _amount = inputParameterConversion(amount, 18)
 
       try {
-        const res = await c.withdrawAllEdrf()
+        const approve = await setAllowance(signer, address, tokens.drf.tokenAddress, _amount)
+
+        if (!approve) return false
+
+        const gasLimit = await estimateGas(c, 'addGrant', [_amount, days1, days2], 0)
+        const res = await c.addGrant(_amount, days1, days2, { gasLimit })
         const receipt = await res.wait()
+        console.info(receipt.status)
         return receipt.status
       } catch (e) {
         console.info(e)
@@ -77,5 +99,5 @@ export const useAddGrant = () => {
     [signer]
   )
 
-  return { addGrant1 }
+  return { addGrantPlan }
 }

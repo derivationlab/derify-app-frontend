@@ -80,15 +80,7 @@ export const R2 = (props: PropsWithChildren<any>) => {
       if (!isEmpty(brokerBound)) {
         return <Redirect to="/broker" />
       }
-      return pathKey ? (
-        find ? (
-          children
-        ) : (
-          <Redirect to={`/${marginToken}/${pathKey}`} />
-        )
-      ) : (
-        <Redirect to={`/${pathKey}`} />
-      )
+      return pathKey ? find ? children : <Redirect to={`/${marginToken}/${pathKey}`} /> : children
     }
     return <Loading show type="fixed" />
   }, [find, account, pathKey, brokerBound, marginToken, brokerBoundLoaded])

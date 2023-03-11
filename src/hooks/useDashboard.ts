@@ -5,6 +5,9 @@ import { useQuery } from '@tanstack/react-query'
 import { formatUnits } from '@/utils/tools'
 
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
+import { useSigner } from 'wagmi'
+import { useCallback } from 'react'
+import { getDerifyRewardsContract } from '@/utils/contractHelpers'
 
 export const useRankReward = (trader: string, rewards: string): { data?: Record<string, any>; isLoading: boolean } => {
   const { data, isLoading } = useQuery(
@@ -52,4 +55,27 @@ export const useRankReward = (trader: string, rewards: string): { data?: Record<
   }
 
   return { isLoading }
+}
+
+export const useAddGrant = () => {
+  const { data: signer } = useSigner()
+
+  const addGrant1 = useCallback(
+    async (rewards: string): Promise<boolean> => {
+      if (!signer) return false
+      const c = getDerifyRewardsContract(rewards, signer)
+
+      try {
+        const res = await c.withdrawAllEdrf()
+        const receipt = await res.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { addGrant1 }
 }

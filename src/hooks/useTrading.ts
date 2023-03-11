@@ -345,11 +345,10 @@ export const useMTokenFromRoute = () => {
 
   return useMemo(() => {
     if (params?.id) {
-      const id = params.id
-      const find = findMarginToken(id)
+      const find = findMarginToken(params.id)
 
       if (find) {
-        return id
+        return find.symbol
       } else {
         const local = localStorage.getItem('MARGIN_TOKEN')
         return local ? JSON.parse(local).state.marginToken : DEFAULT_MARGIN_TOKEN.symbol

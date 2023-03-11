@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getDerifyBrokerContract } from '@/utils/contractHelpers'
+import { getDerifyBrokerContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
+import { formatUnits } from '@/utils/tools'
 
 const init = {
   isBroker: false,
@@ -17,29 +18,29 @@ export const useBrokerInfoFromC = (trader = '', rewards = ''): { data: Record<st
     async () => {
       if (trader && rewards) {
         const c1 = getDerifyBrokerContract()
-        // const c2 = getDerifyRewardsContract(rewards)
+        const c2 = getDerifyRewardsContract(rewards)
 
         const res1 = await c1.getBrokerInfo(trader)
-        // const res2 = await c2.getBrokerReward(trader)
+        const res2 = await c2.getBrokerReward(trader)
 
         const { validPeriodInBlocks } = res1
-        // const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } = res2
+        const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } = res2
         // console.info({
         //   isBroker: true,
-        //   marginTokenRewardBalance: safeInterceptionValues(marginTokenRewardBalance),
-        //   drfRewardBalance: safeInterceptionValues(drfRewardBalance),
+        //   marginTokenRewardBalance: formatUnits(marginTokenRewardBalance),
+        //   drfRewardBalance: formatUnits(drfRewardBalance),
         //   validPeriodInBlocks: Number(validPeriodInBlocks),
-        //   accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
-        //   accumulatedMarginTokenReward: safeInterceptionValues(accumulatedMarginTokenReward)
+        //   accumulatedDrfReward: formatUnits(accumulatedDrfReward),
+        //   accumulatedMarginTokenReward: formatUnits(accumulatedMarginTokenReward)
         // })
         return {
           ...init,
           isBroker: true,
-          // drfRewardBalance: safeInterceptionValues(drfRewardBalance),
-          validPeriodInBlocks: Number(validPeriodInBlocks)
-          // accumulatedDrfReward: safeInterceptionValues(accumulatedDrfReward),
-          // marginTokenRewardBalance: safeInterceptionValues(marginTokenRewardBalance),
-          // accumulatedMarginTokenReward: safeInterceptionValues(accumulatedMarginTokenReward)
+          drfRewardBalance: formatUnits(drfRewardBalance),
+          validPeriodInBlocks: Number(validPeriodInBlocks),
+          accumulatedDrfReward: formatUnits(accumulatedDrfReward),
+          marginTokenRewardBalance: formatUnits(marginTokenRewardBalance),
+          accumulatedMarginTokenReward: formatUnits(accumulatedMarginTokenReward)
         }
       }
       return init

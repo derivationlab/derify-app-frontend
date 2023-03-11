@@ -106,7 +106,7 @@
         "type": "uint256"
       }
     ],
-    "name": "InfurancePoolUpdate",
+    "name": "InsurancePoolUpdate",
     "type": "event"
   },
   {
@@ -484,6 +484,45 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "tokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address",
+        "name": "trader",
+        "type": "address"
+      }
+    ],
+    "name": "_getMarginBalance",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "marginBalance",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "traderUnrealizedProfit",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "traderUnrealizedLoss",
+        "type": "int256"
+      },
+      {
+        "internalType": "bool",
+        "name": "hasPosition",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -1488,9 +1527,5 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
-  },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
   }
 ]

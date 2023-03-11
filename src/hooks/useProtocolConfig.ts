@@ -36,7 +36,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
     params: [t.tokenAddress],
     address: contracts.derifyProtocol.contractAddress
   }))
-
+  // console.info(calls)
   const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 30000)
 
   if (!isLoading && !isEmpty(data)) {
@@ -51,7 +51,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
         derifyAwardsBroker,
         marginTokenPriceFeed
       } = addresses
-
+      // console.info(addresses)
       output = {
         ...output,
         [MARGIN_TOKENS[index].symbol]: {
@@ -66,7 +66,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
         }
       }
     })
-    console.info(output)
+    // console.info(output)
     return { data: output, isLoading }
   }
 

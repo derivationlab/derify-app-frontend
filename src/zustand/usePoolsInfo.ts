@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-import { PoolsInfoState, Rec } from '@/zustand/types'
+import { PoolsInfoState } from '@/zustand/types'
 
 const usePoolsInfo = create<PoolsInfoState>((set) => ({
   drfPoolBalance: '0',

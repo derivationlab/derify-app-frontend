@@ -30,12 +30,12 @@
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsPmr",
+            "name": "derifyPmr",
             "type": "address"
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsBroker",
+            "name": "derifyBrokerRewards",
             "type": "address"
           },
           {
@@ -1106,7 +1106,7 @@
   },
   {
     "inputs": [],
-    "name": "derifyAwardsBroker",
+    "name": "derifyBrokerRewards",
     "outputs": [
       {
         "internalType": "address",
@@ -1119,7 +1119,7 @@
   },
   {
     "inputs": [],
-    "name": "derifyAwardsPmr",
+    "name": "derifyPmr",
     "outputs": [
       {
         "internalType": "address",
@@ -1255,6 +1255,47 @@
         "internalType": "uint256",
         "name": "bondAnnualInterestRatio",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "broker",
+        "type": "address"
+      }
+    ],
+    "name": "getBrokerReward",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "marginTokenRewardBalance",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "accumulatedMarginTokenReward",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "drfRewardBalance",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "accumulatedDrfReward",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct IDerifyRewards.BrokerRewardInfo",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -1448,24 +1489,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "trader",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "mintBond",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -1650,9 +1673,9 @@
         "type": "uint256[]"
       },
       {
-        "internalType": "uint256[]",
-        "name": "gasFeeInDrfAmounts",
-        "type": "uint256[]"
+        "internalType": "uint256",
+        "name": "gasFeeInDrfAmount",
+        "type": "uint256"
       }
     ],
     "name": "updateDrfBrokerReward",
@@ -1691,12 +1714,12 @@
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsPmr",
+            "name": "derifyPmr",
             "type": "address"
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsBroker",
+            "name": "derifyBrokerRewards",
             "type": "address"
           },
           {
@@ -1762,17 +1785,12 @@
       },
       {
         "internalType": "uint256[]",
-        "name": "marginTokenAmounts",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
         "name": "drfAmounts",
         "type": "uint256[]"
       },
       {
         "internalType": "uint256",
-        "name": "gasFeeAmount",
+        "name": "gasFeeInDrfAmount",
         "type": "uint256"
       }
     ],

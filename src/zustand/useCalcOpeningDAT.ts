@@ -1,8 +1,8 @@
 import create from 'zustand'
 
+import { findToken } from '@/config/tokens'
 import { VolumeState } from '@/zustand/types'
 import { MarginTokenKeys } from '@/typings'
-import { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { formatUnits, inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 

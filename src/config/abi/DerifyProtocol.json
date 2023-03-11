@@ -40,7 +40,12 @@
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsDeployer",
+            "name": "derifyPmrDeployer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyBrokerRewardsDeployer",
             "type": "address"
           },
           {
@@ -503,8 +508,8 @@
             "type": "address"
           }
         ],
-        "internalType": "struct IDeployDerifyAwards.DerifyAwardsParam",
-        "name": "derifyAwardsPmrParam",
+        "internalType": "struct IDeployDerifyPmr.DerifyPmrParam",
+        "name": "derifyPmrParam",
         "type": "tuple"
       },
       {
@@ -535,8 +540,8 @@
             "type": "address"
           }
         ],
-        "internalType": "struct IDeployDerifyAwards.DerifyAwardsParam",
-        "name": "derifyAwardsBrokerParam",
+        "internalType": "struct IDeployDerifyBrokerRewards.DerifyBrokerRewardsParam",
+        "name": "derifyBrokerRewardsParam",
         "type": "tuple"
       },
       {
@@ -731,12 +736,12 @@
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsPmr",
+            "name": "derifyPmr",
             "type": "address"
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsBroker",
+            "name": "derifyBrokerRewards",
             "type": "address"
           },
           {
@@ -1027,12 +1032,12 @@
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsPmr",
+            "name": "derifyPmr",
             "type": "address"
           },
           {
             "internalType": "address",
-            "name": "derifyAwardsBroker",
+            "name": "derifyBrokerRewards",
             "type": "address"
           },
           {
@@ -1204,12 +1209,12 @@
       },
       {
         "internalType": "address",
-        "name": "derifyAwardsPmr",
+        "name": "derifyPmr",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "derifyAwardsBroker",
+        "name": "derifyBrokerRewards",
         "type": "address"
       },
       {

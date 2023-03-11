@@ -44,13 +44,13 @@ const Header: FC = () => {
             <em />
             <ul>
               <li>
-                <NavLink to="/dashboard/overview">Overview</NavLink>
+                <NavLink to={`/${marginToken}/dashboard/overview`}>Overview</NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/buyback-plan">Buyback Plan</NavLink>
+                <NavLink to={`/${marginToken}/dashboard/buyback-plan`}>Buyback Plan</NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/grant-list">Grant List</NavLink>
+                <NavLink to={`/${marginToken}/dashboard/grant-list`}>Grant List</NavLink>
               </li>
             </ul>
           </span>

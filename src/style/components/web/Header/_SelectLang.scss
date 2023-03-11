@@ -25,7 +25,7 @@
   &-menu {
     position: absolute;right: 0;top: 48px;display: none;
     box-shadow: 0px 0px 8px rgba($c00, 0.2);background: $cff;
-    border-radius: 24px;padding: 24px;width: 240px;z-index: 11;
+    border-radius: 24px;padding: 24px;min-width: 240px;z-index: 11;
     &.show {
       display: block;
     }

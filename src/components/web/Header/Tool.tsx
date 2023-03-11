@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import SelectLang from './SelectLang'
 import SelectTheme from './SelectTheme'
 import Community from './Community'
+import AddTokenTool from './AddTokenTool'
 
 import { Feedback, Docs, WhitePaper, Tutorial, TestNet } from '@/data/links'
 
@@ -27,6 +28,7 @@ const Tool: FC = () => {
       <div className={classNames('web-header-tool-menu', { show: menuStatus })}>
         <SelectLang />
         <SelectTheme />
+        <AddTokenTool />
         <ul>
           <li>
             <a href={Feedback} target="_blank">

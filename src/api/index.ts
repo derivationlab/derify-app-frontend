@@ -159,3 +159,29 @@ export const getTraderMarginBalance = async (trader: string, page: number, offse
   const response = await get(`api/trader_margin_balance/${trader}/${page}/${offset}`)
   return response
 }
+
+export const getRankGrantList = async (
+  marginToken: string,
+  trader: string,
+  status: number,
+  page: number,
+  offset: number
+) => {
+  const response = await get(`api/rank_grant_list/${marginToken}/${trader}/${status}/${page}/${offset}`)
+  return response
+}
+
+export const getActiveRankGrantCount = async (marginToken: string) => {
+  const response = await get(`api/active_rank_grant_count/${marginToken}`)
+  return response
+}
+
+export const getActiveRankGrantTotalAmount = async (marginToken: string) => {
+  const response = await get(`api/active_rank_grant_total_amount/${marginToken}`)
+  return response
+}
+
+export const getActiveRankGrantRatios = async (marginToken: string) => {
+  const response = await get(`api/active_rank_grant_ratios/${marginToken}`)
+  return response
+}

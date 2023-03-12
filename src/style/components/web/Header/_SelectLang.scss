@@ -35,6 +35,9 @@
         background: $red;color: $cff;
       }
     }
+    hr {
+      border: none; height: 1px; background: $cf7;
+    }
   }
 }
 
@@ -84,6 +87,9 @@
         &.active, &.active:hover {
           background: $yellow;color: $c22;
         }
+      }
+      hr {
+        background: $c88;
       }
     }
   }

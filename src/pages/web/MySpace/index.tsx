@@ -1,0 +1,98 @@
+import React, { FC, useMemo, useState } from 'react'
+import { isEmpty } from 'lodash'
+import Table from 'rc-table'
+
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import Button from '@/components/common/Button'
+import DecimalShow from '@/components/common/DecimalShow'
+import Pagination from '@/components/common/Pagination'
+
+import { MarketInfoData as data } from './mockData'
+import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
+const MySpace: FC = () => {
+  const [pageIndex, setPageIndex] = useState<number>(0)
+  const isLoading = false
+  const memoEmptyText = useMemo(() => {
+    if (isLoading) return 'Loading'
+    if (isEmpty(data)) return 'No Record'
+    return ''
+  }, [isLoading])
+  const webColumns = [
+    {
+      title: 'Margin',
+      dataIndex: 'name',
+      render: (_: string, data: Record<string, any>) => <TableMargin icon={data.icon} name={data.name} />
+    },
+    {
+      title: 'Margin Balance/Rate',
+      dataIndex: 'maxApy',
+      width: 250,
+      render: (value: number, data: Record<string, any>) => (
+        <>
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <DecimalShow value={value} percent black />
+        </>
+      )
+    },
+    {
+      title: 'Position Volume',
+      dataIndex: 'tradingVolume',
+      width: 250,
+      render: (value: number, data: Record<string, any>) => (
+        <BalanceShow value={value} format="0.00a" unit={data.name} />
+      )
+    },
+    {
+      title: 'Position Mining Rewards',
+      dataIndex: 'positionVolume',
+      width: 250,
+      render: (value: number, data: Record<string, any>) => (
+        <>
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} format="0.00a" unit="DRF" />
+        </>
+      )
+    },
+    {
+      title: 'Broker Rewards',
+      dataIndex: 'buybackPool',
+      width: 250,
+      render: (value: number, data: Record<string, any>) => (
+        <>
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} format="0.00a" unit="DRF" />
+        </>
+      )
+    },
+    {
+      title: 'Detail Info',
+      dataIndex: 'Margin',
+      width: 150,
+
+      align: 'right',
+      render: () => <Button size="medium">GO</Button>
+    }
+  ]
+  const onPageChangeEv = (index: number) => {
+    setPageIndex(index)
+    // void getBrokersListCb(index)
+  }
+  return (
+    <div className="web-table-page">
+      <header className="web-table-page-header">
+        <h3>My Space</h3>
+      </header>
+      <Table
+        className="web-broker-table web-space-table"
+        emptyText={memoEmptyText}
+        // @ts-ignore
+        columns={webColumns}
+        data={data}
+        rowKey="id"
+      />
+      <Pagination page={pageIndex} total={100} onChange={onPageChangeEv} />
+    </div>
+  )
+}
+
+export default MySpace

@@ -23,6 +23,9 @@ import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
 import MiningRank from '@/pages/web/MiningRank'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 
+import MySpace from '@/pages/web/MySpace'
+import System from '@/pages/web/MySpace/System'
+
 const Web: FC = () => {
   const { marginToken } = useMTokenForRoute()
 
@@ -145,6 +148,8 @@ const Web: FC = () => {
         />
         <Route path="/broker/profile/:id" exact render={() => <BrokerInfo />} />
         <Route path="/dashboard" render={() => <Dashboard />} />
+        <Route path="/my-space" render={() => <MySpace />} />
+        <Route path="/system" render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
       </Switch>
       <Toast />

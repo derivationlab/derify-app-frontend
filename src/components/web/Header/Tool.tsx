@@ -30,6 +30,7 @@ const Tool: FC = () => {
         <SelectTheme />
         <AddTokenTool />
         <ul>
+          {/*
           <li>
             <a href={Feedback} target="_blank">
               {t('Nav.Tool.Feedback', 'Feedback')}
@@ -39,24 +40,24 @@ const Tool: FC = () => {
             <a href={Tutorial} target="_blank">
               {t('Nav.Tool.Tutorial', 'Tutorial')}
             </a>
-          </li>
+          </li>*/}
           <li>
             <a href={Docs} target="_blank">
               {t('Nav.Tool.Docs', 'Docs')}
             </a>
           </li>
-          <li>
+          {/*<li>
             <a href={TestNet} target="_blank">
               {t('Nav.Tool.Test', 'Testnet')}
             </a>
-          </li>
+          </li>*/}
           <li>
             <a href={WhitePaper} target="_blank">
               {t('Nav.Tool.Whitepaper', 'Whitepaper')}
             </a>
           </li>
         </ul>
-        <Community />
+        {/*  <Community />*/}
       </div>
     </div>
   )

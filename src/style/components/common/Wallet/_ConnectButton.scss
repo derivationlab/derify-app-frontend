@@ -1,0 +1,25 @@
+.c-connect-wallet-btn.web-button-size-mini {
+  padding-left: 4px;
+  &:before {
+    content: '';display: block;width: 26px;height: 26px;margin-right: 5px;
+    background: url($res + 'icon/man.svg') center/contain no-repeat;
+  }
+}
+
+.mobile-mode {
+  .c-connect-wallet-btn.web-button-size-mini {
+    padding-left: rem(1);
+    &:before {
+      width: rem(18);height: rem(18);margin-right: rem(5);
+    }
+  }
+}
+
+
+.dark, .mobile-mode.dark {
+  .c-connect-wallet-btn.web-button-size-mini {
+    &:before {
+      background: url($res + 'icon/man-dark.svg') center/contain no-repeat;
+    }
+  }
+}

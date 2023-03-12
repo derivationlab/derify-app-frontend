@@ -1,3 +1,9 @@
 .web-system-title {
   font-size: 32px;font-weight: bold;text-align: center;
 }
+
+.mobile-mode {
+  .web-system-title {
+    font-size: rem(24);
+  }
+}

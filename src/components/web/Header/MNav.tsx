@@ -15,6 +15,7 @@ interface Props {
 }
 
 const MNav: FC<Props> = ({ show, list, onClose }) => {
+  const { t } = useTranslation()
   const { data: account } = useAccount()
   const { pathname: P } = useLocation()
   const ref = useRef(null)
@@ -54,6 +55,21 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
                 </NavLink>
               </li>
             ))}
+            <span className={classNames({ active: P.indexOf('dashboard') > -1 })}>
+              {t('Nav.Nav.Dashboard', 'Dashboard')}
+              <em />
+              <ul>
+                <li>
+                  <NavLink to={`/dashboard/overview`}>Overview</NavLink>
+                </li>
+                <li>
+                  <NavLink to={`/dashboard/buyback-plan`}>Buyback Plan</NavLink>
+                </li>
+                <li>
+                  <NavLink to={`/dashboard/grant-list`}>Grant List</NavLink>
+                </li>
+              </ul>
+            </span>
           </ul>
         </nav>
         <footer>

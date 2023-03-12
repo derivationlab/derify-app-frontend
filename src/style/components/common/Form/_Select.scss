@@ -122,6 +122,16 @@
         }
       }
     }
+
+    &.large .web-select-show {
+      &-button {
+        border-width: 2px;height: rem(40);border-radius: rem(20);
+      }
+    }
+
+    &.large.show .web-select-options {
+      top: rem(45);border-radius: rem(20);
+    }
   }
 }
 .dark, .mobile-mode.dark {
@@ -150,8 +160,11 @@
     }
     &.show .web-select-show-button {
       border-color: $yellow;color: $yellow;
-      span:after {
-        background-image: url($res + 'icon/arrow-up-dark.svg');
+      span {
+        color: $yellow;
+        &:after {
+          background-image: url($res + 'icon/arrow-up-dark.svg');
+        }
       }
     }
   }

@@ -246,3 +246,305 @@
 .active .web-dashboard-add-grant-margin-item .web-decimal-show.black {
   color: $cff;
 }
+
+.mobile-mode {
+  .web-dashboard {
+    // padding-bottom: 100px;
+    width: 100%;padding: rem(16);
+
+    &-overview {
+      &-charts {
+        width: 100%;border-width: rem(8);margin-bottom: rem(20);
+        border-radius: rem(24);padding: rem(16);height: rem(220);
+        &-layout {
+          flex-flow: column;
+        }
+        header {
+          font-size: rem(12);
+          label {
+            font-size: rem(12);margin-bottom: rem(5);
+          }
+        }
+        .web-chart-area {
+          height: rem(280);
+        }
+      }
+      &-market {
+
+      }
+    }
+
+    &-plan {
+      &-datas {
+        display: grid;grid-template-columns: 1fr 1fr;border-radius: rem(20);
+        background: $cf7;padding: rem(8);grid-gap: rem(8);
+        &-item {
+          width: auto;border-radius: rem(20);padding: 0;background: $cff;overflow: hidden;
+
+          header {
+            height: rem(30);font-size: rem(12);margin-top: rem(20);
+          }
+          section {
+            border-radius: 0;height: auto;padding-bottom: rem(20);
+            .web-decimal-show, .web-balance-show {
+              em, strong {
+                font-size: rem(16);
+              }
+              small {
+                font-size: rem(12);
+              }
+            }
+            & > u {
+              font-size: rem(12);margin-top: rem(5);
+            }
+          }
+        }
+      }
+    }
+
+    &-section-header {
+      margin-top: rem(24);padding-bottom: rem(16);
+
+      h3 {
+        font-size: rem(16);padding: rem(10) rem(20) 0;position: relative;height: rem(32);
+        &:after {
+          height: rem(8);border-radius: rem(4);
+          bottom: rem(-16);
+        }
+      }
+
+      &-search {
+        width: rem(140);position: relative;top: rem(6);
+        &-button {
+          display: block;position: absolute;right: rem(12);top: rem(12);width: rem(14);height: rem(14);border: none;
+        }
+        input:focus + &-button, &-button:hover {
+        }
+      }
+    }
+
+    &-table {
+      &-margin {
+        display: flex;align-items: center;
+        img {
+          display: block;width: rem(40);height: rem(40);margin-left: rem(-20);margin-right: rem(8);
+        }
+      }
+      &-countdown {
+        width: auto;background: none;color: $red;padding: 0;
+      }
+    }
+
+    &-grant {
+      &-header, &-list {
+        display: grid;grid-template-columns: 1fr;grid-gap: rem(8);
+      }
+      &-list {
+        margin-top: rem(20);margin-bottom: rem(20);grid-gap: rem(24);
+        &-item {
+          border-radius: rem(24);padding: rem(68) rem(32) rem(24);
+
+          &-state {
+            top: rem(24);width: rem(120);height: rem(32);border-radius: rem(16) 0 0 rem(16);
+            line-height: rem(32);font-size: rem(16);
+          }
+
+          dl {
+            font-size: rem(16);height: rem(40);
+            dd {
+              img {
+                display: block;width: rem(20);height: rem(20);margin-right: rem(8);
+              }
+            }
+          }
+        }
+
+        &-add {
+          &-button {
+            height: rem(100);
+            border-radius: rem(24);
+            background-size: rem(40) auto
+          }
+        }
+      }
+    }
+
+    &-add-grant {
+      &-dialog {
+        border-radius: rem(40);padding: rem(8);
+        &-selects {
+          border-radius: rem(32);padding: rem(12) rem(16);
+          .web-select {
+            flex-flow: row;align-items: center;
+            &-options {
+              right: 0;width: rem(240);
+            }
+          }
+          hr {
+            margin: rem(10) rem(0);
+          }
+        }
+        &-volume {
+          padding: rem(16) rem(16);
+          & > p {
+            right: rem(40);top: rem(20);font-size: rem(12);
+          }
+        }
+        &-days {
+          padding: 0 rem(16) rem(16);
+          section {
+            label {
+              font-size: rem(12);padding-left: rem(18);margin-bottom: rem(10);
+            }
+
+            &:first-child .web-form-input {
+              input {
+                border-radius: rem(18) 0 0 rem(18);
+              }
+            }
+            &:last-child .web-form-input {
+              input {
+                border-radius: 0 rem(18) rem(18) 0;
+              }
+            }
+          }
+        }
+        &-confirm {
+          margin-top: rem(20);width: rem(150);
+        }
+        &-preview {
+          border-radius: rem(40);padding: rem(20) rem(40);
+          dl {
+            font-size: rem(14);height: rem(40);
+            dd {
+              img {
+                width: rem(20);height: rem(20);margin-right: rem(10);
+              }
+            }
+          }
+        }
+      }
+      &-margin {
+        &-label {
+          img {
+            width: rem(20);height: rem(20);
+          }
+        }
+        &-item {
+          img {
+            width: rem(20);height: rem(20);
+          }
+          .web-decimal-show {
+            em {
+              font-size: rem(14);
+            }
+            small {
+              font-size: rem(12);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.dark {
+  .web-dashboard {
+
+    &-overview {
+      &-charts {
+        border-color: $c33;
+      }
+    }
+
+    &-plan {
+      &-datas {
+        &-item {
+          background: $c33;
+
+          header {
+          }
+          section {
+            background: $c22;
+          }
+        }
+      }
+    }
+
+    &-section-header {
+
+      h3 {
+        color: $yellow;
+        &:after {
+          background: $yellow;
+        }
+      }
+
+    }
+
+
+
+    &-grant {
+      &-list {
+        &-item {
+          background: $c22;
+        }
+
+        &-add {
+          &-button {
+            background-color: $c22;
+          }
+        }
+      }
+    }
+
+    &-add-grant {
+      &-dialog {
+        background: $c33;
+        &-selects {
+          background: $c22;
+
+          hr {
+            background: $c33;
+          }
+        }
+        &-volume {
+          & > p {
+            position: absolute;right: 50px;top: 20px;font-size: 12px;color: $c88;
+            em {
+              color: $cff;
+            }
+          }
+        }
+
+        &-preview {
+          background: $c33;
+        }
+      }
+    }
+  }
+
+  .active .web-dashboard-add-grant-margin-item .web-decimal-show.black {
+    color: $cff;
+  }
+
+}
+
+.dark.mobile-mode {
+  .web-dashboard {
+    &-plan {
+      &-datas {
+        background: $c33;
+        &-item {
+          background: $c22;
+
+          header {
+          }
+          section {
+            background: $c22;
+          }
+        }
+      }
+    }
+  }
+}

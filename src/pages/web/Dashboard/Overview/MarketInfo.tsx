@@ -1,6 +1,8 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState, useContext } from 'react'
 import { isEmpty } from 'lodash'
 import Table from 'rc-table'
+import classNames from 'classnames'
+import { MobileContext } from '@/context/Mobile'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { Input } from '@/components/common/Form'
@@ -12,6 +14,8 @@ import { TableMargin } from '../c/TableCol'
 import { MarketInfoData as data } from './mockData'
 
 const MarketInfo: FC = () => {
+  const { mobile } = useContext(MobileContext)
+
   const [keyword, setKeyword] = useState('')
   const [pageIndex, setPageIndex] = useState<number>(0)
   const isLoading = false
@@ -20,12 +24,30 @@ const MarketInfo: FC = () => {
     if (isEmpty(data)) return 'No Record'
     return ''
   }, [isLoading])
-  const webColumns = [
+  const mColumns = [
     {
       title: 'Margin',
       dataIndex: 'name',
       render: (_: string, data: Record<string, any>) => <TableMargin icon={data.icon} name={data.name} />
     },
+    {
+      title: 'Trading/Position',
+      dataIndex: 'tradingVolume',
+      render: (value: number, data: Record<string, any>) => (
+        <>
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+        </>
+      )
+    },
+    {
+      title: 'Max APY',
+      dataIndex: 'maxApy',
+      render: (value: number) => <DecimalShow value={value} percent black />
+    }
+  ]
+  const webColumns = [
+    mColumns[0],
     {
       title: 'Max Position Mining APY',
       dataIndex: 'maxApy',
@@ -87,8 +109,14 @@ const MarketInfo: FC = () => {
           </Input>
         </div>
       </header>
-      {/* @ts-ignore */}
-      <Table className="web-broker-table" emptyText={memoEmptyText} columns={webColumns} data={data} rowKey="id" />
+      <Table
+        className={classNames('web-broker-table', { 'web-space-table': mobile })}
+        emptyText={memoEmptyText}
+        // @ts-ignore
+        columns={mobile ? mColumns : webColumns}
+        data={data}
+        rowKey="id"
+      />
       <Pagination page={pageIndex} total={100} onChange={onPageChangeEv} />
     </div>
   )

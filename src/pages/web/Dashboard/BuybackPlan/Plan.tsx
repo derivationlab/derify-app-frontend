@@ -1,6 +1,8 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useMemo, useState, useContext } from 'react'
 import { isEmpty } from 'lodash'
+import classNames from 'classnames'
 import Table from 'rc-table'
+import { MobileContext } from '@/context/Mobile'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { Input } from '@/components/common/Form'
@@ -10,6 +12,7 @@ import { TableMargin, TableCountDown } from '../c/TableCol'
 import { PlanData as data } from './mockData'
 
 const Plan: FC = () => {
+  const { mobile } = useContext(MobileContext)
   const [keyword, setKeyword] = useState('')
   const [pageIndex, setPageIndex] = useState<number>(0)
   const isLoading = false
@@ -18,12 +21,37 @@ const Plan: FC = () => {
     if (isEmpty(data)) return 'No Record'
     return ''
   }, [isLoading])
-  const webColumns = [
+  const mColumns = [
     {
       title: 'Margin',
       dataIndex: 'name',
       render: (_: string, data: Record<string, any>) => <TableMargin icon={data.icon} name={data.name} />
     },
+    {
+      title: 'Pool/DRF Price',
+      dataIndex: 'BuybackCycle',
+      align: 'right',
+      render: (value: number) => (
+        <>
+          <BalanceShow value={value} format="0.00a" unit="" />
+          <BalanceShow value={value} format="0.00a" unit="" />
+        </>
+      )
+    },
+    {
+      title: 'Blocks/Time',
+      dataIndex: 'RemainingBlock',
+      align: 'right',
+      render: (value: number, data: Record<string, any>) => (
+        <>
+          <BalanceShow value={value} format="0,0" unit="" />
+          <TableCountDown date={data.EstimatedTime} />
+        </>
+      )
+    }
+  ]
+  const webColumns = [
+    mColumns[0],
     {
       title: 'Buyback Cycle',
       dataIndex: 'BuybackCycle',
@@ -79,8 +107,14 @@ const Plan: FC = () => {
           </Input>
         </div>
       </header>
-      {/* @ts-ignore */}
-      <Table className="web-broker-table" emptyText={memoEmptyText} columns={webColumns} data={data} rowKey="id" />
+      <Table
+        className={classNames('web-broker-table', { 'web-space-table': mobile })}
+        emptyText={memoEmptyText}
+        // @ts-ignore
+        columns={mobile ? mColumns : webColumns}
+        data={data}
+        rowKey="id"
+      />
       <Pagination page={pageIndex} total={100} onChange={onPageChangeEv} />
     </div>
   )

@@ -23,7 +23,7 @@ import NotConnect from '@/components/web/NotConnect'
 import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
 
-const DRFPool: FC = () => {
+const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
   const { data } = useAccount()
   const { mobile } = useContext(MobileContext)
@@ -114,11 +114,14 @@ const DRFPool: FC = () => {
       <div className="web-eran-item">
         <header className="web-eran-item-header">
           <h3>
-            {t('Earn.DRFPool.DRFPool', 'DRF Pool')}
-            <QuestionPopover text={t('Earn.DRFPool.DRFPoolTip', 'Stake 1 DRF, mint 1 eDRF per day')} />
+            {t('Earn.DerifyTokenPool.DerifyTokenPool', 'DRF Pool')}
+            <QuestionPopover text={t('Earn.DerifyTokenPool.DRFPoolTip', 'Stake 1 DRF, mint 1 eDRF per day')} />
           </h3>
           <p>
-            {t('Earn.DRFPool.DRFPoolTitle', 'Stake DRF to mint and use eDRF, the utilized token of Derify protocol.')}
+            {t(
+              'Earn.DerifyTokenPool.DRFPoolTitle',
+              'Stake DRF to mint and use eDRF, the utilized token of Derify protocol.'
+            )}
           </p>
         </header>
         <section className="web-eran-item-main">
@@ -126,33 +129,33 @@ const DRFPool: FC = () => {
             <DecimalShow value={dashboardDAT?.drfStakingApy ?? 0} percent />
             <u>APR.</u>
           </div>
-          <div className="web-eran-item-claima">
+          <div className="web-eran-item-claim">
             <main>
-              <h4>{t('Earn.DRFPool.Claimable', 'Claimable')}</h4>
+              <h4>{t('Earn.DerifyTokenPool.Claimable', 'Claimable')}</h4>
               <BalanceShow value={edrfBalance ?? 0} unit="eDRF" decimal={tokens.edrf.decimals} />
             </main>
             <aside>
               <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
-                {t('Earn.DRFPool.ClaimAll', 'Claim All')}
+                {t('Earn.DerifyTokenPool.ClaimAll', 'Claim All')}
               </Button>
             </aside>
           </div>
           <div className="web-eran-item-card">
             <main>
-              <h4>{t('Earn.DRFPool.Staked', 'Staked')}</h4>
+              <h4>{t('Earn.DerifyTokenPool.Staked', 'Staked')}</h4>
               <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit="DRF" />
               <div className="block" />
               <p>
-                {t('Earn.DRFPool.CurrentPoolSize', 'Current pool size')} :{' '}
+                {t('Earn.DerifyTokenPool.CurrentPoolSize', 'Current pool size')} :{' '}
                 <strong>{keepDecimals(drfPoolBalance, tokens.drf.decimals)}</strong> DRF
               </p>
             </main>
             <aside>
               <Button size={mobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('stake')}>
-                {t('Earn.DRFPool.Stake', 'Stake')}
+                {t('Earn.DerifyTokenPool.Stake', 'Stake')}
               </Button>
               <Button size={mobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('redeem')} outline>
-                {t('Earn.DRFPool.Unstake', 'Unstake')}
+                {t('Earn.DerifyTokenPool.Unstake', 'Unstake')}
               </Button>
             </aside>
           </div>
@@ -165,4 +168,4 @@ const DRFPool: FC = () => {
   )
 }
 
-export default DRFPool
+export default DerifyTokenPool

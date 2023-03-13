@@ -92,7 +92,7 @@ const PositionMining: FC = () => {
           <DecimalShow value={Number(memoPositionApy)} percent suffix="(max)" />
           <u>APR.</u>
         </div>
-        <div className="web-eran-item-claima">
+        <div className="web-eran-item-claim">
           <main>
             <h4>{t('Earn.PositionMining.Claimable', 'Claimable')}</h4>
             <BalanceShow
@@ -114,6 +114,7 @@ const PositionMining: FC = () => {
             <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
               {t('Earn.PositionMining.ClaimAll', 'Claim All')}
             </Button>
+            <a href={`/${marginToken}/mining/rank`}>Rank List # 123</a>
           </aside>
         </div>
         <div className="web-eran-item-card">

@@ -13,8 +13,8 @@ export default {
       Positions: '我的持仓',
       OpenPosition: '开仓'
     },
-    DRFPool: {
-      DRFPool: 'DRF 池',
+    DerifyTokenPool: {
+      DerifyTokenPool: 'DRF 池',
       DRFPoolTip: '质押一个DRF一天可以生成1个eDRF',
       DRFPoolTitle: '质押DRF可以获得协议的治理token——eDRF',
       CurrentPoolSize: '当前质押量',

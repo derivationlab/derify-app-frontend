@@ -26,7 +26,7 @@ import DepositbDRFDialog from './Dialogs/DepositbDRF'
 import WithdrawbDRFDialog from './Dialogs/WithdrawbDRF'
 import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
 
-const EranbDRFPool: FC = () => {
+const MarginTokenPool: FC = () => {
   const { t } = useTranslation()
   const { data } = useAccount()
   const { mobile } = useContext(MobileContext)
@@ -155,7 +155,7 @@ const EranbDRFPool: FC = () => {
             <DecimalShow value={(rewardsInfo?.bondAnnualInterestRatio ?? 0) * 100} percent />
             <u>APR.</u>
           </div>
-          <div className="web-eran-item-claima">
+          <div className="web-eran-item-claim">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
               <BalanceShow value={bondBalance ?? 0} unit={`b${marginToken}`} decimal={2} />
@@ -203,4 +203,4 @@ const EranbDRFPool: FC = () => {
   )
 }
 
-export default EranbDRFPool
+export default MarginTokenPool

@@ -11,9 +11,10 @@ import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTrader
 
 import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
 
-import DRFPool from './c/DRFPool'
-import EranbDRFPool from './c/bDRFPool'
+import Competition from './c/Competition'
 import PositionMining from './c/PositionMining'
+import MarginTokenPool from './c/MarginTokenPool'
+import DerifyTokenPool from './c/DerifyTokenPool'
 
 const Eran: FC = () => {
   const { data: account } = useAccount()
@@ -74,8 +75,9 @@ const Eran: FC = () => {
       <IndicatorsUpdater />
 
       <PositionMining />
-      <DRFPool />
-      <EranbDRFPool />
+      <Competition />
+      <DerifyTokenPool />
+      <MarginTokenPool />
     </div>
   )
 }

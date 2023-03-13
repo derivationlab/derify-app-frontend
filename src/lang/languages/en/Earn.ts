@@ -7,14 +7,14 @@ export default {
       OpenPositionTitle: 'Open position to earn position mining rewards.',
       TotalPositions: 'Total positions',
       Claimable: 'Claimable',
-      TotalEarnedS: 'Total earned: ',
+      TotalEarned: 'Total earned: ',
       And: 'and',
       ClaimAll: 'Claim All',
       Positions: 'Positions',
       OpenPosition: 'Open Position'
     },
-    DRFPool: {
-      DRFPool: 'DRF Pool',
+    DerifyTokenPool: {
+      DerifyTokenPool: 'DRF Pool',
       DRFPoolTip: 'Stake 1 DRF, mint 1 eDRF per day',
       DRFPoolTitle: 'Stake DRF to mint and use eDRF, the ultilized token of Derify protocol.',
       CurrentPoolSize: 'current pool size',

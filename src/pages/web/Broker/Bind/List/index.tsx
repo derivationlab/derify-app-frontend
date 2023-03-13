@@ -18,6 +18,8 @@ import Loading from '@/components/common/Loading'
 import Select from '@/components/common/Form/Select'
 import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { findToken } from '@/config/tokens'
 
 const pageSize = 10
 
@@ -29,6 +31,8 @@ const List: FC = () => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
+
+  const marginToken = useMTokenFromRoute()
 
   const pageChange = async (index: number) => {
     dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: true, pageIndex: index } })
@@ -71,10 +75,16 @@ const List: FC = () => {
     async (index: number) => {
       const {
         data: { records, totalItems }
-      } = await getBrokersList(index, pageSize, state.optSelect.l, state.optSelect.c)
+      } = await getBrokersList(
+        findToken(marginToken).tokenAddress,
+        index,
+        pageSize,
+        state.optSelect.l,
+        state.optSelect.c
+      )
       dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: false, records, totalItems } })
     },
-    [state.optSelect]
+    [state.optSelect, marginToken]
   )
 
   useEffect(() => {

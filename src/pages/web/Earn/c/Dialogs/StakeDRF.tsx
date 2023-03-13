@@ -40,12 +40,12 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   return (
-    <Dialog width="540px" visible={visible} title={t('Earn.DRFPool.StakeDRF', 'Stake DRF')} onClose={onClose}>
+    <Dialog width="540px" visible={visible} title={t('Earn.DerifyTokenPool.StakeDRF', 'Stake DRF')} onClose={onClose}>
       <div className="web-deposit-dialog">
         <div className="web-deposit-dialog-info">
           <div className="wallet">
             <dl>
-              <dt>{t('Earn.DRFPool.WalletBalance', 'Wallet Balance')}</dt>
+              <dt>{t('Earn.DerifyTokenPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
                 <BalanceShow value={balances['drf']} unit="DRF" />
               </dd>
@@ -55,14 +55,14 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           <div className="amount">
             <AmountInput
               max={balances['drf']}
-              title={t('Earn.DRFPool.AmountToStake', 'Amount to stake')}
+              title={t('Earn.DerifyTokenPool.AmountToStake', 'Amount to stake')}
               unit="DRF"
               onChange={onChangeEv}
             />
           </div>
         </div>
         <Button onClick={() => onClick(depositAmount)} disabled={!memoDisabled || isDisabled}>
-          {t('Earn.DRFPool.Stake', 'Stake')}
+          {t('Earn.DerifyTokenPool.Stake', 'Stake')}
         </Button>
       </div>
     </Dialog>

@@ -13,6 +13,8 @@ import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 
 import { RowTime, calcShortHash } from './common'
+import { findToken } from '@/config/tokens'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 interface DataProps {
   trader: string
@@ -55,9 +57,11 @@ const Trader: FC = () => {
   const { data: account } = useAccount()
   const { mobile } = useContext(MobileContext)
 
+  const marginToken = useMTokenFromRoute()
+
   const fetchData = async (index = 0) => {
     if (account?.address) {
-      const { data } = await getListOfAllUsersOfBroker(account.address, index, 10)
+      const { data } = await getListOfAllUsersOfBroker(account.address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_TABLE_DAT',

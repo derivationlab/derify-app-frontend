@@ -11,13 +11,19 @@ export const getBrokerInfoByTrader = async (trader: string) => {
   return response
 }
 
-export const getBrokersList = async (page: number, offset: number, language: string, community: string) => {
-  const response = await get(`api/brokers_list/${language}/${community}/${page}/${offset}`)
+export const getBrokersList = async (
+  marginToken: string,
+  page: number,
+  offset: number,
+  language: string,
+  community: string
+) => {
+  const response = await get(`api/brokers_list/${language}/${community}/${marginToken}/${page}/${offset}`)
   return response
 }
 
-export const getBrokersRankList = async (page: number, offset: number, address: string) => {
-  const response = await get(`api/brokers_rank_list/${address}/${page}/${offset}`)
+export const getBrokersRankList = async (page: number, offset: number, marginToken: string) => {
+  const response = await get(`api/brokers_rank_list/${marginToken}/${page}/${offset}`)
   return response
 }
 
@@ -53,18 +59,18 @@ export const getBrokerRewardsToday = async (trader: string) => {
   return response
 }
 
-export const getBrokerAccountFlow = async (broker: string, address: string, page: number, offset: number) => {
-  const response = await get(`api/broker_reward_balance/${broker}/${address}/${page}/${offset}`)
+export const getBrokerAccountFlow = async (broker: string, marginToken: string, page: number, offset: number) => {
+  const response = await get(`api/broker_reward_balance/${broker}/${marginToken}/${page}/${offset}`)
   return response
 }
 
-export const getBrokerRewardTx = async (broker: string, address: string, page: number, offset: number) => {
-  const response = await get(`api/broker_reward_transactions/${broker}/${address}/${page}/${offset}`)
+export const getBrokerRewardTx = async (broker: string, marginToken: string, page: number, offset: number) => {
+  const response = await get(`api/broker_reward_transactions/${broker}/${marginToken}/${page}/${offset}`)
   return response
 }
 
-export const getListOfAllUsersOfBroker = async (broker: string, page: number, offset: number) => {
-  const response = await get(`api/traders_of_brokerAddr/${broker}/${page}/${offset}`)
+export const getListOfAllUsersOfBroker = async (broker: string, marginToken: string, page: number, offset: number) => {
+  const response = await get(`api/traders_of_brokerAddr/${broker}/${marginToken}/${page}/${offset}`)
   return response
 }
 
@@ -160,14 +166,14 @@ export const getTraderMarginBalance = async (trader: string, page: number, offse
   return response
 }
 
-export const getRankGrantList = async (
+export const getGrantList = async (
   marginToken: string,
-  trader: string,
+  target: string,
   status: string,
   page: number,
   offset: number
 ) => {
-  const response = await get(`api/rank_grant_list/${marginToken}/${trader}/${status}/${page}/${offset}`)
+  const response = await get(`api/grant_list/${marginToken}/${target}/${status}/${page}/${offset}`)
   return response
 }
 

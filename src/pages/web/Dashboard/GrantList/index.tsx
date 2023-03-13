@@ -17,7 +17,7 @@ import {
   getActiveRankGrantCount,
   getActiveRankGrantRatios,
   getActiveRankGrantTotalAmount,
-  getRankGrantList,
+  getGrantList,
   getTraderMarginBalance
 } from '@/api'
 import { findToken } from '@/config/tokens'
@@ -50,8 +50,12 @@ const GrantList: FC = () => {
   const { addGrantPlan } = useAddGrant()
 
   const _addGrantPlan = useCallback(async () => {
-    // upcoming， active，closed
-    if (data?.address) await getRankGrantList(findToken(marginToken)?.tokenAddress, data?.address, 'upcoming', 0, 10)
+    /**
+     * marginToken: 保证金地址('all'或者'0x...'，默认'all')
+     * target: 奖励对象 enum{'all','rank', 'pmr', 'broker_rewards'}，默认'all'
+     * status： 交易比赛状态 enum{'upcoming', 'active', 'closed', 'all'), 默认'all'
+     */
+    if (data?.address) await getGrantList(findToken(marginToken)?.tokenAddress, 'all', 'all', 0, 10)
     if (data?.address) await getTraderMarginBalance(data?.address, 0, 10)
     await getActiveRankGrantCount(findToken(marginToken)?.tokenAddress)
     if (data?.address) await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress, data?.address)

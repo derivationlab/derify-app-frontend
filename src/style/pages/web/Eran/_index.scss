@@ -38,6 +38,7 @@
       }
       aside {
         display: flex;align-items: center;flex-flow: column;
+        a{color:$primary}
       }
       main, aside {
         .web-button {
@@ -52,7 +53,7 @@
         display: block;font-size: 18px;line-height: 24px;
       }
     }
-    &-claima, &-card {
+    &-claim, &-card {
       display: flex;justify-content: space-between;align-items: flex-start;
       width: 562px;padding: 36px 48px;
     }
@@ -118,7 +119,7 @@
           font-size: rem(14);line-height: rem(20);
         }
       }
-      &-claima, &-card {
+      &-claim, &-card {
         display: block;position: relative;
         width: 100%;padding: rem(24);
       }

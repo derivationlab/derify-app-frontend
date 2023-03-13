@@ -1,6 +1,5 @@
 import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
-import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 
 import { useTraderInfo } from '@/zustand/useTraderInfo'
@@ -41,12 +40,17 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   return (
-    <Dialog width="540px" visible={visible} title={t('Earn.DRFPool.UnstakeDRF', 'Unstake DRF')} onClose={onClose}>
+    <Dialog
+      width="540px"
+      visible={visible}
+      title={t('Earn.DerifyTokenPool.UnstakeDRF', 'Unstake DRF')}
+      onClose={onClose}
+    >
       <div className="web-deposit-dialog">
         <div className="web-deposit-dialog-info">
           <div className="wallet">
             <dl>
-              <dt>{t('Earn.DRFPool.StakingAmount', 'Staking Amount')}</dt>
+              <dt>{t('Earn.DerifyTokenPool.StakingAmount', 'Staking Amount')}</dt>
               <dd>
                 <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit="DRF" />
               </dd>
@@ -56,14 +60,14 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           <div className="amount">
             <AmountInput
               max={stakingInfo?.drfBalance ?? 0}
-              title={t('Earn.DRFPool.AmountToUnstake', 'Amount to unstake')}
+              title={t('Earn.DerifyTokenPool.AmountToUnstake', 'Amount to unstake')}
               unit="DRF"
               onChange={onChangeEv}
             />
           </div>
         </div>
         <Button onClick={() => onClick(depositAmount)} disabled={!memoDisabled || isDisabled}>
-          {t('Earn.DRFPool.Unstake', 'Unstake')}
+          {t('Earn.DerifyTokenPool.Unstake', 'Unstake')}
         </Button>
       </div>
     </Dialog>

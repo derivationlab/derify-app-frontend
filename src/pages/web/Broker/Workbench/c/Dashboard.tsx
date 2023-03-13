@@ -73,7 +73,7 @@ const Dashboard: FC = () => {
 
   const memoTodayRewards = useMemo(() => {
     const drf_reward = new BN(brokerInfo?.drf_reward ?? 0).times(dashboardDAT?.drfPrice ?? 0)
-    const rewards_plus = drf_reward.plus(brokerInfo?.usd_reward ?? 0).toString()
+    const rewards_plus = drf_reward.plus(brokerInfo?.margin_token_reward ?? 0).toString()
     return nonBigNumberInterception(rewards_plus)
   }, [brokerInfo, dashboardDAT])
 
@@ -145,7 +145,7 @@ const Dashboard: FC = () => {
               <footer
                 dangerouslySetInnerHTML={{
                   __html: t('Broker.BV.TotalRewards', '', {
-                    data: `${((brokerInfo.usd_reward_rate ?? 0) * 100).toFixed(2)}%`
+                    data: `${((brokerInfo.margin_token_reward_rate ?? 0) * 100).toFixed(2)}%`
                   })
                 }}
               />

@@ -116,11 +116,8 @@ export interface PoolsInfoState {
 export interface BrokerInfoState {
   brokerInfo: Rec
   brokerBound: Rec
-  brokerAssets: Rec
   brokerBoundLoaded: boolean
   brokerInfoLoaded: boolean
-  brokerAssetsLoaded: boolean
-  updateBrokerAssets: (p: Rec) => void
   fetchBrokerInfo: (account: string) => Promise<void>
   fetchBrokerBound: (account: string) => Promise<void>
 }

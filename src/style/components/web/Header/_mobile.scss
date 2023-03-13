@@ -50,13 +50,40 @@
 
   nav {
     padding: rem(32);
-    ul {}
-    li {
+    & > ul > li {
       a {
         display: flex;align-items: center;padding: 0 rem(24);
         height: rem(48);border-radius: rem(24);
         &.active {
           font-weight: bold;background: $red;font-weight: bold;color: $cff;
+        }
+      }
+    }
+    span {
+      display: flex;align-items: center;padding: 0 rem(24);position: relative;
+      height: rem(48);border-radius: rem(24);justify-content: space-between;
+      &.active {
+        font-weight: bold;font-weight: bold;color: $cff;color: $red;
+        em {
+          border-color: $red;border-width: 0 0 2px 2px;
+        }
+      }
+      em {
+        display: block;width: 8px;height: 8px;margin-left: 8px;
+        border-width: 0 0 1.5px 1.5px;position: relative;top: -2px;
+        border-style: solid; border-color: $c88;
+        @include xz(-45);
+        @include dz();
+      }
+      ul {
+        position: absolute;top: rem(48);left: rem(40);
+        li {
+          a {
+            height: rem(32);display: flex;align-items: center;font-size: rem(14);
+            &.active {
+              font-weight: bold;font-weight: bold;color: $red;
+            }
+          }
         }
       }
     }
@@ -117,10 +144,27 @@
     }
 
     nav {
-      li {
+      & > ul > li {
         a {
           &.active {
             background: $yellow;color: $c22;
+          }
+        }
+      }
+      span {
+        &.active {
+          color: $yellow;
+          em {
+            border-color: $yellow;
+          }
+        }
+        ul {
+          li {
+            a {
+              &.active {
+                color: $yellow;
+              }
+            }
           }
         }
       }

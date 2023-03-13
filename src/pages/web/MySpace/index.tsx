@@ -1,22 +1,18 @@
 import React, { FC, useMemo, useState, useContext } from 'react'
 import { isEmpty } from 'lodash'
 import Table from 'rc-table'
-import classNames from 'classnames'
+
 import { MobileContext } from '@/context/Mobile'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { Input } from '@/components/common/Form'
 import Button from '@/components/common/Button'
 import DecimalShow from '@/components/common/DecimalShow'
 import Pagination from '@/components/common/Pagination'
 
-import { TableMargin } from '../c/TableCol'
 import { MarketInfoData as data } from './mockData'
-
-const MarketInfo: FC = () => {
+import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
+const MySpace: FC = () => {
   const { mobile } = useContext(MobileContext)
-
-  const [keyword, setKeyword] = useState('')
   const [pageIndex, setPageIndex] = useState<number>(0)
   const isLoading = false
   const memoEmptyText = useMemo(() => {
@@ -24,7 +20,8 @@ const MarketInfo: FC = () => {
     if (isEmpty(data)) return 'No Record'
     return ''
   }, [isLoading])
-  const mColumns = [
+
+  const mobileColumns = [
     {
       title: 'Margin',
       dataIndex: 'name',
@@ -32,50 +29,67 @@ const MarketInfo: FC = () => {
     },
     {
       title: 'Trading/Position',
-      dataIndex: 'tradingVolume',
+      dataIndex: 'maxApy',
       render: (value: number, data: Record<string, any>) => (
         <>
           <BalanceShow value={value} format="0.00a" unit={data.name} />
-          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <DecimalShow value={value} percent black />
         </>
       )
     },
     {
-      title: 'Max APY',
+      title: 'Balance/Rate',
       dataIndex: 'maxApy',
-      render: (value: number) => <DecimalShow value={value} percent black />
+      render: (value: number, data: Record<string, any>) => (
+        <>
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <DecimalShow value={value} percent black />
+        </>
+      )
     }
   ]
+
   const webColumns = [
-    mColumns[0],
+    mobileColumns[0],
     {
-      title: 'Max Position Mining APY',
+      title: 'Margin Balance/Rate',
       dataIndex: 'maxApy',
-      width: 300,
-      render: (value: number) => <DecimalShow value={value} percent black />
-    },
-    {
-      title: 'Trading Volume',
-      dataIndex: 'tradingVolume',
-      width: 220,
+      width: 250,
       render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
+        <>
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <DecimalShow value={value} percent black />
+        </>
       )
     },
     {
       title: 'Position Volume',
-      dataIndex: 'positionVolume',
-      width: 220,
+      dataIndex: 'tradingVolume',
+      width: 250,
       render: (value: number, data: Record<string, any>) => (
         <BalanceShow value={value} format="0.00a" unit={data.name} />
       )
     },
     {
-      title: 'Buyback Pool',
-      dataIndex: 'buybackPool',
-      width: 220,
+      title: 'Position Mining Rewards',
+      dataIndex: 'positionVolume',
+      width: 250,
       render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
+        <>
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} format="0.00a" unit="DRF" />
+        </>
+      )
+    },
+    {
+      title: 'Broker Rewards',
+      dataIndex: 'buybackPool',
+      width: 250,
+      render: (value: number, data: Record<string, any>) => (
+        <>
+          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} format="0.00a" unit="DRF" />
+        </>
       )
     },
     {
@@ -87,33 +101,20 @@ const MarketInfo: FC = () => {
       render: () => <Button size="medium">GO</Button>
     }
   ]
-
-  const onSearch = () => {
-    if (keyword) {
-      console.log('Search keyword: ' + keyword)
-    }
-  }
-
   const onPageChangeEv = (index: number) => {
     setPageIndex(index)
     // void getBrokersListCb(index)
   }
-
   return (
-    <div className="web-dashboard-overview-market">
-      <header className="web-dashboard-section-header">
-        <h3>Market Info</h3>
-        <div className="web-dashboard-section-header-search">
-          <Input value={keyword} onChange={setKeyword} placeholder="serch name or contract address..">
-            <button className="web-dashboard-section-header-search-button" onClick={onSearch} />
-          </Input>
-        </div>
+    <div className="web-table-page">
+      <header className="web-table-page-header">
+        <h3>My Space</h3>
       </header>
       <Table
-        className={classNames('web-broker-table', { 'web-space-table': mobile })}
+        className="web-broker-table web-space-table"
         emptyText={memoEmptyText}
         // @ts-ignore
-        columns={mobile ? mColumns : webColumns}
+        columns={mobile ? mobileColumns : webColumns}
         data={data}
         rowKey="id"
       />
@@ -122,5 +123,4 @@ const MarketInfo: FC = () => {
   )
 }
 
-export default MarketInfo
-// <BalanceShow value={12345.4567} unit="USD" />
+export default MySpace

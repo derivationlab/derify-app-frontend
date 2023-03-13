@@ -77,7 +77,6 @@ export default function InitialUpdater(): null {
   useEffect(() => {
     const func = async (account: string, protocolConfig: MarginTokenWithContract) => {
       const data = await getTraderVariables(account, protocolConfig[marginToken].exchange)
-      console.info(protocolConfig[marginToken].exchange, data)
       updateVariables(data)
     }
 

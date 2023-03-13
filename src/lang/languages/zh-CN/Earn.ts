@@ -50,6 +50,9 @@ export default {
       AmountToExchange: '兑换数量',
       Exchange: '兑换',
       TotalDeposited: '总存入'
+    },
+    MiningRank: {
+      Address: '地址'
     }
   }
 }

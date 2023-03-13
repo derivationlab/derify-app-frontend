@@ -3,11 +3,11 @@ import { persist } from 'zustand/middleware'
 
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { initial as initialProtocolConfig } from '@/hooks/useProtocolConfig'
-import { ConfigInfoState, MarginTokenState, QuoteTokenState, Rec } from '@/zustand/types'
+import { ConfigInfoState, MarginTokenState, QuoteTokenState } from '@/zustand/types'
 import { initialOpeningMinLimit, initialFactoryConfig, initialOpeningMaxLimit } from '@/hooks/helper'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
-const useConfigInfo = create<ConfigInfoState>((set, get) => ({
+const useConfigInfo = create<ConfigInfoState>((set) => ({
   brokerParams: { burnLimitAmount: '0', burnLimitPerDay: '0' },
   mTokenPrices: initialOpeningMinLimit(),
   factoryConfig: initialFactoryConfig(),
@@ -57,7 +57,7 @@ const useConfigInfo = create<ConfigInfoState>((set, get) => ({
 
 const useQuoteToken = create(
   persist<QuoteTokenState>(
-    (set, get) => ({
+    (set) => ({
       quoteToken: QUOTE_TOKENS[0].symbol as QuoteTokenKeys,
       updateQuoteToken: (data: QuoteTokenKeys) =>
         set(() => {
@@ -74,7 +74,7 @@ const useQuoteToken = create(
 
 const useMarginToken = create(
   persist<MarginTokenState>(
-    (set, get) => ({
+    (set) => ({
       marginToken: MARGIN_TOKENS[0].symbol as MarginTokenKeys,
       updateMarginToken: (data: MarginTokenKeys) =>
         set(() => {

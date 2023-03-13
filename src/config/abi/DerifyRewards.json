@@ -2,44 +2,61 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_exchange",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_marginToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_bMarginToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_tokenDRF",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_tokenEDRF",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_communityVestingVault",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_blockTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_bondAnnualInterestRate",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "marginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "bMarginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenDRF",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenEDRF",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyPmr",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyBrokerRewards",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRank",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "blockTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bondAnnualInterestRate",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IDerifyRewards.ContractParam",
+        "name": "param",
+        "type": "tuple"
       }
     ],
     "stateMutability": "nonpayable",
@@ -137,7 +154,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "newTokenUSD",
+        "name": "newMarginToken",
         "type": "address"
       },
       {
@@ -161,7 +178,19 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "newCommunityVestingVault",
+        "name": "newDerifyAwardsPmr",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newDerifyAwardsBroker",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newDerifyAwardsRank",
         "type": "address"
       },
       {
@@ -178,6 +207,37 @@
       }
     ],
     "name": "ContractParamsUpdate",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "enum IDerifyRewards.UpdateType",
+        "name": "updateType",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "amount",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "DrfBrokerRewardPoolUpdate",
     "type": "event"
   },
   {
@@ -229,6 +289,43 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "amount",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "DrfRankRewardPoolUpdate",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "enum IDerifyRewards.UpdateType",
+        "name": "updateType",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "broker",
         "type": "address"
       },
@@ -246,55 +343,24 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
+        "internalType": "int256",
         "name": "balance",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "accumulatedReward",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "DrfRewardBalanceUpdate",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "enum IDerifyRewards.UpdateType",
-        "name": "updateType",
-        "type": "uint8"
+        "type": "int256"
       },
       {
         "indexed": false,
         "internalType": "int256",
-        "name": "amount",
+        "name": "accumulatedReward",
         "type": "int256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "balance",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
         "name": "timestamp",
         "type": "uint256"
       }
     ],
-    "name": "DrfRewardPoolUpdate",
+    "name": "DrfRewardBrokerBalanceUpdate",
     "type": "event"
   },
   {
@@ -386,7 +452,7 @@
         "type": "uint256"
       }
     ],
-    "name": "MarginTokenRewardBalanceUpdate",
+    "name": "MarginTokenRewardBrokerBalanceUpdate",
     "type": "event"
   },
   {
@@ -417,7 +483,7 @@
         "type": "uint256"
       }
     ],
-    "name": "MarginTokenRewardPoolUpdate",
+    "name": "MarginTokenRewardBrokerPoolUpdate",
     "type": "event"
   },
   {
@@ -505,6 +571,43 @@
       }
     ],
     "name": "PositionRewardUpdates",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "enum IDerifyRewards.UpdateType",
+        "name": "updateType",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "drfAmount",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "drfBalance",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "RankRewardUpdates",
     "type": "event"
   },
   {
@@ -807,29 +910,185 @@
   },
   {
     "inputs": [],
+    "name": "claimAllDrfBrokerReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "claimAllDrfPmr",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "claimAllDrfRankReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "grantIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimDrfBrokerReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "grantIndex",
+        "type": "uint256"
+      }
+    ],
     "name": "claimDrfPmr",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "claimDrfReward",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "grantIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimDrfRankReward",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "communityVestingVault",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "grantor",
         "type": "address"
       }
     ],
-    "stateMutability": "view",
+    "name": "claimGrantorAllDrfBrokerReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantor",
+        "type": "address"
+      }
+    ],
+    "name": "claimGrantorAllDrfPmr",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantor",
+        "type": "address"
+      }
+    ],
+    "name": "claimGrantorAllDrfRankReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimGrantorDrfBrokerReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimGrantorDrfPmr",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "grantor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimGrantorDrfRankReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -847,6 +1106,58 @@
   },
   {
     "inputs": [],
+    "name": "derifyBrokerRewards",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "derifyPmr",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "derifyRank",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "drfBrokerRewardPool",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "drfPmrPool",
     "outputs": [
       {
@@ -860,7 +1171,7 @@
   },
   {
     "inputs": [],
-    "name": "drfRewardPool",
+    "name": "drfRankRewardPool",
     "outputs": [
       {
         "internalType": "uint256",
@@ -953,6 +1264,47 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "broker",
+        "type": "address"
+      }
+    ],
+    "name": "getBrokerReward",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "marginTokenRewardBalance",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "accumulatedMarginTokenReward",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "drfRewardBalance",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "accumulatedDrfReward",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct IDerifyRewards.BrokerRewardInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "trader",
         "type": "address"
       }
@@ -977,6 +1329,40 @@
       }
     ],
     "name": "getPositionReward",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "marginTokenBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "marginTokenAccumulatedBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "drfBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "drfAccumulatedBalance",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "trader",
+        "type": "address"
+      }
+    ],
+    "name": "getRankReward",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1287,12 +1673,12 @@
         "type": "uint256[]"
       },
       {
-        "internalType": "uint256[]",
-        "name": "gasFeeAmounts",
-        "type": "uint256[]"
+        "internalType": "uint256",
+        "name": "gasFeeInDrfAmount",
+        "type": "uint256"
       }
     ],
-    "name": "updateDrfReward",
+    "name": "updateDrfBrokerReward",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1300,44 +1686,61 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_exchange",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_marginToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_bMarginToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_tokenDRF",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_tokenEDRF",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_communityVestingVault",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_blockTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_bondAnnualInterestRate",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "marginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "bMarginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenDRF",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenEDRF",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyPmr",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyBrokerRewards",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRank",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "blockTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bondAnnualInterestRate",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IDerifyRewards.ContractParam",
+        "name": "param",
+        "type": "tuple"
       }
     ],
     "name": "updateParams",
@@ -1374,6 +1777,29 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "traders",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "drfAmounts",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "gasFeeInDrfAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "updateTradersRankReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "withdrawAllBond",
     "outputs": [],
@@ -1390,6 +1816,13 @@
   {
     "inputs": [],
     "name": "withdrawPositionReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawRankReward",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

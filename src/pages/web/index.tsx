@@ -1,4 +1,3 @@
-import { useAccount } from 'wagmi'
 import React, { FC, useEffect, useState } from 'react'
 
 import { getIpLocation } from '@/api'
@@ -15,18 +14,19 @@ import Data from '@/pages/web/Data'
 import BrokerRank from '@/pages/web/Broker/Rank'
 import BrokerBind from '@/pages/web/Broker/Bind'
 import BrokerBound from '@/pages/web/Broker/MyBroker'
-import BrokerConnect from '@/pages/web/Broker/c/Connect'
 import BrokerBindList from '@/pages/web/Broker/Bind/List'
 import BrokerWorkbench from '@/pages/web/Broker/Workbench'
 import BrokerSignUpStep1 from '@/pages/web/Broker/SignUp/step1'
 import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
 import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
 import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
+import MiningRank from '@/pages/web/MiningRank'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 
-const Web: FC = () => {
-  const { data: account } = useAccount()
+import MySpace from '@/pages/web/MySpace'
+import System from '@/pages/web/MySpace/System'
 
+const Web: FC = () => {
   const { marginToken } = useMTokenForRoute()
 
   const [visible, setVisible] = useState<boolean>(false)
@@ -55,6 +55,15 @@ const Web: FC = () => {
           )}
         />
         <Route
+          path="/:id/mining/rank"
+          exact
+          render={() => (
+            <R0 pathKey="mining/rank">
+              <MiningRank />
+            </R0>
+          )}
+        />
+        <Route
           path="/:id/data"
           exact
           render={() => (
@@ -72,7 +81,6 @@ const Web: FC = () => {
             </R0>
           )}
         />
-        <Route path="/dashboard" exact render={() => <Dashboard />} />
         <Route
           path="/broker"
           exact
@@ -139,6 +147,9 @@ const Web: FC = () => {
           )}
         />
         <Route path="/broker/profile/:id" exact render={() => <BrokerInfo />} />
+        <Route path="/dashboard" render={() => <Dashboard />} />
+        <Route path="/my-space" render={() => <MySpace />} />
+        <Route path="/system" render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
       </Switch>
       <Toast />

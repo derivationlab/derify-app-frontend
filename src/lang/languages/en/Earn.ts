@@ -50,6 +50,9 @@ export default {
       AmountToExchange: 'Amount  to exchange',
       Exchange: 'Exchange',
       TotalDeposited: 'Total deposited'
+    },
+    MiningRank: {
+      Address: 'Address'
     }
   }
 }

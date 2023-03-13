@@ -12,7 +12,7 @@ interface Props {
   size?: 'mini' | 'default'
 }
 
-const Connect: FC<Props> = ({ size = 'mini' }) => {
+const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   const { t } = useTranslation()
   const { data: account } = useAccount()
   const { activeChain, switchNetwork, chains } = useNetwork()
@@ -86,14 +86,15 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
     }
   }, [isConnected, account?.address])
 
+  // onClick={() => setVisibleStatus('account')}
   return (
     <>
       {isConnected && account?.address ? (
-        <Button size={size} onClick={() => setVisibleStatus('account')}>
+        <Button className="c-connect-wallet-btn" size={size} to="/my-space">
           {memoAccountHide}
         </Button>
       ) : (
-        <Button size={size} onClick={onClickWalletCb}>
+        <Button className="c-connect-wallet-btn" size={size} onClick={onClickWalletCb}>
           {t('Nav.Nav.ConnectWallet', 'Connect Wallet')}
         </Button>
       )}
@@ -103,4 +104,4 @@ const Connect: FC<Props> = ({ size = 'mini' }) => {
   )
 }
 
-export default Connect
+export default ConnectButton

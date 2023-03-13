@@ -5,7 +5,7 @@ import { usePairsInfo } from '@/zustand'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 
-export default function UpdateIndicators(): null {
+export default function IndicatorsUpdater(): null {
   const marginToken = useMTokenFromRoute()
 
   const { data: indicatorDAT } = usePairIndicator(marginToken)

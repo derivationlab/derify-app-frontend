@@ -120,12 +120,12 @@ const History: FC = () => {
       dataIndex: 'amount',
       width: mobile ? 95 : 268,
       render: (_: string, data: Record<string, any>) => {
-        const usd_amount = nonBigNumberInterception(data?.usd_amount, 8)
-        const drf_amount = nonBigNumberInterception(data?.drf_amount, 8)
+        const usd_amount = nonBigNumberInterception(data?.margin_token_amount ?? 0, 8)
+        const drf_amount = nonBigNumberInterception(data?.drf_amount ?? 0, 8)
 
         return (
           <>
-            <RowAmount text={usd_amount} />
+            <RowAmount text={usd_amount} coin={marginToken} />
             <RowAmount text={drf_amount} coin="DRF" />
           </>
         )
@@ -136,11 +136,11 @@ const History: FC = () => {
       dataIndex: 'balance',
       width: mobile ? 95 : 268,
       render: (_: string, data: Record<string, any>) => {
-        const usd_balance = nonBigNumberInterception(data?.usd_balance ?? 0, 8)
+        const usd_balance = nonBigNumberInterception(data?.margin_token_balance ?? 0, 8)
         const drf_balance = nonBigNumberInterception(data?.drf_balance ?? 0, 8)
         return (
           <>
-            <RowBalance text={usd_balance} />
+            <RowBalance text={usd_balance} coin={marginToken} />
             <RowBalance text={drf_balance} coin="DRF" />
           </>
         )

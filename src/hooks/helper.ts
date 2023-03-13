@@ -121,15 +121,12 @@ export const getOpeningMinLimit = async (p: MarginTokenWithContract): Promise<Ma
 
 export const getMarginTokenPrice = async (p: MarginTokenWithContract): Promise<MarginToken> => {
   let output = initialOpeningMinLimit()
-  console.info(p)
   const calls = Object.keys(p).map((key) => ({
     name: 'getMarginTokenPrice',
     address: p[key as MarginTokenKeys].priceFeed,
     marginToken: key as MarginTokenKeys
   }))
-  console.info(calls)
   const response = await multicall(MarginTokenPriceFeedAbi, calls)
-  console.info(response)
   if (!isEmpty(response)) {
     response.forEach((limit: BigNumberish, index: number) => {
       const { marginToken } = calls[index]

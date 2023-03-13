@@ -6,6 +6,7 @@ import React, { FC, useState, useMemo, useContext } from 'react'
 
 import ThemeContext from '@/context/Theme/Context'
 import { PubSubEvents } from '@/typings'
+import { useQuoteToken } from '@/zustand'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
@@ -24,7 +25,6 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useQuoteToken } from '@/zustand'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()

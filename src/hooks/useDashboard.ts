@@ -2,6 +2,7 @@ import { isEmpty } from 'lodash'
 import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
+import tokens from '@/config/tokens'
 import multicall from '@/utils/multicall'
 import { useQuery } from '@tanstack/react-query'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
@@ -9,8 +10,6 @@ import { formatUnits, inputParameterConversion } from '@/utils/tools'
 import { getDerifyPmrContract, getDerifyRankContract, getDerifyAwardsContract } from '@/utils/contractHelpers'
 
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
-import contracts from '@/config/contracts'
-import tokens from '@/config/tokens'
 
 export const useRankReward = (trader: string, rewards: string): { data?: Record<string, any>; isLoading: boolean } => {
   const { data, isLoading } = useQuery(

@@ -7,7 +7,7 @@ import tokens from '@/config/tokens'
 import contracts from '@/config/contracts'
 import { setAllowance } from '@/utils/practicalMethod'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
-import { getDerifyProtocolContract } from '@/utils/contractHelpers'
+import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
 
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
@@ -48,10 +48,10 @@ export const useApplyBroker = () => {
 }
 
 export const useWithdrawReward = () => {
-  const withdraw = useCallback(async (signer: Signer): Promise<boolean> => {
+  const withdraw = useCallback(async (signer: Signer, address: string): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyProtocolContract(signer)
+    const c = getDerifyRewardsContract(address, signer)
 
     try {
       const response = await c.withdrawBrokerReward()

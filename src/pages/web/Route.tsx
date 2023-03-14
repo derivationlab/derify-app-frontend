@@ -9,7 +9,7 @@ import { useMTokenForRoute } from '@/hooks/useTrading'
 import Loading from '@/components/common/Loading'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
 
-export const R0 = (props: PropsWithChildren<any>) => {
+export const RWithMarToken = (props: PropsWithChildren<any>) => {
   const { data } = useAccount()
   const { children, pathKey } = props
 
@@ -29,7 +29,7 @@ export const R0 = (props: PropsWithChildren<any>) => {
   }, [find, data, pathKey, marginToken, brokerBound, brokerBoundLoaded])
 }
 
-export const R1 = (props: PropsWithChildren<any>) => {
+export const RBrokerBound = (props: PropsWithChildren<any>) => {
   const { data: account } = useAccount()
 
   const { children, pathKey } = props
@@ -48,15 +48,7 @@ export const R1 = (props: PropsWithChildren<any>) => {
         return <Redirect to={`/${marginToken}/broker/workbench`} />
       }
       if (!isEmpty(brokerBound)) {
-        return pathKey ? (
-          find ? (
-            children
-          ) : (
-            <Redirect to={`/${marginToken}/${pathKey}`} />
-          )
-        ) : (
-          <Redirect to={`/${pathKey}`} />
-        )
+        return pathKey ? find ? children : <Redirect to={`/${marginToken}/${pathKey}`} /> : children
       }
       return <Redirect to="/broker/bind" />
     }
@@ -64,12 +56,33 @@ export const R1 = (props: PropsWithChildren<any>) => {
   }, [find, account, pathKey, brokerInfo, brokerBound, marginToken, brokerInfoLoaded, brokerBoundLoaded])
 }
 
-export const R2 = (props: PropsWithChildren<any>) => {
+export const RBrokerToBind = (props: PropsWithChildren<any>) => {
   const { data: account } = useAccount()
 
-  const { children, pathKey } = props
+  const { children } = props
+  const { marginToken } = useMTokenForRoute()
 
-  const { marginToken, find } = useMTokenForRoute()
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerBound = useBrokerInfo((state) => state.brokerBound)
+  const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
+  const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
+
+  return useMemo(() => {
+    if (!account?.address) return <BrokerConnect />
+    if (brokerBoundLoaded && brokerInfoLoaded) {
+      if (!isEmpty(brokerBound)) return <Redirect to="/broker" />
+      if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken}/broker/workbench`} />
+      return children
+    }
+    return <Loading show type="fixed" />
+  }, [account, brokerInfo, brokerInfoLoaded, brokerBound, marginToken, brokerBoundLoaded])
+}
+
+export const RBrokerList = (props: PropsWithChildren<any>) => {
+  const { data: account } = useAccount()
+
+  const { children } = props
+  const { marginToken } = useMTokenForRoute()
 
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
@@ -77,16 +90,14 @@ export const R2 = (props: PropsWithChildren<any>) => {
   return useMemo(() => {
     if (!account?.address) return <BrokerConnect />
     if (brokerBoundLoaded) {
-      if (!isEmpty(brokerBound)) {
-        return <Redirect to="/broker" />
-      }
-      return pathKey ? find ? children : <Redirect to={`/${marginToken}/${pathKey}`} /> : children
+      if (!isEmpty(brokerBound)) return <Redirect to="/broker" />
+      return children
     }
     return <Loading show type="fixed" />
-  }, [find, account, pathKey, brokerBound, marginToken, brokerBoundLoaded])
+  }, [account, brokerBound, marginToken, brokerBoundLoaded])
 }
 
-export const R3 = (props: PropsWithChildren<any>) => {
+export const RBrokerWorkbench = (props: PropsWithChildren<any>) => {
   const { data: account } = useAccount()
 
   const { children, pathKey } = props
@@ -100,18 +111,47 @@ export const R3 = (props: PropsWithChildren<any>) => {
     if (!account?.address) return <BrokerConnect />
     if (brokerInfoLoaded) {
       if (!isEmpty(brokerInfo)) {
-        return pathKey ? (
-          find ? (
-            children
-          ) : (
-            <Redirect to={`/${marginToken}/${pathKey}`} />
-          )
-        ) : (
-          <Redirect to={`/${pathKey}`} />
-        )
+        return pathKey ? find ? children : <Redirect to={`/${marginToken}/${pathKey}`} /> : children
       }
       return <Redirect to="/broker" />
     }
     return <Loading show type="fixed" />
   }, [find, account, pathKey, brokerInfo, marginToken, brokerInfoLoaded])
+}
+
+export const RBrokerSignUpStep1_2 = (props: PropsWithChildren<any>) => {
+  const { data: account } = useAccount()
+
+  const { children } = props
+  const { marginToken } = useMTokenForRoute()
+
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
+
+  return useMemo(() => {
+    if (!account?.address) return <BrokerConnect />
+    if (brokerInfoLoaded) {
+      if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken}/broker/workbench`} />
+      return children
+    }
+    return <Loading show type="fixed" />
+  }, [account, brokerInfo, marginToken, brokerInfoLoaded])
+}
+
+export const RBrokerSignUpStep3 = (props: PropsWithChildren<any>) => {
+  const { data: account } = useAccount()
+
+  const { children } = props
+
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
+
+  return useMemo(() => {
+    if (!account?.address) return <BrokerConnect />
+    if (brokerInfoLoaded) {
+      if (!isEmpty(brokerInfo)) return children
+      return <Redirect to="/broker/bind" />
+    }
+    return <Loading show type="fixed" />
+  }, [account, brokerInfo, brokerInfoLoaded])
 }

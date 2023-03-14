@@ -118,6 +118,8 @@ export interface BrokerInfoState {
   brokerBound: Rec
   brokerBoundLoaded: boolean
   brokerInfoLoaded: boolean
-  fetchBrokerInfo: (account: string) => Promise<void>
+  fetchBrokerInfo: (account: string, marginToken: string) => Promise<void>
   fetchBrokerBound: (account: string) => Promise<void>
+  resetBrokerInfo: () => void
+  resetBrokerBound: () => void
 }

@@ -2,7 +2,15 @@ import React, { FC, useEffect, useState } from 'react'
 
 import { getIpLocation } from '@/api'
 import { useMTokenForRoute } from '@/hooks/useTrading'
-import { R0, R1, R2, R3 } from '@/pages/web/Route'
+import {
+  RWithMarToken,
+  RBrokerWorkbench,
+  RBrokerToBind,
+  RBrokerList,
+  RBrokerBound,
+  RBrokerSignUpStep3,
+  RBrokerSignUpStep1_2
+} from '@/pages/web/Route'
 import { Redirect, Switch, Route } from '@/components/common/Route'
 
 import Header from '@/components/web/Header'
@@ -49,101 +57,109 @@ const Web: FC = () => {
           path="/:id/earn"
           exact
           render={() => (
-            <R0 pathKey="earn">
+            <RWithMarToken pathKey="earn">
               <Earn />
-            </R0>
+            </RWithMarToken>
           )}
         />
         <Route
           path="/:id/mining/rank"
           exact
           render={() => (
-            <R0 pathKey="mining/rank">
+            <RWithMarToken pathKey="mining/rank">
               <MiningRank />
-            </R0>
+            </RWithMarToken>
           )}
         />
         <Route
           path="/:id/data"
           exact
           render={() => (
-            <R0 pathKey="data">
+            <RWithMarToken pathKey="data">
               <Data />
-            </R0>
+            </RWithMarToken>
           )}
         />
         <Route
           path="/:id/trade"
           exact
           render={() => (
-            <R0 pathKey="trade">
+            <RWithMarToken pathKey="trade">
               <Trade />
-            </R0>
+            </RWithMarToken>
           )}
         />
         <Route
           path="/broker"
           exact
           render={() => (
-            <R1>
+            <RBrokerBound>
               <BrokerBound />
-            </R1>
+            </RBrokerBound>
           )}
         />
         <Route
           path="/broker/bind"
           exact
           render={() => (
-            <R2>
+            <RBrokerToBind>
               <BrokerBind />
-            </R2>
+            </RBrokerToBind>
           )}
         />
         <Route
           path="/broker/list"
           exact
           render={() => (
-            <R2>
+            <RBrokerList>
               <BrokerBindList />
-            </R2>
+            </RBrokerList>
           )}
         />
         <Route
           path="/broker/edit"
           exact
           render={() => (
-            <R3>
+            <RBrokerWorkbench>
               <BrokerSignUpStep2 />
-            </R3>
+            </RBrokerWorkbench>
           )}
         />
         <Route
           path="/broker/sign-up/step1"
           exact
           render={() => (
-            <R3>
+            <RBrokerSignUpStep1_2>
               <BrokerSignUpStep1 />
-            </R3>
+            </RBrokerSignUpStep1_2>
           )}
         />
         <Route
           path="/broker/sign-up/step2"
           exact
           render={() => (
-            <R3>
+            <RBrokerSignUpStep1_2>
               <BrokerSignUpStep2 />
-            </R3>
+            </RBrokerSignUpStep1_2>
           )}
         />
-        <Route path="/broker/sign-up/step3" exact render={() => <BrokerSignUpStep3 />} />
+        <Route
+          path="/broker/sign-up/step3"
+          exact
+          render={() => (
+            <RBrokerSignUpStep3>
+              <BrokerSignUpStep3 />
+            </RBrokerSignUpStep3>
+          )}
+        />
         <Route path="/:id/broker/rank" exact render={() => <BrokerRank />} />
         <Route
           path="/:id/broker/workbench"
           exact
           render={() => (
-            <R3 pathKey="broker/workbench">
+            <RBrokerWorkbench pathKey="broker/workbench">
               <BrokerWorkbench />
-            </R3>
+            </RBrokerWorkbench>
           )}
         />
         <Route path="/broker/profile/:id" exact render={() => <BrokerInfo />} />

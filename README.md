@@ -39,3 +39,4 @@ todo:
 . http://localhost:3890/BUSD/broker/workbench 分了mt，数据还空白；
 . /Users/wugongwei/1-project/derify-app-frontend/src/pages/web/Trade/Bench/c/Margin.tsx UI；
 . /Users/wugongwei/1-project/derify-app-frontend/src/App.tsx 改造；
+. 经纪商绑定跳到列表有问题，绑定后跳转有问题；

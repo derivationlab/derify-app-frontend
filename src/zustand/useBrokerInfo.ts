@@ -22,10 +22,10 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
 
     set({ brokerBound: data?.data, brokerBoundLoaded: true })
   },
-  fetchBrokerInfo: async (trader: string) => {
+  fetchBrokerInfo: async (trader: string, marginToken: string) => {
     const data1 = await getBrokerInfoByAddr(trader)
-    const data2 = await getBrokerValidPeriod(trader) // validPeriodDays
-    const data3 = await getBrokerRewardsToday(trader)
+    const data2 = await getBrokerValidPeriod(trader, marginToken) // validPeriodDays
+    const data3 = await getBrokerRewardsToday(trader, marginToken)
     const data4 = await getBrokerRegisterTime(trader)
     /**
      * getBrokerRewardsToday()
@@ -52,6 +52,18 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
           }
         : {},
       brokerInfoLoaded: true
+    })
+  },
+  resetBrokerInfo: () => {
+    set({
+      brokerInfo: {},
+      brokerInfoLoaded: false
+    })
+  },
+  resetBrokerBound: () => {
+    set({
+      brokerBound: {},
+      brokerBoundLoaded: false
     })
   }
 }))

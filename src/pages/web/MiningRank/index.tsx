@@ -6,7 +6,7 @@ import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } fr
 import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/context/Mobile'
 import tokens, { findToken } from '@/config/tokens'
-import { getBrokersRankList, getTraderMarginBalance } from '@/api'
+import { getTraderMarginBalance } from '@/api'
 import { reducer, stateInit } from '@/reducers/brokerRank'
 
 import Image from '@/components/common/Image'

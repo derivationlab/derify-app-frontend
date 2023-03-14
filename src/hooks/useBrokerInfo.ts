@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getDerifyBrokerContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 import { formatUnits } from '@/utils/tools'
+import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 
 const init = {
   isBroker: false,
@@ -17,7 +17,7 @@ export const useBrokerInfoFromC = (trader = '', rewards = ''): { data: Record<st
     ['useRankReward'],
     async () => {
       if (trader && rewards) {
-        const c1 = getDerifyBrokerContract()
+        const c1 = getDerifyProtocolContract()
         const c2 = getDerifyRewardsContract(rewards)
 
         const res1 = await c1.getBrokerInfo(trader)

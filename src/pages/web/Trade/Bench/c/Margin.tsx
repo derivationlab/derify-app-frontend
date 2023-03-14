@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo } from 'react'
 
 import { MARGIN_TOKENS } from '@/config/tokens'
-import { MarginTokenKeys } from '@/typings'
 import { useTokenBalances } from '@/zustand'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { nonBigNumberInterception } from '@/utils/tools'

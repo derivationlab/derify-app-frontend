@@ -12,7 +12,6 @@ import multiCallAbi from '@/config/abi/MM.json'
 import DerifyPmrAbi from '@/config/abi/DerifyPmr.json'
 import DerifyRankAbi from '@/config/abi/DerifyRank.json'
 import DerifyAwardsAbi from '@/config/abi/DerifyAwards.json'
-import DerifyBrokerAbi from '@/config/abi/DerifyBroker.json'
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
@@ -33,10 +32,6 @@ export const getMulticallContract = (signer?: Signer | Provider | null) => {
 
 export const getDerifyRewardsContract = (address: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyRewardsAbi, address, signer)
-}
-
-export const getDerifyBrokerContract = (signer?: Signer | Provider | null) => {
-  return getContract(DerifyBrokerAbi, contracts.derifyBroker.contractAddress, signer)
 }
 
 export const getDerifyExchangeContract = (address: string, signer?: Signer | Provider | null) => {

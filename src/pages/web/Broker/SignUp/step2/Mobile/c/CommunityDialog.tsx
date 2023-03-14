@@ -1,6 +1,4 @@
-import React, { FC, useState, ReactNode, useEffect } from 'react'
-
-import { SelectLangOptions } from '@/data'
+import React, { FC, useState, useEffect } from 'react'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'

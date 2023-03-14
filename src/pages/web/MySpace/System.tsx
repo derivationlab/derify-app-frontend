@@ -6,7 +6,7 @@ import Table from 'rc-table'
 const System: FC = () => {
   const isLoading = false
 
-  const [systemRelevantData, setSystemRelevantData] = useState([
+  const [systemRelevantData] = useState([
     { parameters: 'θ - Open/Close Position Limit', value: '2' },
     { parameters: 'x - Buyback Fund Ratio', value: '20%' },
     { parameters: 'Min Position Value(USD)', value: '500' },
@@ -23,7 +23,7 @@ const System: FC = () => {
     { parameters: 'Min Grant DRFs', value: '1000' }
   ])
 
-  const [tradingToken, setTradingToken] = useState([
+  const [tradingToken] = useState([
     { parameters: 'κ - PCF Rate', value: '1,000' },
     { parameters: 'ψ - PCF Rate', value: '300,000,000' },
     { parameters: 'ρ - PCF', value: '0.12%' },

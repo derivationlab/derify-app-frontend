@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-import { BrokerInfoState, Rec } from '@/zustand/types'
+import { BrokerInfoState } from '@/zustand/types'
 import {
   getBrokerInfoByAddr,
   getBrokerInfoByTrader,

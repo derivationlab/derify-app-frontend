@@ -7,10 +7,10 @@ import tokens from '@/config/tokens'
 import contracts from '@/config/contracts'
 import { setAllowance } from '@/utils/practicalMethod'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
-import { getDerifyBrokerContract } from '@/utils/contractHelpers'
+import { getDerifyProtocolContract } from '@/utils/contractHelpers'
 import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
 
-import DerifyBrokerAbi from '@/config/abi/DerifyBroker.json'
+import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 
 export const useApplyBroker = () => {
   const { data: s } = useSigner()
@@ -19,13 +19,13 @@ export const useApplyBroker = () => {
       // console.info(s)
       if (!signer) return false
 
-      const c = getDerifyBrokerContract(signer)
+      const c = getDerifyProtocolContract(signer)
       const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 8)
 
       try {
         const approve = await setAllowance(
           signer,
-          contracts.derifyBroker.contractAddress,
+          contracts.derifyProtocol.contractAddress,
           tokens.edrf.tokenAddress,
           _burnLimitAmount
         )
@@ -51,7 +51,7 @@ export const useWithdrawReward = () => {
   const withdraw = useCallback(async (signer: Signer): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyBrokerContract(signer)
+    const c = getDerifyProtocolContract(signer)
 
     try {
       const response = await c.withdrawBrokerReward()
@@ -72,13 +72,13 @@ export const useExtendPeriod = () => {
   const extend = useCallback(
     async (amount: string, signer: Signer): Promise<boolean> => {
       console.info(s)
-      const c = getDerifyBrokerContract(signer)
+      const c = getDerifyProtocolContract(signer)
       const _amount = inputParameterConversion(amount, 8)
 
       try {
         const approve = await setAllowance(
           signer,
-          contracts.derifyBroker.contractAddress,
+          contracts.derifyProtocol.contractAddress,
           tokens.edrf.tokenAddress,
           amount
         )
@@ -104,15 +104,15 @@ export const useBrokerParams = (): { data?: Record<string, any>; isLoading: bool
   const calls = [
     {
       name: 'brokerApplyNumber',
-      address: contracts.derifyBroker.contractAddress
+      address: contracts.derifyProtocol.contractAddress
     },
     {
       name: 'brokerValidUnitNumber',
-      address: contracts.derifyBroker.contractAddress
+      address: contracts.derifyProtocol.contractAddress
     }
   ]
 
-  const { data, isLoading } = useQueryMulticall(DerifyBrokerAbi, calls, 30000)
+  const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 30000)
 
   if (!isLoading && !isEmpty(data)) {
     const [brokerApplyNumber, brokerValidUnitNumber] = data

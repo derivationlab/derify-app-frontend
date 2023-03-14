@@ -20,7 +20,7 @@ export default function BrokerUpdater(): null {
   const resetBrokerBound = useBrokerInfo((state) => state.resetBrokerBound)
   const updateBrokerParams = useConfigInfo((state) => state.updateBrokerParams)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   // for broker info
   useEffect(() => {

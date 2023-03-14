@@ -18,7 +18,7 @@ const HeaderData: FC = () => {
   const indicators = usePairsInfo((state) => state.indicators)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { pcfRatio } = usePCFRatioConf(quoteToken, marginToken)
   const { data: positionsAmount, refetch } = useCurrentPositionsAmount(

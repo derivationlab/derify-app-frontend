@@ -21,7 +21,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)

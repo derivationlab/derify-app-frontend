@@ -8,7 +8,7 @@ import Button from '@/components/common/Button'
 const BrokerSignUpStep3: FC = () => {
   const { t } = useTranslation()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   return (
     <div className="web-broker-sign-up-step-3">

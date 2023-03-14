@@ -29,7 +29,7 @@ const Competition: FC = () => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { withdraw } = useWithdrawRankReward()
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)

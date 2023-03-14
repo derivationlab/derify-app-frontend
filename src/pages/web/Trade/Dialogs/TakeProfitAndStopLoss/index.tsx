@@ -28,7 +28,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const indicators = usePairsInfo((state) => state.indicators)

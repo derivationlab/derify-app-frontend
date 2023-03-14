@@ -21,7 +21,7 @@ const InsurancePool: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [insuranceData, setInsuranceData] = useState<Record<string, any>[]>([])
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { data: insuranceVolume } = useCurrentInsuranceDAT(findToken(marginToken).tokenAddress)
 

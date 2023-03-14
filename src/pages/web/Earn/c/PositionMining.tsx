@@ -28,7 +28,7 @@ const PositionMining: FC = () => {
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { withdraw } = useWithdrawPositionReward()
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)

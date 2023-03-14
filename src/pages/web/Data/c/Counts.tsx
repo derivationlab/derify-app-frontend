@@ -9,7 +9,7 @@ import { DEFAULT_MARGIN_TOKEN, findToken } from '@/config/tokens'
 const Counts: FC = () => {
   const { t } = useTranslation()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 

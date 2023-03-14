@@ -28,7 +28,7 @@ const GrantList: FC = () => {
 
   const { address } = useAccount()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 

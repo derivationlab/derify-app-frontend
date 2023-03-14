@@ -32,7 +32,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const updateClosingType = useCalcOpeningDAT((state) => state.updateClosingType)
   const updateClosingAmount = useCalcOpeningDAT((state) => state.updateClosingAmount)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(data?.quoteToken, marginToken)
 

@@ -43,7 +43,7 @@ const MyPosition: FC = () => {
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { factoryConfig } = useFactoryConf(quoteToken, marginToken)

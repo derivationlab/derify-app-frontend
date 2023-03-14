@@ -16,7 +16,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
 
   const variables = useTraderInfo((state) => state.variables)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
   // const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
   return (

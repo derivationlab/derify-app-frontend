@@ -32,7 +32,7 @@ const DerifyTokenPool: FC = () => {
   const stakingInfo = useTraderInfo((state) => state.stakingInfo)
   const drfPoolBalance = usePoolsInfo((state) => state.drfPoolBalance)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()

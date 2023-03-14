@@ -20,7 +20,7 @@ const TradeHistory: FC = () => {
 
   const { address } = useAccount()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const fetchData = async (index = 0) => {
     if (address) {

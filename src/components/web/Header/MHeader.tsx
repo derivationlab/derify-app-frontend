@@ -14,7 +14,7 @@ const MHeader: FC = () => {
   const { t } = useTranslation()
   const { pathname: P } = useLocation()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const navList = [

@@ -57,7 +57,7 @@ const Trader: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const fetchData = async (index = 0) => {
     if (address) {

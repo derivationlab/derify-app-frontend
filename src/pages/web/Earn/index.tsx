@@ -15,7 +15,7 @@ import Competition from './c/Competition'
 import PositionMining from './c/PositionMining'
 import MarginTokenPool from './c/MarginTokenPool'
 import DerifyTokenPool from './c/DerifyTokenPool'
-import { useRankReward } from '@/hooks/useDashboard'
+// import { useRankReward } from '@/hooks/useDashboard'
 
 const Eran: FC = () => {
   const { address } = useAccount()
@@ -26,7 +26,7 @@ const Eran: FC = () => {
   const updateDrfPoolBalance = usePoolsInfo((state) => state.updateDrfPoolBalance)
   const updateBondPoolBalance = usePoolsInfo((state) => state.updateBondPoolBalance)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 

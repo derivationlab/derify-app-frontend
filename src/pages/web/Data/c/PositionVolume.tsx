@@ -33,7 +33,7 @@ const PositionVolume: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { data: positionsDAT, refetch } = useCurrentPositionsAmount(
     'PositionVolume-useCurrentPositionsAmount',

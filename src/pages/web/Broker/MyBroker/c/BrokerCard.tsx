@@ -11,7 +11,7 @@ const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
   const { t } = useTranslation()
   const { id, logo, name, introduction } = broker
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   return (
     <div className="web-my-broker">

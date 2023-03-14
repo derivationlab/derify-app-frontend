@@ -18,7 +18,7 @@ const Options: FC<Props> = ({ onChange }) => {
   const indicators = usePairsInfo((state) => state.indicators)
   const spotPrices = usePairsInfo((state) => state.spotPrices)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const [keyword, setKeyword] = useState<string>('')
 

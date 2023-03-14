@@ -79,7 +79,7 @@ const History: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { address } = useAccount()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const fetchData = async (index = 0) => {
     if (address) {

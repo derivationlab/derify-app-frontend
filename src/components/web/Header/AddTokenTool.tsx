@@ -19,7 +19,7 @@ const AddTokenTool: FC = () => {
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 

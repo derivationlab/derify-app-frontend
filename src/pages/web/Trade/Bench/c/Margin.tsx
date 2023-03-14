@@ -17,7 +17,7 @@ const Margin: FC = () => {
 
   const balances = useTokenBalances((state) => state.balances)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const marginSelect = useMemo(() => {
     return MARGIN_TOKENS.map((t) => {

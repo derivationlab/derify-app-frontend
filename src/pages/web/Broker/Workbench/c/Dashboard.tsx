@@ -29,7 +29,7 @@ const Dashboard: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { withdraw } = useWithdrawReward()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
   const quoteToken = useQuoteToken((state) => state.quoteToken)

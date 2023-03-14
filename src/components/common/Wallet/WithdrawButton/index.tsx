@@ -17,7 +17,7 @@ interface Props {
 const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 

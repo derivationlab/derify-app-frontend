@@ -35,7 +35,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
   const fetchMaxVolume = useCalcOpeningDAT((state) => state.fetchMaxVolume)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)

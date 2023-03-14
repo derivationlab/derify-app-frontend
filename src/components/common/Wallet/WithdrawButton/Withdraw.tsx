@@ -28,7 +28,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const variables = useTraderInfo((state) => state.variables)
   const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const memoMargin = useMemo(() => {
     if (variablesLoaded) {

@@ -4,7 +4,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 const System: FC = () => {
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const isLoading = false
 

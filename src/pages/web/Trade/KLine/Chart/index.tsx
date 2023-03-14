@@ -27,7 +27,7 @@ const Chart: FC = () => {
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 

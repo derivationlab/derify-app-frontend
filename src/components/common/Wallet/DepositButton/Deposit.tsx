@@ -27,7 +27,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const balances = useTokenBalances((state) => state.balances)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const memoDisabled = useMemo(() => {
     return isGT(balances[marginToken], 0)

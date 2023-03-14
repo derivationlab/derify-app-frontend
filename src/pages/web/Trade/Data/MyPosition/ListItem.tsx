@@ -31,7 +31,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { spotPrices } = useSpotPrice(quoteToken, marginToken)
 

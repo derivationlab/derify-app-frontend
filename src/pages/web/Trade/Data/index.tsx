@@ -22,7 +22,7 @@ const Data: FC = () => {
   const factoryConfig = useConfigInfo((state) => state.factoryConfig)
   const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const _factoryConfig = useMemo(() => {
     if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken]

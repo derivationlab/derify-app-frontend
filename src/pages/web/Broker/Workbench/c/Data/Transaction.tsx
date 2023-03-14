@@ -5,12 +5,12 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 
+import { keepDecimals } from '@/utils/tools'
 import { BSC_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
 import { getBrokerRewardTx } from '@/api'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/brokerTable'
-import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Pagination from '@/components/common/Pagination'
 
@@ -82,7 +82,7 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
 const judgeUpsAndDowns = (data: string): string => (Number(data) > 0 ? '+' : '')
 
 const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   // const { mobile } = useContext(MobileContext)
   const up = useMemo(() => Number(data.pnl_margin_token) > 0, [data.pnl_margin_token])
@@ -106,7 +106,7 @@ const Transaction: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const fetchData = async (index = 0) => {
     if (address) {

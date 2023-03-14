@@ -34,7 +34,7 @@ const MarginTokenPool: FC = () => {
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const bondPoolBalance = usePoolsInfo((state) => state.bondPoolBalance)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { redeem } = useRedeemBondFromBank()
   const { deposit } = useDepositBondToBank()

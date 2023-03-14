@@ -32,7 +32,7 @@ const List: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const pageChange = async (index: number) => {
     dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: true, pageIndex: index } })

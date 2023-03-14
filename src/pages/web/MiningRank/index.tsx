@@ -44,7 +44,7 @@ const Rank: FC = () => {
 
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
   /**
    * user: 用户账户地址
    * margin_token: margin token地址

@@ -41,7 +41,7 @@ const Rank: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const fetchData = useCallback(async (index = 0) => {
     const { data } = await getBrokersRankList(index, 10, findToken(marginToken).tokenAddress)

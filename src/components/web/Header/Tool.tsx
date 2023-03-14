@@ -16,7 +16,7 @@ const Tool: FC = () => {
 
   const { t } = useTranslation()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
 

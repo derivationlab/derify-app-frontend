@@ -26,7 +26,7 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const updateQuoteToken = useQuoteToken((state) => state.updateQuoteToken)
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 

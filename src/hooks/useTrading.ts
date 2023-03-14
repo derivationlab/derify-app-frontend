@@ -7,7 +7,7 @@ import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { PositionTriggerTypes, PositionSideTypes, MarginTokenKeys } from '@/typings'
+import { MarginTokenKeys, PositionSideTypes, PositionTriggerTypes } from '@/typings'
 import { DEFAULT_MARGIN_TOKEN, findMarginToken, findToken } from '@/config/tokens'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
@@ -343,41 +343,18 @@ export const useClosePosition = () => {
 export const useMTokenFromRoute = () => {
   const params: any = useParams()
 
-  return useMemo(() => {
-    if (params?.id) {
-      const find = findMarginToken(params.id)
-
-      if (find) {
-        return find.symbol
-      } else {
-        const local = localStorage.getItem('MARGIN_TOKEN')
-        return local ? JSON.parse(local).state.marginToken : DEFAULT_MARGIN_TOKEN.symbol
-      }
-    }
-    return DEFAULT_MARGIN_TOKEN.symbol
-  }, [params.id]) as MarginTokenKeys
-}
-
-export const useMTokenForRoute = () => {
-  const params: any = useParams()
-
-  const find = useMemo(() => {
-    if (params?.id) {
-      return findMarginToken(params.id)
-    }
+  const findMargin = useMemo(() => {
+    if (params?.id) return findMarginToken(params.id)?.symbol
   }, [params?.id])
 
   const marginToken = useMemo(() => {
-    if (find) {
-      return find.symbol
-    } else {
-      const local = localStorage.getItem('MARGIN_TOKEN')
-      return local ? JSON.parse(local).state.marginToken : DEFAULT_MARGIN_TOKEN.symbol
-    }
-  }, [find])
+    const margin = findMargin || DEFAULT_MARGIN_TOKEN.symbol
+    localStorage.setItem('margin', margin)
+    return margin
+  }, [findMargin]) as MarginTokenKeys
 
   return {
-    find,
+    find: findMargin,
     marginToken
   }
 }

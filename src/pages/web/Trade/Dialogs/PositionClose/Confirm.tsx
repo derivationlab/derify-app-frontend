@@ -29,7 +29,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const { t } = useTranslation()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const closingType = useCalcOpeningDAT((state) => state.closingType)

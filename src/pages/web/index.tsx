@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 
 import { getIpLocation } from '@/api'
-import { useMTokenForRoute } from '@/hooks/useTrading'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 import {
   RWithMarToken,
   RBrokerWorkbench,
@@ -9,7 +9,8 @@ import {
   RBrokerList,
   RBrokerBound,
   RBrokerSignUpStep3,
-  RBrokerSignUpStep1_2
+  RBrokerSignUpStep1_2,
+  RBrokerProfile
 } from '@/pages/web/Route'
 import { Redirect, Switch, Route } from '@/components/common/Route'
 
@@ -35,7 +36,7 @@ import MySpace from '@/pages/web/MySpace'
 import System from '@/pages/web/MySpace/System'
 
 const Web: FC = () => {
-  const { marginToken } = useMTokenForRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const [visible, setVisible] = useState<boolean>(false)
 
@@ -162,7 +163,15 @@ const Web: FC = () => {
             </RBrokerWorkbench>
           )}
         />
-        <Route path="/broker/profile/:id" exact render={() => <BrokerInfo />} />
+        <Route
+          path="/broker/profile/:id"
+          exact
+          render={() => (
+            <RBrokerProfile>
+              <BrokerInfo />
+            </RBrokerProfile>
+          )}
+        />
         <Route path="/dashboard" render={() => <Dashboard />} />
         <Route path="/my-space" render={() => <MySpace />} />
         <Route path="/system" render={() => <System />} />

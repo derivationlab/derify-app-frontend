@@ -24,7 +24,7 @@ const MyOrder: FC = () => {
   const { theme } = useContext(ThemeContext)
   const { address } = useAccount()
 
-  const marginToken = useMTokenFromRoute()
+  const { marginToken } = useMTokenFromRoute()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)

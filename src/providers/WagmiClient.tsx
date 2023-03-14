@@ -6,7 +6,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { createClient, configureChains } from 'wagmi'
 import type { WagmiConfigProps } from 'wagmi'
 
@@ -40,7 +40,7 @@ function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'
           jsonRpcUrl: rpcUrl
         }
       }),
-      new WalletConnectLegacyConnector({
+      new WalletConnectConnector({
         chains,
         options: {
           qrcode: true,

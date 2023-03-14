@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getDerifyBrokerContract, getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
+import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 import { formatUnits } from '@/utils/tools'
 
 const init = {

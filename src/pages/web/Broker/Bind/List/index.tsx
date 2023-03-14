@@ -29,7 +29,7 @@ const List: FC = () => {
   const history = useHistory()
 
   const { t } = useTranslation()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   const marginToken = useMTokenFromRoute()
@@ -51,7 +51,7 @@ const List: FC = () => {
     dispatch({ type: 'SET_OPT_SELECT', payload: { i: state.toBindDAT.id } })
     dispatch({ type: 'SET_SHOW_MODAL', payload: '' })
 
-    const data = await bindYourBroker({ trader: account?.address, brokerId: state.toBindDAT.id })
+    const data = await bindYourBroker({ trader: address, brokerId: state.toBindDAT.id })
 
     if (data.code === 0) {
       // succeed

@@ -17,7 +17,7 @@ const BrokerSignUpStep1: FC = () => {
 
   const { t } = useTranslation()
   const { data: signer } = useSigner()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { applyBroker } = useApplyBroker()
 
@@ -49,7 +49,7 @@ const BrokerSignUpStep1: FC = () => {
     setLoading(false)
 
     window.toast.dismiss(toast)
-  }, [account?.address, signer])
+  }, [address, signer])
 
   const memoDisabled = useMemo(() => {
     return (
@@ -80,7 +80,7 @@ const BrokerSignUpStep1: FC = () => {
           <span>
             {t('Broker.Reg.WalletBalance', 'Wallet Balance')}: {thousandthsDivision(balances['edrf'])} eDRF
           </span>
-          <address>{account?.address}</address>
+          <address>{address}</address>
         </section>
         <footer className="web-broker-sign-up-footer">
           <Button onClick={fetchData} disabled={!balanceLoaded || memoDisabled} loading={loading}>

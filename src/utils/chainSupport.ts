@@ -2,7 +2,7 @@ import { last, sortBy } from 'lodash'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 
 import { ChainId } from '@/typings'
-import { BEST_RPC_KEY } from '@/zustand/useRpcStore'
+import { BEST_RPC_KEY } from '@/zustand'
 import { checkRpcHealthStatus } from '@/api'
 
 type Rec = Record<string, any>
@@ -24,7 +24,7 @@ const DEFAULT_PRC_URLS = {
   [ChainId.TESTNET]: 'https://data-seed-prebsc-1-s1.binance.org:8545'
 }
 
-const CHAIN_ID = process.env.REACT_APP_CHAIN_ID ?? ChainId.MAINNET
+const CHAIN_ID = process.env.REACT_APP_CHAIN_ID ?? ChainId.TESTNET
 
 const rpcReturnFormat = (url: string, data: Rec): Fmt => {
   let height = data?.value?.result?.number ?? null
@@ -59,7 +59,19 @@ export const getHealthyNode = async (): Promise<string> => {
   const rpcList = json[CHAIN_ID].rpc
   const queries = rpcList.map((rpc: string) => checkRpcHealthStatus(rpc, rpcBody))
 
-  const response = await Promise.allSettled(queries)
+  const response = await Promise.all(
+    queries.map((p: any) =>
+      p
+        .then((value: any) => ({
+          status: 'fulfilled',
+          value
+        }))
+        .catch((reason: any) => ({
+          status: 'rejected',
+          reason
+        }))
+    )
+  )
 
   const chains = response.map((data, i) => rpcReturnFormat(rpcList[i], data)).filter((data) => data.height)
   // console.info(chains)

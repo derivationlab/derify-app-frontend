@@ -1,6 +1,9 @@
 {
   "56": {
     "rpc": [
+      "https://bsc.nodereal.io",
+      "https://bsc-dataseed1.binance.org",
+      "https://bsc-mainnet.nodereal.io/v1/64a9df0874fb4a93b9d0a3849de012d3",
       "https://bsc-dataseed1.binance.org",
       "https://bsc-dataseed2.binance.org",
       "https://bsc-dataseed3.binance.org",

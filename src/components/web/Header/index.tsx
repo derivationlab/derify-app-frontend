@@ -56,9 +56,8 @@ const Header: FC = () => {
           </span>
         </nav>
         <div className="web-header-tools">
-          <ConnectButton />
-          <AddTokenButton />
           <SelectNetworkButton />
+          <ConnectButton />
           <Tool />
         </div>
       </header>

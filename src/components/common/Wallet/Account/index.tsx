@@ -16,7 +16,7 @@ interface Props {
 
 const AccountDialog: FC<Props> = ({ visible, onClose }) => {
   const { t } = useTranslation()
-  const { data: ACCOUNT } = useAccount()
+  const { address } = useAccount()
   const { disconnect } = useDisconnect()
 
   const disconnectEv = () => {
@@ -33,7 +33,7 @@ const AccountDialog: FC<Props> = ({ visible, onClose }) => {
             <DepositButton />
             <WithdrawButton />
           </div>
-          <address>{ACCOUNT?.address}</address>
+          <address>{address}</address>
           <p>MetaMask @ BNB Chain</p>
         </div>
         <Button outline onClick={disconnectEv}>

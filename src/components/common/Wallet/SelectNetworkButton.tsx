@@ -1,10 +1,10 @@
-import React, { FC, useState, useRef } from 'react'
-import { useClickAway } from 'react-use'
 import classNames from 'classnames'
+import { useClickAway } from 'react-use'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useState, useRef } from 'react'
 
-import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
+import Button from '@/components/common/Button'
 
 const networks: Record<string, any>[] = [
   {
@@ -34,8 +34,10 @@ const networks: Record<string, any>[] = [
 ]
 
 const SelectNetworkButton: FC = () => {
-  const { t } = useTranslation()
   const ref = useRef(null)
+
+  const { t } = useTranslation()
+
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
   const [curr, setCurr] = useState<Record<string, any>>(networks[0])
 

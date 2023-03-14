@@ -16,13 +16,13 @@ interface Props {
 
 const MNav: FC<Props> = ({ show, list, onClose }) => {
   const { t } = useTranslation()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const { pathname: P } = useLocation()
   const ref = useRef(null)
   useClickAway(ref, () => onClose())
 
   const handleNavLinkEv = (e: any) => {
-    if (!account?.address && /^\/broker\/[0-9a-zA-Z_@$]+$/.test(P)) {
+    if (!address && /^\/broker\/[0-9a-zA-Z_@$]+$/.test(P)) {
       e.preventDefault()
       return
     } else {

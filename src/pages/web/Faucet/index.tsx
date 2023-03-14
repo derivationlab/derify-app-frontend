@@ -8,16 +8,16 @@ import NotConnect from '@/components/web/NotConnect'
 import Button from '@/components/common/Button'
 
 const Faucet: FC = () => {
-  const { data: account } = useAccount()
-  const { activeChain } = useNetwork()
+  const { address } = useAccount()
+  const { chain } = useNetwork()
 
   const targetTokenInfo = useMemo(() => {
-    const symbol = activeChain?.nativeCurrency?.symbol
+    const symbol = chain?.nativeCurrency?.symbol
     if (symbol) return [symbol, FaucetLinks[symbol]]
     return ['', '']
-  }, [activeChain])
+  }, [chain])
 
-  if (!account?.address) {
+  if (!address) {
     return (
       <div className="web-broker-not-connect">
         <NotConnect />

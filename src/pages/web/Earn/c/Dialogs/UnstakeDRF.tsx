@@ -18,7 +18,7 @@ interface Props {
 
 const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { data: ACCOUNT } = useAccount()
+  const { address } = useAccount()
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')
@@ -55,7 +55,7 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit="DRF" />
               </dd>
             </dl>
-            <address>{ACCOUNT?.address}</address>
+            <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput

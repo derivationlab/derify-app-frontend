@@ -39,8 +39,9 @@ const PositionMining: FC = () => {
   )
 
   const memoPositionApy = useMemo(() => {
+    const values = Object.values(indicators)
     if (indicatorsLoaded) {
-      const apy = Object.values(indicators).map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))
+      const apy = values.map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))
       return Math.max.apply(null, apy) * 100
     }
     return '0'
@@ -49,7 +50,6 @@ const PositionMining: FC = () => {
   const memoPositionsAm = useMemo(() => {
     if (positionsAmount) {
       const { long_position_amount, short_position_amount } = positionsAmount
-      console.info(long_position_amount, short_position_amount)
       return bnPlus(long_position_amount, short_position_amount)
     }
     return '0'
@@ -114,7 +114,7 @@ const PositionMining: FC = () => {
             <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
               {t('Earn.PositionMining.ClaimAll', 'Claim All')}
             </Button>
-            <a href={`/${marginToken}/mining/rank`}>Rank List # 123</a>
+            <a href={`/${marginToken}/mining/rank`}>Rank List # 999</a>
           </aside>
         </div>
         <div className="web-eran-item-card">

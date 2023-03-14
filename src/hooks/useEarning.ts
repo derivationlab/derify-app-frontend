@@ -76,6 +76,29 @@ export const useWithdrawAllBond = () => {
   return { withdraw }
 }
 
+export const useWithdrawRankReward = () => {
+  const { data: signer } = useSigner()
+
+  const withdraw = useCallback(
+    async (rewards: string): Promise<boolean> => {
+      if (!signer) return false
+      const c = getDerifyRewardsContract(rewards, signer)
+
+      try {
+        const res = await c.withdrawRankReward()
+        const receipt = await res.wait()
+        return receipt.status
+      } catch (e) {
+        console.info(e)
+        return false
+      }
+    },
+    [signer]
+  )
+
+  return { withdraw }
+}
+
 export const useStakingDrf = () => {
   const { data: signer } = useSigner()
 

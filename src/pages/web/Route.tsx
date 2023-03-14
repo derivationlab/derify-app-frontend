@@ -10,7 +10,7 @@ import Loading from '@/components/common/Loading'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
 
 export const R0 = (props: PropsWithChildren<any>) => {
-  const { data } = useAccount()
+  const { address } = useAccount()
   const { children, pathKey } = props
 
   const { find, marginToken } = useMTokenForRoute()
@@ -20,17 +20,17 @@ export const R0 = (props: PropsWithChildren<any>) => {
 
   return useMemo(() => {
     const out = find ? children : <Redirect to={`/${marginToken}/${pathKey}`} />
-    if (!data?.address) return out
+    if (!address) return out
     if (brokerBoundLoaded) {
       if (!isEmpty(brokerBound)) return out
       return <Redirect to="/broker/bind" />
     }
     return <Loading show type="fixed" />
-  }, [find, data, pathKey, marginToken, brokerBound, brokerBoundLoaded])
+  }, [find, address, pathKey, marginToken, brokerBound, brokerBoundLoaded])
 }
 
 export const R1 = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children, pathKey } = props
 
@@ -42,7 +42,7 @@ export const R1 = (props: PropsWithChildren<any>) => {
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerInfoLoaded && brokerBoundLoaded) {
       if (!isEmpty(brokerInfo)) {
         return <Redirect to={`/${marginToken}/broker/workbench`} />
@@ -61,11 +61,11 @@ export const R1 = (props: PropsWithChildren<any>) => {
       return <Redirect to="/broker/bind" />
     }
     return <Loading show type="fixed" />
-  }, [find, account, pathKey, brokerInfo, brokerBound, marginToken, brokerInfoLoaded, brokerBoundLoaded])
+  }, [find, address, pathKey, brokerInfo, brokerBound, marginToken, brokerInfoLoaded, brokerBoundLoaded])
 }
 
 export const R2 = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children, pathKey } = props
 
@@ -75,7 +75,7 @@ export const R2 = (props: PropsWithChildren<any>) => {
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerBoundLoaded) {
       if (!isEmpty(brokerBound)) {
         return <Redirect to="/broker" />
@@ -83,11 +83,11 @@ export const R2 = (props: PropsWithChildren<any>) => {
       return pathKey ? find ? children : <Redirect to={`/${marginToken}/${pathKey}`} /> : children
     }
     return <Loading show type="fixed" />
-  }, [find, account, pathKey, brokerBound, marginToken, brokerBoundLoaded])
+  }, [find, address, pathKey, brokerBound, marginToken, brokerBoundLoaded])
 }
 
 export const R3 = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children, pathKey } = props
 
@@ -97,7 +97,7 @@ export const R3 = (props: PropsWithChildren<any>) => {
   const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
       if (!isEmpty(brokerInfo)) {
         return pathKey ? (
@@ -113,5 +113,18 @@ export const R3 = (props: PropsWithChildren<any>) => {
       return <Redirect to="/broker" />
     }
     return <Loading show type="fixed" />
-  }, [find, account, pathKey, brokerInfo, marginToken, brokerInfoLoaded])
+  }, [find, address, pathKey, brokerInfo, marginToken, brokerInfoLoaded])
+}
+
+export const R4 = (props: PropsWithChildren<any>) => {
+  const { address } = useAccount()
+
+  const { children, pathKey } = props
+
+  const { find, marginToken } = useMTokenForRoute()
+
+  return useMemo(() => {
+    if (!address) return <BrokerConnect />
+    return find ? children : <Redirect to={`/${marginToken}/${pathKey}`} />
+  }, [find, address, pathKey, marginToken])
 }

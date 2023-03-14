@@ -11,7 +11,7 @@ import { MarginTokenKeys, MarginTokenWithContract, PubSubEvents } from '@/typing
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
 
 export default function InitialUpdater(): null {
-  const { data } = useAccount()
+  const { address } = useAccount()
   const { pathname } = useLocation()
 
   const { data: protocolConfDAT, isLoading: protocolConfDATIsLoading } = useProtocolConfig()
@@ -33,16 +33,16 @@ export default function InitialUpdater(): null {
 
   // for tokens balance
   useEffect(() => {
-    if (!data?.address) {
+    if (!address) {
       void resetBalances()
     } else {
-      void fetchBalances(data?.address)
+      void fetchBalances(address)
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
-      if (data?.address) void fetchBalances(data.address)
+      if (address) void fetchBalances(address)
     })
-  }, [data?.address])
+  }, [address])
 
   // for protocol abi config
   useEffect(() => {
@@ -80,10 +80,10 @@ export default function InitialUpdater(): null {
       updateVariables(data)
     }
 
-    if (data?.address && !protocolConfDATIsLoading && protocolConfDAT) {
-      void func(data.address, protocolConfDAT)
+    if (address && !protocolConfDATIsLoading && protocolConfDAT) {
+      void func(address, protocolConfDAT)
     }
-  }, [protocolConfDATIsLoading, protocolConfDAT, data?.address, marginToken, quoteToken])
+  }, [protocolConfDATIsLoading, protocolConfDAT, address, marginToken, quoteToken])
 
   // switch margin token need reset trader variables
   useEffect(() => {

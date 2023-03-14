@@ -41,35 +41,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
   }))
   // console.info(calls)
   const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 30000)
-  /**
-   bMarginToken
-   :
-   "0x60B1ea3Ee150fb09C703168143ea6d58fe273b29"
-   derifyBrokerRewards
-   :
-   "0x545ff472a690681fB702a870122a2AAdA39d2297"
-   derifyClearing
-   :
-   "0x13f1B5f2a50Dee47dF68A6ec15cA31300Ad2bcC0"
-   derifyExchange
-   :
-   "0x6bb172F7813D72ADD33f9552056bB4025555b017"
-   derifyFactory
-   :
-   "0xd813aaFBF9444F45F2e8DF669cF29a73A7Fe7B9c"
-   derifyPmr
-   :
-   "0xc647D96778A9E071c89561b14A8e23D517A4Ac6e"
-   derifyRank
-   :
-   "0xd0A781F3c4eeAd2C012Dbf807AB5fF2Cb887A0E1"
-   derifyRewards
-   :
-   "0xE29570946b2Dea749c40c78f9a87aAd3620cF931"
-   marginTokenPriceFeed
-   :
-   "0xCD84Ba166C63F0F5865E4824e1cB08201B5D0245"
-   */
+
   if (!isLoading && !isEmpty(data)) {
     data.forEach((addresses: any, index: number) => {
       const {

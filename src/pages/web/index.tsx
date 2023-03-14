@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 
 import { getIpLocation } from '@/api'
 import { useMTokenForRoute } from '@/hooks/useTrading'
-import { R0, R1, R2, R3 } from '@/pages/web/Route'
+import { R0, R1, R2, R3, R4 } from '@/pages/web/Route'
 import { Redirect, Switch, Route } from '@/components/common/Route'
 
 import Header from '@/components/web/Header'
@@ -149,7 +149,14 @@ const Web: FC = () => {
         <Route path="/broker/profile/:id" exact render={() => <BrokerInfo />} />
         <Route path="/dashboard" render={() => <Dashboard />} />
         <Route path="/my-space" render={() => <MySpace />} />
-        <Route path="/system" render={() => <System />} />
+        <Route
+          path="/:id/system/parameters"
+          render={() => (
+            <R4 pathKey="system/parameters">
+              <System />
+            </R4>
+          )}
+        />
         <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
       </Switch>
       <Toast />

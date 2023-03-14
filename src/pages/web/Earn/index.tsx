@@ -15,9 +15,10 @@ import Competition from './c/Competition'
 import PositionMining from './c/PositionMining'
 import MarginTokenPool from './c/MarginTokenPool'
 import DerifyTokenPool from './c/DerifyTokenPool'
+import { useRankReward } from '@/hooks/useDashboard'
 
 const Eran: FC = () => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const updateRewardsInfo = useTraderInfo((state) => state.updateRewardsInfo)
@@ -54,17 +55,17 @@ const Eran: FC = () => {
   }, [protocolConfig])
 
   useEffect(() => {
-    if (account?.address && protocolConfig) void _getTraderRewardDAT(account?.address, protocolConfig.rewards)
-  }, [account?.address, protocolConfig])
+    if (address && protocolConfig) void _getTraderRewardDAT(address, protocolConfig.rewards)
+  }, [address, protocolConfig])
 
   useEffect(() => {
-    if (account?.address) void _getTraderStakingDAT(account?.address)
-  }, [account?.address])
+    if (address) void _getTraderStakingDAT(address)
+  }, [address])
 
   useInterval(() => {
-    if (account?.address) {
-      void _getTraderStakingDAT(account?.address)
-      if (protocolConfig) void _getTraderRewardDAT(account?.address, protocolConfig.rewards)
+    if (address) {
+      void _getTraderStakingDAT(address)
+      if (protocolConfig) void _getTraderRewardDAT(address, protocolConfig.rewards)
     }
     if (protocolConfig) void _getBankBDRFPoolDAT(protocolConfig.rewards)
     void _getStakingDrfPoolDAT()

@@ -1,4 +1,3 @@
-import numeral from 'numeral'
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
@@ -28,7 +27,7 @@ import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
 
 const MarginTokenPool: FC = () => {
   const { t } = useTranslation()
-  const { data } = useAccount()
+  const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -42,7 +41,7 @@ const MarginTokenPool: FC = () => {
   const { exchange } = useExchangeBond()
   const { withdraw } = useWithdrawAllBond()
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
-  const { data: bondBalance } = useTraderBondBalance(data?.address, findToken(marginToken).tokenAddress)
+  const { data: bondBalance } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -96,7 +95,7 @@ const MarginTokenPool: FC = () => {
   }, [bondBalance])
 
   const memoAPY = useMemo(() => {
-    return numeral((rewardsInfo?.bondAnnualInterestRatio ?? 0) * 100).format('0.00')
+    return keepDecimals((rewardsInfo?.bondAnnualInterestRatio ?? 0) * 100, 2)
   }, [rewardsInfo])
 
   const exchangeFunc = async (amount: string) => {
@@ -152,7 +151,7 @@ const MarginTokenPool: FC = () => {
         </header>
         <section className="web-eran-item-main">
           <div className="web-eran-item-dashboard">
-            <DecimalShow value={(rewardsInfo?.bondAnnualInterestRatio ?? 0) * 100} percent />
+            <DecimalShow value={memoAPY} percent />
             <u>APR.</u>
           </div>
           <div className="web-eran-item-claim">

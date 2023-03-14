@@ -16,7 +16,7 @@ const Bind: FC = () => {
 
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const [brokerId, setBrokerId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -33,7 +33,7 @@ const Bind: FC = () => {
 
     setVisibleStatus('')
 
-    const data = await bindYourBroker({ trader: account?.address, brokerId })
+    const data = await bindYourBroker({ trader: address, brokerId })
     if (data.code === 0) {
       // succeed
       PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)

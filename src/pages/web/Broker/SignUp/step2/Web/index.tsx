@@ -33,7 +33,7 @@ const BrokerSignUpStep2: FC = () => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
   const { pathname } = useLocation()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const formMode = useForm({ defaultValues })
   const { handleSubmit, setValue } = formMode
@@ -88,7 +88,7 @@ const BrokerSignUpStep2: FC = () => {
 
     const { data: brokerInfo } = await getBrokerInfoById(id)
 
-    if (!isEmpty(brokerInfo) && brokerInfo[0]?.broker !== account?.address) {
+    if (!isEmpty(brokerInfo) && brokerInfo[0]?.broker !== address) {
       window.toast.error(t('Broker.Reg.Occupied', 'Your Code is occupied, choose another one.'))
       return
     }
@@ -151,8 +151,8 @@ const BrokerSignUpStep2: FC = () => {
   }, [pathname, brokerInfo, brokerInfoLoaded])
 
   useEffect(() => {
-    if (account?.address) setValue('broker', account.address)
-  }, [account?.address])
+    if (address) setValue('broker', address)
+  }, [address])
 
   return (
     <div className="web-broker-sign-up">

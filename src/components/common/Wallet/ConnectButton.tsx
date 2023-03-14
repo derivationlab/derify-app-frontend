@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
-import { useAccount, useConnect, useNetwork } from 'wagmi'
 import { useTranslation } from 'react-i18next'
+import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
+import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
 
 import { traderInfoUpdates } from '@/api'
 
@@ -14,9 +14,10 @@ interface Props {
 
 const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   const { t } = useTranslation()
-  const { data: account } = useAccount()
-  const { activeChain, switchNetwork, chains } = useNetwork()
-  const { connectAsync, connectors, isConnecting, activeConnector, isConnected } = useConnect()
+  const { chain, chains } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork()
+  const { connectAsync, connectors, isLoading } = useConnect()
+  const { connector: activeConnector, isConnected, address } = useAccount()
 
   const [needSwitchNet, setNeedSwitchNet] = useState<boolean>(false)
   const [showWalletInf, setShowWalletInf] = useState<boolean>(false)
@@ -30,12 +31,12 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
       return
     }
 
-    if (!connector.ready && [0, 3].includes(connectorsIndex)) {
+    if (!connector.ready && connectorsIndex === 0) {
       window.open('https://metamask.io/download/', '_blank')
       return
     }
 
-    const connectRes = await connectAsync(connector)
+    const connectRes = await connectAsync({ connector })
 
     if (!connectRes) {
       window.toast.error('Wallet Connector could not connect. Please refresh and try again.')
@@ -49,47 +50,45 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   }
 
   const memoAccountHide = useMemo(() => {
-    const _account = account?.address
-    if (_account) return _account.replace(/(\w{5})\w*(\w{4})/, '$1...$2')
+    if (address) return address.replace(/(\w{5})\w*(\w{4})/, '$1...$2')
     return ''
-  }, [account?.address])
+  }, [address])
 
   const onClickWalletCb = useCallback(() => {
-    if (account?.address) {
+    if (address) {
       setShowWalletInf(!showWalletInf)
     } else {
       setVisibleStatus('connect')
     }
-  }, [account?.address, showWalletInf])
+  }, [address, showWalletInf])
 
   const onCloseDialogEv = () => setVisibleStatus('')
 
   useEffect(() => {
-    if (!isConnecting && activeConnector && account?.address) setVisibleStatus('')
-  }, [account?.address, isConnecting, activeConnector])
+    if (!isLoading && activeConnector && address) setVisibleStatus('')
+  }, [address, isLoading, activeConnector])
 
   useEffect(() => {
     if (!activeConnector) setShowWalletInf(false)
   }, [activeConnector])
 
   useEffect(() => {
-    if ((activeChain?.unsupported || needSwitchNet) && switchNetwork) switchNetwork(chains[0]?.id)
-  }, [activeChain, needSwitchNet, switchNetwork, chains])
+    if ((chain?.unsupported || needSwitchNet) && switchNetwork) switchNetwork(chains[0]?.id)
+  }, [chain, needSwitchNet, switchNetwork, chains])
 
   useEffect(() => {
     const func = (trader: string) => {
       void traderInfoUpdates({ trader })
     }
 
-    if (isConnected && account?.address) {
-      func(account.address)
+    if (isConnected && address) {
+      func(address)
     }
-  }, [isConnected, account?.address])
+  }, [isConnected, address])
 
-  // onClick={() => setVisibleStatus('account')}
   return (
     <>
-      {isConnected && account?.address ? (
+      {isConnected && address ? (
         <Button className="c-connect-wallet-btn" size={size} to="/my-space">
           {memoAccountHide}
         </Button>

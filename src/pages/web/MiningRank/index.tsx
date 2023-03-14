@@ -40,7 +40,7 @@ const Rank: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { mobile } = useContext(MobileContext)
 
@@ -55,7 +55,7 @@ const Rank: FC = () => {
    * 1-比赛结束保证金余额
    */
   const fetchData = useCallback(async (index = 0) => {
-    const { data } = await getTraderMarginBalance(account?.address ?? '', index, 10)
+    const { data } = await getTraderMarginBalance(address ?? '', index, 10)
 
     console.info(data)
 
@@ -114,8 +114,8 @@ const Rank: FC = () => {
   ]
 
   useEffect(() => {
-    if (account?.address) void fetchData()
-  }, [account?.address])
+    if (address) void fetchData()
+  }, [address])
 
   return (
     <div className="web-broker-rank">

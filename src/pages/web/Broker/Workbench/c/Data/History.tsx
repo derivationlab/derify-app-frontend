@@ -77,13 +77,13 @@ const History: FC = () => {
 
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const marginToken = useMTokenFromRoute()
 
   const fetchData = async (index = 0) => {
-    if (account?.address) {
-      const { data } = await getBrokerAccountFlow(account.address, findToken(marginToken).tokenAddress, index, 10)
+    if (address) {
+      const { data } = await getBrokerAccountFlow(address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_TABLE_DAT',

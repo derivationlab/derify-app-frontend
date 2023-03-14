@@ -1,9 +1,11 @@
-import React, { FC, useMemo, useState } from 'react'
 import Table from 'rc-table'
+import React, { FC, useMemo, useState } from 'react'
 
-// import { MarketInfoData as data } from './mockData'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 const System: FC = () => {
+  const marginToken = useMTokenFromRoute()
+
   const isLoading = false
 
   const [systemRelevantData, setSystemRelevantData] = useState([
@@ -51,7 +53,7 @@ const System: FC = () => {
 
   return (
     <div className="web-table-page">
-      <div className="web-system-title">System Parameters-BUSD</div>
+      <div className="web-system-title">System Parameters-{marginToken}</div>
       <header className="web-table-page-header">
         <h3>System Relevant</h3>
       </header>

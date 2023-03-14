@@ -7,9 +7,9 @@ export interface NotConnect {
   br?: number
 }
 const NotConnect: FC<NotConnect> = ({ br = 48 }) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   return useMemo(() => {
-    if (!account?.address) {
+    if (!address) {
       return (
         <section className="web-not-connect" style={{ borderRadius: `${br}px` }}>
           <ConnectButton />
@@ -17,7 +17,7 @@ const NotConnect: FC<NotConnect> = ({ br = 48 }) => {
       )
     }
     return null
-  }, [account?.address])
+  }, [address])
 }
 
 export default NotConnect

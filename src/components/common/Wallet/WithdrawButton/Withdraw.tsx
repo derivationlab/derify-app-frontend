@@ -21,7 +21,7 @@ interface Props {
 
 const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { data } = useAccount()
+  const { address } = useAccount()
 
   const [state, dispatch] = useReducer(reducer, stateInit)
 
@@ -64,8 +64,8 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   useEffect(() => {
-    if (data?.address && Number(state.withdrawAmount) > 0) void funcAsync(data.address, Number(state.withdrawAmount))
-  }, [data?.address, state.withdrawAmount])
+    if (address && Number(state.withdrawAmount) > 0) void funcAsync(address, Number(state.withdrawAmount))
+  }, [address, state.withdrawAmount])
 
   return (
     <Dialog

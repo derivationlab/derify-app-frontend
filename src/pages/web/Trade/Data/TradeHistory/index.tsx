@@ -18,13 +18,13 @@ import NoRecord from '../c/NoRecord'
 const TradeHistory: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const marginToken = useMTokenFromRoute()
 
   const fetchData = async (index = 0) => {
-    if (account?.address) {
-      const { data } = await getTraderTradeFlow(findToken(marginToken).tokenAddress, account?.address, index, 10)
+    if (address) {
+      const { data } = await getTraderTradeFlow(findToken(marginToken).tokenAddress, address, index, 10)
 
       dispatch({
         type: 'SET_POSITION_DAT',
@@ -40,7 +40,7 @@ const TradeHistory: FC = () => {
   }
 
   const memoTradeHistory = useMemo(() => {
-    if (!account?.address) return <NoRecord show />
+    if (!address) return <NoRecord show />
     if (state.positionDAT.isLoaded) return <Loading show type="section" />
     if (!isEmpty(state.positionDAT?.records)) {
       return state.positionDAT.records.map((d: Record<string, any>, i: number) => (
@@ -48,7 +48,7 @@ const TradeHistory: FC = () => {
       ))
     }
     return <NoRecord show />
-  }, [account?.address, state.positionDAT])
+  }, [address, state.positionDAT])
 
   useEffect(() => {
     void fetchData()

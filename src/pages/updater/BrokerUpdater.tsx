@@ -8,7 +8,7 @@ import { useConfigInfo } from '@/zustand'
 import { PubSubEvents } from '@/typings'
 
 export default function BrokerUpdater(): null {
-  const { data } = useAccount()
+  const { address } = useAccount()
 
   const { data: brokerParams, isLoading: brokerParamsIsLoading } = useBrokerParams()
 
@@ -18,17 +18,17 @@ export default function BrokerUpdater(): null {
 
   // for broker info
   useEffect(() => {
-    if (data?.address) {
-      void fetchBrokerInfo(data?.address)
-      void fetchBrokerBound(data?.address)
+    if (address) {
+      void fetchBrokerInfo(address)
+      void fetchBrokerBound(address)
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {
-      if (data?.address) {
-        void fetchBrokerInfo(data.address)
+      if (address) {
+        void fetchBrokerInfo(address)
       }
     })
-  }, [data?.address])
+  }, [address])
 
   useEffect(() => {
     if (!brokerParamsIsLoading && brokerParams) {

@@ -18,7 +18,7 @@ export const initial = (): Record<string, any> => {
   return quote
 }
 
-export const usePairIndicator = (marginToken: MarginTokenKeys): { data: Record<string, any> } => {
+export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<string, any> } => {
   const output = initial()
 
   const { data } = useQuery(
@@ -69,5 +69,5 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data: Record<s
     return { data: output }
   }
 
-  return { data: output }
+  return { data: undefined }
 }

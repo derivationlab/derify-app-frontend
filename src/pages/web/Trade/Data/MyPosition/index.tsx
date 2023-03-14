@@ -30,7 +30,7 @@ const MyPosition: FC = () => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
   const { data: signer } = useSigner()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { close: close1 } = useClosePosition()
   const { close: close2 } = useCloseAllPositions()
@@ -151,7 +151,7 @@ const MyPosition: FC = () => {
   }
 
   const memoMyPositions = useMemo(() => {
-    if (!account?.address) return <NoRecord show />
+    if (!address) return <NoRecord show />
     if (!positionOrdLoaded) return <Loading show type="section" />
     if (!isEmpty(positionOrd)) {
       return (
@@ -174,7 +174,7 @@ const MyPosition: FC = () => {
       )
     }
     return <NoRecord show />
-  }, [account?.address, positionOrdLoaded, positionOrd, theme])
+  }, [address, positionOrdLoaded, positionOrd, theme])
 
   return (
     <>

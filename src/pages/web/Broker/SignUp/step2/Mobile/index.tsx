@@ -21,7 +21,7 @@ const BrokerSignUpStep2Mobile: FC = () => {
 
   const { t } = useTranslation()
   const { pathname } = useLocation()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const [brokerId, setBrokerId] = useState<string>('')
   const [brokerLang, setBrokerLang] = useState<string>(SelectLangOptions[0])
@@ -93,7 +93,7 @@ const BrokerSignUpStep2Mobile: FC = () => {
 
     const { data: brokerInfo } = await getBrokerInfoById(brokerId)
 
-    if (!isEmpty(brokerInfo) && brokerInfo[0]?.broker !== account?.address) {
+    if (!isEmpty(brokerInfo) && brokerInfo[0]?.broker !== address) {
       window.toast.error(t('Broker.Reg.Occupied', 'Your Code is occupied, choose another one.'))
       return
     }
@@ -156,8 +156,8 @@ const BrokerSignUpStep2Mobile: FC = () => {
   }, [pathname, brokerInfo, brokerInfoLoaded])
 
   useEffect(() => {
-    if (account?.address) setBrokerAcco(account.address)
-  }, [account?.address])
+    if (address) setBrokerAcco(address)
+  }, [address])
 
   return (
     <div className="m-reg">

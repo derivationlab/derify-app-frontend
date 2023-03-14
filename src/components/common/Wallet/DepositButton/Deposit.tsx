@@ -21,7 +21,7 @@ interface Props {
 
 const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { data } = useAccount()
+  const { address } = useAccount()
 
   const [state, dispatch] = useReducer(reducer, stateInit)
 
@@ -59,7 +59,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 <BalanceShow value={balances[marginToken]} unit={marginToken} />
               </dd>
             </dl>
-            <address>{data?.address}</address>
+            <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput

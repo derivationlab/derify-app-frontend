@@ -9,13 +9,13 @@ import BuybackPlan from './BuybackPlan'
 import GrantList from './GrantList'
 
 const Dashboard: FC = () => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   return (
     <Switch>
       <Route path="/dashboard" exact render={() => <Redirect to="/dashboard/overview" />} />
       <Route path="/dashboard/overview" component={Overview} />
       <Route path="/dashboard/buyback-plan" component={BuybackPlan} />
-      <Route path="/dashboard/grant-list" component={!account?.address ? GrantList : BrokerConnect} />
+      <Route path="/dashboard/grant-list" component={!address ? GrantList : BrokerConnect} />
     </Switch>
   )
 }

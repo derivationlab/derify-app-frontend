@@ -13,7 +13,7 @@ import BrokerCard from './c/BrokerCard'
 const BrokerInfo: FC = () => {
   const history = useHistory()
 
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const { id: brokerId } = useParams<{ id: string }>()
 
   const [brokerInfo, setBrokerInfo] = useState<Record<string, any>>({})
@@ -25,7 +25,7 @@ const BrokerInfo: FC = () => {
   const bindBrokerFunc = async () => {
     const toast = window.toast.loading('binding...')
 
-    const data = await bindYourBroker({ trader: account?.address, brokerId })
+    const data = await bindYourBroker({ trader: address, brokerId })
 
     if (data.code === 0) {
       // succeed
@@ -67,7 +67,7 @@ const BrokerInfo: FC = () => {
 
   useEffect(() => {
     if (loaded) void brokerInfoFunc()
-  }, [loaded, account?.address])
+  }, [loaded, address])
 
   return infoLoaded ? <Loading show type="fixed" /> : <BrokerCard broker={brokerInfo} />
 }

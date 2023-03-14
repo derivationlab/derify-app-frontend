@@ -1,70 +1,59 @@
-import toast from 'react-hot-toast'
+import React from 'react'
 import { Buffer } from 'buffer'
 import { WagmiConfig } from 'wagmi'
-import type { WagmiConfigProps } from 'wagmi'
-import { createClient, configureChains, defaultChains } from 'wagmi'
-import { publicProvider } from 'wagmi/providers/public'
+import { bsc, bscTestnet } from 'wagmi/chains'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { InjectedConnector } from 'wagmi/connectors/injected'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
+import { createClient, configureChains } from 'wagmi'
+import type { WagmiConfigProps } from 'wagmi'
 
-import { BSC_SCAN_URL } from '@/config'
-import { rpcUrl, chainId, netLabel } from '@/utils/baseProvider'
-
-window.toast = toast
+import { useRpcStore } from '@/zustand'
+import { chainId } from '@/utils/chainSupport'
 
 if (!window.Buffer) window.Buffer = Buffer
 
-const extraChains = [
-  {
-    id: chainId,
-    name: `BNB Smart Chain ${netLabel}`,
-    network: `BNB Smart Chain ${netLabel}`,
-    nativeCurrency: {
-      name: 'BNB',
-      symbol: 'BNB',
-      decimals: 18
-    },
-    rpcUrls: {
-      default: rpcUrl
-    },
-    blockExplorers: {
-      default: {
-        name: 'BscScan',
-        url: BSC_SCAN_URL
-      }
-    }
-  }
-]
-
 function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'>>) {
-  const { provider } = configureChains([...defaultChains, ...extraChains], [publicProvider()])
+  const rpcUrl = useRpcStore((state) => state.rpc)
+
+  const { provider, chains } = configureChains(
+    [bsc, bscTestnet],
+    [
+      jsonRpcProvider({
+        rpc: (chain) => ({ http: rpcUrl })
+      })
+    ]
+  )
 
   const client = createClient({
+    provider,
     autoConnect: true,
-    connectors() {
-      return [
-        new MetaMaskConnector({ chains: extraChains, options: { shimDisconnect: true } }),
-        new CoinbaseWalletConnector({
-          chains: extraChains,
-          options: {
-            appName: 'Derify protocol',
-            chainId: chainId,
-            jsonRpcUrl: rpcUrl
-          }
-        }),
-        new WalletConnectConnector({
-          chains: extraChains,
-          options: {
-            qrcode: true,
-            rpc: { [chainId]: rpcUrl }
-          }
-        }),
-        new InjectedConnector({ chains: extraChains, options: { name: 'Injected', shimDisconnect: true } })
-      ]
-    },
-    provider
+    connectors: [
+      new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
+      new CoinbaseWalletConnector({
+        chains,
+        options: {
+          appName: 'app',
+          chainId: chainId,
+          jsonRpcUrl: rpcUrl
+        }
+      }),
+      new WalletConnectLegacyConnector({
+        chains,
+        options: {
+          qrcode: true,
+        },
+      }),
+      new InjectedConnector({
+        chains,
+        options: {
+          name: 'Injected',
+          shimDisconnect: true
+        }
+      })
+    ]
   })
 
   return <WagmiConfig client={client}>{props.children}</WagmiConfig>

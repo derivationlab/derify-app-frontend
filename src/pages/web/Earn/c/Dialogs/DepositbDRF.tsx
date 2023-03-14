@@ -23,7 +23,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
-  const { data: ACCOUNT } = useAccount()
+  const { address } = useAccount()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 
@@ -52,7 +52,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
       dispatch({ type: 'SET_BALANCE', payload: data })
     }
 
-    if (ACCOUNT?.address && protocolConfig) void func(ACCOUNT.address, protocolConfig.bMarginToken)
+    if (address && protocolConfig) void func(address, protocolConfig.bMarginToken)
   }, [])
 
   return (
@@ -71,7 +71,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 <BalanceShow value={state.balance} unit={`b${marginToken}`} />
               </dd>
             </dl>
-            <address>{ACCOUNT?.address}</address>
+            <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput

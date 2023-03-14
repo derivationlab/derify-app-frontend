@@ -26,7 +26,7 @@ import { reducer, stateInit } from '@/reducers/grantList'
 const GrantList: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const { data } = useAccount()
+  const { address } = useAccount()
 
   const marginToken = useMTokenFromRoute()
 
@@ -37,7 +37,7 @@ const GrantList: FC = () => {
   const fetchData = useCallback(async (index = 0) => {
     // dispatch({
     //   type: 'SET_GRANT_DAT',
-    //   payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+    //   payload: { records: records ?? [], totalItems: totalItems ?? 0, isLoaded: false }
     // })
   }, [])
 
@@ -55,13 +55,13 @@ const GrantList: FC = () => {
      * target: 奖励对象 enum{'all','rank', 'pmr', 'broker_rewards'}，默认'all'
      * status： 交易比赛状态 enum{'upcoming', 'active', 'closed', 'all'), 默认'all'
      */
-    if (data?.address) await getGrantList(findToken(marginToken)?.tokenAddress, 'all', 'all', 0, 10)
-    if (data?.address) await getTraderMarginBalance(data?.address, 0, 10)
+    if (address) await getGrantList(findToken(marginToken)?.tokenAddress, 'all', 'all', 0, 10)
+    if (address) await getTraderMarginBalance(address, 0, 10)
     await getActiveRankGrantCount(findToken(marginToken)?.tokenAddress)
-    if (data?.address) await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress, data?.address)
+    if (address) await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress, address)
     await getActiveRankGrantTotalAmount(findToken(marginToken)?.tokenAddress)
     if (protocolConfig) await addGrantPlan(1, protocolConfig.awards, '2000', '4', '4')
-  }, [data?.address, protocolConfig, marginToken])
+  }, [address, protocolConfig, marginToken])
 
   return (
     <div className="web-dashboard">

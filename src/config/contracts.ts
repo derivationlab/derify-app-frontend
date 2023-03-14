@@ -9,10 +9,7 @@ export const contracts: { [key in ContractKeys]: Contract } = {
   derifyProtocol: new Contract('DerifyProtocol', {
     [ChainId.MAINNET]: '0x2e70e1C2B3660B91E07DEa476F36945aDFe1e4A1',
     [ChainId.TESTNET]: '0x37a7e5F207634bd57B671cb1fa4c271170c8C2a2'
-  }),
-  derifyBroker: new Contract('DerifyBroker', {
-    [ChainId.MAINNET]: '0x465e0019B1a51Ec5E4A6A26567Aff4E1806A76B6',
-    [ChainId.TESTNET]: '0xC77B6bDCC2ABA23b5B968D3DE2A1aB827d9EAB07'
+
   })
 }
 

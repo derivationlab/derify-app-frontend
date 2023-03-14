@@ -26,7 +26,7 @@ interface Props {
 
 const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const { t } = useTranslation()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const maxVolume = useCalcOpeningDAT((state) => state.maxVolume)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -69,9 +69,9 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   }
 
   useEffect(() => {
-    if (account?.address && protocolConfig) {
+    if (address && protocolConfig) {
       void _fetchMaxVolume(
-        account.address,
+        address,
         protocolConfig.exchange,
         spotPrice,
         openingPrice,
@@ -82,9 +82,9 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_POSITION_VOLUME, () => {
-      if (account?.address && protocolConfig) {
+      if (address && protocolConfig) {
         void _fetchMaxVolume(
-          account.address,
+          address,
           protocolConfig.exchange,
           spotPrice,
           openingPrice,
@@ -94,7 +94,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
         )
       }
     })
-  }, [account?.address, spotPrice, quoteToken, openingType, leverageNow, marginToken, openingPrice, protocolConfig])
+  }, [address, spotPrice, quoteToken, openingType, leverageNow, marginToken, openingPrice, protocolConfig])
 
   return (
     <>

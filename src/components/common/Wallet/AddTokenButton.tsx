@@ -17,7 +17,7 @@ const AddTokenButton: FC = () => {
   const ref = useRef(null)
 
   const { t } = useTranslation()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 
@@ -30,7 +30,7 @@ const AddTokenButton: FC = () => {
   const memoTokens = useMemo(() => {
     return [
       {
-        swap: 'swap?inputCurrency=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&outputCurrency=0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F',
+        swap: `swap?inputCurrency=${tokens.busd.tokenAddress}&outputCurrency=${tokens.drf.tokenAddress}`,
         image: '',
         symbol: tokens.drf.symbol,
         address: tokens.drf.tokenAddress,
@@ -72,7 +72,7 @@ const AddTokenButton: FC = () => {
     setMenuStatus(false)
   })
 
-  if (!account?.address) return null
+  if (!address) return null
 
   return (
     <div className="web-addtoken-button" ref={ref}>

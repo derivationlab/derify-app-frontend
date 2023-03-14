@@ -10,8 +10,8 @@ import { useQuoteToken } from '@/zustand'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
-import { isGT, keepDecimals } from '@/utils/tools'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { bnMul, isGT, keepDecimals } from '@/utils/tools'
 import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
 
@@ -25,7 +25,7 @@ import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
 
 const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
-  const { data } = useAccount()
+  const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -38,8 +38,7 @@ const DerifyTokenPool: FC = () => {
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
-  const { data: edrfBalance } = useTraderEDRFBalance(data?.address)
-
+  const { data: edrfBalance } = useTraderEDRFBalance(address)
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
@@ -126,7 +125,7 @@ const DerifyTokenPool: FC = () => {
         </header>
         <section className="web-eran-item-main">
           <div className="web-eran-item-dashboard">
-            <DecimalShow value={dashboardDAT?.drfStakingApy ?? 0} percent />
+            <DecimalShow value={keepDecimals(bnMul(dashboardDAT?.drfStakingApy ?? 0, 100), 2)} percent />
             <u>APR.</u>
           </div>
           <div className="web-eran-item-claim">

@@ -11,18 +11,19 @@ import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { isGT, keepDecimals } from '@/utils/tools'
-import { useWithdrawAllBond } from '@/hooks/useEarning'
 import { useTraderBondBalance } from '@/hooks/useQueryApi'
+import { useWithdrawRankReward } from '@/hooks/useEarning'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { useRankReward } from '@/hooks/useDashboard'
 
 const Competition: FC = () => {
   const { t } = useTranslation()
-  const { data } = useAccount()
+  const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
@@ -30,9 +31,11 @@ const Competition: FC = () => {
 
   const marginToken = useMTokenFromRoute()
 
-  const { withdraw } = useWithdrawAllBond()
+  const { withdraw } = useWithdrawRankReward()
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
-  const { data: bondBalance } = useTraderBondBalance(data?.address, findToken(marginToken).tokenAddress)
+  const { data: bondBalance } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
+
+  useRankReward(address, protocolConfig?.rewards)
 
   const memoDisabled = useMemo(() => {
     return isGT(bondBalance ?? 0, 0)

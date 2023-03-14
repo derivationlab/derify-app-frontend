@@ -16,7 +16,7 @@ import TradeHistory from './TradeHistory'
 
 const Data: FC = () => {
   const { t } = useTranslation()
-  const { data } = useAccount()
+  const { address } = useAccount()
 
   const fetchTraderPos = usePosDATStore((state) => state.fetch)
   const factoryConfig = useConfigInfo((state) => state.factoryConfig)
@@ -29,16 +29,16 @@ const Data: FC = () => {
   }, [marginToken, factoryConfig, factoryConfigLoaded])
 
   useEffect(() => {
-    if (data?.address && _factoryConfig) void fetchTraderPos(data?.address, _factoryConfig)
-  }, [_factoryConfig, data?.address])
+    if (address && _factoryConfig) void fetchTraderPos(address, _factoryConfig)
+  }, [_factoryConfig, address])
 
   useEffect(() => {
     PubSub.subscribe(PubSubEvents.UPDATE_OPENED_POSITION, () => {
-      if (data?.address && _factoryConfig) {
-        void fetchTraderPos(data?.address, _factoryConfig)
+      if (address && _factoryConfig) {
+        void fetchTraderPos(address, _factoryConfig)
       }
     })
-  }, [factoryConfig, data?.address])
+  }, [factoryConfig, address])
 
   return (
     <Tabs className="web-trade-data">

@@ -22,7 +22,7 @@ import NoRecord from '../c/NoRecord'
 const MyOrder: FC = () => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const marginToken = useMTokenFromRoute()
 
@@ -91,7 +91,7 @@ const MyOrder: FC = () => {
   }
 
   const memoMyPosOrders = useMemo(() => {
-    if (!account?.address) return <NoRecord show />
+    if (!address) return <NoRecord show />
     if (!profitLossOrdLoaded) return <Loading show type="section" />
     if (!isEmpty(profitLossOrd)) {
       return (
@@ -109,7 +109,7 @@ const MyOrder: FC = () => {
       )
     }
     return <NoRecord show />
-  }, [account?.address, profitLossOrdLoaded, profitLossOrd, theme])
+  }, [address, profitLossOrdLoaded, profitLossOrd, theme])
 
   return (
     <>

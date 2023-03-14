@@ -18,7 +18,7 @@ import SymbolSelect from './KLine/SymbolSelect'
 const Trade: FC = () => {
   const [toggle, setToggle] = useState<boolean>(false)
 
-  const { data } = useAccount()
+  const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   if (mobile) {
@@ -40,7 +40,7 @@ const Trade: FC = () => {
           </div>
           <Data />
         </div>
-        <MobileFixed address={data?.address} isKline={!toggle} goBench={() => setToggle(true)} />
+        <MobileFixed address={address} isKline={!toggle} goBench={() => setToggle(true)} />
       </>
     )
   }

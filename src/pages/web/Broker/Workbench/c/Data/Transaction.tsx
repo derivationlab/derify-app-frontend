@@ -103,14 +103,14 @@ const Transaction: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
-  const { data: account } = useAccount()
+  const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   const marginToken = useMTokenFromRoute()
 
   const fetchData = async (index = 0) => {
-    if (account?.address) {
-      const { data } = await getBrokerRewardTx(account.address, findToken(marginToken).tokenAddress, index, 10)
+    if (address) {
+      const { data } = await getBrokerRewardTx(address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_TABLE_DAT',

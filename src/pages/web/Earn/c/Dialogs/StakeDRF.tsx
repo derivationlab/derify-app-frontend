@@ -18,7 +18,7 @@ interface Props {
 
 const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { data: ACCOUNT } = useAccount()
+  const { address } = useAccount()
 
   const balances = useTokenBalances((state) => state.balances)
 
@@ -50,7 +50,7 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 <BalanceShow value={balances['drf']} unit="DRF" />
               </dd>
             </dl>
-            <address>{ACCOUNT?.address}</address>
+            <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput

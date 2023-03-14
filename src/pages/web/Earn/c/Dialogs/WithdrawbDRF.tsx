@@ -19,7 +19,7 @@ interface Props {
 
 const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
-  const { data: ACCOUNT } = useAccount()
+  const { address } = useAccount()
 
   const marginToken = useMTokenFromRoute()
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
@@ -57,7 +57,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken}`} />
               </dd>
             </dl>
-            <address>{ACCOUNT?.address}</address>
+            <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput

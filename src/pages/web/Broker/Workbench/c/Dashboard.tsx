@@ -23,7 +23,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const Dashboard: FC = () => {
   const { t } = useTranslation()
-  const { data } = useAccount()
+  const { address } = useAccount()
   const { data: signer } = useSigner()
 
   const { mobile } = useContext(MobileContext)
@@ -35,7 +35,7 @@ const Dashboard: FC = () => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
-  const { data: brokerAssets } = useBrokerInfoFromC(data?.address, protocolConfig?.rewards)
+  const { data: brokerAssets } = useBrokerInfoFromC(address, protocolConfig?.rewards)
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
   const withdrawFunc = useCallback(async () => {

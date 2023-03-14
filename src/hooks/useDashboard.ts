@@ -11,7 +11,13 @@ import { getDerifyPmrContract, getDerifyRankContract, getDerifyAwardsContract } 
 
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 
-export const useRankReward = (trader: string, rewards: string): { data?: Record<string, any>; isLoading: boolean } => {
+export const useRankReward = (
+  trader?: string,
+  rewards?: string
+): { data?: Record<string, any>; isLoading: boolean } => {
+  console.info(`rewards:${rewards}`)
+  console.info(`trader:${trader}`)
+  console.info(`getRankReward()`)
   const { data, isLoading } = useQuery(
     ['DerifyRewards-getRankReward'],
     async () => {
@@ -29,7 +35,7 @@ export const useRankReward = (trader: string, rewards: string): { data?: Record<
     },
     {
       retry: false,
-      refetchInterval: 3000,
+      refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }

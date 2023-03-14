@@ -7,8 +7,8 @@ import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { MarginTokenKeys, PositionSideTypes, PositionTriggerTypes } from '@/typings'
 import { DEFAULT_MARGIN_TOKEN, findMarginToken, findToken } from '@/config/tokens'
+import { MarginTokenKeys, PositionSideTypes, PositionTriggerTypes } from '@/typings'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export const useOpeningPosition = () => {

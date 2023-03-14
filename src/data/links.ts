@@ -2,7 +2,7 @@ import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
 
 export const Docs = 'https://docs.derify.finance/'
 export const Tutorial = 'https://docs.derify.finance/getting-started/tutorial'
-export const WhitePaper = 'https://docs.derify.finance/whitepaper/introduction'
+export const Support = 'https://discord.com/channels/822422051099902053/827112242449350686'
 export const Medium = 'https://derify.medium.com/'
 export const Github = 'https://github.com/derivationlab'
 export const Discord = 'https://discord.gg/kSR6tz2pdm'

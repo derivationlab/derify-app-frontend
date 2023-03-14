@@ -3,9 +3,10 @@ import { useClickAway } from 'react-use'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useRef } from 'react'
 
-import { Docs, WhitePaper } from '@/data/links'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { Docs, Support, Tutorial } from '@/data/links'
 
+import Community from './Community'
 import SelectLang from './SelectLang'
 import SelectTheme from './SelectTheme'
 import AddTokenTool from './AddTokenTool'
@@ -35,19 +36,25 @@ const Tool: FC = () => {
         <AddTokenTool />
         <ul>
           <li>
-            <a href={Docs} target="_blank">
-              {t('Nav.Tool.Docs', 'Docs')}
+            <a href={Support} target="_blank">
+              {t('Nav.Tool.Feedback')}
             </a>
           </li>
           <li>
-            <a href={WhitePaper} target="_blank">
-              {t('Nav.Tool.Whitepaper', 'Whitepaper')}
+            <a href={Tutorial} target="_blank">
+              {t('Nav.Tool.Tutorial')}
+            </a>
+          </li>
+          <li>
+            <a href={Docs} target="_blank">
+              {t('Nav.Tool.Docs', 'Docs')}
             </a>
           </li>
           <li>
             <a href={`/${marginToken}/system/parameters`}>System Parameters</a>
           </li>
         </ul>
+        <Community />
       </div>
     </div>
   )

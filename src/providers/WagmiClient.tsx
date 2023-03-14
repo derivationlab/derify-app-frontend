@@ -1,5 +1,6 @@
 import React from 'react'
 import { Buffer } from 'buffer'
+import type { WagmiConfigProps } from 'wagmi'
 import { WagmiConfig } from 'wagmi'
 import { bsc, bscTestnet } from 'wagmi/chains'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
@@ -8,7 +9,6 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
 import { createClient, configureChains } from 'wagmi'
-import type { WagmiConfigProps } from 'wagmi'
 
 import { useRpcStore } from '@/zustand'
 
@@ -16,8 +16,6 @@ if (!window.Buffer) window.Buffer = Buffer
 
 function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'>>) {
   const rpcUrl = useRpcStore((state) => state.rpc)
-
-  console.info(rpcUrl)
 
   const { provider, chains } = configureChains(
     [bsc, bscTestnet],

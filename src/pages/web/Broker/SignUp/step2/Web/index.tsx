@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useHistory, useLocation } from 'react-router-dom'
 import React, { FC, useContext, useEffect } from 'react'
 
-import ThemeContext from '@/context/Theme/Context'
+import { ThemeContext } from '@/providers/Theme'
 import { PubSubEvents } from '@/typings'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { API_PREFIX_URL } from '@/config'

@@ -3,7 +3,7 @@ import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from 'react'
 
-import ThemeContext from '@/context/Theme/Context'
+import { ThemeContext } from '@/providers/Theme'
 import { findToken } from '@/config/tokens'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { getHistoryPositionsDAT } from '@/api'

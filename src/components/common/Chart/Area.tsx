@@ -2,7 +2,7 @@ import React, { FC, useContext } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import dayjs from 'dayjs'
 
-import ThemeContext from '@/context/Theme/Context'
+import { ThemeContext } from '@/providers/Theme'
 import { keepDecimals } from '@/utils/tools'
 
 interface Props {

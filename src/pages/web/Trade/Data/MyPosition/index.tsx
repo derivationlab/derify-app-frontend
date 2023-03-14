@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useSigner, useAccount } from 'wagmi'
 import React, { FC, useState, useMemo, useContext } from 'react'
 
-import ThemeContext from '@/context/Theme/Context'
+import { ThemeContext } from '@/providers/Theme'
 import { PubSubEvents } from '@/typings'
 import { useQuoteToken } from '@/zustand'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'

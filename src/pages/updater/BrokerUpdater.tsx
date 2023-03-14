@@ -10,7 +10,7 @@ import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { findToken } from '@/config/tokens'
 
 export default function BrokerUpdater(): null {
-  const { data } = useAccount()
+  const { address } = useAccount()
 
   const { data: brokerParams, isLoading: brokerParamsIsLoading } = useBrokerParams()
 
@@ -24,27 +24,27 @@ export default function BrokerUpdater(): null {
 
   // for broker info
   useEffect(() => {
-    if (data?.address) {
-      void fetchBrokerInfo(data?.address, findToken(marginToken).tokenAddress)
-      void fetchBrokerBound(data?.address)
+    if (address) {
+      void fetchBrokerInfo(address, findToken(marginToken).tokenAddress)
+      void fetchBrokerBound(address)
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {
       resetBrokerInfo()
 
-      if (data?.address) {
-        void fetchBrokerInfo(data.address, findToken(marginToken).tokenAddress)
+      if (address) {
+        void fetchBrokerInfo(address, findToken(marginToken).tokenAddress)
       }
     })
 
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT, () => {
       resetBrokerBound()
 
-      if (data?.address) {
-        void fetchBrokerBound(data?.address)
+      if (address) {
+        void fetchBrokerBound(address)
       }
     })
-  }, [data?.address])
+  }, [address])
 
   useEffect(() => {
     if (!brokerParamsIsLoading && brokerParams) {

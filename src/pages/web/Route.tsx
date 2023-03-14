@@ -10,7 +10,7 @@ import Loading from '@/components/common/Loading'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
 
 export const RWithMarToken = (props: PropsWithChildren<any>) => {
-  const { data } = useAccount()
+  const { address } = useAccount()
   const { children, pathKey } = props
 
   const { find, marginToken } = useMTokenForRoute()
@@ -20,17 +20,17 @@ export const RWithMarToken = (props: PropsWithChildren<any>) => {
 
   return useMemo(() => {
     const out = find ? children : <Redirect to={`/${marginToken}/${pathKey}`} />
-    if (!data?.address) return out
+    if (!address) return out
     if (brokerBoundLoaded) {
       if (!isEmpty(brokerBound)) return out
       return <Redirect to="/broker/bind" />
     }
     return <Loading show type="fixed" />
-  }, [find, data, pathKey, marginToken, brokerBound, brokerBoundLoaded])
+  }, [find, address, pathKey, marginToken, brokerBound, brokerBoundLoaded])
 }
 
 export const RBrokerBound = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children, pathKey } = props
 
@@ -42,7 +42,7 @@ export const RBrokerBound = (props: PropsWithChildren<any>) => {
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerInfoLoaded && brokerBoundLoaded) {
       if (!isEmpty(brokerInfo)) {
         return <Redirect to={`/${marginToken}/broker/workbench`} />
@@ -53,11 +53,11 @@ export const RBrokerBound = (props: PropsWithChildren<any>) => {
       return <Redirect to="/broker/bind" />
     }
     return <Loading show type="fixed" />
-  }, [find, account, pathKey, brokerInfo, brokerBound, marginToken, brokerInfoLoaded, brokerBoundLoaded])
+  }, [find, address, pathKey, brokerInfo, brokerBound, marginToken, brokerInfoLoaded, brokerBoundLoaded])
 }
 
 export const RBrokerToBind = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children } = props
   const { marginToken } = useMTokenForRoute()
@@ -68,18 +68,18 @@ export const RBrokerToBind = (props: PropsWithChildren<any>) => {
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerBoundLoaded && brokerInfoLoaded) {
       if (!isEmpty(brokerBound)) return <Redirect to="/broker" />
       if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken}/broker/workbench`} />
       return children
     }
     return <Loading show type="fixed" />
-  }, [account, brokerInfo, brokerInfoLoaded, brokerBound, marginToken, brokerBoundLoaded])
+  }, [address, brokerInfo, brokerInfoLoaded, brokerBound, marginToken, brokerBoundLoaded])
 }
 
 export const RBrokerList = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children } = props
   const { marginToken } = useMTokenForRoute()
@@ -88,17 +88,17 @@ export const RBrokerList = (props: PropsWithChildren<any>) => {
   const brokerBoundLoaded = useBrokerInfo((state) => state.brokerBoundLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerBoundLoaded) {
       if (!isEmpty(brokerBound)) return <Redirect to="/broker" />
       return children
     }
     return <Loading show type="fixed" />
-  }, [account, brokerBound, marginToken, brokerBoundLoaded])
+  }, [address, brokerBound, marginToken, brokerBoundLoaded])
 }
 
 export const RBrokerWorkbench = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children, pathKey } = props
 
@@ -108,7 +108,7 @@ export const RBrokerWorkbench = (props: PropsWithChildren<any>) => {
   const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
       if (!isEmpty(brokerInfo)) {
         return pathKey ? find ? children : <Redirect to={`/${marginToken}/${pathKey}`} /> : children
@@ -116,11 +116,11 @@ export const RBrokerWorkbench = (props: PropsWithChildren<any>) => {
       return <Redirect to="/broker" />
     }
     return <Loading show type="fixed" />
-  }, [find, account, pathKey, brokerInfo, marginToken, brokerInfoLoaded])
+  }, [find, address, pathKey, brokerInfo, marginToken, brokerInfoLoaded])
 }
 
 export const RBrokerSignUpStep1_2 = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children } = props
   const { marginToken } = useMTokenForRoute()
@@ -129,17 +129,17 @@ export const RBrokerSignUpStep1_2 = (props: PropsWithChildren<any>) => {
   const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
       if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken}/broker/workbench`} />
       return children
     }
     return <Loading show type="fixed" />
-  }, [account, brokerInfo, marginToken, brokerInfoLoaded])
+  }, [address, brokerInfo, marginToken, brokerInfoLoaded])
 }
 
 export const RBrokerSignUpStep3 = (props: PropsWithChildren<any>) => {
-  const { data: account } = useAccount()
+  const { address } = useAccount()
 
   const { children } = props
 
@@ -147,11 +147,11 @@ export const RBrokerSignUpStep3 = (props: PropsWithChildren<any>) => {
   const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
 
   return useMemo(() => {
-    if (!account?.address) return <BrokerConnect />
+    if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
       if (!isEmpty(brokerInfo)) return children
       return <Redirect to="/broker/bind" />
     }
     return <Loading show type="fixed" />
-  }, [account, brokerInfo, brokerInfoLoaded])
+  }, [address, brokerInfo, brokerInfoLoaded])
 }

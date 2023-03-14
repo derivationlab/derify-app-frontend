@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
 
-import ThemeContext from '@/context/Theme/Context'
+import { ThemeContext } from '@/providers/Theme'
 import { PubSubEvents } from '@/typings'
 import { useQuoteToken } from '@/zustand'
 import { usePosDATStore } from '@/zustand/usePosDAT'

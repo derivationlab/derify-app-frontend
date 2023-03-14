@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, useRef, useImperativeHandle, useContext } from 'react'
 import { init, Chart } from 'klinecharts'
 
-import ThemeContext from '@/context/Theme/Context'
+import { ThemeContext } from '@/providers/Theme'
 
 import KLineConfig from './config'
 

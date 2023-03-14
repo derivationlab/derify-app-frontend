@@ -1,10 +1,14 @@
 import React, { FC, useState, useEffect, createContext } from 'react'
+
 import Cache from '@/utils/cache'
 import { ThemeOptions } from '@/data'
 
-import Context from './Context'
-
 const CacheKey = 'THEME-KEY'
+
+export const ThemeContext = createContext({
+  theme: ThemeOptions[0].toLocaleLowerCase(),
+  changeTheme: (val: string) => null
+})
 
 const ThemeProvider: FC = ({ children }) => {
   const [theme, setTheme] = useState<string>(ThemeOptions[0])
@@ -32,12 +36,7 @@ const ThemeProvider: FC = ({ children }) => {
     }
   }, [])
 
-  return <Context.Provider value={{ theme, changeTheme }}>{children}</Context.Provider>
+  return <ThemeContext.Provider value={{ theme, changeTheme }}>{children}</ThemeContext.Provider>
 }
 
 export default ThemeProvider
-
-export const ThemeContext = createContext({
-  theme: ThemeOptions[0].toLocaleLowerCase(),
-  changeTheme: (val: string) => null
-})

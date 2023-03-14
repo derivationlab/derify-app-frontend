@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import React, { FC, useContext } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
-import ThemeContext from '@/context/Theme/Context'
+import { ThemeContext } from '@/providers/Theme'
 import { keepDecimals } from '@/utils/tools'
 
 interface FormatProps {

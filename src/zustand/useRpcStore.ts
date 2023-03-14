@@ -2,7 +2,7 @@ import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import { Rec, RpcState } from '@/zustand/types'
-import { defaultPrc, getHealthyNode } from '@/utils/chainSupport'
+import { DEFAULT_PRC_URLS, getHealthyNode } from '@/utils/chainSupport'
 import { ChainId } from '@/typings'
 
 export const BEST_RPC_KEY = 'best-rpc'
@@ -10,10 +10,10 @@ export const BEST_RPC_KEY = 'best-rpc'
 const useRpcStore = create(
   persist<RpcState>(
     (set) => ({
-      rpc: defaultPrc,
+      rpc: DEFAULT_PRC_URLS[ChainId.MAINNET],
       // chainId: ChainId.MAINNET,
-      fetch: async () => {
-        const node = await getHealthyNode()
+      fetch: async (chainId: ChainId) => {
+        const node = await getHealthyNode(chainId)
 
         // console.info(`best node: ${node}`)
         // emitter.emit(BEST_RPC_KEY, node)

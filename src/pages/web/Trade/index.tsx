@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useAccount } from 'wagmi'
 import React, { FC, useState, useContext } from 'react'
 
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 
 import TradingUpdater from '@/pages/updater/TradingUpdater'
 import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'

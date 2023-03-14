@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState, useContext } from 'react'
 import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import Button from '@/components/common/Button'

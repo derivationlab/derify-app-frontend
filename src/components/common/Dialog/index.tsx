@@ -2,7 +2,7 @@ import React, { FC, useContext } from 'react'
 import Dialog from 'rc-dialog'
 
 import { px2rem } from '@/utils/tools'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 
 import Image from '@/components/common/Image'
 

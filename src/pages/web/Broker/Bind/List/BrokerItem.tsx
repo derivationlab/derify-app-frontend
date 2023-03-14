@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef, useMemo, useEffect, useContext, BaseSyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'

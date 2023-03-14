@@ -3,7 +3,7 @@ import { useClickAway } from 'react-use'
 import React, { FC, useState, useRef, useContext } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { usePairsInfo, useQuoteToken } from '@/zustand'

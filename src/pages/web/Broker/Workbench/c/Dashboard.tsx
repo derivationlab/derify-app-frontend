@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useContext, useEffect, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { useQuoteToken } from '@/zustand'
 import { useProtocolConf } from '@/hooks/useMatchConf'

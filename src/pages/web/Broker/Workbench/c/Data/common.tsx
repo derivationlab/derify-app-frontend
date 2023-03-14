@@ -2,7 +2,7 @@ import React, { FC, useContext } from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import { calcShortHash as _calcShortHash } from '@/utils/tools'
 
 dayjs.extend(relativeTime)

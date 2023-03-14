@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, createContext } from 'react'
 import { isMobile } from '@/utils/tools'
 
-export const Mobile = createContext({
+export const MobileContext = createContext({
   mobile: false
 })
 
@@ -12,7 +12,7 @@ const MobileProvider: FC = ({ children }) => {
     setMobile(isMobile())
   }, [])
 
-  return <Mobile.Provider value={{ mobile }}>{children}</Mobile.Provider>
+  return <MobileContext.Provider value={{ mobile }}>{children}</MobileContext.Provider>
 }
 
 export default MobileProvider

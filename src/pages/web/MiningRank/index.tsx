@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
 
 import { keepDecimals } from '@/utils/tools'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import tokens, { findToken } from '@/config/tokens'
 import { getTraderMarginBalance } from '@/api'
 import { reducer, stateInit } from '@/reducers/brokerRank'

@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import React, { FC, useContext, useMemo } from 'react'
 
 import { WEBSITE_URL } from '@/config'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'

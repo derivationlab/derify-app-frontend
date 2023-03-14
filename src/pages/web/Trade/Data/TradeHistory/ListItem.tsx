@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
 
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import { PositionSideTypes } from '@/typings'
 import { safeInterceptionValues } from '@/utils/tools'
 import { findMarginToken, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'

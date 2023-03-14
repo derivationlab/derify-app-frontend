@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 
 import Step2Web from './Web'
 import Step2Mobile from './Mobile'

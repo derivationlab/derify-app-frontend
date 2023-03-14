@@ -1,7 +1,7 @@
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
 
 import { usePairsInfo } from '@/zustand'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { QUOTE_TOKENS, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 

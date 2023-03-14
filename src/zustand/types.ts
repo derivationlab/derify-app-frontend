@@ -1,4 +1,11 @@
-import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+import {
+  ChainId,
+  MarginToken,
+  MarginTokenKeys,
+  MarginTokenWithContract,
+  MarginTokenWithQuote,
+  QuoteTokenKeys
+} from '@/typings'
 import { InitialTraderVariablesType } from '@/hooks/helper'
 import { OpeningType } from '@/zustand/useCalcOpeningDAT'
 
@@ -6,7 +13,7 @@ export type Rec = Record<string, any>
 
 export interface RpcState {
   rpc: string
-  fetch: () => Promise<void>
+  fetch: (chainId: ChainId) => Promise<void>
 }
 
 export interface BalancesState {

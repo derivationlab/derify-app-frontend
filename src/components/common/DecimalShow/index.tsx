@@ -2,7 +2,7 @@ import React, { FC, useMemo, useContext } from 'react'
 import classNames from 'classnames'
 import numeral from 'numeral'
 
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 
 export interface DecimalShowProps {
   value: number | string

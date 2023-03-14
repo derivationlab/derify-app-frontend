@@ -11,12 +11,13 @@ import { createClient, configureChains } from 'wagmi'
 import type { WagmiConfigProps } from 'wagmi'
 
 import { useRpcStore } from '@/zustand'
-import { chainId } from '@/utils/chainSupport'
 
 if (!window.Buffer) window.Buffer = Buffer
 
 function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'>>) {
   const rpcUrl = useRpcStore((state) => state.rpc)
+
+  console.info(rpcUrl)
 
   const { provider, chains } = configureChains(
     [bsc, bscTestnet],
@@ -30,30 +31,30 @@ function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'
   const client = createClient({
     provider,
     autoConnect: true,
-    connectors: [
-      new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
-      new CoinbaseWalletConnector({
-        chains,
-        options: {
-          appName: 'app',
-          chainId: chainId,
-          jsonRpcUrl: rpcUrl
-        }
-      }),
-      new WalletConnectLegacyConnector({
-        chains,
-        options: {
-          qrcode: true
-        }
-      }),
-      new InjectedConnector({
-        chains,
-        options: {
-          name: 'Injected',
-          shimDisconnect: true
-        }
-      })
-    ]
+    connectors: () => {
+      return [
+        new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
+        new CoinbaseWalletConnector({
+          chains,
+          options: {
+            appName: 'app'
+          }
+        }),
+        new WalletConnectLegacyConnector({
+          chains,
+          options: {
+            qrcode: true
+          }
+        }),
+        new InjectedConnector({
+          chains,
+          options: {
+            name: 'Injected',
+            shimDisconnect: true
+          }
+        })
+      ]
+    }
   })
 
   return <WagmiConfig client={client}>{props.children}</WagmiConfig>

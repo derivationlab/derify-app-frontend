@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 
 import { BSC_SCAN_URL } from '@/config'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import { getBrokerRewardTx } from '@/api'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/brokerTable'

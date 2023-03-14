@@ -19,7 +19,7 @@ const rpcBody = {
   id: 1
 }
 
-const DEFAULT_PRC_URLS = {
+export const DEFAULT_PRC_URLS = {
   [ChainId.MAINNET]: 'https://bsc-dataseed1.binance.org',
   [ChainId.TESTNET]: 'https://data-seed-prebsc-1-s1.binance.org:8545'
 }
@@ -54,9 +54,10 @@ const loadJsonFile = (key: string, path = '/abi'): Promise<Record<string, any>> 
   })
 }
 
-export const getHealthyNode = async (): Promise<string> => {
+export const getHealthyNode = async (chainId: ChainId): Promise<string> => {
+  console.info(`getHealthyNode:${chainId}`)
   const json = await loadJsonFile('rpcs', '')
-  const rpcList = json[CHAIN_ID].rpc
+  const rpcList = json[chainId].rpc
   const queries = rpcList.map((rpc: string) => checkRpcHealthStatus(rpc, rpcBody))
 
   const response = await Promise.all(

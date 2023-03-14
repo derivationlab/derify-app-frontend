@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { MobileContext } from '@/context/Mobile'
+import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useQuoteToken } from '@/zustand'
 import { PositionSideTypes } from '@/typings'

@@ -35,6 +35,7 @@ const GrantList: FC = () => {
   const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
 
   const fetchData = useCallback(async (index = 0) => {
+    console.info(index)
     // dispatch({
     //   type: 'SET_GRANT_DAT',
     //   payload: { records: records ?? [], totalItems: totalItems ?? 0, isLoaded: false }

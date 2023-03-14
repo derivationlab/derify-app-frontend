@@ -50,7 +50,7 @@ export async function http(request: Request, latency = false): Promise<HttpRespo
       return latency ? { ...json, latency: start - Date.now() } : json
     })
     .catch((error) => {
-      // console.info(error)
+      console.info(error)
       return null
     })
 }

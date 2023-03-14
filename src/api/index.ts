@@ -32,8 +32,8 @@ export const getBrokerInfoById = async (brokerId: string) => {
   return response
 }
 
-export const getBrokerValidPeriod = async (brokerId: string) => {
-  const response = await get(`api/broker_latest_valid_period/${brokerId}`)
+export const getBrokerValidPeriod = async (brokerId: string, marginToken: string) => {
+  const response = await get(`api/broker_latest_valid_period/${brokerId}/${marginToken}`)
   return response
 }
 
@@ -52,10 +52,10 @@ export const updateBrokerInfo = async (body: Record<string, any>) => {
   return response
 }
 
-export const getBrokerRewardsToday = async (trader: string) => {
+export const getBrokerRewardsToday = async (trader: string, marginToken: string) => {
   const dayStart = dayjs.utc().startOf('day').format()
   const dayEnd = dayjs.utc().endOf('day').format()
-  const response = await get(`api/broker_today_reward/${trader}/${dayStart}/${dayEnd}`)
+  const response = await get(`api/broker_today_reward/${trader}/${marginToken}/${dayStart}/${dayEnd}`)
   return response
 }
 

@@ -57,7 +57,7 @@ const List: FC = () => {
       // succeed
       window.toast.success(t('common.success', 'success'))
 
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_BOUND_DAT)
 
       history.push('/broker')
     } else {

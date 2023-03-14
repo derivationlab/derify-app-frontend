@@ -30,7 +30,7 @@ const Info: FC = () => {
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
   const goEdit = () => {
-    history.push('/broker-edit')
+    history.push('/broker/edit')
   }
 
   const extendFunc = useCallback(

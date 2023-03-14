@@ -41,8 +41,8 @@ const Dashboard: FC = () => {
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    if (signer) {
-      const status = await withdraw(signer)
+    if (signer && protocolConfig) {
+      const status = await withdraw(signer, protocolConfig.rewards)
 
       if (status) {
         // succeed
@@ -57,7 +57,7 @@ const Dashboard: FC = () => {
     }
 
     window.toast.dismiss(toast)
-  }, [signer])
+  }, [signer, protocolConfig])
 
   const memoTotalBalance = useMemo(() => {
     const drf = String(brokerAssets?.drfRewardBalance ?? 0)

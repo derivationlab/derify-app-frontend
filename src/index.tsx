@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter } from 'react-router-dom'
 
 import ThemeProvider from '@/context/Theme'
 import MobileProvider from '@/context/Mobile'
 import QueryClientProvider from '@/providers/QueryClient'
 import WagmiClientProvider from '@/providers/WagmiClient'
-import { BrowserRouter } from '@/components/common/Route'
 import App from '@/App'
 import '@/lang'
 

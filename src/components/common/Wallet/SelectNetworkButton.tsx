@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useClickAway } from 'react-use'
 import { useTranslation } from 'react-i18next'
 import { bsc, bscTestnet } from 'wagmi/chains'
-import React, { FC, useState, useRef, useEffect } from 'react'
+import React, { FC, useState, useRef, useEffect, useCallback } from 'react'
 
 import { ChainId } from '@/typings'
 import { Chain, useNetwork, useSwitchNetwork } from 'wagmi'
@@ -33,23 +33,26 @@ const SelectNetworkButton: FC = () => {
 
   const [visible, setVisible] = useState<boolean>(false)
 
-  const selectNetwork = (network: Chain) => {
-    switchNetwork?.(network.id)
-    setVisible(false)
-  }
+  const selectNetwork = useCallback(
+    (network: Chain) => {
+      if (chain?.id !== network.id) switchNetwork?.(network.id)
+      setVisible(false)
+    },
+    [chain]
+  )
 
   useClickAway(ref, () => {
     setVisible(false)
   })
 
   useEffect(() => {
-    void fetchRpc(chain?.id ?? ChainId.MAINNET)
-  }, [chain?.id])
+    if (chain?.id === ChainId.TESTNET && !isLoading) void fetchRpc(chain?.id)
+  }, [chain?.id, isLoading])
 
   return (
     <div className="web-select-network-button" ref={ref}>
       <Button size="mini" outline loading={isLoading} onClick={() => setVisible(!visible)}>
-        {chain ? (
+        {chain?.id === ChainId.TESTNET ? (
           <>
             <Image src="icon/bnb.svg" />
             {isLoading ? 'Network Switching ...' : networks[chain?.id as ChainId]?.name}
@@ -61,7 +64,7 @@ const SelectNetworkButton: FC = () => {
       <div className={classNames('web-select-network-menu', { show: visible })}>
         <h3>{t('Nav.CW.SelectNetwork', 'Select a network')}</h3>
         <ul>
-          {[bsc, bscTestnet].map((c, index) => (
+          {[bscTestnet].map((c, index) => (
             <li
               key={index}
               onClick={() => selectNetwork(c)}

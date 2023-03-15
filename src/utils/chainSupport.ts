@@ -54,7 +54,7 @@ const loadJsonFile = (key: string, path = '/abi'): Promise<Record<string, any>> 
   })
 }
 
-export const getHealthyNode = async (chainId = ChainId.MAINNET): Promise<string> => {
+export const getHealthyNode = async (chainId = ChainId.TESTNET): Promise<string> => {
   const json = await loadJsonFile('rpcs', '')
   const rpcList = json[chainId].rpc
 

@@ -18,7 +18,7 @@ function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'
   const rpcUrl = useRpcStore((state) => state.rpc)
 
   const { provider, chains } = configureChains(
-    [bsc, bscTestnet],
+    [bscTestnet, bsc],
     [
       jsonRpcProvider({
         rpc: () => ({ http: rpcUrl })

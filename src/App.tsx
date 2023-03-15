@@ -1,5 +1,6 @@
-import React, { lazy, Suspense } from 'react'
+import toast from 'react-hot-toast'
 import { Route, Switch } from 'react-router-dom'
+import React, { lazy, Suspense } from 'react'
 
 import 'rc-dialog/assets/index.css'
 import 'rc-collapse/assets/index.css'
@@ -10,6 +11,8 @@ import BrokerUpdater from '@/pages/updater/BrokerUpdater'
 import InitialUpdater from '@/pages/updater/InitialUpdater'
 
 import '@/style/style.scss'
+
+window.toast = toast
 
 const WebEntry = lazy(() => import('@/pages/web'))
 

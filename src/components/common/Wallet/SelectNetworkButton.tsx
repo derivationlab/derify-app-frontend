@@ -52,7 +52,7 @@ const SelectNetworkButton: FC = () => {
         {chain ? (
           <>
             <Image src="icon/bnb.svg" />
-            {isLoading ? 'Network Switching ...' : networks[chain?.id as ChainId].name}
+            {isLoading ? 'Network Switching ...' : networks[chain?.id as ChainId]?.name}
           </>
         ) : (
           'Select Network'
@@ -68,7 +68,7 @@ const SelectNetworkButton: FC = () => {
               className={classNames({ active: c.network === chain?.network })}
             >
               <Image src="icon/bnb.svg" />
-              {networks[c.id as ChainId].name}
+              {networks[c.id as ChainId]?.name}
             </li>
           ))}
         </ul>

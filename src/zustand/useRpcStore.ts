@@ -11,7 +11,7 @@ const useRpcStore = create(
   persist<RpcState>(
     (set) => ({
       rpc: DEFAULT_PRC_URLS[ChainId.MAINNET],
-      // chainId: ChainId.MAINNET,
+      chainId: ChainId.MAINNET,
       fetch: async (chainId: ChainId) => {
         const node = await getHealthyNode(chainId)
 
@@ -19,13 +19,13 @@ const useRpcStore = create(
         // emitter.emit(BEST_RPC_KEY, node)
 
         set({ rpc: node })
-      }
-      // updateChainId: (data: Rec) =>
-      //   set(() => {
-      //     console.info('updatePCFRatios:')
-      //     console.info(data)
-      // return { chainId: data, pcfRatiosLoaded: true }
-      // })
+      },
+      updateChainId: (chainId: ChainId) =>
+        set(() => {
+          console.info('updateChainId:')
+          console.info(chainId)
+      return { chainId }
+      })
     }),
     {
       name: BEST_RPC_KEY

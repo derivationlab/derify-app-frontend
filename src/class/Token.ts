@@ -9,6 +9,10 @@ export const _getAddress = (address: ChainIdRec): string => {
   return address[chainId].toLowerCase()
 }
 
+export const getAddress1 = (address: ChainIdRec, chainId: ChainId): string => {
+  return address[chainId].toLowerCase()
+}
+
 export function addressCheck(address: string) {
   try {
     const check = getAddress(address)

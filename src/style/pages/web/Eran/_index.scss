@@ -56,6 +56,13 @@
     &-claim, &-card {
       display: flex;justify-content: space-between;align-items: flex-start;
       width: 562px;padding: 36px 48px;
+      a {
+        color: $red;font-weight: bold;display: flex;align-items: center;
+        &:after {
+          content: '';display: block;width: 20px;height: 20px;margin-left: 4px;
+          background: url($res + 'icon/share.svg') center/contain no-repeat;
+        }
+      }
     }
     &-card {
       background: $cff;border-radius: 36px;

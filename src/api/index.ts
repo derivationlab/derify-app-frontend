@@ -6,6 +6,11 @@ import { formDataPost, get, post } from '@/utils/http'
 
 dayjs.extend(utc)
 
+export const getBrokerRankValue = async (trader: string, marginToken: string) => {
+  const response = await get(`api/brokers_rank/${marginToken}/${trader}`)
+  return response
+}
+
 export const getBrokerInfoByTrader = async (trader: string) => {
   const response = await get(`api/broker_info_of_trader/${trader}`)
   return response

@@ -143,7 +143,7 @@ const Bench: FC = () => {
       )
 
       if (isLimit) {
-        window.toast.error(t('Trade.Bench.MinNumber', '', { limit: openingMinLimit[marginToken] }))
+        window.toast.error(t('Trade.Bench.MinNumber', '', { Limit: openingMinLimit[marginToken], Token: marginToken }))
         return
       }
 

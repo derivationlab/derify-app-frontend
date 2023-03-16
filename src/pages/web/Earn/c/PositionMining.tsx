@@ -16,6 +16,8 @@ import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { Link } from 'react-router-dom'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
@@ -23,6 +25,7 @@ const PositionMining: FC = () => {
   const { mobile } = useContext(MobileContext)
 
   const variables = useTraderInfo((state) => state.variables)
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const indicators = usePairsInfo((state) => state.indicators)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
@@ -110,7 +113,10 @@ const PositionMining: FC = () => {
             <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
               {t('Earn.PositionMining.ClaimAll', 'Claim All')}
             </Button>
-            <a href={`/${marginToken}/mining/rank`}>Rank List # 999</a>
+            <Link to={`/${marginToken}/mining/rank`}>
+              {t('Broker.BV.RankList')}
+              {brokerInfo?.rank && ` # ${brokerInfo?.rank}`}
+            </Link>
           </aside>
         </div>
         <div className="web-eran-item-card">

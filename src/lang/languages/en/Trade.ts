@@ -106,7 +106,7 @@ export default {
       Volume: 'Volume',
       Max: 'Max',
       NumberError: 'Number error, please retry...',
-      MinNumber: 'The minimum number is {{limit}}U',
+      MinNumber: 'The minimum number is {{Limit}}{{Token}}',
       Long: 'Long',
       Short: 'Short',
       TowWay: '2-Way'

@@ -4,6 +4,7 @@ import { BrokerInfoState } from '@/zustand/types'
 import {
   getBrokerInfoByAddr,
   getBrokerInfoByTrader,
+  getBrokerRankValue,
   getBrokerRegisterTime,
   getBrokerRewardsToday,
   getBrokerValidPeriod
@@ -23,10 +24,12 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
     set({ brokerBound: data?.data, brokerBoundLoaded: true })
   },
   fetchBrokerInfo: async (trader: string, marginToken: string) => {
+    const data0 = await getBrokerRankValue(trader, marginToken)
     const data1 = await getBrokerInfoByAddr(trader)
     const data2 = await getBrokerValidPeriod(trader, marginToken) // validPeriodDays
     const data3 = await getBrokerRewardsToday(trader, marginToken)
     const data4 = await getBrokerRegisterTime(trader)
+    console.info(`rank:${data0}`)
     /**
      * getBrokerRewardsToday()
      * margin_token: margin token地址
@@ -47,6 +50,7 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
         ? {
             ...data1?.data,
             ...data3?.data,
+            rank: data0,
             registerTime: data4?.data,
             validPeriodDays: data2?.data
           }

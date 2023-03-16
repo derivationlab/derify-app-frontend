@@ -30,7 +30,7 @@ const Options: FC<Props> = ({ onChange }) => {
   const searchFC = (e: ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value.trim().toLocaleLowerCase())
   }
-  
+
   return (
     <div className="web-trade-symbol-select-options">
       <div className="web-trade-symbol-select-search">

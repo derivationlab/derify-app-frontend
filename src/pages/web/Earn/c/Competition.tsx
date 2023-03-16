@@ -77,7 +77,7 @@ const Competition: FC = () => {
         <div className="web-eran-item-claim">
           <main>
             <h4>{t('Earn.PositionMining.Claimable')}</h4>
-            <BalanceShow value={bondBalance ?? 0} unit={marginToken} decimal={findToken(marginToken).decimals} />
+            <BalanceShow value={bondBalance ?? 0} unit={marginToken} />
             <div className="block" />
             <p>
               {t('Earn.PositionMining.TotalEarned')} :{' '}

@@ -35,8 +35,8 @@ const MarketInfo: FC = () => {
       dataIndex: 'tradingVolume',
       render: (value: number, data: Record<string, any>) => (
         <>
-          <BalanceShow value={value} format="0.00a" unit={data.name} />
-          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} unit={data.name} />
+          <BalanceShow value={value} unit={data.name} />
         </>
       )
     },
@@ -58,25 +58,19 @@ const MarketInfo: FC = () => {
       title: 'Trading Volume',
       dataIndex: 'tradingVolume',
       width: 220,
-      render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
-      )
+      render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.name} />
     },
     {
       title: 'Position Volume',
       dataIndex: 'positionVolume',
       width: 220,
-      render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
-      )
+      render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.name} />
     },
     {
       title: 'Buyback Pool',
       dataIndex: 'buybackPool',
       width: 220,
-      render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
-      )
+      render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.name} />
     },
     {
       title: 'Detail Info',

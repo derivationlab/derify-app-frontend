@@ -10,6 +10,7 @@ import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { usePairsInfo, useQuoteToken } from '@/zustand'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const HeaderData: FC = () => {
   const { t } = useTranslation()
@@ -65,12 +66,12 @@ const HeaderData: FC = () => {
         </h3>
         {!mobile ? (
           <strong>
-            {keepDecimals(positionInfo[1], 2)}% ( {keepDecimals(positionInfo[0], findToken(marginToken).decimals)}{' '}
-            {marginToken} )
+            <BalanceShow value={positionInfo[1]} percent />
+            (<BalanceShow value={positionInfo[0]} unit={marginToken} />)
           </strong>
         ) : (
           <>
-            <strong>{keepDecimals(positionInfo[1], 2)}%</strong>
+            <BalanceShow value={positionInfo[1]} percent />
             <small>
               ({keepDecimals(positionInfo[0], findToken(marginToken).decimals)} {marginToken})
             </small>
@@ -83,7 +84,9 @@ const HeaderData: FC = () => {
           {t('Trade.kline.PCFRate', 'PCF Rate')}
           <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
         </h3>
-        <strong>{keepDecimals(memoPosFeeRatio, 2)}%</strong>
+        <strong>
+          <BalanceShow value={memoPosFeeRatio} percent />
+        </strong>
       </section>
       {!mobile && <hr />}
       <section>
@@ -94,17 +97,27 @@ const HeaderData: FC = () => {
         {mobile ? (
           <>
             <aside>
-              <strong>{memoPositionApy[0]}%</strong>
+              <strong>
+                <BalanceShow value={memoPositionApy[0]} percent />
+              </strong>
               <small>Long</small>
             </aside>
             <aside>
-              <strong>{memoPositionApy[1]}%</strong>
+              <strong>
+                <BalanceShow value={memoPositionApy[1]} percent />
+              </strong>
               <small>Short</small>
             </aside>
           </>
         ) : (
           <strong>
-            {memoPositionApy[0]}% <small>Long</small> / {memoPositionApy[1]}% <small>Short</small>
+            <BalanceShow value={memoPositionApy[0]} percent />
+            <em />
+            <small>Long</small>
+            <em>/</em>
+            <BalanceShow value={memoPositionApy[1]} percent />
+            <em />
+            <small>Short</small>
           </strong>
         )}
       </section>

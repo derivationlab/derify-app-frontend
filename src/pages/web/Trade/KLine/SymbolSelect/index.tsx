@@ -12,6 +12,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
 
 import Options from './Options'
+import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   onToggle?: () => void
@@ -54,7 +55,7 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
           {VALUATION_TOKEN_SYMBOL}
         </h4>
         <aside>
-          <BalanceShow value={spotPrice} unit="" />
+          <BalanceShow value={keepDecimals(spotPrice, 2)} />
           <ChangePercent value={indicators[quoteToken]?.price_change_rate ?? 0} />
         </aside>
       </div>

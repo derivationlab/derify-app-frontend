@@ -11,6 +11,7 @@ import Pagination from '@/components/common/Pagination'
 
 import { MarketInfoData as data } from './mockData'
 import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
+
 const MySpace: FC = () => {
   const { mobile } = useContext(MobileContext)
   const [pageIndex, setPageIndex] = useState<number>(0)
@@ -32,7 +33,7 @@ const MySpace: FC = () => {
       dataIndex: 'maxApy',
       render: (value: number, data: Record<string, any>) => (
         <>
-          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} unit={data.name} />
           <DecimalShow value={value} percent black />
         </>
       )
@@ -42,7 +43,7 @@ const MySpace: FC = () => {
       dataIndex: 'maxApy',
       render: (value: number, data: Record<string, any>) => (
         <>
-          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} unit={data.name} />
           <DecimalShow value={value} percent black />
         </>
       )
@@ -57,7 +58,7 @@ const MySpace: FC = () => {
       width: 250,
       render: (value: number, data: Record<string, any>) => (
         <>
-          <BalanceShow value={value} format="0.00a" unit={data.name} />
+          <BalanceShow value={value} unit={data.name} />
           <DecimalShow value={value} percent black />
         </>
       )
@@ -66,9 +67,7 @@ const MySpace: FC = () => {
       title: 'Position Volume',
       dataIndex: 'tradingVolume',
       width: 250,
-      render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
-      )
+      render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.name} />
     },
     {
       title: 'Position Mining Rewards',
@@ -76,8 +75,8 @@ const MySpace: FC = () => {
       width: 250,
       render: (value: number, data: Record<string, any>) => (
         <>
-          <BalanceShow value={value} format="0.00a" unit={data.name} />
-          <BalanceShow value={value} format="0.00a" unit="DRF" />
+          <BalanceShow value={value} unit={data.name} />
+          <BalanceShow value={value} unit="DRF" />
         </>
       )
     },
@@ -87,8 +86,8 @@ const MySpace: FC = () => {
       width: 250,
       render: (value: number, data: Record<string, any>) => (
         <>
-          <BalanceShow value={value} format="0.00a" unit={data.name} />
-          <BalanceShow value={value} format="0.00a" unit="DRF" />
+          <BalanceShow value={value} unit={data.name} />
+          <BalanceShow value={value} unit="DRF" />
         </>
       )
     },

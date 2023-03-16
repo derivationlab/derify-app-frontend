@@ -131,7 +131,7 @@ const DerifyTokenPool: FC = () => {
           <div className="web-eran-item-claim">
             <main>
               <h4>{t('Earn.DerifyTokenPool.Claimable', 'Claimable')}</h4>
-              <BalanceShow value={edrfBalance ?? 0} unit="eDRF" decimal={tokens.edrf.decimals} />
+              <BalanceShow value={edrfBalance ?? 0} unit="eDRF" />
             </main>
             <aside>
               <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>

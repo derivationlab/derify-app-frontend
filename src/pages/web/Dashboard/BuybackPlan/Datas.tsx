@@ -29,7 +29,7 @@ const Datas: FC = () => {
       <div className="web-dashboard-plan-datas-item">
         <header>Current Block Height</header>
         <section>
-          <BalanceShow value={23914639} format="0" unit="" />
+          <BalanceShow value={23914639} rule="0" unit="" />
           <u>Block</u>
         </section>
       </div>

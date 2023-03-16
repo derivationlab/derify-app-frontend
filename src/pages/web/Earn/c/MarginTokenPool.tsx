@@ -157,7 +157,7 @@ const MarginTokenPool: FC = () => {
           <div className="web-eran-item-claim">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow value={bondBalance ?? 0} unit={`b${marginToken}`} decimal={2} />
+              <BalanceShow value={bondBalance ?? 0} unit={`b${marginToken}`} />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} :{' '}

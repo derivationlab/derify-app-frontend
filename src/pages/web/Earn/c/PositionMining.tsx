@@ -95,12 +95,8 @@ const PositionMining: FC = () => {
         <div className="web-eran-item-claim">
           <main>
             <h4>{t('Earn.PositionMining.Claimable', 'Claimable')}</h4>
-            <BalanceShow
-              value={rewardsInfo?.marginTokenBalance ?? 0}
-              unit={marginToken}
-              decimal={findToken(marginToken).decimals}
-            />
-            <BalanceShow value={rewardsInfo?.drfBalance ?? 0} unit="DRF" decimal={tokens.drf.decimals} />
+            <BalanceShow value={rewardsInfo?.marginTokenBalance ?? 0} unit={marginToken} />
+            <BalanceShow value={rewardsInfo?.drfBalance ?? 0} unit="DRF" />
             <p>
               {t('Earn.PositionMining.TotalEarned', 'Total earned :')}{' '}
               <strong>

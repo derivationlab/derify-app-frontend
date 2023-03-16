@@ -4,7 +4,7 @@ const MarketInfoDataFunc = () => {
     name: 'BUSD',
     icon: 'icon/bnb.svg',
     maxApy: 234.56,
-    tradingVolume: 123458654.22,
+    tradingVolume: 111119.22,
     positionVolume: 12345.22,
     buybackPool: 1245.22
   }))

@@ -33,8 +33,8 @@ const Plan: FC = () => {
       align: 'right',
       render: (value: number) => (
         <>
-          <BalanceShow value={value} format="0.00a" unit="" />
-          <BalanceShow value={value} format="0.00a" unit="" />
+          <BalanceShow value={value} />
+          <BalanceShow value={value} />
         </>
       )
     },
@@ -44,7 +44,7 @@ const Plan: FC = () => {
       align: 'right',
       render: (value: number, data: Record<string, any>) => (
         <>
-          <BalanceShow value={value} format="0,0" unit="" />
+          <BalanceShow value={value} rule="0,0" />
           <TableCountDown date={data.EstimatedTime} />
         </>
       )
@@ -56,27 +56,25 @@ const Plan: FC = () => {
       title: 'Buyback Cycle',
       dataIndex: 'BuybackCycle',
       width: 220,
-      render: (value: number) => <BalanceShow value={value} format="0.00a" unit="Block" />
+      render: (value: number) => <BalanceShow value={value} rule="0,0" unit="Block" />
     },
     {
       title: 'Buyback Pool',
       dataIndex: 'buybackPool',
       width: 220,
-      render: (value: number, data: Record<string, any>) => (
-        <BalanceShow value={value} format="0.00a" unit={data.name} />
-      )
+      render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.name} />
     },
     {
       title: 'DRF Price(Last Cycle)',
       dataIndex: 'DRFPrice',
       width: 240,
-      render: (value: number) => <BalanceShow value={value} format="0.00" unit="BUSD" />
+      render: (value: number) => <BalanceShow value={value} unit="BUSD" />
     },
     {
       title: 'Remaining block',
       dataIndex: 'RemainingBlock',
       width: 220,
-      render: (value: number) => <BalanceShow value={value} format="0,0" unit="Block" />
+      render: (value: number) => <BalanceShow value={value} rule="0,0" unit="Block" />
     },
     {
       title: 'Estimated Time',

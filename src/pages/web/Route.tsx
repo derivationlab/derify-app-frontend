@@ -9,6 +9,16 @@ import { useMTokenFromRoute } from '@/hooks/useTrading'
 import Loading from '@/components/common/Loading'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
 
+export const RConnectWallet = (props: PropsWithChildren<any>) => {
+  const { address } = useAccount()
+  const { children } = props
+
+  return useMemo(() => {
+    if (!address) return <BrokerConnect />
+    return children
+  }, [address])
+}
+
 export const RBrokerProfile = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children } = props

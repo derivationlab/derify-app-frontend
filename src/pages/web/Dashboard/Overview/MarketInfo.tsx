@@ -20,6 +20,7 @@ import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin } from '../c/TableCol'
+import { STATIC_RESOURCES_URL } from '@/config'
 
 const MarketInfo: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -42,7 +43,9 @@ const MarketInfo: FC = () => {
       {
         title: 'Margin',
         dataIndex: 'name',
-        render: (_: string, data: Record<string, any>) => <TableMargin icon={data.logo} name={data.symbol} />
+        render: (_: string, data: Record<string, any>) => (
+          <TableMargin icon={`${STATIC_RESOURCES_URL}market/${data.symbol.toLowerCase()}.svg`} name={data.symbol} />
+        )
       },
       {
         title: 'Trading/Position',
@@ -58,7 +61,7 @@ const MarketInfo: FC = () => {
         title: 'Max APY',
         dataIndex: 'max_pm_apy',
         render: (value: number) => {
-          const per = bnMul(value, 100)
+          const per = bnMul(value ?? 0, 100)
           return <DecimalShow value={per} percent black />
         }
       }
@@ -73,7 +76,7 @@ const MarketInfo: FC = () => {
         dataIndex: 'max_pm_apy',
         width: 300,
         render: (value: number) => {
-          const per = bnMul(value, 100)
+          const per = bnMul(value ?? 0, 100)
           return <DecimalShow value={per} percent black />
         }
       },
@@ -104,8 +107,8 @@ const MarketInfo: FC = () => {
         dataIndex: 'Margin',
         width: 150,
         align: 'right',
-        render: () => (
-          <Button size='medium' onClick={() => history.push(`/${data.symbol}/trade`)}>
+        render: (_: string, data: Record<string, any>) => (
+          <Button size="medium" onClick={() => history.push(`/${data.symbol}/trade`)}>
             GO
           </Button>
         )
@@ -163,19 +166,24 @@ const MarketInfo: FC = () => {
       void debounceSearch(keyword)
     }
   }, [keyword])
+
+  useEffect(() => {
+    void fetchData()
+  }, [])
+
   // 无效（下架状态）保证金logo加个半透明，文字显示灰色，表明该保证金已下架
   return (
-    <div className='web-dashboard-overview-market'>
-      <header className='web-dashboard-section-header'>
+    <div className="web-dashboard-overview-market">
+      <header className="web-dashboard-section-header">
         <h3>Market Info</h3>
-        <div className='web-dashboard-section-header-search'>
-          <Input value={keyword} onChange={setKeyword} placeholder='serch name or contract address..'>
-            <button className='web-dashboard-section-header-search-button' onClick={onSearch} />
+        <div className="web-dashboard-section-header-search">
+          <Input value={keyword} onChange={setKeyword} placeholder="serch name or contract address..">
+            <button className="web-dashboard-section-header-search-button" onClick={onSearch} />
           </Input>
         </div>
       </header>
       <Table
-        rowKey='id'
+        rowKey="id"
         data={state.marketData.records}
         // @ts-ignore
         columns={mobile ? mColumns : wColumns}

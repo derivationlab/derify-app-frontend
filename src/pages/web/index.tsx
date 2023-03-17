@@ -10,7 +10,8 @@ import {
   RBrokerBound,
   RBrokerSignUpStep3,
   RBrokerSignUpStep1_2,
-  RBrokerProfile
+  RBrokerProfile,
+  RConnectWallet
 } from '@/pages/web/Route'
 import { Redirect, Switch, Route } from '@/components/common/Route'
 
@@ -34,6 +35,9 @@ import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 
 import MySpace from '@/pages/web/MySpace'
 import System from '@/pages/web/MySpace/System'
+import Overview from '@/pages/web/Dashboard/Overview'
+import GrantList from '@/pages/web/Dashboard/GrantList'
+import BuybackPlan from '@/pages/web/Dashboard/BuybackPlan'
 
 const Web: FC = () => {
   const { marginToken } = useMTokenFromRoute()
@@ -172,7 +176,16 @@ const Web: FC = () => {
             </RBrokerProfile>
           )}
         />
-        <Route path="/dashboard" render={() => <Dashboard />} />
+        <Route path={`/${marginToken}/dashboard/overview`} component={Overview} />
+        <Route path="/dashboard/buyback-plan" component={BuybackPlan} />
+        <Route
+          path="/dashboard/grant-list"
+          render={() => (
+            <RConnectWallet>
+              <GrantList />
+            </RConnectWallet>
+          )}
+        />
         <Route path="/my-space" render={() => <MySpace />} />
         <Route path="/system" render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />

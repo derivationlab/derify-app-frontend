@@ -117,6 +117,9 @@
       display: flex;align-items: center;justify-content: center;
     }
   }
+  tr.close{
+    background-color: $c88;
+  }
 }
 
 %td-strong-mobile {

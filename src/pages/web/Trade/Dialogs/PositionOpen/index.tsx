@@ -35,7 +35,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
   const { openingMaxLimit } = useOpeningMaxLimit(quoteToken, marginToken)
 
   const checkOpeningVolFunc = async () => {

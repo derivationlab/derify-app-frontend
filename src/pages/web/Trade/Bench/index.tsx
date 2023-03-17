@@ -47,7 +47,7 @@ const Bench: FC = () => {
 
   const { opening } = useOpeningPosition()
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(indicators?.longPmrRate)

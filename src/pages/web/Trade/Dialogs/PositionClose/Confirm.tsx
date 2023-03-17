@@ -37,7 +37,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
 
   const calcTFeeFunc = useCallback(async () => {
     if (factoryConfig) {

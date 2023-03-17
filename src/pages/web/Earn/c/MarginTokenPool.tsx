@@ -6,7 +6,6 @@ import React, { FC, useMemo, useState, useContext } from 'react'
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
-import { useQuoteToken } from '@/zustand'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
@@ -30,7 +29,6 @@ const MarginTokenPool: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const bondPoolBalance = usePoolsInfo((state) => state.bondPoolBalance)
 
@@ -40,7 +38,7 @@ const MarginTokenPool: FC = () => {
   const { deposit } = useDepositBondToBank()
   const { exchange } = useExchangeBond()
   const { withdraw } = useWithdrawAllBond()
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
   const { data: bondBalance } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')

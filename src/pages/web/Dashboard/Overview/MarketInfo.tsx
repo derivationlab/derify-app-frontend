@@ -1,86 +1,123 @@
-import React, { FC, useMemo, useState, useContext } from 'react'
-import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 import classNames from 'classnames'
-import { MobileContext } from '@/providers/Mobile'
+import { debounce, isEmpty } from 'lodash'
+import { useHistory } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useEffect } from 'react'
 
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { bnMul } from '@/utils/tools'
+import { useMarketInfo } from '@/hooks/useMarketInfo'
+import { MobileContext } from '@/providers/Mobile'
+import { getMarginTokenList } from '@/api'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { reducer, stateInit } from '@/reducers/marketInfo'
+import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
+
 import { Input } from '@/components/common/Form'
 import Button from '@/components/common/Button'
-import DecimalShow from '@/components/common/DecimalShow'
 import Pagination from '@/components/common/Pagination'
+import DecimalShow from '@/components/common/DecimalShow'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin } from '../c/TableCol'
-import { MarketInfoData as data } from './mockData'
 
 const MarketInfo: FC = () => {
+  const [state, dispatch] = useReducer(reducer, stateInit)
+
+  const history = useHistory()
+
+  const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
+  const { marginToken } = useMTokenFromRoute()
+
+  const { match } = useFactoryConf('', marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
+
+  const { data } = useMarketInfo(protocolConfig?.exchange, match)
 
   const [keyword, setKeyword] = useState('')
-  const [pageIndex, setPageIndex] = useState<number>(0)
-  const isLoading = false
-  const memoEmptyText = useMemo(() => {
-    if (isLoading) return 'Loading'
-    if (isEmpty(data)) return 'No Record'
-    return ''
-  }, [isLoading])
-  const mColumns = [
-    {
-      title: 'Margin',
-      dataIndex: 'name',
-      render: (_: string, data: Record<string, any>) => <TableMargin icon={data.icon} name={data.name} />
-    },
-    {
-      title: 'Trading/Position',
-      dataIndex: 'tradingVolume',
-      render: (value: number, data: Record<string, any>) => (
-        <>
-          <BalanceShow value={value} unit={data.name} />
-          <BalanceShow value={value} unit={data.name} />
-        </>
-      )
-    },
-    {
-      title: 'Max APY',
-      dataIndex: 'maxApy',
-      render: (value: number) => <DecimalShow value={value} percent black />
-    }
-  ]
-  const webColumns = [
-    mColumns[0],
-    {
-      title: 'Max Position Mining APY',
-      dataIndex: 'maxApy',
-      width: 300,
-      render: (value: number) => <DecimalShow value={value} percent black />
-    },
-    {
-      title: 'Trading Volume',
-      dataIndex: 'tradingVolume',
-      width: 220,
-      render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.name} />
-    },
-    {
-      title: 'Position Volume',
-      dataIndex: 'positionVolume',
-      width: 220,
-      render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.name} />
-    },
-    {
-      title: 'Buyback Pool',
-      dataIndex: 'buybackPool',
-      width: 220,
-      render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.name} />
-    },
-    {
-      title: 'Detail Info',
-      dataIndex: 'Margin',
-      width: 150,
 
-      align: 'right',
-      render: () => <Button size="medium">GO</Button>
-    }
-  ]
+  const mColumns = useMemo(() => {
+    return [
+      {
+        title: 'Margin',
+        dataIndex: 'name',
+        render: (_: string, data: Record<string, any>) => <TableMargin icon={data.logo} name={data.symbol} />
+      },
+      {
+        title: 'Trading/Position',
+        dataIndex: 'trading_amount',
+        render: () => (
+          <>
+            <BalanceShow value={data.positionVol} unit={data.symbol} />
+            <BalanceShow value={data.buybackPool} unit={data.symbol} />
+          </>
+        )
+      },
+      {
+        title: 'Max APY',
+        dataIndex: 'max_pm_apy',
+        render: (value: number) => {
+          const per = bnMul(value, 100)
+          return <DecimalShow value={per} percent black />
+        }
+      }
+    ]
+  }, [t])
+
+  const wColumns = useMemo(() => {
+    return [
+      mColumns[0],
+      {
+        title: 'Max Position Mining APY',
+        dataIndex: 'max_pm_apy',
+        width: 300,
+        render: (value: number) => {
+          const per = bnMul(value, 100)
+          return <DecimalShow value={per} percent black />
+        }
+      },
+      {
+        title: 'Trading Volume',
+        dataIndex: 'trading_amount',
+        width: 220,
+        render: (value: number, data: Record<string, any>) => <BalanceShow value={value} unit={data.symbol} />
+      },
+      {
+        title: 'Position Volume',
+        dataIndex: 'positionVolume',
+        width: 220,
+        render: (value: number, data: Record<string, any>) => (
+          <BalanceShow value={data.positionVol} unit={data.symbol} />
+        )
+      },
+      {
+        title: 'Buyback Pool',
+        dataIndex: 'buybackPool',
+        width: 220,
+        render: (value: number, data: Record<string, any>) => (
+          <BalanceShow value={data.buybackPool} unit={data.symbol} />
+        )
+      },
+      {
+        title: 'Detail Info',
+        dataIndex: 'Margin',
+        width: 150,
+        align: 'right',
+        render: () => (
+          <Button size='medium' onClick={() => history.push(`/${data.symbol}/trade`)}>
+            GO
+          </Button>
+        )
+      }
+    ]
+  }, [t])
+
+  const emptyText = useMemo(() => {
+    if (state.marketData.isLoaded) return 'Loading'
+    if (isEmpty(state.marketData.records)) return 'No Record'
+    return ''
+  }, [state.marketData])
 
   const onSearch = () => {
     if (keyword) {
@@ -88,33 +125,67 @@ const MarketInfo: FC = () => {
     }
   }
 
-  const onPageChangeEv = (index: number) => {
-    setPageIndex(index)
-    // void getBrokersListCb(index)
+  const debounceSearch = useCallback(
+    debounce((keyword: string) => {
+      void fetchData(0)
+    }, 1000),
+    []
+  )
+
+  const fetchData = useCallback(
+    async (index = 0) => {
+      // keyword
+      const { data } = await getMarginTokenList(index, 10)
+
+      console.info(data)
+
+      dispatch({
+        type: 'SET_MARKET_DAT',
+        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+      })
+    },
+    [keyword]
+  )
+
+  const pageChange = (index: number) => {
+    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
+
+    void fetchData(index)
   }
 
+  useEffect(() => {
+    if (keyword) {
+      dispatch({
+        type: 'SET_MARKET_DAT',
+        payload: { records: [], totalItems: 0, isLoaded: true }
+      })
+
+      void debounceSearch(keyword)
+    }
+  }, [keyword])
+  // 无效（下架状态）保证金logo加个半透明，文字显示灰色，表明该保证金已下架
   return (
-    <div className="web-dashboard-overview-market">
-      <header className="web-dashboard-section-header">
+    <div className='web-dashboard-overview-market'>
+      <header className='web-dashboard-section-header'>
         <h3>Market Info</h3>
-        <div className="web-dashboard-section-header-search">
-          <Input value={keyword} onChange={setKeyword} placeholder="serch name or contract address..">
-            <button className="web-dashboard-section-header-search-button" onClick={onSearch} />
+        <div className='web-dashboard-section-header-search'>
+          <Input value={keyword} onChange={setKeyword} placeholder='serch name or contract address..'>
+            <button className='web-dashboard-section-header-search-button' onClick={onSearch} />
           </Input>
         </div>
       </header>
       <Table
-        className={classNames('web-broker-table', { 'web-space-table': mobile })}
-        emptyText={memoEmptyText}
+        rowKey='id'
+        data={state.marketData.records}
         // @ts-ignore
-        columns={mobile ? mColumns : webColumns}
-        data={data}
-        rowKey="id"
+        columns={mobile ? mColumns : wColumns}
+        className={classNames('web-broker-table', { 'web-space-table': mobile })}
+        emptyText={emptyText}
+        rowClassName={(record) => (!!record.open ? 'close' : 'open')}
       />
-      <Pagination page={pageIndex} total={100} onChange={onPageChangeEv} />
+      <Pagination page={state.pageIndex} total={state.marketData.totalItems} onChange={pageChange} />
     </div>
   )
 }
 
 export default MarketInfo
-// <BalanceShow value={12345.4567} unit="USD" />

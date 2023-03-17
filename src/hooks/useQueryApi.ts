@@ -6,6 +6,8 @@ import {
   getCurrentIndexDAT,
   getCurrentInsuranceDAT,
   getCurrentPositionsAmount,
+  getCurrentTotalPositionsNetValue,
+  getCurrentTotalTradingNetValue,
   getCurrentTradingAmount,
   getTraderBondBalance,
   getTraderEDRFBalance
@@ -130,6 +132,48 @@ export const useCurrentInsuranceDAT = (address: string) => {
   )
 
   if (!isEmpty(data)) return { data, refetch }
+
+  return { refetch }
+}
+
+export const useCurrentTotalTradingNetValue = (marginToken: string, quoteToken: string) => {
+  const { data, refetch } = useQuery(
+    ['getCurrentTotalTradingNetValue'],
+    async (): Promise<any[]> => {
+      const data = await getCurrentTotalTradingNetValue(marginToken, quoteToken)
+      return data?.data ?? []
+    },
+    {
+      retry: 0,
+      initialData: [],
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  if (!isEmpty(data)) return { refetch, data }
+
+  return { refetch }
+}
+
+export const useCurrentTotalPositionsNetValue = (marginToken: string, quoteToken: string) => {
+  const { data, refetch } = useQuery(
+    ['getCurrentTotalPositionsNetValue'],
+    async (): Promise<any[]> => {
+      const data = await getCurrentTotalPositionsNetValue(marginToken, quoteToken)
+      return data?.data ?? []
+    },
+    {
+      retry: 0,
+      initialData: [],
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  if (!isEmpty(data)) return { refetch, data }
 
   return { refetch }
 }

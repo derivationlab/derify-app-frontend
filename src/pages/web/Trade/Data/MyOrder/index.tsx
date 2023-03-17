@@ -32,7 +32,7 @@ const MyOrder: FC = () => {
 
   const { close } = useCancelPosition()
   const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
   const { cancel: cancelAllPositions } = useCancelAllPositions()
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})

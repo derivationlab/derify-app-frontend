@@ -1,6 +1,9 @@
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useContext, useMemo } from 'react'
 
+import { usePairsInfo } from '@/zustand'
+import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
@@ -9,15 +12,12 @@ import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useWithdrawPositionReward } from '@/hooks/useEarning'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { bnPlus, isGT, keepDecimals } from '@/utils/tools'
-import { usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
-import { Link } from 'react-router-dom'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
@@ -26,7 +26,6 @@ const PositionMining: FC = () => {
 
   const variables = useTraderInfo((state) => state.variables)
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const indicators = usePairsInfo((state) => state.indicators)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
@@ -34,7 +33,7 @@ const PositionMining: FC = () => {
   const { marginToken } = useMTokenFromRoute()
 
   const { withdraw } = useWithdrawPositionReward()
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
   const { data: positionsAmount } = useCurrentPositionsAmount(
     'PositionMining-useCurrentPositionsAmount',
     'all',

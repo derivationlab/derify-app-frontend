@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useReducer, useEffect } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
+import { getTokenBalance } from '@/zustand'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/earn'
-import { getTokenBalance, useQuoteToken } from '@/zustand'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -25,11 +25,9 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-
   const { marginToken } = useMTokenFromRoute()
 
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
 
   const memoDisabled = useMemo(() => {
     return isGT(state.balance, 0)

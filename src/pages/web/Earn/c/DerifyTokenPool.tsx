@@ -6,7 +6,6 @@ import React, { FC, useMemo, useState, useContext, useEffect } from 'react'
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { useQuoteToken } from '@/zustand'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
@@ -28,7 +27,6 @@ const DerifyTokenPool: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const stakingInfo = useTraderInfo((state) => state.stakingInfo)
   const drfPoolBalance = usePoolsInfo((state) => state.drfPoolBalance)
 
@@ -37,7 +35,7 @@ const DerifyTokenPool: FC = () => {
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
   const { data: edrfBalance } = useTraderEDRFBalance(address)
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 

@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 
 import tokens from '@/config/tokens'
-import { useQuoteToken } from '@/zustand'
 import { addToken2Wallet } from '@/utils/practicalMethod'
 import { PANCAKE_SWAP_URL } from '@/config'
 import { useProtocolConf } from '@/hooks/useMatchConf'
@@ -19,11 +18,9 @@ const AddTokenButton: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-
   const { marginToken } = useMTokenFromRoute()
 
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
 
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
 

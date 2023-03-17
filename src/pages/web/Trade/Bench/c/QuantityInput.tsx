@@ -38,7 +38,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const { marginToken } = useMTokenFromRoute()
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
 
   const onSelectChange = (val: string | number) => {
     onChange(0)

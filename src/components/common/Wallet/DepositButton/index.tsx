@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useQuoteToken } from '@/zustand'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useDepositMargin, useMTokenFromRoute } from '@/hooks/useTrading'
 
@@ -19,10 +18,8 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
   const { marginToken } = useMTokenFromRoute()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-
   const { deposit } = useDepositMargin()
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 

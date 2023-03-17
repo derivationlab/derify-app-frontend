@@ -196,3 +196,28 @@ export const getActiveRankGrantRatios = async (marginToken: string, trader: stri
   const response = await get(`api/active_rank_grant_ratios/${marginToken}/${trader}`)
   return response
 }
+
+export const getCurrentTotalTradingNetValue = async (marginToken: string, quoteToken: string) => {
+  const response = await get(`api/current_total_trading_net_value/${quoteToken}/${marginToken}`)
+  return response
+}
+
+export const getCurrentTotalPositionsNetValue = async (marginToken: string, quoteToken: string) => {
+  const response = await get(`api/current_total_positions_net_value/${quoteToken}/${marginToken}`)
+  return response
+}
+
+export const getHistoryTotalTradingNetValue = async (marginToken: string, quoteToken: string, days = 90) => {
+  const response = await get(`api/history_total_trading_net_value/${quoteToken}/${days}/${marginToken}`)
+  return response
+}
+
+export const getHistoryTotalPositionsNetValue = async (marginToken: string, quoteToken: string, days = 90) => {
+  const response = await get(`api/history_total_positions_net_value/${quoteToken}/${days}/${marginToken}`)
+  return response
+}
+
+export const getMarginTokenList = async (page: number, offset: number) => {
+  const response = await get(`api/margin_token_list/${page}/${offset}`)
+  return response
+}

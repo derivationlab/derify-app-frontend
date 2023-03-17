@@ -12,7 +12,6 @@ import { useAddGrant } from '@/hooks/useDashboard'
 import { useAccount } from 'wagmi'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
-import { useQuoteToken } from '@/zustand'
 import {
   getActiveRankGrantCount,
   getActiveRankGrantRatios,
@@ -30,9 +29,7 @@ const GrantList: FC = () => {
 
   const { marginToken } = useMTokenFromRoute()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
 
   const fetchData = useCallback(async (index = 0) => {
     console.info(index)

@@ -9,7 +9,6 @@ import React, { FC, useCallback, useContext, useEffect, useMemo } from 'react'
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/providers/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
-import { useQuoteToken } from '@/zustand'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
 import { useWithdrawReward } from '@/hooks/useBroker'
@@ -32,9 +31,8 @@ const Dashboard: FC = () => {
   const { marginToken } = useMTokenFromRoute()
 
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
 
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
   const { data: brokerAssets } = useBrokerInfoFromC(address, protocolConfig?.rewards)
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 

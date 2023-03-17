@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useQuoteToken } from '@/zustand'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMTokenFromRoute, useWithdrawMargin } from '@/hooks/useTrading'
 
@@ -19,10 +18,8 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
 
   const { marginToken } = useMTokenFromRoute()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-
   const { withdraw } = useWithdrawMargin()
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 

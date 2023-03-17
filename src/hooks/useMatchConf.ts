@@ -40,23 +40,27 @@ export const useFactoryConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken 
   const factoryConfig = useConfigInfo((state) => state.factoryConfig)
   const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
 
+  const match = useMemo(() => {
+    if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken as MarginTokenKeys]
+  }, [marginToken, factoryConfig, factoryConfigLoaded])
+
   const _factoryConfig = useMemo(() => {
-    if (factoryConfigLoaded && factoryConfig)
-      return factoryConfig[marginToken as MarginTokenKeys][quoteToken as QuoteTokenKeys]
-  }, [quoteToken, marginToken, factoryConfig, factoryConfigLoaded])
+    if (match) return match[quoteToken as QuoteTokenKeys]
+  }, [match, quoteToken])
 
   return {
+    match,
     factoryConfig: _factoryConfig
   }
 }
 
-export const useProtocolConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
+export const useProtocolConf = (marginToken = MARGIN_TOKENS[0].symbol) => {
   const protocolConfig = useConfigInfo((state) => state.protocolConfig)
   const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
 
   const _protocolConfig = useMemo(() => {
     if (protocolConfigLoaded && protocolConfig) return protocolConfig[marginToken as MarginTokenKeys]
-  }, [quoteToken, marginToken, protocolConfig, protocolConfigLoaded])
+  }, [marginToken, protocolConfig, protocolConfigLoaded])
 
   return {
     protocolConfig: _protocolConfig

@@ -5,7 +5,6 @@ import React, { FC, useMemo, useContext } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
-import { useQuoteToken } from '@/zustand'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
@@ -26,13 +25,12 @@ const Competition: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
 
   const { marginToken } = useMTokenFromRoute()
 
   const { withdraw } = useWithdrawRankReward()
-  const { protocolConfig } = useProtocolConf(quoteToken, marginToken)
+  const { protocolConfig } = useProtocolConf(marginToken)
   const { data: bondBalance } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
 
   useRankReward(address, protocolConfig?.rewards)

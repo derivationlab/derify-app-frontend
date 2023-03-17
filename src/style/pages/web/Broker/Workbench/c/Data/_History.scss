@@ -118,7 +118,8 @@
     }
   }
   tr.close{
-    background-color: $c88;
+    *{color: $c88;}
+    img{opacity: 0.5}
   }
 }
 

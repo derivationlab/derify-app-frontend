@@ -1,9 +1,11 @@
-import React, { FC } from 'react'
-import classNames from 'classnames'
-import numeral from 'numeral'
 import dayjs from 'dayjs'
+import classNames from 'classnames'
+import React, { FC, useMemo } from 'react'
 
-import { nonBigNumberInterception } from '@/utils/tools'
+import { keepDecimals } from '@/utils/tools'
+import { grantStateOptions } from '@/reducers/grantList'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+
 import Image from '@/components/common/Image'
 
 interface Props {
@@ -11,33 +13,40 @@ interface Props {
 }
 
 const ListItem: FC<Props> = ({ data }) => {
+  const state = useMemo(() => {
+    const find = grantStateOptions.find((s) => s.key === data.status)
+    return find?.label ?? ''
+  }, [data])
+
+  const margin = useMemo(() => {
+    return findToken(data?.margin_token ?? '')
+  }, [data])
+
   return (
     <div className="web-dashboard-grant-list-item">
-      <div className={classNames('web-dashboard-grant-list-item-state', String(data.State).toLocaleLowerCase())}>
-        {data.State}
-      </div>
+      <div className={classNames('web-dashboard-grant-list-item-state', state.toLocaleLowerCase())}>{state}</div>
       <dl>
         <dt>Margin</dt>
         <dd>
-          <Image src={data.MarginIcon} />
-          {data.Margin}
+          <Image src={margin?.icon} />
+          {margin?.symbol}
         </dd>
       </dl>
       <dl>
         <dt>Target</dt>
-        <dd>{data.Target}</dd>
+        <dd>{data.target}</dd>
       </dl>
       <dl>
         <dt>Rewards</dt>
-        <dd>{numeral(nonBigNumberInterception(data.Rewards)).format('0,0.00')}</dd>
+        <dd>{keepDecimals(data.amount, PLATFORM_TOKEN.decimals, true)}</dd>
       </dl>
       <dl>
         <dt>Start</dt>
-        <dd>{dayjs(data.StartTime).utc().format('MM/DD/YYYY HH:mm:ss')} UTC</dd>
+        <dd>{dayjs(data.start_time).utc().format('MM/DD/YYYY HH:mm:ss')} UTC</dd>
       </dl>
       <dl>
         <dt>End</dt>
-        <dd>{dayjs(data.EndTime).utc().format('MM/DD/YYYY HH:mm:ss')} UTC</dd>
+        <dd>{dayjs(data.end_time).utc().format('MM/DD/YYYY HH:mm:ss')} UTC</dd>
       </dl>
     </div>
   )

@@ -108,7 +108,7 @@ const MarketInfo: FC = () => {
         width: 150,
         align: 'right',
         render: (_: string, data: Record<string, any>) => (
-          <Button size="medium" onClick={() => history.push(`/${data.symbol}/trade`)}>
+          <Button size="medium" disabled={!!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
             GO
           </Button>
         )
@@ -128,6 +128,7 @@ const MarketInfo: FC = () => {
     }
   }
 
+  // todo search
   const debounceSearch = useCallback(
     debounce((keyword: string) => {
       void fetchData(0)
@@ -171,7 +172,6 @@ const MarketInfo: FC = () => {
     void fetchData()
   }, [])
 
-  // 无效（下架状态）保证金logo加个半透明，文字显示灰色，表明该保证金已下架
   return (
     <div className="web-dashboard-overview-market">
       <header className="web-dashboard-section-header">

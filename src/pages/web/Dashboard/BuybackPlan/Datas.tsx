@@ -1,35 +1,46 @@
+import { useBlockNumber } from 'wagmi'
 import React, { FC } from 'react'
+
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import DecimalShow from '@/components/common/DecimalShow'
+
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
+import { BENCHMARK_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
 const Datas: FC = () => {
+  const { data = 0 } = useBlockNumber({ watch: true })
+
+  const { marginToken } = useMTokenFromRoute()
+
+  const { data: dashboardDAT } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
+
   return (
     <div className="web-dashboard-plan-datas">
       <div className="web-dashboard-plan-datas-item">
         <header>Total Buyback Value</header>
         <section>
-          <DecimalShow value={42312.34} black format="0,0.00" />
-          <u>USD</u>
+          <BalanceShow value={dashboardDAT?.drfBuyBack} />
+          <u>{PLATFORM_TOKEN.symbol}</u>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">
-        <header>Current DRF Price</header>
+        <header>Current {PLATFORM_TOKEN.symbol} Price</header>
         <section>
-          <DecimalShow value={0.45} black format="0,0.00" />
-          <u>BUSD</u>
+          <BalanceShow value={dashboardDAT?.drfPrice} />
+          <u>{BENCHMARK_TOKEN.symbol}</u>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">
         <header>Total Destroyed</header>
         <section>
-          <DecimalShow value={142312.34} black format="0,0.00 a" />
-          <u>DRF</u>
+          <BalanceShow value={dashboardDAT?.drfBurnt} />
+          <u>{PLATFORM_TOKEN.symbol}</u>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">
         <header>Current Block Height</header>
         <section>
-          <BalanceShow value={23914639} rule="0" unit="" />
+          <BalanceShow value={data} rule="0" unit="" />
           <u>Block</u>
         </section>
       </div>

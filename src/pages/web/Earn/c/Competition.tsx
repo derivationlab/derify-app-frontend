@@ -1,16 +1,21 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useContext } from 'react'
+import React, { FC, useMemo, useContext, useEffect } from 'react'
 
-import { findToken } from '@/config/tokens'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
+import { useRankReward } from '@/hooks/useDashboard'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
-import { isGT, keepDecimals } from '@/utils/tools'
-import { useTraderBondBalance } from '@/hooks/useQueryApi'
+import { bnMul, isGT, keepDecimals } from '@/utils/tools'
+import {
+  useActiveRankGrantCount,
+  useActiveRankGrantRatios,
+  useActiveRankGrantTotalAmount,
+  useTraderBondBalance
+} from '@/hooks/useQueryApi'
 import { useWithdrawRankReward } from '@/hooks/useEarning'
 
 import Button from '@/components/common/Button'
@@ -18,22 +23,21 @@ import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { useRankReward } from '@/hooks/useDashboard'
 
 const Competition: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
+
   const { mobile } = useContext(MobileContext)
-
-  const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
-
   const { marginToken } = useMTokenFromRoute()
 
   const { withdraw } = useWithdrawRankReward()
   const { protocolConfig } = useProtocolConf(marginToken)
+  const { data, refetch } = useRankReward(address, protocolConfig?.rewards)
+  const { data: grantRatio } = useActiveRankGrantRatios(findToken(marginToken).tokenAddress)
   const { data: bondBalance } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
-
-  useRankReward(address, protocolConfig?.rewards)
+  const { data: grantAmount } = useActiveRankGrantTotalAmount(findToken(marginToken).tokenAddress)
+  const { data: activeGrant } = useActiveRankGrantCount(findToken(marginToken).tokenAddress)
 
   const memoDisabled = useMemo(() => {
     return isGT(bondBalance ?? 0, 0)
@@ -58,6 +62,10 @@ const Competition: FC = () => {
     window.toast.dismiss(toast)
   }
 
+  useEffect(() => {
+    if (address && protocolConfig) void refetch()
+  }, [address, protocolConfig])
+
   return (
     <div className="web-eran-item">
       <header className="web-eran-item-header">
@@ -69,17 +77,18 @@ const Competition: FC = () => {
       </header>
       <section className="web-eran-item-main">
         <div className="web-eran-item-dashboard">
-          <DecimalShow value={(rewardsInfo?.bondAnnualInterestRatio ?? 999) * 100} percent />
+          <DecimalShow value={keepDecimals(bnMul(grantRatio, 100), 2)} percent />
           <u>RANK.</u>
         </div>
         <div className="web-eran-item-claim">
           <main>
             <h4>{t('Earn.PositionMining.Claimable')}</h4>
-            <BalanceShow value={bondBalance ?? 0} unit={marginToken} />
+            <BalanceShow value={data?.drfBalance ?? 0} unit={PLATFORM_TOKEN.symbol} />
             <div className="block" />
             <p>
               {t('Earn.PositionMining.TotalEarned')} :{' '}
-              <strong>{keepDecimals(rewardsInfo?.exchangeable ?? 999, 2)}</strong> {marginToken}
+              <strong>{keepDecimals(data?.drfAccumulatedBalance ?? 0, PLATFORM_TOKEN.decimals)}</strong>{' '}
+              {PLATFORM_TOKEN.symbol}
             </p>
           </main>
           <aside>
@@ -91,10 +100,10 @@ const Competition: FC = () => {
         <div className="web-eran-item-card">
           <main>
             <h4>Rewards pool</h4>
-            <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 999} unit={marginToken} />
+            <BalanceShow value={grantAmount.totalAmount} unit={PLATFORM_TOKEN.symbol} />
             <div className="block" />
             <p>
-              Active grants : <strong>{999}</strong>
+              Active grants : <strong>{activeGrant.count}</strong>
             </p>
           </main>
           <aside>

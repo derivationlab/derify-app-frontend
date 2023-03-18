@@ -4,7 +4,7 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { grantTargetOptions } from '@/reducers/addGrant'
-import { findToken, MARGIN_TOKENS } from '@/config/tokens'
+import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
 import {
   getGrantList,
@@ -21,6 +21,9 @@ import Pagination from '@/components/common/Pagination'
 import { GrantListData } from './mockData'
 import ListItem from './ListItem'
 import AddGrant from './AddGrant'
+import PubSub from 'pubsub-js'
+import { PubSubEvents } from '@/typings'
+import { debounce } from 'lodash'
 
 const targetOptions = grantTargetOptions()
 
@@ -37,7 +40,15 @@ const GrantList: FC = () => {
 
     void fetchData(index)
   }
-
+  /**
+   * margin_token: 保证金地址
+   * target: 奖励类型
+   * status: 比赛状态
+   * start_time: 比赛开始时间
+   * end_time: 比赛结束时间
+   * event_time: 奖励添加时间
+   * amount: 奖励DRF数量
+   */
   const fetchData = useCallback(
     async (index = 0) => {
       const marginToken = findToken(state.marginToken).tokenAddress
@@ -58,7 +69,7 @@ const GrantList: FC = () => {
   const _addGrantPlan = useCallback(async () => {
     if (address) await getTraderMarginBalance(address, 0, 10) // 404
     await getActiveRankGrantCount(findToken(marginToken)?.tokenAddress) // count: 0
-    if (address) await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress, address) // []
+    await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress) // []
     await getActiveRankGrantTotalAmount(findToken(marginToken)?.tokenAddress) // totalAmount: null
   }, [address, protocolConfig, marginToken])
 
@@ -72,9 +83,40 @@ const GrantList: FC = () => {
     []
   )
 
+  const debounceSearch = useCallback(
+    debounce(() => {
+      void fetchData(0)
+    }, 1000),
+    []
+  )
+
   useEffect(() => {
-    void fetchData()
+    PubSub.subscribe(PubSubEvents.UPDATE_GRANT_LIST, () => {
+      console.info(`UPDATE_GRANT_LIST`)
+
+      dispatch({
+        type: 'SET_GRANT_DAT',
+        payload: { records: [], totalItems: 0, isLoaded: true }
+      })
+      dispatch({ type: 'SET_PAGE_INDEX', payload: 0 })
+      dispatch({ type: 'SET_GRANT_TARGET', payload: '' })
+      dispatch({ type: 'SET_GRANT_STATUS', payload: '' })
+      dispatch({ type: 'SET_MARGIN_TOKEN', payload: DEFAULT_MARGIN_TOKEN.symbol })
+
+      void fetchData()
+    })
   }, [])
+
+  useEffect(() => {
+    if (state.marginToken || state.grantStatus || state.grantTarget) {
+      dispatch({
+        type: 'SET_GRANT_DAT',
+        payload: { records: [], totalItems: 0, isLoaded: true }
+      })
+
+      void debounceSearch()
+    }
+  }, [state.marginToken, state.grantStatus, state.grantTarget])
 
   return (
     <div className="web-dashboard">

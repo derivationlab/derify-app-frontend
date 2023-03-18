@@ -4,35 +4,17 @@ import { useQuery } from '@tanstack/react-query'
 import { Rec } from '@/zustand/types'
 import {
   getCurrentIndexDAT,
-  getCurrentInsuranceDAT,
-  getCurrentPositionsAmount,
-  getCurrentTotalPositionsNetValue,
-  getCurrentTotalTradingNetValue,
-  getCurrentTradingAmount,
   getTraderBondBalance,
-  getTraderEDRFBalance
+  getTraderEDRFBalance,
+  getCurrentInsuranceDAT,
+  getCurrentTradingAmount,
+  getActiveRankGrantCount,
+  getActiveRankGrantRatios,
+  getCurrentPositionsAmount,
+  getActiveRankGrantTotalAmount,
+  getCurrentTotalTradingNetValue,
+  getCurrentTotalPositionsNetValue
 } from '@/api'
-
-export const useCurrentPositionsAmount = (queryKey: string, quoteToken: string, marginToken: string) => {
-  const { data, refetch } = useQuery(
-    [queryKey],
-    async (): Promise<Record<string, any>> => {
-      const data = await getCurrentPositionsAmount(quoteToken, marginToken)
-      return data?.data ?? {}
-    },
-    {
-      retry: 0,
-      initialData: {},
-      refetchInterval: 5000,
-      keepPreviousData: true,
-      refetchOnWindowFocus: false
-    }
-  )
-
-  if (!isEmpty(data)) return { refetch, data }
-
-  return { refetch }
-}
 
 export const useCurrentIndexDAT = (marginToken: string) => {
   const { data, refetch } = useQuery(
@@ -94,6 +76,27 @@ export const useTraderBondBalance = (trader = '', address: string) => {
   return { data }
 }
 
+export const useCurrentInsuranceDAT = (address: string) => {
+  const { data, refetch } = useQuery(
+    ['getCurrentInsuranceDAT'],
+    async (): Promise<Rec> => {
+      const data = await getCurrentInsuranceDAT(address)
+      return data?.data ?? {}
+    },
+    {
+      retry: 0,
+      initialData: {},
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  if (!isEmpty(data)) return { data, refetch }
+
+  return { refetch }
+}
+
 export const useCurrentTradingAmount = (address: string, marginToken: string) => {
   const { data, refetch } = useQuery(
     ['getCurrentTradingAmount'],
@@ -115,25 +118,85 @@ export const useCurrentTradingAmount = (address: string, marginToken: string) =>
   return { refetch }
 }
 
-export const useCurrentInsuranceDAT = (address: string) => {
-  const { data, refetch } = useQuery(
-    ['getCurrentInsuranceDAT'],
-    async (): Promise<Rec> => {
-      const data = await getCurrentInsuranceDAT(address)
-      return data?.data ?? {}
+export const useActiveRankGrantCount = (marginToken: string) => {
+  const { data } = useQuery(
+    ['getActiveRankGrantCount'],
+    async (): Promise<{ count: number }> => {
+      const data = await getActiveRankGrantCount(marginToken)
+      return data?.data ?? { count: 0 }
     },
     {
       retry: 0,
-      initialData: {},
+      initialData: { count: 0 },
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  if (!isEmpty(data)) return { data, refetch }
+  return { data }
+}
+
+export const useActiveRankGrantRatios = (marginToken: string) => {
+  const { data } = useQuery(
+    ['getActiveRankGrantRatios'],
+    async (): Promise<number> => {
+      const data = await getActiveRankGrantRatios(marginToken)
+
+      const _data = data?.data ?? []
+
+      return _data.length > 0 ? Math.min.apply(null, _data) : 0
+    },
+    {
+      retry: 0,
+      initialData: 0,
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data }
+}
+
+export const useCurrentPositionsAmount = (queryKey: string, quoteToken: string, marginToken: string) => {
+  const { data, refetch } = useQuery(
+    [queryKey],
+    async (): Promise<Record<string, any>> => {
+      const data = await getCurrentPositionsAmount(quoteToken, marginToken)
+      return data?.data ?? {}
+    },
+    {
+      retry: 0,
+      initialData: {},
+      refetchInterval: 5000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  if (!isEmpty(data)) return { refetch, data }
 
   return { refetch }
+}
+
+export const useActiveRankGrantTotalAmount = (marginToken: string) => {
+  const { data } = useQuery(
+    ['getActiveRankGrantTotalAmount'],
+    async (): Promise<{ totalAmount: number }> => {
+      const data = await getActiveRankGrantTotalAmount(marginToken)
+      return data?.data ?? { totalAmount: 10 }
+    },
+    {
+      retry: 0,
+      initialData: { totalAmount: 0 },
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data }
 }
 
 export const useCurrentTotalTradingNetValue = (marginToken: string, quoteToken: string) => {

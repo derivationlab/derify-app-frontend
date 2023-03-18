@@ -43,7 +43,7 @@ class Token {
   }
 
   get icon() {
-    return `symbol/${this.symbol.toLowerCase()}.svg`
+    return `market/${this.symbol.toLowerCase()}.svg`
   }
 
   get tokenAddress() {

@@ -1363,6 +1363,7 @@
       }
     ],
     "name": "getRankReward",
+
     "outputs": [
       {
         "internalType": "uint256",

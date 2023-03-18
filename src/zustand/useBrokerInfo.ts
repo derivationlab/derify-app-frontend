@@ -46,7 +46,7 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
     // console.info(data4.data)
 
     set({
-      brokerInfo: data1.data
+      brokerInfo: data1?.data
         ? {
             ...data1?.data,
             ...data3?.data,

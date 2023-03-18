@@ -10,11 +10,10 @@ import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTrader
 
 import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
 
-import Competition from './c/Competition'
 import PositionMining from './c/PositionMining'
+import CompetitionPool from './c/Competition'
 import MarginTokenPool from './c/MarginTokenPool'
 import DerifyTokenPool from './c/DerifyTokenPool'
-// import { useRankReward } from '@/hooks/useDashboard'
 
 const Eran: FC = () => {
   const { address } = useAccount()
@@ -74,7 +73,7 @@ const Eran: FC = () => {
       <IndicatorsUpdater />
 
       <PositionMining />
-      <Competition />
+      <CompetitionPool />
       <DerifyTokenPool />
       <MarginTokenPool />
     </div>

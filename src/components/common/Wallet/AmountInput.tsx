@@ -1,40 +1,55 @@
-import React, { ChangeEvent, FC, useEffect, useState } from 'react'
+import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
+import { isGT } from '@/utils/tools'
 
 interface Props {
-  title: string
-  unit?: string
   max: string
+  unit?: string
+  title: string
+  initial?: string
   onChange: (v: string) => void
 }
 
-const AmountInput: FC<Props> = ({ title, unit, max, onChange }) => {
+const AmountInput: FC<Props> = ({ max, unit, title, initial = '', onChange }) => {
   const { t } = useTranslation()
+
   const [value, setValue] = useState<string>('')
 
-  const onChangeEv = (e: ChangeEvent<HTMLInputElement>) => {
-    const v = e.target.value
-    setValue(v)
+  const setMax = () => {
+    if (Number(max) > 0) setValue(max)
   }
 
-  const setMaxValueEv = () => {
-    setValue(max)
-  }
+  const validate = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const v = e.target.value
+      if (isGT(v, max)) {
+        onChange(max)
+        setValue(max)
+      } else {
+        onChange(v)
+        setValue(v)
+      }
+    },
+    [max]
+  )
 
   useEffect(() => {
-    onChange(value)
-  }, [value])
+    if (initial) {
+      onChange(initial)
+      setValue(initial)
+    }
+  }, [initial])
 
   return (
     <div className="web-c-amount-input">
       <p>{title}</p>
       <div className="wrap">
-        <input type="number" value={value} onChange={onChangeEv} />
+        <input type="number" value={value} onChange={validate} />
         <div className="extra">
           <span className="unit">{unit}</span>
-          <Button size="mini" onClick={setMaxValueEv}>
+          <Button size="mini" onClick={setMax}>
             {t('Trade.Deposit.Max', 'Max')}
           </Button>
         </div>

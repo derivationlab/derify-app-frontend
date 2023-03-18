@@ -1,26 +1,28 @@
-import React, { FC, useCallback, useReducer } from 'react'
+import { useAccount } from 'wagmi'
+import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { grantTargetOptions } from '@/reducers/addGrant'
+import { findToken, MARGIN_TOKENS } from '@/config/tokens'
+import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
+import {
+  getGrantList,
+  getTraderMarginBalance,
+  getActiveRankGrantCount,
+  getActiveRankGrantRatios,
+  getActiveRankGrantTotalAmount
+} from '@/api'
 
 import { Select } from '@/components/common/Form'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 
-import { MarginData, TargetData, StateData, GrantListData } from './mockData'
-
+import { GrantListData } from './mockData'
 import ListItem from './ListItem'
 import AddGrant from './AddGrant'
-import { useAddGrant } from '@/hooks/useDashboard'
-import { useAccount } from 'wagmi'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
-import {
-  getActiveRankGrantCount,
-  getActiveRankGrantRatios,
-  getActiveRankGrantTotalAmount,
-  getGrantList,
-  getTraderMarginBalance
-} from '@/api'
-import { findToken } from '@/config/tokens'
-import { reducer, stateInit } from '@/reducers/grantList'
+
+const targetOptions = grantTargetOptions()
 
 const GrantList: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -28,16 +30,7 @@ const GrantList: FC = () => {
   const { address } = useAccount()
 
   const { marginToken } = useMTokenFromRoute()
-
   const { protocolConfig } = useProtocolConf(marginToken)
-
-  const fetchData = useCallback(async (index = 0) => {
-    console.info(index)
-    // dispatch({
-    //   type: 'SET_GRANT_DAT',
-    //   payload: { records: records ?? [], totalItems: totalItems ?? 0, isLoaded: false }
-    // })
-  }, [])
 
   const pageChange = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
@@ -45,54 +38,82 @@ const GrantList: FC = () => {
     void fetchData(index)
   }
 
-  const { addGrantPlan } = useAddGrant()
+  const fetchData = useCallback(
+    async (index = 0) => {
+      const marginToken = findToken(state.marginToken).tokenAddress
+      const grantStatus = grantStateOptions.find((t) => t.value === state.grantStatus)?.key ?? 'all'
+      const grantTarget = targetOptions.find((t) => t.value === state.grantTarget)?.key ?? 'all'
 
+      const { data } = await getGrantList(marginToken, grantTarget, grantStatus, index, 9)
+
+      dispatch({
+        type: 'SET_GRANT_DAT',
+        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+      })
+    },
+    [state.marginToken, state.grantStatus, state.grantTarget]
+  )
+
+  // debug todo
   const _addGrantPlan = useCallback(async () => {
-    /**
-     * marginToken: 保证金地址('all'或者'0x...'，默认'all')
-     * target: 奖励对象 enum{'all','rank', 'pmr', 'broker_rewards'}，默认'all'
-     * status： 交易比赛状态 enum{'upcoming', 'active', 'closed', 'all'), 默认'all'
-     */
-    if (address) await getGrantList(findToken(marginToken)?.tokenAddress, 'all', 'all', 0, 10)
-    if (address) await getTraderMarginBalance(address, 0, 10)
-    await getActiveRankGrantCount(findToken(marginToken)?.tokenAddress)
-    if (address) await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress, address)
-    await getActiveRankGrantTotalAmount(findToken(marginToken)?.tokenAddress)
-    if (protocolConfig) await addGrantPlan(1, protocolConfig.awards, '2000', '4', '4')
+    if (address) await getTraderMarginBalance(address, 0, 10) // 404
+    await getActiveRankGrantCount(findToken(marginToken)?.tokenAddress) // count: 0
+    if (address) await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress, address) // []
+    await getActiveRankGrantTotalAmount(findToken(marginToken)?.tokenAddress) // totalAmount: null
   }, [address, protocolConfig, marginToken])
+
+  const marginOptions = useMemo(
+    () =>
+      MARGIN_TOKENS.map((t) => ({
+        value: t.symbol,
+        label: t.symbol,
+        icon: `market/${t.symbol.toLowerCase()}.svg`
+      })),
+    []
+  )
+
+  useEffect(() => {
+    void fetchData()
+  }, [])
 
   return (
     <div className="web-dashboard">
-      <button onClick={_addGrantPlan}>addGrantPlan</button>
+      {/*<button onClick={_addGrantPlan}>fetchData</button>*/}
       <header className="web-dashboard-grant-header">
         <Select
+          large
+          filter
           label="Margin"
           value={state.marginToken}
           onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
-          large
-          filter
-          filterPlaceholder="serch name or contract address.."
-          objOptions={MarginData}
           renderer={(props) => (
             <div className="web-select-options-item">
               {props.icon && <Image src={props.icon} />}
               {props.label}
             </div>
           )}
+          objOptions={marginOptions}
+          labelRenderer={(props) => (
+            <div className="web-dashboard-add-grant-margin-label">
+              {props.icon && <Image src={props.icon} />}
+              <span>{props.label}</span>
+            </div>
+          )}
+          filterPlaceholder="Search name or contract address..."
         />
         <Select
-          label="Target"
-          value={state.grantType}
-          onChange={(v) => dispatch({ type: 'SET_GRANT_TYPE', payload: v })}
           large
-          objOptions={TargetData}
+          label="Target"
+          value={state.grantTarget}
+          onChange={(v) => dispatch({ type: 'SET_GRANT_TARGET', payload: v })}
+          objOptions={targetOptions as any}
         />
         <Select
+          large
           label="State"
           value={state.grantStatus}
           onChange={(v) => dispatch({ type: 'SET_GRANT_STATUS', payload: v })}
-          large
-          objOptions={StateData}
+          objOptions={grantStateOptions as any}
         />
       </header>
       <div className="web-dashboard-grant-list">

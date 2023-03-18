@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo } from 'react'
 
 import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
 import { useConfigInfo, useQuoteToken, useTokenBalances } from '@/zustand'
@@ -22,6 +23,7 @@ export default function InitialUpdater(): null {
   const resetVariables = useTraderInfo((state) => state.reset)
   const updateVariables = useTraderInfo((state) => state.updateVariables)
   const updateMTokenPrices = useConfigInfo((state) => state.updateMTokenPrices)
+  const updateMinimumGrant = useConfigInfo((state) => state.updateMinimumGrant)
   const updateFactoryConfig = useConfigInfo((state) => state.updateFactoryConfig)
   const updateProtocolConfig = useConfigInfo((state) => state.updateProtocolConfig)
   const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)
@@ -30,6 +32,8 @@ export default function InitialUpdater(): null {
     const find = MARGIN_TOKENS.find((m) => pathname.includes(m.symbol))
     return find?.symbol ?? DEFAULT_MARGIN_TOKEN.symbol
   }, [pathname]) as MarginTokenKeys
+
+  const { data: minimumGrant, refetch } = useMinimumGrant(protocolConfDAT?.[marginToken])
 
   // for tokens balance
   useEffect(() => {
@@ -89,6 +93,16 @@ export default function InitialUpdater(): null {
   useEffect(() => {
     resetVariables()
   }, [marginToken])
+
+  // for add grant config
+  useEffect(() => {
+    if (!protocolConfDATIsLoading && protocolConfDAT) void refetch()
+  }, [protocolConfDATIsLoading, protocolConfDAT])
+
+  // for add grant config
+  useEffect(() => {
+    updateMinimumGrant(minimumGrant)
+  }, [minimumGrant])
 
   return null
 }

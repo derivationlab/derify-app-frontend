@@ -7,7 +7,7 @@ import multicall from '@/utils/multicall'
 import { useQuery } from '@tanstack/react-query'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { formatUnits, inputParameterConversion } from '@/utils/tools'
-import { getDerifyPmrContract, getDerifyRankContract, getDerifyAwardsContract } from '@/utils/contractHelpers'
+import { getDerifyPmrContract, getDerifyRankContract, getDerifyBrokerRewardsContract } from '@/utils/contractHelpers'
 
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 
@@ -69,18 +69,18 @@ export const useAddGrant = () => {
   const { data: signer } = useSigner()
 
   const addGrantPlan = useCallback(
-    async (type: number, address: string, amount: string, days1: string, days2: string): Promise<boolean> => {
+    async (type: string, address: string, amount: string, days1: number, days2: number): Promise<boolean> => {
       if (!signer) return false
 
       let c: any
 
-      if (type === 0) {
+      if (type === 'mining') {
         c = getDerifyPmrContract(address, signer)
       }
-      if (type === 1) {
-        c = getDerifyAwardsContract(address, signer)
+      if (type === 'awards') {
+        c = getDerifyBrokerRewardsContract(address, signer)
       }
-      if (type === 2) {
+      if (type === 'rank') {
         c = getDerifyRankContract(address, signer)
       }
 
@@ -94,7 +94,6 @@ export const useAddGrant = () => {
         const gasLimit = await estimateGas(c, 'addGrant', [_amount, days1, days2], 0)
         const res = await c.addGrant(_amount, days1, days2, { gasLimit })
         const receipt = await res.wait()
-        console.info(receipt.status)
         return receipt.status
       } catch (e) {
         console.info(e)

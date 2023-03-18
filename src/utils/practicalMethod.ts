@@ -1,6 +1,5 @@
 import { ethers } from 'ethers'
 import type { BigNumber, Contract, Signer } from 'ethers'
-import { MaxUint256 } from '@ethersproject/constants'
 import type { BigNumberish } from '@ethersproject/bignumber'
 import { getBep20Contract } from '@/utils/contractHelpers'
 
@@ -37,9 +36,11 @@ export const setAllowance = async (
   try {
     const account = await signer.getAddress()
     const allowance = await _contract.allowance(account, spender)
+
     const _allowance = ethers.BigNumber.from(allowance)
-    if (_allowance.lt(_amount)) {
-      const tx = await _contract.approve(spender, MaxUint256)
+
+    if (_allowance.lte(_amount)) {
+      const tx = await _contract.approve(spender, _amount)
       const receipt = await tx.wait()
       return receipt.status
     }

@@ -61,7 +61,7 @@
     &-item {
       display: flex;width: 100%;justify-content: space-between;align-items: center;
       img {
-        display: block;width: 25px;height: 25px;margin-right: 5px;
+        display: block;width: 25px;height: 25px;margin-right: 5px;border-radius: 100%;
       }
       span, em, u, i, div {
         display: flex;align-items: center;

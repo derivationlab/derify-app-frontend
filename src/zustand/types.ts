@@ -26,6 +26,7 @@ export interface BalancesState {
 export interface ConfigInfoState {
   brokerParams: { burnLimitAmount: string; burnLimitPerDay: string }
   mTokenPrices: MarginToken
+  minimumGrant: string[]
   openingMinLimit: MarginToken
   openingMaxLimit: MarginTokenWithQuote
   factoryConfig: MarginTokenWithQuote
@@ -35,6 +36,7 @@ export interface ConfigInfoState {
   factoryConfigLoaded: boolean
   protocolConfigLoaded: boolean
   mTokenPricesLoaded: boolean
+  updateMinimumGrant: (p: string[]) => void
   updateFactoryConfig: (p: MarginTokenWithQuote) => void
   updateProtocolConfig: (p: MarginTokenWithContract) => void
   updateOpeningMinLimit: (p: MarginToken) => void

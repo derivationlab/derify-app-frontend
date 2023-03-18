@@ -8,17 +8,18 @@ import { initialOpeningMinLimit, initialFactoryConfig, initialOpeningMaxLimit } 
 import { MarginToken, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 const useConfigInfo = create<ConfigInfoState>((set) => ({
+  minimumGrant: ['0', '0', '0'],
   brokerParams: { burnLimitAmount: '0', burnLimitPerDay: '0' },
   mTokenPrices: initialOpeningMinLimit(),
   factoryConfig: initialFactoryConfig(),
   protocolConfig: initialProtocolConfig(),
   openingMinLimit: initialOpeningMinLimit(),
   openingMaxLimit: initialOpeningMaxLimit(),
+  mTokenPricesLoaded: false,
   factoryConfigLoaded: false,
   protocolConfigLoaded: false,
   openingMinLimitLoaded: false,
   openingMaxLimitLoaded: false,
-  mTokenPricesLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
       // console.info('updateFactoryConfig:')
@@ -52,6 +53,10 @@ const useConfigInfo = create<ConfigInfoState>((set) => ({
   updateBrokerParams: (data: any) =>
     set((state) => {
       return { brokerParams: { ...state.brokerParams, ...data } }
+    }),
+  updateMinimumGrant: (data: any) =>
+    set(() => {
+      return { minimumGrant: data }
     })
 }))
 

@@ -80,6 +80,8 @@ export const VALUATION_TOKEN_SYMBOL = 'USD'
 
 export const DEFAULT_MARGIN_TOKEN = tokens.busd
 
+export const PLATFORM_TOKEN = tokens.drf
+
 // key: (btc,eth...)/address
 export const findToken = (key: string): Token => {
   // eslint-disable-next-line

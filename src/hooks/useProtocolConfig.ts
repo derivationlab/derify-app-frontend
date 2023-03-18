@@ -45,12 +45,12 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
   if (!isLoading && !isEmpty(data)) {
     data.forEach((addresses: any, index: number) => {
       const {
+        derifyPmr,
         derifyRank,
         bMarginToken,
         derifyFactory,
         derifyRewards,
         derifyExchange,
-        derifyPmr,
         derifyBrokerRewards,
         marginTokenPriceFeed
       } = addresses

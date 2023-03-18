@@ -26,6 +26,7 @@ export const TargetData = [
     label: 'Trading Competition'
   }
 ]
+
 export const StateData = [
   allItem,
   {

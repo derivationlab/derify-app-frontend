@@ -19,7 +19,7 @@ const Margin: FC = () => {
 
   const { marginToken } = useMTokenFromRoute()
 
-  const marginSelect = useMemo(() => {
+  const marginOptions = useMemo(() => {
     return MARGIN_TOKENS.map((t) => {
       return {
         value: t.symbol,
@@ -40,7 +40,7 @@ const Margin: FC = () => {
         onChange={(v) => {
           history.push(`/${v}/trade`)
         }}
-        objOptions={marginSelect}
+        objOptions={marginOptions}
         renderer={(props) => (
           <div className="web-select-options-item">
             <span>

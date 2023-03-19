@@ -8,9 +8,10 @@ import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useE
 import { bnMul } from '@/utils/tools'
 import { useMarketInfo } from '@/hooks/useMarketInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { getMarginTokenList } from '@/api'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/marketInfo'
+import { STATIC_RESOURCES_URL } from '@/config'
+import { getDashboardMarginTokenList } from '@/api'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
 
 import { Input } from '@/components/common/Form'
@@ -20,7 +21,6 @@ import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin } from '../c/TableCol'
-import { STATIC_RESOURCES_URL } from '@/config'
 
 const MarketInfo: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -139,7 +139,7 @@ const MarketInfo: FC = () => {
   const fetchData = useCallback(
     async (index = 0) => {
       // keyword
-      const { data } = await getMarginTokenList(index, 10)
+      const { data } = await getDashboardMarginTokenList(index, 10)
 
       console.info(data)
 

@@ -10,7 +10,7 @@ import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/providers/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import tokens, { findToken } from '@/config/tokens'
+import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { useWithdrawReward } from '@/hooks/useBroker'
 import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
@@ -90,7 +90,7 @@ const Dashboard: FC = () => {
         <section>
           <h3>{t('Broker.BV.BrokerAccountBalance', 'Broker Account Balance')}</h3>
           <BalanceShow value={memoTotalBalance[0]} unit={marginToken} />
-          <BalanceShow value={memoTotalBalance[1]} unit="DRF" />
+          <BalanceShow value={memoTotalBalance[1]} unit={PLATFORM_TOKEN.symbol} />
           <p
             dangerouslySetInnerHTML={{
               __html: t('Broker.BV.EarnedTip', '', {

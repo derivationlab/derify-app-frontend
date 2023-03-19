@@ -21,7 +21,7 @@ const TradingChart: FC = () => {
   const { data } = useCurrentTotalTradingNetValue(findToken(marginToken).tokenAddress, 'all')
 
   const combineDAT = useMemo(() => {
-    if (data) output = { day_time: time, ...data[0] }
+    if (data) output = { day_time: time, ...data }
     return [...chartData, output]
   }, [chartData, data])
 
@@ -42,7 +42,7 @@ const TradingChart: FC = () => {
     <div className="web-dashboard-overview-charts">
       <header>
         <label>Total Trading Value</label>
-        <BalanceShow value={data?.[0].total_trading_net_value ?? 0} unit={marginToken} />
+        <BalanceShow value={data.total_trading_net_value} unit={marginToken} />
       </header>
       <section>
         <BarChart
@@ -54,7 +54,7 @@ const TradingChart: FC = () => {
           yFormat={[
             {
               label: 'Value',
-              value: 'value',
+              value: 'total_trading_net_value',
               color: '#E7446B'
             }
           ]}

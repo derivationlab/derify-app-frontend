@@ -11,7 +11,7 @@ import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
 import { MobileContext } from '@/providers/Mobile'
 import { useAllBrokerRewards, useAllMarginBalances, useAllTraderRewards } from '@/hooks/useMySpaceInfo'
 import { reducer, stateInit } from '@/reducers/mySpace'
-import { getMarginTokenList } from '@/api'
+import { getMySpaceMarginTokenList } from '@/api'
 
 import Button from '@/components/common/Button'
 import Pagination from '@/components/common/Pagination'
@@ -161,15 +161,20 @@ const MySpace: FC = () => {
     ]
   }, [t, allTraderRewards, allBrokerRewards])
 
-  const fetchData = useCallback(async (index = 0) => {
-    const { data } = await getMarginTokenList(index, 9)
-    console.info(data)
+  const fetchData = useCallback(
+    async (index = 0) => {
+      if (address) {
+        const { data } = await getMySpaceMarginTokenList(address, index, 9)
+        console.info(data)
 
-    dispatch({
-      type: 'SET_MARGIN_DAT',
-      payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-    })
-  }, [])
+        dispatch({
+          type: 'SET_MARGIN_DAT',
+          payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+        })
+      }
+    },
+    [address]
+  )
 
   const pageChange = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
@@ -178,8 +183,8 @@ const MySpace: FC = () => {
   }
 
   useEffect(() => {
-    void fetchData()
-  }, [])
+    if (address) void fetchData()
+  }, [address])
 
   // useEffect(() => {
   //   console.info(marginBalances)

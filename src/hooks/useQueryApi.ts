@@ -200,43 +200,41 @@ export const useActiveRankGrantTotalAmount = (marginToken: string) => {
 }
 
 export const useCurrentTotalTradingNetValue = (marginToken: string, quoteToken: string) => {
+  const base = { total_trading_net_value: 0 }
   const { data, refetch } = useQuery(
     ['getCurrentTotalTradingNetValue'],
-    async (): Promise<any[]> => {
+    async (): Promise<typeof base> => {
       const data = await getCurrentTotalTradingNetValue(marginToken, quoteToken)
-      return data?.data ?? []
+      return data?.data ?? base
     },
     {
       retry: 0,
-      initialData: [],
+      initialData: base,
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  if (!isEmpty(data)) return { refetch, data }
-
-  return { refetch }
+  return { data, refetch }
 }
 
 export const useCurrentTotalPositionsNetValue = (marginToken: string, quoteToken: string) => {
+  const base = { total_positions_net_value: 0 }
   const { data, refetch } = useQuery(
     ['getCurrentTotalPositionsNetValue'],
-    async (): Promise<any[]> => {
+    async (): Promise<typeof base> => {
       const data = await getCurrentTotalPositionsNetValue(marginToken, quoteToken)
-      return data?.data ?? []
+      return data?.data ?? base
     },
     {
       retry: 0,
-      initialData: [],
+      initialData: base,
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  if (!isEmpty(data)) return { refetch, data }
-
-  return { refetch }
+  return { refetch, data }
 }

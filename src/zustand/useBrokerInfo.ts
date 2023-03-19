@@ -50,7 +50,7 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
         ? {
             ...data1?.data,
             ...data3?.data,
-            rank: data0,
+            rank: data0?.data,
             registerTime: data4?.data,
             validPeriodDays: data2?.data
           }

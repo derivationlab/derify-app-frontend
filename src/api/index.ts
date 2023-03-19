@@ -217,7 +217,12 @@ export const getHistoryTotalPositionsNetValue = async (marginToken: string, quot
   return response
 }
 
-export const getMarginTokenList = async (page: number, offset: number) => {
-  const response = await get(`api/margin_token_list/${page}/${offset}`)
+export const getMySpaceMarginTokenList = async (trader: string, page: number, offset: number) => {
+  const response = await get(`api/margin_token_list/${trader}/${page}/${offset}`)
+  return response
+}
+
+export const getDashboardMarginTokenList = async (page: number, offset: number) => {
+  const response = await get(`api/dashboard_margin_token_list/${page}/${offset}`)
   return response
 }

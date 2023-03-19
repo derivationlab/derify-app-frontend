@@ -21,7 +21,7 @@ const PositionChart: FC = () => {
   const { data } = useCurrentTotalPositionsNetValue(findToken(marginToken).tokenAddress, 'all')
 
   const combineDAT = useMemo(() => {
-    if (data) output = { day_time: time, ...data[0] }
+    if (data) output = { day_time: time, ...data }
     return [...chartData, output]
   }, [chartData, data])
 
@@ -44,7 +44,7 @@ const PositionChart: FC = () => {
     <div className="web-dashboard-overview-charts">
       <header>
         <label>Total Position Value</label>
-        <BalanceShow value={data?.[0].total_position_net_value ?? 0} unit={marginToken} />
+        <BalanceShow value={data.total_positions_net_value} unit={marginToken} />
       </header>
       <section>
         <BarChart
@@ -56,7 +56,7 @@ const PositionChart: FC = () => {
           yFormat={[
             {
               label: 'Value',
-              value: 'value',
+              value: 'total_position_net_value',
               color: '#E7446B'
             }
           ]}

@@ -6,13 +6,13 @@ import React, { FC, useState, useMemo, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 import { PubSubEvents } from '@/typings'
-import { useQuoteToken } from '@/zustand'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { usePosDATStore } from '@/zustand/usePosDAT'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
-import { useCloseAllPositions, useClosePosition, useMTokenFromRoute, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
+import { useCloseAllPositions, useClosePosition, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
@@ -42,8 +42,7 @@ const MyPosition: FC = () => {
   const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { factoryConfig } = useFactoryConf(quoteToken, marginToken)

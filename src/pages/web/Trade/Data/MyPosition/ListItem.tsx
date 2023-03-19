@@ -5,9 +5,9 @@ import React, { FC, useMemo, useContext } from 'react'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useQuoteToken } from '@/zustand'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { PositionSideTypes } from '@/typings'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'
 
@@ -30,8 +30,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const variables = useTraderInfo((state) => state.variables)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { spotPrices } = useSpotPrice(quoteToken, marginToken)
 

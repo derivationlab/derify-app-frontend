@@ -11,7 +11,8 @@ import { reducer, stateInit } from '@/reducers/brokerRank'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
+import { useMarginToken } from '@/zustand'
 
 interface RowTextProps {
   value: string | number
@@ -41,7 +42,7 @@ const Rank: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const fetchData = useCallback(async (index = 0) => {
     const { data } = await getBrokersRankList(index, 10, findToken(marginToken).tokenAddress)

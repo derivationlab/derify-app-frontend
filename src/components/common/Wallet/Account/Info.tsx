@@ -2,9 +2,10 @@ import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useMarginToken } from '@/zustand'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
+
 import BalanceShow from '../BalanceShow'
 
 interface Props {
@@ -15,9 +16,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
 
   const variables = useTraderInfo((state) => state.variables)
-
-  const { marginToken } = useMTokenFromRoute()
-  // const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   return (
     <>

@@ -1,10 +1,10 @@
 import Table from 'rc-table'
 import React, { FC, useMemo, useState } from 'react'
 
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useMarginToken } from '@/zustand'
 
 const System: FC = () => {
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const isLoading = false
 

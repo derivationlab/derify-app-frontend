@@ -1,12 +1,11 @@
 import { isEmpty } from 'lodash'
 import { useEffect } from 'react'
 
-import { usePairsInfo } from '@/zustand'
+import { useMarginToken, usePairsInfo } from '@/zustand'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 export default function IndicatorsUpdater(): null {
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { data: indicatorDAT } = usePairIndicator(marginToken)
 

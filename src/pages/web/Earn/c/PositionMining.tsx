@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useContext, useMemo } from 'react'
 
-import { usePairsInfo } from '@/zustand'
+import { useMarginToken, usePairsInfo } from '@/zustand'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { useWithdrawPositionReward } from '@/hooks/useEarning'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { bnPlus, isGT, keepDecimals } from '@/utils/tools'
@@ -29,9 +29,7 @@ const PositionMining: FC = () => {
   const indicators = usePairsInfo((state) => state.indicators)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
-
-  const { marginToken } = useMTokenFromRoute()
-
+  const marginToken = useMarginToken((state) => state.marginToken)
   const { withdraw } = useWithdrawPositionReward()
   const { protocolConfig } = useProtocolConf(marginToken)
   const { data: positionsAmount } = useCurrentPositionsAmount(

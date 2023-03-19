@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next'
 
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { isGT, isGTET } from '@/utils/tools'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '@/components/common/Wallet/AmountInput'
+import { useMarginToken } from '@/zustand'
 
 interface Props {
   visible: boolean
@@ -21,7 +21,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)

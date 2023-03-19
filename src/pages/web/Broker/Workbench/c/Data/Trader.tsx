@@ -14,7 +14,8 @@ import Pagination from '@/components/common/Pagination'
 
 import { RowTime, calcShortHash } from './common'
 import { findToken } from '@/config/tokens'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
+import { useMarginToken } from '@/zustand'
 
 interface DataProps {
   trader: string
@@ -57,7 +58,7 @@ const Trader: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const fetchData = async (index = 0) => {
     if (address) {

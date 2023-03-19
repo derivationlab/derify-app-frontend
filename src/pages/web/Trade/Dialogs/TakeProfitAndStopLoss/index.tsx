@@ -4,8 +4,8 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { PositionSideTypes } from '@/typings'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
-import { usePairsInfo, useQuoteToken } from '@/zustand'
+
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
 
@@ -27,8 +27,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   const { t } = useTranslation()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const indicators = usePairsInfo((state) => state.indicators)

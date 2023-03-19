@@ -2,10 +2,10 @@ import React, { FC, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { usePairsInfo } from '@/zustand'
+import { useMarginToken, usePairsInfo } from '@/zustand'
 import { PositionSideTypes } from '@/typings'
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
@@ -32,7 +32,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const updateClosingType = useCalcOpeningDAT((state) => state.updateClosingType)
   const updateClosingAmount = useCalcOpeningDAT((state) => state.updateClosingAmount)
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { spotPrice } = useSpotPrice(data?.quoteToken, marginToken)
 

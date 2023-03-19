@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import { useQuoteToken } from '@/zustand'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { PositionSideTypes } from '@/typings'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isGT, keepDecimals } from '@/utils/tools'
@@ -29,8 +29,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const { t } = useTranslation()
 
-  const { marginToken } = useMTokenFromRoute()
-
+  const marginToken = useMarginToken((state) => state.marginToken)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const closingType = useCalcOpeningDAT((state) => state.closingType)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)

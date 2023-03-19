@@ -5,8 +5,8 @@ import React, { FC, useState, useCallback, useRef, useEffect } from 'react'
 import { findToken } from '@/config/tokens'
 import { KLineTimes } from '@/data'
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { useQuoteToken } from '@/zustand'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useMarginToken, useQuoteToken } from '@/zustand'
+
 import { getKLineDAT, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 
 import { Select } from '@/components/common/Form'
@@ -26,8 +26,7 @@ const Chart: FC = () => {
   const kline = useRef<KlineChartProps>(null)
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 

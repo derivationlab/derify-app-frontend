@@ -5,7 +5,7 @@ import { useInterval } from 'react-use'
 import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
 
 import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
@@ -14,6 +14,7 @@ import PositionMining from './c/PositionMining'
 import CompetitionPool from './c/Competition'
 import MarginTokenPool from './c/MarginTokenPool'
 import DerifyTokenPool from './c/DerifyTokenPool'
+import { useMarginToken } from '@/zustand'
 
 const Eran: FC = () => {
   const { address } = useAccount()
@@ -22,8 +23,7 @@ const Eran: FC = () => {
   const updateStakingInfo = useTraderInfo((state) => state.updateStakingInfo)
   const updateDrfPoolBalance = usePoolsInfo((state) => state.updateDrfPoolBalance)
   const updateBondPoolBalance = usePoolsInfo((state) => state.updateBondPoolBalance)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { protocolConfig } = useProtocolConf(marginToken)
 

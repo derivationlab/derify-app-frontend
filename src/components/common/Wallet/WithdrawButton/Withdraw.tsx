@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
 import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useMarginToken } from '@/zustand'
 import { reducer, stateInit } from '@/reducers/withdraw'
 import { getTraderWithdrawAmount } from '@/api'
 import { isET, isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
@@ -27,8 +27,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const variables = useTraderInfo((state) => state.variables)
   const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const memoMargin = useMemo(() => {
     if (variablesLoaded) {

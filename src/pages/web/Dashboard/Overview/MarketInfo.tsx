@@ -8,7 +8,7 @@ import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useE
 import { bnMul } from '@/utils/tools'
 import { useMarketInfo } from '@/hooks/useMarketInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { reducer, stateInit } from '@/reducers/marketInfo'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { getDashboardMarginTokenList } from '@/api'
@@ -21,6 +21,7 @@ import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin } from '../c/TableCol'
+import { useMarginToken } from '@/zustand'
 
 const MarketInfo: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -29,7 +30,7 @@ const MarketInfo: FC = () => {
 
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { match } = useFactoryConf('', marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)

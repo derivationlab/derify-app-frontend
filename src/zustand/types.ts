@@ -55,6 +55,11 @@ export interface QuoteTokenState {
   updateQuoteToken: (p: QuoteTokenKeys) => void
 }
 
+export interface MarginTokenState {
+  marginToken: MarginTokenKeys
+  updateMarginToken: (p: MarginTokenKeys) => void
+}
+
 export interface PosDATState {
   positionOrd: Rec[]
   profitLossOrd: Rec[]

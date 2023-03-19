@@ -5,7 +5,7 @@ import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from
 
 import { ThemeContext } from '@/providers/Theme'
 import { findToken } from '@/config/tokens'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { getHistoryPositionsDAT } from '@/api'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { bnDiv, bnMul, bnPlus, isGT, keepDecimals } from '@/utils/tools'
@@ -14,6 +14,7 @@ import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTime
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
+import { useMarginToken } from '@/zustand'
 
 const time = days().utc().startOf('days').format()
 let output: Record<string, any> = {
@@ -33,7 +34,7 @@ const PositionVolume: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { data: positionsDAT, refetch } = useCurrentPositionsAmount(
     'PositionVolume-useCurrentPositionsAmount',

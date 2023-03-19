@@ -343,18 +343,15 @@ export const useClosePosition = () => {
 export const useMTokenFromRoute = () => {
   const params: any = useParams()
 
-  const findMargin = useMemo(() => {
-    if (params?.id) return findMarginToken(params.id)?.symbol
-  }, [params?.id])
-
   const marginToken = useMemo(() => {
-    const margin = findMargin || DEFAULT_MARGIN_TOKEN.symbol
-    localStorage.setItem('margin', margin)
-    return margin
-  }, [findMargin]) as MarginTokenKeys
+    if (params?.id) {
+      const find = findMarginToken(params.id)
+      return find?.symbol
+    }
+    return DEFAULT_MARGIN_TOKEN.symbol
+  }, [params.id]) as MarginTokenKeys
 
   return {
-    find: findMargin,
     marginToken
   }
 }

@@ -3,20 +3,20 @@ import { useClickAway } from 'react-use'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useRef } from 'react'
 
-import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { Docs, Support, Tutorial } from '@/data/links'
 
 import Community from './Community'
 import SelectLang from './SelectLang'
 import SelectTheme from './SelectTheme'
 import AddTokenTool from './AddTokenTool'
+import { useMarginToken } from '@/zustand'
 
 const Tool: FC = () => {
   const ref = useRef(null)
 
   const { t } = useTranslation()
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
 

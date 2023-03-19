@@ -5,13 +5,13 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { findToken } from '@/config/tokens'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { isOpeningMinLimit } from '@/hooks/helper'
+import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isET, isGT, isLT, isLTET } from '@/utils/tools'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
 import { PubSubEvents, PositionSideTypes } from '@/typings'
-import { useMTokenFromRoute, useOpeningPosition } from '@/hooks/useTrading'
-import { useConfigInfo, usePairsInfo, useQuoteToken } from '@/zustand'
+import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -42,9 +42,7 @@ const Bench: FC = () => {
   const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
   const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
-
-  const { marginToken } = useMTokenFromRoute()
-
+  const marginToken = useMarginToken((state) => state.marginToken)
   const { opening } = useOpeningPosition()
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)

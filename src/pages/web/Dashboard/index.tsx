@@ -7,12 +7,13 @@ import BrokerConnect from '@/pages/web/Broker/c/Connect'
 import Overview from './Overview'
 import BuybackPlan from './BuybackPlan'
 import GrantList from './GrantList'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
+import { useMarginToken } from '@/zustand'
 
 const Dashboard: FC = () => {
   const { address } = useAccount()
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   return (
     <Switch>

@@ -1,14 +1,13 @@
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
-import React, { FC, useContext, useMemo } from 'react'
+import React, { FC, useContext } from 'react'
 
 import { WEBSITE_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
-import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
+import { useMarginToken } from '@/zustand'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
-import AddTokenButton from '@/components/common/Wallet/AddTokenButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 
 import Tool from './Tool'
@@ -16,13 +15,11 @@ import MHeader from './MHeader'
 
 const Header: FC = () => {
   const { t } = useTranslation()
-  const { pathname: P } = useLocation()
+  const { pathname } = useLocation()
+
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMemo(() => {
-    const find = MARGIN_TOKENS.find((m) => P.includes(m.symbol))
-    return find?.symbol ?? DEFAULT_MARGIN_TOKEN.symbol
-  }, [P])
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   if (mobile) return <MHeader />
 
@@ -36,10 +33,10 @@ const Header: FC = () => {
           <NavLink to={`/${marginToken}/trade`}>{t('Nav.Nav.Trade', 'Trade')}</NavLink>
           <NavLink to={`/${marginToken}/earn`}>{t('Nav.Nav.Earn', 'Earn')}</NavLink>
           <NavLink to={`/${marginToken}/data`}>{t('Nav.Nav.Data', 'Data')}</NavLink>
-          <NavLink to={`/broker`} className={classNames({ active: P.indexOf('broker') > -1 })}>
+          <NavLink to={`/broker`} className={classNames({ active: pathname.indexOf('broker') > -1 })}>
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>
-          <span className={classNames({ active: P.indexOf('dashboard') > -1 })}>
+          <span className={classNames({ active: pathname.indexOf('dashboard') > -1 })}>
             {t('Nav.Nav.Dashboard', 'Dashboard')}
             <em />
             <ul>

@@ -9,10 +9,11 @@ import React, { FC, useCallback, useContext, useEffect, useMemo } from 'react'
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/providers/Mobile'
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useMarginToken } from '@/zustand'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { useWithdrawReward } from '@/hooks/useBroker'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { useBrokerInfoFromC } from '@/hooks/useBrokerInfo'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
@@ -28,8 +29,7 @@ const Dashboard: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { withdraw } = useWithdrawReward()
 
-  const { marginToken } = useMTokenFromRoute()
-
+  const marginToken = useMarginToken((state) => state.marginToken)
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
 
   const { protocolConfig } = useProtocolConf(marginToken)

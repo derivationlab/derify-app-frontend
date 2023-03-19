@@ -2,7 +2,7 @@ import { useAccount } from 'wagmi'
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { grantTargetOptions } from '@/reducers/addGrant'
 import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
@@ -24,6 +24,7 @@ import AddGrant from './AddGrant'
 import PubSub from 'pubsub-js'
 import { PubSubEvents } from '@/typings'
 import { debounce } from 'lodash'
+import { useMarginToken } from '@/zustand'
 
 const targetOptions = grantTargetOptions()
 
@@ -31,8 +32,7 @@ const GrantList: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { address } = useAccount()
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
 
   const pageChange = (index: number) => {

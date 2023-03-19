@@ -2,16 +2,15 @@ import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
-import { useMTokenFromRoute } from '@/hooks/useTrading'
-
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { useMarginToken } from '@/zustand'
 
 const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
   const { t } = useTranslation()
   const { id, logo, name, introduction } = broker
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   return (
     <div className="web-my-broker">

@@ -9,7 +9,7 @@ import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { bnMul, isGT, keepDecimals } from '@/utils/tools'
 import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
@@ -21,6 +21,7 @@ import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
+import { useMarginToken } from '@/zustand'
 
 const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
@@ -30,8 +31,7 @@ const DerifyTokenPool: FC = () => {
   const stakingInfo = useTraderInfo((state) => state.stakingInfo)
   const drfPoolBalance = usePoolsInfo((state) => state.drfPoolBalance)
 
-  const { marginToken } = useMTokenFromRoute()
-
+  const marginToken = useMarginToken((state) => state.marginToken)
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()

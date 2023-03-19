@@ -1,25 +1,27 @@
+import { useLocation } from 'react-router-dom'
 import React, { FC, useEffect, useState } from 'react'
 
 import { getIpLocation } from '@/api'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useMarginToken } from '@/zustand'
+import { findMarginToken } from '@/config/tokens'
+import { MarginTokenKeys } from '@/typings'
+import { Redirect, Switch, Route } from '@/components/common/Route'
 import {
-  RWithMarToken,
-  RBrokerWorkbench,
-  RBrokerToBind,
   RBrokerList,
   RBrokerBound,
-  RBrokerSignUpStep3,
-  RBrokerSignUpStep1_2,
+  RWithMarToken,
+  RBrokerToBind,
   RBrokerProfile,
-  RConnectWallet
+  RConnectWallet,
+  RBrokerWorkbench,
+  RBrokerSignUpStep3,
+  RBrokerSignUpStep1_2
 } from '@/pages/web/Route'
-import { Redirect, Switch, Route } from '@/components/common/Route'
 
 import Header from '@/components/web/Header'
 import Toast from '@/components/common/Toast'
 import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
-import Dashboard from '@/pages/web/Dashboard'
 import Data from '@/pages/web/Data'
 import BrokerRank from '@/pages/web/Broker/Rank'
 import BrokerBind from '@/pages/web/Broker/Bind'
@@ -32,7 +34,6 @@ import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
 import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
 import MiningRank from '@/pages/web/MiningRank'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
-
 import MySpace from '@/pages/web/MySpace'
 import System from '@/pages/web/MySpace/System'
 import Overview from '@/pages/web/Dashboard/Overview'
@@ -40,9 +41,20 @@ import GrantList from '@/pages/web/Dashboard/GrantList'
 import BuybackPlan from '@/pages/web/Dashboard/BuybackPlan'
 
 const Web: FC = () => {
-  const { marginToken } = useMTokenFromRoute()
+  const { pathname } = useLocation()
 
   const [visible, setVisible] = useState<boolean>(false)
+
+  const marginToken = useMarginToken((state) => state.marginToken)
+  const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
+
+  useEffect(() => {
+    const path = pathname.split('/')
+    const find = findMarginToken(path[1])
+    const margin = find ? find.symbol : marginToken
+    // console.info(margin)
+    updateMarginToken(margin as MarginTokenKeys)
+  }, [pathname, marginToken])
 
   useEffect(() => {
     const func = async () => {

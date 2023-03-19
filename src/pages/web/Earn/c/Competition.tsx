@@ -8,7 +8,7 @@ import { PubSubEvents } from '@/typings'
 import { useRankReward } from '@/hooks/useDashboard'
 import { MobileContext } from '@/providers/Mobile'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { bnMul, isGT, keepDecimals } from '@/utils/tools'
 import {
   useActiveRankGrantCount,
@@ -23,13 +23,14 @@ import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { useMarginToken } from '@/zustand'
 
 const Competition: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
   const { mobile } = useContext(MobileContext)
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { withdraw } = useWithdrawRankReward()
   const { protocolConfig } = useProtocolConf(marginToken)

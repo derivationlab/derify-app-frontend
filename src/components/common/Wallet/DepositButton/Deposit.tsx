@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useReducer } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { useTokenBalances } from '@/zustand'
+import { useMarginToken, useTokenBalances } from '@/zustand'
 import { reducer, stateInit } from '@/reducers/withdraw'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -26,8 +25,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const balances = useTokenBalances((state) => state.balances)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const memoDisabled = useMemo(() => {
     return isGT(balances[marginToken], 0)

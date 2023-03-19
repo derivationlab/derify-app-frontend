@@ -6,10 +6,10 @@ import React, { FC, useMemo, useState, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 import { PubSubEvents } from '@/typings'
-import { useQuoteToken } from '@/zustand'
 import { usePosDATStore } from '@/zustand/usePosDAT'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
-import { useCancelAllPositions, useCancelPosition, useMTokenFromRoute } from '@/hooks/useTrading'
+import { useCancelAllPositions, useCancelPosition } from '@/hooks/useTrading'
 
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
@@ -24,8 +24,7 @@ const MyOrder: FC = () => {
   const { theme } = useContext(ThemeContext)
   const { address } = useAccount()
 
-  const { marginToken } = useMTokenFromRoute()
-
+  const marginToken = useMarginToken((state) => state.marginToken)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)
   const profitLossOrdLoaded = usePosDATStore((state) => state.loaded)

@@ -4,9 +4,9 @@ import { useEffect } from 'react'
 
 import { useBrokerInfo } from '@/zustand/useBrokerInfo'
 import { useBrokerParams } from '@/hooks/useBroker'
-import { useConfigInfo } from '@/zustand'
+import { useConfigInfo, useMarginToken } from '@/zustand'
 import { PubSubEvents } from '@/typings'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { findToken } from '@/config/tokens'
 
 export default function BrokerUpdater(): null {
@@ -20,7 +20,7 @@ export default function BrokerUpdater(): null {
   const resetBrokerBound = useBrokerInfo((state) => state.resetBrokerBound)
   const updateBrokerParams = useConfigInfo((state) => state.updateBrokerParams)
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   // for broker info
   useEffect(() => {

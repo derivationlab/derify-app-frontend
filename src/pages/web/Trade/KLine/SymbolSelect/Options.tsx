@@ -1,8 +1,8 @@
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
 
-import { usePairsInfo } from '@/zustand'
+import { useMarginToken, usePairsInfo } from '@/zustand'
 import { MobileContext } from '@/providers/Mobile'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { QUOTE_TOKENS, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -18,8 +18,7 @@ const Options: FC<Props> = ({ onChange }) => {
 
   const indicators = usePairsInfo((state) => state.indicators)
   const spotPrices = usePairsInfo((state) => state.spotPrices)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const [keyword, setKeyword] = useState<string>('')
 

@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useQuoteToken } from '@/zustand'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+import { useMarginToken, useQuoteToken } from '@/zustand'
+
 import { MarginTokenKeys, PubSubEvents } from '@/typings'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
@@ -34,9 +34,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
   const fetchMaxVolume = useCalcOpeningDAT((state) => state.fetchMaxVolume)
-
-  const { marginToken } = useMTokenFromRoute()
-
+  const marginToken = useMarginToken((state) => state.marginToken)
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
 

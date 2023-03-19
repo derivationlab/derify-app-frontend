@@ -18,8 +18,9 @@ import Loading from '@/components/common/Loading'
 import Select from '@/components/common/Form/Select'
 import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { findToken } from '@/config/tokens'
+import { useMarginToken } from '@/zustand'
 
 const pageSize = 10
 
@@ -32,7 +33,7 @@ const List: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const pageChange = async (index: number) => {
     dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: true, pageIndex: index } })

@@ -5,9 +5,8 @@ import { findToken } from '@/config/tokens'
 import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { usePairsInfo, useQuoteToken } from '@/zustand'
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -18,8 +17,7 @@ const HeaderData: FC = () => {
 
   const indicators = usePairsInfo((state) => state.indicators)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { pcfRatio } = usePCFRatioConf(quoteToken, marginToken)
   const { data: positionsAmount, refetch } = useCurrentPositionsAmount(

@@ -1,11 +1,11 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { QUOTE_TOKENS } from '@/config/tokens'
+import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { initial as initialProtocolConfig } from '@/hooks/useProtocolConfig'
-import { ConfigInfoState, QuoteTokenState } from '@/zustand/types'
+import { ConfigInfoState, QuoteTokenState, MarginTokenState } from '@/zustand/types'
 import { initialOpeningMinLimit, initialFactoryConfig, initialOpeningMaxLimit } from '@/hooks/helper'
-import { MarginToken, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
 const useConfigInfo = create<ConfigInfoState>((set) => ({
   minimumGrant: ['0', '0', '0'],
@@ -72,9 +72,26 @@ const useQuoteToken = create(
         })
     }),
     {
-      name: 'QUOTE_TOKEN'
+      name: 'quoteToken'
     }
   )
 )
 
-export { useConfigInfo, useQuoteToken }
+const useMarginToken = create(
+  persist<MarginTokenState>(
+    (set) => ({
+      marginToken: MARGIN_TOKENS[0].symbol as MarginTokenKeys,
+      updateMarginToken: (data: MarginTokenKeys) =>
+        set(() => {
+          // console.info('updateMarginToken:')
+          // console.info(data)
+          return { marginToken: data }
+        })
+    }),
+    {
+      name: 'marginToken'
+    }
+  )
+)
+
+export { useConfigInfo, useQuoteToken, useMarginToken }

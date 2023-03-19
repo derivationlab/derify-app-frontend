@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useRef, useMemo } from 'react'
 
 import tokens from '@/config/tokens'
+import { useMarginToken } from '@/zustand'
 import { addToken2Wallet } from '@/utils/practicalMethod'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { PANCAKE_SWAP_URL } from '@/config'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
 
 const AddTokenTool: FC = () => {
   const ref = useRef(null)
@@ -16,7 +16,7 @@ const AddTokenTool: FC = () => {
 
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { protocolConfig } = useProtocolConf(marginToken)
 

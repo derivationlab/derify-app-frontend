@@ -9,7 +9,7 @@ import { usePoolsInfo } from '@/zustand/usePoolsInfo'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/zustand/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { isGT, keepDecimals } from '@/utils/tools'
 import { useTraderBondBalance } from '@/hooks/useQueryApi'
 import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useEarning'
@@ -23,6 +23,7 @@ import NotConnect from '@/components/web/NotConnect'
 import DepositbDRFDialog from './Dialogs/DepositbDRF'
 import WithdrawbDRFDialog from './Dialogs/WithdrawbDRF'
 import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
+import { useMarginToken } from '@/zustand'
 
 const MarginTokenPool: FC = () => {
   const { t } = useTranslation()
@@ -31,8 +32,7 @@ const MarginTokenPool: FC = () => {
 
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const bondPoolBalance = usePoolsInfo((state) => state.bondPoolBalance)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { redeem } = useRedeemBondFromBank()
   const { deposit } = useDepositBondToBank()

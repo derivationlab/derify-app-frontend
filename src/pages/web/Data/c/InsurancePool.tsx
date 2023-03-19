@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { useCurrentInsuranceDAT } from '@/hooks/useQueryApi'
 import { getHistoryInsuranceDAT } from '@/api'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
@@ -12,6 +12,7 @@ import { SelectTimesOptions, SelectTimesValues } from '@/data'
 import { AreaChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useMarginToken } from '@/zustand'
 
 const time = days().utc().startOf('days').format()
 
@@ -21,7 +22,7 @@ const InsurancePool: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [insuranceData, setInsuranceData] = useState<Record<string, any>[]>([])
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { data: insuranceVolume } = useCurrentInsuranceDAT(findToken(marginToken).tokenAddress)
 

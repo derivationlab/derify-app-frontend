@@ -11,8 +11,9 @@ import { reducer, stateInit } from '@/reducers/brokerRank'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { useAccount } from 'wagmi'
+import { useMarginToken } from '@/zustand'
 
 interface RowTextProps {
   value: string | number
@@ -43,8 +44,7 @@ const Rank: FC = () => {
   const { address } = useAccount()
 
   const { mobile } = useContext(MobileContext)
-
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
   /**
    * user: 用户账户地址
    * margin_token: margin token地址

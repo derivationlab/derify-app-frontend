@@ -3,12 +3,13 @@ import { isArray } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { getHistoryTotalTradingNetValue } from '@/api'
 import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
 
 import { BarChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useMarginToken } from '@/zustand'
 
 let output: Record<string, any> = {}
 const time = days().utc().startOf('days').format()
@@ -16,7 +17,7 @@ const time = days().utc().startOf('days').format()
 const TradingChart: FC = () => {
   const [chartData, setChartData] = useState<any>([])
 
-  const { marginToken } = useMTokenFromRoute()
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { data } = useCurrentTotalTradingNetValue(findToken(marginToken).tokenAddress, 'all')
 

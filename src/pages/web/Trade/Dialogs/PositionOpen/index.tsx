@@ -3,9 +3,9 @@ import { isEmpty, debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
 import { keepDecimals } from '@/utils/tools'
-import { useQuoteToken } from '@/zustand'
+import { useMarginToken, useQuoteToken } from '@/zustand'
 import { PositionSideTypes } from '@/typings'
-import { useMTokenFromRoute } from '@/hooks/useTrading'
+
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
@@ -29,8 +29,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const { t } = useTranslation()
 
-  const { marginToken } = useMTokenFromRoute()
-
+  const marginToken = useMarginToken((state) => state.marginToken)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)

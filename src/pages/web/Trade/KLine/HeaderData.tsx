@@ -21,7 +21,6 @@ const HeaderData: FC = () => {
 
   const { pcfRatio } = usePCFRatioConf(quoteToken, marginToken)
   const { data: positionsAmount, refetch } = useCurrentPositionsAmount(
-    'HeaderData-useCurrentPositionsAmount',
     findToken(quoteToken).tokenAddress,
     findToken(marginToken).tokenAddress
   )

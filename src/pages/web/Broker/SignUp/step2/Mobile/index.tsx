@@ -6,7 +6,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import React, { FC, useState, useEffect } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { calcShortHash } from '@/utils/tools'
 import { SelectLangOptions } from '@/data'
 import { getBrokerInfoById, updateBrokerInfo } from '@/api'

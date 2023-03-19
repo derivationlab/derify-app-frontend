@@ -9,7 +9,7 @@ import { Chain, useNetwork, useSwitchNetwork } from 'wagmi'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
-import { useRpcStore } from '@/zustand'
+import { useRpcStore } from '@/store'
 
 const networks = {
   [ChainId.MAINNET]: {

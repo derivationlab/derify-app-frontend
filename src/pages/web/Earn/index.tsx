@@ -2,10 +2,10 @@ import React, { FC, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { useInterval } from 'react-use'
 
-import { usePoolsInfo } from '@/zustand/usePoolsInfo'
-import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { usePoolsInfo } from '@/store/usePoolsInfo'
+import { useTraderInfo } from '@/store/useTraderInfo'
+import { useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
 
 import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
@@ -14,7 +14,6 @@ import PositionMining from './c/PositionMining'
 import CompetitionPool from './c/Competition'
 import MarginTokenPool from './c/MarginTokenPool'
 import DerifyTokenPool from './c/DerifyTokenPool'
-import { useMarginToken } from '@/zustand'
 
 const Eran: FC = () => {
   const { address } = useAccount()

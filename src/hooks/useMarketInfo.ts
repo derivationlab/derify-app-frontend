@@ -10,6 +10,10 @@ export const useMarketInfo = (
   exchange?: string,
   pairs?: Record<string, any>
 ): { data: Record<string, any>; isLoading: boolean } => {
+  const base = {
+    positionVol: '0',
+    buybackPool: '0'
+  }
   const { data, isLoading } = useQuery(
     ['useMarketInfo'],
     async () => {
@@ -30,17 +34,11 @@ export const useMarketInfo = (
           buybackPool: formatUnits(String(buybackPool), 8)
         }
       }
-      return {
-        positionVol: '0',
-        buybackPool: '0'
-      }
+      return base
     },
     {
       retry: false,
-      initialData: {
-        positionVol: '0',
-        buybackPool: '0'
-      },
+      initialData: base,
       refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false

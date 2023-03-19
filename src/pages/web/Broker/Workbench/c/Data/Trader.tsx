@@ -15,7 +15,7 @@ import Pagination from '@/components/common/Pagination'
 import { RowTime, calcShortHash } from './common'
 import { findToken } from '@/config/tokens'
 
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 interface DataProps {
   trader: string

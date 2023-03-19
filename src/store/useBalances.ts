@@ -2,7 +2,7 @@ import create from 'zustand'
 
 import multicall from '@/utils/multicall'
 import { baseProvider } from '@/utils/baseProvider'
-import { BalancesState } from '@/zustand/types'
+import { BalancesState } from '@/store/types'
 import { getBep20Contract } from '@/utils/contractHelpers'
 import tokens, { MARGIN_TOKENS } from '@/config/tokens'
 import { safeInterceptionValues } from '@/utils/tools'

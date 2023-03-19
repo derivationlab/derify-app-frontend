@@ -4,7 +4,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import React, { FC, useEffect, useState } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { bindYourBroker, getBrokerInfoById } from '@/api'
 
 import Loading from '@/components/common/Loading'

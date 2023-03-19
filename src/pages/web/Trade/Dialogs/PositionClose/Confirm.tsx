@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import { useMarginToken, useQuoteToken } from '@/zustand'
+import { useMarginToken, useQuoteToken } from '@/store'
 import { PositionSideTypes } from '@/typings'
 
-import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 import { reducer, stateInit } from '@/reducers/openingPosition'
 import { isGT, keepDecimals } from '@/utils/tools'
 import { calcChangeFee, calcTradingFee } from '@/hooks/helper'

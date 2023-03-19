@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { useTokenBalances } from '@/zustand'
+import { useTokenBalances } from '@/store'
 import { isGT, isGTET } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'

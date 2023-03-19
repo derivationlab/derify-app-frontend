@@ -6,7 +6,7 @@ import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/providers/Mobile'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/store'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'

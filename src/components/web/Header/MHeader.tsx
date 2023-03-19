@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'

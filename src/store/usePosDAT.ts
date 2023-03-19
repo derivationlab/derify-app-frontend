@@ -2,7 +2,7 @@ import create from 'zustand'
 import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 
-import { PosDATState, Rec } from '@/zustand/types'
+import { PosDATState, Rec } from '@/store/types'
 import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
 import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 

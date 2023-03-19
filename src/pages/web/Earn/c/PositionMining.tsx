@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useContext, useMemo } from 'react'
 
-import { useMarginToken, usePairsInfo } from '@/zustand'
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useMarginToken, usePairsInfo } from '@/store'
+import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useTraderInfo } from '@/store/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
 
@@ -28,15 +28,12 @@ const PositionMining: FC = () => {
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
   const indicators = usePairsInfo((state) => state.indicators)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
-  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
+
   const { withdraw } = useWithdrawPositionReward()
   const { protocolConfig } = useProtocolConf(marginToken)
-  const { data: positionsAmount } = useCurrentPositionsAmount(
-    'PositionMining-useCurrentPositionsAmount',
-    'all',
-    findToken(marginToken).tokenAddress
-  )
+  const { data: positionsAmount } = useCurrentPositionsAmount('all', findToken(marginToken).tokenAddress)
 
   const memoPositionApy = useMemo(() => {
     const values = Object.values(indicators)

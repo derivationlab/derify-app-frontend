@@ -26,7 +26,8 @@ export const useRankReward = (trader?: string, rewards?: string) => {
        */
       if (trader && rewards) {
         const c = getDerifyRewardsContract(rewards)
-
+        console.info(`DerifyRewards-getRankReward():${rewards}`)
+        console.info(`trader:${trader}`)
         const res = await c.getRankReward(trader)
 
         console.info(res)

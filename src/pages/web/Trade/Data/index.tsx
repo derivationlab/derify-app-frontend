@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useConfigInfo, useMarginToken } from '@/zustand'
-import { usePosDATStore } from '@/zustand/usePosDAT'
+import { useConfigInfo, useMarginToken } from '@/store'
+import { usePosDATStore } from '@/store/usePosDAT'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
 

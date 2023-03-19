@@ -3,7 +3,7 @@ import { useSigner } from 'wagmi'
 import { useParams } from 'react-router-dom'
 import { useCallback, useMemo } from 'react'
 
-import { OpeningType } from '@/zustand/useCalcOpeningDAT'
+import { OpeningType } from '@/store/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'

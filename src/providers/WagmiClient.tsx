@@ -10,7 +10,7 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
 import { createClient, configureChains } from 'wagmi'
 
-import { useRpcStore } from '@/zustand'
+import { useRpcStore } from '@/store'
 
 if (!window.Buffer) window.Buffer = Buffer
 

@@ -11,7 +11,7 @@ import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 interface Props {
   data?: Record<string, any>

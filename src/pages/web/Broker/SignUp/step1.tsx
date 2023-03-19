@@ -6,7 +6,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { useApplyBroker } from '@/hooks/useBroker'
-import { useConfigInfo, useTokenBalances } from '@/zustand'
+import { useConfigInfo, useTokenBalances } from '@/store'
 import { isET, isLT, thousandthsDivision } from '@/utils/tools'
 
 import Button from '@/components/common/Button'

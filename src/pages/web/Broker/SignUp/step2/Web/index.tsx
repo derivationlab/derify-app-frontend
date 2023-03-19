@@ -8,7 +8,7 @@ import React, { FC, useContext, useEffect } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 import { PubSubEvents } from '@/typings'
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
 import { getBrokerInfoById, updateBrokerInfo } from '@/api'

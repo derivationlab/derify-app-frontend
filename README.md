@@ -10,4 +10,3 @@ todo:
 . /pages/web/Trade/Bench/c/Margin.tsx UI补充；
 . 个人空间的保证金列表牵扯到动态的数据，不能做定时涉及到分也数据，需要依赖外部单独获取，持仓这一块的数据量太大，未来如果扩展的话基本没法做；
 . dashboard/overview 中的 market info 支持搜索；
-. 导航高粱问题；

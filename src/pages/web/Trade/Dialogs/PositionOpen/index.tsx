@@ -3,7 +3,7 @@ import { isEmpty, debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
 import { keepDecimals } from '@/utils/tools'
-import { useMarginToken, useQuoteToken } from '@/zustand'
+import { useMarginToken, useQuoteToken } from '@/store'
 import { PositionSideTypes } from '@/typings'
 
 import { reducer, stateInit } from '@/reducers/openingPosition'

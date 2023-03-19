@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useWithdrawMargin } from '@/hooks/useTrading'
 

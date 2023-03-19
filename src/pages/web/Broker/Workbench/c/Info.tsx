@@ -8,7 +8,7 @@ import React, { FC, useCallback, useState, useMemo } from 'react'
 
 import { copyText } from '@/utils/tools'
 import { PubSubEvents } from '@/typings'
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { API_PREFIX_URL } from '@/config'
 import { useExtendPeriod } from '@/hooks/useBroker'
 

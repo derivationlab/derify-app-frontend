@@ -3,8 +3,8 @@ import { useAccount } from 'wagmi'
 import { Redirect, useParams } from 'react-router-dom'
 import React, { PropsWithChildren, useMemo } from 'react'
 
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
-import { useMarginToken } from '@/zustand'
+import { useBrokerInfo } from '@/store/useBrokerInfo'
+import { useMarginToken } from '@/store'
 import { findMarginToken } from '@/config/tokens'
 
 import Loading from '@/components/common/Loading'

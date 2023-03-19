@@ -6,8 +6,8 @@ import React, { FC, useMemo, useState, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 import { PubSubEvents } from '@/typings'
-import { usePosDATStore } from '@/zustand/usePosDAT'
-import { useMarginToken, useQuoteToken } from '@/zustand'
+import { usePosDATStore } from '@/store/usePosDAT'
+import { useMarginToken, useQuoteToken } from '@/store'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
 import { useCancelAllPositions, useCancelPosition } from '@/hooks/useTrading'
 

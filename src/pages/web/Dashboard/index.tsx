@@ -8,7 +8,7 @@ import Overview from './Overview'
 import BuybackPlan from './BuybackPlan'
 import GrantList from './GrantList'
 
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const Dashboard: FC = () => {
   const { address } = useAccount()

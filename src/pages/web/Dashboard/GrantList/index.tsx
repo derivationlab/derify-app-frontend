@@ -6,13 +6,7 @@ import { useProtocolConf } from '@/hooks/useMatchConf'
 import { grantTargetOptions } from '@/reducers/addGrant'
 import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
-import {
-  getGrantList,
-  getTraderMarginBalance,
-  getActiveRankGrantCount,
-  getActiveRankGrantRatios,
-  getActiveRankGrantTotalAmount
-} from '@/api'
+import { getGrantList, getActiveRankGrantCount, getActiveRankGrantRatios, getActiveRankGrantTotalAmount } from '@/api'
 
 import { Select } from '@/components/common/Form'
 import Image from '@/components/common/Image'
@@ -24,9 +18,9 @@ import AddGrant from './AddGrant'
 import PubSub from 'pubsub-js'
 import { PubSubEvents } from '@/typings'
 import { debounce } from 'lodash'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
-const targetOptions = grantTargetOptions()
+const targetOptions = grantTargetOptions(true)
 
 const GrantList: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -67,7 +61,6 @@ const GrantList: FC = () => {
 
   // debug todo
   const _addGrantPlan = useCallback(async () => {
-    if (address) await getTraderMarginBalance(address, 0, 10) // 404
     await getActiveRankGrantCount(findToken(marginToken)?.tokenAddress) // count: 0
     await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress) // []
     await getActiveRankGrantTotalAmount(findToken(marginToken)?.tokenAddress) // totalAmount: null

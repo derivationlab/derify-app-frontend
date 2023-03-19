@@ -7,7 +7,7 @@ import Image from '@/components/common/Image'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import { Select, Input } from '@/components/common/Form'
 
-import { useConfigInfo, useTokenBalances } from '@/zustand'
+import { useConfigInfo, useTokenBalances } from '@/store'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
 import { isET, isLT, keepDecimals, safeInterceptionValues } from '@/utils/tools'

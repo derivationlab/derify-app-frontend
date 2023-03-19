@@ -2,14 +2,14 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useTraderInfo } from '@/store/useTraderInfo'
 import { isGT, isGTET } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '@/components/common/Wallet/AmountInput'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 interface Props {
   visible: boolean

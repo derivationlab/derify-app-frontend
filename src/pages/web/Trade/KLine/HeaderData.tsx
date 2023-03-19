@@ -6,7 +6,7 @@ import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/zustand'
+import { useMarginToken, usePairsInfo, useQuoteToken } from '@/store'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'

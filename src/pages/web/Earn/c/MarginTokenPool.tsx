@@ -5,9 +5,9 @@ import React, { FC, useMemo, useState, useContext } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
-import { usePoolsInfo } from '@/zustand/usePoolsInfo'
+import { usePoolsInfo } from '@/store/usePoolsInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useTraderInfo } from '@/store/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 
 import { isGT, keepDecimals } from '@/utils/tools'
@@ -23,7 +23,7 @@ import NotConnect from '@/components/web/NotConnect'
 import DepositbDRFDialog from './Dialogs/DepositbDRF'
 import WithdrawbDRFDialog from './Dialogs/WithdrawbDRF'
 import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const MarginTokenPool: FC = () => {
   const { t } = useTranslation()

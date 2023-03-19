@@ -5,7 +5,7 @@ import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
 
 import { nonBigNumberInterception } from '@/utils/tools'
 import { DEFAULT_MARGIN_TOKEN, findToken } from '@/config/tokens'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const Counts: FC = () => {
   const { t } = useTranslation()

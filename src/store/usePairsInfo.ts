@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-import { PairsInfoState, Rec } from '@/zustand/types'
+import { PairsInfoState, Rec } from '@/store/types'
 import { initialPCFAndSpotPrice } from '@/hooks/helper'
 import { initial as initialIndicator } from '@/hooks/usePairIndicator'
 

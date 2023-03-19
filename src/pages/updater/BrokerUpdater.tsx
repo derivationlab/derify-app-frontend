@@ -2,9 +2,9 @@ import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useEffect } from 'react'
 
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { useBrokerParams } from '@/hooks/useBroker'
-import { useConfigInfo, useMarginToken } from '@/zustand'
+import { useConfigInfo, useMarginToken } from '@/store'
 import { PubSubEvents } from '@/typings'
 
 import { findToken } from '@/config/tokens'

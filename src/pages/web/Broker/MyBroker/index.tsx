@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { useBrokerInfo } from '@/zustand/useBrokerInfo'
+import { useBrokerInfo } from '@/store/useBrokerInfo'
 
 import BrokerCard from './c/BrokerCard'
 

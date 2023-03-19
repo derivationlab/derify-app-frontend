@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom'
 import React, { FC, useEffect, useState } from 'react'
 
 import { getIpLocation } from '@/api'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 import { findMarginToken } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
 import { Redirect, Switch, Route } from '@/components/common/Route'

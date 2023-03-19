@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useTraderInfo } from '@/zustand/useTraderInfo'
-import { useMarginToken } from '@/zustand'
+import { useTraderInfo } from '@/store/useTraderInfo'
+import { useMarginToken } from '@/store'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 

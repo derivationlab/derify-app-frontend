@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useMarginToken, useQuoteToken } from '@/zustand'
+import { useMarginToken, useQuoteToken } from '@/store'
 
 import { MarginTokenKeys, PubSubEvents } from '@/typings'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
-import { OpeningType, useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { OpeningType, useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import { Select, Input } from '@/components/common/Form'

@@ -5,15 +5,13 @@ import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } fr
 
 import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
-import tokens, { findToken } from '@/config/tokens'
-import { getTraderMarginBalance } from '@/api'
+import { useMarginToken } from '@/store'
+import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { getTradersRankList } from '@/api'
 import { reducer, stateInit } from '@/reducers/brokerRank'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-
-import { useAccount } from 'wagmi'
-import { useMarginToken } from '@/zustand'
 
 interface RowTextProps {
   value: string | number
@@ -24,8 +22,8 @@ const RowName: FC<{ data: Record<string, any> }> = ({ data }) => (
   <div className="web-broker-rank-table-row-name">
     <Image src={data?.logo ?? 'icon/normal-ico.svg'} cover />
     <main>
-      <strong>{data?.name}</strong>
-      <em>@{data?.id}</em>
+      <strong>{data?.user}</strong>
+      {/*<em>@{data?.id}</em>*/}
     </main>
   </div>
 )
@@ -41,29 +39,24 @@ const Rank: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
-  const { address } = useAccount()
 
   const { mobile } = useContext(MobileContext)
+
   const marginToken = useMarginToken((state) => state.marginToken)
-  /**
-   * user: 用户账户地址
-   * margin_token: margin token地址
-   * margin_balance: margin token余额
-   * grant_id: 对应交易比赛grant id
-   * type:
-   * 0-比赛开始保证金余额
-   * 1-比赛结束保证金余额
-   */
-  const fetchData = useCallback(async (index = 0) => {
-    const { data } = await getTraderMarginBalance(address ?? '', index, 10)
 
-    console.info(data)
+  const fetchData = useCallback(
+    async (index = 0) => {
+      const { data } = await getTradersRankList(findToken(marginToken).tokenAddress, index, 10)
 
-    dispatch({
-      type: 'SET_RANK_DAT',
-      payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-    })
-  }, [])
+      console.info(data)
+
+      dispatch({
+        type: 'SET_RANK_DAT',
+        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+      })
+    },
+    [marginToken]
+  )
 
   const pageChange = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
@@ -82,11 +75,13 @@ const Rank: FC = () => {
       title: t('Earn.MiningRank.Address'),
       dataIndex: 'user',
       width: mobile ? 275 : 250,
-      render: (_: string, data: Record<string, any>) => <RowName data={data} />
+      render: (user: string, data: Record<string, any>) => {
+        return <RowName data={data} />
+      }
     },
     {
       title: t('Broker.RankList.Rank', 'Rank'),
-      dataIndex: 'grant_id',
+      dataIndex: 'rank',
       width: mobile ? '' : 200,
       render: (text: string) => <RowText value={`#${text}`} />
     }
@@ -99,13 +94,13 @@ const Rank: FC = () => {
       dataIndex: '',
       width: 250,
       render: (_: string, data: Record<string, any>) => {
-        const { accumulated_margin_token_reward = 0, accumulated_drf_reward = 0 } = data ?? {}
-        const drf = keepDecimals(accumulated_drf_reward, tokens.drf.decimals)
-        const margin = keepDecimals(accumulated_margin_token_reward, findToken(marginToken).decimals)
+        const { total_margin_token_reward = 0, total_drf_reward = 0 } = data ?? {}
+        const margin = keepDecimals(total_margin_token_reward, findToken(marginToken).decimals)
+        const platform = keepDecimals(total_drf_reward, PLATFORM_TOKEN.decimals)
         return (
           <>
             <RowText value={margin} unit={marginToken} />
-            <RowText value={drf} unit="DRF" />
+            <RowText value={platform} unit={PLATFORM_TOKEN.symbol} />
           </>
         )
       }
@@ -114,8 +109,8 @@ const Rank: FC = () => {
   ]
 
   useEffect(() => {
-    if (address) void fetchData()
-  }, [address])
+    void fetchData()
+  }, [])
 
   return (
     <div className="web-broker-rank">

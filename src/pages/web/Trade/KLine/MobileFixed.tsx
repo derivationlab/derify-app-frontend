@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo } from 'react'
 
-import { usePairsInfo } from '@/zustand'
+import { usePairsInfo } from '@/store'
 import { bnMul, isLTET } from '@/utils/tools'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'

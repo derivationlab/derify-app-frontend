@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-import { Rec, TraderInfoState } from '@/zustand/types'
+import { Rec, TraderInfoState } from '@/store/types'
 import { initialTraderVariables, InitialTraderVariablesType } from '@/hooks/helper'
 
 const useTraderInfo = create<TraderInfoState>((set) => ({

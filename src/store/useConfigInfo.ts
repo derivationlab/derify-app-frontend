@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { initial as initialProtocolConfig } from '@/hooks/useProtocolConfig'
-import { ConfigInfoState, QuoteTokenState, MarginTokenState } from '@/zustand/types'
+import { ConfigInfoState, QuoteTokenState, MarginTokenState } from '@/store/types'
 import { initialOpeningMinLimit, initialFactoryConfig, initialOpeningMaxLimit } from '@/hooks/helper'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 

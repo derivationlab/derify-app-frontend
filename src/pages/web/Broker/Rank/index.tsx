@@ -12,7 +12,7 @@ import { reducer, stateInit } from '@/reducers/brokerRank'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 interface RowTextProps {
   value: string | number

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { useConfigInfo, usePairsInfo } from '@/zustand'
+import { useConfigInfo, usePairsInfo } from '@/store'
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys, QuoteTokenKeys } from '@/typings'
 

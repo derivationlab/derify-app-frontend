@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useInterval } from 'react-use'
 
-import { usePairsInfo } from '@/zustand'
-import { useConfigInfo } from '@/zustand/useConfigInfo'
+import { usePairsInfo } from '@/store'
+import { useConfigInfo } from '@/store/useConfigInfo'
 import { getOpeningMaxLimit, getPCFAndSpotPrice } from '@/hooks/helper'
 import { MarginTokenWithContract, MarginTokenWithQuote } from '@/typings'
 

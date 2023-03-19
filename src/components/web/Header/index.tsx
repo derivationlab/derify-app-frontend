@@ -5,7 +5,7 @@ import React, { FC, useContext } from 'react'
 
 import { WEBSITE_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'

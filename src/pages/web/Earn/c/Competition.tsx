@@ -23,7 +23,7 @@ import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const Competition: FC = () => {
   const { t } = useTranslation()

@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-import { DashboardDATState, Rec } from '@/zustand/types'
+import { DashboardDATState, Rec } from '@/store/types'
 
 const useDashboardDAT = create<DashboardDATState>((set) => ({
   dashboardDAT: {},

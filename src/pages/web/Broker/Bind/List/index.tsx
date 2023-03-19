@@ -20,7 +20,7 @@ import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
 
 import { findToken } from '@/config/tokens'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const pageSize = 10
 

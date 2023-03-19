@@ -5,7 +5,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { BENCHMARK_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const Datas: FC = () => {
   const { data = 0 } = useBlockNumber({ watch: true })

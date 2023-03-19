@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useReducer, useEffect } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { getTokenBalance, useMarginToken } from '@/zustand'
+import { getTokenBalance, useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 
 import { reducer, stateInit } from '@/reducers/earn'

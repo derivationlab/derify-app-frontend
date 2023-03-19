@@ -2,9 +2,9 @@ import React, { FC, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { useMarginToken, usePairsInfo } from '@/zustand'
+import { useMarginToken, usePairsInfo } from '@/store'
 import { PositionSideTypes } from '@/typings'
-import { useCalcOpeningDAT } from '@/zustand/useCalcOpeningDAT'
+import { useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'

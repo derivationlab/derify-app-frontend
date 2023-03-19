@@ -6,7 +6,7 @@ import { MARGIN_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
 
 import { nonBigNumberInterception } from '@/utils/tools'
-import { useMarginToken, useTokenBalances } from '@/zustand'
+import { useMarginToken, useTokenBalances } from '@/store'
 
 import { Select } from '@/components/common/Form'
 import Image from '@/components/common/Image'

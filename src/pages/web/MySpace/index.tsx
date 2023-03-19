@@ -17,7 +17,7 @@ import Button from '@/components/common/Button'
 import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import DecimalShow from '@/components/common/DecimalShow'
-import { useConfigInfo } from '@/zustand'
+import { useConfigInfo } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 
 const MySpace: FC = () => {

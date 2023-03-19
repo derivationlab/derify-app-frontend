@@ -265,6 +265,72 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "marginToken",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "marginTokenPriceFeed",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "bMarginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyPmr",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyBrokerRewards",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRank",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyClearing",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyExchange",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyFactory",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyRewards",
+            "type": "address"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IDerifyProtocol.MarginTokenContractCollection",
+        "name": "marginTokenContractCollection",
+        "type": "tuple"
+      }
+    ],
+    "name": "MarginTokenAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "previousOwner",
         "type": "address"
       },
@@ -592,6 +658,11 @@
             "internalType": "address",
             "name": "marginToken",
             "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "protocol",
+            "type": "address"
           }
         ],
         "internalType": "struct IDeployDerifyFactory.DerifyFactoryParam",
@@ -828,25 +899,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "allMarginTokens",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "applyBroker",
     "outputs": [],
@@ -959,6 +1011,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "marginTokens",
+        "type": "address[]"
+      }
+    ],
+    "name": "getAllMarginTokenPrices",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getAllMarginTokens",
     "outputs": [
@@ -979,6 +1050,25 @@
         "internalType": "address[]",
         "name": "",
         "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "marginTokens",
+        "type": "address[]"
+      }
+    ],
+    "name": "getAllSysExchangeBondSizeUpperBounds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",

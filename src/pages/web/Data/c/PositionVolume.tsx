@@ -14,7 +14,7 @@ import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTime
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const time = days().utc().startOf('days').format()
 let output: Record<string, any> = {

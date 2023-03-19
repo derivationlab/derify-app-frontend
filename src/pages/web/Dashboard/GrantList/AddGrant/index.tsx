@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useState } from 'react'
 
 import { useAddGrant } from '@/hooks/useDashboard'
-import { useConfigInfo } from '@/zustand'
+import { useConfigInfo } from '@/store'
 import { MarginTokenKeys, PubSubEvents } from '@/typings'
 
 import AddGrantDialog from './AddGrantDialog'

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useReducer } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { useMarginToken, useTokenBalances } from '@/zustand'
+import { useMarginToken, useTokenBalances } from '@/store'
 import { reducer, stateInit } from '@/reducers/withdraw'
 
 import Dialog from '@/components/common/Dialog'

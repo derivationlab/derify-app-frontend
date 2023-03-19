@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 import { getHistoryTradingDAT } from '@/api'
 import { useCurrentTradingAmount } from '@/hooks/useQueryApi'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'

@@ -1,6 +1,6 @@
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
 
-import { useMarginToken, usePairsInfo } from '@/zustand'
+import { useMarginToken, usePairsInfo } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
 
 import { QUOTE_TOKENS, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'

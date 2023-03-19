@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash'
 import { useQuery } from '@tanstack/react-query'
 
-import { Rec } from '@/zustand/types'
+import { Rec } from '@/store/types'
 import {
   getCurrentIndexDAT,
   getTraderBondBalance,
@@ -159,9 +159,9 @@ export const useActiveRankGrantRatios = (marginToken: string) => {
   return { data }
 }
 
-export const useCurrentPositionsAmount = (queryKey: string, quoteToken: string, marginToken: string) => {
+export const useCurrentPositionsAmount = (quoteToken: string, marginToken: string) => {
   const { data, refetch } = useQuery(
-    [queryKey],
+    ['useCurrentPositionsAmount'],
     async (): Promise<Record<string, any>> => {
       const data = await getCurrentPositionsAmount(quoteToken, marginToken)
       return data?.data ?? {}

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import React, { ChangeEvent, FC, useMemo, useState } from 'react'
 
 import { bnDiv, isET, isLT, isLTET } from '@/utils/tools'
-import { useConfigInfo, useTokenBalances } from '@/zustand'
+import { useConfigInfo, useTokenBalances } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'

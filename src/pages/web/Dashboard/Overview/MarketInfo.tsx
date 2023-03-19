@@ -1,14 +1,15 @@
 import Table from 'rc-table'
 import classNames from 'classnames'
-import { debounce, isEmpty } from 'lodash'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { debounce, isEmpty } from 'lodash'
 import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useEffect } from 'react'
 
 import { bnMul } from '@/utils/tools'
 import { useMarketInfo } from '@/hooks/useMarketInfo'
 import { MobileContext } from '@/providers/Mobile'
 
+import { useMarginToken } from '@/store'
 import { reducer, stateInit } from '@/reducers/marketInfo'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { getDashboardMarginTokenList } from '@/api'
@@ -21,7 +22,6 @@ import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin } from '../c/TableCol'
-import { useMarginToken } from '@/zustand'
 
 const MarketInfo: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -30,12 +30,12 @@ const MarketInfo: FC = () => {
 
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
+
   const marginToken = useMarginToken((state) => state.marginToken)
 
   const { match } = useFactoryConf('', marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
-
-  const { data } = useMarketInfo(protocolConfig?.exchange, match)
+  const { data: marketInfo } = useMarketInfo(protocolConfig?.exchange, match)
 
   const [keyword, setKeyword] = useState('')
 
@@ -51,10 +51,10 @@ const MarketInfo: FC = () => {
       {
         title: 'Trading/Position',
         dataIndex: 'trading_amount',
-        render: () => (
+        render: (value: string, data: Record<string, any>) => (
           <>
-            <BalanceShow value={data.positionVol} unit={data.symbol} />
-            <BalanceShow value={data.buybackPool} unit={data.symbol} />
+            <BalanceShow value={value} unit={data.symbol} />
+            <BalanceShow value={marketInfo.positionVol} unit={data.symbol} />
           </>
         )
       },
@@ -67,7 +67,7 @@ const MarketInfo: FC = () => {
         }
       }
     ]
-  }, [t])
+  }, [t, marketInfo])
 
   const wColumns = useMemo(() => {
     return [
@@ -100,7 +100,7 @@ const MarketInfo: FC = () => {
         dataIndex: 'buybackPool',
         width: 220,
         render: (value: number, data: Record<string, any>) => (
-          <BalanceShow value={data.buybackPool} unit={data.symbol} />
+          <BalanceShow value={marketInfo.buybackPool} unit={data.symbol} />
         )
       },
       {
@@ -115,7 +115,7 @@ const MarketInfo: FC = () => {
         )
       }
     ]
-  }, [t])
+  }, [t, marketInfo])
 
   const emptyText = useMemo(() => {
     if (state.marketData.isLoaded) return 'Loading'
@@ -178,7 +178,7 @@ const MarketInfo: FC = () => {
       <header className="web-dashboard-section-header">
         <h3>Market Info</h3>
         <div className="web-dashboard-section-header-search">
-          <Input value={keyword} onChange={setKeyword} placeholder="serch name or contract address..">
+          <Input value={keyword} onChange={setKeyword} placeholder="search name or contract address..">
             <button className="web-dashboard-section-header-search-button" onClick={onSearch} />
           </Input>
         </div>

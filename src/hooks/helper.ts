@@ -4,7 +4,7 @@ import { chunk, flatten, isEmpty } from 'lodash'
 
 import multicall from '@/utils/multicall'
 import contracts from '@/config/contracts'
-import { OpeningType } from '@/zustand/useCalcOpeningDAT'
+import { OpeningType } from '@/store/useCalcOpeningDAT'
 import { PositionSideTypes } from '@/typings'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {
@@ -510,7 +510,7 @@ export const getTraderStakingDAT = async (trader: string): Promise<Record<string
 
   if (!isEmpty(response)) {
     const [{ drfBalance, edrfBalance }] = response
-    console.info('edrfBalance:', safeInterceptionValues(edrfBalance, 8))
+    // console.info('edrfBalance:', safeInterceptionValues(edrfBalance, 8))
     output = {
       drfBalance: safeInterceptionValues(drfBalance, 8),
       edrfBalance: safeInterceptionValues(edrfBalance, 8)

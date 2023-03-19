@@ -14,7 +14,7 @@ import Pagination from '@/components/common/Pagination'
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const TradeHistory: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)

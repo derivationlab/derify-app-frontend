@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useTraderInfo } from '@/store/useTraderInfo'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'

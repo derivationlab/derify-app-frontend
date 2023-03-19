@@ -1,7 +1,7 @@
 import Table from 'rc-table'
 import React, { FC, useMemo, useState } from 'react'
 
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const System: FC = () => {
   const marginToken = useMarginToken((state) => state.marginToken)

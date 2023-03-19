@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-import { BrokerInfoState } from '@/zustand/types'
+import { BrokerInfoState } from '@/store/types'
 import {
   getBrokerInfoByAddr,
   getBrokerInfoByTrader,
@@ -29,7 +29,6 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
     const data2 = await getBrokerValidPeriod(trader, marginToken) // validPeriodDays
     const data3 = await getBrokerRewardsToday(trader, marginToken)
     const data4 = await getBrokerRegisterTime(trader)
-    console.info(`rank:${data0}`)
     /**
      * getBrokerRewardsToday()
      * margin_token: margin token地址

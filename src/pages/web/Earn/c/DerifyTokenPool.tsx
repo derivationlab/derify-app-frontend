@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext, useEffect } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { usePoolsInfo } from '@/zustand/usePoolsInfo'
+import { usePoolsInfo } from '@/store/usePoolsInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useTraderInfo } from '@/store/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
 
@@ -21,7 +21,7 @@ import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()

@@ -7,7 +7,7 @@ import {
   QuoteTokenKeys
 } from '@/typings'
 import { InitialTraderVariablesType } from '@/hooks/helper'
-import { OpeningType } from '@/zustand/useCalcOpeningDAT'
+import { OpeningType } from '@/store/useCalcOpeningDAT'
 
 export type Rec = Record<string, any>
 

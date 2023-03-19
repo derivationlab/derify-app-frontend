@@ -3,15 +3,15 @@ import { isArray } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { findToken } from '@/config/tokens'
-
+import { useMarginToken } from '@/store'
 import { getHistoryTotalPositionsNetValue } from '@/api'
 import { useCurrentTotalPositionsNetValue } from '@/hooks/useQueryApi'
 
 import { BarChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useMarginToken } from '@/zustand'
 
-let output: Record<string, any> = {}
+let output = Object.create(null)
+
 const time = days().utc().startOf('days').format()
 
 const PositionChart: FC = () => {

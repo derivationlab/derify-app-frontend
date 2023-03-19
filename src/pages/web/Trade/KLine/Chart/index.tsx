@@ -5,7 +5,7 @@ import React, { FC, useState, useCallback, useRef, useEffect } from 'react'
 import { findToken } from '@/config/tokens'
 import { KLineTimes } from '@/data'
 import { useSpotPrice } from '@/hooks/useMatchConf'
-import { useMarginToken, useQuoteToken } from '@/zustand'
+import { useMarginToken, useQuoteToken } from '@/store'
 
 import { getKLineDAT, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 

@@ -3,11 +3,11 @@ import { useAccount } from 'wagmi'
 import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo } from 'react'
 
-import { useTraderInfo } from '@/zustand/useTraderInfo'
+import { useTraderInfo } from '@/store/useTraderInfo'
 import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
-import { useConfigInfo, useQuoteToken, useTokenBalances } from '@/zustand'
+import { useConfigInfo, useQuoteToken, useTokenBalances } from '@/store'
 import { MarginTokenKeys, MarginTokenWithContract, PubSubEvents } from '@/typings'
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
 

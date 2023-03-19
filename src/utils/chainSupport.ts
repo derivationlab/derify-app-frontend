@@ -2,7 +2,7 @@ import { last, sortBy } from 'lodash'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 
 import { ChainId } from '@/typings'
-import { BEST_RPC_KEY } from '@/zustand'
+import { BEST_RPC_KEY } from '@/store'
 import { checkRpcHealthStatus } from '@/api'
 
 type Rec = Record<string, any>

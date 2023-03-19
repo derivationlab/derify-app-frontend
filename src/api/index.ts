@@ -166,8 +166,8 @@ export const checkRpcHealthStatus = async (url: string, body: Record<string, any
   return response
 }
 
-export const getTraderMarginBalance = async (trader: string, page: number, offset: number) => {
-  const response = await get(`api/trader_margin_balance/${trader}/${page}/${offset}`)
+export const getTradersRankList = async (marginToken: string, page: number, offset: number) => {
+  const response = await get(`api/traders_rank_list/${marginToken}/${page}/${offset}`)
   return response
 }
 
@@ -224,5 +224,10 @@ export const getMySpaceMarginTokenList = async (trader: string, page: number, of
 
 export const getDashboardMarginTokenList = async (page: number, offset: number) => {
   const response = await get(`api/dashboard_margin_token_list/${page}/${offset}`)
+  return response
+}
+
+export const getBuyBackMarginTokenList = async (page: number, offset: number) => {
+  const response = await get(`api/buy_back_margin_token_list/${page}/${offset}`)
   return response
 }

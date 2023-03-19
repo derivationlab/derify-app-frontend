@@ -9,7 +9,7 @@ import Community from './Community'
 import SelectLang from './SelectLang'
 import SelectTheme from './SelectTheme'
 import AddTokenTool from './AddTokenTool'
-import { useMarginToken } from '@/zustand'
+import { useMarginToken } from '@/store'
 
 const Tool: FC = () => {
   const ref = useRef(null)

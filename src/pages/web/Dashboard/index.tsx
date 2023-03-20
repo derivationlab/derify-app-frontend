@@ -19,8 +19,8 @@ const Dashboard: FC = () => {
     <Switch>
       <Route path="/dashboard" exact render={() => <Redirect to={`/${marginToken}/dashboard/overview`} />} />
       <Route path={`/${marginToken}/dashboard/overview`} component={Overview} />
-      <Route path="/dashboard/buyback-plan" component={BuybackPlan} />
-      <Route path="/dashboard/grant-list" component={!address ? GrantList : BrokerConnect} />
+      <Route path="/dashboard/buyback" component={BuybackPlan} />
+      <Route path="/dashboard/grant" component={!address ? GrantList : BrokerConnect} />
     </Switch>
   )
 }

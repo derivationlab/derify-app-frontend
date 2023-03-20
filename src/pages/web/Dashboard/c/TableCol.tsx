@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
-import Countdown from 'react-countdown'
-import numeral from 'numeral'
+import React, { FC, useEffect, useState } from 'react'
+
+import { calcDateDuration } from '@/utils/tools'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
@@ -20,19 +20,33 @@ export const TableMargin: FC<TableMarginProps> = ({ icon, name }) => {
 }
 
 interface TableCountDownProps {
-  date: number
+  timestamp: number
 }
 
-export const TableCountDown: FC<TableCountDownProps> = ({ date }) => {
-  const renderer = (props: any) => {
-    const { days, hours, minutes, seconds, completed } = props
-    return (
-      <Button className="web-dashboard-table-countdown" size="medium" disabled={completed}>
-        {days ? `${days}d` : ''} {numeral(hours).format('00')}:{numeral(minutes).format('00')}:
-        {numeral(seconds).format('00')}
-      </Button>
-    )
-  }
-  return null
-  // return <Countdown date={date} renderer={renderer} />
+export const TableCountDown: FC<TableCountDownProps> = ({ timestamp }) => {
+  const [estimatedTime, setEstimatedTime] = useState<[number, string, string, string, boolean]>([
+    0,
+    '0',
+    '0',
+    '0',
+    false
+  ])
+
+  useEffect(() => {
+    let timer: NodeJS.Timer
+    timer = setInterval(function () {
+      if (estimatedTime[4] && timer) return clearInterval(timer)
+      setEstimatedTime(calcDateDuration(timestamp))
+    }, 1000)
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [estimatedTime])
+
+  return (
+    <Button className="web-dashboard-table-countdown" size="medium">
+      {`${estimatedTime[0]}d`} {estimatedTime[1]}:{estimatedTime[2]}:{estimatedTime[3]}
+    </Button>
+  )
 }

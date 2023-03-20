@@ -1,6 +1,6 @@
 import Table from 'rc-table'
 import classNames from 'classnames'
-import { debounce, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import React, { FC, useMemo, useState, useContext, useEffect, useReducer, useCallback } from 'react'
 
 import { MobileContext } from '@/providers/Mobile'
@@ -10,7 +10,7 @@ import { reducer, stateInit } from '@/reducers/marketInfo'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { getBuyBackMarginTokenList } from '@/api'
 
-import { Input } from '@/components/common/Form'
+// import { Input } from '@/components/common/Form'
 import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
@@ -33,7 +33,8 @@ const Plan: FC = () => {
 
   const { data: buyBackInfo } = useBuyBackPool()
 
-  const [keyword, setKeyword] = useState('')
+  // const [keyword, setKeyword] = useState('')
+  const [keyword] = useState('')
 
   // const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
 
@@ -66,7 +67,7 @@ const Plan: FC = () => {
           return (
             <>
               <BalanceShow value={block} rule="0,0" unit="Block" />
-              <TableCountDown date={data.EstimatedTime} />
+              <TableCountDown timestamp={3679394727481} />
             </>
           )
         }
@@ -102,26 +103,12 @@ const Plan: FC = () => {
       },
       {
         title: 'Estimated Time', // todo
-        dataIndex: 'last_buy_back_block',
-        render: () => {
-          // let timer: any = null
-          const estimatedTime: any[] = []
-
-          // timer = setInterval(function() {
-          //   if (estimatedTime[4] && timer) return clearInterval(timer)
-          //   // const timestamp = (Number(data?.buyback_period) + Number(data?.last_buy_back_block)) * 3 * 1000
-          //   const f = 1679394727481
-          //
-          //   estimatedTime = calcDateDuration(f)
-          // }, 1000)
-
-          const [days = 0, hours = '0', minutes = '0', seconds = '0', over = true] = estimatedTime
-
-          return (
-            <Button className="web-dashboard-table-countdown" size="medium" disabled={over}>
-              {`${days}d`} {hours}:{minutes}:{seconds}
-            </Button>
-          )
+        dataIndex: 'symbol',
+        render: (symbol: symbol, data: Record<string, any>) => {
+          const timestamp = data.open
+            ? (Number(data?.buyback_period) + Number(data?.last_buy_back_block)) * 3 * 1000
+            : 0
+          return <TableCountDown timestamp={timestamp} />
         }
       }
     ]
@@ -133,26 +120,26 @@ const Plan: FC = () => {
     return ''
   }, [state.marketData])
 
-  const onSearch = () => {
-    if (keyword) {
-      console.log('Search keyword: ' + keyword)
-    }
-  }
+  // const onSearch = () => {
+  //   if (keyword) {
+  //     console.log('Search keyword: ' + keyword)
+  //   }
+  // }
 
   // todo search
-  const debounceSearch = useCallback(
-    debounce(() => {
-      void fetchData(0)
-    }, 1000),
-    []
-  )
+  // const debounceSearch = useCallback(
+  //   debounce(() => {
+  //     void fetchData(0)
+  //   }, 1000),
+  //   []
+  // )
 
   const fetchData = useCallback(
     async (index = 0) => {
       // keyword
       const { data } = await getBuyBackMarginTokenList(index, 10)
 
-      console.info(data)
+      // console.info(data)
 
       dispatch({
         type: 'SET_MARKET_DAT',
@@ -168,16 +155,16 @@ const Plan: FC = () => {
     void fetchData(index)
   }
 
-  useEffect(() => {
-    if (keyword) {
-      dispatch({
-        type: 'SET_MARKET_DAT',
-        payload: { records: [], totalItems: 0, isLoaded: true }
-      })
-
-      void debounceSearch()
-    }
-  }, [keyword])
+  // useEffect(() => {
+  //   if (keyword) {
+  //     dispatch({
+  //       type: 'SET_MARKET_DAT',
+  //       payload: { records: [], totalItems: 0, isLoaded: true }
+  //     })
+  //
+  //     void debounceSearch()
+  //   }
+  // }, [keyword])
 
   useEffect(() => {
     void fetchData()
@@ -188,9 +175,10 @@ const Plan: FC = () => {
       <header className="web-dashboard-section-header">
         <h3>Buyback Plan</h3>
         <div className="web-dashboard-section-header-search">
-          <Input value={keyword} onChange={setKeyword} placeholder="search name or contract address..">
-            <button className="web-dashboard-section-header-search-button" onClick={onSearch} />
-          </Input>
+          {/*todo search*/}
+          {/*<Input value={keyword} onChange={setKeyword} placeholder="search name or contract address...">*/}
+          {/*  <button className="web-dashboard-section-header-search-button" onClick={onSearch} />*/}
+          {/*</Input>*/}
         </div>
       </header>
 

@@ -1,8 +1,8 @@
 import { isEmpty } from 'lodash'
 import { useEffect } from 'react'
 
-import { useMarginToken, usePairsInfo } from '@/store'
 import { usePairIndicator } from '@/hooks/usePairIndicator'
+import { useMarginToken, usePairsInfo } from '@/store'
 
 export default function IndicatorsUpdater(): null {
   const marginToken = useMarginToken((state) => state.marginToken)

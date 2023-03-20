@@ -99,7 +99,7 @@ export const useCurrentInsuranceDAT = (address: string) => {
 
 export const useCurrentTradingAmount = (address: string, marginToken: string) => {
   const { data, refetch } = useQuery(
-    ['getCurrentTradingAmount'],
+    ['useCurrentTradingAmount'],
     async (): Promise<any[]> => {
       const data = await getCurrentTradingAmount(address, marginToken)
       return data?.data ?? []
@@ -204,12 +204,13 @@ export const useActiveRankGrantTotalAmount = (marginToken: string) => {
 }
 
 export const useCurrentTotalTradingNetValue = (marginToken: string, quoteToken: string) => {
-  const base = { total_trading_net_value: 0 }
+  const base = { trading_net_value: 0 }
   const { data, refetch } = useQuery(
-    ['getCurrentTotalTradingNetValue'],
+    ['useCurrentTotalTradingNetValue'],
     async (): Promise<typeof base> => {
-      const data = await getCurrentTotalTradingNetValue(marginToken, quoteToken)
-      return data?.data ?? base
+      const { data } = await getCurrentTotalTradingNetValue(marginToken, quoteToken)
+
+      return data?.[0] ?? base
     },
     {
       retry: 0,

@@ -118,7 +118,7 @@
     }
   }
   tr.close{
-    *{color: $c88;}
+    *:not(button){color: $c88;}
     img{opacity: 0.5}
   }
 }

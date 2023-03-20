@@ -31,7 +31,7 @@ const PositionChart: FC = () => {
 
     if (isArray(data)) {
       const convert = data
-        .map((o) => ({ ...o, total_position_net_value: Number(o.total_position_net_value) }))
+        .map((o) => ({ ...o, total_positions_net_value: Number(o.total_positions_net_value) }))
         .reverse()
       setChartData(convert)
     }
@@ -57,7 +57,7 @@ const PositionChart: FC = () => {
           yFormat={[
             {
               label: 'Value',
-              value: 'total_position_net_value',
+              value: 'total_positions_net_value',
               color: '#E7446B'
             }
           ]}

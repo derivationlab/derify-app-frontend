@@ -30,7 +30,7 @@ const TradingChart: FC = () => {
     const { data } = await getHistoryTotalTradingNetValue(findToken(marginToken).tokenAddress, 'all')
 
     if (isArray(data)) {
-      const convert = data.map((o) => ({ ...o, total_trading_net_value: Number(o.total_trading_net_value) })).reverse()
+      const convert = data.map((o) => ({ ...o, trading_net_value: Number(o.trading_net_value) })).reverse()
       setChartData(convert)
     }
   }, [marginToken])
@@ -43,7 +43,7 @@ const TradingChart: FC = () => {
     <div className="web-dashboard-overview-charts">
       <header>
         <label>Total Trading Value</label>
-        <BalanceShow value={data.total_trading_net_value} unit={marginToken} />
+        <BalanceShow value={data.trading_net_value} unit={marginToken} />
       </header>
       <section>
         <BarChart
@@ -55,7 +55,7 @@ const TradingChart: FC = () => {
           yFormat={[
             {
               label: 'Value',
-              value: 'total_trading_net_value',
+              value: 'trading_net_value',
               color: '#E7446B'
             }
           ]}

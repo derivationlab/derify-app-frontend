@@ -189,9 +189,9 @@ const Web: FC = () => {
           )}
         />
         <Route path={`/${marginToken}/dashboard/overview`} component={Overview} />
-        <Route path="/dashboard/buyback-plan" component={BuybackPlan} />
+        <Route path="/dashboard/buyback" component={BuybackPlan} />
         <Route
-          path="/dashboard/grant-list"
+          path="/dashboard/grant"
           render={() => (
             <RConnectWallet>
               <GrantList />

@@ -109,7 +109,7 @@ const MarketInfo: FC = () => {
         width: 150,
         align: 'right',
         render: (_: string, data: Record<string, any>) => (
-          <Button size="medium" disabled={!!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
+          <Button size="medium" disabled={!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
             GO
           </Button>
         )

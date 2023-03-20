@@ -13,7 +13,7 @@ import {
 } from '@/utils/contractHelpers'
 
 export const useRankReward = (trader?: string, rewards?: string) => {
-  let output = { drfBalance: '0', drfAccumulatedBalance: '0' }
+  const output = { drfBalance: '0', drfAccumulatedBalance: '0' }
   const { data, refetch, isLoading } = useQuery(
     ['useRankReward'],
     async () => {
@@ -25,6 +25,7 @@ export const useRankReward = (trader?: string, rewards?: string) => {
         const { drfBalance, drfAccumulatedBalance } = response
 
         return {
+          ...output,
           drfBalance: formatUnits(String(drfBalance), 8),
           drfAccumulatedBalance: formatUnits(String(drfAccumulatedBalance), 8)
         }

@@ -8,6 +8,19 @@ import { formatUnits as _formatUnits } from '@ethersproject/units'
 
 dayjs.extend(duration)
 
+export const calcDateDuration = (s: number): [number, string, string, string, boolean] => {
+  const duration = dayjs.duration(dayjs(s).diff(dayjs()))
+
+  const days = duration.days()
+  const hours = String(duration.hours()).padStart(2, '0')
+  const minutes = String(duration.minutes()).padStart(2, '0')
+  const seconds = String(duration.seconds()).padStart(2, '0')
+
+  const over = Math.floor(duration.asSeconds()) <= 0
+
+  return over ? [0, '0', '0', '0', true] : [days, hours, minutes, seconds, false]
+}
+
 export const toType = (obj: any): string => {
   // @ts-ignore
   return {}.toString

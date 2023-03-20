@@ -1,7 +1,7 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { Rec, RpcState } from '@/store/types'
+import { RpcState } from '@/store/types'
 import { DEFAULT_PRC_URLS, getHealthyNode } from '@/utils/chainSupport'
 import { ChainId } from '@/typings'
 

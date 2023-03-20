@@ -24,7 +24,7 @@ export const useMarketInfo = (
         const buybackPool = await c.getSysExchangeBondSizeUpperBound()
         const positionVol = await multicall(DerifyDerivativeAbi, calls)
 
-        let _positionVol = positionVol.reduce((s1: number, [longTotalAmount, shortTotalAmount]: any[]) => {
+        const _positionVol = positionVol.reduce((s1: number, [longTotalAmount, shortTotalAmount]: any[]) => {
           const s2 = bnPlus(formatUnits(longTotalAmount, 8), formatUnits(shortTotalAmount, 8))
           return bnPlus(s1, s2)
         }, 0)

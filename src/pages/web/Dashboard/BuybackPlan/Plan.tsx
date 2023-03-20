@@ -16,10 +16,15 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
 import { MarginTokenKeys } from '@/typings'
-import { useConfigInfo } from '@/store'
+// import { useConfigInfo } from '@/store'
 import { useBlockNumber } from 'wagmi'
+import { useTranslation } from 'react-i18next'
+// import { calcDateDuration } from '@/utils/tools'
+import Button from '@/components/common/Button'
 
 const Plan: FC = () => {
+  const { t } = useTranslation()
+
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { data: blockNumber = 0 } = useBlockNumber()
@@ -30,76 +35,97 @@ const Plan: FC = () => {
 
   const [keyword, setKeyword] = useState('')
 
-  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
+  // const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
 
-  const mColumns = [
-    {
-      title: 'Margin',
-      dataIndex: 'name',
-      render: (_: string, data: Record<string, any>) => (
-        <TableMargin icon={`${STATIC_RESOURCES_URL}market/${data.symbol.toLowerCase()}.svg`} name={data.symbol} />
-      )
-    },
-    {
-      title: 'Pool/DRF Price',
-      dataIndex: 'symbol',
-      align: 'right',
-      render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
-        <>
-          <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
-          <BalanceShow value={data?.last_drf_price} unit={BENCHMARK_TOKEN.symbol} />
-        </>
-      )
-    },
-    {
-      title: 'Blocks/Time',
-      dataIndex: 'RemainingBlock',
-      align: 'right',
-      render: (value: number, data: Record<string, any>) => {
-        const sub = Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber
-        return (
+  const mColumns = useMemo(() => {
+    return [
+      {
+        title: 'Margin',
+        dataIndex: 'name',
+        render: (_: string, data: Record<string, any>) => (
+          <TableMargin icon={`${STATIC_RESOURCES_URL}market/${data.symbol.toLowerCase()}.svg`} name={data.symbol} />
+        )
+      },
+      {
+        title: 'Pool/DRF Price',
+        dataIndex: 'symbol',
+        align: 'right',
+        render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
           <>
-            <BalanceShow value={sub} rule="0,0" unit="Block" />
-            <TableCountDown date={data.EstimatedTime} />
+            <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
+            <BalanceShow value={data?.last_drf_price} unit={BENCHMARK_TOKEN.symbol} />
           </>
         )
+      },
+      {
+        title: 'Blocks/Time',
+        dataIndex: 'RemainingBlock',
+        align: 'right',
+        render: (value: number, data: Record<string, any>) => {
+          const block = data.open ? Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber : 0
+          return (
+            <>
+              <BalanceShow value={block} rule="0,0" unit="Block" />
+              <TableCountDown date={data.EstimatedTime} />
+            </>
+          )
+        }
       }
-    }
-  ]
+    ]
+  }, [t, blockNumber])
 
-  const wColumns = [
-    mColumns[0],
-    {
-      title: 'Buyback Cycle',
-      dataIndex: 'buyback_period',
-      render: (value: number) => <BalanceShow value={value} rule="0,0" unit="Block" />
-    },
-    {
-      title: 'Buyback Pool',
-      dataIndex: 'symbol',
-      render: (symbol: MarginTokenKeys) => <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
-    },
-    {
-      title: 'DRF Price(Last Cycle)',
-      dataIndex: 'last_drf_price',
-      render: (value: number) => <BalanceShow value={value} unit={BENCHMARK_TOKEN.symbol} />
-    },
-    {
-      title: 'Remaining block',
-      dataIndex: 'last_buy_back_block',
-      render: (value: number, data: Record<any, any>) => {
-        const sub = Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber
-        return <BalanceShow value={sub} rule="0,0" unit="Block" />
+  const wColumns = useMemo(() => {
+    return [
+      mColumns[0],
+      {
+        title: 'Buyback Cycle',
+        dataIndex: 'buyback_period',
+        render: (value: number) => <BalanceShow value={value} rule="0,0" unit="Block" />
+      },
+      {
+        title: 'Buyback Pool',
+        dataIndex: 'symbol',
+        render: (symbol: MarginTokenKeys) => <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
+      },
+      {
+        title: 'DRF Price(Last Cycle)',
+        dataIndex: 'last_drf_price',
+        render: (value: number) => <BalanceShow value={value} unit={BENCHMARK_TOKEN.symbol} />
+      },
+      {
+        title: 'Remaining block',
+        dataIndex: 'last_buy_back_block',
+        render: (value: number, data: Record<any, any>) => {
+          const block = data.open ? Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber : 0
+          return <BalanceShow value={block} rule="0,0" unit="Block" />
+        }
+      },
+      {
+        title: 'Estimated Time', // todo
+        dataIndex: 'last_buy_back_block',
+        render: () => {
+          // let timer: any = null
+          const estimatedTime: any[] = []
+
+          // timer = setInterval(function() {
+          //   if (estimatedTime[4] && timer) return clearInterval(timer)
+          //   // const timestamp = (Number(data?.buyback_period) + Number(data?.last_buy_back_block)) * 3 * 1000
+          //   const f = 1679394727481
+          //
+          //   estimatedTime = calcDateDuration(f)
+          // }, 1000)
+
+          const [days = 0, hours = '0', minutes = '0', seconds = '0', over = true] = estimatedTime
+
+          return (
+            <Button className="web-dashboard-table-countdown" size="medium" disabled={over}>
+              {`${days}d`} {hours}:{minutes}:{seconds}
+            </Button>
+          )
+        }
       }
-    },
-    {
-      title: 'Estimated Time', // todo
-      dataIndex: 'last_buy_back_block',
-      render: (value: number) => {
-        return <TableCountDown date={value} />
-      }
-    }
-  ]
+    ]
+  }, [t, blockNumber])
 
   const emptyText = useMemo(() => {
     if (state.marketData.isLoaded) return 'Loading'
@@ -115,7 +141,7 @@ const Plan: FC = () => {
 
   // todo search
   const debounceSearch = useCallback(
-    debounce((keyword: string) => {
+    debounce(() => {
       void fetchData(0)
     }, 1000),
     []
@@ -149,7 +175,7 @@ const Plan: FC = () => {
         payload: { records: [], totalItems: 0, isLoaded: true }
       })
 
-      void debounceSearch(keyword)
+      void debounceSearch()
     }
   }, [keyword])
 

@@ -78,7 +78,6 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           <div className="wallet">
             <dl>
               <dt>{t('Trade.Withdraw.Withdrawable', 'Withdrawable')}</dt>
-              <dt>{t('Trade.Withdraw.Withdrawable', 'Withdrawable')}</dt>
               <dd>
                 <BalanceShow value={variables.availableMargin} unit={marginToken} />
               </dd>

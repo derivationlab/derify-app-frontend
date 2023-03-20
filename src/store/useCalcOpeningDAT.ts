@@ -30,7 +30,7 @@ const getMaxVolume = async (
 
     return [formatUnits(String(size), 8), formatUnits(String(amount), 8)]
   } catch (e) {
-    console.info(e)
+    // console.info(e)
     return ['0', '0']
   }
 }

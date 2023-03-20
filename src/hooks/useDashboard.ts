@@ -1,9 +1,7 @@
-import { isEmpty } from 'lodash'
 import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
 import tokens from '@/config/tokens'
-import multicall from '@/utils/multicall'
 import { useQuery } from '@tanstack/react-query'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { formatUnits, inputParameterConversion } from '@/utils/tools'
@@ -14,50 +12,35 @@ import {
   getDerifyRewardsContract
 } from '@/utils/contractHelpers'
 
-import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
-
 export const useRankReward = (trader?: string, rewards?: string) => {
+  let output = { drfBalance: '0', drfAccumulatedBalance: '0' }
   const { data, refetch, isLoading } = useQuery(
     ['useRankReward'],
     async () => {
-      /**
-       * uint256 drfBalance: 交易比赛未被提现的DRF奖励（精度为8位）
-       * uint256 drfAccumulatedBalance: 过去所有比赛累积获得的DRF奖励之和（精度为8位）
-       */
       if (trader && rewards) {
         const c = getDerifyRewardsContract(rewards)
-        console.info(`DerifyRewards-getRankReward():${rewards}`)
-        console.info(`trader:${trader}`)
-        const res = await c.getRankReward(trader)
 
-        console.info(res)
+        const response = await c.getRankReward(trader)
 
-        return res
+        const { drfBalance, drfAccumulatedBalance } = response
+
+        return {
+          drfBalance: formatUnits(String(drfBalance), 8),
+          drfAccumulatedBalance: formatUnits(String(drfAccumulatedBalance), 8)
+        }
       }
-      return []
+      return output
     },
     {
       retry: false,
+      initialData: output,
       refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  if (!isLoading && !isEmpty(data)) {
-    const { drfBalance, drfAccumulatedBalance } = data
-
-    return {
-      data: {
-        drfBalance: formatUnits(String(drfBalance), 8),
-        drfAccumulatedBalance: formatUnits(String(drfAccumulatedBalance), 8)
-      },
-      refetch,
-      isLoading
-    }
-  }
-
-  return { refetch, isLoading }
+  return { data, refetch, isLoading }
 }
 
 export const useAddGrant = () => {

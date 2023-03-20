@@ -18,7 +18,10 @@ const AmountInput: FC<Props> = ({ max, unit, title, initial = '', onChange }) =>
   const [value, setValue] = useState<string>('')
 
   const setMax = () => {
-    if (Number(max) > 0) setValue(max)
+    if (Number(max) > 0) {
+      onChange(max)
+      setValue(max)
+    }
   }
 
   const validate = useCallback(

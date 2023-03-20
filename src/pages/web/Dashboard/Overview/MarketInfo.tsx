@@ -184,7 +184,7 @@ const MarketInfo: FC = () => {
         </div>
       </header>
       <Table
-        rowKey="id"
+        rowKey="symbol"
         data={state.marketData.records}
         // @ts-ignore
         columns={mobile ? mColumns : wColumns}

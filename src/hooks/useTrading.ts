@@ -170,7 +170,7 @@ export const useDepositMargin = () => {
   const deposit = useCallback(
     async (exchange: string, amount: string, marginToken: string): Promise<boolean> => {
       if (!signer) return false
-      console.info(amount)
+
       const c = getDerifyExchangeContract(exchange, signer)
 
       try {

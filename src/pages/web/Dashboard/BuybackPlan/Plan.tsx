@@ -47,7 +47,7 @@ const Plan: FC = () => {
       render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
         <>
           <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
-          <BalanceShow value={mTokenPrices[symbol]} unit={BENCHMARK_TOKEN.symbol} />
+          <BalanceShow value={data?.last_drf_price} unit={BENCHMARK_TOKEN.symbol} />
         </>
       )
     },
@@ -55,12 +55,15 @@ const Plan: FC = () => {
       title: 'Blocks/Time',
       dataIndex: 'RemainingBlock',
       align: 'right',
-      render: (value: number, data: Record<string, any>) => (
-        <>
-          <BalanceShow value={value} rule="0,0" />
-          <TableCountDown date={data.EstimatedTime} />
-        </>
-      )
+      render: (value: number, data: Record<string, any>) => {
+        const sub = blockNumber > 0 ? blockNumber - value : 0
+        return (
+          <>
+            <BalanceShow value={sub} rule="0,0" unit="Block" />
+            <TableCountDown date={data.EstimatedTime} />
+          </>
+        )
+      }
     }
   ]
 
@@ -76,9 +79,7 @@ const Plan: FC = () => {
       title: 'Buyback Pool',
       dataIndex: 'symbol',
       width: 220,
-      render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
-        <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
-      )
+      render: (symbol: MarginTokenKeys) => <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
     },
     {
       title: 'DRF Price(Last Cycle)',
@@ -99,7 +100,9 @@ const Plan: FC = () => {
       title: 'Estimated Time', // todo
       dataIndex: 'last_buy_back_block',
       width: 240,
-      render: (value: number) => <TableCountDown date={value} />
+      render: (value: number) => {
+        return <TableCountDown date={value} />
+      }
     }
   ]
 
@@ -171,7 +174,7 @@ const Plan: FC = () => {
       </header>
 
       <Table
-        rowKey="id"
+        rowKey="symbol"
         data={state.marketData.records}
         // @ts-ignore
         columns={mobile ? mColumns : wColumns}

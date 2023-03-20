@@ -137,15 +137,19 @@ export const useActiveRankGrantCount = (marginToken: string) => {
   return { data }
 }
 
-export const useActiveRankGrantRatios = (marginToken: string) => {
+export const useActiveRankGrantRatios = (marginToken: string, trader?: string) => {
   const { data } = useQuery(
     ['getActiveRankGrantRatios'],
     async (): Promise<number> => {
-      const data = await getActiveRankGrantRatios(marginToken)
+      if (trader) {
+        const data = await getActiveRankGrantRatios(marginToken, trader)
 
-      const _data = data?.data ?? []
+        const _data = data?.data ?? []
 
-      return _data.length > 0 ? Math.min.apply(null, _data) : 0
+        return _data.length > 0 ? Math.min.apply(null, _data) : 0
+      }
+
+      return 0
     },
     {
       retry: 0,

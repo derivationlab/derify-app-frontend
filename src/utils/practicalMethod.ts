@@ -1,65 +1,38 @@
 import { ethers } from 'ethers'
-import type { BigNumber, Contract, Signer } from 'ethers'
-import type { BigNumberish } from '@ethersproject/bignumber'
+import { BigNumberish, Contract, BigNumber, Signer, constants } from 'ethers'
+
 import { getBep20Contract } from '@/utils/contractHelpers'
 
-export const estimateGas = async (
-  contract: Contract,
-  methodName: string,
-  methodArgs: unknown[] = [],
-  gasMarginPer10000 = 2000
-): Promise<BigNumber> => {
-  if (!contract[methodName]) {
-    throw new Error(`Method ${methodName} doesn't exist on ${contract.address}`)
+const getAllowance = async (c: Contract, signer: Signer, spender: string): Promise<BigNumberish> => {
+  if (!c) {
+    throw new Error("Contract doesn't exist")
   }
 
-  const rawGasEstimation = await contract.estimateGas[methodName](...methodArgs)
-  // console.info(`real need gas:${rawGasEstimation}`)
-  // console.info(
-  //   `Gas after amplification:${rawGasEstimation
-  //     .mul(ethers.BigNumber.from(10000).add(ethers.BigNumber.from(gasMarginPer10000)))
-  //     .div(ethers.BigNumber.from(10000))}`
-  // )
-  return rawGasEstimation
-    .mul(ethers.BigNumber.from(10000).add(ethers.BigNumber.from(gasMarginPer10000)))
-    .div(ethers.BigNumber.from(10000))
+  const account = await signer.getAddress()
+  const allowance = await c.allowance(account, spender)
+
+  return allowance
 }
 
 export const setAllowance = async (
   signer: Signer,
   spender: string,
   token: string,
-  amount?: BigNumberish
+  approveAmount: string | number
 ): Promise<boolean> => {
-  const _contract = getBep20Contract(token, signer)
-  const _amount = ethers.BigNumber.from(amount)
+  const c = getBep20Contract(token, signer)
+
   try {
-    const account = await signer.getAddress()
-    const allowance = await _contract.allowance(account, spender)
-
-    const _allowance = ethers.BigNumber.from(allowance)
-
-    if (_allowance.lte(_amount)) {
-      const tx = await _contract.approve(spender, _amount)
+    const allowance = await getAllowance(c, signer, spender)
+    // console.info(`allowance: ${formatUnits(String(allowance), 18)}`, BigNumber.from(allowance).lt(MaxUint256))
+    if (BigNumber.from(allowance).lte(approveAmount)) {
+      const gasLimit = await estimateGas(c, 'approve', [spender, constants.MaxUint256])
+      const tx = await c.approve(spender, constants.MaxUint256, { gasLimit })
       const receipt = await tx.wait()
-      return receipt.status
-    }
-    return true
-  } catch (e) {
-    console.error(e)
-    return false
-  }
-}
 
-export const setApproval = async (contract: Contract, account: string, spender?: string): Promise<boolean> => {
-  try {
-    const response = await contract.isApprovedForAll(account, spender)
-
-    if (!response) {
-      const tx = await contract.setApprovalForAll(spender, true)
-      const receipt = await tx.wait()
-      return receipt.status
+      return !!receipt.status
     }
+
     return true
   } catch (e) {
     console.error(e)
@@ -84,4 +57,26 @@ export const addToken2Wallet = async (
     return status
   }
   return false
+}
+
+export const estimateGas = async (
+  contract: Contract,
+  methodName: string,
+  methodArgs: unknown[] = [],
+  gasMarginPer10000 = 2000
+): Promise<BigNumber> => {
+  if (!contract[methodName]) {
+    throw new Error(`Method ${methodName} doesn't exist on ${contract.address}`)
+  }
+
+  const rawGasEstimation = await contract.estimateGas[methodName](...methodArgs)
+  // console.info(`real need gas:${rawGasEstimation}`)
+  // console.info(
+  //   `Gas after amplification:${rawGasEstimation
+  //     .mul(ethers.BigNumber.from(10000).add(ethers.BigNumber.from(gasMarginPer10000)))
+  //     .div(ethers.BigNumber.from(10000))}`
+  // )
+  return rawGasEstimation
+    .mul(ethers.BigNumber.from(10000).add(ethers.BigNumber.from(gasMarginPer10000)))
+    .div(ethers.BigNumber.from(10000))
 }

@@ -192,8 +192,8 @@ export const getActiveRankGrantTotalAmount = async (marginToken: string) => {
   return response
 }
 
-export const getActiveRankGrantRatios = async (marginToken: string) => {
-  const response = await get(`api/active_rank_grant_ratios/${marginToken}`)
+export const getActiveRankGrantRatios = async (marginToken: string, trader: string) => {
+  const response = await get(`api/active_rank_grant_ratios/${marginToken}/${trader}`)
   return response
 }
 

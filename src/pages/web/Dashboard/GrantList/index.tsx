@@ -62,7 +62,6 @@ const GrantList: FC = () => {
   // debug todo
   const _addGrantPlan = useCallback(async () => {
     await getActiveRankGrantCount(findToken(marginToken)?.tokenAddress) // count: 0
-    await getActiveRankGrantRatios(findToken(marginToken)?.tokenAddress) // []
     await getActiveRankGrantTotalAmount(findToken(marginToken)?.tokenAddress) // totalAmount: null
   }, [address, protocolConfig, marginToken])
 

@@ -34,11 +34,11 @@ const Competition: FC = () => {
 
   const { withdraw } = useWithdrawRankReward()
   const { protocolConfig } = useProtocolConf(marginToken)
-  const { data, refetch } = useRankReward(address, protocolConfig?.rewards)
-  const { data: grantRatio } = useActiveRankGrantRatios(findToken(marginToken).tokenAddress)
+  const { data: grantRatio } = useActiveRankGrantRatios(findToken(marginToken).tokenAddress, address)
   const { data: bondBalance } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
   const { data: grantAmount } = useActiveRankGrantTotalAmount(findToken(marginToken).tokenAddress)
   const { data: activeGrant } = useActiveRankGrantCount(findToken(marginToken).tokenAddress)
+  const { data: rankReward, refetch } = useRankReward(address, protocolConfig?.rewards)
 
   const memoDisabled = useMemo(() => {
     return isGT(bondBalance ?? 0, 0)
@@ -84,11 +84,11 @@ const Competition: FC = () => {
         <div className="web-eran-item-claim">
           <main>
             <h4>{t('Earn.PositionMining.Claimable')}</h4>
-            <BalanceShow value={data?.drfBalance ?? 0} unit={PLATFORM_TOKEN.symbol} />
+            <BalanceShow value={rankReward.drfBalance} unit={PLATFORM_TOKEN.symbol} />
             <div className="block" />
             <p>
               {t('Earn.PositionMining.TotalEarned')} :{' '}
-              <strong>{keepDecimals(data?.drfAccumulatedBalance ?? 0, PLATFORM_TOKEN.decimals)}</strong>{' '}
+              <strong>{keepDecimals(rankReward.drfAccumulatedBalance, PLATFORM_TOKEN.decimals)}</strong>{' '}
               {PLATFORM_TOKEN.symbol}
             </p>
           </main>

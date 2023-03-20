@@ -44,6 +44,7 @@ export default function InitialUpdater(): null {
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
+      console.info('UPDATE_BALANCE')
       if (address) void fetchBalances(address)
     })
   }, [address])
@@ -87,6 +88,13 @@ export default function InitialUpdater(): null {
     if (address && !protocolConfDATIsLoading && protocolConfDAT) {
       void func(address, protocolConfDAT)
     }
+
+    PubSub.subscribe(PubSubEvents.UPDATE_TRADER_VARIABLES, () => {
+      console.info('UPDATE_TRADER_VARIABLES')
+      if (address && !protocolConfDATIsLoading && protocolConfDAT) {
+        void func(address, protocolConfDAT)
+      }
+    })
   }, [protocolConfDATIsLoading, protocolConfDAT, address, marginToken, quoteToken])
 
   // switch margin token need reset trader variables

@@ -190,7 +190,7 @@ const MarketInfo: FC = () => {
         columns={mobile ? mColumns : wColumns}
         className={classNames('web-broker-table', { 'web-space-table': mobile })}
         emptyText={emptyText}
-        rowClassName={(record) => (!!record.open ? 'close' : 'open')}
+        rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
       <Pagination page={state.pageIndex} total={state.marketData.totalItems} onChange={pageChange} />
     </div>

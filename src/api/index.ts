@@ -37,8 +37,8 @@ export const getBrokerInfoById = async (brokerId: string) => {
   return response
 }
 
-export const getBrokerValidPeriod = async (brokerId: string, marginToken: string) => {
-  const response = await get(`api/broker_latest_valid_period/${brokerId}/${marginToken}`)
+export const getBrokerValidPeriod = async (brokerId: string) => {
+  const response = await get(`api/broker_latest_valid_period/${brokerId}`)
   return response
 }
 

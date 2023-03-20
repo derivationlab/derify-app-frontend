@@ -56,7 +56,7 @@ const Plan: FC = () => {
       dataIndex: 'RemainingBlock',
       align: 'right',
       render: (value: number, data: Record<string, any>) => {
-        const sub = blockNumber > 0 ? blockNumber - value : 0
+        const sub = Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber
         return (
           <>
             <BalanceShow value={sub} rule="0,0" unit="Block" />
@@ -72,34 +72,29 @@ const Plan: FC = () => {
     {
       title: 'Buyback Cycle',
       dataIndex: 'buyback_period',
-      width: 220,
       render: (value: number) => <BalanceShow value={value} rule="0,0" unit="Block" />
     },
     {
       title: 'Buyback Pool',
       dataIndex: 'symbol',
-      width: 220,
       render: (symbol: MarginTokenKeys) => <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
     },
     {
       title: 'DRF Price(Last Cycle)',
       dataIndex: 'last_drf_price',
-      width: 240,
       render: (value: number) => <BalanceShow value={value} unit={BENCHMARK_TOKEN.symbol} />
     },
     {
       title: 'Remaining block',
-      dataIndex: 'RemainingBlock',
-      width: 220,
-      render: (value: number) => {
-        const sub = blockNumber > 0 ? blockNumber - value : 0
+      dataIndex: 'last_buy_back_block',
+      render: (value: number, data: Record<any, any>) => {
+        const sub = Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber
         return <BalanceShow value={sub} rule="0,0" unit="Block" />
       }
     },
     {
       title: 'Estimated Time', // todo
       dataIndex: 'last_buy_back_block',
-      width: 240,
       render: (value: number) => {
         return <TableCountDown date={value} />
       }
@@ -180,7 +175,7 @@ const Plan: FC = () => {
         columns={mobile ? mColumns : wColumns}
         className={classNames('web-broker-table', { 'web-space-table': mobile })}
         emptyText={emptyText}
-        rowClassName={(record) => (!!record.open ? 'close' : 'open')}
+        rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
       <Pagination page={state.pageIndex} total={state.marketData.totalItems} onChange={pageChange} />
     </div>

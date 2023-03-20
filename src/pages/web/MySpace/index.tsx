@@ -218,7 +218,7 @@ const MySpace: FC = () => {
         columns={mobile ? mColumns : wColumns}
         className="web-broker-table web-space-table"
         emptyText={emptyText}
-        rowClassName={(record) => (!!record.open ? 'close' : 'open')}
+        rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
       <Pagination page={state.pageIndex} total={state.marginData.totalItems} onChange={pageChange} />
     </div>

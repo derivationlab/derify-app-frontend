@@ -1,5 +1,3 @@
-import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
-
 interface ActionType {
   type: 'SET_GRANT_DAT' | 'SET_PAGE_INDEX' | 'SET_GRANT_STATUS' | 'SET_GRANT_TARGET' | 'SET_MARGIN_TOKEN'
   payload: any
@@ -17,7 +15,7 @@ export const grantStateOptions = [
   {
     key: 'all',
     value: '',
-    label: 'All'
+    label: 'ALL'
   },
   {
     key: 'upcoming',
@@ -39,7 +37,7 @@ export const grantStateOptions = [
 const stateInit: StateType = {
   grantData: { records: [], totalItems: 0, isLoaded: true },
   pageIndex: 0,
-  marginToken: DEFAULT_MARGIN_TOKEN.symbol,
+  marginToken: '',
   grantTarget: '',
   grantStatus: ''
 }

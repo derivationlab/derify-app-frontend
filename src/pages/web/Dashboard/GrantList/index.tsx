@@ -1,83 +1,60 @@
-import { useAccount } from 'wagmi'
+import PubSub from 'pubsub-js'
+import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 
-import { useProtocolConf } from '@/hooks/useMatchConf'
-
-import { grantTargetOptions } from '@/reducers/addGrant'
-import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS } from '@/config/tokens'
+import { PubSubEvents } from '@/typings'
+import { getGrantList } from '@/api'
+import { all, grantTargetOptions } from '@/reducers/addGrant'
+import { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
-import { getGrantList, getActiveRankGrantCount, getActiveRankGrantRatios, getActiveRankGrantTotalAmount } from '@/api'
 
 import { Select } from '@/components/common/Form'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 
-import { GrantListData } from './mockData'
 import ListItem from './ListItem'
 import AddGrant from './AddGrant'
-import PubSub from 'pubsub-js'
-import { PubSubEvents } from '@/typings'
-import { debounce } from 'lodash'
-import { useMarginToken } from '@/store'
 
 const targetOptions = grantTargetOptions(true)
 
 const GrantList: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const { address } = useAccount()
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const { protocolConfig } = useProtocolConf(marginToken)
+  const pageChange = useCallback(
+    (index: number) => {
+      dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
-  const pageChange = (index: number) => {
-    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-
-    void fetchData(index)
-  }
-  /**
-   * margin_token: 保证金地址
-   * target: 奖励类型
-   * status: 比赛状态
-   * start_time: 比赛开始时间
-   * end_time: 比赛结束时间
-   * event_time: 奖励添加时间
-   * amount: 奖励DRF数量
-   */
-  const fetchData = useCallback(
-    async (index = 0) => {
-      const marginToken = findToken(state.marginToken).tokenAddress
-      const grantStatus = grantStateOptions.find((t) => t.value === state.grantStatus)?.key ?? 'all'
-      const grantTarget = targetOptions.find((t) => t.value === state.grantTarget)?.key ?? 'all'
-
-      const { data } = await getGrantList(marginToken, grantTarget, grantStatus, index, 9)
-
-      dispatch({
-        type: 'SET_GRANT_DAT',
-        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-      })
+      void fetchData(index, state.marginToken, state.grantStatus, state.grantTarget)
     },
     [state.marginToken, state.grantStatus, state.grantTarget]
   )
 
-  // debug todo
-  const _addGrantPlan = useCallback(async () => {
-    await getActiveRankGrantCount(findToken(marginToken)?.tokenAddress) // count: 0
-    await getActiveRankGrantTotalAmount(findToken(marginToken)?.tokenAddress) // totalAmount: null
-  }, [address, protocolConfig, marginToken])
+  const fetchData = useCallback(async (index = 0, marginToken, grantStatus, grantTarget) => {
+    const _marginToken = findToken(marginToken)?.tokenAddress ?? 'all'
+    const _grantStatus = grantStateOptions.find((t) => t.value === grantStatus)?.key ?? 'all'
+    const _grantTarget = targetOptions.find((t) => t.value === grantTarget)?.nick ?? 'all'
 
-  const marginOptions = useMemo(
-    () =>
-      MARGIN_TOKENS.map((t) => ({
-        value: t.symbol,
-        label: t.symbol,
-        icon: `market/${t.symbol.toLowerCase()}.svg`
-      })),
-    []
-  )
+    const { data } = await getGrantList(_marginToken, _grantTarget, _grantStatus, index, 9)
+
+    dispatch({
+      type: 'SET_GRANT_DAT',
+      payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+    })
+  }, [])
+
+  const marginOptions = useMemo(() => {
+    const base = MARGIN_TOKENS.map((t) => ({
+      value: t.symbol,
+      label: t.symbol,
+      icon: `market/${t.symbol.toLowerCase()}.svg`
+    }))
+
+    return [all, ...base]
+  }, [])
 
   const debounceSearch = useCallback(
-    debounce(() => {
-      void fetchData(0)
+    debounce((marginToken, grantStatus, grantTarget) => {
+      void fetchData(0, marginToken, grantStatus, grantTarget)
     }, 1000),
     []
   )
@@ -93,11 +70,13 @@ const GrantList: FC = () => {
       dispatch({ type: 'SET_PAGE_INDEX', payload: 0 })
       dispatch({ type: 'SET_GRANT_TARGET', payload: '' })
       dispatch({ type: 'SET_GRANT_STATUS', payload: '' })
-      dispatch({ type: 'SET_MARGIN_TOKEN', payload: DEFAULT_MARGIN_TOKEN.symbol })
+      dispatch({ type: 'SET_MARGIN_TOKEN', payload: '' })
 
-      void fetchData()
+      void fetchData(0, state.marginToken, state.grantStatus, state.grantTarget)
     })
-  }, [])
+
+    void fetchData(0, state.marginToken, state.grantStatus, state.grantTarget)
+  }, [state.marginToken, state.grantStatus, state.grantTarget])
 
   useEffect(() => {
     if (state.marginToken || state.grantStatus || state.grantTarget) {
@@ -106,7 +85,7 @@ const GrantList: FC = () => {
         payload: { records: [], totalItems: 0, isLoaded: true }
       })
 
-      void debounceSearch()
+      void debounceSearch(state.marginToken, state.grantStatus, state.grantTarget)
     }
   }, [state.marginToken, state.grantStatus, state.grantTarget])
 
@@ -152,7 +131,7 @@ const GrantList: FC = () => {
       </header>
       <div className="web-dashboard-grant-list">
         <AddGrant />
-        {GrantListData.map((item, index) => (
+        {state.grantData.records.map((item, index) => (
           <ListItem key={index} data={item} />
         ))}
       </div>

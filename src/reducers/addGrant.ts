@@ -20,21 +20,25 @@ interface StateType {
   grantTarget: string
 }
 
-const all = { value: '', label: 'All' }
+export const all = { value: '', label: 'ALL' }
+
 export const grantTargetOptions = (needAll = false): Record<string, any>[] => {
   const baseOptions = [
     {
       key: 'mining',
+      nick: 'pmr',
       value: 1,
       label: 'Position Mining'
     },
     {
       key: 'awards',
+      nick: 'broker_rewards',
       value: 2,
       label: 'Broker'
     },
     {
       key: 'rank',
+      nick: 'rank',
       value: 3,
       label: 'Trading Competition'
     }

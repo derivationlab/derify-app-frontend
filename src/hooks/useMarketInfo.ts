@@ -127,7 +127,7 @@ const initial2 = (): MarginToken => {
 }
 
 export const usePairIndicators = () => {
-  let output = initial2()
+  const output = initial2()
 
   const { data } = useQuery(
     ['usePairIndicators'],

@@ -3,14 +3,15 @@ import { useQuery } from '@tanstack/react-query'
 
 import multicall from '@/utils/multicall'
 import contracts from '@/config/contracts'
-import { formatUnits } from '@/utils/tools'
-import { MarginToken, MarginTokenKeys, MarginTokenWithQuote } from '@/typings'
-import { findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
+import { formatUnits, isLT } from '@/utils/tools'
+import { MarginToken, MarginTokenKeys } from '@/typings'
+import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
 
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 
-const initial1 = (): MarginTokenWithQuote => {
+const initial1 = (): MarginToken => {
   let value = Object.create(null)
 
   MARGIN_TOKENS.forEach((t) => {
@@ -51,26 +52,29 @@ export const useAllMarginBalances = (trader?: string) => {
         }
         const calls = MARGIN_TOKENS.map((token) => ({
           ...base,
-          params: [token.tokenAddress, [trader], []]
+          params: [
+            [
+              {
+                traders: [trader],
+                balances: [],
+                marginToken: token.tokenAddress
+              }
+            ]
+          ]
         }))
-
-        console.info(calls)
 
         const res = await multicall(DerifyProtocolAbi, calls)
 
-        console.info(res)
-
         if (res.length > 0) {
-          res.forEach((margin: any) => {
-            const [marginToken, , balances] = margin
-            const M = findToken(marginToken).symbol
+          res.forEach(([margin]: any, index: number) => {
+            const [{ balances }] = margin
             output = {
               ...output,
-              [M]: formatUnits(String(balances[0]), 8)
+              [MARGIN_TOKENS[index].symbol]: formatUnits(String(balances), 8)
             }
           })
         }
-
+        // console.info(output)
         return output
       }
 
@@ -110,11 +114,9 @@ export const useAllTraderRewards = (trader?: string, config?: Record<string, any
 
           if (!isEmpty(response)) {
             response.forEach((data: any, index: number) => {
-              const { drfAccumulatedBalance, drfBalance, marginTokenAccumulatedBalance, marginTokenBalance } = data
+              const { drfBalance, marginTokenBalance } = data
               const _drfBalance = formatUnits(String(drfBalance), 8)
               const _marginTokenBalance = formatUnits(String(marginTokenBalance), 8)
-              const _drfAccumulatedBalance = formatUnits(String(drfAccumulatedBalance), 8)
-              const _marginTokenAccumulatedBalance = formatUnits(String(marginTokenAccumulatedBalance), 8)
 
               output = {
                 ...output,
@@ -171,18 +173,15 @@ export const useAllBrokerRewards = (trader?: string, config?: Record<string, any
 
           if (!isEmpty(response)) {
             response.forEach((data: any, index: number) => {
-              const [
-                { accumulatedDrfReward, accumulatedMarginTokenReward, drfRewardBalance, marginTokenRewardBalance }
-              ] = data
-              const _drfRewardBalance = formatUnits(String(drfRewardBalance), 18)
-              const _accumulatedDrfReward = formatUnits(String(accumulatedDrfReward), 18)
-              const _marginTokenRewardBalance = formatUnits(String(marginTokenRewardBalance), 18)
-              const _accumulatedMarginTokenReward = formatUnits(String(accumulatedMarginTokenReward), 18)
+              const [{ drfRewardBalance, marginTokenRewardBalance }] = data
+              const _drfRewardBalance = formatUnits(String(drfRewardBalance), 8)
+              const _marginTokenRewardBalance = formatUnits(String(marginTokenRewardBalance), 8)
+
               output = {
                 ...output,
                 [calls[index].marginToken]: {
-                  origin: _drfRewardBalance,
-                  [calls[index].marginToken]: _marginTokenRewardBalance
+                  origin: isLT(_drfRewardBalance, 0) ? '0' : _drfRewardBalance,
+                  [calls[index].marginToken]: isLT(_marginTokenRewardBalance, 0) ? '0' : _marginTokenRewardBalance
                 }
               }
             })
@@ -209,4 +208,49 @@ export const useAllBrokerRewards = (trader?: string, config?: Record<string, any
   )
 
   return { data, refetch, isLoading }
+}
+
+export const useTraderVariables = (trader?: string, config?: Record<string, any>) => {
+  let output = initial1()
+
+  const { data, refetch } = useQuery(
+    ['useTraderVariables'],
+    async () => {
+      if (trader && config && config[DEFAULT_MARGIN_TOKEN.symbol].exchange) {
+        const calls = Object.keys(config).map((key) => ({
+          name: 'getTraderVariables',
+          params: [trader],
+          address: config[key as MarginTokenKeys].exchange
+        }))
+
+        const response = await multicall(DerifyExchangeAbi, calls)
+
+        if (!isEmpty(response)) {
+          response.forEach((data: any, index: number) => {
+            const { totalPositionAmount } = data
+            output = {
+              ...output,
+              [Object.keys(config)[index]]: formatUnits(String(totalPositionAmount), 8)
+            }
+          })
+
+          // console.info(output)
+          return output
+        }
+
+        return output
+      }
+
+      return output
+    },
+    {
+      retry: false,
+      initialData: output,
+      refetchInterval: 6000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data, refetch }
 }

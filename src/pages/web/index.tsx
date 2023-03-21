@@ -198,7 +198,7 @@ const Web: FC = () => {
             </RConnectWallet>
           )}
         />
-        <Route path="/my-space" render={() => <MySpace />} />
+        <Route path="/space" render={() => <MySpace />} />
         <Route path="/system" render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
       </Switch>

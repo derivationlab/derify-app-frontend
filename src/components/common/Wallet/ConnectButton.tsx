@@ -89,7 +89,7 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   return (
     <>
       {isConnected && address ? (
-        <Button className="c-connect-wallet-btn" size={size} to="/my-space">
+        <Button className="c-connect-wallet-btn" size={size} to="/space">
           {memoAccountHide}
         </Button>
       ) : (

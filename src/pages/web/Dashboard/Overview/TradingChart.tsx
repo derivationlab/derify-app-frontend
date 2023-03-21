@@ -22,7 +22,7 @@ const TradingChart: FC = () => {
   const { data } = useCurrentTotalTradingNetValue(findToken(marginToken).tokenAddress, 'all')
 
   const combineDAT = useMemo(() => {
-    if (data) output = { day_time: time, ...data }
+    if (data) output = { day_time: time, trading_net_value: data?.trading_net_value ?? 0 }
     return [...chartData, output]
   }, [chartData, data])
 

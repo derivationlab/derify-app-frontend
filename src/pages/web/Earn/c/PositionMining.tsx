@@ -86,7 +86,7 @@ const PositionMining: FC = () => {
       </header>
       <section className="web-eran-item-main">
         <div className="web-eran-item-dashboard">
-          <DecimalShow value={Number(memoPositionApy)} percent suffix="(max)" />
+          <DecimalShow value={keepDecimals(memoPositionApy, 2)} percent suffix="(max)" />
           <u>APR.</u>
         </div>
         <div className="web-eran-item-claim">

@@ -189,7 +189,7 @@ const Web: FC = () => {
             </RBrokerProfile>
           )}
         />
-        <Route path={`/${marginToken}/dashboard/overview`} component={Overview} />
+        <Route path="/dashboard/overview" component={Overview} />
         <Route path="/dashboard/buyback" component={BuybackPlan} />
         <Route
           path="/dashboard/grant"

@@ -60,7 +60,7 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
               <em />
               <ul>
                 <li>
-                  <NavLink to={`/dashboard/overview`}>Overview</NavLink>
+                  <NavLink to="/dashboard/overview">Overview</NavLink>
                 </li>
                 <li>
                   <NavLink to={`/dashboard/buyback-plan`}>Buyback Plan</NavLink>

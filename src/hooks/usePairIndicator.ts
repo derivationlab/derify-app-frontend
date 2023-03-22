@@ -42,11 +42,11 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
     data.forEach(
       ({
         token,
-        longMarginTokenPmrRate = 0,
         longDrfPmrRate = 0,
         shortDrfPmrRate = 0,
-        shortMarginTokenPmrRate = 0,
         price_change_rate = 0,
+        longMarginTokenPmrRate = 0,
+        shortMarginTokenPmrRate = 0,
         ...rest
       }: Record<string, any>) => {
         const quote = findToken(token).symbol

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useContext, useEffect, useMemo } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { keepDecimals } from '@/utils/tools'
+import { isLTET, keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
@@ -31,13 +31,14 @@ const HeaderData: FC = () => {
   }, [pcfRatio])
 
   const memoPositionApy = useMemo(() => {
-    const longPmrRate = indicators?.longPmrRate ?? 0
-    const shortPmrRate = indicators?.shortPmrRate ?? 0
+    const match = indicators?.[quoteToken]
+    const longPmrRate = match?.longPmrRate ?? 0
+    const shortPmrRate = match?.shortPmrRate ?? 0
     return [
-      Number(longPmrRate) <= 0 ? '0.00' : keepDecimals(longPmrRate * 100, 2),
-      Number(shortPmrRate) <= 0 ? '0.00' : keepDecimals(shortPmrRate * 100, 2)
+      keepDecimals(isLTET(longPmrRate, 0) ? 0 : longPmrRate, 4),
+      keepDecimals(isLTET(shortPmrRate, 0) ? 0 : shortPmrRate, 4)
     ]
-  }, [indicators])
+  }, [quoteToken, indicators])
 
   const positionInfo = useMemo(() => {
     if (positionsAmount) {

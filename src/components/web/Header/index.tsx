@@ -41,7 +41,7 @@ const Header: FC = () => {
             <em />
             <ul>
               <li>
-                <NavLink to={`/${marginToken}/dashboard/overview`}>Overview</NavLink>
+                <NavLink to="/dashboard/overview">Overview</NavLink>
               </li>
               <li>
                 <NavLink to={`/dashboard/buyback`}>Buyback Plan</NavLink>

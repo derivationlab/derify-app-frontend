@@ -3,14 +3,16 @@ import React, { FC } from 'react'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
+import { useConfigInfo, useMarginToken } from '@/store'
 import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
-import { BENCHMARK_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { useMarginToken } from '@/store'
+import { findToken, PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { bnMul } from '@/utils/tools'
 
 const Datas: FC = () => {
   const { data = 0 } = useBlockNumber({ watch: true })
 
   const marginToken = useMarginToken((state) => state.marginToken)
+  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
 
   const { data: dashboardDAT } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
@@ -19,15 +21,15 @@ const Datas: FC = () => {
       <div className="web-dashboard-plan-datas-item">
         <header>Total Buyback Value</header>
         <section>
-          <BalanceShow value={dashboardDAT?.drfBuyBack} />
-          <u>{PLATFORM_TOKEN.symbol}</u>
+          <BalanceShow value={bnMul(dashboardDAT?.drfBuyBack, mTokenPrices[marginToken])} />
+          <u>{VALUATION_TOKEN_SYMBOL}</u>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">
         <header>Current {PLATFORM_TOKEN.symbol} Price</header>
         <section>
           <BalanceShow value={dashboardDAT?.drfPrice} />
-          <u>{BENCHMARK_TOKEN.symbol}</u>
+          <u>{VALUATION_TOKEN_SYMBOL}</u>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">

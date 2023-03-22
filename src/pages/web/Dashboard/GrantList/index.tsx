@@ -91,7 +91,6 @@ const GrantList: FC = () => {
 
   return (
     <div className="web-dashboard">
-      {/*<button onClick={_addGrantPlan}>fetchData</button>*/}
       <header className="web-dashboard-grant-header">
         <Select
           large

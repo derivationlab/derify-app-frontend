@@ -35,6 +35,7 @@ export const TableCountDown: FC<TableCountDownProps> = ({ timestamp }) => {
   useEffect(() => {
     const timer: NodeJS.Timer = setInterval(function () {
       if (estimatedTime[4] && timer) return clearInterval(timer)
+      console.info(timestamp, calcDateDuration(timestamp))
       setEstimatedTime(calcDateDuration(timestamp))
     }, 1000)
 

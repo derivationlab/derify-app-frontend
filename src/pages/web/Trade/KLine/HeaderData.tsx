@@ -44,7 +44,7 @@ const HeaderData: FC = () => {
       const { long_position_amount = 0, short_position_amount = 0 } = positionsAmount
       const m = long_position_amount - short_position_amount
       const n = long_position_amount + short_position_amount
-      const x = ((m / n) * 100).toFixed(2)
+      const x = (m / n).toFixed(4)
       return [m, n === 0 || m === 0 ? 0 : x]
     }
     return [0, 0]

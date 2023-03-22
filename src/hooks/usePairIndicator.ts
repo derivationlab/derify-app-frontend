@@ -22,7 +22,7 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
   const output = initial()
 
   const { data } = useQuery(
-    ['getPairIndicator'],
+    ['usePairIndicator'],
     async (): Promise<Record<string, any>[]> => {
       const m = findMarginToken(marginToken)!
       const data = await getPairIndicator(m.tokenAddress)

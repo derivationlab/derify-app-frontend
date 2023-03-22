@@ -1,44 +1,54 @@
 import { isEmpty } from 'lodash'
 import { useSigner } from 'wagmi'
-import { useParams } from 'react-router-dom'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 
 import { OpeningType } from '@/store/useCalcOpeningDAT'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
-import { DEFAULT_MARGIN_TOKEN, findMarginToken, findToken } from '@/config/tokens'
-import { MarginTokenKeys, PositionSideTypes, PositionTriggerTypes } from '@/typings'
+import { findMarginToken, findToken } from '@/config/tokens'
+import { PositionSideTypes, PositionTriggerTypes } from '@/typings'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export const useOpeningPosition = () => {
   const { data: signer } = useSigner()
 
-  const opening = useCallback(
-    async (
-      exchange: string,
-      brokerId: string,
-      qtAddress: string, // quote token address
-      positionSide: PositionSideTypes,
-      openingType: OpeningType,
-      pricingType: string,
-      openingPrice: string,
-      posLeverage: number,
-      openingSize: number,
-      conversion?: boolean
-    ): Promise<boolean> => {
-      if (!signer) return false
+  const opening = async (
+    exchange: string,
+    brokerId: string,
+    qtAddress: string, // quote token address
+    positionSide: PositionSideTypes,
+    openingType: OpeningType,
+    pricingType: string,
+    openingPrice: string,
+    posLeverage: number,
+    openingSize: number,
+    conversion?: boolean
+  ): Promise<boolean> => {
+    if (!signer) return false
 
-      const c = getDerifyExchangeContract(exchange, signer)
+    const c = getDerifyExchangeContract(exchange, signer)
 
-      // getUintAmount?
-      const _posLeverage = inputParameterConversion(posLeverage, 8)
-      const _pricingType = findMarginToken(pricingType) ? 1 : 0
-      const _openingType = conversion ? OpeningType.Market : openingType
-      const _openingSize = inputParameterConversion(openingSize, 8)
-      const _openingPrice = inputParameterConversion(openingPrice, 8)
+    // getUintAmount?
+    const _posLeverage = inputParameterConversion(posLeverage, 8)
+    const _pricingType = findMarginToken(pricingType) ? 1 : 0
+    const _openingType = conversion ? OpeningType.Market : openingType
+    const _openingSize = inputParameterConversion(openingSize, 8)
+    const _openingPrice = inputParameterConversion(openingPrice, 8)
 
-      console.info([
+    console.info([
+      brokerId,
+      qtAddress,
+      positionSide,
+      _openingType,
+      _pricingType,
+      _openingSize,
+      _openingPrice,
+      _posLeverage
+    ])
+    try {
+      // const gasLimit = await estimateGas(c, 'openPosition', params, 0)
+      const res = await c.openPosition(
         brokerId,
         qtAddress,
         positionSide,
@@ -46,32 +56,18 @@ export const useOpeningPosition = () => {
         _pricingType,
         _openingSize,
         _openingPrice,
-        _posLeverage
-      ])
-      try {
-        // const gasLimit = await estimateGas(c, 'openPosition', params, 0)
-        const res = await c.openPosition(
-          brokerId,
-          qtAddress,
-          positionSide,
-          _openingType,
-          _pricingType,
-          _openingSize,
-          _openingPrice,
-          _posLeverage,
-          {
-            gasLimit: 3000000
-          }
-        )
-        const receipt = await res.wait()
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
+        _posLeverage,
+        {
+          gasLimit: 3000000
+        }
+      )
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { opening }
 }
@@ -224,74 +220,71 @@ export const useWithdrawMargin = () => {
 export const useTakeProfitOrStopLoss = () => {
   const { data: signer } = useSigner()
 
-  const takeProfitOrStopLoss = useCallback(
-    async (
-      pairAddress: string,
-      positionSide: PositionSideTypes,
-      takeProfitPrice: number,
-      stopLossPrice: number
-    ): Promise<boolean> => {
-      if (!signer) return false
+  const takeProfitOrStopLoss = async (
+    pairAddress: string,
+    positionSide: PositionSideTypes,
+    takeProfitPrice: number,
+    stopLossPrice: number
+  ): Promise<boolean> => {
+    if (!signer) return false
 
-      const c = getDerifyDerivativePairContract(pairAddress, signer)
-      const job = calcProfitOrLoss(takeProfitPrice, stopLossPrice)
+    const c = getDerifyDerivativePairContract(pairAddress, signer)
+    const job = calcProfitOrLoss(takeProfitPrice, stopLossPrice)
 
-      if (isEmpty(job)) return true
+    if (isEmpty(job)) return true
 
-      const _stopLossPrice = inputParameterConversion(stopLossPrice, 8)
-      const _takeProfitPrice = inputParameterConversion(takeProfitPrice, 8)
-      const { method, stopType, orderStopType, cancelStopType } = job
+    const _stopLossPrice = inputParameterConversion(stopLossPrice, 8)
+    const _takeProfitPrice = inputParameterConversion(takeProfitPrice, 8)
+    const { method, stopType, orderStopType, cancelStopType } = job
 
-      try {
-        if (method === 'orderStopPosition') {
-          const gasLimit = await estimateGas(
-            c,
-            'orderStopPosition',
-            [positionSide, stopType, _takeProfitPrice, _stopLossPrice],
-            0
-          )
-          const data = await c.orderStopPosition(positionSide, stopType, _takeProfitPrice, _stopLossPrice, {
-            gasLimit
-          })
-          const receipt = await data.wait()
-          return receipt.status
-        }
-        /**
-         #### cancleOrderedStopPosition
-         */
-        if (method === 'cancelOrderedStopPosition') {
-          const gasLimit = await estimateGas(c, 'cancelOrderedStopPosition', [stopType, positionSide], 0)
-          const data = await c.cancelOrderedStopPosition(stopType, positionSide, { gasLimit })
-          const receipt = await data.wait()
-          return receipt.status
-        }
-        /**
-         #### orderAndCancleStopPosition
-         */
-        if (method === 'orderAndCancelStopPosition') {
-          const price = orderStopType === 0 ? _takeProfitPrice : _stopLossPrice
-
-          const gasLimit = await estimateGas(
-            c,
-            'orderAndCancelStopPosition',
-            [positionSide, orderStopType, price, cancelStopType],
-            0
-          )
-          const data = await c.orderAndCancelStopPosition(positionSide, orderStopType, price, cancelStopType, {
-            gasLimit
-          })
-          const receipt = await data.wait()
-          return receipt.status
-        }
-
-        return false
-      } catch (e) {
-        console.info(e)
-        return false
+    try {
+      if (method === 'orderStopPosition') {
+        const gasLimit = await estimateGas(
+          c,
+          'orderStopPosition',
+          [positionSide, stopType, _takeProfitPrice, _stopLossPrice],
+          0
+        )
+        const data = await c.orderStopPosition(positionSide, stopType, _takeProfitPrice, _stopLossPrice, {
+          gasLimit
+        })
+        const receipt = await data.wait()
+        return receipt.status
       }
-    },
-    [signer]
-  )
+      /**
+       #### cancleOrderedStopPosition
+       */
+      if (method === 'cancelOrderedStopPosition') {
+        const gasLimit = await estimateGas(c, 'cancelOrderedStopPosition', [stopType, positionSide], 0)
+        const data = await c.cancelOrderedStopPosition(stopType, positionSide, { gasLimit })
+        const receipt = await data.wait()
+        return receipt.status
+      }
+      /**
+       #### orderAndCancleStopPosition
+       */
+      if (method === 'orderAndCancelStopPosition') {
+        const price = orderStopType === 0 ? _takeProfitPrice : _stopLossPrice
+
+        const gasLimit = await estimateGas(
+          c,
+          'orderAndCancelStopPosition',
+          [positionSide, orderStopType, price, cancelStopType],
+          0
+        )
+        const data = await c.orderAndCancelStopPosition(positionSide, orderStopType, price, cancelStopType, {
+          gasLimit
+        })
+        const receipt = await data.wait()
+        return receipt.status
+      }
+
+      return false
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { takeProfitOrStopLoss }
 }
@@ -338,20 +331,4 @@ export const useClosePosition = () => {
   )
 
   return { close }
-}
-
-export const useMTokenFromRoute = () => {
-  const params: any = useParams()
-
-  const marginToken = useMemo(() => {
-    if (params?.id) {
-      const find = findMarginToken(params.id)
-      return find?.symbol
-    }
-    return DEFAULT_MARGIN_TOKEN.symbol
-  }, [params.id]) as MarginTokenKeys
-
-  return {
-    marginToken
-  }
 }

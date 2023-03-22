@@ -587,7 +587,7 @@ export const getPCFAndSpotPrice = async (p: MarginTokenWithQuote) => {
   if (!isEmpty(response)) {
     const _chunk = chunk(response, calls1.length) as any[]
     _chunk[0].forEach((ratio: BigNumberish, index: number) => {
-      const _ratio = Number(safeInterceptionValues(String(ratio), 4)) * 100
+      const _ratio = Number(safeInterceptionValues(String(ratio), 8, 8)) * 100
       const { marginToken, quoteToken } = calls1[index]
       output1[marginToken as MarginTokenKeys] = { ...output1[marginToken as MarginTokenKeys], [quoteToken]: _ratio }
     })

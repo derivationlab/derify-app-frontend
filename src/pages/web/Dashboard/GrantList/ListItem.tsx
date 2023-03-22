@@ -46,7 +46,9 @@ const ListItem: FC<Props> = ({ data }) => {
       </dl>
       <dl>
         <dt>Rewards</dt>
-        <dd>{keepDecimals(data.amount, PLATFORM_TOKEN.decimals, true)}</dd>
+        <dd>
+          {keepDecimals(data.amount, PLATFORM_TOKEN.decimals, true)} {margin?.symbol}
+        </dd>
       </dl>
       <dl>
         <dt>Start</dt>

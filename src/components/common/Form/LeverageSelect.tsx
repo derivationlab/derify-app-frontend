@@ -32,8 +32,8 @@ const LeverageSelect: FC<Props> = ({ value, onChange, className }) => {
         {value}x
       </div>
       <div className="web-leverage-select-stepper">
-        <Stepper value={multiple} min={1} onChange={setMultiple} suffix="X" max={75} input />
-        <Slider value={multiple} onChange={setMultiple} suffix="X" marks={[1, 15, 30, 45, 60, 75]} />
+        <Stepper value={multiple} min={1} onChange={setMultiple} suffix="X" max={30} input />
+        <Slider value={multiple} onChange={setMultiple} suffix="X" marks={[1, 5, 10, 15, 20, 25, 30]} />
         <Button full size="medium" onClick={onConfirm}>
           Confirm
         </Button>

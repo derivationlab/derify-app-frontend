@@ -1,7 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 
-import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
 import { FaucetLinks } from '@/data/links'
 
 import NotConnect from '@/components/web/NotConnect'

@@ -1,9 +1,8 @@
 import days from 'dayjs'
 import { isArray } from 'lodash'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginToken } from '@/store'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { getHistoryTotalPositionsNetValue } from '@/api'
 import { useCurrentTotalPositionsNetValue } from '@/hooks/useQueryApi'
 
@@ -17,17 +16,15 @@ const time = days().utc().startOf('days').format()
 const PositionChart: FC = () => {
   const [chartData, setChartData] = useState<any>([])
 
-  const marginToken = useMarginToken((state) => state.marginToken)
-
-  const { data } = useCurrentTotalPositionsNetValue(findToken(marginToken).tokenAddress, 'all')
+  const { data } = useCurrentTotalPositionsNetValue('all', 'all')
 
   const combineDAT = useMemo(() => {
     if (data) output = { day_time: time, ...data }
     return [...chartData, output]
   }, [chartData, data])
 
-  const historyDAT = useCallback(async () => {
-    const { data } = await getHistoryTotalPositionsNetValue(findToken(marginToken).tokenAddress, 'all')
+  const historyDAT = async () => {
+    const { data } = await getHistoryTotalPositionsNetValue('all', 'all')
 
     if (isArray(data)) {
       const convert = data
@@ -35,11 +32,11 @@ const PositionChart: FC = () => {
         .reverse()
       setChartData(convert)
     }
-  }, [marginToken])
+  }
 
   useEffect(() => {
     void historyDAT()
-  }, [marginToken])
+  }, [])
 
   return (
     <div className="web-dashboard-overview-charts">

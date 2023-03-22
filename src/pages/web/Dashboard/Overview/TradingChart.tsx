@@ -1,9 +1,8 @@
 import days from 'dayjs'
 import { isArray } from 'lodash'
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginToken } from '@/store'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { getHistoryTotalTradingNetValue } from '@/api'
 import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
 
@@ -17,27 +16,25 @@ const time = days().utc().startOf('days').format()
 const TradingChart: FC = () => {
   const [chartData, setChartData] = useState<any>([])
 
-  const marginToken = useMarginToken((state) => state.marginToken)
-
-  const { data } = useCurrentTotalTradingNetValue(findToken(marginToken).tokenAddress, 'all')
+  const { data } = useCurrentTotalTradingNetValue('all', 'all')
 
   const combineDAT = useMemo(() => {
     if (data) output = { day_time: time, trading_net_value: data?.trading_net_value ?? 0 }
     return [...chartData, output]
   }, [chartData, data])
 
-  const historyDAT = useCallback(async () => {
-    const { data } = await getHistoryTotalTradingNetValue(findToken(marginToken).tokenAddress, 'all')
+  const historyDAT = async () => {
+    const { data } = await getHistoryTotalTradingNetValue('all', 'all')
 
     if (isArray(data)) {
       const convert = data.map((o) => ({ ...o, trading_net_value: Number(o.trading_net_value) })).reverse()
       setChartData(convert)
     }
-  }, [marginToken])
+  }
 
   useEffect(() => {
     void historyDAT()
-  }, [marginToken])
+  }, [])
 
   return (
     <div className="web-dashboard-overview-charts">

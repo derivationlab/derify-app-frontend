@@ -15,6 +15,21 @@ import {
   getCurrentTotalTradingNetValue,
   getCurrentTotalPositionsNetValue
 } from '@/api'
+import { MARGIN_TOKENS } from '@/config/tokens'
+import { MarginToken } from '@/typings'
+
+const initial = (): MarginToken => {
+  let value = Object.create(null)
+
+  MARGIN_TOKENS.forEach((t) => {
+    value = {
+      ...value,
+      [t.symbol]: {}
+    }
+  })
+
+  return value
+}
 
 export const useCurrentIndexDAT = (marginToken: string) => {
   const { data, refetch } = useQuery(
@@ -36,6 +51,44 @@ export const useCurrentIndexDAT = (marginToken: string) => {
   if (!isEmpty(data)) return { refetch, data }
 
   return { refetch }
+}
+
+export const useMulCurrentIndexDAT = () => {
+  let output = initial()
+
+  const { data } = useQuery(
+    ['useMulCurrentIndexDAT'],
+    async (): Promise<Record<string, any>> => {
+      const promises = MARGIN_TOKENS.map(async (token) => {
+        return [await getCurrentIndexDAT(token.tokenAddress).then(({ data }) => data)]
+      })
+
+      const response = await Promise.all(promises)
+
+      if (response.length > 0) {
+        response.forEach(([margin], index) => {
+          output = {
+            ...output,
+            [MARGIN_TOKENS[index].symbol]: margin
+          }
+        })
+        // console.info(output)
+
+        return output
+      }
+
+      return output
+    },
+    {
+      retry: 0,
+      initialData: output,
+      refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data }
 }
 
 export const useTraderEDRFBalance = (trader = '') => {

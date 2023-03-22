@@ -1,12 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 
 import { calcDateDuration } from '@/utils/tools'
+import { getJsonRpcProvider } from '@/utils/chainSupport'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
-import { ethers } from 'ethers'
-import { getJsonRpcProvider } from '@/utils/chainSupport'
-import dayjs from 'dayjs'
 
 interface TableMarginProps {
   icon: string

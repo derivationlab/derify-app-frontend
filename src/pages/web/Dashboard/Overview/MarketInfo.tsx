@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { isEmpty } from 'lodash'
 import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useEffect } from 'react'
 
-import { bnMul } from '@/utils/tools'
+import { bnMul, keepDecimals } from '@/utils/tools'
 import { useConfigInfo } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
 import { MarginTokenKeys } from '@/typings'
@@ -80,8 +80,8 @@ const MarketInfo: FC = () => {
         title: 'Max Position Mining APY',
         dataIndex: 'symbol',
         render: (symbol: string) => {
-          const apy = eval(Object.values(indicators[symbol as MarginTokenKeys]).join('+'))
-          const per = bnMul(apy, 100)
+          const apy = Math.max.apply(null, Object.values(indicators[symbol as MarginTokenKeys]))
+          const per = keepDecimals(bnMul(apy, 100), 2)
           return <DecimalShow value={per} percent black />
         }
       },

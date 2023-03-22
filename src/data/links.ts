@@ -21,5 +21,6 @@ export const FaucetLinks: Record<string, string> = {
   [DEFAULT_MARGIN_TOKEN.symbol]:
     'https://docs.google.com/forms/d/e/1FAIpQLSesoXfNkoXbF9KoDf_cCq-CqND4xD62GLVcf2F1jUGk3D3WZA/viewform',
   rETH: 'https://www.rinkeby.io/#faucet',
-  BNB: 'https://testnet.binance.org/faucet-smart'
+  BNB: 'https://testnet.binance.org/faucet-smart',
+  tTOKEN: 'https://docs.google.com/forms/d/e/1FAIpQLSeLFM9daYrB1g_gYRHItQZdc2IUG5Ob5Jtb2vEEMbmMqQ-ACA/viewform'
 }

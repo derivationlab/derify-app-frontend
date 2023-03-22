@@ -2,7 +2,7 @@ import days from 'dayjs'
 import { isArray } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { findToken } from '@/config/tokens'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginToken } from '@/store'
 import { getHistoryTotalTradingNetValue } from '@/api'
 import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
@@ -43,7 +43,7 @@ const TradingChart: FC = () => {
     <div className="web-dashboard-overview-charts">
       <header>
         <label>Total Trading Value</label>
-        <BalanceShow value={data.trading_net_value} unit={marginToken} />
+        <BalanceShow value={data.trading_net_value} unit={VALUATION_TOKEN_SYMBOL} />
       </header>
       <section>
         <BarChart
@@ -51,7 +51,7 @@ const TradingChart: FC = () => {
           data={combineDAT}
           xKey="day_time"
           enableLegend={false}
-          timeFormatStr={'YYYY-MM-DD HH:mm'}
+          timeFormatStr={'YYYY-MM-DD'}
           yFormat={[
             {
               label: 'Value',

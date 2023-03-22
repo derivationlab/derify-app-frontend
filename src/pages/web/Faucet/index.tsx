@@ -27,13 +27,10 @@ const Faucet: FC = () => {
 
   return (
     <div className="web-faucet">
-      <Button size="mini" onClick={() => window.open(FaucetLinks[DEFAULT_MARGIN_TOKEN.symbol])}>
-        Get 100,000 tBUSD
+      <Button size="mini" onClick={() => window.open(FaucetLinks.tTOKEN)}>
+        Get 10,000 tTOKEN
       </Button>
-      {/*<Button type="gray" size="mini">*/}
-      {/*  You've claimed tBUSD*/}
-      {/*</Button>*/}
-      <a href={targetTokenInfo[1]} target="_blank">
+      <a href={FaucetLinks.BNB} target="_blank">
         Get testnet {targetTokenInfo[0]} from official faucet
       </a>
     </div>

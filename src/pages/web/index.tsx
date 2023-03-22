@@ -23,6 +23,7 @@ import Toast from '@/components/common/Toast'
 import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
 import Data from '@/pages/web/Data'
+import Faucet from '@/pages/web/Faucet'
 import BrokerRank from '@/pages/web/Broker/Rank'
 import BrokerBind from '@/pages/web/Broker/Bind'
 import BrokerBound from '@/pages/web/Broker/MyBroker'
@@ -198,6 +199,7 @@ const Web: FC = () => {
             </RConnectWallet>
           )}
         />
+        <Route path="/faucet" render={() => <Faucet />} />
         <Route path="/space" render={() => <MySpace />} />
         <Route path="/system" render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />

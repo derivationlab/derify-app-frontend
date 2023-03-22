@@ -2,7 +2,7 @@ import days from 'dayjs'
 import { isArray } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { findToken } from '@/config/tokens'
+import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginToken } from '@/store'
 import { getHistoryTotalPositionsNetValue } from '@/api'
 import { useCurrentTotalPositionsNetValue } from '@/hooks/useQueryApi'
@@ -45,7 +45,7 @@ const PositionChart: FC = () => {
     <div className="web-dashboard-overview-charts">
       <header>
         <label>Total Position Value</label>
-        <BalanceShow value={data.total_positions_net_value} unit={marginToken} />
+        <BalanceShow value={data.total_positions_net_value} unit={VALUATION_TOKEN_SYMBOL} />
       </header>
       <section>
         <BarChart
@@ -53,7 +53,7 @@ const PositionChart: FC = () => {
           data={combineDAT}
           xKey="day_time"
           enableLegend={false}
-          timeFormatStr={'YYYY-MM-DD HH:mm'}
+          timeFormatStr={'YYYY-MM-DD'}
           yFormat={[
             {
               label: 'Value',

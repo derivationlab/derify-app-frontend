@@ -62,8 +62,8 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yFormat, timeFormatStr, enableL
               ))}
             </defs>
             <CartesianGrid strokeDasharray="3 0" vertical={false} />
-            <XAxis dataKey={xKey} interval={0} minTickGap={10} tickFormatter={formatTime} />
-            <YAxis orientation="right" tickFormatter={formatValue} />
+            <XAxis fontSize={14} dataKey={xKey} interval={0} minTickGap={10} tickFormatter={formatTime} />
+            <YAxis fontSize={14} orientation="right" tickFormatter={formatValue} />
             {enableLegend && <Legend formatter={formatLegend} />}
             <Tooltip
               formatter={formatTip}

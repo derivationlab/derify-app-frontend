@@ -4,6 +4,9 @@ import { calcDateDuration } from '@/utils/tools'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
+import { ethers } from 'ethers'
+import { getJsonRpcProvider } from '@/utils/chainSupport'
+import dayjs from 'dayjs'
 
 interface TableMarginProps {
   icon: string
@@ -20,10 +23,12 @@ export const TableMargin: FC<TableMarginProps> = ({ icon, name }) => {
 }
 
 interface TableCountDownProps {
-  timestamp: number
+  cycle: number
+  blockNumber: number
 }
 
-export const TableCountDown: FC<TableCountDownProps> = ({ timestamp }) => {
+export const TableCountDown: FC<TableCountDownProps> = ({ cycle, blockNumber }) => {
+  const [initTimestamp, setInitTimestamp] = useState<number>(0)
   const [estimatedTime, setEstimatedTime] = useState<[number, string, string, string, boolean]>([
     0,
     '0',
@@ -32,17 +37,25 @@ export const TableCountDown: FC<TableCountDownProps> = ({ timestamp }) => {
     false
   ])
 
+  const funcAsync = async (blockNumber: number) => {
+    const { timestamp } = await getJsonRpcProvider().getBlock(blockNumber)
+    setInitTimestamp(timestamp * 1000 + cycle * 3 * 1000)
+  }
+
+  useEffect(() => {
+    if (blockNumber > 0) void funcAsync(blockNumber)
+  }, [])
+
   useEffect(() => {
     const timer: NodeJS.Timer = setInterval(function () {
       if (estimatedTime[4] && timer) return clearInterval(timer)
-      console.info(timestamp, calcDateDuration(timestamp))
-      setEstimatedTime(calcDateDuration(timestamp))
+      if (initTimestamp > 0) setEstimatedTime(calcDateDuration(initTimestamp))
     }, 1000)
 
     return () => {
       clearInterval(timer)
     }
-  }, [estimatedTime])
+  }, [estimatedTime, initTimestamp])
 
   return (
     <Button className="web-dashboard-table-countdown" size="medium">

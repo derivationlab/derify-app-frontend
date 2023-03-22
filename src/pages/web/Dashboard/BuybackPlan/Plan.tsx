@@ -16,11 +16,9 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
 import { MarginTokenKeys } from '@/typings'
-// import { useConfigInfo } from '@/store'
 import { useBlockNumber } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-// import { calcDateDuration } from '@/utils/tools'
-import Button from '@/components/common/Button'
+// import Button from '@/components/common/Button'
 
 const Plan: FC = () => {
   const { t } = useTranslation()
@@ -35,8 +33,6 @@ const Plan: FC = () => {
 
   // const [keyword, setKeyword] = useState('')
   const [keyword] = useState('')
-
-  // const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
 
   const mColumns = useMemo(() => {
     return [
@@ -67,7 +63,7 @@ const Plan: FC = () => {
           return (
             <>
               <BalanceShow value={block} rule="0,0" unit="Block" />
-              <TableCountDown timestamp={3679394727481} />
+              <TableCountDown cycle={data?.buyback_period} blockNumber={data?.last_buy_back_block} />
             </>
           )
         }
@@ -102,13 +98,10 @@ const Plan: FC = () => {
         }
       },
       {
-        title: 'Estimated Time', // todo
+        title: 'Estimated Time',
         dataIndex: 'symbol',
         render: (symbol: symbol, data: Record<string, any>) => {
-          const timestamp = data.open
-            ? (Number(data?.buyback_period) + Number(data?.last_buy_back_block)) * 3 * 1000
-            : 0
-          return <TableCountDown timestamp={timestamp} />
+          return <TableCountDown cycle={data?.buyback_period} blockNumber={data?.last_buy_back_block} />
         }
       }
     ]

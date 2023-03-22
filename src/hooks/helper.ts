@@ -16,6 +16,7 @@ import {
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 import {
   bnDiv,
+  bnMul,
   formatUnits,
   inputParameterConversion,
   isGT,
@@ -587,7 +588,7 @@ export const getPCFAndSpotPrice = async (p: MarginTokenWithQuote) => {
   if (!isEmpty(response)) {
     const _chunk = chunk(response, calls1.length) as any[]
     _chunk[0].forEach((ratio: BigNumberish, index: number) => {
-      const _ratio = Number(safeInterceptionValues(String(ratio), 8, 8)) * 100
+      const _ratio = bnMul(safeInterceptionValues(String(ratio), 8, 8), 100)
       const { marginToken, quoteToken } = calls1[index]
       output1[marginToken as MarginTokenKeys] = { ...output1[marginToken as MarginTokenKeys], [quoteToken]: _ratio }
     })
@@ -598,7 +599,7 @@ export const getPCFAndSpotPrice = async (p: MarginTokenWithQuote) => {
         [quoteToken]: safeInterceptionValues(String(spotPrice), 8)
       }
     })
-
+    console.info(output1)
     return { data1: output1, data2: output2 }
   }
 

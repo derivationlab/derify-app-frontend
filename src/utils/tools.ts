@@ -9,8 +9,9 @@ import { formatUnits as _formatUnits } from '@ethersproject/units'
 dayjs.extend(duration)
 
 export const calcDateDuration = (s: number): [number, string, string, string, boolean] => {
+  console.info(s, new Date().getTime())
   const duration = dayjs.duration(dayjs(s).diff(dayjs()))
-  console.info(duration.asSeconds())
+  // console.info(duration.asSeconds())
   const days = duration.days()
   const hours = String(duration.hours()).padStart(2, '0')
   const minutes = String(duration.minutes()).padStart(2, '0')

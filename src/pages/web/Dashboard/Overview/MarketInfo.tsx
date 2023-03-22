@@ -65,8 +65,8 @@ const MarketInfo: FC = () => {
         title: 'Max APY',
         dataIndex: 'symbol',
         render: (symbol: string) => {
-          const apy = eval(Object.values(indicators[symbol as MarginTokenKeys]).join('+'))
-          const per = bnMul(apy, 100)
+          const apy = Math.max.apply(null, Object.values(indicators[symbol as MarginTokenKeys]))
+          const per = keepDecimals(bnMul(apy, 100), 2)
           return <DecimalShow value={per} percent black />
         }
       }

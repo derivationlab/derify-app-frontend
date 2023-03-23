@@ -18,8 +18,8 @@ const MHeader: FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const navList = [
-    { url: `/${marginToken}/earn`, name: t('Nav.Nav.Earn', 'Earn') },
     { url: `/${marginToken}/trade`, name: t('Nav.Nav.Trade', 'Trade') },
+    { url: `/${marginToken}/earn`, name: t('Nav.Nav.Earn', 'Earn') },
     { url: `/broker`, name: t('Nav.Nav.Broker', 'Broker') },
     // { url: `/${marginToken}/dashboard`, name: t('Nav.Nav.Dashboard', 'Dashboard') }
     { url: `/${marginToken}/data`, name: t('Nav.Nav.Data', 'Data') }

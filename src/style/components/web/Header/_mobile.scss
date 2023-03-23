@@ -48,7 +48,7 @@
     }
   }
 
-  nav {
+  & > nav {
     padding: rem(32);
     & > ul > li {
       a {
@@ -59,24 +59,35 @@
         }
       }
     }
-    span {
-      display: flex;align-items: center;padding: 0 rem(24);position: relative;
-      height: rem(48);border-radius: rem(24);justify-content: space-between;
+    nav {
+      position: relative;
+      span {
+        display: flex;align-items: center;padding: 0 rem(24);
+        height: rem(48);border-radius: rem(24);justify-content: space-between;
+      }
       &.active {
         font-weight: bold;font-weight: bold;color: $cff;color: $red;
         em {
           border-color: $red;border-width: 0 0 2px 2px;
         }
       }
+      &.show {
+        em {
+          @include xz(-45);
+        }
+        ul {
+          max-height: rem(120)
+        }
+      }
       em {
         display: block;width: 8px;height: 8px;margin-left: 8px;
         border-width: 0 0 1.5px 1.5px;position: relative;top: -2px;
         border-style: solid; border-color: $c88;
-        @include xz(-45);
+        @include xz(-225);
         @include dz();
       }
       ul {
-        position: absolute;top: rem(48);left: rem(40);
+        padding-left: rem(40);max-height: rem(0);@include dz();overflow: hidden;
         li {
           a {
             height: rem(32);display: flex;align-items: center;font-size: rem(14);
@@ -143,7 +154,7 @@
       }
     }
 
-    nav {
+    & > nav {
       & > ul > li {
         a {
           &.active {
@@ -151,7 +162,7 @@
           }
         }
       }
-      span {
+      nav {
         &.active {
           color: $yellow;
           em {

@@ -41,6 +41,7 @@
       ul {
         position: absolute;background: $cff;padding: 10px 0;border-radius: 10px;max-height: 0;overflow: hidden;left: -20px;top: 40px;
         @include dz();z-index: 20;opacity: 0;
+        box-shadow: 0px 0px 8px rgba($c00, 0.2);
         a {
           font-size: 16px;margin: 0;padding: 0 20px;white-space: nowrap;
         }
@@ -77,9 +78,29 @@
       }
     }
     &-nav {
-      a {
+      a, span {
+
         &.active {
           color: $yellow;
+          em {
+            border-color: $yellow;
+          }
+        }
+
+        em {
+          border-color: $c88;
+        }
+
+        ul {
+          background: $c22;
+          box-shadow: 0px 0px 8px rgba($c00, 0.8);
+        }
+
+        &:hover {
+          color: $yellow;
+          em {
+            border-color: $yellow;
+          }
         }
       }
     }

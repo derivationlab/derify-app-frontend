@@ -11,7 +11,25 @@ export default {
       And: 'and',
       ClaimAll: 'Claim All',
       Positions: 'Positions',
-      OpenPosition: 'Open Position'
+      OpenPosition: 'Open Position',
+      // 以下为2023年03月23日新增
+      RankList: 'Rank List',
+      PositionMiningRank: 'Position Mining Rank',
+      Address: 'Address',
+      TotalRewards: 'Total Rewards',
+      Rank: 'Rank'
+    },
+    Trading: {
+      TradingCompetition: 'Trading Competition',
+      HigherTheRanking: 'Higher the ranking, more rewards from trading',
+      JoinTrading: 'Join trading competition to earn rewards',
+      RANK: 'RANK',
+      Claimable: 'Claimable',
+      ClaimAll: 'Claim All',
+      TotalEarned: 'Total earned',
+      RewardsPool: 'Rewards pool',
+      Trade: 'Trade',
+      ActiveGrants: 'Active grants'
     },
     DerifyTokenPool: {
       DerifyTokenPool: 'DRF Pool',

@@ -320,6 +320,7 @@
           display: block;position: absolute;right: rem(12);top: rem(12);width: rem(14);height: rem(14);border: none;
         }
         input:focus + &-button, &-button:hover {
+          // background-image: url($res + 'icon/search-active-dark.svg');
         }
       }
     }
@@ -480,7 +481,11 @@
           background: $yellow;
         }
       }
-
+      &-search {
+        input:focus + &-button, &-button:hover {
+          background-image: url($res + 'icon/search-active-dark.svg');
+        }
+      }
     }
 
 

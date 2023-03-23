@@ -45,7 +45,7 @@ const MarketInfo: FC = () => {
   const mColumns = useMemo(() => {
     return [
       {
-        title: 'Margin',
+        title: t('NewDashboard.Overview.Margin'),
         dataIndex: 'name',
         render: (_: string, data: Record<string, any>) => (
           <TableMargin icon={`${STATIC_RESOURCES_URL}market/${data.symbol.toLowerCase()}.svg`} name={data.symbol} />
@@ -77,7 +77,7 @@ const MarketInfo: FC = () => {
     return [
       mColumns[0],
       {
-        title: 'Max Position Mining APY',
+        title: t('NewDashboard.Overview.MaxPositionMiningAPY'),
         dataIndex: 'symbol',
         render: (symbol: string) => {
           const apy = Math.max.apply(null, Object.values(indicators[symbol as MarginTokenKeys]))
@@ -86,24 +86,24 @@ const MarketInfo: FC = () => {
         }
       },
       {
-        title: 'Trading Volume',
+        title: t('NewDashboard.Overview.TradingVolume'),
         dataIndex: 'symbol',
         render: (symbol: string) => {
           return <BalanceShow value={tradingAmount[symbol]} unit={symbol} />
         }
       },
       {
-        title: 'Position Volume',
+        title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
         render: (symbol: string) => <BalanceShow value={positionInfo[symbol as MarginTokenKeys]} unit={symbol} />
       },
       {
-        title: 'Buyback Pool',
+        title: t('NewDashboard.Overview.BuybackPool'),
         dataIndex: 'symbol',
         render: (symbol: string) => <BalanceShow value={exchangeInfo[symbol as MarginTokenKeys]} unit={symbol} />
       },
       {
-        title: 'Detail Info',
+        title: t('NewDashboard.Overview.DetailInfo'),
         dataIndex: 'Margin',
         align: 'right',
         render: (_: string, data: Record<string, any>) => (
@@ -117,7 +117,7 @@ const MarketInfo: FC = () => {
 
   const emptyText = useMemo(() => {
     if (state.marketData.isLoaded) return 'Loading'
-    if (isEmpty(state.marketData.records)) return 'No Record'
+    if (isEmpty(state.marketData.records)) return t('NewDashboard.Overview.NoResultsFound')
     return ''
   }, [state.marketData])
 
@@ -180,10 +180,10 @@ const MarketInfo: FC = () => {
   return (
     <div className="web-dashboard-overview-market">
       <header className="web-dashboard-section-header">
-        <h3>Market Info</h3>
+        <h3>{t('NewDashboard.Overview.MarketInfo')}</h3>
         <div className="web-dashboard-section-header-search">
           {/*todo search*/}
-          {/*<Input value={keyword} onChange={setKeyword} placeholder='search name or contract address..'>*/}
+          {/*<Input value={keyword} onChange={setKeyword} placeholder={t('NewDashboard.Overview.SerchTip')}>*/}
           {/*  <button className='web-dashboard-section-header-search-button' onClick={onSearch} />*/}
           {/*</Input>*/}
         </div>

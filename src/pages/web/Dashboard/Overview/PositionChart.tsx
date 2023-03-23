@@ -1,6 +1,7 @@
 import days from 'dayjs'
 import { isArray } from 'lodash'
 import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { getHistoryTotalPositionsNetValue } from '@/api'
@@ -15,6 +16,7 @@ const time = days().utc().startOf('days').format()
 
 const PositionChart: FC = () => {
   const [chartData, setChartData] = useState<any>([])
+  const { t } = useTranslation()
 
   const { data } = useCurrentTotalPositionsNetValue('all', 'all')
 
@@ -41,7 +43,7 @@ const PositionChart: FC = () => {
   return (
     <div className="web-dashboard-overview-charts">
       <header>
-        <label>Total Position Value</label>
+        <label>{t('NewDashboard.Overview.TotalPositionValue')}</label>
         <BalanceShow value={data.total_positions_net_value} unit={VALUATION_TOKEN_SYMBOL} />
       </header>
       <section>

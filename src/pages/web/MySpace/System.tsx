@@ -1,47 +1,50 @@
 import Table from 'rc-table'
 import React, { FC, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useMarginToken } from '@/store'
 
 const System: FC = () => {
   const marginToken = useMarginToken((state) => state.marginToken)
+  const { t } = useTranslation()
 
   const isLoading = false
 
   const [systemRelevantData] = useState([
-    { parameters: 'θ - Open/Close Position Limit', value: '2' },
-    { parameters: 'x - Buyback Fund Ratio', value: '20%' },
-    { parameters: 'Min Position Value(USD)', value: '500' },
-    { parameters: 'MMR-Maintenance Margin Ratio', value: '1%' },
-    { parameters: 'LMR-Liquidation Margin Ratio', value: '0.5%' },
-    { parameters: 'n-Multiplier of MMR After ADL', value: '2' },
-    { parameters: 'i-APR of bToken', value: '10%' },
-    { parameters: 'eDRF Mint per block', value: '0.00003472' },
-    { parameters: 'Broker Privilege Fee (eDRF)', value: '60,000' },
-    { parameters: 'eDRF for broker privilege per block', value: '0.02083333' },
-    { parameters: 'Multiplier of Gas Fee', value: '1.5' },
-    { parameters: 'Buyback cycle(blocks)', value: '30,000' },
-    { parameters: 'Buyback Slippage Tolerance', value: '2%' },
-    { parameters: 'Min Grant DRFs', value: '1000' }
+    { parameters: t('Nav.SystemParameters.OpenClosePositionLimit'), value: '2' },
+    { parameters: t('Nav.SystemParameters.BuybackFundRatio'), value: '20%' },
+    { parameters: t('Nav.SystemParameters.MinPositionValue'), value: '500' },
+    { parameters: t('Nav.SystemParameters.MMRMaintenanceMarginRatio'), value: '1%' },
+    { parameters: t('Nav.SystemParameters.LMRLiquidationMarginRatio'), value: '0.5%' },
+    { parameters: t('Nav.SystemParameters.MultiplierofMMRAfterADL'), value: '2' },
+    { parameters: t('Nav.SystemParameters.iAPRofbToken'), value: '10%' },
+    { parameters: t('Nav.SystemParameters.eDRFMintperblock'), value: '0.00003472' },
+    { parameters: t('Nav.SystemParameters.BrokerPrivilegeFeeeDRF'), value: '60,000' },
+    { parameters: t('Nav.SystemParameters.eDRFforbrokerprivilegeperblock'), value: '0.02083333' },
+    { parameters: t('Nav.SystemParameters.MultiplierofGasFee'), value: '1.5' },
+    { parameters: t('Nav.SystemParameters.Buybackcycleblocks'), value: '30,000' },
+    { parameters: t('Nav.SystemParameters.BuybackSlippageTolerance'), value: '2%' },
+    { parameters: t('Nav.SystemParameters.MinGrantDRFspositionmining'), value: '1000' },
+    { parameters: t('Nav.SystemParameters.MinGrantDRFsbroker'), value: '1000' }
   ])
 
   const [tradingToken] = useState([
-    { parameters: 'κ - PCF Rate', value: '1,000' },
-    { parameters: 'ψ - PCF Rate', value: '300,000,000' },
-    { parameters: 'ρ - PCF', value: '0.12%' },
-    { parameters: 'Trading Fee Ratio', value: '0.1%' },
-    { parameters: 'Max  limit orders', value: '10' },
-    { parameters: 'Max leverage', value: '75' }
+    { parameters: t('Nav.SystemParameters.kPCFRate'), value: '1,000' },
+    { parameters: t('Nav.SystemParameters.yPCFRate'), value: '300,000,000' },
+    { parameters: t('Nav.SystemParameters.PCF'), value: '0.12%' },
+    { parameters: t('Nav.SystemParameters.TradingFeeRatio'), value: '0.1%' },
+    { parameters: t('Nav.SystemParameters.Maxlimitorders'), value: '10' },
+    { parameters: t('Nav.SystemParameters.Maxleverage'), value: '75' }
   ])
 
   const webColumns = [
     {
-      title: 'Parameters',
+      title: t('Nav.SystemParameters.Parameters'),
       dataIndex: 'parameters',
       width: '60%'
     },
     {
-      title: 'Value',
+      title: t('Nav.SystemParameters.Value'),
       dataIndex: 'value'
     }
   ]
@@ -53,9 +56,11 @@ const System: FC = () => {
 
   return (
     <div className="web-table-page">
-      <div className="web-system-title">System Parameters-{marginToken}</div>
+      <div className="web-system-title">
+        {t('Nav.SystemParameters.SystemParameters')}-{marginToken}
+      </div>
       <header className="web-table-page-header">
-        <h3>System Relevant</h3>
+        <h3>{t('Nav.SystemParameters.SystemRelevant')}</h3>
       </header>
       <Table
         className="web-broker-table"
@@ -66,7 +71,7 @@ const System: FC = () => {
         rowKey="parameters"
       />
       <header className="web-table-page-header">
-        <h3>Trading Token</h3>
+        <h3>{t('Nav.SystemParameters.TradingToken')}</h3>
       </header>
       <Table
         className="web-broker-table"

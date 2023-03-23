@@ -11,7 +11,25 @@ export default {
       And: '和',
       ClaimAll: '全部提现',
       Positions: '我的持仓',
-      OpenPosition: '开仓'
+      OpenPosition: '开仓',
+      // 以下为2023年03月23日新增
+      RankList: '排行榜',
+      PositionMiningRank: '持仓挖矿排名',
+      Address: '地址',
+      TotalRewards: '总奖励',
+      Rank: '排名'
+    },
+    Trading: {
+      TradingCompetition: '交易比赛',
+      HigherTheRanking: '排名越靠前交易奖励越多',
+      JoinTrading: '参加交易比赛赚取奖励',
+      RANK: '排名',
+      Claimable: '可提现',
+      ClaimAll: '全部提现',
+      TotalEarned: '共赚取',
+      RewardsPool: '奖池',
+      Trade: '交易',
+      ActiveGrants: '进行中的奖励'
     },
     DerifyTokenPool: {
       DerifyTokenPool: 'DRF 池',

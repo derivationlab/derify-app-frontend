@@ -8,7 +8,11 @@ export default {
       Broker: '经纪商',
       Faucet: '水龙头',
       AddToken: 'Add Token',
-      ConnectWallet: '连接钱包'
+      ConnectWallet: '连接钱包',
+      Data: '数据',
+      Overview: '总览',
+      BuybackPlan: '回购计划',
+      GrantList: '奖励计划'
     },
     CW: {
       Title: '选择钱包',
@@ -31,7 +35,9 @@ export default {
       Docs: '文档',
       Test: '测试网',
       Whitepaper: '白皮书',
-      Community: '社区'
+      Community: '社区',
+      SystemParameters: '系统参数',
+      Token: '通证'
     },
     Account: {
       Account: '账户',
@@ -56,6 +62,45 @@ export default {
       Language: '语言',
       Community: '社区',
       SetBroker: '设置为我的经纪商'
+    },
+    MySpace: {
+      MySpace: '我的空间',
+      Margin: '保证金',
+      MarginBalanceRate: '保证金余额/率',
+      PositionVolume: '持仓量',
+      PositionMiningRewards: '持仓挖矿收益',
+      BrokerRewards: '经纪商收益',
+      DetailInfo: '详细信息'
+    },
+    SystemParameters: {
+      SystemParameters: '系统参数',
+      SystemRelevant: '系统相关',
+      Parameters: '参数',
+      Value: '参数值',
+      OpenClosePositionLimit: '开仓/平仓上限公式参数θ',
+      BuybackFundRatio: '回购基金比例参数x',
+      MinPositionValue: '最小开仓净值',
+      MMRMaintenanceMarginRatio: '维持保证金率',
+      LMRLiquidationMarginRatio: '自动强平保证金率',
+      MultiplierofMMRAfterADL: '自动减仓后的维持保证金率倍数n',
+      iAPRofbToken: 'bToken质押收益率 i',
+      eDRFMintperblock: 'eDRF单个区块产量',
+      BrokerPrivilegeFeeeDRF: '经纪商资格费用（eDRF数）',
+      eDRFforbrokerprivilegeperblock: '经纪商单个区块续期eDRF数',
+      MultiplierofGasFee: 'Gas Fee倍数',
+      Buybackcycleblocks: '回购周期区块数',
+      BuybackSlippageTolerance: '回购滑点容忍值',
+      MinGrantDRFspositionmining: '最小奖励DRF数（持仓挖矿）',
+      MinGrantDRFsbroker: '最小奖励DRF数（经纪商）',
+      MinGrantDRFstradingcompetition: '最小奖励DRF数（交易比赛）',
+      TradingToken: '交易币种',
+      Token: '币种',
+      kPCFRate: '动仓费率公式参数κ',
+      yPCFRate: '动仓费率公式参数ψ',
+      PCF: '动仓费公式参数ρ',
+      TradingFeeRatio: '手续费率',
+      Maxlimitorders: '限价委托单数量上限',
+      Maxleverage: '最大杠杆数'
     }
   }
 }

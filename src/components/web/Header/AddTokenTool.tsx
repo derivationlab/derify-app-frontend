@@ -66,7 +66,7 @@ const AddTokenTool: FC = () => {
   return (
     <div className="web-header-select-lang" ref={ref}>
       <div className="web-header-select-lang-label" onClick={() => setMenuStatus(!menuStatus)}>
-        <label>Token</label>
+        <label>{t('Nav.Tool.Token')}</label>
         <span></span>
       </div>
       <ul className={classNames('web-header-select-lang-menu', { show: menuStatus })}>

@@ -2,6 +2,8 @@ import Table from 'rc-table'
 import classNames from 'classnames'
 import { isEmpty } from 'lodash'
 import React, { FC, useMemo, useState, useContext, useEffect, useReducer, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useBlockNumber } from 'wagmi'
 
 import { MobileContext } from '@/providers/Mobile'
 import { useBuyBackPool } from '@/hooks/useBuyBackPool'
@@ -16,8 +18,6 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
 import { MarginTokenKeys } from '@/typings'
-import { useBlockNumber } from 'wagmi'
-import { useTranslation } from 'react-i18next'
 // import Button from '@/components/common/Button'
 
 const Plan: FC = () => {
@@ -37,7 +37,7 @@ const Plan: FC = () => {
   const mColumns = useMemo(() => {
     return [
       {
-        title: 'Margin',
+        title: t('NewDashboard.BuybackPlan.Margin', 'Margin'),
         dataIndex: 'name',
         render: (_: string, data: Record<string, any>) => (
           <TableMargin icon={`${STATIC_RESOURCES_URL}market/${data.symbol.toLowerCase()}.svg`} name={data.symbol} />
@@ -75,22 +75,22 @@ const Plan: FC = () => {
     return [
       mColumns[0],
       {
-        title: 'Buyback Cycle',
+        title: t('NewDashboard.BuybackPlan.BuybackCycle', 'Buyback Cycle'),
         dataIndex: 'buyback_period',
         render: (value: number) => <BalanceShow value={value} rule="0,0" unit="Block" />
       },
       {
-        title: 'Buyback Pool',
+        title: t('NewDashboard.BuybackPlan.BuybackPool', 'Buyback Pool'),
         dataIndex: 'symbol',
         render: (symbol: MarginTokenKeys) => <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
       },
       {
-        title: 'DRF Price(Last Cycle)',
+        title: t('NewDashboard.BuybackPlan.DRFPriceLastCycle', 'DRF Price(Last Cycle)'),
         dataIndex: 'last_drf_price',
         render: (value: number) => <BalanceShow value={value} unit={BENCHMARK_TOKEN.symbol} />
       },
       {
-        title: 'Remaining block',
+        title: t('NewDashboard.BuybackPlan.RemainingBlock', 'Remaining block'),
         dataIndex: 'last_buy_back_block',
         render: (value: number, data: Record<any, any>) => {
           const block = data.open ? Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber : 0
@@ -98,7 +98,7 @@ const Plan: FC = () => {
         }
       },
       {
-        title: 'Estimated Time',
+        title: t('NewDashboard.BuybackPlan.EstimatedTime', 'Estimated Time'),
         dataIndex: 'symbol',
         render: (symbol: symbol, data: Record<string, any>) => {
           return <TableCountDown cycle={data?.buyback_period} blockNumber={data?.last_buy_back_block} />
@@ -109,7 +109,7 @@ const Plan: FC = () => {
 
   const emptyText = useMemo(() => {
     if (state.marketData.isLoaded) return 'Loading'
-    if (isEmpty(state.marketData.records)) return 'No Record'
+    if (isEmpty(state.marketData.records)) return t('NewDashboard.BuybackPlan.NoResultsFound')
     return ''
   }, [state.marketData])
 
@@ -166,10 +166,10 @@ const Plan: FC = () => {
   return (
     <div className="web-dashboard-plan-list">
       <header className="web-dashboard-section-header">
-        <h3>Buyback Plan</h3>
+        <h3>{t('NewDashboard.BuybackPlan.BuybackPlan', 'Buyback Plan')}</h3>
         <div className="web-dashboard-section-header-search">
           {/*todo search*/}
-          {/*<Input value={keyword} onChange={setKeyword} placeholder="search name or contract address...">*/}
+          {/*<Input value={keyword} onChange={setKeyword} placeholder={t('NewDashboard.BuybackPlan.SerchTip')}>*/}
           {/*  <button className="web-dashboard-section-header-search-button" onClick={onSearch} />*/}
           {/*</Input>*/}
         </div>

@@ -320,6 +320,12 @@
           background: $c22;
         }
       }
+      &-rank {
+        color: $yellow;
+        &:after {
+          background-image: url($res + 'icon/share-dark.svg');
+        }
+      }
     }
     &-data {
       background: $c22;

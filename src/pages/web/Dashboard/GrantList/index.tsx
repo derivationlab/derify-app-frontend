@@ -1,6 +1,7 @@
 import PubSub from 'pubsub-js'
 import { debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { PubSubEvents } from '@/typings'
 import { getGrantList } from '@/api'
@@ -18,6 +19,7 @@ import AddGrant from './AddGrant'
 const targetOptions = grantTargetOptions(true)
 
 const GrantList: FC = () => {
+  const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const pageChange = useCallback(
@@ -95,7 +97,7 @@ const GrantList: FC = () => {
         <Select
           large
           filter
-          label="Margin"
+          label={t('NewDashboard.GrantList.Margin', 'Margin')}
           value={state.marginToken}
           onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
           renderer={(props) => (
@@ -115,14 +117,14 @@ const GrantList: FC = () => {
         />
         <Select
           large
-          label="Target"
+          label={t('NewDashboard.GrantList.Target', 'Target')}
           value={state.grantTarget}
           onChange={(v) => dispatch({ type: 'SET_GRANT_TARGET', payload: v })}
           objOptions={targetOptions as any}
         />
         <Select
           large
-          label="State"
+          label={t('NewDashboard.GrantList.State', 'State')}
           value={state.grantStatus}
           onChange={(v) => dispatch({ type: 'SET_GRANT_STATUS', payload: v })}
           objOptions={grantStateOptions as any}

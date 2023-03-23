@@ -71,15 +71,15 @@ const Competition: FC = () => {
     <div className="web-eran-item">
       <header className="web-eran-item-header">
         <h3>
-          Trading Competition
-          <QuestionPopover text="根据历史累计收益计算该保证金每个用户（保证金/DRF的累积收益值>0）的排名" />
+          {t('Earn.Trading.TradingCompetition')}
+          <QuestionPopover text={t('Earn.Trading.HigherTheRanking')} />
         </h3>
-        <p>Join trading competition to earn rewards</p>
+        <p>{t('Earn.Trading.JoinTrading')}</p>
       </header>
       <section className="web-eran-item-main">
         <div className="web-eran-item-dashboard">
           <DecimalShow value={keepDecimals(bnMul(grantRatio, 100), 2)} percent />
-          <u>RANK.</u>
+          <u>{t('Earn.Trading.RANK')}.</u>
         </div>
         <div className="web-eran-item-claim">
           <main>
@@ -100,16 +100,16 @@ const Competition: FC = () => {
         </div>
         <div className="web-eran-item-card">
           <main>
-            <h4>Rewards pool</h4>
+            <h4>{t('Earn.Trading.RewardsPool')}</h4>
             <BalanceShow value={grantAmount.totalAmount} unit={PLATFORM_TOKEN.symbol} />
             <div className="block" />
             <p>
-              Active grants : <strong>{activeGrant.count}</strong>
+              {t('Earn.Trading.ActiveGrants')} : <strong>{activeGrant.count}</strong>
             </p>
           </main>
           <aside>
             <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken}/trade`}>
-              Trade
+              {t('Earn.Trading.Trade')}
             </Button>
           </aside>
         </div>

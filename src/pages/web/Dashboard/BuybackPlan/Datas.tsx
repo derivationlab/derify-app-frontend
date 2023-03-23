@@ -1,5 +1,6 @@
 import { useBlockNumber } from 'wagmi'
 import React, { FC, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
@@ -11,6 +12,7 @@ import { DEFAULT_MARGIN_TOKEN, PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/
 
 const Datas: FC = () => {
   const { data = 0 } = useBlockNumber({ watch: true })
+  const { t } = useTranslation()
 
   const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
 
@@ -30,28 +32,28 @@ const Datas: FC = () => {
   return (
     <div className="web-dashboard-plan-datas">
       <div className="web-dashboard-plan-datas-item">
-        <header>Total Buyback Value</header>
+        <header>{t('NewDashboard.BuybackPlan.TotalBuybackValue')}</header>
         <section>
           <BalanceShow value={totalBuyback} />
           <u>{VALUATION_TOKEN_SYMBOL}</u>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">
-        <header>Current {PLATFORM_TOKEN.symbol} Price</header>
+        <header>{t('NewDashboard.BuybackPlan.CurrentDRFPrice', '', { Coin: PLATFORM_TOKEN.symbol })} </header>
         <section>
           <BalanceShow value={mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]} />
           <u>{VALUATION_TOKEN_SYMBOL}</u>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">
-        <header>Total Destroyed</header>
+        <header>{t('NewDashboard.BuybackPlan.TotalDestroyed', 'Total Destroyed')}</header>
         <section>
           <BalanceShow value={totalDestroyed} />
           <u>{PLATFORM_TOKEN.symbol}</u>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">
-        <header>Current Block Height</header>
+        <header>{t('NewDashboard.BuybackPlan.CurrentBlockHeight', 'Current Block Height')}</header>
         <section>
           <BalanceShow value={data} rule="0" unit="" />
           <u>Block</u>

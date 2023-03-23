@@ -8,7 +8,11 @@ export default {
       Broker: 'Broker',
       Faucet: 'Faucet',
       AddToken: 'Add Token',
-      ConnectWallet: 'Connect Wallet'
+      ConnectWallet: 'Connect Wallet',
+      Data: 'Data',
+      Overview: 'Overview',
+      BuybackPlan: 'Buyback Plan',
+      GrantList: 'Grant List'
     },
     CW: {
       Title: 'Select a wallet',
@@ -31,7 +35,9 @@ export default {
       Docs: 'Docs',
       Test: 'Testnet',
       Whitepaper: 'Whitepaper',
-      Community: 'Community'
+      Community: 'Community',
+      SystemParameters: 'System Parameters',
+      Token: 'Token'
     },
     Account: {
       Account: 'Account',
@@ -57,6 +63,45 @@ export default {
       Language: 'Language',
       Community: 'Community',
       SetBroker: 'Set as my broker'
+    },
+    MySpace: {
+      MySpace: 'My Space',
+      Margin: 'Margin',
+      MarginBalanceRate: 'Margin Balance/Rate',
+      PositionVolume: 'Position Volume',
+      PositionMiningRewards: 'Position Mining Rewards',
+      BrokerRewards: 'Broker Rewards',
+      DetailInfo: 'Detail Info'
+    },
+    SystemParameters: {
+      SystemParameters: 'System Parameters',
+      SystemRelevant: 'System Relevant',
+      Parameters: 'Parameters',
+      Value: 'Value',
+      OpenClosePositionLimit: 'θ - Open/Close Position Limit',
+      BuybackFundRatio: 'x - Buyback Fund Ratio',
+      MinPositionValue: 'Min Position Value',
+      MMRMaintenanceMarginRatio: 'MMR-Maintenance Margin Ratio',
+      LMRLiquidationMarginRatio: 'LMR-Liquidation Margin Ratio',
+      MultiplierofMMRAfterADL: 'n - Multiplier of MMR After ADL',
+      iAPRofbToken: 'i-APR of bToken',
+      eDRFMintperblock: 'eDRF Mint per block',
+      BrokerPrivilegeFeeeDRF: 'Broker Privilege Fee (eDRF)',
+      eDRFforbrokerprivilegeperblock: 'eDRF for broker privilege per block ',
+      MultiplierofGasFee: 'Multiplier of Gas Fee ',
+      Buybackcycleblocks: 'Buyback cycle(blocks)',
+      BuybackSlippageTolerance: 'Buyback Slippage Tolerance',
+      MinGrantDRFspositionmining: 'Min Grant DRFs(position mining)',
+      MinGrantDRFsbroker: 'Min Grant DRFs(broker)',
+      MinGrantDRFstradingcompetition: 'Min Grant DRFs(trading competition)',
+      TradingToken: 'Trading Token',
+      Token: 'Token',
+      kPCFRate: 'κ - PCF Rate',
+      yPCFRate: 'ψ - PCF Rate',
+      PCF: 'ρ - PCF',
+      TradingFeeRatio: 'Trading Fee Ratio',
+      Maxlimitorders: 'Max limit orders',
+      Maxleverage: 'Max leverage'
     }
   }
 }

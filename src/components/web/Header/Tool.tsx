@@ -51,7 +51,7 @@ const Tool: FC = () => {
             </a>
           </li>
           <li>
-            <a href={`/${marginToken}/system/parameters`}>System Parameters</a>
+            <a href={`/${marginToken}/system/parameters`}>{t('Nav.Tool.SystemParameters')}</a>
           </li>
         </ul>
         <Community />

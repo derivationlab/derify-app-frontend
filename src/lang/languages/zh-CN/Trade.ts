@@ -103,7 +103,11 @@ export default {
       MinNumber: '最小开仓额为 {{Limit}}{{Token}}',
       Long: '开多',
       Short: '开空',
-      TowWay: '双向对冲'
+      TowWay: '双向对冲',
+      // 以下为2023年03月23日新增
+      SerchTip: '搜索名称或合约地址',
+      NoResultsFound: '无搜索结果',
+      TheMinimumPositionValue: '最小开仓净值为 {{UsdValue}} USD({{MarginValue}} {{MarginCoin}})'
     },
     COP: {
       OpenPosition: '开仓',

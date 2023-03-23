@@ -13,7 +13,8 @@
       }
     }
     &-main {
-      padding: 12px;border-radius: 48px;background: $cf7;position: relative;
+      padding: 12px;border-radius: 48px;background: $cf7;
+      position: relative;
       display: flex;justify-content: space-between;
       main {
         flex:1;
@@ -86,7 +87,8 @@
         }
       }
       &-main {
-        padding: rem(8);border-radius: rem(36); position: static;
+        padding: rem(8);border-radius: rem(36);
+        // position: static;
         justify-content: flex-start;flex-flow: column;
         main {
           h4 {
@@ -121,7 +123,7 @@
       &-dashboard {
         width: rem(98);height: rem(78);font-size: rem(14);border-radius: rem(20);line-height: rem(20);z-index: 16;
         flex-flow: column;background: $cf7;text-align: center;
-        position: absolute;right: 0;top: 0;
+        position: absolute;right: 0;top: rem(-95);
         u {
           font-size: rem(14);line-height: rem(20);
         }
@@ -144,7 +146,16 @@
         background: $c33;
       }
       &-dashboard {
-        background: $c22;
+        background: $c33;
+      }
+      &-claim, &-card {
+        a {
+          color: $yellow;
+          &:after {
+            // background: url($res + 'icon/share.svg') center/contain no-repeat;
+            background-image: url($res + 'icon/share-dark.svg');
+          }
+        }
       }
       &-card {
         background: $c22;

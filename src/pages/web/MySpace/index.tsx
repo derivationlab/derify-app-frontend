@@ -51,7 +51,7 @@ const MySpace: FC = () => {
   const mColumns = useMemo(() => {
     return [
       {
-        title: 'Margin',
+        title: t('Nav.MySpace.Margin'),
         dataIndex: 'symbol',
         render: (symbol: string) => {
           const icon = findToken(symbol).icon
@@ -89,7 +89,7 @@ const MySpace: FC = () => {
     return [
       mColumns[0],
       {
-        title: 'Margin Balance/Rate',
+        title: t('Nav.MySpace.MarginBalanceRate'),
         dataIndex: 'symbol',
         width: 250,
         render: (symbol: string) => {
@@ -105,7 +105,7 @@ const MySpace: FC = () => {
         }
       },
       {
-        title: 'Position Volume',
+        title: t('Nav.MySpace.PositionVolume'),
         dataIndex: 'symbol',
         width: 250,
         render: (symbol: string) => {
@@ -113,7 +113,7 @@ const MySpace: FC = () => {
         }
       },
       {
-        title: 'Position Mining Rewards',
+        title: t('Nav.MySpace.PositionMiningRewards'),
         dataIndex: 'symbol',
         width: 250,
         render: (symbol: string) => {
@@ -127,7 +127,7 @@ const MySpace: FC = () => {
         }
       },
       {
-        title: 'Broker Rewards',
+        title: t('Nav.MySpace.BrokerRewards'),
         dataIndex: 'symbol',
         width: 250,
         render: (symbol: string) => {
@@ -141,7 +141,7 @@ const MySpace: FC = () => {
         }
       },
       {
-        title: 'Detail Info',
+        title: t('Nav.MySpace.DetailInfo'),
         dataIndex: 'Margin',
         width: 150,
 
@@ -194,7 +194,7 @@ const MySpace: FC = () => {
   return (
     <div className="web-table-page">
       <header className="web-table-page-header">
-        <h3>My Space</h3>
+        <h3>{t('Nav.MySpace.MySpace')}</h3>
       </header>
       <Table
         rowKey="symbol"

@@ -18,6 +18,7 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { pathname: P } = useLocation()
+  const [showMenu, setShowMenu] = useState(false)
   const ref = useRef(null)
   useClickAway(ref, () => onClose())
 
@@ -55,21 +56,22 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
                 </NavLink>
               </li>
             ))}
-            <span className={classNames({ active: P.indexOf('dashboard') > -1 })}>
-              {t('Nav.Nav.Dashboard', 'Dashboard')}
-              <em />
+            <nav className={classNames({ active: P.indexOf('dashboard') > -1, show: showMenu })}>
+              <span onClick={() => setShowMenu(!showMenu)}>
+                {t('Nav.Nav.Dashboard', 'Dashboard')} <em />
+              </span>
               <ul>
                 <li>
-                  <NavLink to="/dashboard/overview">Overview</NavLink>
+                  <NavLink to="/dashboard/overview">{t('Nav.Nav.Overview', 'Overview')}</NavLink>
                 </li>
                 <li>
-                  <NavLink to={`/dashboard/buyback-plan`}>Buyback Plan</NavLink>
+                  <NavLink to={`/dashboard/buyback`}>{t('Nav.Nav.BuybackPlan', 'Buyback Plan')}</NavLink>
                 </li>
                 <li>
-                  <NavLink to={`/dashboard/grant-list`}>Grant List</NavLink>
+                  <NavLink to={`/dashboard/grant`}>{t('Nav.Nav.GrantList', 'Grant List')}</NavLink>
                 </li>
               </ul>
-            </span>
+            </nav>
           </ul>
         </nav>
         <footer>

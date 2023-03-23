@@ -201,7 +201,7 @@ const Web: FC = () => {
         />
         <Route path="/faucet" render={() => <Faucet />} />
         <Route path="/space" render={() => <MySpace />} />
-        <Route path="/system" render={() => <System />} />
+        <Route path={`/${marginToken}/system`} render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
       </Switch>
       <Toast />

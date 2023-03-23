@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import React, { FC, useState, useMemo, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -26,6 +27,7 @@ const limitDays = {
 const targetOptions = grantTargetOptions()
 
 const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
+  const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const [toggle, setToggle] = useState<boolean>(false)
@@ -87,7 +89,9 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     <Dialog
       width="540px"
       visible={visible}
-      title={toggle ? 'Add Grant' : 'Grant Info'}
+      title={
+        toggle ? t('NewDashboard.GrantList.AddGrant', 'Add Grant') : t('NewDashboard.GrantList.GrantInfo', 'Grant Info')
+      }
       onClose={() => {
         clearState()
         onClose()
@@ -99,7 +103,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             <div className="web-dashboard-add-grant-dialog-selects">
               <Select
                 filter
-                label="Margin"
+                label={t('NewDashboard.GrantList.Margin', 'Margin')}
                 value={state.marginToken}
                 onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
                 renderer={(item) => (
@@ -119,7 +123,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
               />
               <hr />
               <Select
-                label="Target"
+                label={t('NewDashboard.GrantList.Target', 'Target')}
                 value={state.grantTarget}
                 onChange={(v) => dispatch({ type: 'SET_GRANT_TARGET', payload: v })}
                 objOptions={targetOptions as any}
@@ -136,27 +140,33 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
               <AmountInput
                 max={safeInterceptionValues(balances[PLATFORM_TOKEN.symbol], findToken(PLATFORM_TOKEN.symbol).decimals)}
                 unit={PLATFORM_TOKEN.symbol}
-                title="Volume"
+                title={t('NewDashboard.GrantList.Volume', 'Volume')}
                 initial={minimumGrant[state.grantTarget as any]}
                 onChange={(v) => dispatch({ type: 'SET_AMOUNT_INP', payload: v })}
               />
             </div>
             <div className="web-dashboard-add-grant-dialog-days">
               <section>
-                <label>Grant Days ({`${limitDays.grantDays[0]} - ${limitDays.grantDays[1]}`})</label>
+                <label>
+                  {t('NewDashboard.GrantList.GrantDays', 'Grant Days')} (
+                  {`${limitDays.grantDays[0]} - ${limitDays.grantDays[1]}`})
+                </label>
                 <Input
                   type="number"
                   value={state.grantDays}
-                  suffix="Days"
+                  suffix={t('NewDashboard.GrantList.Days', 'Days')}
                   onChange={(v) => dispatch({ type: 'SET_GRANT_DAYS', payload: v })}
                 />
               </section>
               <section>
-                <label>Cliff Days ({`${limitDays.cliffDays[0]} - ${limitDays.cliffDays[1]}`})</label>
+                <label>
+                  {t('NewDashboard.GrantList.CliffDays', 'Cliff Days')} (
+                  {`${limitDays.cliffDays[0]} - ${limitDays.cliffDays[1]}`})
+                </label>
                 <Input
                   type="number"
                   value={state.cliffDays}
-                  suffix="Days"
+                  suffix={t('NewDashboard.GrantList.Days', 'Days')}
                   onChange={(v) => dispatch({ type: 'SET_CLIFF_DAYS', payload: v })}
                 />
               </section>
@@ -167,35 +177,35 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             onClick={() => setToggle(true)}
             disabled={disabled}
           >
-            Add Grant
+            {t('NewDashboard.GrantList.AddGrant', 'Add Grant')}
           </Button>
         </>
       ) : (
         <>
           <div className="web-dashboard-add-grant-dialog-preview">
             <dl>
-              <dt>Margin</dt>
+              <dt>{t('NewDashboard.GrantList.Margin', 'Margin')}</dt>
               <dd>
                 <Image src={currentMargin.icon} />
                 {currentMargin.label}
               </dd>
             </dl>
             <dl>
-              <dt>Target</dt>
+              <dt>{t('NewDashboard.GrantList.Target', 'Target')}</dt>
               <dd>{currentTarget?.label}</dd>
             </dl>
             <dl>
-              <dt>Rewards</dt>
+              <dt>{t('NewDashboard.GrantList.Rewards', 'Rewards')}</dt>
               <dd>
                 {keepDecimals(state.amountInp, findToken(PLATFORM_TOKEN.symbol).decimals, true)} {PLATFORM_TOKEN.symbol}
               </dd>
             </dl>
             <dl>
-              <dt>Start</dt>
+              <dt>{t('NewDashboard.GrantList.Start', 'Start')}</dt>
               <dd>{periodDate[0]} UTC</dd>
             </dl>
             <dl>
-              <dt>End</dt>
+              <dt>{t('NewDashboard.GrantList.End', 'End')}</dt>
               <dd>{periodDate[1]} UTC</dd>
             </dl>
           </div>
@@ -206,7 +216,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
               _onConfirm()
             }}
           >
-            Confirm
+            {t('NewDashboard.GrantList.Confirm', 'Confirm')}
           </Button>
         </>
       )}

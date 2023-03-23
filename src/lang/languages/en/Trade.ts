@@ -109,7 +109,11 @@ export default {
       MinNumber: 'The minimum number is {{Limit}}{{Token}}',
       Long: 'Long',
       Short: 'Short',
-      TowWay: '2-Way'
+      TowWay: '2-Way',
+      // 以下为2023年03月23日新增
+      SerchTip: 'serch name or contract address..',
+      NoResultsFound: 'No results found.',
+      TheMinimumPositionValue: 'The minimum position value is {{UsdValue}} USD({{MarginValue}} {{MarginCoin}})'
     },
     COP: {
       OpenPosition: 'Open Position',

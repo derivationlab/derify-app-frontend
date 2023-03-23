@@ -41,13 +41,13 @@ const Header: FC = () => {
             <em />
             <ul>
               <li>
-                <NavLink to="/dashboard/overview">Overview</NavLink>
+                <NavLink to="/dashboard/overview">{t('Nav.Nav.Overview', 'Overview')}</NavLink>
               </li>
               <li>
-                <NavLink to={`/dashboard/buyback`}>Buyback Plan</NavLink>
+                <NavLink to={`/dashboard/buyback`}>{t('Nav.Nav.BuybackPlan', 'Buyback Plan')}</NavLink>
               </li>
               <li>
-                <NavLink to={`/dashboard/grant`}>Grant List</NavLink>
+                <NavLink to={`/dashboard/grant`}>{t('Nav.Nav.GrantList', 'Grant List')}</NavLink>
               </li>
             </ul>
           </span>

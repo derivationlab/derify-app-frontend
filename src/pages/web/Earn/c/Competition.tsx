@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js'
-import { useAccount } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useContext, useEffect } from 'react'
+import React, { FC, useMemo, useContext, useEffect, useCallback } from 'react'
 
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
@@ -28,8 +28,9 @@ import { useMarginToken } from '@/store'
 const Competition: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
-
+  const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
+
   const marginToken = useMarginToken((state) => state.marginToken)
 
   const { withdraw } = useWithdrawRankReward()
@@ -44,11 +45,11 @@ const Competition: FC = () => {
     return isGT(bondBalance ?? 0, 0)
   }, [bondBalance])
 
-  const withdrawFunc = async () => {
+  const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     if (protocolConfig) {
-      const status = await withdraw(protocolConfig.rewards)
+      const status = await withdraw(protocolConfig.rewards, signer)
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
@@ -61,7 +62,7 @@ const Competition: FC = () => {
     }
 
     window.toast.dismiss(toast)
-  }
+  }, [signer])
 
   useEffect(() => {
     if (address && protocolConfig) void refetch()

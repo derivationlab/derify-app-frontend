@@ -7,7 +7,6 @@ import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/store/usePoolsInfo'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/store/useTraderInfo'
-import { useProtocolConf } from '@/hooks/useMatchConf'
 import tokens, { findToken } from '@/config/tokens'
 
 import { bnMul, isGT, keepDecimals } from '@/utils/tools'
@@ -36,7 +35,6 @@ const DerifyTokenPool: FC = () => {
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
-  const { protocolConfig } = useProtocolConf(marginToken)
   const { data: edrfBalance } = useTraderEDRFBalance(address)
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
@@ -77,15 +75,13 @@ const DerifyTokenPool: FC = () => {
 
       closeDialog()
 
-      if (protocolConfig) {
-        const status = await redeem(protocolConfig.rewards, amount, signer)
-        if (status) {
-          // succeed
-          window.toast.success(t('common.success', 'success'))
-        } else {
-          // fail
-          window.toast.error(t('common.failed', 'failed'))
-        }
+      const status = await redeem(amount, signer)
+      if (status) {
+        // succeed
+        window.toast.success(t('common.success', 'success'))
+      } else {
+        // fail
+        window.toast.error(t('common.failed', 'failed'))
       }
 
       window.toast.dismiss(toast)
@@ -96,15 +92,13 @@ const DerifyTokenPool: FC = () => {
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    if (protocolConfig) {
-      const status = await withdraw(protocolConfig.rewards, signer)
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
-      } else {
-        // fail
-        window.toast.error(t('common.failed', 'failed'))
-      }
+    const status = await withdraw(signer)
+    if (status) {
+      // succeed
+      window.toast.success(t('common.success', 'success'))
+    } else {
+      // fail
+      window.toast.error(t('common.failed', 'failed'))
     }
 
     window.toast.dismiss(toast)

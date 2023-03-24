@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js'
-import { useAccount } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useState, useContext } from 'react'
+import React, { FC, useMemo, useState, useContext, useCallback } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
@@ -28,6 +28,7 @@ import { useMarginToken } from '@/store'
 const MarginTokenPool: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
+  const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
@@ -45,48 +46,54 @@ const MarginTokenPool: FC = () => {
 
   const closeDialog = () => setVisibleStatus('')
 
-  const depositFunc = async (amount: string) => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+  const depositFunc = useCallback(
+    async (amount: string) => {
+      const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    closeDialog()
+      closeDialog()
 
-    if (protocolConfig) {
-      const status = await deposit(protocolConfig.rewards, protocolConfig.bMarginToken, amount)
+      if (protocolConfig) {
+        const status = await deposit(protocolConfig.rewards, protocolConfig.bMarginToken, amount, signer)
 
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
+        if (status) {
+          // succeed
+          window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_BALANCE)
-      } else {
-        // fail
-        window.toast.error(t('common.failed', 'failed'))
+          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+        } else {
+          // fail
+          window.toast.error(t('common.failed', 'failed'))
+        }
       }
-    }
 
-    window.toast.dismiss(toast)
-  }
+      window.toast.dismiss(toast)
+    },
+    [signer]
+  )
 
-  const redeemFunc = async (amount: string) => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+  const redeemFunc = useCallback(
+    async (amount: string) => {
+      const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    closeDialog()
+      closeDialog()
 
-    if (protocolConfig) {
-      const status = await redeem(protocolConfig.rewards, amount)
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
+      if (protocolConfig) {
+        const status = await redeem(protocolConfig.rewards, amount, signer)
+        if (status) {
+          // succeed
+          window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_BALANCE)
-      } else {
-        // fail
-        window.toast.error(t('common.failed', 'failed'))
+          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+        } else {
+          // fail
+          window.toast.error(t('common.failed', 'failed'))
+        }
       }
-    }
 
-    window.toast.dismiss(toast)
-  }
+      window.toast.dismiss(toast)
+    },
+    [signer]
+  )
 
   const memoDisabled = useMemo(() => {
     return isGT(bondBalance ?? 0, 0)
@@ -96,33 +103,36 @@ const MarginTokenPool: FC = () => {
     return keepDecimals((rewardsInfo?.bondAnnualInterestRatio ?? 0) * 100, 2)
   }, [rewardsInfo])
 
-  const exchangeFunc = async (amount: string) => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+  const exchangeFunc = useCallback(
+    async (amount: string) => {
+      const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    closeDialog()
+      closeDialog()
 
-    if (protocolConfig) {
-      const status = await exchange(protocolConfig.rewards, protocolConfig.bMarginToken, amount)
+      if (protocolConfig) {
+        const status = await exchange(protocolConfig.rewards, protocolConfig.bMarginToken, amount, signer)
 
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
-      } else {
-        // fail
-        window.toast.error(t('common.failed', 'failed'))
+        if (status) {
+          // succeed
+          window.toast.success(t('common.success', 'success'))
+        } else {
+          // fail
+          window.toast.error(t('common.failed', 'failed'))
+        }
       }
-    }
 
-    window.toast.dismiss(toast)
-  }
+      window.toast.dismiss(toast)
+    },
+    [signer]
+  )
 
-  const withdrawFunc = async () => {
+  const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     closeDialog()
 
     if (protocolConfig) {
-      const status = await withdraw(protocolConfig.rewards)
+      const status = await withdraw(protocolConfig.rewards, signer)
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
@@ -135,7 +145,7 @@ const MarginTokenPool: FC = () => {
     }
 
     window.toast.dismiss(toast)
-  }
+  }, [signer])
 
   return (
     <>

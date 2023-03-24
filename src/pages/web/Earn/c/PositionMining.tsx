@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
+import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useContext, useMemo } from 'react'
+import React, { FC, useCallback, useContext, useMemo } from 'react'
 
 import { useMarginToken, usePairsInfo } from '@/store'
 import { useBrokerInfo } from '@/store/useBrokerInfo'
@@ -21,7 +22,7 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
-
+  const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
   const variables = useTraderInfo((state) => state.variables)
@@ -56,11 +57,11 @@ const PositionMining: FC = () => {
     return isGT(rewardsInfo?.drfBalance ?? 0, 0) || isGT(rewardsInfo?.marginTokenBalance ?? 0, 0)
   }, [rewardsInfo])
 
-  const withdrawFunc = async () => {
+  const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     if (protocolConfig) {
-      const status = await withdraw(protocolConfig.rewards)
+      const status = await withdraw(protocolConfig.rewards, signer)
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
@@ -71,7 +72,7 @@ const PositionMining: FC = () => {
     }
 
     window.toast.dismiss(toast)
-  }
+  }, [signer])
 
   return (
     <div className="web-eran-item">

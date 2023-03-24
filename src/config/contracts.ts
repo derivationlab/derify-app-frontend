@@ -8,7 +8,7 @@ export const contracts: { [key in ContractKeys]: Contract } = {
   }),
   derifyProtocol: new Contract('DerifyProtocol', {
     [ChainId.MAINNET]: '0x2e70e1C2B3660B91E07DEa476F36945aDFe1e4A1',
-    [ChainId.TESTNET]: '0xedaccc2cC87aE6cceAf997F65526Fe5E09540380'
+    [ChainId.TESTNET]: '0xd485fa8Ca070589E6747285c94DdA091cC5d2E46'
   })
 }
 

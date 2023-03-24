@@ -134,11 +134,17 @@
     border-bottom: 1px solid $ce7;padding-bottom:8px;margin-bottom: 20px;
     display: flex;align-items: center;justify-content: space-between;
     &-select{
+      .web-form-input input {font-weight: normal;font-size: 14px}
+      .web-select-show-button label{font-weight: normal;color:$c00!important;}
       .web-select-show-button {
-        border: 0;min-width: auto;
+        border: 0;min-width: auto;padding: 0;
       }
       .web-select-options {
-        left: 0;right: 0;
+        left: -36px;right: -36px!important;top:70px!important;
+        ul li.active, .web-select-options ul li.active:hover{
+          background-color: $cf7;
+          color:$red;
+        }
       }
     }
     .web-select-show{position: static}

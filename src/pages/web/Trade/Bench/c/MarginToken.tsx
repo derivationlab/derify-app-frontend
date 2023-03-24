@@ -3,10 +3,8 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo } from 'react'
 
 import { MARGIN_TOKENS } from '@/config/tokens'
+import { useMarginToken } from '@/store'
 import { MarginTokenKeys } from '@/typings'
-
-import { nonBigNumberInterception } from '@/utils/tools'
-import { useMarginToken, useTokenBalances } from '@/store'
 
 import { Select } from '@/components/common/Form'
 import Image from '@/components/common/Image'
@@ -16,40 +14,43 @@ const MarginToken: FC = () => {
 
   const { t } = useTranslation()
 
-  const balances = useTokenBalances((state) => state.balances)
-  const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
+
   const marginOptions = useMemo(() => {
     return MARGIN_TOKENS.map((t) => ({
       value: t.symbol,
       label: t.symbol,
-      icon: 'icon/bnb.svg',
-      price: balances[t.symbol] ?? 0,
-      decimals: 2
+      icon: `market/${t.symbol.toLowerCase()}.svg`
     }))
-  }, [balances])
+  }, [])
 
-  // todo 完善ui
   return (
     <div className="web-trade-bench-margin">
-      <label htmlFor="Margin">{t('Trade.Bench.Margin')}</label>
       <Select
-        value={marginToken}
+        large
+        filter
+        label={t('Trade.Bench.Margin')}
+        value={marginToken as any}
         onChange={(v) => {
           updateMarginToken(v as MarginTokenKeys)
           history.push(`/${v}/trade`)
         }}
-        objOptions={marginOptions}
         renderer={(props) => (
           <div className="web-select-options-item">
-            <span>
-              {props.icon && <Image src={props.icon} />}
-              {props.label}
-            </span>
-            {nonBigNumberInterception(props.price)}
+            {props.icon && <Image src={props.icon} />}
+            {props.label}
           </div>
         )}
         className="web-trade-bench-margin-select"
+        objOptions={marginOptions}
+        labelRenderer={(props) => (
+          <div className="web-dashboard-add-grant-margin-label">
+            {props.icon && <Image src={props.icon} />}
+            <span>{props.label}</span>
+          </div>
+        )}
+        filterPlaceholder="Search name or contract address..."
       />
     </div>
   )

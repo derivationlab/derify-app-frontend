@@ -282,5 +282,17 @@
         background: $c22;
       }
     }
+    &-margin{
+      &-select{
+        .web-select-show-button label{color:$cff!important;}
+        .web-select-options {
+          left: -36px;right: -36px!important;top:70px!important;
+          ul li.active, .web-select-options ul li.active:hover{
+            background-color: $yellow;
+            color:$c00;
+          }
+        }
+      }
+    }
   }
 }

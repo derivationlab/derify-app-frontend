@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js'
-import { useAccount } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useState, useContext, useEffect } from 'react'
+import React, { FC, useMemo, useState, useContext, useEffect, useCallback } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { usePoolsInfo } from '@/store/usePoolsInfo'
@@ -26,6 +26,7 @@ import { useMarginToken } from '@/store'
 const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
+  const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
   const stakingInfo = useTraderInfo((state) => state.stakingInfo)
@@ -47,32 +48,56 @@ const DerifyTokenPool: FC = () => {
 
   const closeDialog = () => setVisibleStatus('')
 
-  const stakeDrfFunc = async (amount: string) => {
+  const stakeDrfFunc = useCallback(
+    async (amount: string) => {
+      const toast = window.toast.loading(t('common.pending', 'pending...'))
+
+      closeDialog()
+
+      const status = await staking(amount, signer)
+
+      if (status) {
+        // succeed
+        window.toast.success(t('common.success', 'success'))
+
+        PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+      } else {
+        // fail
+        window.toast.error(t('common.failed', 'failed'))
+      }
+
+      window.toast.dismiss(toast)
+    },
+    [signer]
+  )
+
+  const redeemDrfFunc = useCallback(
+    async (amount: string) => {
+      const toast = window.toast.loading(t('common.pending', 'pending...'))
+
+      closeDialog()
+
+      if (protocolConfig) {
+        const status = await redeem(protocolConfig.rewards, amount, signer)
+        if (status) {
+          // succeed
+          window.toast.success(t('common.success', 'success'))
+        } else {
+          // fail
+          window.toast.error(t('common.failed', 'failed'))
+        }
+      }
+
+      window.toast.dismiss(toast)
+    },
+    [signer]
+  )
+
+  const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
-
-    closeDialog()
-
-    const status = await staking(amount)
-    if (status) {
-      // succeed
-      window.toast.success(t('common.success', 'success'))
-
-      PubSub.publish(PubSubEvents.UPDATE_BALANCE)
-    } else {
-      // fail
-      window.toast.error(t('common.failed', 'failed'))
-    }
-
-    window.toast.dismiss(toast)
-  }
-
-  const redeemDrfFunc = async (amount: string) => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
-
-    closeDialog()
 
     if (protocolConfig) {
-      const status = await redeem(protocolConfig.rewards, amount)
+      const status = await withdraw(protocolConfig.rewards, signer)
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
@@ -83,24 +108,7 @@ const DerifyTokenPool: FC = () => {
     }
 
     window.toast.dismiss(toast)
-  }
-
-  const withdrawFunc = async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
-
-    if (protocolConfig) {
-      const status = await withdraw(protocolConfig.rewards)
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
-      } else {
-        // fail
-        window.toast.error(t('common.failed', 'failed'))
-      }
-    }
-
-    window.toast.dismiss(toast)
-  }
+  }, [signer])
 
   useEffect(() => {
     void dashboardDATRefetch()

@@ -9,6 +9,7 @@ import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '@/components/common/Wallet/AmountInput'
+import { PLATFORM_TOKEN } from '@/config/tokens'
 
 interface Props {
   visible: boolean
@@ -47,16 +48,16 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.DerifyTokenPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balances['drf']} unit="DRF" />
+                <BalanceShow value={balances[PLATFORM_TOKEN.symbol]} unit={PLATFORM_TOKEN.symbol} />
               </dd>
             </dl>
             <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={balances['drf']}
+              max={balances[PLATFORM_TOKEN.symbol]}
               title={t('Earn.DerifyTokenPool.AmountToStake', 'Amount to stake')}
-              unit="DRF"
+              unit={PLATFORM_TOKEN.symbol}
               onChange={onChangeEv}
             />
           </div>

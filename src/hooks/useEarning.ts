@@ -6,6 +6,7 @@ import contracts from '@/config/contracts'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
+import { Signer } from 'ethers'
 
 export const useWithdrawPositionReward = () => {
   const { data: signer } = useSigner()
@@ -31,24 +32,20 @@ export const useWithdrawPositionReward = () => {
 }
 
 export const useWithdrawAllEdrf = () => {
-  const { data: signer } = useSigner()
+  const withdraw = async (rewards: string, signer?: S): Promise<boolean> => {
+    if (!signer) return false
 
-  const withdraw = useCallback(
-    async (rewards: string): Promise<boolean> => {
-      if (!signer) return false
-      const c = getDerifyRewardsContract(rewards, signer)
+    const c = getDerifyRewardsContract(rewards, signer)
 
-      try {
-        const res = await c.withdrawAllEdrf()
-        const receipt = await res.wait()
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
+    try {
+      const res = await c.withdrawAllEdrf()
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { withdraw }
 }
@@ -99,37 +96,34 @@ export const useWithdrawRankReward = () => {
   return { withdraw }
 }
 
+type S = Signer | null | undefined
+
 export const useStakingDrf = () => {
-  const { data: signer } = useSigner()
+  const staking = async (amount: string, signer?: S): Promise<boolean> => {
+    if (!signer) return false
 
-  const staking = useCallback(
-    async (amount: string): Promise<boolean> => {
-      if (!signer) return false
+    const c = getDerifyProtocolContract(signer)
+    const _amount = inputParameterConversion(amount, 8)
 
-      const c = getDerifyProtocolContract(signer)
-      const _amount = inputParameterConversion(amount, 8)
+    try {
+      const approve = await setAllowance(
+        signer,
+        contracts.derifyProtocol.contractAddress,
+        tokens.drf.tokenAddress,
+        _amount
+      )
 
-      try {
-        const approve = await setAllowance(
-          signer,
-          contracts.derifyProtocol.contractAddress,
-          tokens.drf.tokenAddress,
-          _amount
-        )
+      if (!approve) return false
 
-        if (!approve) return false
-
-        const gasLimit = await estimateGas(c, 'stakingDrf', [_amount], 0)
-        const res = await c.stakingDrf(_amount, { gasLimit })
-        const receipt = await res.wait()
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
+      const gasLimit = await estimateGas(c, 'stakingDrf', [_amount], 0)
+      const res = await c.stakingDrf(_amount, { gasLimit })
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { staking }
 }
@@ -165,27 +159,22 @@ export const useExchangeBond = () => {
 }
 
 export const useRedeemDrf = () => {
-  const { data: signer } = useSigner()
+  const redeem = async (rewards: string, amount: string, signer?: S): Promise<boolean> => {
+    if (!signer) return false
 
-  const redeem = useCallback(
-    async (rewards: string, amount: string): Promise<boolean> => {
-      if (!signer) return false
+    const c = getDerifyRewardsContract(rewards, signer)
+    const _amount = inputParameterConversion(amount, 8)
 
-      const c = getDerifyRewardsContract(rewards, signer)
-      const _amount = inputParameterConversion(amount, 8)
-
-      try {
-        const gasLimit = await estimateGas(c, 'redeemDrf', [_amount], 0)
-        const res = await c.redeemDrf(_amount, { gasLimit })
-        const receipt = await res.wait()
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
+    try {
+      const gasLimit = await estimateGas(c, 'redeemDrf', [_amount], 0)
+      const res = await c.redeemDrf(_amount, { gasLimit })
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { redeem }
 }

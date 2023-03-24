@@ -163,3 +163,13 @@
     }
   }
 }
+
+.dark {
+  .web-eran {
+    &-item {
+      &-dashboard {
+        background: $c22;
+      }
+    }
+  }
+}

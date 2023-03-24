@@ -53,7 +53,8 @@ export default {
       ConnectWallet: 'Connect Wallet',
       Rewards: 'Rewards',
       Start: 'Start',
-      End: 'End'
+      End: 'End',
+      Confirm: 'Confirm'
     }
   }
 }

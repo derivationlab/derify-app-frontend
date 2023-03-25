@@ -7,7 +7,7 @@ import { useBlockNumber } from 'wagmi'
 
 import { MobileContext } from '@/providers/Mobile'
 import { useBuyBackPool } from '@/hooks/useBuyBackPool'
-import { BENCHMARK_TOKEN } from '@/config/tokens'
+import { BENCHMARK_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/marketInfo'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { getBuyBackMarginTokenList } from '@/api'
@@ -18,6 +18,8 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
 import { MarginTokenKeys } from '@/typings'
+import { isGTET } from '@/utils/tools'
+import { useConfigInfo } from '@/store'
 // import Button from '@/components/common/Button'
 
 const Plan: FC = () => {
@@ -30,6 +32,8 @@ const Plan: FC = () => {
   const { mobile } = useContext(MobileContext)
 
   const { data: buyBackInfo } = useBuyBackPool()
+
+  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
 
   // const [keyword, setKeyword] = useState('')
   const [keyword] = useState('')
@@ -49,8 +53,15 @@ const Plan: FC = () => {
         align: 'right',
         render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
           <>
-            <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
-            <BalanceShow value={data?.last_drf_price} unit={BENCHMARK_TOKEN.symbol} />
+            <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />(
+            <div
+              className={classNames(
+                isGTET(data?.last_drf_price, mTokenPrices[data.symbol as MarginTokenKeys]) ? 'rise' : 'fall'
+              )}
+            >
+              <BalanceShow value={data?.last_drf_price} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
+            </div>
+            )
           </>
         )
       },
@@ -69,7 +80,7 @@ const Plan: FC = () => {
         }
       }
     ]
-  }, [t, blockNumber])
+  }, [t, blockNumber, mTokenPrices])
 
   const wColumns = useMemo(() => {
     return [
@@ -87,7 +98,13 @@ const Plan: FC = () => {
       {
         title: t('NewDashboard.BuybackPlan.DRFPriceLastCycle', 'DRF Price(Last Cycle)'),
         dataIndex: 'last_drf_price',
-        render: (value: number) => <BalanceShow value={value} unit={BENCHMARK_TOKEN.symbol} />
+        render: (value: number, data: Record<string, any>) => {
+          return (
+            <div className={classNames(isGTET(value, mTokenPrices[data.symbol as MarginTokenKeys]) ? 'rise' : 'fall')}>
+              <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
+            </div>
+          )
+        }
       },
       {
         title: t('NewDashboard.BuybackPlan.RemainingBlock', 'Remaining block'),
@@ -105,7 +122,7 @@ const Plan: FC = () => {
         }
       }
     ]
-  }, [t, blockNumber])
+  }, [t, blockNumber, mTokenPrices])
 
   const emptyText = useMemo(() => {
     if (state.marketData.isLoaded) return 'Loading'

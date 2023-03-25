@@ -1,29 +1,23 @@
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useContext, useEffect, useCallback } from 'react'
+import React, { FC, useContext, useEffect, useCallback } from 'react'
 
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { useRankReward } from '@/hooks/useDashboard'
 import { MobileContext } from '@/providers/Mobile'
+import { useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-
-import { bnMul, isGT, keepDecimals } from '@/utils/tools'
-import {
-  useActiveRankGrantCount,
-  useActiveRankGrantRatios,
-  useActiveRankGrantTotalAmount,
-  useTraderBondBalance
-} from '@/hooks/useQueryApi'
 import { useWithdrawRankReward } from '@/hooks/useEarning'
+import { bnMul, isET, isGT, isLT, keepDecimals } from '@/utils/tools'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { useActiveRankGrantCount, useActiveRankGrantRatios, useActiveRankGrantTotalAmount } from '@/hooks/useQueryApi'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { useMarginToken } from '@/store'
 
 const Competition: FC = () => {
   const { t } = useTranslation()
@@ -36,14 +30,9 @@ const Competition: FC = () => {
   const { withdraw } = useWithdrawRankReward()
   const { protocolConfig } = useProtocolConf(marginToken)
   const { data: grantRatio } = useActiveRankGrantRatios(findToken(marginToken).tokenAddress, address)
-  const { data: bondBalance } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
   const { data: grantAmount } = useActiveRankGrantTotalAmount(findToken(marginToken).tokenAddress)
   const { data: activeGrant } = useActiveRankGrantCount(findToken(marginToken).tokenAddress)
-  const { data: rankReward, refetch } = useRankReward(address, protocolConfig?.rewards)
-
-  const memoDisabled = useMemo(() => {
-    return isGT(bondBalance ?? 0, 0)
-  }, [bondBalance])
+  const { data: rankReward, refetch, isLoading } = useRankReward(address, protocolConfig?.rewards)
 
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
@@ -85,16 +74,26 @@ const Competition: FC = () => {
         <div className="web-eran-item-claim">
           <main>
             <h4>{t('Earn.PositionMining.Claimable')}</h4>
-            <BalanceShow value={rankReward.drfBalance} unit={PLATFORM_TOKEN.symbol} />
+            <BalanceShow
+              value={rankReward?.drfBalance ?? 0}
+              unit={PLATFORM_TOKEN.symbol}
+              decimal={
+                isLoading ? 2 : isLT(rankReward?.drfBalance ?? 0, 1) && isGT(rankReward?.drfBalance ?? 0, 0) ? 8 : 2
+              }
+            />
             <div className="block" />
             <p>
               {t('Earn.PositionMining.TotalEarned')} :{' '}
-              <strong>{keepDecimals(rankReward.drfAccumulatedBalance, PLATFORM_TOKEN.decimals)}</strong>{' '}
+              <strong>{keepDecimals(rankReward?.drfAccumulatedBalance ?? 0, PLATFORM_TOKEN.decimals)}</strong>{' '}
               {PLATFORM_TOKEN.symbol}
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
+            <Button
+              size={mobile ? 'mini' : 'default'}
+              disabled={isET(rankReward?.drfBalance ?? 0, 0)}
+              onClick={withdrawFunc}
+            >
               {t('Earn.bDRFPool.ClaimAll', 'Claim All')}
             </Button>
           </aside>

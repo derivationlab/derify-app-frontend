@@ -234,7 +234,7 @@ export const useTraderVariables = (trader?: string, config?: Record<string, any>
             }
           })
 
-          // console.info(output)
+          console.info(output)
           return output
         }
 

@@ -7,7 +7,7 @@ import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { isOpeningMinLimit } from '@/hooks/helper'
 import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
-import { isET, isGT, isLT, isLTET } from '@/utils/tools'
+import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 import { PubSubEvents, PositionSideTypes } from '@/typings'
@@ -141,7 +141,16 @@ const Bench: FC = () => {
       )
 
       if (isLimit) {
-        window.toast.error(t('Trade.Bench.MinNumber', '', { Limit: openingMinLimit[marginToken], Token: marginToken }))
+        window.toast.error(
+          t('Trade.Bench.TheMinimumPositionValue', {
+            USD: openingMinLimit[marginToken],
+            Token: marginToken,
+            Margin: keepDecimals(
+              bnDiv(openingMinLimit[marginToken], mTokenPrices[marginToken]),
+              findToken(marginToken).decimals
+            )
+          })
+        )
         return
       }
 

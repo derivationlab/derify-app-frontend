@@ -83,7 +83,7 @@ const HeaderData: FC = () => {
           <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
         </h3>
         <strong>
-          <BalanceShow value={memoPosFeeRatio} percent />
+          <BalanceShow value={memoPosFeeRatio} decimal={4} percent />
         </strong>
       </section>
       {!mobile && <hr />}

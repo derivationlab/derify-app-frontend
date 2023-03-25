@@ -87,9 +87,12 @@ export const PLATFORM_TOKEN = tokens.drf
 // key: (btc,eth...)/address
 export const findToken = (key: string): Token => {
   // eslint-disable-next-line
-  return Object.values(tokens).find((t) => t.symbol === key.toUpperCase() || t.tokenAddress === key.toLowerCase())!
+  const upper = key.toUpperCase()
+  const lower = key.toLowerCase()
+  return Object.values(tokens).find(
+    (t) => t.symbol === upper || t.symbol === lower || t.symbol === key || t.tokenAddress === key.toLowerCase()
+  )!
 }
-
 export const findMarginToken = (key: string): Token | undefined => {
   return MARGIN_TOKENS.find((t) => t.symbol === key.toUpperCase() || t.tokenAddress === key.toLowerCase())
 }

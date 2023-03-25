@@ -106,14 +106,12 @@ export default {
       Volume: 'Volume',
       Max: 'Max',
       NumberError: 'Number error, please retry...',
-      MinNumber: 'The minimum number is {{Limit}}{{Token}}',
       Long: 'Long',
       Short: 'Short',
       TowWay: '2-Way',
-      // 以下为2023年03月23日新增
       SerchTip: 'serch name or contract address..',
       NoResultsFound: 'No results found.',
-      TheMinimumPositionValue: 'The minimum position value is {{UsdValue}} USD({{MarginValue}} {{MarginCoin}})'
+      TheMinimumPositionValue: 'The minimum position value is {{USD}} USD({{Margin}} {{Token}})'
     },
     COP: {
       OpenPosition: 'Open Position',
@@ -169,7 +167,7 @@ export default {
       AmountToWithdraw: 'Amount to withdraw',
       Confirm: 'Confirm',
       WithdrawTip:
-        'Due to the system risk control rules, you will recieve <b>{{BUSD}} BUSD</b>, and <b>{{bBUSD}} bBUSD</b> as compensation. You can exchange bBUSD to BUSD at 1 : 1 ratio when Buyback Pool >0.'
+        'Due to the system risk control rules, you will recieve <b>{{MarginAmount}} {{ MarginToken }}</b>, and <b>{{bMarginAmount}} {{bMarginToken}}</b> as compensation. You can exchange {{bMarginToken}} to {{MarginToken}} at 1 : 1 ratio when Buyback Pool >0.'
     }
   }
 }

@@ -100,14 +100,12 @@ export default {
       Volume: '数量',
       Max: 'Max',
       NumberError: '数值有误，请重新输入',
-      MinNumber: '最小开仓额为 {{Limit}}{{Token}}',
       Long: '开多',
       Short: '开空',
       TowWay: '双向对冲',
-      // 以下为2023年03月23日新增
       SerchTip: '搜索名称或合约地址',
       NoResultsFound: '无搜索结果',
-      TheMinimumPositionValue: '最小开仓净值为 {{UsdValue}} USD({{MarginValue}} {{MarginCoin}})'
+      TheMinimumPositionValue: '最小开仓净值为 {{USD}} USD({{Margin}} {{Token}})'
     },
     COP: {
       OpenPosition: '开仓',
@@ -163,7 +161,7 @@ export default {
       AmountToWithdraw: '取回数量',
       Confirm: '确认',
       WithdrawTip:
-        '根据系统风控规则，你将收到 <b>{{BUSD}} BUSD</b>和 <b>{{bBUSD}} bBUSD</b>作为补偿，你可以在回购池余额>0时以1:1的比例将bBUSD换回USDT'
+        '根据系统风控规则，你将收到 <b>{{MarginAmount}} {{ MarginToken }}</b> 和 <b>{{bMarginAmount}} {{bMarginToken}}</b>作为补偿，你可以在回购池余额>0时以1:1的比例将{{bMarginToken}}换回{{MarginToken}}'
     }
   }
 }

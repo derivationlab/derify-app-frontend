@@ -92,7 +92,7 @@ export const useMulCurrentIndexDAT = () => {
 }
 
 export const useTraderEDRFBalance = (trader = '') => {
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     ['getTraderEDRFBalance'],
     async (): Promise<number> => {
       const data = await getTraderEDRFBalance(trader)
@@ -100,18 +100,18 @@ export const useTraderEDRFBalance = (trader = '') => {
     },
     {
       retry: 0,
-      initialData: 0,
+      // initialData: 0,
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  return { data }
+  return { data, isLoading }
 }
 
 export const useTraderBondBalance = (trader = '', address: string) => {
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     ['getTraderBondBalance'],
     async (): Promise<number> => {
       const data = await getTraderBondBalance(trader, address)
@@ -119,14 +119,14 @@ export const useTraderBondBalance = (trader = '', address: string) => {
     },
     {
       retry: 0,
-      initialData: 0,
+      // initialData: 0,
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  return { data }
+  return { data, isLoading }
 }
 
 export const useCurrentInsuranceDAT = (address: string) => {

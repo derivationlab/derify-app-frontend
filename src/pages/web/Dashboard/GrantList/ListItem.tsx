@@ -51,7 +51,7 @@ const ListItem: FC<Props> = ({ data }) => {
       <dl>
         <dt>{t('NewDashboard.GrantList.Rewards', 'Rewards')}</dt>
         <dd>
-          {keepDecimals(data.amount, PLATFORM_TOKEN.decimals, true)} {margin?.symbol}
+          {keepDecimals(data.amount, PLATFORM_TOKEN.decimals, true)} {PLATFORM_TOKEN.symbol}
         </dd>
       </dl>
       <dl>

@@ -9,7 +9,7 @@ import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/store/useTraderInfo'
 import tokens, { findToken } from '@/config/tokens'
 
-import { bnMul, isGT, keepDecimals } from '@/utils/tools'
+import { bnMul, isGT, isLT, keepDecimals } from '@/utils/tools'
 import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
 
@@ -35,7 +35,7 @@ const DerifyTokenPool: FC = () => {
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
-  const { data: edrfBalance } = useTraderEDRFBalance(address)
+  const { data: edrfBalance, isLoading } = useTraderEDRFBalance(address)
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
@@ -131,7 +131,11 @@ const DerifyTokenPool: FC = () => {
           <div className="web-eran-item-claim">
             <main>
               <h4>{t('Earn.DerifyTokenPool.Claimable', 'Claimable')}</h4>
-              <BalanceShow value={edrfBalance ?? 0} unit="eDRF" />
+              <BalanceShow
+                value={edrfBalance ?? 0}
+                unit="eDRF"
+                decimal={isLoading ? 2 : isLT(edrfBalance ?? 0, 1) && isGT(edrfBalance ?? 0, 0) ? 8 : 2}
+              />
             </main>
             <aside>
               <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>

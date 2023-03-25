@@ -6,12 +6,13 @@ import { useTraderInfo } from '@/store/useTraderInfo'
 import { useMarginToken } from '@/store'
 import { reducer, stateInit } from '@/reducers/withdraw'
 import { getTraderWithdrawAmount } from '@/api'
-import { isET, isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
+import { isET, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '../AmountInput'
+import { findToken } from '@/config/tokens'
 
 interface Props {
   visible: boolean
@@ -26,18 +27,18 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const variables = useTraderInfo((state) => state.variables)
-  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
   const memoMargin = useMemo(() => {
     if (variablesLoaded) {
       const { marginBalance, availableMargin } = variables
       const p1 = Number(marginBalance) - Number(availableMargin)
       const p2 = isET(marginBalance, 0) ? 0 : (p1 / Number(marginBalance)) * 100
-      return [nonBigNumberInterception(p1), p2]
+      return [keepDecimals(p1, findToken(marginToken).decimals), keepDecimals(p2, 2)]
     }
     return [0, 0]
-  }, [variablesLoaded])
+  }, [marginToken, variablesLoaded])
 
   const memoDisabled = useMemo(() => {
     if (variablesLoaded) {
@@ -58,7 +59,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   const funcAsync = async (account: string, amount: number) => {
-    const { data } = await getTraderWithdrawAmount(account, amount)
+    const { data } = await getTraderWithdrawAmount(account, amount, findToken(marginToken).tokenAddress)
     dispatch({ type: 'SET_WITHDRAW_DAT', payload: data })
   }
 
@@ -94,13 +95,18 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
               title={t('Trade.Withdraw.AmountToWithdraw', 'Amount to withdraw')}
               onChange={onChange}
             />
-            {state.withdrawData?.bdrfAmount > 0 && (
+            {state.withdrawData?.bMarginTokenAmount > 0 && (
               <p
                 className="tips"
                 dangerouslySetInnerHTML={{
                   __html: t('Trade.Withdraw.WithdrawTip', '', {
-                    BUSD: nonBigNumberInterception(state.withdrawData?.usdAmount, 8),
-                    bBUSD: nonBigNumberInterception(state.withdrawData?.bdrfAmount, 8)
+                    MarginToken: marginToken,
+                    MarginAmount: keepDecimals(state.withdrawData?.marginTokenAmount, findToken(marginToken).decimals),
+                    bMarginAmount: keepDecimals(
+                      state.withdrawData?.bMarginTokenAmount,
+                      findToken(marginToken).decimals
+                    ),
+                    bMarginToken: `b${marginToken}`
                   })
                 }}
               />

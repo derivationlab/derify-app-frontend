@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
-import { useInterval } from 'react-use'
 
 import { usePairsInfo } from '@/store'
+import { useSpotPrices } from '@/hooks/useSpotPrices'
 import { useConfigInfo } from '@/store/useConfigInfo'
-import { getOpeningMaxLimit, getPCFAndSpotPrice } from '@/hooks/helper'
-import { MarginTokenWithContract, MarginTokenWithQuote } from '@/typings'
+import { getOpeningMaxLimit } from '@/hooks/helper'
+import { MarginTokenWithContract } from '@/typings'
 
 export default function TradingUpdater(): null {
   const factoryConfig = useConfigInfo((state) => state.factoryConfig)
@@ -15,6 +15,18 @@ export default function TradingUpdater(): null {
   const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
   const updateOpeningMaxLimit = useConfigInfo((state) => state.updateOpeningMaxLimit)
 
+  // for pcf and spot price
+  const { data1: pcfDAT, data2: spotPriceDAT, refetch: refetchSpotPrices } = useSpotPrices(factoryConfig)
+
+  useEffect(() => {
+    if (factoryConfig && factoryConfigLoaded) void refetchSpotPrices()
+  }, [factoryConfig, factoryConfigLoaded])
+
+  useEffect(() => {
+    updatePCFRatios(pcfDAT)
+    updateSpotPrices(spotPriceDAT)
+  }, [pcfDAT, spotPriceDAT])
+
   useEffect(() => {
     const func = async (protocolConfig: MarginTokenWithContract) => {
       const data = await getOpeningMaxLimit(protocolConfig)
@@ -23,18 +35,6 @@ export default function TradingUpdater(): null {
 
     if (protocolConfigLoaded && protocolConfig) void func(protocolConfig)
   }, [protocolConfigLoaded, protocolConfig])
-
-  // for pcf and spot price
-  const _getPCFAndSpotPrice = async (factoryConfig: MarginTokenWithQuote) => {
-    const { data1: pcfDAT, data2: spotPriceDAT } = await getPCFAndSpotPrice(factoryConfig)
-    updatePCFRatios(pcfDAT)
-    updateSpotPrices(spotPriceDAT)
-  }
-
-  // for pcf and spot price
-  useInterval(() => {
-    if (factoryConfig && factoryConfigLoaded) void _getPCFAndSpotPrice(factoryConfig)
-  }, 3000)
 
   return null
 }

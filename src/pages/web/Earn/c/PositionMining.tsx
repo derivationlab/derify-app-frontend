@@ -8,11 +8,11 @@ import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/store/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import tokens, { findToken } from '@/config/tokens'
+import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
 import { useWithdrawPositionReward } from '@/hooks/useEarning'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { bnPlus, isGT, keepDecimals } from '@/utils/tools'
+import { bnPlus, isGT, isLT, keepDecimals } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -30,6 +30,7 @@ const PositionMining: FC = () => {
   const indicators = usePairsInfo((state) => state.indicators)
   const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
   const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
 
   const { withdraw } = useWithdrawPositionReward()
@@ -93,8 +94,29 @@ const PositionMining: FC = () => {
         <div className="web-eran-item-claim">
           <main>
             <h4>{t('Earn.PositionMining.Claimable', 'Claimable')}</h4>
-            <BalanceShow value={rewardsInfo?.marginTokenBalance ?? 0} unit={marginToken} />
-            <BalanceShow value={rewardsInfo?.drfBalance ?? 0} unit="DRF" />
+            <BalanceShow
+              value={rewardsInfo?.marginTokenBalance ?? 0}
+              unit={marginToken}
+              decimal={
+                !variablesLoaded
+                  ? 2
+                  : isLT(rewardsInfo?.marginTokenBalance ?? 0 ?? 0, 1) &&
+                    isGT(rewardsInfo?.marginTokenBalance ?? 0 ?? 0, 0)
+                  ? 8
+                  : 2
+              }
+            />
+            <BalanceShow
+              value={rewardsInfo?.drfBalance ?? 0}
+              unit={PLATFORM_TOKEN.symbol}
+              decimal={
+                !variablesLoaded
+                  ? 2
+                  : isLT(rewardsInfo?.drfBalance ?? 0, 1) && isGT(rewardsInfo?.drfBalance ?? 0, 0)
+                  ? 8
+                  : 2
+              }
+            />
             <p>
               {t('Earn.PositionMining.TotalEarned', 'Total earned :')}{' '}
               <strong>

@@ -10,7 +10,7 @@ import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/store/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 
-import { isGT, keepDecimals } from '@/utils/tools'
+import { isGT, isLT, keepDecimals } from '@/utils/tools'
 import { useTraderBondBalance } from '@/hooks/useQueryApi'
 import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useEarning'
 
@@ -40,7 +40,7 @@ const MarginTokenPool: FC = () => {
   const { exchange } = useExchangeBond()
   const { withdraw } = useWithdrawAllBond()
   const { protocolConfig } = useProtocolConf(marginToken)
-  const { data: bondBalance } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
+  const { data: bondBalance, isLoading } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -68,7 +68,7 @@ const MarginTokenPool: FC = () => {
 
       window.toast.dismiss(toast)
     },
-    [signer]
+    [signer, protocolConfig]
   )
 
   const redeemFunc = useCallback(
@@ -92,7 +92,7 @@ const MarginTokenPool: FC = () => {
 
       window.toast.dismiss(toast)
     },
-    [signer]
+    [signer, protocolConfig]
   )
 
   const memoDisabled = useMemo(() => {
@@ -123,7 +123,7 @@ const MarginTokenPool: FC = () => {
 
       window.toast.dismiss(toast)
     },
-    [signer]
+    [signer, protocolConfig]
   )
 
   const withdrawFunc = useCallback(async () => {
@@ -145,7 +145,7 @@ const MarginTokenPool: FC = () => {
     }
 
     window.toast.dismiss(toast)
-  }, [signer])
+  }, [signer, protocolConfig])
 
   return (
     <>
@@ -165,7 +165,11 @@ const MarginTokenPool: FC = () => {
           <div className="web-eran-item-claim">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow value={bondBalance ?? 0} unit={`b${marginToken}`} />
+              <BalanceShow
+                value={bondBalance ?? 0}
+                unit={`b${marginToken}`}
+                decimal={isLoading ? 2 : isLT(bondBalance ?? 0, 1) && isGT(bondBalance ?? 0, 0) ? 8 : 2}
+              />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} :{' '}

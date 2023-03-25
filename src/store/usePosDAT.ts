@@ -2,11 +2,11 @@ import create from 'zustand'
 import BN from 'bignumber.js'
 import { isEmpty } from 'lodash'
 
+import multicall from '@/utils/multicall'
 import { PosDATState, Rec } from '@/store/types'
 import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
 import { nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
 
-import multicall from '@/utils/multicall'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 
 const BIG_TEN = new BN(10).pow(8)

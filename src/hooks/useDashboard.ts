@@ -34,7 +34,7 @@ export const useRankReward = (trader?: string, rewards?: string) => {
     },
     {
       retry: false,
-      initialData: output,
+      // initialData: output,
       refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false

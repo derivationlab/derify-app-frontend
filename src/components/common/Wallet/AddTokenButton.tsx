@@ -43,13 +43,13 @@ const AddTokenButton: FC = () => {
       },
       {
         image: '',
-        symbol: 'bBUSD',
+        symbol: `b${marginToken}`,
         address: protocolConfig?.bMarginToken,
         decimals: 18,
         direction: 1
       }
     ]
-  }, [protocolConfig])
+  }, [protocolConfig, marginToken])
 
   const addToken = (token: Record<string, any>) => {
     void addToken2Wallet(token.address, token.symbol, token.decimals, token.image)

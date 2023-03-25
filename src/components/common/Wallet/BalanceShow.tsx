@@ -9,15 +9,16 @@ interface Props {
   rule?: string
   value: number | string
   percent?: boolean
+  decimal?: number
 }
 
-const BalanceShow: FC<Props> = ({ unit, rule, value, percent = false }) => {
+const BalanceShow: FC<Props> = ({ unit, rule, value, percent = false, decimal = 2 }) => {
   // todo dec maybe undefined
   const [isMillion, int, dec] = useMemo(() => {
+    const padEnd = '0'.padEnd(decimal, '0')
     const output = percent ? bnMul(value, 100) : value
     const isMillion = output >= 1000000
-    const isDecimal = output < 1
-    const formatRule = rule || (isMillion ? '0,0.00 a' : '0,0.00')
+    const formatRule = rule || (isMillion ? `0,0.${padEnd} a` : `0,0.${padEnd}`)
     return [isMillion, ...numeral(output).format(formatRule).split('.')]
   }, [value, percent])
 

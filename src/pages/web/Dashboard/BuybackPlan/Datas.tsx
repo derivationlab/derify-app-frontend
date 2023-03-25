@@ -41,7 +41,7 @@ const Datas: FC = () => {
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.CurrentDRFPrice', '', { Coin: PLATFORM_TOKEN.symbol })} </header>
         <section>
-          <BalanceShow value={mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]} />
+          <BalanceShow value={mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]} decimal={4} />
           <u>{VALUATION_TOKEN_SYMBOL}</u>
         </section>
       </div>

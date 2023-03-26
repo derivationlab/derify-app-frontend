@@ -71,12 +71,14 @@ const MySpace: FC = () => {
       },
       {
         title: 'Balance/Rate',
-        dataIndex: 'max_pm_apy',
-        render: (value: number, data: Record<string, any>) => {
-          const per = bnMul(value ?? 0, 100)
+        dataIndex: 'symbol',
+        render: (symbol: string, data: Record<string, any>) => {
+          const p1 = traderVariables[symbol as MarginTokenKeys]
+          const p2 = marginBalances[symbol as MarginTokenKeys]
+          const per = Number(p1) === 0 ? 0 : bnDiv(p2, p1)
           return (
             <>
-              <BalanceShow value={value} unit={data.name} />
+              <BalanceShow value={p2} unit={data.name} />
               <DecimalShow value={per} percent black />
             </>
           )
@@ -98,7 +100,7 @@ const MySpace: FC = () => {
           const per = Number(p1) === 0 ? 0 : bnDiv(p2, p1)
           return (
             <>
-              <BalanceShow value={marginBalances[symbol as MarginTokenKeys]} unit={symbol} />
+              <BalanceShow value={p2} unit={symbol} />
               <BalanceShow value={per} percent />
             </>
           )
@@ -158,7 +160,7 @@ const MySpace: FC = () => {
   const fetchData = useCallback(
     async (index = 0) => {
       if (address) {
-        const { data } = await getMySpaceMarginTokenList(address, index, 10)
+        const { data } = await getMySpaceMarginTokenList('0xfAaf5D88609fd5Ef171671da0189019e7d4D4943', index, 10)
 
         dispatch({
           type: 'SET_MARGIN_DAT',

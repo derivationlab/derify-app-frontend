@@ -79,3 +79,16 @@ export const usePCFRatioConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken
     pcfRatio
   }
 }
+
+export const useIndicatorsConf = (quoteToken = QUOTE_TOKENS[0].symbol) => {
+  const indicators = usePairsInfo((state) => state.indicators)
+  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
+
+  const _indicators = useMemo(() => {
+    if (indicatorsLoaded) return indicators[quoteToken]
+  }, [quoteToken, indicators, indicatorsLoaded])
+
+  return {
+    indicators: _indicators
+  }
+}

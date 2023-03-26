@@ -7,11 +7,11 @@ import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { isOpeningMinLimit } from '@/hooks/helper'
 import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
-import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
-import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { OpeningType, useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 import { PubSubEvents, PositionSideTypes } from '@/typings'
-import { useConfigInfo, useMarginToken, usePairsInfo, useQuoteToken } from '@/store'
+import { useConfigInfo, useMarginToken, useQuoteToken } from '@/store'
+import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
+import { useIndicatorsConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -30,9 +30,9 @@ const Bench: FC = () => {
 
   const { t } = useTranslation()
 
-  const indicators = usePairsInfo((state) => state.indicators)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
   const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
@@ -42,9 +42,10 @@ const Bench: FC = () => {
   const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
   const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
-  const marginToken = useMarginToken((state) => state.marginToken)
+
   const { opening } = useOpeningPosition()
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { indicators } = useIndicatorsConf(quoteToken)
   const { protocolConfig } = useProtocolConf(marginToken)
 
   const memoLongPosApy = useMemo(() => {
@@ -225,7 +226,7 @@ const Bench: FC = () => {
               >
                 <strong>{t('Trade.Bench.Long', 'Long')}</strong>
                 <em>
-                  {memoLongPosApy}%<u>APR</u>
+                  {keepDecimals(memoLongPosApy, 2)}%<u>APR</u>
                 </em>
               </Button>
             </Col>
@@ -240,7 +241,7 @@ const Bench: FC = () => {
               >
                 <strong>{t('Trade.Bench.Short', 'Short')}</strong>
                 <em>
-                  {memoShortPosApy}%<u>APR</u>
+                  {keepDecimals(memoShortPosApy, 2)}%<u>APR</u>
                 </em>
               </Button>
             </Col>
@@ -260,7 +261,7 @@ const Bench: FC = () => {
                 >
                   <strong>{t('Trade.Bench.TowWay', '2-Way')}</strong>
                   <em>
-                    {memo2WayPosApy}%<u>APR</u>
+                    {keepDecimals(memo2WayPosApy, 2)}%<u>APR</u>
                   </em>
                 </Button>
               </Col>

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { useConfigInfo } from '@/store'
-import { bnMul, bnPlus } from '@/utils/tools'
+import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 import { MarginTokenKeys } from '@/typings'
 import { useMulCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { DEFAULT_MARGIN_TOKEN, PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
@@ -15,6 +15,7 @@ const Datas: FC = () => {
   const { t } = useTranslation()
 
   const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
+  const mTokenPricesLoaded = useConfigInfo((state) => state.mTokenPricesLoaded)
 
   const { data: dashboardDAT } = useMulCurrentIndexDAT()
 
@@ -41,7 +42,17 @@ const Datas: FC = () => {
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.CurrentDRFPrice', '', { Coin: PLATFORM_TOKEN.symbol })} </header>
         <section>
-          <BalanceShow value={mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]} decimal={4} />
+          <BalanceShow
+            value={mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]}
+            decimal={
+              !mTokenPricesLoaded
+                ? 2
+                : isLT(mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys], 1) &&
+                  isGT(mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys], 0)
+                ? 4
+                : 2
+            }
+          />
           <u>{VALUATION_TOKEN_SYMBOL}</u>
         </section>
       </div>

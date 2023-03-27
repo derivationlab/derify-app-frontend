@@ -21,9 +21,10 @@ export const multicall = async <T = any>(
   const { requireSuccess } = options
   const multi = getMulticallContract()
   const itf = new ethers.utils.Interface(abi)
+  const callEncode = calls.map((call) => [call.address.toLowerCase(), itf.encodeFunctionData(call.name, call.params)])
 
-  const calldata = calls.map((call) => [call.address.toLowerCase(), itf.encodeFunctionData(call.name, call.params)])
-  const returnData = await multi.tryAggregate(requireSuccess, calldata)
+  const returnData = await multi.tryAggregate(requireSuccess, callEncode)
+
   return returnData.map((call: [any, any], i: any) => {
     const [result, data] = call
     return result ? itf.decodeFunctionResult(calls[i].name, data) : null

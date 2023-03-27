@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext, useCallback, useEffect, useReducer } from 'react'
 
-import { bnDiv, bnMul } from '@/utils/tools'
+import { bnDiv } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useConfigInfo } from '@/store'
 import { MarginTokenKeys } from '@/typings'
@@ -13,10 +13,10 @@ import { reducer, stateInit } from '@/reducers/mySpace'
 import { getMySpaceMarginTokenList } from '@/api'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import {
+  useTraderVariables,
   useAllBrokerRewards,
-  useAllMarginBalances,
   useAllTraderRewards,
-  useTraderVariables
+  useAllMarginBalances
 } from '@/hooks/useMySpaceInfo'
 
 import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
@@ -160,7 +160,7 @@ const MySpace: FC = () => {
   const fetchData = useCallback(
     async (index = 0) => {
       if (address) {
-        const { data } = await getMySpaceMarginTokenList('0xfAaf5D88609fd5Ef171671da0189019e7d4D4943', index, 10)
+        const { data } = await getMySpaceMarginTokenList(address, index, 10)
 
         dispatch({
           type: 'SET_MARGIN_DAT',

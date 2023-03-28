@@ -1,25 +1,26 @@
 import Table from 'rc-table'
 import classNames from 'classnames'
 import { isEmpty } from 'lodash'
-import React, { FC, useMemo, useState, useContext, useEffect, useReducer, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBlockNumber } from 'wagmi'
+import React, { FC, useMemo, useState, useContext, useEffect, useReducer, useCallback } from 'react'
 
+import { isGT, isGTET } from '@/utils/tools'
+import { useConfigInfo } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
 import { useBuyBackPool } from '@/hooks/useBuyBackPool'
-import { BENCHMARK_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/marketInfo'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { getBuyBackMarginTokenList } from '@/api'
+import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 // import { Input } from '@/components/common/Form'
 import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
-import { MarginTokenKeys } from '@/typings'
-import { isGTET } from '@/utils/tools'
-import { useConfigInfo } from '@/store'
+
 // import Button from '@/components/common/Button'
 
 const Plan: FC = () => {
@@ -100,7 +101,11 @@ const Plan: FC = () => {
         dataIndex: 'last_drf_price',
         render: (value: number, data: Record<string, any>) => {
           return (
-            <div className={classNames(isGTET(value, mTokenPrices[data.symbol as MarginTokenKeys]) ? 'rise' : 'fall')}>
+            <div
+              className={classNames(
+                isGT(value, mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]) ? 'rise' : 'fall'
+              )}
+            >
               <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
           )

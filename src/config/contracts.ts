@@ -13,8 +13,3 @@ export const contracts: { [key in ContractKeys]: Contract } = {
 }
 
 export default contracts
-
-export const findContract = (key: string): Contract => {
-  // eslint-disable-next-line
-  return Object.values(contracts).find((t) => t.contractAddress === key.toLowerCase())!
-}

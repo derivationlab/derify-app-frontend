@@ -12,7 +12,6 @@ export default {
       ClaimAll: 'Claim All',
       Positions: 'Positions',
       OpenPosition: 'Open Position',
-      // 以下为2023年03月23日新增
       RankList: 'Rank List',
       PositionMiningRank: 'Position Mining Rank',
       Address: 'Address',

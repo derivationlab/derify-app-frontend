@@ -130,10 +130,7 @@ const PositionMining: FC = () => {
             <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
               {t('Earn.PositionMining.ClaimAll', 'Claim All')}
             </Button>
-            <Link to={`/${marginToken}/mining/rank`}>
-              {t('Broker.BV.RankList')}
-              {brokerInfo?.rank && ` # ${brokerInfo?.rank}`}
-            </Link>
+            <Link to={`/${marginToken}/mining/rank`}>{t('Broker.BV.RankList')}</Link>
           </aside>
         </div>
         <div className="web-eran-item-card">

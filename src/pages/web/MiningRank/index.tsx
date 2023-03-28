@@ -6,9 +6,9 @@ import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } fr
 import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginToken } from '@/store'
-import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { getTradersRankList } from '@/api'
 import { reducer, stateInit } from '@/reducers/brokerRank'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
@@ -48,7 +48,7 @@ const Rank: FC = () => {
     async (index = 0) => {
       const { data } = await getTradersRankList(findToken(marginToken).tokenAddress, index, 10)
 
-      console.info(data)
+      // console.info(data)
 
       dispatch({
         type: 'SET_RANK_DAT',
@@ -74,7 +74,7 @@ const Rank: FC = () => {
     {
       title: t('Earn.MiningRank.Address'),
       dataIndex: 'user',
-      width: mobile ? 275 : 250,
+      width: mobile ? 275 : 600,
       render: (user: string, data: Record<string, any>) => {
         return <RowName data={data} />
       }

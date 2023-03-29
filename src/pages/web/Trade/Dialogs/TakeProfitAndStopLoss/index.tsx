@@ -2,7 +2,7 @@ import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
-import { useSpotPrice } from '@/hooks/useMatchConf'
+import { useIndicatorsConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { PositionSideTypes } from '@/typings'
 
 import { useMarginToken, usePairsInfo, useQuoteToken } from '@/store'
@@ -26,20 +26,41 @@ interface Props {
 const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
-  const indicators = usePairsInfo((state) => state.indicators)
+  const { spotPrice } = useSpotPrice(data?.quoteToken, marginToken)
+  const { indicators } = useIndicatorsConf(data?.quoteToken)
 
-  const [stopLossAmount, setStopLossAmount] = useState<any>()
   const [stopLossPrice, setStopLossPrice] = useState<any>('')
-  const [takeProfitAmount, setTakeProfitAmount] = useState<any>()
+  const [stopLossAmount, setStopLossAmount] = useState<any>()
   const [takeProfitPrice, setTakeProfitPrice] = useState<any>('')
+  const [takeProfitAmount, setTakeProfitAmount] = useState<any>()
+
+  const memoStopLoss = useMemo(() => {
+    return (
+      <p>
+        <em className="buy">
+          {data?.side === PositionSideTypes.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+        </em>
+        <u>{VALUATION_TOKEN_SYMBOL}</u>
+      </p>
+    )
+  }, [data])
 
   const memoChangeRate = useMemo(() => {
     return Number(indicators?.price_change_rate ?? 0) * 100
   }, [indicators])
+
+  const memoTakeProfit = useMemo(() => {
+    return (
+      <p>
+        <em className="buy">
+          {data?.side === PositionSideTypes.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+        </em>
+        <u>{VALUATION_TOKEN_SYMBOL}</u>
+      </p>
+    )
+  }, [data])
 
   const calcProfitAmountCb = useCallback(
     (v) => {
@@ -77,38 +98,6 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   const calcAmountShowFunc = (price: string | number, amount: string | number) => {
     if (new BN(price).isGreaterThan(0)) return !new BN(amount).isZero() ? `${amount > 0 ? '+' : ''}${amount}` : '--'
     return '--'
-  }
-
-  const onChangeTakeProfitPriceEv = (val: any) => {
-    if (val === '') {
-      setTakeProfitPrice('')
-      calcProfitAmountCb(0)
-    } else {
-      if (val >= 0) {
-        setTakeProfitPrice(val)
-        calcProfitAmountCb(val)
-
-        if (Number(val) === 0) {
-          window.toast.error(t('Trade.TPSL.Tip'))
-        }
-      }
-    }
-  }
-
-  const onChangeStopLossPriceEv = (val: any) => {
-    if (val === '') {
-      setStopLossPrice('')
-      calcLossAmountCb(0)
-    } else {
-      if (val >= 0) {
-        setStopLossPrice(val)
-        calcLossAmountCb(val)
-
-        if (Number(val) === 0) {
-          window.toast.error(t('Trade.TPSL.Tip'))
-        }
-      }
-    }
   }
 
   const onConfirmEditPosFunc = async () => {
@@ -160,36 +149,46 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     }
 
     const params = {
-      token: findToken(quoteToken)?.tokenAddress,
-      side: data?.side,
       TP,
-      SL
+      SL,
+      side: data?.side,
+      token: data?.quoteToken
     }
 
     onClick(params)
   }
 
-  const memoTakeProfit = useMemo(() => {
-    return (
-      <p>
-        <em className="buy">
-          {data?.side === PositionSideTypes.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
-        </em>
-        <u>{VALUATION_TOKEN_SYMBOL}</u>
-      </p>
-    )
-  }, [data])
+  const onChangeStopLossPriceEv = (val: any) => {
+    if (val === '') {
+      setStopLossPrice('')
+      calcLossAmountCb(0)
+    } else {
+      if (val >= 0) {
+        setStopLossPrice(val)
+        calcLossAmountCb(val)
 
-  const memoStopLoss = useMemo(() => {
-    return (
-      <p>
-        <em className="buy">
-          {data?.side === PositionSideTypes.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
-        </em>
-        <u>{VALUATION_TOKEN_SYMBOL}</u>
-      </p>
-    )
-  }, [data])
+        if (Number(val) === 0) {
+          window.toast.error(t('Trade.TPSL.Tip'))
+        }
+      }
+    }
+  }
+
+  const onChangeTakeProfitPriceEv = (val: any) => {
+    if (val === '') {
+      setTakeProfitPrice('')
+      calcProfitAmountCb(0)
+    } else {
+      if (val >= 0) {
+        setTakeProfitPrice(val)
+        calcProfitAmountCb(val)
+
+        if (Number(val) === 0) {
+          window.toast.error(t('Trade.TPSL.Tip'))
+        }
+      }
+    }
+  }
 
   useEffect(() => {
     if (data && visible) {
@@ -233,7 +232,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
             </header>
             <section className="web-trade-dialog-position-info-data">
               <BalanceShow value={spotPrice} unit="" />
-              <span className={memoChangeRate >= 0 ? 'buy' : 'sell'}>{memoChangeRate}%</span>
+              <span className={memoChangeRate >= 0 ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
             </section>
             <section className="web-trade-dialog-position-info-count">
               <p>

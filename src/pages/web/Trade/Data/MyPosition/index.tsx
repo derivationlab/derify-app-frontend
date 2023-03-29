@@ -5,7 +5,7 @@ import { useSigner, useAccount } from 'wagmi'
 import React, { FC, useState, useMemo, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { PubSubEvents } from '@/typings'
+import { PubSubEvents, QuoteTokenKeys } from '@/typings'
 import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { usePosDATStore } from '@/store/usePosDAT'
 import { useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
@@ -45,8 +45,8 @@ const MyPosition: FC = () => {
   const marginToken = useMarginToken((state) => state.marginToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
-  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
+  const { match: matchFactoryConfig } = useFactoryConf(quoteToken, marginToken)
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
@@ -132,10 +132,9 @@ const MyPosition: FC = () => {
 
     onCloseDialogEv()
 
-    if (signer && factoryConfig) {
-      const { side, TP, SL } = params
-
-      const status = await takeProfitOrStopLoss(factoryConfig, side, TP, SL)
+    if (signer && matchFactoryConfig) {
+      const { token, side, TP, SL } = params
+      const status = await takeProfitOrStopLoss(matchFactoryConfig[token as QuoteTokenKeys], side, TP, SL)
 
       if (status) {
         // succeed

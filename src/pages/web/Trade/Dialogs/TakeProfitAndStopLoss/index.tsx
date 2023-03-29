@@ -5,8 +5,8 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useIndicatorsConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { PositionSideTypes } from '@/typings'
 
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/store'
-import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useMarginToken } from '@/store'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'

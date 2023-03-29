@@ -9,7 +9,6 @@ import { formatUnits as _formatUnits } from '@ethersproject/units'
 dayjs.extend(duration)
 
 export const calcDateDuration = (s: number): [number, string, string, string, boolean] => {
-  console.info(s, new Date().getTime())
   const duration = dayjs.duration(dayjs(s).diff(dayjs()))
   // console.info(duration.asSeconds())
   const days = duration.days()

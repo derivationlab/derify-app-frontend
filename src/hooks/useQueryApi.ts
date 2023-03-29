@@ -1,7 +1,8 @@
 import { isEmpty } from 'lodash'
 import { useQuery } from '@tanstack/react-query'
 
-import { Rec } from '@/store/types'
+import { MarginToken } from '@/typings'
+import { MARGIN_TOKENS } from '@/config/tokens'
 import {
   getCurrentIndexDAT,
   getTraderBondBalance,
@@ -15,10 +16,8 @@ import {
   getCurrentTotalTradingNetValue,
   getCurrentTotalPositionsNetValue
 } from '@/api'
-import { MARGIN_TOKENS } from '@/config/tokens'
-import { MarginToken } from '@/typings'
 
-const initial = (): MarginToken => {
+const initialMulCurrentIndexOutput = (): MarginToken => {
   let value = Object.create(null)
 
   MARGIN_TOKENS.forEach((t) => {
@@ -33,7 +32,7 @@ const initial = (): MarginToken => {
 
 export const useCurrentIndexDAT = (marginToken: string) => {
   const { data, refetch } = useQuery(
-    ['getCurrentIndexDAT'],
+    ['useCurrentIndexDAT'],
     async (): Promise<Record<string, any>> => {
       const data = await getCurrentIndexDAT(marginToken)
       // console.info(data)
@@ -54,7 +53,7 @@ export const useCurrentIndexDAT = (marginToken: string) => {
 }
 
 export const useMulCurrentIndexDAT = () => {
-  let output = initial()
+  let output = initialMulCurrentIndexOutput()
 
   const { data } = useQuery(
     ['useMulCurrentIndexDAT'],
@@ -72,7 +71,6 @@ export const useMulCurrentIndexDAT = () => {
             [MARGIN_TOKENS[index].symbol]: margin
           }
         })
-        // console.info(output)
 
         return output
       }
@@ -132,7 +130,7 @@ export const useTraderBondBalance = (trader = '', address: string) => {
 export const useCurrentInsuranceDAT = (address: string) => {
   const { data, refetch } = useQuery(
     ['getCurrentInsuranceDAT'],
-    async (): Promise<Rec> => {
+    async () => {
       const data = await getCurrentInsuranceDAT(address)
       return data?.data ?? {}
     },

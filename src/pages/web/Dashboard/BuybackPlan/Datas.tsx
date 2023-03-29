@@ -1,18 +1,18 @@
 import { useBlockNumber } from 'wagmi'
-import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo } from 'react'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { useConfigInfo } from '@/store'
-import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 import { MarginTokenKeys } from '@/typings'
 import { useMulCurrentIndexDAT } from '@/hooks/useQueryApi'
+import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 import { DEFAULT_MARGIN_TOKEN, PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 const Datas: FC = () => {
   const { t } = useTranslation()
-  const { data = 0 } = useBlockNumber({ watch: true })
+  const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
 
   const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
   const mTokenPricesLoaded = useConfigInfo((state) => state.mTokenPricesLoaded)
@@ -24,7 +24,7 @@ const Datas: FC = () => {
       const margin = Object.keys(dashboardDAT)[index] as MarginTokenKeys
       return bnPlus(bnMul(n.drfBuyBack ?? 0, mTokenPrices[margin]), p)
     }, 0)
-  }, [dashboardDAT])
+  }, [dashboardDAT, mTokenPrices])
 
   const tokenDecimal = useMemo(() => {
     if (!mTokenPricesLoaded) return 2
@@ -66,7 +66,7 @@ const Datas: FC = () => {
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.CurrentBlockHeight', 'Current Block Height')}</header>
         <section>
-          <BalanceShow value={data} rule="0" unit="" />
+          <BalanceShow value={blockNumber} rule="0" unit="" />
           <u>Block</u>
         </section>
       </div>

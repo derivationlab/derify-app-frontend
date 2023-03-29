@@ -5,7 +5,7 @@ import React, { FC, useMemo, useContext } from 'react'
 
 import { MobileContext } from '@/providers/Mobile'
 import { PositionSideTypes } from '@/typings'
-import { safeInterceptionValues } from '@/utils/tools'
+import { keepDecimals, safeInterceptionValues } from '@/utils/tools'
 import { findMarginToken, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import AtomWrap from '../c/AtomWrap'
@@ -128,7 +128,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         tip={t('Trade.TradeHistory.VolumeBaseTip')}
         footer={findToken(data?.token).symbol}
       >
-        {safeInterceptionValues(data?.size, 4)}
+        {keepDecimals(data?.size, findToken(data?.token).decimals)}
       </DataAtom>
     ),
     [data?.size, data?.token, t]

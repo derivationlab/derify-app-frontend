@@ -29,8 +29,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
 
   const variables = useTraderInfo((state) => state.variables)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
   const marginToken = useMarginToken((state) => state.marginToken)
+  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
 
   const { spotPrices } = useSpotPrice(quoteToken, marginToken)
 
@@ -83,7 +83,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         footer={`${data.quoteToken} / ${marginToken}`}
       >
         <span>
-          {keepDecimals(data?.size ?? 0, 4)} / {keepDecimals(memoVolume, findToken(marginToken).decimals)}
+          {keepDecimals(data?.size ?? 0, findToken(data.quoteToken).decimals)} /{' '}
+          {keepDecimals(memoVolume, findToken(marginToken).decimals)}
         </span>
       </DataAtom>
     ),

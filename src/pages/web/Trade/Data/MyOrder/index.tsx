@@ -24,8 +24,8 @@ const MyOrder: FC = () => {
   const { theme } = useContext(ThemeContext)
   const { address } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
   const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)
   const profitLossOrdLoaded = usePosDATStore((state) => state.loaded)
 
@@ -47,7 +47,7 @@ const MyOrder: FC = () => {
     if (factoryConfig) {
       const { side, orderType, timestamp } = targetPosOrd
 
-      const status = await close(factoryConfig[marginToken][quoteToken], orderType, side, timestamp)
+      const status = await close(factoryConfig, orderType, side, timestamp)
 
       if (status) {
         // succeed

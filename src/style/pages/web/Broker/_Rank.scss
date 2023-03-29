@@ -26,6 +26,11 @@
       }
     }
   }
+  .rc-table-row.active{
+    * {
+      color: $red;
+    }
+  }
 }
 
 .mobile-mode {

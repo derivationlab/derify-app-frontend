@@ -12,6 +12,7 @@ import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
+import { useAccount } from 'wagmi'
 
 interface RowTextProps {
   value: string | number
@@ -39,6 +40,7 @@ const Rank: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
+  const { address } = useAccount()
 
   const { mobile } = useContext(MobileContext)
 
@@ -116,11 +118,12 @@ const Rank: FC = () => {
     <div className="web-broker-rank">
       <h2>Position Mining Rank</h2>
       <Table
-        className="web-broker-table"
-        emptyText={emptyText}
-        columns={mobile ? mColumns : wColumns}
         data={state.rankData.records}
-        rowKey="id"
+        rowKey="user"
+        columns={mobile ? mColumns : wColumns}
+        emptyText={emptyText}
+        className="web-broker-table"
+        rowClassName={(record) => (address === record.user ? 'active' : '')}
       />
       <Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />
     </div>

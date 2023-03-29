@@ -73,7 +73,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
         dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
       },
-      1000
+      500
     ),
     []
   )

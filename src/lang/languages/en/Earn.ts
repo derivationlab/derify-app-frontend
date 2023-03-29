@@ -50,7 +50,7 @@ export default {
     bDRFPool: {
       bDRFPool: '{{Token}} Pool',
       bDRFPoolTip: 'Stake {{Token}} to earn {{APR}}% APR',
-      bDRFPoolTitle: 'Deposit {{Token}} to earn stable interests, or exchange {{Token}} to stable coin.',
+      bDRFPoolTitle: 'Deposit {{Token}} to earn stable interests, or exchange {{Token}} to {{Margin}}.',
       Exchangeable: 'Exchangeable',
       Interests: 'Interests',
       ClaimAll: 'Claim All',

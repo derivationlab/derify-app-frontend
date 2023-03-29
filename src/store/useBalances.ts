@@ -5,7 +5,7 @@ import { baseProvider } from '@/utils/baseProvider'
 import { BalancesState } from '@/store/types'
 import { getBep20Contract } from '@/utils/contractHelpers'
 import tokens, { MARGIN_TOKENS } from '@/config/tokens'
-import { safeInterceptionValues } from '@/utils/tools'
+import { formatUnits, safeInterceptionValues } from '@/utils/tools'
 
 import erc20Abi from '@/config/abi/erc20.json'
 
@@ -29,7 +29,7 @@ export const getTokenBalance = async (account: string, address: string) => {
 
   const res = await c.balanceOf(account)
 
-  return safeInterceptionValues(res, 18, 18)
+  return formatUnits(res, 18)
 }
 
 export const getTokenBalances = async (account: string) => {

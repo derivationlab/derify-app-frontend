@@ -51,7 +51,7 @@ export default {
     bDRFPool: {
       bDRFPool: '{{Token}} 池',
       bDRFPoolTip: '质押{{Token}}可以获得年化{{APR}}%的利息',
-      bDRFPoolTitle: '存入{{Token}}可以获得稳定的利息，或者将{{Token}}兑换成稳定币',
+      bDRFPoolTitle: '存入{{Token}}可以获得稳定的利息，或者将{{Token}}兑换成{{Margin}}',
       Exchangeable: '可兑换额',
       Interests: '利息',
       ClaimAll: '全部提现',

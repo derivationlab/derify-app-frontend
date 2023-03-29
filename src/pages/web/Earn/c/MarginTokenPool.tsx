@@ -155,7 +155,7 @@ const MarginTokenPool: FC = () => {
             {t('Earn.bDRFPool.bDRFPool', { Token: `b${marginToken}` })}
             <QuestionPopover text={t('Earn.bDRFPool.bDRFPoolTip', { APR: memoAPY, Token: `b${marginToken}` })} />
           </h3>
-          <p>{t('Earn.bDRFPool.bDRFPoolTitle', { Token: `b${marginToken}` })}</p>
+          <p>{t('Earn.bDRFPool.bDRFPoolTitle', { Token: `b${marginToken}`, Margin: marginToken })}</p>
         </header>
         <section className="web-eran-item-main">
           <div className="web-eran-item-dashboard">

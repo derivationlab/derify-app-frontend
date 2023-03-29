@@ -45,12 +45,11 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   useEffect(() => {
     const func = async (account: string, protocolConfig: string) => {
       const data = await getTokenBalance(account, protocolConfig)
-
       dispatch({ type: 'SET_BALANCE', payload: data })
     }
 
     if (address && protocolConfig) void func(address, protocolConfig.bMarginToken)
-  }, [])
+  }, [address, protocolConfig])
 
   return (
     <Dialog

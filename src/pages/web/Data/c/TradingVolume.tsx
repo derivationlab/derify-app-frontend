@@ -13,8 +13,11 @@ import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
-let output: Record<string, any> = {}
 const time = days().utc().startOf('days').format()
+let output: Record<string, any> = {
+  day_time: time,
+  trading_amount: 0
+}
 
 const TradingVolume: FC = () => {
   const { t } = useTranslation()
@@ -87,11 +90,9 @@ const TradingVolume: FC = () => {
         {/*  yLabel="Trading Volume"*/}
         {/*/>*/}
         <BarChart
-          chartId="PositionVolume"
           data={combineDAT}
           xKey="day_time"
-          enableLegend={false}
-          timeFormatStr={timeSelectVal !== '1D' ? 'MM/DD' : 'HH:mm'}
+          chartId="PositionVolume"
           yFormat={[
             {
               label: 'Volume',
@@ -99,6 +100,8 @@ const TradingVolume: FC = () => {
               color: '#E7446B'
             }
           ]}
+          enableLegend={false}
+          timeFormatStr={'YYYY-MM-DD'}
         />
       </main>
     </div>

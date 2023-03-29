@@ -1,18 +1,20 @@
 import days from 'dayjs'
 import { isArray } from 'lodash'
-import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { getHistoryTotalPositionsNetValue } from '@/api'
 import { useCurrentTotalPositionsNetValue } from '@/hooks/useQueryApi'
 
-import { BarChart } from '@/components/common/Chart'
+import { AreaChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
-let output = Object.create(null)
-
 const time = days().utc().startOf('days').format()
+let output: Record<string, any> = {
+  day_time: time,
+  total_positions_net_value: 0
+}
 
 const PositionChart: FC = () => {
   const [chartData, setChartData] = useState<any>([])
@@ -47,19 +49,13 @@ const PositionChart: FC = () => {
         <BalanceShow value={data.total_positions_net_value} unit={VALUATION_TOKEN_SYMBOL} />
       </header>
       <section>
-        <BarChart
-          chartId="PositionVolume"
+        <AreaChart
           data={combineDAT}
           xKey="day_time"
-          enableLegend={false}
+          yKey="total_positions_net_value"
+          yLabel="Value"
+          chartId="PositionVolume"
           timeFormatStr={'YYYY-MM-DD'}
-          yFormat={[
-            {
-              label: 'Value',
-              value: 'total_positions_net_value',
-              color: '#E7446B'
-            }
-          ]}
         />
       </section>
     </div>

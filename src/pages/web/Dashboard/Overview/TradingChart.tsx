@@ -1,7 +1,7 @@
 import days from 'dayjs'
 import { isArray } from 'lodash'
-import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { getHistoryTotalTradingNetValue } from '@/api'
@@ -10,12 +10,15 @@ import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
 import { BarChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
-let output = Object.create(null)
-
 const time = days().utc().startOf('days').format()
+let output: Record<string, any> = {
+  day_time: time,
+  trading_net_value: 0
+}
 
 const TradingChart: FC = () => {
   const [chartData, setChartData] = useState<any>([])
+
   const { t } = useTranslation()
 
   const { data } = useCurrentTotalTradingNetValue('all', 'all')
@@ -46,11 +49,9 @@ const TradingChart: FC = () => {
       </header>
       <section>
         <BarChart
-          chartId="PositionVolume"
-          data={combineDAT}
           xKey="day_time"
-          enableLegend={false}
-          timeFormatStr={'YYYY-MM-DD'}
+          data={combineDAT}
+          chartId="PositionVolume"
           yFormat={[
             {
               label: 'Value',
@@ -58,6 +59,8 @@ const TradingChart: FC = () => {
               color: '#E7446B'
             }
           ]}
+          enableLegend={false}
+          timeFormatStr={'YYYY-MM-DD'}
         />
       </section>
     </div>

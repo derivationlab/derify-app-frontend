@@ -15,6 +15,10 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useMarginToken } from '@/store'
 
 const time = days().utc().startOf('days').format()
+let output: Record<string, any> = {
+  day_time: time,
+  insurance_pool: 0
+}
 
 const InsurancePool: FC = () => {
   const { t } = useTranslation()
@@ -27,7 +31,6 @@ const InsurancePool: FC = () => {
   const { data: insuranceVolume } = useCurrentInsuranceDAT(findToken(marginToken).tokenAddress)
 
   const combineDAT = useMemo(() => {
-    let output
     if (insuranceVolume) {
       // console.info({ day_time: time, ...insuranceVolume })
       output = { day_time: time, ...insuranceVolume }
@@ -69,12 +72,12 @@ const InsurancePool: FC = () => {
       </header>
       <main className="web-data-chart-main">
         <AreaChart
-          chartId="InsurancePool"
           data={combineDAT}
           xKey="day_time"
-          timeFormatStr={timeSelectVal !== '1D' ? 'MM/DD' : 'HH:mm'}
           yKey="insurance_pool"
           yLabel="Volume"
+          chartId="InsurancePool"
+          timeFormatStr={'YYYY-MM-DD'}
         />
       </main>
     </div>

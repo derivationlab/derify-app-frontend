@@ -148,11 +148,11 @@ const PositionVolume: FC = () => {
           </span>
         </div>
         <BarChart
-          chartId="PositionVolume"
           data={combineDAT}
           xKey="day_time"
-          timeFormatStr={timeSelectVal !== '1D' ? 'MM/DD' : 'HH:mm'}
+          chartId="PositionVolume"
           yFormat={barColor}
+          timeFormatStr={'YYYY-MM-DD'}
         />
       </main>
     </div>

@@ -25,6 +25,7 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
+import { findMarginToken } from '@/config/tokens'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()
@@ -44,7 +45,7 @@ const MyPosition: FC = () => {
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
+  const { spotPrices } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
   const { match: matchFactoryConfig } = useFactoryConf(quoteToken, marginToken)
 
@@ -64,8 +65,10 @@ const MyPosition: FC = () => {
   }
 
   // 100% or not
-  const whetherStud = ({ size = 0 }, amount: string): boolean => {
-    return isGTET(amount, nonBigNumberInterception(bnMul(spotPrice, size), 8)) || isGTET(amount, size)
+  const whetherStud = ({ size = 0, quoteToken = '' }, amount: string): boolean => {
+    const u = nonBigNumberInterception(bnMul(spotPrices[quoteToken], size), 8)
+    if (findMarginToken(closingType)) return isGTET(amount, u)
+    return isGTET(amount, size)
   }
 
   const closeOneFunc = async () => {
@@ -74,14 +77,25 @@ const MyPosition: FC = () => {
     onCloseDialogEv()
 
     if (signer && brokerBound?.broker && protocolConfig) {
-      const { side, size } = targetPosOrd
-
+      const { side, size, quoteToken } = targetPosOrd
+      console.info(
+        protocolConfig.exchange,
+        brokerBound.broker,
+        spotPrices[quoteToken],
+        quoteToken,
+        closingType,
+        closingAmount,
+        size,
+        side,
+        whetherStud(targetPosOrd, closingAmount)
+      )
       const status = await close1(
         protocolConfig.exchange,
         brokerBound.broker,
-        spotPrice,
+        spotPrices[quoteToken],
         quoteToken,
         closingType,
+        closingAmount,
         size,
         side,
         whetherStud(targetPosOrd, closingAmount)

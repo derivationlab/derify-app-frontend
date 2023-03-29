@@ -299,6 +299,7 @@ export const useClosePosition = () => {
       spotPrice: string,
       quoteToken: string,
       marginToken: string,
+      closeAmount: string,
       positionSize: string,
       positionSide: PositionSideTypes,
       whetherStud?: boolean
@@ -313,10 +314,10 @@ export const useClosePosition = () => {
       if (whetherStud) {
         _positionSize = inputParameterConversion(positionSize, 8)
       } else {
-        const calc = findMarginToken(marginToken) ? Number(positionSize) / Number(spotPrice) : positionSize
+        const calc = findMarginToken(marginToken) ? Number(closeAmount) / Number(spotPrice) : closeAmount
         _positionSize = inputParameterConversion(calc, 8)
       }
-
+      console.info([brokerId, qtAddress, positionSide, _positionSize])
       try {
         const gasLimit = await estimateGas(c, 'closePosition', [brokerId, qtAddress, positionSide, _positionSize], 0)
         const res = await c.closePosition(brokerId, qtAddress, positionSide, _positionSize, { gasLimit })

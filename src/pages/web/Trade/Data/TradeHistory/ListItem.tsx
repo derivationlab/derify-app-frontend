@@ -8,9 +8,9 @@ import { PositionSideTypes } from '@/typings'
 import { safeInterceptionValues } from '@/utils/tools'
 import { findMarginToken, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
-import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
+import ItemHeader from '../c/ItemHeader'
 
 interface Props {
   data?: Record<string, any>
@@ -90,12 +90,12 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         tip={t('Trade.TradeHistory.RealizedPnLTip')}
         footer={memoMarginToken}
       >
-        <span className={classNames({ up: data?.pnl_usdt > 0, down: data?.pnl_usdt < 0 })}>
-          {data?.pnl_usdt ? safeInterceptionValues(data?.pnl_usdt) : '--'}
+        <span className={classNames({ up: data?.pnl_margin_token > 0, down: data?.pnl_margin_token < 0 })}>
+          {data?.pnl_margin_token ? safeInterceptionValues(data?.pnl_margin_token) : '--'}
         </span>
       </DataAtom>
     ),
-    [memoMarginToken, data?.pnl_usdt, t]
+    [memoMarginToken, data?.pnl_margin_token, t]
   )
   const atom3Tsx = useMemo(
     () => (

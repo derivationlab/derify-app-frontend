@@ -19,7 +19,7 @@ const HeaderData: FC = () => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const { pcfRatio } = usePCFRatioConf(quoteToken, marginToken)
+  const { pcfRatio, pcfRatiosLoaded } = usePCFRatioConf(quoteToken, marginToken)
   const { data: positionsAmount, refetch } = useCurrentPositionsAmount(
     findToken(quoteToken).tokenAddress,
     findToken(marginToken).tokenAddress
@@ -83,7 +83,7 @@ const HeaderData: FC = () => {
           <QuestionPopover size="mini" text={t('Trade.kline.PCFRateTip')} />
         </h3>
         <strong>
-          <BalanceShow value={memoPosFeeRatio} decimal={4} percent />
+          <BalanceShow value={memoPosFeeRatio} decimal={!pcfRatiosLoaded ? 2 : 4} percent />
         </strong>
       </section>
       {!mobile && <hr />}

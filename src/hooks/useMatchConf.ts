@@ -76,7 +76,8 @@ export const usePCFRatioConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken
   }, [quoteToken, marginToken, pcfRatios, pcfRatiosLoaded])
 
   return {
-    pcfRatio
+    pcfRatio,
+    pcfRatiosLoaded
   }
 }
 

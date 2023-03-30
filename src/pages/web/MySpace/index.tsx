@@ -22,8 +22,8 @@ import {
 import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
 import Button from '@/components/common/Button'
 import Pagination from '@/components/common/Pagination'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import DecimalShow from '@/components/common/DecimalShow'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const MySpace: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)

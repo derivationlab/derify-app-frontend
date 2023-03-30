@@ -29,7 +29,9 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
     const data2 = await getBrokerValidPeriod(trader) // validPeriodDays
     const data3 = await getBrokerRewardsToday(trader, marginToken)
     const data4 = await getBrokerRegisterTime(trader)
-
+    console.info(data1)
+    console.info(data2)
+    console.info(data4)
     set({
       brokerInfo: data1?.data
         ? {

@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { PubSubEvents } from '@/typings'
 import { usePosDATStore } from '@/store/usePosDAT'
-import { useMarginToken, useQuoteToken } from '@/store'
+import { useMarginToken } from '@/store'
+import { PubSubEvents, QuoteTokenKeys } from '@/typings'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
 import { useCancelAllPositions, useCancelPosition } from '@/hooks/useTrading'
 
@@ -24,14 +24,13 @@ const MyOrder: FC = () => {
   const { theme } = useContext(ThemeContext)
   const { address } = useAccount()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
   const marginToken = useMarginToken((state) => state.marginToken)
   const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)
   const profitLossOrdLoaded = usePosDATStore((state) => state.loaded)
 
   const { close } = useCancelPosition()
-  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
+  const { match: matchFactoryConfig } = useFactoryConf('', marginToken)
   const { cancel: cancelAllPositions } = useCancelAllPositions()
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
@@ -44,10 +43,10 @@ const MyOrder: FC = () => {
 
     onCloseDialogEv()
 
-    if (factoryConfig) {
-      const { side, orderType, timestamp } = targetPosOrd
+    if (matchFactoryConfig) {
+      const { side, orderType, timestamp, quoteToken } = targetPosOrd
 
-      const status = await close(factoryConfig, orderType, side, timestamp)
+      const status = await close(matchFactoryConfig[quoteToken as QuoteTokenKeys], orderType, side, timestamp)
 
       if (status) {
         // succeed

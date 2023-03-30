@@ -1,18 +1,31 @@
 import create from 'zustand'
 
 import { BrokerInfoState } from '@/store/types'
+import { getDerifyProtocolContract } from '@/utils/contractHelpers'
 import {
-  getBrokerInfoByAddr,
-  getBrokerInfoByTrader,
   getBrokerRankValue,
+  getBrokerInfoByAddr,
+  getBrokerValidPeriod,
   getBrokerRegisterTime,
   getBrokerRewardsToday,
-  getBrokerValidPeriod
+  getBrokerInfoByTrader
 } from '@/api'
+
+const getBrokerInfo = async (trader: string): Promise<boolean> => {
+  const c = getDerifyProtocolContract()
+
+  try {
+    await c.getBrokerInfo(trader)
+    return true
+  } catch (e) {
+    return false
+  }
+}
 
 const useBrokerInfo = create<BrokerInfoState>((set) => ({
   brokerInfo: {},
   brokerBound: {},
+  isBrokerLoaded: false,
   brokerInfoLoaded: false,
   brokerBoundLoaded: false,
   fetchBrokerBound: async (trader: string) => {
@@ -24,26 +37,26 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
     set({ brokerBound: data?.data, brokerBoundLoaded: true })
   },
   fetchBrokerInfo: async (trader: string, marginToken: string) => {
-    const data0 = await getBrokerRankValue(trader, marginToken)
-    const data1 = await getBrokerInfoByAddr(trader)
-    const data2 = await getBrokerValidPeriod(trader) // validPeriodDays
-    const data3 = await getBrokerRewardsToday(trader, marginToken)
-    const data4 = await getBrokerRegisterTime(trader)
-    console.info(data1)
-    console.info(data2)
-    console.info(data4)
-    set({
-      brokerInfo: data1?.data
-        ? {
-            ...data1?.data,
-            ...data3?.data,
-            rank: data0?.data,
-            registerTime: data4?.data,
-            validPeriodDays: data2?.data ?? 0
-          }
-        : {},
-      brokerInfoLoaded: true
-    })
+    const data = await getBrokerInfo(trader)
+
+    if (data) {
+      const { data: rank = 0 } = await getBrokerRankValue(trader, marginToken)
+      const { data: time = 0 } = await getBrokerRegisterTime(trader)
+      const { data: period = 0 } = await getBrokerValidPeriod(trader)
+      const { data: info = {} } = await getBrokerInfoByAddr(trader)
+      const { data: rewards = {} } = await getBrokerRewardsToday(trader, marginToken)
+
+      set({
+        brokerInfo: {
+          rank,
+          ...info,
+          ...rewards,
+          registerTime: time,
+          validPeriodDays: period
+        },
+        brokerInfoLoaded: true
+      })
+    }
   },
   resetBrokerInfo: () => {
     set({

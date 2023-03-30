@@ -2,12 +2,11 @@ import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useEffect } from 'react'
 
+import { findToken } from '@/config/tokens'
+import { PubSubEvents } from '@/typings'
 import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { useBrokerParams } from '@/hooks/useBroker'
 import { useConfigInfo, useMarginToken } from '@/store'
-import { PubSubEvents } from '@/typings'
-
-import { findToken } from '@/config/tokens'
 
 export default function BrokerUpdater(): null {
   const { address } = useAccount()

@@ -72,6 +72,9 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
                 </li>
               </ul>
             </nav>
+            <li>
+              <NavLink to="/faucet">{t('Nav.Nav.Faucet')}</NavLink>
+            </li>
           </ul>
         </nav>
         <footer>

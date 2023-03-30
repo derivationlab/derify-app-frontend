@@ -13,6 +13,7 @@ import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import { useAccount } from 'wagmi'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 interface RowTextProps {
   value: string | number
@@ -26,7 +27,7 @@ const RowName: FC<{ data: Record<string, any> }> = ({ data }) => {
     <div className="web-broker-rank-table-row-name">
       <Image src={data?.logo ?? 'icon/normal-ico.svg'} cover />
       <main>
-        <strong>{mobile ? calcShortHash(data?.user, 10, 4) : data?.user}</strong>
+        <strong>{mobile ? calcShortHash(data?.user, 5, 4) : data?.user}</strong>
       </main>
     </div>
   )
@@ -79,9 +80,25 @@ const Rank: FC = () => {
     {
       title: t('Earn.MiningRank.Address'),
       dataIndex: 'user',
-      width: mobile ? 275 : 600,
+      width: mobile ? '' : 600,
       render: (user: string, data: Record<string, any>) => {
         return <RowName data={data} />
+      }
+    },
+    {
+      title: t('Broker.RankList.TotalRewards', 'Total Rewards'),
+      dataIndex: '',
+      width: mobile ? '' : 250,
+      render: (_: string, data: Record<string, any>) => {
+        const { total_margin_token_reward = 0, total_drf_reward = 0 } = data ?? {}
+        const margin = keepDecimals(total_margin_token_reward, findToken(marginToken).decimals)
+        const platform = keepDecimals(total_drf_reward, PLATFORM_TOKEN.decimals)
+        return (
+          <>
+            <BalanceShow value={margin} unit={marginToken} />
+            <BalanceShow value={platform} unit={PLATFORM_TOKEN.symbol} />
+          </>
+        )
       }
     },
     {
@@ -90,27 +107,6 @@ const Rank: FC = () => {
       width: mobile ? '' : 200,
       render: (text: string) => <RowText value={`#${text}`} />
     }
-  ]
-
-  const wColumns = [
-    mColumns[0],
-    {
-      title: t('Broker.RankList.TotalRewards', 'Total Rewards'),
-      dataIndex: '',
-      width: 250,
-      render: (_: string, data: Record<string, any>) => {
-        const { total_margin_token_reward = 0, total_drf_reward = 0 } = data ?? {}
-        const margin = keepDecimals(total_margin_token_reward, findToken(marginToken).decimals)
-        const platform = keepDecimals(total_drf_reward, PLATFORM_TOKEN.decimals)
-        return (
-          <>
-            <RowText value={margin} unit={marginToken} />
-            <RowText value={platform} unit={PLATFORM_TOKEN.symbol} />
-          </>
-        )
-      }
-    },
-    mColumns[1]
   ]
 
   useEffect(() => {
@@ -123,7 +119,7 @@ const Rank: FC = () => {
       <Table
         data={state.rankData.records}
         rowKey="user"
-        columns={mobile ? mColumns : wColumns}
+        columns={mColumns}
         emptyText={emptyText}
         className="web-broker-table"
         rowClassName={(record) => (address === record.user ? 'active' : '')}

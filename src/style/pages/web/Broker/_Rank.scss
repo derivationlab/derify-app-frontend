@@ -47,7 +47,7 @@
         main {
           line-height: rem(20);
           strong {
-            font-size: rem(20);
+            font-size: rem(14);
           }
           em {
             font-size: rem(14);
@@ -55,7 +55,8 @@
         }
       }
       &-text {
-        font-size: rem(14);font-weight: bold;
+        font-size: rem(12);font-weight: bold;
+        small{font-size: rem(12);}
       }
     }
   }

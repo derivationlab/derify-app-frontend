@@ -84,12 +84,7 @@ const History: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerAccountFlow(
-        address,
-        findToken(marginToken).tokenAddress,
-        index,
-        10
-      )
+      const { data } = await getBrokerAccountFlow(address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_TABLE_DAT',

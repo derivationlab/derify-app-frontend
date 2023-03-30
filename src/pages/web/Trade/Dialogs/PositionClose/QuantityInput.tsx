@@ -52,7 +52,8 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxSwap, maxSize,
       <label>{t('Trade.ClosePosition.AmountToClose', 'Amount to Close')}</label>
       <section>
         <Input value={value} onChange={validateEnteredValueCb} type="number" />
-        <Select value={closingType} onChange={closingTypeChange} options={[marginToken, quoteToken]} />
+        {/*<Select value={closingType} onChange={closingTypeChange} options={[marginToken]} />*/}
+        <div className="web-select-show-button">{marginToken}</div>
       </section>
       <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(amount)} />
     </div>

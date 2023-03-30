@@ -32,9 +32,10 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const openingType = useCalcOpeningDAT((state) => state.openingType)
   const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
   const fetchMaxVolume = useCalcOpeningDAT((state) => state.fetchMaxVolume)
-  const marginToken = useMarginToken((state) => state.marginToken)
+
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
 
@@ -96,28 +97,26 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
 
   return (
     <>
+      <Row mb="0">
+        <header className="web-trade-bench-pane-volume-header">{t('Trade.Bench.Volume', 'Volume')}</header>
+        <div className="web-trade-bench-pane-volume-max">
+          <span>Max: </span>
+          <em>{keepDecimals(maxVolume?.[type] ?? 0, findToken(type)?.decimals ?? 2)} </em>
+          <u>{type}</u>
+        </div>
+      </Row>
       <Row mb="16">
-        <Col label={t('Trade.Bench.Volume', 'Volume')}>
-          <Input
-            className="web-trade-bench-pane-volume-input"
-            value={value}
-            onChange={(val) => onChange(Number(val))}
-            type="number"
-          />
-        </Col>
-        <Col>
-          <div className="web-trade-bench-pane-volume-max">
-            <span>Max: </span>
-            <em>{keepDecimals(maxVolume?.[type] ?? 0, findToken(type)?.decimals ?? 2)} </em>
-            <u>{type}</u>
+        <Input
+          className="web-trade-bench-pane-volume-input"
+          value={value}
+          onChange={(val) => onChange(Number(val))}
+          type="number"
+        />
+        <div className="web-trade-bench-pane-volume-type">
+          <div className="web-select-show-button">
+            <label>{marginToken}</label>
           </div>
-          <Select
-            className="web-trade-bench-pane-volume-type"
-            value={type}
-            onChange={onSelectChange}
-            options={[marginToken, quoteToken]}
-          />
-        </Col>
+        </div>
       </Row>
       <Row mb="36">
         <PercentButton currValue={value} value={visibleMaxVol} onChange={(val) => onChange(val)} />

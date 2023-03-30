@@ -1,20 +1,18 @@
-import BN from 'bignumber.js'
 import dayjs from 'dayjs'
 import PubSub from 'pubsub-js'
 import { Link } from 'react-router-dom'
 import { useAccount, useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useCallback, useContext, useEffect, useMemo } from 'react'
+import React, { FC, useCallback, useContext, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/providers/Mobile'
 import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { useWithdrawReward } from '@/hooks/useBroker'
+import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
-import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { useBrokerInfoFromC } from '@/hooks/useBrokerInfo'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
@@ -29,12 +27,11 @@ const Dashboard: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { withdraw } = useWithdrawReward()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
   const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { protocolConfig } = useProtocolConf(marginToken)
   const { data: brokerAssets } = useBrokerInfoFromC(address, protocolConfig?.rewards)
-  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
@@ -69,20 +66,10 @@ const Dashboard: FC = () => {
     return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]
   }, [brokerAssets])
 
-  const memoTodayRewards = useMemo(() => {
-    const drf_reward = new BN(brokerInfo?.drf_reward ?? 0).times(dashboardDAT?.drfPrice ?? 0)
-    const rewards_plus = drf_reward.plus(brokerInfo?.margin_token_reward ?? 0).toString()
-    return nonBigNumberInterception(rewards_plus)
-  }, [brokerInfo, dashboardDAT])
-
   const memoDisabled = useMemo(() => {
     const [usd, drf] = memoTotalBalance
     return Number(usd) > 0 || Number(drf) > 0
   }, [memoTotalBalance])
-
-  useEffect(() => {
-    void dashboardDATRefetch()
-  }, [marginToken])
 
   return (
     <div className="web-broker-dashboard">
@@ -112,7 +99,8 @@ const Dashboard: FC = () => {
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>
               <section>
-                <BalanceShow value={memoTodayRewards} unit={marginToken} />
+                <BalanceShow value={brokerInfo?.margin_token_reward ?? 0} unit={marginToken} />
+                <BalanceShow value={brokerInfo?.drf_reward ?? 0} unit={PLATFORM_TOKEN.symbol} />
               </section>
               <footer>
                 <Link to={`/${marginToken}/broker/rank`}>
@@ -138,7 +126,8 @@ const Dashboard: FC = () => {
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>
               <section>
-                <BalanceShow value={memoTodayRewards} unit={marginToken} />
+                <BalanceShow value={brokerInfo?.margin_token_reward ?? 0} unit={marginToken} />
+                <BalanceShow value={brokerInfo?.drf_reward ?? 0} unit={PLATFORM_TOKEN.symbol} />
               </section>
               <footer
                 dangerouslySetInnerHTML={{

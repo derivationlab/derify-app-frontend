@@ -47,6 +47,7 @@ export const RBrokerBound = (props: PropsWithChildren<any>) => {
   }, [params?.id])
 
   return useMemo(() => {
+    console.info(brokerInfo)
     if (!address) return <BrokerConnect />
     if (brokerInfoLoaded && brokerBoundLoaded) {
       if (!isEmpty(brokerInfo)) {

@@ -71,7 +71,7 @@ const MarketInfo: FC = () => {
         }
       }
     ]
-  }, [t, indicators, exchangeInfo])
+  }, [t, indicators, exchangeInfo, positionInfo])
 
   const wColumns = useMemo(() => {
     return [

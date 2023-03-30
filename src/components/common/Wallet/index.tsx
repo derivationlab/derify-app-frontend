@@ -29,7 +29,7 @@ const WalletDialog: FC<Props> = ({ visible, onClose, onClick }) => {
       {
         title: 'MetaMask',
         icon: 'metamask.svg',
-        id: isMetaMaskReady ? 0 : 3
+        id: 0
       },
       {
         title: 'Coinbase Wallet',

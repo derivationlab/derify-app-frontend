@@ -20,9 +20,9 @@ const MHeader: FC = () => {
   const navList = [
     { url: `/${marginToken}/trade`, name: t('Nav.Nav.Trade', 'Trade') },
     { url: `/${marginToken}/earn`, name: t('Nav.Nav.Earn', 'Earn') },
-    { url: `/broker`, name: t('Nav.Nav.Broker', 'Broker') },
+    { url: `/${marginToken}/data`, name: t('Nav.Nav.Data', 'Data') },
+    { url: `/broker`, name: t('Nav.Nav.Broker', 'Broker') }
     // { url: `/${marginToken}/dashboard`, name: t('Nav.Nav.Dashboard', 'Dashboard') }
-    { url: `/${marginToken}/data`, name: t('Nav.Nav.Data', 'Data') }
   ]
 
   const [showMenu, setShowMenu] = useState<boolean>(false)

@@ -250,6 +250,17 @@
         }
       }
     }
+    &-margin{
+      position: relative;
+      label{font-size: rem(16);padding-left: 0}
+      padding-bottom:rem(8);margin-bottom: rem(20);
+      &-select{
+        .web-form-input input {font-size: rem(14)}
+        .web-select-options {
+          left: rem(-24);right: rem(-24)!important;top:rem(40)!important;
+        }
+      }
+    }
   }
 }
 .dark {

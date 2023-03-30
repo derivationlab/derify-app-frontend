@@ -80,7 +80,7 @@
         margin-bottom: rem(16);padding-right: rem(114);height: rem(80);
         flex-flow: column;align-items: flex-start;justify-content: center;
         & > h3 {
-          font-size: rem(28);line-height: rem(40);margin-bottom: rem(6);
+          font-size: rem(22);line-height: rem(40);margin-bottom: rem(6);font-weight: bold;
         }
         & > p {
           font-size: rem(10);line-height: rem(16);
@@ -131,6 +131,9 @@
       &-claim, &-card {
         display: block;position: relative;
         width: 100%;padding: rem(24);
+        a {
+          font-size: rem(12);
+        }
       }
       &-card {
         border-radius: rem(28);

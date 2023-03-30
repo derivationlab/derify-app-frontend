@@ -78,8 +78,8 @@ const MySpace: FC = () => {
           const per = Number(p1) === 0 ? 0 : bnDiv(p2, p1)
           return (
             <>
-              <BalanceShow value={p2} unit={data.name} />
-              <DecimalShow value={per} percent black />
+              <BalanceShow value={p2} unit={symbol} />
+              <BalanceShow value={per} percent />
             </>
           )
         }

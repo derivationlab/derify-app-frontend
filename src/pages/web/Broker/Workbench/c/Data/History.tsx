@@ -5,15 +5,15 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useContext, useReducer } from 'react'
 
 import { BSC_SCAN_URL } from '@/config'
+import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/brokerTable'
 import { getBrokerAccountFlow } from '@/api'
-import { nonBigNumberInterception } from '@/utils/tools'
 
 import Pagination from '@/components/common/Pagination'
 
 import { RowTime, calcShortHash, calcTimeStr } from './common'
-import { findToken } from '@/config/tokens'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
 import { useMarginToken } from '@/store'
 
@@ -84,7 +84,12 @@ const History: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerAccountFlow(address, findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getBrokerAccountFlow(
+        '0x02d33286fe1d09e12443f9B9336e5Bc8Ce836f9F',
+        findToken(marginToken).tokenAddress,
+        index,
+        10
+      )
 
       dispatch({
         type: 'SET_TABLE_DAT',
@@ -119,10 +124,10 @@ const History: FC = () => {
     {
       title: t('Broker.History.Amount', 'Amount'),
       dataIndex: 'amount',
-      width: mobile ? 95 : 268,
+      width: mobile ? '' : 268,
       render: (_: string, data: Record<string, any>) => {
-        const usd_amount = nonBigNumberInterception(data?.margin_token_amount ?? 0, 8)
-        const drf_amount = nonBigNumberInterception(data?.drf_amount ?? 0, 8)
+        const usd_amount = keepDecimals(data?.margin_token_amount ?? 0, findToken(data?.margin_token).decimals)
+        const drf_amount = keepDecimals(data?.drf_amount ?? 0, PLATFORM_TOKEN.decimals)
 
         return (
           <>
@@ -135,10 +140,10 @@ const History: FC = () => {
     {
       title: t('Broker.History.Balance', 'Balance'),
       dataIndex: 'balance',
-      width: mobile ? 95 : 268,
+      width: mobile ? '' : 268,
       render: (_: string, data: Record<string, any>) => {
-        const usd_balance = nonBigNumberInterception(data?.margin_token_balance ?? 0, 8)
-        const drf_balance = nonBigNumberInterception(data?.drf_balance ?? 0, 8)
+        const usd_balance = keepDecimals(data?.margin_token_balance ?? 0, findToken(data?.margin_token).decimals)
+        const drf_balance = keepDecimals(data?.drf_balance ?? 0, PLATFORM_TOKEN.decimals)
         return (
           <>
             <RowBalance text={usd_balance} coin={marginToken} />

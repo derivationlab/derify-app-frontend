@@ -54,15 +54,14 @@ const Plan: FC = () => {
         align: 'right',
         render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
           <>
-            <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />(
+            <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
             <div
               className={classNames(
-                isGTET(data?.last_drf_price, mTokenPrices[data.symbol as MarginTokenKeys]) ? 'rise' : 'fall'
+                isGTET(data?.last_drf_price, mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]) ? 'rise' : 'fall'
               )}
             >
               <BalanceShow value={data?.last_drf_price} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
-            )
           </>
         )
       },

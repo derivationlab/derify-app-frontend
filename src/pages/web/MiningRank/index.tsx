@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
 
-import { keepDecimals } from '@/utils/tools'
+import { calcShortHash, keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginToken } from '@/store'
 import { getTradersRankList } from '@/api'
@@ -19,15 +19,18 @@ interface RowTextProps {
   unit?: string
 }
 
-const RowName: FC<{ data: Record<string, any> }> = ({ data }) => (
-  <div className="web-broker-rank-table-row-name">
-    <Image src={data?.logo ?? 'icon/normal-ico.svg'} cover />
-    <main>
-      <strong>{data?.user}</strong>
-      {/*<em>@{data?.id}</em>*/}
-    </main>
-  </div>
-)
+const RowName: FC<{ data: Record<string, any> }> = ({ data }) => {
+  const { mobile } = useContext(MobileContext)
+
+  return (
+    <div className="web-broker-rank-table-row-name">
+      <Image src={data?.logo ?? 'icon/normal-ico.svg'} cover />
+      <main>
+        <strong>{mobile ? calcShortHash(data?.user, 10, 4) : data?.user}</strong>
+      </main>
+    </div>
+  )
+}
 
 const RowText: FC<RowTextProps> = ({ value, unit }) => (
   <div className="web-broker-rank-table-row-text">

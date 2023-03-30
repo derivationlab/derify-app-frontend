@@ -56,6 +56,10 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
         },
         brokerInfoLoaded: true
       })
+    } else {
+      set({
+        brokerInfoLoaded: true
+      })
     }
   },
   resetBrokerInfo: () => {

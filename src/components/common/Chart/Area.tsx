@@ -45,8 +45,8 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yKey, yLabel, timeFormatStr }) 
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 0" vertical={false} />
-            <XAxis dataKey={xKey} minTickGap={20} tickFormatter={(value) => dayjs(value).format('DD')} />
-            <YAxis orientation="right" tickFormatter={formatValue} />
+            <XAxis fontSize={14} dataKey={xKey} minTickGap={20} tickFormatter={(value) => dayjs(value).format('DD')} />
+            <YAxis fontSize={14} orientation="right" tickFormatter={formatValue} />
             <Tooltip formatter={formatTip} labelFormatter={formatTime} contentStyle={toolTipStyle} />
             <Area type="monotone" dataKey={yKey} stroke="#E7446B" fillOpacity={1} fill={`url(#${chartId})`} />
           </AreaChart>

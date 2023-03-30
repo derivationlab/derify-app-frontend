@@ -36,7 +36,7 @@ const GrantList: FC = () => {
     const _grantStatus = grantStateOptions.find((t) => t.value === grantStatus)?.key ?? 'all'
     const _grantTarget = targetOptions.find((t) => t.value === grantTarget)?.nick ?? 'all'
 
-    const { data } = await getGrantList(_marginToken, _grantTarget, _grantStatus, index, 9)
+    const { data } = await getGrantList(_marginToken, _grantTarget, _grantStatus, index, 8)
 
     dispatch({
       type: 'SET_GRANT_DAT',
@@ -136,7 +136,7 @@ const GrantList: FC = () => {
           <ListItem key={index} data={item} />
         ))}
       </div>
-      <Pagination page={state.pageIndex} total={state.grantData.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} pageSize={8} total={state.grantData.totalItems} onChange={pageChange} />
     </div>
   )
 }

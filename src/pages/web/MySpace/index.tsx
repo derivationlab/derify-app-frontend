@@ -59,7 +59,7 @@ const MySpace: FC = () => {
         }
       },
       {
-        title: 'Trading/Position',
+        title: 'Position',
         dataIndex: 'symbol',
         render: (symbol: string) => {
           return (

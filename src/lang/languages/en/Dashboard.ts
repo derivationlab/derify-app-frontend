@@ -6,7 +6,7 @@ export default {
       TotalPositionValue: 'Total Position Value',
       MarketInfo: 'Market Info',
       Margin: 'Margin',
-      MaxPositionMiningAPY: 'Max Position Mining APY',
+      MaxPositionMiningAPY: 'Max Position Mining APR',
       TradingVolume: 'Trading Volume',
       PositionVolume: 'Position Volume',
       BuybackPool: 'Buyback Pool',

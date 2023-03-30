@@ -6,7 +6,7 @@ export default {
       TotalPositionValue: '总持仓净值',
       MarketInfo: '市场信息',
       Margin: '保证金',
-      MaxPositionMiningAPY: '最大持仓挖矿APY',
+      MaxPositionMiningAPY: '最大持仓挖矿APR',
       TradingVolume: '交易量',
       PositionVolume: '持仓量',
       BuybackPool: '回购池',

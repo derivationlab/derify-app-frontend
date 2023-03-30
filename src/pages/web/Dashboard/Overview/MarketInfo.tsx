@@ -62,7 +62,7 @@ const MarketInfo: FC = () => {
         )
       },
       {
-        title: 'Max APY',
+        title: 'Max APR',
         dataIndex: 'symbol',
         render: (symbol: string) => {
           const apy = Math.max.apply(null, Object.values(indicators[symbol as MarginTokenKeys]))

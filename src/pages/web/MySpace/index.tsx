@@ -85,7 +85,7 @@ const MySpace: FC = () => {
         }
       }
     ]
-  }, [t])
+  }, [t, traderVariables, marginBalances])
 
   const wColumns = useMemo(() => {
     return [
@@ -155,7 +155,7 @@ const MySpace: FC = () => {
         )
       }
     ]
-  }, [t, traderVariables, allTraderRewards, allBrokerRewards])
+  }, [t, traderVariables, marginBalances, allTraderRewards, allBrokerRewards])
 
   const fetchData = useCallback(
     async (index = 0) => {

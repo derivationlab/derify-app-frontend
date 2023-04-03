@@ -5,10 +5,11 @@ import { useSigner, useAccount } from 'wagmi'
 import React, { FC, useState, useMemo, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { PubSubEvents, QuoteTokenKeys } from '@/typings'
 import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { usePosDATStore } from '@/store/usePosDAT'
 import { useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
+import { findMarginToken, findToken } from '@/config/tokens'
+import { PubSubEvents, QuoteTokenKeys } from '@/typings'
 import { useMarginToken, useQuoteToken } from '@/store'
 import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
@@ -17,7 +18,6 @@ import { useCloseAllPositions, useClosePosition, useTakeProfitOrStopLoss } from 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Loading from '@/components/common/Loading'
-
 import PositionCloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import PositionClosePreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
 import PositionCloseConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
@@ -25,7 +25,6 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { findMarginToken } from '@/config/tokens'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()
@@ -66,7 +65,7 @@ const MyPosition: FC = () => {
 
   // 100% or not
   const whetherStud = ({ size = 0, quoteToken = '' }, amount: string): boolean => {
-    const u = nonBigNumberInterception(bnMul(spotPrices[quoteToken], size), 8)
+    const u = nonBigNumberInterception(bnMul(spotPrices[quoteToken], size), findToken(marginToken).decimals)
     if (findMarginToken(closingType)) return isGTET(amount, u)
     return isGTET(amount, size)
   }

@@ -45,7 +45,7 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
       const { data: period = 0 } = await getBrokerValidPeriod(trader)
       const { data: info = {} } = await getBrokerInfoByAddr(trader)
       const { data: rewards = {} } = await getBrokerRewardsToday(trader, marginToken)
-
+      // console.info(info)
       set({
         brokerInfo: {
           rank,

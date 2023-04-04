@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js'
-import { useAccount, useSigner } from 'wagmi'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useAccount, useSigner } from 'wagmi'
 import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { PubSubEvents } from '@/typings'

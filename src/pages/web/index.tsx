@@ -15,7 +15,8 @@ import {
   RConnectWallet,
   RBrokerWorkbench,
   RBrokerSignUpStep3,
-  RBrokerSignUpStep1_2
+  RBrokerSignUpStep1,
+  RBrokerSignUpStep2
 } from '@/pages/web/Route'
 
 import Header from '@/components/web/Header'
@@ -147,18 +148,18 @@ const Web: FC = () => {
           path="/broker/sign-up/step1"
           exact
           render={() => (
-            <RBrokerSignUpStep1_2>
+            <RBrokerSignUpStep1>
               <BrokerSignUpStep1 />
-            </RBrokerSignUpStep1_2>
+            </RBrokerSignUpStep1>
           )}
         />
         <Route
           path="/broker/sign-up/step2"
           exact
           render={() => (
-            <RBrokerSignUpStep1_2>
+            <RBrokerSignUpStep2>
               <BrokerSignUpStep2 />
-            </RBrokerSignUpStep1_2>
+            </RBrokerSignUpStep2>
           )}
         />
         <Route

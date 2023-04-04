@@ -164,7 +164,7 @@ export const RBrokerWorkbench = (props: PropsWithChildren<any>) => {
   }, [find, address, pathKey, brokerInfo, marginToken, brokerInfoLoaded])
 }
 
-export const RBrokerSignUpStep1_2 = (props: PropsWithChildren<any>) => {
+export const RBrokerSignUpStep1 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
 
   const { children } = props
@@ -177,6 +177,25 @@ export const RBrokerSignUpStep1_2 = (props: PropsWithChildren<any>) => {
     if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
       if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken}/broker/workbench`} />
+      return children
+    }
+    return <Loading show type="fixed" />
+  }, [address, brokerInfo, marginToken, brokerInfoLoaded])
+}
+
+export const RBrokerSignUpStep2 = (props: PropsWithChildren<any>) => {
+  const { address } = useAccount()
+
+  const { children } = props
+
+  const marginToken = useMarginToken((state) => state.marginToken)
+  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
+
+  return useMemo(() => {
+    if (!address) return <BrokerConnect />
+    if (brokerInfoLoaded) {
+      if (brokerInfo?.is_enable) return <Redirect to={`/${marginToken}/broker/workbench`} />
       return children
     }
     return <Loading show type="fixed" />

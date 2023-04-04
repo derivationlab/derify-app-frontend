@@ -29,7 +29,7 @@ const BrokerInfo: FC = () => {
 
     if (data.code === 0) {
       // succeed
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
+      PubSub.publish(PubSubEvents.UPDATE_BROKER_BOUND_DAT)
 
       history.push('/broker')
     } else {

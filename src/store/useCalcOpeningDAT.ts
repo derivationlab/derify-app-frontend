@@ -18,7 +18,7 @@ const getMaxVolume = async (
   leverageNow: number,
   price: string,
   exchange: string
-): Promise<string[]> => {
+): Promise<string[] | 'error'> => {
   const _price = inputParameterConversion(price, 8)
   const _leverageNow = inputParameterConversion(leverageNow, 8)
   const c = getDerifyExchangeContract(exchange)
@@ -31,7 +31,7 @@ const getMaxVolume = async (
     return [formatUnits(String(size), 8), formatUnits(String(amount), 8)]
   } catch (e) {
     // console.info(e)
-    return ['0', '0']
+    return 'error'
   }
 }
 
@@ -99,25 +99,24 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
     marginToken: MarginTokenKeys
   ) => {
     // console.info(qtAddress, trader, get().openingType, get().leverageNow, price, exchange)
-    const [size, swap] = await getMaxVolume(qtAddress, trader, get().openingType, get().leverageNow, price, exchange)
+    const data = await getMaxVolume(qtAddress, trader, get().openingType, get().leverageNow, price, exchange)
 
     // console.info('getMaxVolume:')
     // console.info([size, swap])
 
-    set({
-      maxVolume: {
-        [marginToken]: swap,
-        [findToken(qtAddress).symbol]: size
-      },
-      maxVolumeLoaded: true
-    })
+    if (data !== 'error') {
+      const [size, swap] = data
+      set({
+        maxVolume: {
+          [marginToken]: swap,
+          [findToken(qtAddress).symbol]: size
+        },
+        maxVolumeLoaded: true
+      })
+    }
   },
   fetchTFRValue: async (address: string) => {
-    console.info(address)
     const data = await getTFRValue(address)
-
-    console.info('fetchTFRValue-不完整:')
-    console.info(data)
 
     set({ tfr: Number(data) })
   }

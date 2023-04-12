@@ -231,3 +231,8 @@ export const getBuyBackMarginTokenList = async (page: number, offset: number) =>
   const response = await get(`api/buy_back_margin_token_list/${page}/${offset}`)
   return response
 }
+
+export const getTradingCompetitionRanks = async (marginToken: string, page: number, offset: number) => {
+  const response = await get(`api/trading_competition_ranks/${marginToken}`)
+  return response
+}

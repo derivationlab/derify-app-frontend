@@ -35,6 +35,7 @@ import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
 import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
 import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
 import MiningRank from '@/pages/web/MiningRank'
+import CompetitionRank from '@/pages/web/CompetitionRank'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 import MySpace from '@/pages/web/MySpace'
 import System from '@/pages/web/MySpace/System'
@@ -87,6 +88,15 @@ const Web: FC = () => {
           render={() => (
             <RWithMarToken pathKey="mining/rank">
               <MiningRank />
+            </RWithMarToken>
+          )}
+        />
+        <Route
+          path="/:id/competition/rank"
+          exact
+          render={() => (
+            <RWithMarToken pathKey="competition/rank">
+              <CompetitionRank />
             </RWithMarToken>
           )}
         />

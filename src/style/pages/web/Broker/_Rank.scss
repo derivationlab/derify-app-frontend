@@ -61,3 +61,13 @@
     }
   }
 }
+
+
+.web-mining-rank,
+.web-competition-rank {
+  @extend .web-broker-rank;
+}
+
+.web-competition-rank{
+  aside{display: flex;justify-content: flex-end;margin-bottom: 30px}
+}

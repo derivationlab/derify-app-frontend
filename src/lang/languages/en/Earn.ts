@@ -70,6 +70,12 @@ export default {
     },
     MiningRank: {
       Address: 'Address'
+    },
+    CompetitionRank: {
+      Address: 'Address',
+      Rewards: 'PNL/Rewards',
+      Rank: 'Rank',
+      State: 'State'
     }
   }
 }

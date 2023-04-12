@@ -1,7 +1,8 @@
 import PubSub from 'pubsub-js'
-import { debounce } from 'lodash'
-import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import { debounce, orderBy } from 'lodash'
 import { useTranslation } from 'react-i18next'
+
+import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { getGrantList } from '@/api'
@@ -38,9 +39,11 @@ const GrantList: FC = () => {
 
     const { data } = await getGrantList(_marginToken, _grantTarget, _grantStatus, index, 8)
 
+    const sort = orderBy(data?.records ?? [], ['open'], 'desc')
+
     dispatch({
       type: 'SET_GRANT_DAT',
-      payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+      payload: { records: sort, totalItems: data?.totalItems ?? 0, isLoaded: false }
     })
   }, [])
 

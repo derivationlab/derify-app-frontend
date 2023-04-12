@@ -1,3 +1,5 @@
+import CompetitionRank from '@/pages/web/CompetitionRank'
+
 export default {
   section: 'Earn',
   dicts: {
@@ -71,6 +73,12 @@ export default {
     },
     MiningRank: {
       Address: '地址'
+    },
+    CompetitionRank: {
+      Address: '地址',
+      Rewards: 'PNL/收益',
+      Rank: '排名',
+      State: '状态'
     }
   }
 }

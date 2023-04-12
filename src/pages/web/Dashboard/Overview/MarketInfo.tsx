@@ -2,14 +2,15 @@ import Table from 'rc-table'
 import classNames from 'classnames'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { isEmpty } from 'lodash'
+import { isEmpty, orderBy } from 'lodash'
 import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useEffect } from 'react'
 
-import { bnMul, keepDecimals } from '@/utils/tools'
 import { useConfigInfo } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
+import { useBuyBackPool } from '@/hooks/useBuyBackPool'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/marketInfo'
+import { bnMul, keepDecimals } from '@/utils/tools'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { getDashboardMarginTokenList } from '@/api'
 import { useMulCurrentTradingAmount, usePairIndicators, usePositionInfo } from '@/hooks/useMarketInfo'
@@ -21,7 +22,6 @@ import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 import { TableMargin } from '../c/TableCol'
-import { useBuyBackPool } from '@/hooks/useBuyBackPool'
 
 const MarketInfo: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -142,9 +142,11 @@ const MarketInfo: FC = () => {
 
       // console.info(data)
 
+      const sort = orderBy(data?.records ?? [], ['max_pm_apy', 'open'], 'desc')
+
       dispatch({
         type: 'SET_MARKET_DAT',
-        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+        payload: { records: sort, totalItems: data?.totalItems ?? 0, isLoaded: false }
       })
     },
     [keyword]

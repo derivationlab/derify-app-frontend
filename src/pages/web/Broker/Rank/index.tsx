@@ -13,6 +13,7 @@ import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 
 import { useMarginToken } from '@/store'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 interface RowTextProps {
   value: string | number
@@ -90,12 +91,10 @@ const Rank: FC = () => {
       width: 250,
       render: (_: string, data: Record<string, any>) => {
         const { accumulated_margin_token_reward = 0, accumulated_drf_reward = 0 } = data ?? {}
-        const drf = keepDecimals(accumulated_drf_reward, tokens.drf.decimals)
-        const margin = keepDecimals(accumulated_margin_token_reward, findToken(marginToken).decimals)
         return (
           <>
-            <RowText value={margin} unit={marginToken} />
-            <RowText value={drf} unit="DRF" />
+            <BalanceShow value={accumulated_margin_token_reward} unit={marginToken} />
+            <BalanceShow value={accumulated_drf_reward} unit="DRF" />
           </>
         )
       }
@@ -106,12 +105,10 @@ const Rank: FC = () => {
       width: 250,
       render: (_: string, data: Record<string, any>) => {
         const { today_margin_token_reward = 0, today_drf_reward = 0 } = data ?? {}
-        const margin = keepDecimals(today_margin_token_reward, findToken(marginToken).decimals)
-        const drf = keepDecimals(today_drf_reward, tokens.drf.decimals)
         return (
           <>
-            <RowText value={margin} unit={marginToken} />
-            <RowText value={drf} unit="DRF" />
+            <BalanceShow value={today_margin_token_reward} unit={marginToken} />
+            <BalanceShow value={today_drf_reward} unit="DRF" />
           </>
         )
       }

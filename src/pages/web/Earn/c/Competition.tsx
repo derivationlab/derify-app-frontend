@@ -18,6 +18,7 @@ import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { Link } from 'react-router-dom'
 
 const Competition: FC = () => {
   const { t } = useTranslation()
@@ -96,6 +97,7 @@ const Competition: FC = () => {
             >
               {t('Earn.bDRFPool.ClaimAll', 'Claim All')}
             </Button>
+            <Link to={`/${marginToken}/competition/rank`}>{t('Broker.BV.RankList')}</Link>
           </aside>
         </div>
         <div className="web-eran-item-card">

@@ -1,18 +1,19 @@
 import Table from 'rc-table'
 import { isEmpty } from 'lodash'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
 
-import { calcShortHash, keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginToken } from '@/store'
-import { getTradersRankList } from '@/api'
-import { reducer, stateInit } from '@/reducers/brokerRank'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { getTradingCompetitionRanks } from '@/api'
+import { calcShortHash, keepDecimals } from '@/utils/tools'
+import { grantStateOptions, reducer, stateInit } from '@/reducers/brokerRank'
 
 import Image from '@/components/common/Image'
+import Select from '@/components/common/Form/Select'
 import Pagination from '@/components/common/Pagination'
-import { useAccount } from 'wagmi'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 interface RowTextProps {
@@ -40,7 +41,7 @@ const RowText: FC<RowTextProps> = ({ value, unit }) => (
   </div>
 )
 
-const Rank: FC = () => {
+const CompetitionRank: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
@@ -50,26 +51,6 @@ const Rank: FC = () => {
 
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const fetchData = useCallback(
-    async (index = 0) => {
-      const { data } = await getTradersRankList(findToken(marginToken).tokenAddress, index, 10)
-
-      // console.info(data)
-
-      dispatch({
-        type: 'SET_RANK_DAT',
-        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-      })
-    },
-    [marginToken]
-  )
-
-  const pageChange = (index: number) => {
-    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-
-    void fetchData(index)
-  }
-
   const emptyText = useMemo(() => {
     if (state.rankData.isLoaded) return 'Loading'
     if (isEmpty(state.rankData.records)) return 'No Record'
@@ -78,7 +59,7 @@ const Rank: FC = () => {
 
   const mColumns = [
     {
-      title: t('Earn.MiningRank.Address'),
+      title: t('Earn.CompetitionRank.Address'),
       dataIndex: 'user',
       width: mobile ? '' : 600,
       render: (user: string, data: Record<string, any>) => {
@@ -86,47 +67,67 @@ const Rank: FC = () => {
       }
     },
     {
-      title: t('Broker.RankList.TotalRewards', 'Total Rewards'),
-      dataIndex: '',
+      title: t('Earn.CompetitionRank.Rewards'),
+      dataIndex: 'amount',
       width: mobile ? '' : 250,
       render: (_: string, data: Record<string, any>) => {
-        const { total_margin_token_reward = 0, total_drf_reward = 0 } = data ?? {}
-        const margin = keepDecimals(total_margin_token_reward, findToken(marginToken).decimals)
-        const platform = keepDecimals(total_drf_reward, PLATFORM_TOKEN.decimals)
+        const amount = keepDecimals(_, findToken(marginToken).decimals)
+        const platform = keepDecimals(data.awards, PLATFORM_TOKEN.decimals)
         return (
           <>
-            <BalanceShow value={margin} unit={marginToken} />
+            <BalanceShow value={amount} unit={marginToken} />
             <BalanceShow value={platform} unit={PLATFORM_TOKEN.symbol} />
           </>
         )
       }
     },
     {
-      title: t('Broker.RankList.Rank', 'Rank'),
+      title: t('Earn.CompetitionRank.Rank'),
       dataIndex: 'rank',
       width: mobile ? '' : 200,
       render: (text: string) => <RowText value={`#${text}`} />
     }
   ]
 
+  const pageChange = (index: number) => {
+    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
+
+    void fetchData(index)
+  }
+
+  const fetchData = useCallback(
+    async (index = 0) => {
+      const { data } = await getTradingCompetitionRanks(findToken(marginToken).tokenAddress, index, 10)
+
+      console.info(data)
+
+      dispatch({
+        type: 'SET_RANK_DAT',
+        payload: { records: data, totalItems: data.length, isLoaded: false }
+        // payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+      })
+    },
+    [marginToken]
+  )
+
   useEffect(() => {
     void fetchData()
   }, [])
 
   return (
-    <div className="web-mining-rank">
-      <h2>Position Mining Rank</h2>
-      <Table
-        data={state.rankData.records}
-        rowKey="user"
-        columns={mColumns}
-        emptyText={emptyText}
-        className="web-broker-table"
-        rowClassName={(record) => (address === record.user ? 'active' : '')}
-      />
+    <div className="web-competition-rank">
+      <h2>Trading Competition Rank</h2>
+      <aside>
+        <Select
+          value={state.grantStatus}
+          onChange={(v) => dispatch({ type: 'SET_GRANT_STATUS', payload: v })}
+          objOptions={grantStateOptions as any}
+        />
+      </aside>
+      <Table data={state.rankData.records} rowKey="id" columns={mColumns} emptyText={emptyText} />
       <Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />
     </div>
   )
 }
 
-export default Rank
+export default CompetitionRank

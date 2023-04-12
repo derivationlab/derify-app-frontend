@@ -270,7 +270,12 @@
 
         .web-select {
           display: flex;
+          position: relative;
           justify-content: space-between;
+
+          &-show {
+            position: unset
+          }
 
           &-show-button {
             &, span {
@@ -281,9 +286,9 @@
           }
 
           &-options {
-            left: auto;
-            right: 0;
-            width: 396px;
+            right: -24px;
+            left: -24px;
+            width: auto;
           }
         }
 
@@ -655,8 +660,8 @@
             align-items: center;
 
             &-options {
-              right: 0;
-              width: rem(240);
+              right: rem(-24);
+              left: rem(-24);
             }
           }
 

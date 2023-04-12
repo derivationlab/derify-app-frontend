@@ -51,7 +51,7 @@ const BrokerSignUpStep2Mobile: FC = () => {
       return
     }
 
-    if ((_logo as File)?.size > Math.pow(1024, 2)) {
+    if ((_logo as File)?.size > 2 * Math.pow(1024, 2)) {
       window.toast.error(t('Broker.Reg.UploadImageTip', 'Image file size should be less than 2M, please retry.'))
       return
     }

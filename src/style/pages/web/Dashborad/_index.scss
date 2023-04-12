@@ -846,6 +846,10 @@
     }
   }
 
+  .closed{
+    color: $c44;
+    background-color: $c88;
+  }
   .active .web-dashboard-add-grant-margin-item .web-decimal-show.black {
     color: $cff;
   }

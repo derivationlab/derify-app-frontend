@@ -66,6 +66,11 @@
 .web-mining-rank,
 .web-competition-rank {
   @extend .web-broker-rank;
+  .rc-table-row.active{
+    * {
+      color: $yellow;
+    }
+  }
 }
 
 .web-competition-rank{

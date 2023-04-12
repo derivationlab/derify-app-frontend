@@ -15,6 +15,7 @@ import Button from '@/components/common/Button'
 
 import MFormItem from './c/FormItem'
 import { patterns, rules } from '../config'
+import { API_PREFIX_URL } from '@/config'
 
 const BrokerSignUpStep2Mobile: FC = () => {
   const history = useHistory()
@@ -137,9 +138,13 @@ const BrokerSignUpStep2Mobile: FC = () => {
 
       const index = SelectLangOptions.findIndex((l: string) => l === language) ?? 0
 
+      if (logo) {
+        const index = logo.lastIndexOf('/')
+        setBrokerLogo(`${API_PREFIX_URL}${logo.substring(index + 1)}` as any)
+      }
+
       setBrokerId(id)
       setBrokerName(name)
-      setBrokerLogo(logo)
       setBrokerAcco(_broker)
       setBrokerIntr(introduction)
       setBrokerLang(SelectLangOptions[index])

@@ -22,7 +22,7 @@ $communitys: telegram, discord, twitter, reddit, wechat;
       padding-right: rem(20);
       background: url($res + 'icon/arrow-right.svg') center right/rem(12) rem(12) no-repeat;
       .web-image {
-        width: rem(62);height: rem(62);
+        width: rem(62);height: rem(62);border-radius: 100%;
       }
     }
     &-community {

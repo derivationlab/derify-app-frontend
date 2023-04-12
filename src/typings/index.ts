@@ -1,10 +1,13 @@
 import GlobalType from '@/typings/global'
 import { contractInfo } from '@/hooks/useProtocolConfig'
+import { Signer } from 'ethers'
 
 export enum ChainId {
   MAINNET = 56,
   TESTNET = 97
 }
+
+export type TSigner = Signer | null | undefined
 
 export type ChainIdRec = { [key in GlobalType.Chain]: string }
 

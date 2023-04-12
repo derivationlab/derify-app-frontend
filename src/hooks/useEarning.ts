@@ -1,15 +1,12 @@
-import { Signer } from 'ethers'
-
 import tokens from '@/config/tokens'
 import contracts from '@/config/contracts'
+import { TSigner } from '@/typings'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 
-type S = Signer | null | undefined
-
 export const useWithdrawPositionReward = () => {
-  const withdraw = async (rewards: string, signer?: S): Promise<boolean> => {
+  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
     const c = getDerifyRewardsContract(rewards, signer)
 
@@ -27,7 +24,7 @@ export const useWithdrawPositionReward = () => {
 }
 
 export const useWithdrawAllEdrf = () => {
-  const withdraw = async (signer?: S): Promise<boolean> => {
+  const withdraw = async (signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyProtocolContract(signer)
@@ -46,7 +43,7 @@ export const useWithdrawAllEdrf = () => {
 }
 
 export const useWithdrawAllBond = () => {
-  const withdraw = async (rewards: string, signer?: S): Promise<boolean> => {
+  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyRewardsContract(rewards, signer)
@@ -65,7 +62,7 @@ export const useWithdrawAllBond = () => {
 }
 
 export const useWithdrawRankReward = () => {
-  const withdraw = async (rewards: string, signer?: S): Promise<boolean> => {
+  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
     const c = getDerifyRewardsContract(rewards, signer)
 
@@ -83,7 +80,7 @@ export const useWithdrawRankReward = () => {
 }
 
 export const useStakingDrf = () => {
-  const staking = async (amount: string, signer?: S): Promise<boolean> => {
+  const staking = async (amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyProtocolContract(signer)
@@ -113,7 +110,12 @@ export const useStakingDrf = () => {
 }
 
 export const useExchangeBond = () => {
-  const exchange = async (rewards: string, bMarginToken: string, amount: string, signer?: S): Promise<boolean> => {
+  const exchange = async (
+    rewards: string,
+    bMarginToken: string,
+    amount: string,
+    signer?: TSigner
+  ): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyRewardsContract(rewards, signer)
@@ -138,7 +140,7 @@ export const useExchangeBond = () => {
 }
 
 export const useRedeemDrf = () => {
-  const redeem = async (amount: string, signer?: S): Promise<boolean> => {
+  const redeem = async (amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyProtocolContract(signer)
@@ -159,7 +161,7 @@ export const useRedeemDrf = () => {
 }
 
 export const useRedeemBondFromBank = () => {
-  const redeem = async (rewards: string, amount: string, signer?: S): Promise<boolean> => {
+  const redeem = async (rewards: string, amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyRewardsContract(rewards, signer)
@@ -180,7 +182,7 @@ export const useRedeemBondFromBank = () => {
 }
 
 export const useDepositBondToBank = () => {
-  const deposit = async (rewards: string, bMarginToken: string, amount: string, signer?: S): Promise<boolean> => {
+  const deposit = async (rewards: string, bMarginToken: string, amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyRewardsContract(rewards, signer)

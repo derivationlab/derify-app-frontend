@@ -1,4 +1,5 @@
 import PubSub from 'pubsub-js'
+import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
 
@@ -16,6 +17,7 @@ interface Props {
 
 const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
+  const { data: signer } = useSigner()
 
   const marginToken = useMarginToken((state) => state.marginToken)
 
@@ -32,7 +34,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
       setDialogStatus('')
 
       if (protocolConfig) {
-        const status = await deposit(protocolConfig.exchange, amount, marginToken)
+        const status = await deposit(protocolConfig.exchange, amount, marginToken, signer)
 
         if (status) {
           // succeed
@@ -49,7 +51,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       window.toast.dismiss(toast)
     },
-    [protocolConfig, marginToken]
+    [signer, marginToken, protocolConfig]
   )
 
   return (

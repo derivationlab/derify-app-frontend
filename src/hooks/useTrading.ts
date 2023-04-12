@@ -7,7 +7,7 @@ import { calcProfitOrLoss } from '@/hooks/helper'
 import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { findMarginToken, findToken } from '@/config/tokens'
-import { PositionSideTypes, PositionTriggerTypes } from '@/typings'
+import { PositionSideTypes, PositionTriggerTypes, TSigner } from '@/typings'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export const useOpeningPosition = () => {
@@ -161,58 +161,48 @@ export const useCancelAllPositions = () => {
 }
 
 export const useDepositMargin = () => {
-  const { data: signer } = useSigner()
+  const deposit = async (exchange: string, amount: string, marginToken: string, signer?: TSigner): Promise<boolean> => {
+    if (!signer) return false
 
-  const deposit = useCallback(
-    async (exchange: string, amount: string, marginToken: string): Promise<boolean> => {
-      if (!signer) return false
+    const c = getDerifyExchangeContract(exchange, signer)
 
-      const c = getDerifyExchangeContract(exchange, signer)
+    try {
+      const _amount = inputParameterConversion(amount, 8)
+      const approve = await setAllowance(signer, exchange, findToken(marginToken).tokenAddress, _amount)
 
-      try {
-        const _amount = inputParameterConversion(amount, 8)
-        const approve = await setAllowance(signer, exchange, findToken(marginToken).tokenAddress, _amount)
+      if (!approve) return false
 
-        if (!approve) return false
-
-        const gasLimit = await estimateGas(c, 'deposit', [_amount], 0)
-        const res = await c.deposit(_amount, { gasLimit })
-        const receipt = await res.wait()
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
+      const gasLimit = await estimateGas(c, 'deposit', [_amount], 0)
+      const res = await c.deposit(_amount, { gasLimit })
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { deposit }
 }
 
 export const useWithdrawMargin = () => {
-  const { data: signer } = useSigner()
+  const withdraw = async (exchange: string, amount: string, signer?: TSigner): Promise<boolean> => {
+    if (!signer) return false
 
-  const withdraw = useCallback(
-    async (exchange: string, amount: string): Promise<boolean> => {
-      if (!signer) return false
+    const c = getDerifyExchangeContract(exchange, signer)
 
-      const c = getDerifyExchangeContract(exchange, signer)
+    try {
+      const _amount = inputParameterConversion(amount, 8)
 
-      try {
-        const _amount = inputParameterConversion(amount, 8)
-
-        const gasLimit = await estimateGas(c, 'withdraw', [_amount], 0)
-        const res = await c.withdraw(_amount, { gasLimit })
-        const receipt = await res.wait()
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [signer]
-  )
+      const gasLimit = await estimateGas(c, 'withdraw', [_amount], 0)
+      const res = await c.withdraw(_amount, { gasLimit })
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { withdraw }
 }

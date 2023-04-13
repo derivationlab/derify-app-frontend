@@ -81,8 +81,7 @@ const MarketInfo: FC = () => {
         dataIndex: 'symbol',
         render: (symbol: string) => {
           const apy = Math.max.apply(null, Object.values(indicators[symbol as MarginTokenKeys]))
-          const per = keepDecimals(bnMul(apy, 100), 2)
-          return <DecimalShow value={per} percent black />
+          return <BalanceShow value={apy} percent />
         }
       },
       {

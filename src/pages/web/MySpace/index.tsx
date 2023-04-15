@@ -198,11 +198,10 @@ const MySpace: FC = () => {
   }
 
   useEffect(() => {
-    if (address) void fetchData()
-  }, [address])
-
-  useEffect(() => {
-    if (address) void marginBalancesRefetch()
+    if (address) {
+      void fetchData()
+      void marginBalancesRefetch()
+    }
   }, [address])
 
   useEffect(() => {

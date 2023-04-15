@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 
 import { BrokerInfoState } from '@/store/types'
 import { getDerifyProtocolContract } from '@/utils/contractHelpers'
@@ -44,8 +44,11 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
       const { data: time = 0 } = await getBrokerRegisterTime(trader)
       const { data: period = 0 } = await getBrokerValidPeriod(trader)
       const { data: info = {} } = await getBrokerInfoByAddr(trader)
-      const { data: rewards = {} } = await getBrokerRewardsToday(trader, marginToken)
-      // console.info(info)
+      const { data: rewards = {} } = await getBrokerRewardsToday(
+        '0x02d33286fe1d09e12443f9B9336e5Bc8Ce836f9F',
+        marginToken
+      )
+      // console.info(rewards)
       set({
         brokerInfo: {
           rank,

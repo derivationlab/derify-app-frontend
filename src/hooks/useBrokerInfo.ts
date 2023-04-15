@@ -21,7 +21,7 @@ export const useBrokerInfoFromC = (trader = '', rewards = ''): { data: Record<st
 
         const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } =
           response
-
+        console.info(`${trader}-${formatUnits(drfRewardBalance)}`)
         return {
           ...init,
           drfRewardBalance: formatUnits(drfRewardBalance),

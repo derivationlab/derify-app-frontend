@@ -60,10 +60,10 @@ const CompetitionRank: FC = () => {
   const mColumns = [
     {
       title: t('Earn.CompetitionRank.Address'),
-      dataIndex: 'user',
+      dataIndex: 'ranks',
       width: mobile ? '' : 600,
-      render: (user: string, data: Record<string, any>) => {
-        return <RowName data={data} />
+      render: (_: any[]) => {
+        return <RowName data={_[0]} />
       }
     },
     {
@@ -71,8 +71,8 @@ const CompetitionRank: FC = () => {
       dataIndex: 'amount',
       width: mobile ? '' : 250,
       render: (_: string, data: Record<string, any>) => {
-        const amount = keepDecimals(_, findToken(marginToken).decimals)
-        const platform = keepDecimals(data.awards, PLATFORM_TOKEN.decimals)
+        const amount = keepDecimals(data.ranks[0]?.amount, findToken(marginToken).decimals)
+        const platform = keepDecimals(data.ranks[0]?.awards, PLATFORM_TOKEN.decimals)
         return (
           <>
             <BalanceShow value={amount} unit={marginToken} />
@@ -85,7 +85,7 @@ const CompetitionRank: FC = () => {
       title: t('Earn.CompetitionRank.Rank'),
       dataIndex: 'rank',
       width: mobile ? '' : 200,
-      render: (text: string) => <RowText value={`#${text}`} />
+      render: (text: string) => <RowText value={`#${1}`} />
     }
   ]
 
@@ -125,7 +125,7 @@ const CompetitionRank: FC = () => {
         />
       </aside>
       <Table data={state.rankData.records} rowKey="id" columns={mColumns} emptyText={emptyText} />
-      <Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />
+      {/*<Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />*/}
     </div>
   )
 }

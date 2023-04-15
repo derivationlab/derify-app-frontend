@@ -15,23 +15,12 @@ interface Props {
   data: any[]
   chartId: string
   xKey: string
-  xInterval?: number
-  xMinTickGap?: number
   yFormat: FormatProps[]
   timeFormatStr: string
   enableLegend?: boolean
 }
 
-const AreaC: FC<Props> = ({
-  chartId,
-  data,
-  xKey,
-  yFormat,
-  xInterval = 0,
-  xMinTickGap = 10,
-  timeFormatStr,
-  enableLegend
-}) => {
+const AreaC: FC<Props> = ({ chartId, data, xKey, yFormat, timeFormatStr, enableLegend }) => {
   const { theme } = useContext(ThemeContext)
 
   const formatTime = (value: string) => {
@@ -76,8 +65,7 @@ const AreaC: FC<Props> = ({
             <XAxis
               fontSize={14}
               dataKey={xKey}
-              interval={xInterval}
-              minTickGap={xMinTickGap}
+              interval={data.length > 20 ? Math.ceil(data.length / 20) : 0}
               tickFormatter={(value) => dayjs(value).format('DD')}
             />
             <YAxis fontSize={14} orientation="right" tickFormatter={formatValue} />

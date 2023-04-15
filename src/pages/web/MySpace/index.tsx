@@ -1,5 +1,5 @@
 import Table from 'rc-table'
-import { isEmpty } from 'lodash'
+import { isEmpty, orderBy } from 'lodash'
 import { useAccount } from 'wagmi'
 import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +11,7 @@ import { useConfigInfo } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/mySpace'
 import { getMySpaceMarginTokenList } from '@/api'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
 import {
   useTraderVariables,
   useAllBrokerRewards,
@@ -36,7 +36,7 @@ const MySpace: FC = () => {
   const protocolConfig = useConfigInfo((state) => state.protocolConfig)
   const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
 
-  const { data: marginBalances, refetch: marginBalancesRefetch } = useAllMarginBalances(address)
+  const { data: marginBalances, refetch: marginBalancesRefetch, isLoading } = useAllMarginBalances(address)
   const { data: traderVariables, refetch: traderVariablesRefetch } = useTraderVariables(address, protocolConfig)
   const { data: allTraderRewards, refetch: allTraderRewardsRefetch } = useAllTraderRewards(address, protocolConfig)
   const { data: allBrokerRewards, refetch: allBrokerRewardsRefetch } = useAllBrokerRewards(address, protocolConfig)
@@ -91,70 +91,91 @@ const MySpace: FC = () => {
       mColumns[0],
       {
         title: t('Nav.MySpace.MarginBalanceRate'),
-        dataIndex: 'symbol',
+        dataIndex: 'marginBalance',
         width: 250,
-        render: (symbol: string) => {
-          const p1 = traderVariables[symbol as MarginTokenKeys]
-          const p2 = marginBalances[symbol as MarginTokenKeys]
-          const per = Number(p1) === 0 ? 0 : bnDiv(p2, p1)
+        render: (_: string, record: Record<string, any>) => {
           return (
             <>
-              <BalanceShow value={p2} unit={symbol} />
-              <BalanceShow value={per} percent />
+              <BalanceShow value={_} unit={record.symbol} />
+              <BalanceShow value={record.marginRate} percent />
             </>
           )
         }
       },
       {
         title: t('Nav.MySpace.PositionVolume'),
-        dataIndex: 'symbol',
+        dataIndex: 'positionVolume',
         width: 250,
-        render: (symbol: string) => {
-          return <BalanceShow value={traderVariables[symbol as MarginTokenKeys]} unit={symbol} />
+        render: (_: string, record: Record<string, any>) => {
+          return <BalanceShow value={_} unit={record.symbol} />
         }
       },
       {
         title: t('Nav.MySpace.PositionMiningRewards'),
-        dataIndex: 'symbol',
+        dataIndex: 'rewards1',
         width: 250,
-        render: (symbol: string) => {
-          const rewards = allTraderRewards[symbol as MarginTokenKeys]
+        render: (_: Record<string, any>, record: Record<string, any>) => {
           return (
             <>
-              <BalanceShow value={rewards[symbol]} rule="0.00" unit={symbol} />
-              <BalanceShow value={rewards.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
+              <BalanceShow value={_[record.symbol]} rule="0.00" unit={record.symbol} />
+              <BalanceShow value={_.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
             </>
           )
         }
       },
       {
         title: t('Nav.MySpace.BrokerRewards'),
-        dataIndex: 'symbol',
+        dataIndex: 'rewards2',
         width: 250,
-        render: (symbol: string) => {
-          const rewards = allBrokerRewards[symbol as MarginTokenKeys]
+        render: (_: Record<string, any>, record: Record<string, any>) => {
           return (
             <>
-              <BalanceShow value={rewards[symbol]} rule="0.00" unit={symbol} />
-              <BalanceShow value={rewards.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
+              <BalanceShow value={_[record.symbol]} rule="0.00" unit={record.symbol} />
+              <BalanceShow value={_.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
             </>
           )
         }
       },
       {
         title: t('Nav.MySpace.DetailInfo'),
-        dataIndex: 'Margin',
+        dataIndex: 'open',
         width: 150,
-
         align: 'right',
-        render: (_: string, data: Record<string, any>) => (
-          <Button size="medium" disabled={!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
-            GO
-          </Button>
-        )
+        render: (_: string, record: Record<string, any>) => {
+          return (
+            <Button size="medium" disabled={!_} onClick={() => history.push(`/${record.symbol}/trade`)}>
+              GO
+            </Button>
+          )
+        }
       }
     ]
   }, [t, traderVariables, marginBalances, allTraderRewards, allBrokerRewards])
+
+  const initDAT = useMemo(() => {
+    if (!state.marginData.isLoaded && !isLoading) {
+      const _ = MARGIN_TOKENS.map((token) => {
+        const p0 = state.marginData.records.find((data) => data.symbol === token.symbol)
+        const p1 = traderVariables[token.symbol as MarginTokenKeys]
+        const p2 = marginBalances[token.symbol as MarginTokenKeys]
+        const p3 = Number(p1) === 0 ? 0 : bnDiv(p2, p1)
+        const rewards1 = allTraderRewards[token.symbol as MarginTokenKeys]
+        const rewards2 = allBrokerRewards[token.symbol as MarginTokenKeys]
+        return {
+          apy: p0?.max_pm_apy ?? 0,
+          open: p0?.open ?? 0,
+          symbol: token.symbol,
+          rewards1,
+          rewards2,
+          marginRate: p3,
+          marginBalance: p2,
+          positionVolume: traderVariables[token.symbol as MarginTokenKeys]
+        }
+      })
+      return orderBy(_, ['marginBalance', 'apy'], 'desc')
+    }
+    return []
+  }, [isLoading, state.marginData, traderVariables, marginBalances, allBrokerRewards, allTraderRewards])
 
   const fetchData = useCallback(
     async (index = 0) => {
@@ -199,7 +220,7 @@ const MySpace: FC = () => {
       </header>
       <Table
         rowKey="symbol"
-        data={state.marginData.records}
+        data={initDAT}
         // @ts-ignore
         columns={mobile ? mColumns : wColumns}
         className="web-broker-table web-space-table"

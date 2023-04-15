@@ -1,4 +1,4 @@
-import CompetitionRank from '@/pages/web/CompetitionRank'
+import CompetitionRank from '@/pages/web/Competition'
 
 export default {
   section: 'Earn',

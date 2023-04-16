@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { BSC_SCAN_URL } from '@/config'
+import { EXPLORER_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { reducer, stateInit } from '@/reducers/records'
@@ -31,7 +31,7 @@ const RowTrader: FC<{ data: Record<string, any> }> = ({ data }) => {
   return (
     <div className="web-broker-table-trader-tx">
       <Image src="icon/normal-ico.svg" cover />
-      <a href={`${BSC_SCAN_URL}/address/${data.trader}`} title={data.trader} target="_blank">
+      <a href={`${EXPLORER_SCAN_URL}/address/${data.trader}`} title={data.trader} target="_blank">
         {mobile ? calcShortHash(data.trader, 4, 4) : calcShortHash(data.trader)}
       </a>
     </div>
@@ -41,7 +41,7 @@ const RowTrader: FC<{ data: Record<string, any> }> = ({ data }) => {
 const RowLastTransaction: FC<RowProps> = ({ text }) => (
   <div className="web-broker-table-trader-tx">
     {text ? (
-      <a href={`${BSC_SCAN_URL}/tx/${text}`} target="_blank" title={text}>
+      <a href={`${EXPLORER_SCAN_URL}/tx/${text}`} target="_blank" title={text}>
         {calcShortHash(text ?? '')}
       </a>
     ) : (

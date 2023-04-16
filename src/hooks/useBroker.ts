@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 
 import tokens from '@/config/tokens'
 import contracts from '@/config/contracts'
-import { setAllowance } from '@/utils/practicalMethod'
+import { allowanceApprove } from '@/utils/allowanceApprove'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
@@ -23,7 +23,7 @@ export const useApplyBroker = () => {
       const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 8)
 
       try {
-        const approve = await setAllowance(
+        const approve = await allowanceApprove(
           signer,
           contracts.derifyProtocol.contractAddress,
           tokens.edrf.tokenAddress,
@@ -75,7 +75,7 @@ export const useExtendPeriod = () => {
     try {
       if (!signer) return false
 
-      const approve = await setAllowance(
+      const approve = await allowanceApprove(
         signer,
         contracts.derifyProtocol.contractAddress,
         tokens.edrf.tokenAddress,

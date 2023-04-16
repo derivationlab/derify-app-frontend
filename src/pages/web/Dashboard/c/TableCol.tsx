@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 
 import { calcDateDuration } from '@/utils/tools'
-import { getJsonRpcProvider } from '@/utils/chainSupport'
+import { getJsonRpcProvider } from '@/utils/contractHelpers'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'

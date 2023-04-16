@@ -1,11 +1,10 @@
 import { create } from 'zustand'
 
 import multicall from '@/utils/multicall'
-import { baseProvider } from '@/utils/baseProvider'
 import { BalancesState } from '@/store/types'
-import { getBep20Contract } from '@/utils/contractHelpers'
 import tokens, { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { formatUnits, safeInterceptionValues } from '@/utils/tools'
+import { getBep20Contract, getJsonRpcProvider } from '@/utils/contractHelpers'
 
 import erc20Abi from '@/config/abi/erc20.json'
 
@@ -32,13 +31,15 @@ export const getTokenBalance = async (account: string, address: string) => {
   return formatUnits(res, findToken(address).precision)
 }
 
+const jsonRpc = getJsonRpcProvider()
+
 export const getTokenBalances = async (account: string) => {
   let initialVal = initial()
 
   const calls = TOKENS.map((t) => ({ address: t.tokenAddress, name: 'balanceOf', params: [account] }))
 
   const res = await multicall(erc20Abi, calls)
-  const bnb = await baseProvider.getBalance(account)
+  const bnb = await jsonRpc.getBalance(account)
 
   const bnbBalance = formatUnits(bnb, 18)
 

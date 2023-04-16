@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useContext, useReducer } from 'react'
 
-import { BSC_SCAN_URL } from '@/config'
+import { EXPLORER_SCAN_URL } from '@/config'
 import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
@@ -49,7 +49,7 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
       {mobile ? (
         <time>{calcTimeStr(data.event_time)}</time>
       ) : (
-        <a href={`${BSC_SCAN_URL}/tx/${data.tx}`} target="_blank" title={data.tx}>
+        <a href={`${EXPLORER_SCAN_URL}/tx/${data.tx}`} target="_blank" title={data.tx}>
           txid {calcShortHash(data.tx)}
         </a>
       )}

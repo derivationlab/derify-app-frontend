@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useRef, useMemo } from 'react'
 
 import tokens from '@/config/tokens'
-import { useMarginTokenStore } from '@/store'
-import { addToken2Wallet } from '@/utils/practicalMethod'
+import { addToken } from '@/utils/addToken'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { PANCAKE_SWAP_URL } from '@/config'
+import { useMarginTokenStore } from '@/store'
 
 const AddTokenTool: FC = () => {
   const ref = useRef(null)
@@ -47,8 +47,8 @@ const AddTokenTool: FC = () => {
     ]
   }, [protocolConfig, marginToken])
 
-  const addToken = (token: Record<string, any>) => {
-    void addToken2Wallet(token.address, token.symbol, token.decimals, token.image)
+  const _addToken = (token: Record<string, any>) => {
+    void addToken(token.address, token.symbol, token.decimals, token.image)
     setMenuStatus(false)
   }
 
@@ -71,7 +71,7 @@ const AddTokenTool: FC = () => {
       </div>
       <ul className={classNames('web-header-select-lang-menu', { show: menuStatus })}>
         {memoTokens.map((token, index) => (
-          <li key={`add-${index}`} onClick={() => addToken(token)}>
+          <li key={`add-${index}`} onClick={() => _addToken(token)}>
             {t('Nav.AddToken.Add', 'Add Token', { token: token.symbol })}
           </li>
         ))}

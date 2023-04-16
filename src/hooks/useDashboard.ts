@@ -4,7 +4,8 @@ import { useCallback } from 'react'
 
 import tokens from '@/config/tokens'
 import { useQuery } from '@tanstack/react-query'
-import { estimateGas, setAllowance } from '@/utils/practicalMethod'
+import { estimateGas } from '@/utils/estimateGas'
+import { allowanceApprove } from '@/utils/allowanceApprove'
 import { formatUnits, inputParameterConversion } from '@/utils/tools'
 import {
   getDerifyPmrContract,
@@ -67,7 +68,7 @@ export const useAddGrant = () => {
       const _amount = inputParameterConversion(amount, 18)
 
       try {
-        const approve = await setAllowance(signer, address, tokens.drf.tokenAddress, _amount)
+        const approve = await allowanceApprove(signer, address, tokens.drf.tokenAddress, _amount)
 
         if (!approve) return false
 

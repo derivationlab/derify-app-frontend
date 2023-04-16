@@ -3,10 +3,11 @@ import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
 import { OpeningType } from '@/store'
+import { estimateGas } from '@/utils/estimateGas'
 import { calcProfitOrLoss } from '@/hooks/helper'
-import { bnDiv, inputParameterConversion } from '@/utils/tools'
-import { estimateGas, setAllowance } from '@/utils/practicalMethod'
+import { allowanceApprove } from '@/utils/allowanceApprove'
 import { findMarginToken, findToken } from '@/config/tokens'
+import { bnDiv, inputParameterConversion } from '@/utils/tools'
 import { PositionSideTypes, PositionTriggerTypes, TSigner } from '@/typings'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
@@ -260,7 +261,7 @@ export const useMarginOperation = () => {
 
     try {
       const _amount = inputParameterConversion(amount, 8)
-      const approve = await setAllowance(signer, exchange, findToken(marginToken).tokenAddress, _amount)
+      const approve = await allowanceApprove(signer, exchange, findToken(marginToken).tokenAddress, _amount)
 
       if (!approve) return false
 

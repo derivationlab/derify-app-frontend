@@ -1,8 +1,9 @@
 import tokens from '@/config/tokens'
 import contracts from '@/config/contracts'
 import { TSigner } from '@/typings'
+import { estimateGas } from '@/utils/estimateGas'
+import { allowanceApprove } from '@/utils/allowanceApprove'
 import { inputParameterConversion } from '@/utils/tools'
-import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 
 export const useRedeemDrf = () => {
@@ -34,7 +35,7 @@ export const useStakingDrf = () => {
     const _amount = inputParameterConversion(amount, 8)
 
     try {
-      const approve = await setAllowance(
+      const approve = await allowanceApprove(
         signer,
         contracts.derifyProtocol.contractAddress,
         tokens.drf.tokenAddress,
@@ -69,7 +70,7 @@ export const useExchangeBond = () => {
     const _amount = inputParameterConversion(amount, 8)
 
     try {
-      const approve = await setAllowance(signer, rewards, bMarginToken, _amount)
+      const approve = await allowanceApprove(signer, rewards, bMarginToken, _amount)
 
       if (!approve) return false
 
@@ -132,7 +133,7 @@ export const useDepositBondToBank = () => {
     const _amount = inputParameterConversion(amount, 8)
 
     try {
-      const approve = await setAllowance(signer, rewards, bMarginToken, _amount)
+      const approve = await allowanceApprove(signer, rewards, bMarginToken, _amount)
 
       if (!approve) return false
 

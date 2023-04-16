@@ -3,9 +3,10 @@ import type { Provider } from '@ethersproject/providers'
 import type { Contract } from '@ethersproject/contracts'
 import type { Signer } from '@ethersproject/abstract-signer'
 import type { ContractInterface } from '@ethersproject/contracts'
+import { StaticJsonRpcProvider } from '@ethersproject/providers'
 
 import contracts from '@/config/contracts'
-import { baseProvider } from '@/utils/baseProvider'
+import { CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
 
 import bep20Abi from '@/config/abi/erc20.json'
 import multiCallAbi from '@/config/abi/MM.json'
@@ -17,8 +18,15 @@ import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import DerifyBrokerRewardsAbi from '@/config/abi/DerifyBrokerRewards.json'
 
+export const getJsonRpcProvider = (): StaticJsonRpcProvider => {
+  const local = localStorage.getItem('best-rpc')
+  const rpc = local ? JSON.parse(local)?.state.rpc : DEFAULT_PRC_URLS[CHAIN_ID]
+  // console.info(rpc)
+  return new StaticJsonRpcProvider(rpc)
+}
+
 export const getContract = (abi: ContractInterface, address: string, signer?: Signer | Provider | null): Contract => {
-  const signerOrProvider = signer ?? baseProvider
+  const signerOrProvider = signer ?? getJsonRpcProvider()
   return new ethers.Contract(address, abi, signerOrProvider)
 }
 

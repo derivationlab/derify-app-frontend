@@ -1,6 +1,6 @@
 import React from 'react'
 import { Buffer } from 'buffer'
-import type { WagmiConfigProps } from 'wagmi'
+import type { WagmiConfigProps, Chain } from 'wagmi'
 import { WagmiConfig } from 'wagmi'
 import { bsc, bscTestnet } from 'wagmi/chains'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
@@ -10,15 +10,18 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
 import { createClient, configureChains } from 'wagmi'
 
+import { CHAIN_ID } from '@/config'
 import { useRpcNodeStore } from '@/store'
 
 if (!window.Buffer) window.Buffer = Buffer
+
+const chain = getDefaultChainInfo()
 
 function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'>>) {
   const rpcUrl = useRpcNodeStore((state) => state.rpc)
 
   const { provider, chains } = configureChains(
-    [bscTestnet, bsc],
+    [chain],
     [
       jsonRpcProvider({
         rpc: () => ({ http: rpcUrl })
@@ -31,7 +34,12 @@ function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'
     autoConnect: true,
     connectors: () => {
       return [
-        new MetaMaskConnector({ chains, options: { shimDisconnect: true } }),
+        new MetaMaskConnector({
+          chains: [chain],
+          options: {
+            shimDisconnect: false
+          }
+        }),
         new CoinbaseWalletConnector({
           chains,
           options: {
@@ -59,3 +67,8 @@ function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'
 }
 
 export default Provider
+
+function getDefaultChainInfo(): Chain {
+  const chain = [bscTestnet, bsc].find((chain: Chain) => chain.id === Number(CHAIN_ID))
+  return chain ?? bsc
+}

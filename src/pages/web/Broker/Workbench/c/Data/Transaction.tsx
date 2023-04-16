@@ -7,7 +7,7 @@ import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { keepDecimals } from '@/utils/tools'
-import { BSC_SCAN_URL } from '@/config'
+import { EXPLORER_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { getBrokerRewardTx } from '@/api'
@@ -32,13 +32,13 @@ const RowTransaction: FC<{ data: Record<string, any> }> = ({ data }) => {
   const { mobile } = useContext(MobileContext)
   return (
     <div className="web-broker-table-transaction-tx">
-      <a href={`${BSC_SCAN_URL}/tx/${data.tx}`} target="_blank" title={data.tx}>
+      <a href={`${EXPLORER_SCAN_URL}/tx/${data.tx}`} target="_blank" title={data.tx}>
         {mobile ? calcShortHash(data.tx, 4, 4) : calcShortHash(data.tx)}
       </a>
       {mobile ? (
         <time>{calcTimeStr(data.event_time)}</time>
       ) : (
-        <a href={`${BSC_SCAN_URL}/address/${data.user}`} target="_blank" title={data.user}>
+        <a href={`${EXPLORER_SCAN_URL}/address/${data.user}`} target="_blank" title={data.user}>
           by trader {calcShortHash(data.user)}
         </a>
       )}

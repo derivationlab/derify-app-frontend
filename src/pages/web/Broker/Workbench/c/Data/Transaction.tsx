@@ -5,18 +5,17 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 
+import { findToken } from '@/config/tokens'
 import { keepDecimals } from '@/utils/tools'
 import { BSC_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
+import { useMarginToken } from '@/store'
 import { getBrokerRewardTx } from '@/api'
-
-import { reducer, stateInit } from '@/reducers/brokerTable'
+import { reducer, stateInit } from '@/reducers/records'
 
 import Pagination from '@/components/common/Pagination'
 
 import { RowTime, calcShortHash, calcTimeStr } from './common'
-import { findToken } from '@/config/tokens'
-import { useMarginToken } from '@/store'
 
 interface DataProps {
   id: string
@@ -114,7 +113,7 @@ const Transaction: FC = () => {
       const { data } = await getBrokerRewardTx(address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
-        type: 'SET_TABLE_DAT',
+        type: 'SET_RECORDS',
         payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
       })
     }
@@ -127,10 +126,10 @@ const Transaction: FC = () => {
   }
 
   const memoEmptyText = useMemo(() => {
-    if (state.tableDAT.isLoaded) return 'Loading'
-    if (isEmpty(state.tableDAT?.records)) return 'No Record'
+    if (state.records.loaded) return 'Loading'
+    if (isEmpty(state.records?.records)) return 'No Record'
     return ''
-  }, [state.tableDAT])
+  }, [state.records])
 
   const mobileColumns = [
     {
@@ -172,10 +171,10 @@ const Transaction: FC = () => {
         className="web-broker-table"
         columns={mobile ? mobileColumns : webColumns}
         emptyText={memoEmptyText}
-        data={state.tableDAT.records}
+        data={state.records.records}
         rowKey="id"
       />
-      <Pagination page={state.pageIndex} total={state.tableDAT.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </>
   )
 }

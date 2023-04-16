@@ -5,9 +5,8 @@ import React, { FC, useMemo, useContext } from 'react'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfo } from '@/store/useTraderInfo'
-import { useMarginToken, useQuoteToken } from '@/store'
 import { PositionSideTypes } from '@/typings'
-
+import { useMarginToken, useQuoteToken } from '@/store'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'
 

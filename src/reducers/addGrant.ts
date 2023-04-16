@@ -2,12 +2,12 @@ import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
 
 interface ActionType {
   type:
-    | 'SET_MARGIN_TOKEN'
-    | 'SET_GRANT_TARGET'
     | 'SET_DISABLED'
     | 'SET_GRANT_DAYS'
     | 'SET_CLIFF_DAYS'
     | 'SET_AMOUNT_INP'
+    | 'SET_MARGIN_TOKEN'
+    | 'SET_GRANT_TARGET'
   payload: any
 }
 
@@ -58,10 +58,6 @@ const stateInit: StateType = {
 
 function reducer(state: StateType, action: ActionType): StateType {
   switch (action.type) {
-    case 'SET_MARGIN_TOKEN':
-      return { ...state, marginToken: action.payload }
-    case 'SET_GRANT_TARGET':
-      return { ...state, grantTarget: action.payload }
     case 'SET_DISABLED':
       return { ...state, disabled: action.payload }
     case 'SET_GRANT_DAYS':
@@ -70,6 +66,10 @@ function reducer(state: StateType, action: ActionType): StateType {
       return { ...state, cliffDays: action.payload }
     case 'SET_AMOUNT_INP':
       return { ...state, amountInp: action.payload }
+    case 'SET_MARGIN_TOKEN':
+      return { ...state, marginToken: action.payload }
+    case 'SET_GRANT_TARGET':
+      return { ...state, grantTarget: action.payload }
     default:
       return state
   }

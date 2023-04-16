@@ -17,10 +17,10 @@ const stateInit: StateType = {
 
 function reducer(state: StateType, action: ActionType): StateType {
   switch (action.type) {
-    case 'SET_IN_AMOUNT':
-      return { ...state, inAmount: action.payload }
     case 'SET_BALANCE':
       return { ...state, balance: action.payload }
+    case 'SET_IN_AMOUNT':
+      return { ...state, inAmount: action.payload }
     case 'SET_DISABLED':
       return { ...state, disabled: action.payload }
     default:

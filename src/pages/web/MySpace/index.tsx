@@ -9,7 +9,7 @@ import { bnDiv } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useConfigInfo } from '@/store'
 import { MarginTokenKeys } from '@/typings'
-import { reducer, stateInit } from '@/reducers/mySpace'
+import { reducer, stateInit } from '@/reducers/records'
 import { getMySpaceMarginTokenList } from '@/api'
 import { findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
 import {
@@ -42,10 +42,10 @@ const MySpace: FC = () => {
   const { data: allBrokerRewards, refetch: allBrokerRewardsRefetch } = useAllBrokerRewards(address, protocolConfig)
 
   const emptyText = useMemo(() => {
-    if (state.marginData.isLoaded) return 'Loading'
-    if (isEmpty(state.marginData.records)) return 'No Record'
+    if (state.records.loaded) return 'Loading'
+    if (isEmpty(state.records.records)) return 'No Record'
     return ''
-  }, [state.marginData])
+  }, [state.records])
 
   const mColumns = useMemo(() => {
     return [
@@ -153,9 +153,9 @@ const MySpace: FC = () => {
   }, [t, traderVariables, marginBalances, allTraderRewards, allBrokerRewards])
 
   const initDAT = useMemo(() => {
-    if (!state.marginData.isLoaded && !isLoading) {
+    if (!state.records.loaded && !isLoading) {
       const _ = MARGIN_TOKENS.map((token) => {
-        const p0 = state.marginData.records.find((data) => data.symbol === token.symbol)
+        const p0 = state.records.records.find((data) => data.symbol === token.symbol)
         const p1 = traderVariables[token.symbol as MarginTokenKeys]
         const p2 = marginBalances[token.symbol as MarginTokenKeys]
         const p3 = Number(p1) === 0 ? 0 : bnDiv(p2, p1)
@@ -175,7 +175,7 @@ const MySpace: FC = () => {
       return orderBy(_, ['marginBalance', 'apy'], 'desc')
     }
     return []
-  }, [isLoading, state.marginData, traderVariables, marginBalances, allBrokerRewards, allTraderRewards])
+  }, [isLoading, state.records, traderVariables, marginBalances, allBrokerRewards, allTraderRewards])
 
   const fetchData = useCallback(
     async (index = 0) => {
@@ -183,7 +183,7 @@ const MySpace: FC = () => {
         const { data } = await getMySpaceMarginTokenList(address, index, 10)
 
         dispatch({
-          type: 'SET_MARGIN_DAT',
+          type: 'SET_RECORDS',
           payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
         })
       }
@@ -226,7 +226,7 @@ const MySpace: FC = () => {
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
-      <Pagination page={state.pageIndex} total={state.marginData.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </div>
   )
 }

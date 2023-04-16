@@ -9,7 +9,7 @@ import { useMarginToken } from '@/store'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { getTradingCompetitionRanks } from '@/api'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
-import { grantStateOptions, reducer, stateInit } from '@/reducers/brokerRank'
+import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
 
 import Image from '@/components/common/Image'
 import Select from '@/components/common/Form/Select'
@@ -52,10 +52,10 @@ const CompetitionRank: FC = () => {
   const marginToken = useMarginToken((state) => state.marginToken)
 
   const emptyText = useMemo(() => {
-    if (state.rankData.isLoaded) return 'Loading'
-    if (isEmpty(state.rankData.records)) return 'No Record'
+    if (state.grantData.isLoaded) return 'Loading'
+    if (isEmpty(state.grantData.records)) return 'No Record'
     return ''
-  }, [state.rankData])
+  }, [state.grantData])
 
   const mColumns = [
     {
@@ -102,7 +102,7 @@ const CompetitionRank: FC = () => {
       console.info(data)
 
       dispatch({
-        type: 'SET_RANK_DAT',
+        type: 'SET_GRANT_DAT',
         payload: { records: data, totalItems: data.length, isLoaded: false }
         // payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
       })
@@ -124,7 +124,7 @@ const CompetitionRank: FC = () => {
           objOptions={grantStateOptions as any}
         />
       </aside>
-      <Table data={state.rankData.records} rowKey="id" columns={mColumns} emptyText={emptyText} />
+      <Table data={state.grantData.records} rowKey="id" columns={mColumns} emptyText={emptyText} />
       {/*<Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />*/}
     </div>
   )

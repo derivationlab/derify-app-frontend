@@ -7,15 +7,14 @@ import React, { FC, useEffect, useMemo, useContext, useReducer } from 'react'
 import { BSC_SCAN_URL } from '@/config'
 import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
-import { reducer, stateInit } from '@/reducers/brokerTable'
+import { useMarginToken } from '@/store'
+import { reducer, stateInit } from '@/reducers/records'
 import { getBrokerAccountFlow } from '@/api'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
 import Pagination from '@/components/common/Pagination'
 
 import { RowTime, calcShortHash, calcTimeStr } from './common'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-
-import { useMarginToken } from '@/store'
 
 interface DataProps {
   id: string
@@ -87,7 +86,7 @@ const History: FC = () => {
       const { data } = await getBrokerAccountFlow(address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
-        type: 'SET_TABLE_DAT',
+        type: 'SET_RECORDS',
         payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
       })
     }
@@ -100,10 +99,10 @@ const History: FC = () => {
   }
 
   const memoEmptyText = useMemo(() => {
-    if (state.tableDAT.isLoaded) return 'Loading'
-    if (isEmpty(state.tableDAT?.records)) return 'No Record'
+    if (state.records.loaded) return 'Loading'
+    if (isEmpty(state.records?.records)) return 'No Record'
     return ''
-  }, [state.tableDAT])
+  }, [state.records])
 
   useEffect(() => {
     void fetchData()
@@ -164,10 +163,10 @@ const History: FC = () => {
         className="web-broker-table"
         columns={mobile ? mobileColums : webColumns}
         emptyText={memoEmptyText}
-        data={state.tableDAT.records}
+        data={state.records.records}
         rowKey="id"
       />
-      <Pagination page={state.pageIndex} total={state.tableDAT.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </>
   )
 }

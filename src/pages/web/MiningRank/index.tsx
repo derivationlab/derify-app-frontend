@@ -7,7 +7,7 @@ import { calcShortHash, keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginToken } from '@/store'
 import { getTradersRankList } from '@/api'
-import { reducer, stateInit } from '@/reducers/brokerRank'
+import { reducer, stateInit } from '@/reducers/records'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
 import Image from '@/components/common/Image'
@@ -57,7 +57,7 @@ const Rank: FC = () => {
       // console.info(data)
 
       dispatch({
-        type: 'SET_RANK_DAT',
+        type: 'SET_RECORDS',
         payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
       })
     },
@@ -71,10 +71,10 @@ const Rank: FC = () => {
   }
 
   const emptyText = useMemo(() => {
-    if (state.rankData.isLoaded) return 'Loading'
-    if (isEmpty(state.rankData.records)) return 'No Record'
+    if (state.records.loaded) return 'Loading'
+    if (isEmpty(state.records.records)) return 'No Record'
     return ''
-  }, [state.rankData])
+  }, [state.records])
 
   const mColumns = [
     {
@@ -117,14 +117,14 @@ const Rank: FC = () => {
     <div className="web-mining-rank">
       <h2>Position Mining Rank</h2>
       <Table
-        data={state.rankData.records}
+        data={state.records.records}
         rowKey="user"
         columns={mColumns}
         emptyText={emptyText}
         className="web-broker-table"
         rowClassName={(record) => (address === record.user ? 'active' : '')}
       />
-      <Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </div>
   )
 }

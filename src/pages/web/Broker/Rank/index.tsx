@@ -3,16 +3,14 @@ import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
 
-import { keepDecimals } from '@/utils/tools'
+import { findToken } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
-import tokens, { findToken } from '@/config/tokens'
+import { useMarginToken } from '@/store'
 import { getBrokersRankList } from '@/api'
-import { reducer, stateInit } from '@/reducers/brokerRank'
+import { reducer, stateInit } from '@/reducers/records'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-
-import { useMarginToken } from '@/store'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 interface RowTextProps {
@@ -51,7 +49,7 @@ const Rank: FC = () => {
     console.info(data)
 
     dispatch({
-      type: 'SET_RANK_DAT',
+      type: 'SET_RECORDS',
       payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
     })
   }, [])
@@ -63,10 +61,10 @@ const Rank: FC = () => {
   }
 
   const emptyText = useMemo(() => {
-    if (state.rankData.isLoaded) return 'Loading'
-    if (isEmpty(state.rankData.records)) return 'No Record'
+    if (state.records.loaded) return 'Loading'
+    if (isEmpty(state.records.records)) return 'No Record'
     return ''
-  }, [state.rankData])
+  }, [state.records])
 
   const mColumns = [
     {
@@ -133,10 +131,10 @@ const Rank: FC = () => {
         className="web-broker-table"
         emptyText={emptyText}
         columns={mobile ? mColumns : wColumns}
-        data={state.rankData.records}
+        data={state.records.records}
         rowKey="id"
       />
-      <Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </div>
   )
 }

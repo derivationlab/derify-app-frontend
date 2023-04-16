@@ -21,27 +21,32 @@ import NoRecord from '../c/NoRecord'
 
 const MyOrder: FC = () => {
   const { t } = useTranslation()
-  const { theme } = useContext(ThemeContext)
   const { address } = useAccount()
+
+  const { theme } = useContext(ThemeContext)
 
   const marginToken = useMarginToken((state) => state.marginToken)
   const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)
   const profitLossOrdLoaded = usePosDATStore((state) => state.loaded)
 
-  const { cancelPosition } = usePositionOperation()
   const { protocolConfig } = useProtocolConf(marginToken)
   const { match: matchFactoryConfig } = useFactoryConf('', marginToken)
-  const { cancelAllPositions } = usePositionOperation()
+  const { cancelAllPositions, cancelPosition } = usePositionOperation()
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
-  const onCloseDialogEv = () => setDialogStatus('')
+  const clear = () => setDialogStatus('')
 
-  const cancelOnePosOrderFunc = async () => {
+  const cancel = (order: Record<string, any>) => {
+    setTargetPosOrd(order)
+    setDialogStatus('cancel-one-position')
+  }
+
+  const _cancelPosition = async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    onCloseDialogEv()
+    clear()
 
     if (matchFactoryConfig) {
       const { side, orderType, timestamp, quoteToken } = targetPosOrd
@@ -62,10 +67,10 @@ const MyOrder: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const cancelAllPosOrdersFunc = async () => {
+  const _cancelAllPositions = async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    onCloseDialogEv()
+    clear()
 
     if (protocolConfig) {
       const status = await cancelAllPositions(protocolConfig.exchange)
@@ -83,12 +88,7 @@ const MyOrder: FC = () => {
     window.toast.dismiss(toast)
   }
 
-  const confirmCancelOnePosOrderEv = (order: Record<string, any>) => {
-    setTargetPosOrd(order)
-    setDialogStatus('cancel-one-position')
-  }
-
-  const memoMyPosOrders = useMemo(() => {
+  const positions = useMemo(() => {
     if (!address) return <NoRecord show />
     if (!profitLossOrdLoaded) return <Loading show type="section" />
     if (!isEmpty(profitLossOrd)) {
@@ -96,7 +96,7 @@ const MyOrder: FC = () => {
         <>
           <div className="web-trade-data-list">
             {profitLossOrd.map((d, i) => (
-              <ListItem key={`my-orders-${i}`} data={d} onClick={() => confirmCancelOnePosOrderEv(d)} />
+              <ListItem key={`my-orders-${i}`} data={d} onClick={() => cancel(d)} />
             ))}
           </div>
           <Button onClick={() => setDialogStatus('cancel-all-position')}>
@@ -111,16 +111,12 @@ const MyOrder: FC = () => {
 
   return (
     <>
-      <div className="web-trade-data-wrap">{memoMyPosOrders}</div>
-      <CancelOrderDialog
-        visible={dialogStatus === 'cancel-one-position'}
-        onClose={onCloseDialogEv}
-        onClick={cancelOnePosOrderFunc}
-      />
+      <div className="web-trade-data-wrap">{positions}</div>
+      <CancelOrderDialog visible={dialogStatus === 'cancel-one-position'} onClose={clear} onClick={_cancelPosition} />
       <CancelAllOrderDialog
         visible={dialogStatus === 'cancel-all-position'}
-        onClose={onCloseDialogEv}
-        onClick={cancelAllPosOrdersFunc}
+        onClose={clear}
+        onClick={_cancelAllPositions}
       />
     </>
   )

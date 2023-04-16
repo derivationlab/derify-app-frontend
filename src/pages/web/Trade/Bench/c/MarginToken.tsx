@@ -8,7 +8,7 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { useMarginToken } from '@/store'
 import { MarginTokenKeys } from '@/typings'
-import { reducer, stateInit } from '@/reducers/mySpace'
+import { reducer, stateInit } from '@/reducers/records'
 import { useAllMarginBalances } from '@/hooks/useMySpaceInfo'
 import { getMySpaceMarginTokenList } from '@/api'
 
@@ -29,9 +29,9 @@ const MarginToken: FC = () => {
   const { data: marginBalances, refetch: marginBalancesRefetch, isLoading } = useAllMarginBalances(address)
 
   const marginOptions = useMemo(() => {
-    if (!state.marginData.isLoaded && !isLoading) {
+    if (!state.records.loaded && !isLoading) {
       const _ = MARGIN_TOKENS.map((token) => {
-        const p0 = state.marginData.records.find((data) => data.symbol === token.symbol)
+        const p0 = state.records.records.find((data) => data.symbol === token.symbol)
         const p1 = marginBalances[token.symbol as MarginTokenKeys]
         return {
           apy: p0?.max_pm_apy ?? 0,
@@ -45,7 +45,7 @@ const MarginToken: FC = () => {
       return orderBy(_, ['marginBalance', 'apy'], 'desc')
     }
     return []
-  }, [isLoading, state.marginData, marginBalances])
+  }, [isLoading, state.records, marginBalances])
 
   // todo more margins loading...
   const fetchData = useCallback(
@@ -54,7 +54,7 @@ const MarginToken: FC = () => {
         const { data } = await getMySpaceMarginTokenList(address, index, 10)
 
         dispatch({
-          type: 'SET_MARGIN_DAT',
+          type: 'SET_RECORDS',
           payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
         })
       }

@@ -28,9 +28,10 @@ import NoRecord from '../c/NoRecord'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()
-  const { theme } = useContext(ThemeContext)
-  const { data: signer } = useSigner()
   const { address } = useAccount()
+  const { data: signer } = useSigner()
+
+  const { theme } = useContext(ThemeContext)
 
   const { closePosition, closeAllPositions, takeProfitOrStopLoss } = usePositionOperation()
 
@@ -38,9 +39,9 @@ const MyPosition: FC = () => {
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
   const positionOrd = usePosDATStore((state) => state.positionOrd)
   const closingType = useCalcOpeningDAT((state) => state.closingType)
+  const marginToken = useMarginToken((state) => state.marginToken)
   const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
   const positionOrdLoaded = usePosDATStore((state) => state.loaded)
-  const marginToken = useMarginToken((state) => state.marginToken)
 
   const { spotPrices } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
@@ -49,43 +50,30 @@ const MyPosition: FC = () => {
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
-  const onCloseDialogEv = () => setDialogStatus('')
+  const isFull = ({ size = 0, quoteToken = '' }, amount: string): boolean => {
+    const u = nonBigNumberInterception(bnMul(spotPrices[quoteToken], size), findToken(marginToken).decimals)
+    return findMarginToken(closingType) ? isGTET(amount, u) : isGTET(amount, size)
+  }
 
-  const previewPositionInfoEv = (pos: Record<string, any>) => {
+  const clear = () => setDialogStatus('')
+
+  const preview = (pos: Record<string, any>) => {
     setTargetPosOrd(pos)
     setDialogStatus('preview-close-position')
   }
 
-  const editPositionTriggerEv = (pos: Record<string, any>) => {
+  const modify = (pos: Record<string, any>) => {
     setTargetPosOrd(pos)
     setDialogStatus('edit-position')
   }
 
-  // 100% or not
-  const whetherStud = ({ size = 0, quoteToken = '' }, amount: string): boolean => {
-    const u = nonBigNumberInterception(bnMul(spotPrices[quoteToken], size), findToken(marginToken).decimals)
-    if (findMarginToken(closingType)) return isGTET(amount, u)
-    return isGTET(amount, size)
-  }
-
-  const closeOneFunc = async () => {
+  const _closePosition = async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    onCloseDialogEv()
+    clear()
 
     if (signer && brokerBound?.broker && protocolConfig) {
       const { side, size, quoteToken } = targetPosOrd
-      console.info(
-        protocolConfig.exchange,
-        brokerBound.broker,
-        spotPrices[quoteToken],
-        quoteToken,
-        closingType,
-        closingAmount,
-        size,
-        side,
-        whetherStud(targetPosOrd, closingAmount)
-      )
       const status = await closePosition(
         protocolConfig.exchange,
         brokerBound.broker,
@@ -95,11 +83,10 @@ const MyPosition: FC = () => {
         closingAmount,
         size,
         side,
-        whetherStud(targetPosOrd, closingAmount)
+        isFull(targetPosOrd, closingAmount)
       )
 
       if (status) {
-        // succeed
         window.toast.success(t('common.success', 'success'))
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
@@ -107,23 +94,21 @@ const MyPosition: FC = () => {
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
-        // failed
       }
     }
 
     window.toast.dismiss(toast)
   }
 
-  const closeAllFunc = async () => {
+  const _closeAllPositions = async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    onCloseDialogEv()
+    clear()
 
     if (brokerBound?.broker && protocolConfig) {
       const status = await closeAllPositions(protocolConfig.exchange, brokerBound.broker)
 
       if (status) {
-        // succeed
         window.toast.success(t('common.success', 'success'))
 
         PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
@@ -131,35 +116,32 @@ const MyPosition: FC = () => {
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
-        // failed
       }
     }
 
     window.toast.dismiss(toast)
   }
 
-  const profitOrLossFunc = async (params: Record<string, any>) => {
+  const _takeProfitOrStopLoss = async (params: Record<string, any>) => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    onCloseDialogEv()
+    clear()
 
     if (signer && matchFactoryConfig) {
       const { token, side, TP, SL } = params
       const status = await takeProfitOrStopLoss(matchFactoryConfig[token as QuoteTokenKeys], side, TP, SL)
 
       if (status) {
-        // succeed
         window.toast.success(t('common.success', 'success'))
       } else {
         window.toast.error(t('common.failed', 'failed'))
-        // failed
       }
     }
 
     window.toast.dismiss(toast)
   }
 
-  const memoMyPositions = useMemo(() => {
+  const positions = useMemo(() => {
     if (!address) return <NoRecord show />
     if (!positionOrdLoaded) return <Loading show type="section" />
     if (!isEmpty(positionOrd)) {
@@ -167,12 +149,7 @@ const MyPosition: FC = () => {
         <>
           <div className="web-trade-data-list">
             {positionOrd.map((d, i) => (
-              <ListItem
-                key={`my-positions-${i}`}
-                data={d}
-                onEdit={editPositionTriggerEv}
-                onClick={previewPositionInfoEv}
-              />
+              <ListItem key={`my-positions-${i}`} data={d} onEdit={modify} onClick={preview} />
             ))}
           </div>
           <Button onClick={() => setDialogStatus('close-all-position')}>
@@ -183,17 +160,17 @@ const MyPosition: FC = () => {
       )
     }
     return <NoRecord show />
-  }, [address, positionOrdLoaded, positionOrd, theme])
+  }, [theme, address, positionOrd, positionOrdLoaded])
 
   return (
     <>
-      <div className="web-trade-data-wrap">{memoMyPositions}</div>
+      <div className="web-trade-data-wrap">{positions}</div>
 
       {dialogStatus === 'preview-close-position' && (
         <PositionClosePreviewDialog
           data={targetPosOrd}
           visible={dialogStatus === 'preview-close-position'}
-          onClose={onCloseDialogEv}
+          onClose={clear}
           onClick={() => setDialogStatus('confirm-close-position')}
         />
       )}
@@ -201,23 +178,23 @@ const MyPosition: FC = () => {
         <PositionCloseConfirmDialog
           data={targetPosOrd}
           visible={dialogStatus === 'confirm-close-position'}
-          onClose={onCloseDialogEv}
-          onClick={closeOneFunc}
+          onClose={clear}
+          onClick={_closePosition}
         />
       )}
       {dialogStatus === 'edit-position' && (
         <TakeProfitAndStopLossDialog
           data={targetPosOrd}
           visible={dialogStatus === 'edit-position'}
-          onClose={onCloseDialogEv}
-          onClick={profitOrLossFunc}
+          onClose={clear}
+          onClick={_takeProfitOrStopLoss}
         />
       )}
       {dialogStatus === 'close-all-position' && (
         <PositionCloseAllDialog
           visible={dialogStatus === 'close-all-position'}
-          onClose={onCloseDialogEv}
-          onClick={closeAllFunc}
+          onClose={clear}
+          onClick={_closeAllPositions}
         />
       )}
     </>

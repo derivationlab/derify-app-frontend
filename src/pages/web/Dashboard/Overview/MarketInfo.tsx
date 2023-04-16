@@ -9,7 +9,7 @@ import { useConfigInfo } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
 import { useBuyBackPool } from '@/hooks/useBuyBackPool'
 import { MarginTokenKeys } from '@/typings'
-import { reducer, stateInit } from '@/reducers/marketInfo'
+import { reducer, stateInit } from '@/reducers/records'
 import { bnMul, keepDecimals } from '@/utils/tools'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { getDashboardMarginTokenList } from '@/api'
@@ -115,10 +115,10 @@ const MarketInfo: FC = () => {
   }, [t, indicators, exchangeInfo, positionInfo])
 
   const emptyText = useMemo(() => {
-    if (state.marketData.isLoaded) return 'Loading'
-    if (isEmpty(state.marketData.records)) return t('NewDashboard.Overview.NoResultsFound')
+    if (state.records.loaded) return 'Loading'
+    if (isEmpty(state.records.records)) return t('NewDashboard.Overview.NoResultsFound')
     return ''
-  }, [state.marketData])
+  }, [state.records])
 
   // const onSearch = () => {
   //   if (keyword) {
@@ -144,7 +144,7 @@ const MarketInfo: FC = () => {
       const sort = orderBy(data?.records ?? [], ['max_pm_apy', 'open'], 'desc')
 
       dispatch({
-        type: 'SET_MARKET_DAT',
+        type: 'SET_RECORDS',
         payload: { records: sort, totalItems: data?.totalItems ?? 0, isLoaded: false }
       })
     },
@@ -191,14 +191,14 @@ const MarketInfo: FC = () => {
       </header>
       <Table
         rowKey="symbol"
-        data={state.marketData.records}
+        data={state.records.records}
         // @ts-ignore
         columns={mobile ? mColumns : wColumns}
         className={classNames('web-broker-table', { 'web-space-table': mobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
-      <Pagination page={state.pageIndex} total={state.marketData.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </div>
   )
 }

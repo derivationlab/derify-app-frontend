@@ -23,7 +23,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
     8
   ),
   busd: new Token(
-    'BUSD',
+    'Binance USD',
     'BUSD',
     {
       [ChainId.MAINNET]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
@@ -33,7 +33,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
     2
   ),
   drf: new Token(
-    'DRF',
+    'Derify Protocol',
     'DRF',
     {
       [ChainId.MAINNET]: '0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F',
@@ -49,8 +49,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0x9d1b272B797137d3713f0bA2fA15abcc3a8C2Ef7',
       [ChainId.TESTNET]: '0xcFC597eEDFC368c19AFD22e581468a2e69eA5E24'
     },
-    18,
-    2
+    18
   )
 }
 
@@ -64,9 +63,7 @@ export const DEFAULT_MARGIN_TOKEN = tokens.busd
 
 export const PLATFORM_TOKEN = tokens.drf
 
-// key: (btc,eth...)/address
 export const findToken = (key: string): Token => {
-  // eslint-disable-next-line
   const upper = key.toUpperCase()
   const lower = key.toLowerCase()
   return Object.values(tokens).find(

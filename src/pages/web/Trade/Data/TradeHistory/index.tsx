@@ -6,7 +6,7 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 
-import { reducer, stateInit } from '@/reducers/positionDAT'
+import { reducer, stateInit } from '@/reducers/records'
 import { getTraderTradeFlow } from '@/api'
 
 import Loading from '@/components/common/Loading'
@@ -28,7 +28,7 @@ const TradeHistory: FC = () => {
       const { data } = await getTraderTradeFlow(findToken(marginToken).tokenAddress, address, index, 10)
 
       dispatch({
-        type: 'SET_POSITION_DAT',
+        type: 'SET_RECORDS',
         payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
       })
     }
@@ -42,14 +42,14 @@ const TradeHistory: FC = () => {
 
   const memoTradeHistory = useMemo(() => {
     if (!address) return <NoRecord show />
-    if (state.positionDAT.isLoaded) return <Loading show type="section" />
-    if (!isEmpty(state.positionDAT?.records)) {
-      return state.positionDAT.records.map((d: Record<string, any>, i: number) => (
+    if (state.records.loaded) return <Loading show type="section" />
+    if (!isEmpty(state.records?.records)) {
+      return state.records.records.map((d: Record<string, any>, i: number) => (
         <ListItem key={`trade-history-${i}`} data={d} />
       ))
     }
     return <NoRecord show />
-  }, [address, state.positionDAT])
+  }, [address, state.records])
 
   useEffect(() => {
     void fetchData()
@@ -62,7 +62,7 @@ const TradeHistory: FC = () => {
   return (
     <div className="web-trade-data-wrap">
       <div className="web-trade-data-list">{memoTradeHistory}</div>
-      <Pagination page={state.pageIndex} total={state.positionDAT.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </div>
   )
 }

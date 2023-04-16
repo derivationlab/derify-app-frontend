@@ -14,14 +14,14 @@ import Pagination from '@/components/common/Pagination'
 
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const TradeHistory: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { address } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const fetchData = async (index = 0) => {
     if (address) {

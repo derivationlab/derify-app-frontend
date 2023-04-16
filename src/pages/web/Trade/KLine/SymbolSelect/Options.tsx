@@ -1,6 +1,6 @@
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
 
-import { useMarginToken, usePairsInfo } from '@/store'
+import { useMarginTokenStore, usePairsInfoStore } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
 
 import { QUOTE_TOKENS, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
@@ -16,9 +16,9 @@ interface Props {
 const Options: FC<Props> = ({ onChange }) => {
   const { mobile } = useContext(MobileContext)
 
-  const indicators = usePairsInfo((state) => state.indicators)
-  const spotPrices = usePairsInfo((state) => state.spotPrices)
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const indicators = usePairsInfoStore((state) => state.indicators)
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const [keyword, setKeyword] = useState<string>('')
 

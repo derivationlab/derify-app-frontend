@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
 
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { PositionSideTypes } from '@/typings'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
@@ -22,7 +22,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const memoTimestamp = useMemo(() => {
     return dayjs((data?.timestamp ?? 0) * 1000)

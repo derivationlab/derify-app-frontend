@@ -3,15 +3,20 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { isOpeningMinLimit } from '@/hooks/helper'
-import { reducer, stateInit } from '@/reducers/openingPosition'
+import { reducer, stateInit } from '@/reducers/opening'
 import { usePositionOperation } from '@/hooks/useTrading'
-import { OpeningType, useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 import { PubSubEvents, PositionSideTypes } from '@/typings'
-import { useConfigInfo, useMarginToken, useQuoteToken } from '@/store'
 import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
 import { useIndicatorsConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
+import {
+  OpeningType,
+  useConfigInfoStore,
+  useMarginTokenStore,
+  useQuoteTokenStore,
+  useOpeningStore,
+  useBrokerInfoStore
+} from '@/store'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -30,18 +35,18 @@ const Bench: FC = () => {
 
   const { t } = useTranslation()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const brokerBound = useBrokerInfo((state) => state.brokerBound)
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const openingType = useCalcOpeningDAT((state) => state.openingType)
-  const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
-  const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
-  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
-  const openingMinLimit = useConfigInfo((state) => state.openingMinLimit)
-  const maxVolumeLoaded = useCalcOpeningDAT((state) => state.maxVolumeLoaded)
-  const updateLeverageNow = useCalcOpeningDAT((state) => state.updateLeverageNow)
-  const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
-  const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const openingType = useOpeningStore((state) => state.openingType)
+  const leverageNow = useOpeningStore((state) => state.leverageNow)
+  const openingPrice = useOpeningStore((state) => state.openingPrice)
+  const mTokenPrices = useConfigInfoStore((state) => state.mTokenPrices)
+  const openingMinLimit = useConfigInfoStore((state) => state.openingMinLimit)
+  const maxVolumeLoaded = useOpeningStore((state) => state.maxVolumeLoaded)
+  const updateLeverageNow = useOpeningStore((state) => state.updateLeverageNow)
+  const updateOpeningType = useOpeningStore((state) => state.updateOpeningType)
+  const updateOpeningPrice = useOpeningStore((state) => state.updateOpeningPrice)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { indicators } = useIndicatorsConf(quoteToken)

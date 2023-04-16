@@ -1,19 +1,18 @@
 import { useEffect } from 'react'
 
-import { usePairsInfo } from '@/store'
 import { useSpotPrices } from '@/hooks/useSpotPrices'
-import { useConfigInfo } from '@/store/useConfigInfo'
 import { getOpeningMaxLimit } from '@/hooks/helper'
 import { MarginTokenWithContract } from '@/typings'
+import { useConfigInfoStore, usePairsInfoStore } from '@/store'
 
 export default function TradingUpdater(): null {
-  const factoryConfig = useConfigInfo((state) => state.factoryConfig)
-  const protocolConfig = useConfigInfo((state) => state.protocolConfig)
-  const updatePCFRatios = usePairsInfo((state) => state.updatePCFRatios)
-  const updateSpotPrices = usePairsInfo((state) => state.updateSpotPrices)
-  const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
-  const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
-  const updateOpeningMaxLimit = useConfigInfo((state) => state.updateOpeningMaxLimit)
+  const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)
+  const protocolConfig = useConfigInfoStore((state) => state.protocolConfig)
+  const updatePCFRatios = usePairsInfoStore((state) => state.updatePCFRatios)
+  const updateSpotPrices = usePairsInfoStore((state) => state.updateSpotPrices)
+  const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
+  const protocolConfigLoaded = useConfigInfoStore((state) => state.protocolConfigLoaded)
+  const updateOpeningMaxLimit = useConfigInfoStore((state) => state.updateOpeningMaxLimit)
 
   // for pcf and spot price
   const { data1: pcfDAT, data2: spotPriceDAT, refetch: refetchSpotPrices } = useSpotPrices(factoryConfig)

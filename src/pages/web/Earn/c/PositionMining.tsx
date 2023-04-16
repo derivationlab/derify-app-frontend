@@ -3,16 +3,13 @@ import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useContext, useMemo } from 'react'
 
-import { useMarginToken, usePairsInfo } from '@/store'
-import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfo } from '@/store/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-
 import { useWithdrawPositionReward } from '@/hooks/useEarning'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { bnPlus, isGT, isLT, keepDecimals } from '@/utils/tools'
+import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { useTraderInfoStore, useMarginTokenStore, usePairsInfoStore } from '@/store'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
@@ -25,13 +22,12 @@ const PositionMining: FC = () => {
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
-  const variables = useTraderInfo((state) => state.variables)
-  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
-  const indicators = usePairsInfo((state) => state.indicators)
-  const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
-  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
+  const variables = useTraderInfoStore((state) => state.variables)
+  const indicators = usePairsInfoStore((state) => state.indicators)
+  const rewardsInfo = useTraderInfoStore((state) => state.rewardsInfo)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const variablesLoaded = useTraderInfoStore((state) => state.variablesLoaded)
+  const indicatorsLoaded = usePairsInfoStore((state) => state.indicatorsLoaded)
 
   const { withdraw } = useWithdrawPositionReward()
   const { protocolConfig } = useProtocolConf(marginToken)

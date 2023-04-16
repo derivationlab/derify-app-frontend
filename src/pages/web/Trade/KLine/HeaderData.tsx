@@ -6,7 +6,7 @@ import { isLTET, keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { usePCFRatioConf } from '@/hooks/useMatchConf'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/store'
+import { useMarginTokenStore, usePairsInfoStore, useQuoteTokenStore } from '@/store'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -15,9 +15,9 @@ const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const indicators = usePairsInfo((state) => state.indicators)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const indicators = usePairsInfoStore((state) => state.indicators)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { pcfRatio, pcfRatiosLoaded } = usePCFRatioConf(quoteToken, marginToken)
   const { data: positionsAmount, refetch } = useCurrentPositionsAmount(

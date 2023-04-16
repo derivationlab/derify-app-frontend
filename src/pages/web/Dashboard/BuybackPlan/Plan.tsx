@@ -6,7 +6,7 @@ import { useBlockNumber } from 'wagmi'
 import React, { FC, useMemo, useState, useContext, useEffect, useReducer, useCallback } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { useConfigInfo } from '@/store'
+import { useConfigInfoStore } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
 import { useBuyBackPool } from '@/hooks/useBuyBackPool'
 import { MarginTokenKeys } from '@/typings'
@@ -34,7 +34,7 @@ const Plan: FC = () => {
 
   const { data: buyBackInfo } = useBuyBackPool()
 
-  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
+  const mTokenPrices = useConfigInfoStore((state) => state.mTokenPrices)
 
   // const [keyword, setKeyword] = useState('')
   const [keyword] = useState('')

@@ -2,14 +2,14 @@ import { isEmpty } from 'lodash'
 import { useEffect } from 'react'
 
 import { usePairIndicator } from '@/hooks/usePairIndicator'
-import { useMarginToken, usePairsInfo } from '@/store'
+import { useMarginTokenStore, usePairsInfoStore } from '@/store'
 
 export default function IndicatorsUpdater(): null {
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { data: indicatorDAT } = usePairIndicator(marginToken)
 
-  const updateIndicators = usePairsInfo((state) => state.updateIndicators)
+  const updateIndicators = usePairsInfoStore((state) => state.updateIndicators)
 
   // for quote token indicators
   useEffect(() => {

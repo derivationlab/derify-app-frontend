@@ -2,14 +2,13 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { useTraderInfo } from '@/store/useTraderInfo'
 import { isGT, isGTET } from '@/utils/tools'
+import { useTraderInfoStore, useMarginTokenStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '@/components/common/Wallet/AmountInput'
-import { useMarginToken } from '@/store'
 
 interface Props {
   visible: boolean
@@ -21,8 +20,8 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const rewardsInfo = useTraderInfoStore((state) => state.rewardsInfo)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')

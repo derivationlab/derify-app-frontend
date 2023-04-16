@@ -2,10 +2,10 @@ import Table from 'rc-table'
 import React, { FC, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const System: FC = () => {
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
   const { t } = useTranslation()
 
   const isLoading = false

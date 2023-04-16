@@ -2,13 +2,13 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { useTraderInfo } from '@/store/useTraderInfo'
+import { isGT, isGTET } from '@/utils/tools'
+import { useTraderInfoStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '@/components/common/Wallet/AmountInput'
-import { isGT, isGTET } from '@/utils/tools'
 
 interface Props {
   visible: boolean
@@ -23,7 +23,7 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')
 
-  const stakingInfo = useTraderInfo((state) => state.stakingInfo)
+  const stakingInfo = useTraderInfoStore((state) => state.stakingInfo)
 
   const memoDisabled = useMemo(() => {
     return isGT(stakingInfo?.drfBalance ?? 0, 0)

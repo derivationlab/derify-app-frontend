@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
 
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { getTradingCompetitionRanks } from '@/api'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
@@ -49,7 +49,7 @@ const CompetitionRank: FC = () => {
 
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const emptyText = useMemo(() => {
     if (state.grantData.isLoaded) return 'Loading'

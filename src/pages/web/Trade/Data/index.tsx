@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useConfigInfo, useMarginToken } from '@/store'
-import { usePosDATStore } from '@/store/usePosDAT'
+import { useConfigInfoStore, useMarginTokenStore } from '@/store'
+import { usePositionStore } from '@/store/usePosition'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
 
@@ -17,10 +17,10 @@ const Data: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const fetchTraderPos = usePosDATStore((state) => state.fetch)
-  const factoryConfig = useConfigInfo((state) => state.factoryConfig)
-  const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const fetchTraderPos = usePositionStore((state) => state.fetch)
+  const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)
+  const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const _factoryConfig = useMemo(() => {
     if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken]

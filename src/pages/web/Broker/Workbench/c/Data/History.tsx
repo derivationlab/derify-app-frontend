@@ -7,7 +7,7 @@ import React, { FC, useEffect, useMemo, useContext, useReducer } from 'react'
 import { BSC_SCAN_URL } from '@/config'
 import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { reducer, stateInit } from '@/reducers/records'
 import { getBrokerAccountFlow } from '@/api'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
@@ -79,7 +79,7 @@ const History: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { address } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const fetchData = async (index = 0) => {
     if (address) {

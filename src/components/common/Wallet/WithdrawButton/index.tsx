@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMarginOperation } from '@/hooks/useTrading'
 
@@ -19,7 +19,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { withdraw } = useMarginOperation()
   const { protocolConfig } = useProtocolConf(marginToken)

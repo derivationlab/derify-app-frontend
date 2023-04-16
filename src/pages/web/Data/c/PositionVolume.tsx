@@ -14,7 +14,7 @@ import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTime
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const time = days().utc().startOf('days').format()
 let output: Record<string, any> = {
@@ -34,7 +34,7 @@ const PositionVolume: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { data: positionsDAT, refetch } = useCurrentPositionsAmount(
     SelectSymbolTokens[pairSelectVal],

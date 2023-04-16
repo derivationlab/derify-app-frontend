@@ -9,7 +9,7 @@ import { findToken } from '@/config/tokens'
 import { keepDecimals } from '@/utils/tools'
 import { BSC_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { getBrokerRewardTx } from '@/api'
 import { reducer, stateInit } from '@/reducers/records'
 
@@ -82,7 +82,7 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
 const judgeUpsAndDowns = (data: string): string => (Number(data) > 0 ? '+' : '')
 
 const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   // const { mobile } = useContext(MobileContext)
   const up = useMemo(() => Number(data.pnl_margin_token) > 0, [data.pnl_margin_token])
@@ -106,7 +106,7 @@ const Transaction: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const fetchData = async (index = 0) => {
     if (address) {

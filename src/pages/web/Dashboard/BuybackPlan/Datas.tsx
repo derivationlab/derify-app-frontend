@@ -4,7 +4,7 @@ import React, { FC, useMemo } from 'react'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
-import { useConfigInfo } from '@/store'
+import { useConfigInfoStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 import { useMulCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
@@ -14,8 +14,8 @@ const Datas: FC = () => {
   const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
 
-  const mTokenPrices = useConfigInfo((state) => state.mTokenPrices)
-  const mTokenPricesLoaded = useConfigInfo((state) => state.mTokenPricesLoaded)
+  const mTokenPrices = useConfigInfoStore((state) => state.mTokenPrices)
+  const mTokenPricesLoaded = useConfigInfoStore((state) => state.mTokenPricesLoaded)
 
   const { data: dashboardDAT } = useMulCurrentIndexDAT()
 

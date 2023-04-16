@@ -3,10 +3,10 @@ import { isEmpty, debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
 import { keepDecimals } from '@/utils/tools'
-import { useMarginToken, useQuoteToken } from '@/store'
+import { useMarginTokenStore, useQuoteTokenStore } from '@/store'
 import { PositionSideTypes } from '@/typings'
 
-import { reducer, stateInit } from '@/reducers/openingPosition'
+import { reducer, stateInit } from '@/reducers/opening'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
 import { useFactoryConf, useOpeningMaxLimit, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
@@ -29,8 +29,8 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const { t } = useTranslation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { factoryConfig } = useFactoryConf(quoteToken, marginToken)

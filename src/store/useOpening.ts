@@ -1,10 +1,10 @@
-import create from 'zustand'
+import { create } from 'zustand'
 
 import { findToken } from '@/config/tokens'
-import { VolumeState } from '@/store/types'
+import { OpeningState } from '@/store/types'
 import { MarginTokenKeys } from '@/typings'
-import { formatUnits, inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
 import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
+import { formatUnits, inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
 
 export enum OpeningType {
   Market,
@@ -12,7 +12,7 @@ export enum OpeningType {
 }
 
 const getMaxVolume = async (
-  qtAddress: string, // quote token address
+  quoteToken: string, // quote token address
   trader: string,
   openingType: OpeningType,
   leverageNow: number,
@@ -24,7 +24,7 @@ const getMaxVolume = async (
   const c = getDerifyExchangeContract(exchange)
 
   try {
-    const data = await c.getTraderOpenUpperBound(qtAddress, trader, openingType, _price, _leverageNow)
+    const data = await c.getTraderOpenUpperBound(quoteToken, trader, openingType, _price, _leverageNow)
 
     const { size, amount } = data
 
@@ -45,7 +45,7 @@ const getTFRValue = async (address: string) => {
   return safeInterceptionValues(String(ratio), 8)
 }
 
-const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
+const useOpeningStore = create<OpeningState>((set, get) => ({
   tfr: 0, // trading fee ratio
   maxVolume: {},
   maxVolumeLoaded: false,
@@ -92,14 +92,14 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
       return { closingAmount: data }
     }),
   fetchMaxVolume: async (
-    qtAddress: string,
+    quoteToken: string,
     trader: string,
     price: string,
     exchange: string,
     marginToken: MarginTokenKeys
   ) => {
-    // console.info(qtAddress, trader, get().openingType, get().leverageNow, price, exchange)
-    const data = await getMaxVolume(qtAddress, trader, get().openingType, get().leverageNow, price, exchange)
+    // console.info(quoteToken, trader, get().openingType, get().leverageNow, price, exchange)
+    const data = await getMaxVolume(quoteToken, trader, get().openingType, get().leverageNow, price, exchange)
 
     // console.info('getMaxVolume:')
     // console.info([size, swap])
@@ -109,7 +109,7 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
       set({
         maxVolume: {
           [marginToken]: swap,
-          [findToken(qtAddress).symbol]: size
+          [findToken(quoteToken).symbol]: size
         },
         maxVolumeLoaded: true
       })
@@ -122,4 +122,4 @@ const useCalcOpeningDAT = create<VolumeState>((set, get) => ({
   }
 }))
 
-export { useCalcOpeningDAT }
+export { useOpeningStore }

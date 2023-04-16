@@ -2,17 +2,16 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
-import { useTraderInfo } from '@/store/useTraderInfo'
-import { useMarginToken } from '@/store'
+import { findToken } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/withdraw'
 import { getTraderWithdrawAmount } from '@/api'
-import { isET, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { isET, isGT, isGTET, keepDecimals } from '@/utils/tools'
+import { useMarginTokenStore, useTraderInfoStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '../AmountInput'
-import { findToken } from '@/config/tokens'
 
 interface Props {
   visible: boolean
@@ -26,9 +25,9 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const variables = useTraderInfo((state) => state.variables)
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
+  const variables = useTraderInfoStore((state) => state.variables)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const variablesLoaded = useTraderInfoStore((state) => state.variablesLoaded)
 
   const memoMargin = useMemo(() => {
     if (variablesLoaded) {

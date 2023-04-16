@@ -3,12 +3,11 @@ import { useAccount } from 'wagmi'
 import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo } from 'react'
 
-import { useTraderInfo } from '@/store/useTraderInfo'
 import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
-import { useConfigInfo, useQuoteToken, useTokenBalances } from '@/store'
 import { MarginTokenKeys, MarginTokenWithContract, PubSubEvents } from '@/typings'
+import { useConfigInfoStore, useQuoteTokenStore, useBalancesStore, useTraderInfoStore } from '@/store'
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
 
 export default function InitialUpdater(): null {
@@ -17,16 +16,16 @@ export default function InitialUpdater(): null {
 
   const { data: protocolConfDAT, isLoading: protocolConfDATIsLoading } = useProtocolConfig()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const fetchBalances = useTokenBalances((state) => state.fetch)
-  const resetBalances = useTokenBalances((state) => state.reset)
-  const resetVariables = useTraderInfo((state) => state.reset)
-  const updateVariables = useTraderInfo((state) => state.updateVariables)
-  const updateMTokenPrices = useConfigInfo((state) => state.updateMTokenPrices)
-  const updateMinimumGrant = useConfigInfo((state) => state.updateMinimumGrant)
-  const updateFactoryConfig = useConfigInfo((state) => state.updateFactoryConfig)
-  const updateProtocolConfig = useConfigInfo((state) => state.updateProtocolConfig)
-  const updateOpeningMinLimit = useConfigInfo((state) => state.updateOpeningMinLimit)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const fetchBalances = useBalancesStore((state) => state.fetch)
+  const resetBalances = useBalancesStore((state) => state.reset)
+  const resetVariables = useTraderInfoStore((state) => state.reset)
+  const updateVariables = useTraderInfoStore((state) => state.updateVariables)
+  const updateMTokenPrices = useConfigInfoStore((state) => state.updateMTokenPrices)
+  const updateMinimumGrant = useConfigInfoStore((state) => state.updateMinimumGrant)
+  const updateFactoryConfig = useConfigInfoStore((state) => state.updateFactoryConfig)
+  const updateProtocolConfig = useConfigInfoStore((state) => state.updateProtocolConfig)
+  const updateOpeningMinLimit = useConfigInfoStore((state) => state.updateOpeningMinLimit)
 
   const marginToken = useMemo(() => {
     const find = MARGIN_TOKENS.find((m) => pathname.includes(m.symbol))

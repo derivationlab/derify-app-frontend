@@ -1,14 +1,14 @@
-import create from 'zustand'
+import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { RpcState } from '@/store/types'
-import { DEFAULT_PRC_URLS, getHealthyNode } from '@/utils/chainSupport'
 import { ChainId } from '@/typings'
+import { RpcNodeState } from '@/store/types'
+import { DEFAULT_PRC_URLS, getHealthyNode } from '@/utils/chainSupport'
 
 export const BEST_RPC_KEY = 'best-rpc'
 
-const useRpcStore = create(
-  persist<RpcState>(
+const useRpcNodeStore = create(
+  persist<RpcNodeState>(
     (set) => ({
       rpc: DEFAULT_PRC_URLS[ChainId.TESTNET],
       chainId: ChainId.TESTNET,
@@ -33,4 +33,4 @@ const useRpcStore = create(
   )
 )
 
-export { useRpcStore }
+export { useRpcNodeStore }

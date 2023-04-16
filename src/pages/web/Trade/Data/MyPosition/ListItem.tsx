@@ -4,11 +4,10 @@ import React, { FC, useMemo, useContext } from 'react'
 
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfo } from '@/store/useTraderInfo'
 import { PositionSideTypes } from '@/typings'
-import { useMarginToken, useQuoteToken } from '@/store'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'
+import { useMarginTokenStore, useQuoteTokenStore, useTraderInfoStore } from '@/store'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
@@ -26,10 +25,10 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const variables = useTraderInfo((state) => state.variables)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const variablesLoaded = useTraderInfo((state) => state.variablesLoaded)
+  const variables = useTraderInfoStore((state) => state.variables)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const variablesLoaded = useTraderInfoStore((state) => state.variablesLoaded)
 
   const { spotPrices } = useSpotPrice(quoteToken, marginToken)
 

@@ -4,7 +4,7 @@ import { flatten, isEmpty } from 'lodash'
 
 import multicall from '@/utils/multicall'
 import contracts from '@/config/contracts'
-import { OpeningType } from '@/store/useCalcOpeningDAT'
+import { OpeningType } from '@/store'
 import { PositionSideTypes } from '@/typings'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {

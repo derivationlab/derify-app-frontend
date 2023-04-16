@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { getHistoryTradingDAT } from '@/api'
 import { useCurrentTradingAmount } from '@/hooks/useQueryApi'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
@@ -26,7 +26,7 @@ const TradingVolume: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { data: tradingVolume, refetch } = useCurrentTradingAmount(
     SelectSymbolTokens[pairSelectVal],

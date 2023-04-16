@@ -8,7 +8,7 @@ import Image from '@/components/common/Image'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import { Select, Input } from '@/components/common/Form'
 
-import { useConfigInfo, useTokenBalances } from '@/store'
+import { useConfigInfoStore, useBalancesStore } from '@/store'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
 import { isET, isLT, keepDecimals, safeInterceptionValues } from '@/utils/tools'
@@ -32,8 +32,8 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
 
   const [toggle, setToggle] = useState<boolean>(false)
 
-  const balances = useTokenBalances((state) => state.balances)
-  const minimumGrant = useConfigInfo((state) => state.minimumGrant)
+  const balances = useBalancesStore((state) => state.balances)
+  const minimumGrant = useConfigInfoStore((state) => state.minimumGrant)
 
   const disabled = useMemo(() => {
     const p1 = minimumGrant[state.grantTarget as any]

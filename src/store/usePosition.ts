@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 import { BigNumber } from 'ethers'
 
 import multicall from '@/utils/multicall'
-import { PosDATState, Rec } from '@/store/types'
+import { PositionState, Rec } from '@/store/types'
 import { bnMul, formatUnits } from '@/utils/tools'
 import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
 
@@ -191,7 +191,7 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
   return []
 }
 
-const usePosDATStore = create<PosDATState>((set) => ({
+const usePositionStore = create<PositionState>((set) => ({
   positionOrd: [],
   profitLossOrd: [],
   loaded: false,
@@ -201,4 +201,4 @@ const usePosDATStore = create<PosDATState>((set) => ({
   }
 }))
 
-export { usePosDATStore }
+export { usePositionStore }

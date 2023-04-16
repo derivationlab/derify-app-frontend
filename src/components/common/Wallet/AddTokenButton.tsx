@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 
 import tokens from '@/config/tokens'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { addToken2Wallet } from '@/utils/practicalMethod'
 import { PANCAKE_SWAP_URL } from '@/config'
@@ -18,7 +18,7 @@ const AddTokenButton: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { protocolConfig } = useProtocolConf(marginToken)
 

@@ -1,12 +1,10 @@
-import React, { FC, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useMemo, useEffect } from 'react'
 
-import { useIndicatorsConf, useSpotPrice } from '@/hooks/useMatchConf'
-import { useMarginToken, usePairsInfo } from '@/store'
 import { PositionSideTypes } from '@/typings'
-import { useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
-
+import { useIndicatorsConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useOpeningStore, useMarginTokenStore } from '@/store'
 import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
@@ -27,18 +25,13 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
-  const updateClosingType = useCalcOpeningDAT((state) => state.updateClosingType)
-  const updateClosingAmount = useCalcOpeningDAT((state) => state.updateClosingAmount)
-
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const closingAmount = useOpeningStore((state) => state.closingAmount)
+  const updateClosingType = useOpeningStore((state) => state.updateClosingType)
+  const updateClosingAmount = useOpeningStore((state) => state.updateClosingAmount)
 
   const { spotPrice } = useSpotPrice(data?.quoteToken, marginToken)
   const { indicators } = useIndicatorsConf(data?.quoteToken)
-
-  const memoDisabled = useMemo(() => {
-    return isGT(closingAmount, 0)
-  }, [closingAmount])
 
   const memoVolume = useMemo(() => {
     return nonBigNumberInterception(bnMul(spotPrice, data?.size), findToken(marginToken).decimals)
@@ -101,7 +94,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
               onChange={(v) => updateClosingAmount(v as any)}
             />
           </div>
-          <Button disabled={!memoDisabled} onClick={onClick}>
+          <Button disabled={!isGT(closingAmount, 0)} onClick={onClick}>
             {t('Trade.ClosePosition.Confirm', 'Confirm')}
           </Button>
         </div>

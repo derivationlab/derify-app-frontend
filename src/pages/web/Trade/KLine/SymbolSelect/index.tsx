@@ -6,7 +6,7 @@ import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/providers/Mobile'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginToken, usePairsInfo, useQuoteToken } from '@/store'
+import { useMarginTokenStore, usePairsInfoStore, useQuoteTokenStore } from '@/store'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
@@ -23,10 +23,10 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
 
   const { mobile } = useContext(MobileContext)
 
-  const indicators = usePairsInfo((state) => state.indicators)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const updateQuoteToken = useQuoteToken((state) => state.updateQuoteToken)
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const indicators = usePairsInfoStore((state) => state.indicators)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const updateQuoteToken = useQuoteTokenStore((state) => state.updateQuoteToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 

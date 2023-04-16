@@ -7,7 +7,7 @@ import React, { FC, useMemo, useContext, useCallback, useEffect, useReducer } fr
 
 import { bnDiv } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
-import { useConfigInfo } from '@/store'
+import { useConfigInfoStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
 import { getMySpaceMarginTokenList } from '@/api'
@@ -33,8 +33,8 @@ const MySpace: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { address } = useAccount()
 
-  const protocolConfig = useConfigInfo((state) => state.protocolConfig)
-  const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
+  const protocolConfig = useConfigInfoStore((state) => state.protocolConfig)
+  const protocolConfigLoaded = useConfigInfoStore((state) => state.protocolConfigLoaded)
 
   const { data: marginBalances, refetch: marginBalancesRefetch, isLoading } = useAllMarginBalances(address)
   const { data: traderVariables, refetch: traderVariablesRefetch } = useTraderVariables(address, protocolConfig)

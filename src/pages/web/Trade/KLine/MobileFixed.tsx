@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo } from 'react'
 
 import { isLTET, keepDecimals } from '@/utils/tools'
-import { useQuoteToken } from '@/store'
+import { useQuoteTokenStore } from '@/store'
 import { useIndicatorsConf } from '@/hooks/useMatchConf'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
@@ -17,7 +17,7 @@ interface Props {
 const MobileFixed: FC<Props> = ({ address, isKline, goBench }) => {
   const { t } = useTranslation()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
 
   const { indicators } = useIndicatorsConf(quoteToken)
 

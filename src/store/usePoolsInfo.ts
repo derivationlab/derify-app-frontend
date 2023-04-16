@@ -1,8 +1,8 @@
-import create from 'zustand'
+import { create } from 'zustand'
 
 import { PoolsInfoState } from '@/store/types'
 
-const usePoolsInfo = create<PoolsInfoState>((set) => ({
+const usePoolsInfoStore = create<PoolsInfoState>((set) => ({
   drfPoolBalance: '0',
   bondPoolBalance: '0',
   updateDrfPoolBalance: (data: string) =>
@@ -19,4 +19,4 @@ const usePoolsInfo = create<PoolsInfoState>((set) => ({
     })
 }))
 
-export { usePoolsInfo }
+export { usePoolsInfoStore }

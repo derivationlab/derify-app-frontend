@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { usePosDATStore } from '@/store/usePosDAT'
-import { useMarginToken } from '@/store'
+import { usePositionStore } from '@/store/usePosition'
+import { useMarginTokenStore } from '@/store'
 import { usePositionOperation } from '@/hooks/useTrading'
 import { PubSubEvents, QuoteTokenKeys } from '@/typings'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
@@ -25,9 +25,9 @@ const MyOrder: FC = () => {
 
   const { theme } = useContext(ThemeContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)
-  const profitLossOrdLoaded = usePosDATStore((state) => state.loaded)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const profitLossOrd = usePositionStore((state) => state.profitLossOrd)
+  const profitLossOrdLoaded = usePositionStore((state) => state.loaded)
 
   const { protocolConfig } = useProtocolConf(marginToken)
   const { match: matchFactoryConfig } = useFactoryConf('', marginToken)

@@ -2,12 +2,12 @@ import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const BrokerSignUpStep3: FC = () => {
   const { t } = useTranslation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   return (
     <div className="web-broker-sign-up-step-3">

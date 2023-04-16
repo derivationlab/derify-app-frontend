@@ -5,13 +5,11 @@ import React, { FC, useMemo, useState, useContext, useCallback } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
-import { usePoolsInfo } from '@/store/usePoolsInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfo } from '@/store/useTraderInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-
-import { isGT, isLT, keepDecimals } from '@/utils/tools'
 import { useTraderBondBalance } from '@/hooks/useQueryApi'
+import { isGT, isLT, keepDecimals } from '@/utils/tools'
+import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
 import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useEarning'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -23,7 +21,6 @@ import NotConnect from '@/components/web/NotConnect'
 import DepositbDRFDialog from './Dialogs/DepositbDRF'
 import WithdrawbDRFDialog from './Dialogs/WithdrawbDRF'
 import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
-import { useMarginToken } from '@/store'
 
 const MarginTokenPool: FC = () => {
   const { t } = useTranslation()
@@ -31,9 +28,9 @@ const MarginTokenPool: FC = () => {
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
-  const rewardsInfo = useTraderInfo((state) => state.rewardsInfo)
-  const bondPoolBalance = usePoolsInfo((state) => state.bondPoolBalance)
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const rewardsInfo = useTraderInfoStore((state) => state.rewardsInfo)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const bondPoolBalance = usePoolsInfoStore((state) => state.bondPoolBalance)
 
   const { redeem } = useRedeemBondFromBank()
   const { deposit } = useDepositBondToBank()

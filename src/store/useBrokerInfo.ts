@@ -22,20 +22,12 @@ const getBrokerInfo = async (trader: string): Promise<boolean> => {
   }
 }
 
-const useBrokerInfo = create<BrokerInfoState>((set) => ({
+const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
   brokerInfo: {},
   brokerBound: {},
   isBrokerLoaded: false,
   brokerInfoLoaded: false,
   brokerBoundLoaded: false,
-  fetchBrokerBound: async (trader: string) => {
-    const data = await getBrokerInfoByTrader(trader)
-
-    // console.info(`fetchBrokerBound`)
-    // console.info(data?.data)
-
-    set({ brokerBound: data?.data, brokerBoundLoaded: true })
-  },
   fetchBrokerInfo: async (trader: string, marginToken: string) => {
     const data = await getBrokerInfo(trader)
 
@@ -62,6 +54,14 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
       })
     }
   },
+  fetchBrokerBound: async (trader: string) => {
+    const data = await getBrokerInfoByTrader(trader)
+
+    // console.info(`fetchBrokerBound`)
+    // console.info(data?.data)
+
+    set({ brokerBound: data?.data, brokerBoundLoaded: true })
+  },
   resetBrokerInfo: () => {
     set({
       brokerInfo: {},
@@ -76,4 +76,4 @@ const useBrokerInfo = create<BrokerInfoState>((set) => ({
   }
 }))
 
-export { useBrokerInfo }
+export { useBrokerInfoStore }

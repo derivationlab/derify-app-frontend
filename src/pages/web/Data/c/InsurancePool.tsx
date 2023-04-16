@@ -12,7 +12,7 @@ import { SelectTimesOptions, SelectTimesValues } from '@/data'
 import { AreaChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const time = days().utc().startOf('days').format()
 let output: Record<string, any> = {
@@ -26,7 +26,7 @@ const InsurancePool: FC = () => {
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [insuranceData, setInsuranceData] = useState<Record<string, any>[]>([])
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { data: insuranceVolume } = useCurrentInsuranceDAT(findToken(marginToken).tokenAddress)
 

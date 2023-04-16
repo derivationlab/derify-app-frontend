@@ -10,12 +10,12 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
 import { createClient, configureChains } from 'wagmi'
 
-import { useRpcStore } from '@/store'
+import { useRpcNodeStore } from '@/store'
 
 if (!window.Buffer) window.Buffer = Buffer
 
 function Provider(props: React.PropsWithChildren<Omit<WagmiConfigProps, 'client'>>) {
-  const rpcUrl = useRpcStore((state) => state.rpc)
+  const rpcUrl = useRpcNodeStore((state) => state.rpc)
 
   const { provider, chains } = configureChains(
     [bscTestnet, bsc],

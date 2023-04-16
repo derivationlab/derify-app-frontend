@@ -23,10 +23,10 @@ function reducer(state: StateType, action: ActionType): StateType {
       return { ...state, brokerDAT: { ...state.brokerDAT, ...action.payload } }
     case 'SET_SHOW_MODAL':
       return { ...state, showModal: action.payload }
-    case 'SET_TO_BIND_DAT':
-      return { ...state, toBindDAT: action.payload }
     case 'SET_OPT_SELECT':
       return { ...state, optSelect: { ...state.optSelect, ...action.payload } }
+    case 'SET_TO_BIND_DAT':
+      return { ...state, toBindDAT: action.payload }
     default:
       return state
   }

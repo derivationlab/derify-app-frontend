@@ -6,9 +6,9 @@ import { useHistory, useLocation } from 'react-router-dom'
 import React, { FC, useState, useEffect } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { calcShortHash } from '@/utils/tools'
 import { SelectLangOptions } from '@/data'
+import { useBrokerInfoStore } from '@/store'
 import { getBrokerInfoById, updateBrokerInfo } from '@/api'
 
 import Button from '@/components/common/Button'
@@ -33,8 +33,8 @@ const BrokerSignUpStep2Mobile: FC = () => {
   const [brokerIntr, setBrokerIntr] = useState<string>('')
   const [brokerAcco, setBrokerAcco] = useState<string>('')
 
-  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
-  const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
+  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
+  const brokerInfoLoaded = useBrokerInfoStore((state) => state.brokerInfoLoaded)
 
   const onSubmitFunc = async () => {
     const {

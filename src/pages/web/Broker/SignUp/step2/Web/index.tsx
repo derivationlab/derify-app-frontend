@@ -8,9 +8,9 @@ import React, { FC, useContext, useEffect } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 import { PubSubEvents } from '@/typings'
-import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
+import { useBrokerInfoStore } from '@/store'
 import { getBrokerInfoById, updateBrokerInfo } from '@/api'
 import { defaultValues, FormInputProps, patterns, rules } from '../config'
 
@@ -38,8 +38,8 @@ const BrokerSignUpStep2: FC = () => {
   const formMode = useForm({ defaultValues })
   const { handleSubmit, setValue } = formMode
 
-  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
-  const brokerInfoLoaded = useBrokerInfo((state) => state.brokerInfoLoaded)
+  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
+  const brokerInfoLoaded = useBrokerInfoStore((state) => state.brokerInfoLoaded)
 
   const goSubmit: SubmitHandler<FormInputProps> = async (form: FormInputProps) => {
     // console.log(form)

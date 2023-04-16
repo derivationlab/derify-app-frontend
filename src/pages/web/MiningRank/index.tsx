@@ -5,7 +5,7 @@ import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } fr
 
 import { calcShortHash, keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { getTradersRankList } from '@/api'
 import { reducer, stateInit } from '@/reducers/records'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
@@ -48,7 +48,7 @@ const Rank: FC = () => {
 
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const fetchData = useCallback(
     async (index = 0) => {

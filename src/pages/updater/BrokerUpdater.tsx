@@ -4,22 +4,21 @@ import { useEffect } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
-import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { useBrokerParams } from '@/hooks/useBroker'
-import { useConfigInfo, useMarginToken } from '@/store'
+import { useConfigInfoStore, useMarginTokenStore, useBrokerInfoStore } from '@/store'
 
 export default function BrokerUpdater(): null {
   const { address } = useAccount()
 
   const { data: brokerParams, isLoading: brokerParamsIsLoading } = useBrokerParams()
 
-  const fetchBrokerInfo = useBrokerInfo((state) => state.fetchBrokerInfo)
-  const resetBrokerInfo = useBrokerInfo((state) => state.resetBrokerInfo)
-  const fetchBrokerBound = useBrokerInfo((state) => state.fetchBrokerBound)
-  const resetBrokerBound = useBrokerInfo((state) => state.resetBrokerBound)
-  const updateBrokerParams = useConfigInfo((state) => state.updateBrokerParams)
+  const fetchBrokerInfo = useBrokerInfoStore((state) => state.fetchBrokerInfo)
+  const resetBrokerInfo = useBrokerInfoStore((state) => state.resetBrokerInfo)
+  const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
+  const resetBrokerBound = useBrokerInfoStore((state) => state.resetBrokerBound)
+  const updateBrokerParams = useConfigInfoStore((state) => state.updateBrokerParams)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   // for broker info
   useEffect(() => {

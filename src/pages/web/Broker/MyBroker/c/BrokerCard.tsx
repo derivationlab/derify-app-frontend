@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next'
 
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
   const { t } = useTranslation()
   const { id, logo, name, introduction } = broker
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   return (
     <div className="web-my-broker">

@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom'
 import React, { FC, useEffect, useState } from 'react'
 
 import { getIpLocation } from '@/api'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { findMarginToken } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
 import { Redirect, Switch, Route } from '@/components/common/Route'
@@ -48,8 +48,8 @@ const Web: FC = () => {
 
   const [visible, setVisible] = useState<boolean>(false)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const updateMarginToken = useMarginTokenStore((state) => state.updateMarginToken)
 
   useEffect(() => {
     const path = pathname.split('/')

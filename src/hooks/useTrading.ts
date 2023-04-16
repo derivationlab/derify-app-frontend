@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash'
 import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
-import { OpeningType } from '@/store/useCalcOpeningDAT'
+import { OpeningType } from '@/store'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { bnDiv, inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'

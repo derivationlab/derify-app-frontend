@@ -10,7 +10,7 @@ const init = {
   accumulatedMarginTokenReward: '0'
 }
 
-export const useBrokerInfoFromC = (trader = '', rewards = ''): { data: Record<string, any>; isLoading: boolean } => {
+export const useBrokerInfo = (trader = '', rewards = ''): { data: Record<string, any>; isLoading: boolean } => {
   const { data, isLoading } = useQuery(
     ['useRankReward'],
     async () => {
@@ -21,7 +21,6 @@ export const useBrokerInfoFromC = (trader = '', rewards = ''): { data: Record<st
 
         const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } =
           response
-        console.info(`${trader}-${formatUnits(drfRewardBalance)}`)
         return {
           ...init,
           drfRewardBalance: formatUnits(drfRewardBalance),

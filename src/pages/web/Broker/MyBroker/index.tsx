@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 
-import { useBrokerInfo } from '@/store/useBrokerInfo'
+import { useBrokerInfoStore } from '@/store'
 
 import BrokerCard from './c/BrokerCard'
 
 const MyBroker: FC = () => {
-  const brokerBound = useBrokerInfo((state) => state.brokerBound)
+  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
 
   return <BrokerCard broker={brokerBound} />
 }

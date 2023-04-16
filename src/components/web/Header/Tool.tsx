@@ -9,14 +9,14 @@ import Community from './Community'
 import SelectLang from './SelectLang'
 import SelectTheme from './SelectTheme'
 import AddTokenTool from './AddTokenTool'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const Tool: FC = () => {
   const ref = useRef(null)
 
   const { t } = useTranslation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
 

@@ -1,15 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 
-import { useMarginToken, useQuoteToken } from '@/store'
 import { PositionSideTypes } from '@/typings'
-
-import { useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
-import { reducer, stateInit } from '@/reducers/openingPosition'
+import { reducer, stateInit } from '@/reducers/opening'
 import { isGT, keepDecimals } from '@/utils/tools'
 import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { useMarginTokenStore, useQuoteTokenStore, useOpeningStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -29,10 +27,10 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const { t } = useTranslation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const closingType = useCalcOpeningDAT((state) => state.closingType)
-  const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const closingType = useOpeningStore((state) => state.closingType)
+  const closingAmount = useOpeningStore((state) => state.closingAmount)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { factoryConfig } = useFactoryConf(quoteToken, marginToken)

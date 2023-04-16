@@ -20,7 +20,7 @@ import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
 
 import { findToken } from '@/config/tokens'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const pageSize = 10
 
@@ -33,7 +33,7 @@ const List: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const pageChange = async (index: number) => {
     dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: true, pageIndex: index } })

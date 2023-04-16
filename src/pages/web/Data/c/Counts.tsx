@@ -5,12 +5,12 @@ import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
 
 import { nonBigNumberInterception } from '@/utils/tools'
 import { DEFAULT_MARGIN_TOKEN, findToken } from '@/config/tokens'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const Counts: FC = () => {
   const { t } = useTranslation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
 

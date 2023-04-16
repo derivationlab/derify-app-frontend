@@ -8,9 +8,9 @@ import React, { FC, useCallback, useState, useMemo } from 'react'
 
 import { copyText } from '@/utils/tools'
 import { PubSubEvents } from '@/typings'
-import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { API_PREFIX_URL } from '@/config'
 import { useExtendPeriod } from '@/hooks/useBroker'
+import { useBrokerInfoStore } from '@/store'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
@@ -25,7 +25,7 @@ const Info: FC = () => {
 
   const { extend } = useExtendPeriod()
 
-  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
+  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 

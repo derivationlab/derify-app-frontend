@@ -1,12 +1,11 @@
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useReducer, useEffect } from 'react'
+import React, { FC, useReducer, useEffect } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { getTokenBalance, useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-
-import { reducer, stateInit } from '@/reducers/earn'
+import { reducer, stateInit } from '@/reducers/deposit'
+import { getTokenBalance, useMarginTokenStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -25,27 +24,23 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+
   const { protocolConfig } = useProtocolConf(marginToken)
 
-  const memoDisabled = useMemo(() => {
-    return isGT(state.balance, 0)
-  }, [state.balance])
-
   const onChangeEv = (v: string) => {
-    if (isGTET(state.balance, v) && isGT(v, 0)) {
-      dispatch({ type: 'SET_DISABLED', payload: false })
-      dispatch({ type: 'SET_IN_AMOUNT', payload: v })
+    if (isGTET(state.depositDAT.balance, v) && isGT(v, 0)) {
+      dispatch({ type: 'SET_DEPOSIT_DAT', payload: { disabled: false, inAmount: v } })
     } else {
-      dispatch({ type: 'SET_DISABLED', payload: true })
-      dispatch({ type: 'SET_IN_AMOUNT', payload: '0' })
+      dispatch({ type: 'SET_DEPOSIT_DAT', payload: { disabled: true, inAmount: '0' } })
     }
   }
 
   useEffect(() => {
     const func = async (account: string, protocolConfig: string) => {
       const data = await getTokenBalance(account, protocolConfig)
-      dispatch({ type: 'SET_BALANCE', payload: data })
+
+      dispatch({ type: 'SET_DEPOSIT_DAT', payload: { balance: data } })
     }
 
     if (address && protocolConfig) void func(address, protocolConfig.bMarginToken)
@@ -64,21 +59,24 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.bDRFPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={state.balance} unit={`b${marginToken}`} />
+                <BalanceShow value={state.depositDAT.balance} unit={`b${marginToken}`} />
               </dd>
             </dl>
             <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={state.balance}
+              max={state.depositDAT.balance}
               title={t('Earn.bDRFPool.AmountToDeposit', 'Amount to deposit')}
               unit={`b${marginToken}`}
               onChange={onChangeEv}
             />
           </div>
         </div>
-        <Button onClick={() => onClick(state.inAmount)} disabled={!memoDisabled || state.disabled}>
+        <Button
+          onClick={() => onClick(state.depositDAT.inAmount)}
+          disabled={!isGT(state.depositDAT.balance, 0) || state.depositDAT.disabled}
+        >
           {t('Earn.bDRFPool.Deposit', 'Deposit')}
         </Button>
       </div>

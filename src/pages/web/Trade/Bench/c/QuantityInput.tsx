@@ -4,12 +4,10 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
 
 import { findToken } from '@/config/tokens'
-import { useMarginToken, useQuoteToken } from '@/store'
-
 import { MarginTokenKeys, PubSubEvents } from '@/typings'
 import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
-import { OpeningType, useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { OpeningType, useOpeningStore, useMarginTokenStore, useQuoteTokenStore } from '@/store'
 
 import { Select, Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
@@ -28,13 +26,13 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const maxVolume = useCalcOpeningDAT((state) => state.maxVolume)
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const openingType = useCalcOpeningDAT((state) => state.openingType)
-  const leverageNow = useCalcOpeningDAT((state) => state.leverageNow)
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const openingPrice = useCalcOpeningDAT((state) => state.openingPrice)
-  const fetchMaxVolume = useCalcOpeningDAT((state) => state.fetchMaxVolume)
+  const maxVolume = useOpeningStore((state) => state.maxVolume)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const openingType = useOpeningStore((state) => state.openingType)
+  const leverageNow = useOpeningStore((state) => state.leverageNow)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const openingPrice = useOpeningStore((state) => state.openingPrice)
+  const fetchMaxVolume = useOpeningStore((state) => state.fetchMaxVolume)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)

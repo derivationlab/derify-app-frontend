@@ -5,7 +5,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useIndicatorsConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { PositionSideTypes } from '@/typings'
 
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
 
@@ -26,7 +26,7 @@ interface Props {
 const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { spotPrice } = useSpotPrice(data?.quoteToken, marginToken)
   const { indicators } = useIndicatorsConf(data?.quoteToken)

@@ -2,10 +2,8 @@ import React, { FC, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { useInterval } from 'react-use'
 
-import { usePoolsInfo } from '@/store/usePoolsInfo'
-import { useTraderInfo } from '@/store/useTraderInfo'
-import { useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useMarginTokenStore, usePoolsInfoStore, useTraderInfoStore } from '@/store'
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
 
 import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
@@ -18,11 +16,11 @@ import DerifyTokenPool from './c/DerifyTokenPool'
 const Eran: FC = () => {
   const { address } = useAccount()
 
-  const updateRewardsInfo = useTraderInfo((state) => state.updateRewardsInfo)
-  const updateStakingInfo = useTraderInfo((state) => state.updateStakingInfo)
-  const updateDrfPoolBalance = usePoolsInfo((state) => state.updateDrfPoolBalance)
-  const updateBondPoolBalance = usePoolsInfo((state) => state.updateBondPoolBalance)
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const updateRewardsInfo = useTraderInfoStore((state) => state.updateRewardsInfo)
+  const updateStakingInfo = useTraderInfoStore((state) => state.updateStakingInfo)
+  const updateDrfPoolBalance = usePoolsInfoStore((state) => state.updateDrfPoolBalance)
+  const updateBondPoolBalance = usePoolsInfoStore((state) => state.updateBondPoolBalance)
 
   const { protocolConfig } = useProtocolConf(marginToken)
 

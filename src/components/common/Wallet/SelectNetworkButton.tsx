@@ -9,7 +9,7 @@ import { Chain, useNetwork, useSwitchNetwork } from 'wagmi'
 
 import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
-import { useRpcStore } from '@/store'
+import { useRpcNodeStore } from '@/store'
 
 const networks = {
   [ChainId.MAINNET]: {
@@ -29,7 +29,7 @@ const SelectNetworkButton: FC = () => {
   const { chain } = useNetwork()
   const { switchNetwork, isLoading } = useSwitchNetwork()
 
-  const fetchRpc = useRpcStore((state) => state.fetch)
+  const fetchRpc = useRpcNodeStore((state) => state.fetch)
 
   const [visible, setVisible] = useState<boolean>(false)
 

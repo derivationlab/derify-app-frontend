@@ -5,15 +5,12 @@ import { useSigner, useAccount } from 'wagmi'
 import React, { FC, useState, useMemo, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { useBrokerInfo } from '@/store/useBrokerInfo'
-import { usePosDATStore } from '@/store/usePosDAT'
-import { useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 import { usePositionOperation } from '@/hooks/useTrading'
 import { findMarginToken, findToken } from '@/config/tokens'
 import { PubSubEvents, QuoteTokenKeys } from '@/typings'
-import { useMarginToken, useQuoteToken } from '@/store'
 import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { useOpeningStore, useBrokerInfoStore, usePositionStore, useMarginTokenStore, useQuoteTokenStore } from '@/store'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
@@ -35,13 +32,13 @@ const MyPosition: FC = () => {
 
   const { closePosition, closeAllPositions, takeProfitOrStopLoss } = usePositionOperation()
 
-  const quoteToken = useQuoteToken((state) => state.quoteToken)
-  const brokerBound = useBrokerInfo((state) => state.brokerBound)
-  const positionOrd = usePosDATStore((state) => state.positionOrd)
-  const closingType = useCalcOpeningDAT((state) => state.closingType)
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const closingAmount = useCalcOpeningDAT((state) => state.closingAmount)
-  const positionOrdLoaded = usePosDATStore((state) => state.loaded)
+  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
+  const positionOrd = usePositionStore((state) => state.positionOrd)
+  const closingType = useOpeningStore((state) => state.closingType)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const closingAmount = useOpeningStore((state) => state.closingAmount)
+  const positionOrdLoaded = usePositionStore((state) => state.loaded)
 
   const { spotPrices } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)

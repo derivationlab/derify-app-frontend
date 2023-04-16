@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 
 import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS } from '@/config/tokens'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
 import { useAllMarginBalances } from '@/hooks/useMySpaceInfo'
@@ -23,8 +23,8 @@ const MarginToken: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
-  const updateMarginToken = useMarginToken((state) => state.updateMarginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const updateMarginToken = useMarginTokenStore((state) => state.updateMarginToken)
 
   const { data: marginBalances, refetch: marginBalancesRefetch, isLoading } = useAllMarginBalances(address)
 

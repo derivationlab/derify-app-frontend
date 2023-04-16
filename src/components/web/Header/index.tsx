@@ -5,7 +5,7 @@ import React, { FC, useContext } from 'react'
 
 import { WEBSITE_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
@@ -19,7 +19,7 @@ const Header: FC = () => {
 
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   if (mobile) return <MHeader />
 

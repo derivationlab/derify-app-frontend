@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
 
-import { useConfigInfo, usePairsInfo } from '@/store'
+import { useConfigInfoStore, usePairsInfoStore } from '@/store'
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys, QuoteTokenKeys } from '@/typings'
 
 export const useOpeningMaxLimit = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
-  const openingMaxLimit = useConfigInfo((state) => state.openingMaxLimit)
-  const openingMaxLimitLoaded = useConfigInfo((state) => state.openingMaxLimitLoaded)
+  const openingMaxLimit = useConfigInfoStore((state) => state.openingMaxLimit)
+  const openingMaxLimitLoaded = useConfigInfoStore((state) => state.openingMaxLimitLoaded)
 
   const _openingMaxLimit = useMemo(() => {
     if (openingMaxLimitLoaded) return openingMaxLimit[marginToken as MarginTokenKeys][quoteToken as QuoteTokenKeys]
@@ -18,8 +18,8 @@ export const useOpeningMaxLimit = (quoteToken = QUOTE_TOKENS[0].symbol, marginTo
 }
 
 export const useSpotPrice = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
-  const spotPrices = usePairsInfo((state) => state.spotPrices)
-  const spotPricesLoaded = usePairsInfo((state) => state.spotPricesLoaded)
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
+  const spotPricesLoaded = usePairsInfoStore((state) => state.spotPricesLoaded)
 
   const spotPrice = useMemo(() => {
     if (spotPricesLoaded) return spotPrices[marginToken][quoteToken]
@@ -37,8 +37,8 @@ export const useSpotPrice = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = 
 }
 
 export const useFactoryConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
-  const factoryConfig = useConfigInfo((state) => state.factoryConfig)
-  const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
+  const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)
+  const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
 
   const match = useMemo(() => {
     if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken as MarginTokenKeys]
@@ -55,8 +55,8 @@ export const useFactoryConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken 
 }
 
 export const useProtocolConf = (marginToken = MARGIN_TOKENS[0].symbol) => {
-  const protocolConfig = useConfigInfo((state) => state.protocolConfig)
-  const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
+  const protocolConfig = useConfigInfoStore((state) => state.protocolConfig)
+  const protocolConfigLoaded = useConfigInfoStore((state) => state.protocolConfigLoaded)
 
   const _protocolConfig = useMemo(() => {
     if (protocolConfigLoaded && protocolConfig) return protocolConfig[marginToken as MarginTokenKeys]
@@ -68,8 +68,8 @@ export const useProtocolConf = (marginToken = MARGIN_TOKENS[0].symbol) => {
 }
 
 export const usePCFRatioConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
-  const pcfRatios = usePairsInfo((state) => state.pcfRatios)
-  const pcfRatiosLoaded = usePairsInfo((state) => state.pcfRatiosLoaded)
+  const pcfRatios = usePairsInfoStore((state) => state.pcfRatios)
+  const pcfRatiosLoaded = usePairsInfoStore((state) => state.pcfRatiosLoaded)
 
   const pcfRatio = useMemo(() => {
     if (pcfRatiosLoaded) return pcfRatios[marginToken][quoteToken]
@@ -82,8 +82,8 @@ export const usePCFRatioConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken
 }
 
 export const useIndicatorsConf = (quoteToken = QUOTE_TOKENS[0].symbol) => {
-  const indicators = usePairsInfo((state) => state.indicators)
-  const indicatorsLoaded = usePairsInfo((state) => state.indicatorsLoaded)
+  const indicators = usePairsInfoStore((state) => state.indicators)
+  const indicatorsLoaded = usePairsInfoStore((state) => state.indicatorsLoaded)
 
   const _indicators = useMemo(() => {
     if (indicatorsLoaded) return indicators[quoteToken]

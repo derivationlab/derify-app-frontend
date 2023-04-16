@@ -7,14 +7,12 @@ import React, { FC, useCallback, useContext, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/providers/Mobile'
-import { useBrokerInfo } from '@/store/useBrokerInfo'
-import { useMarginToken } from '@/store'
+import { useBrokerInfo } from '@/hooks/useBrokerInfo'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useWithdrawReward } from '@/hooks/useBroker'
 import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-
-import { useBrokerInfoFromC } from '@/hooks/useBrokerInfo'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { useMarginTokenStore, useBrokerInfoStore } from '@/store'
 
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -27,11 +25,11 @@ const Dashboard: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { withdraw } = useWithdrawReward()
 
-  const brokerInfo = useBrokerInfo((state) => state.brokerInfo)
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { protocolConfig } = useProtocolConf(marginToken)
-  const { data: brokerAssets } = useBrokerInfoFromC(address, protocolConfig?.rewards)
+  const { data: brokerAssets } = useBrokerInfo(address, protocolConfig?.rewards)
 
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))

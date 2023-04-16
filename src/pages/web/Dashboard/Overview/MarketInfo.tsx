@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { isEmpty, orderBy } from 'lodash'
 import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useEffect } from 'react'
 
-import { useConfigInfo } from '@/store'
+import { useConfigInfoStore } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
 import { useBuyBackPool } from '@/hooks/useBuyBackPool'
 import { MarginTokenKeys } from '@/typings'
@@ -31,8 +31,8 @@ const MarketInfo: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const factoryConfig = useConfigInfo((state) => state.factoryConfig)
-  const factoryConfigLoaded = useConfigInfo((state) => state.factoryConfigLoaded)
+  const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)
+  const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
 
   const { data: indicators } = usePairIndicators()
   const { data: exchangeInfo } = useBuyBackPool()

@@ -4,7 +4,7 @@ import multicall from '@/utils/multicall'
 import { baseProvider } from '@/utils/baseProvider'
 import { BalancesState } from '@/store/types'
 import { getBep20Contract } from '@/utils/contractHelpers'
-import tokens, { MARGIN_TOKENS } from '@/config/tokens'
+import tokens, { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { formatUnits, safeInterceptionValues } from '@/utils/tools'
 
 import erc20Abi from '@/config/abi/erc20.json'
@@ -29,7 +29,7 @@ export const getTokenBalance = async (account: string, address: string) => {
 
   const res = await c.balanceOf(account)
 
-  return formatUnits(res, 18)
+  return formatUnits(res, findToken(address).precision)
 }
 
 export const getTokenBalances = async (account: string) => {
@@ -40,7 +40,7 @@ export const getTokenBalances = async (account: string) => {
   const res = await multicall(erc20Abi, calls)
   const bnb = await baseProvider.getBalance(account)
 
-  const bnbBalance = safeInterceptionValues(bnb, 18, 18)
+  const bnbBalance = formatUnits(bnb, 18)
 
   if (res.length > 0) {
     res.forEach((t: any, index: number) => {
@@ -57,7 +57,7 @@ export const getTokenBalances = async (account: string) => {
   return { ...initialVal, bnb: bnbBalance, BNB: bnbBalance }
 }
 
-const useTokenBalances = create<BalancesState>((set) => ({
+const useBalancesStore = create<BalancesState>((set) => ({
   balances: initial(),
   loaded: false,
   fetch: async (account: string) => {
@@ -69,4 +69,4 @@ const useTokenBalances = create<BalancesState>((set) => ({
   reset: () => set(() => ({ balances: initial() }))
 }))
 
-export { useTokenBalances }
+export { useBalancesStore }

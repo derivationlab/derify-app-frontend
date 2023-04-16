@@ -6,7 +6,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { useApplyBroker } from '@/hooks/useBroker'
-import { useConfigInfo, useTokenBalances } from '@/store'
+import { useConfigInfoStore, useBalancesStore } from '@/store'
 import { isET, isLT, thousandthsDivision } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
@@ -21,9 +21,9 @@ const BrokerSignUpStep1: FC = () => {
 
   const { applyBroker } = useApplyBroker()
 
-  const balances = useTokenBalances((state) => state.balances)
-  const brokerParams = useConfigInfo((state) => state.brokerParams)
-  const balanceLoaded = useTokenBalances((state) => state.loaded)
+  const balances = useBalancesStore((state) => state.balances)
+  const brokerParams = useConfigInfoStore((state) => state.brokerParams)
+  const balanceLoaded = useBalancesStore((state) => state.loaded)
 
   const [loading, setLoading] = useState<boolean>(false)
 

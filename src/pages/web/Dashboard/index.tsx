@@ -8,12 +8,12 @@ import Overview from './Overview'
 import BuybackPlan from './BuybackPlan'
 import GrantList from './GrantList'
 
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 
 const Dashboard: FC = () => {
   const { address } = useAccount()
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   return (
     <Switch>

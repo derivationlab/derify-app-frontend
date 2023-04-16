@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useState } from 'react'
 
 import { useAddGrant } from '@/hooks/useDashboard'
-import { useConfigInfo } from '@/store'
+import { useConfigInfoStore } from '@/store'
 import { MarginTokenKeys, PubSubEvents } from '@/typings'
 
 import AddGrantDialog from './AddGrantDialog'
@@ -13,8 +13,8 @@ const AddGrant: FC = () => {
 
   const [visible, setVisible] = useState(false)
 
-  const protocolConfig = useConfigInfo((state) => state.protocolConfig)
-  const protocolConfigLoaded = useConfigInfo((state) => state.protocolConfigLoaded)
+  const protocolConfig = useConfigInfoStore((state) => state.protocolConfig)
+  const protocolConfigLoaded = useConfigInfoStore((state) => state.protocolConfigLoaded)
 
   const { addGrantPlan } = useAddGrant()
 

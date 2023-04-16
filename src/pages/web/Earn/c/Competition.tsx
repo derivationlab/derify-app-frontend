@@ -6,7 +6,7 @@ import React, { FC, useContext, useEffect, useCallback } from 'react'
 import { PubSubEvents } from '@/typings'
 import { useRankReward } from '@/hooks/useDashboard'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginToken } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useWithdrawRankReward } from '@/hooks/useEarning'
 import { bnMul, isET, isGT, isLT, keepDecimals } from '@/utils/tools'
@@ -26,7 +26,7 @@ const Competition: FC = () => {
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { withdraw } = useWithdrawRankReward()
   const { protocolConfig } = useProtocolConf(marginToken)

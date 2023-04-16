@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import React, { ChangeEvent, FC, useMemo, useState } from 'react'
 
 import { bnDiv, isET, isLT, isLTET } from '@/utils/tools'
-import { useConfigInfo, useTokenBalances } from '@/store'
+import { useConfigInfoStore, useBalancesStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -17,8 +17,8 @@ interface Props {
 const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const balances = useTokenBalances((state) => state.balances)
-  const brokerParams = useConfigInfo((state) => state.brokerParams)
+  const balances = useBalancesStore((state) => state.balances)
+  const brokerParams = useConfigInfoStore((state) => state.brokerParams)
 
   const [burnAmount, setBurnAmount] = useState<string>('')
 

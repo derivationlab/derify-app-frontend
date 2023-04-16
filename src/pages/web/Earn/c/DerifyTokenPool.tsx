@@ -4,14 +4,12 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext, useEffect, useCallback } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { usePoolsInfo } from '@/store/usePoolsInfo'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfo } from '@/store/useTraderInfo'
 import tokens, { findToken } from '@/config/tokens'
-
 import { bnMul, isGT, isLT, keepDecimals } from '@/utils/tools'
 import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
+import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import DecimalShow from '@/components/common/DecimalShow'
@@ -20,18 +18,18 @@ import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
-import { useMarginToken } from '@/store'
 
 const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
+
   const { mobile } = useContext(MobileContext)
 
-  const stakingInfo = useTraderInfo((state) => state.stakingInfo)
-  const drfPoolBalance = usePoolsInfo((state) => state.drfPoolBalance)
+  const stakingInfo = useTraderInfoStore((state) => state.stakingInfo)
+  const drfPoolBalance = usePoolsInfoStore((state) => state.drfPoolBalance)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const marginToken = useMarginToken((state) => state.marginToken)
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()

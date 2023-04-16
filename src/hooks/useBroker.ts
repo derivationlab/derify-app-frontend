@@ -68,34 +68,31 @@ export const useWithdrawReward = () => {
 }
 
 export const useExtendPeriod = () => {
-  const { data: s } = useSigner()
-  const extend = useCallback(
-    async (amount: string, signer: Signer): Promise<boolean> => {
-      console.info(s)
-      const c = getDerifyProtocolContract(signer)
-      const _amount = inputParameterConversion(amount, 8)
+  const extend = async (amount: string, signer: Signer): Promise<boolean> => {
+    const c = getDerifyProtocolContract(signer)
+    const _amount = inputParameterConversion(amount, 8)
 
-      try {
-        const approve = await setAllowance(
-          signer,
-          contracts.derifyProtocol.contractAddress,
-          tokens.edrf.tokenAddress,
-          amount
-        )
+    try {
+      if (!signer) return false
 
-        if (!approve) return false
+      const approve = await setAllowance(
+        signer,
+        contracts.derifyProtocol.contractAddress,
+        tokens.edrf.tokenAddress,
+        amount
+      )
 
-        const response = await c.burnEdrfExtendValidPeriod(_amount)
-        const receipt = await response.wait()
+      if (!approve) return false
 
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [s]
-  )
+      const response = await c.burnEdrfExtendValidPeriod(_amount)
+      const receipt = await response.wait()
+
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { extend }
 }

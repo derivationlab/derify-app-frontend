@@ -29,7 +29,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
       [ChainId.TESTNET]: '0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba'
     },
-    18, // checked from getMarginTokenPrecision
+    18,
     2
   ),
   drf: new Token(
@@ -39,26 +39,8 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
       [ChainId.MAINNET]: '0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F',
       [ChainId.TESTNET]: '0x11B876d9D5d18d70664153C84fD3084c1E71E2ef'
     },
-    18, // checked from getMarginTokenPrecision
+    18,
     2
-  ),
-  matic: new Token(
-    'MATIC',
-    'MATIC',
-    {
-      [ChainId.MAINNET]: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3',
-      [ChainId.TESTNET]: '0xc0cd7e6a0e1f71cea6c6e4885f2d2d30f7cd78a3'
-    },
-    18
-  ),
-  bnb: new Token(
-    'BNB',
-    'BNB',
-    {
-      [ChainId.MAINNET]: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52',
-      [ChainId.TESTNET]: '0xB8c77482e45F1F44dE1745F52C74426C631bDD52'
-    },
-    18
   ),
   edrf: new Token(
     'eDRF',
@@ -80,8 +62,6 @@ export const VALUATION_TOKEN_SYMBOL = 'USD'
 
 export const DEFAULT_MARGIN_TOKEN = tokens.busd
 
-export const BENCHMARK_TOKEN = tokens.busd
-
 export const PLATFORM_TOKEN = tokens.drf
 
 // key: (btc,eth...)/address
@@ -93,8 +73,13 @@ export const findToken = (key: string): Token => {
     (t) => t.symbol === upper || t.symbol === lower || t.symbol === key || t.tokenAddress === key.toLowerCase()
   )!
 }
+
 export const findMarginToken = (key: string): Token | undefined => {
-  return MARGIN_TOKENS.find((t) => t.symbol === key.toUpperCase() || t.tokenAddress === key.toLowerCase())
+  const upper = key.toUpperCase()
+  const lower = key.toLowerCase()
+  return MARGIN_TOKENS.find(
+    (t) => t.symbol === upper || t.symbol === lower || t.symbol === key || t.tokenAddress === key.toLowerCase()
+  )
 }
 
 export default tokens

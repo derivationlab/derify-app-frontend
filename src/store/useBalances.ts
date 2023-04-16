@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 
 import multicall from '@/utils/multicall'
 import { baseProvider } from '@/utils/baseProvider'
@@ -54,7 +54,7 @@ export const getTokenBalances = async (account: string) => {
     })
   }
 
-  return { ...initialVal, BNB: bnbBalance }
+  return { ...initialVal, bnb: bnbBalance, BNB: bnbBalance }
 }
 
 const useTokenBalances = create<BalancesState>((set) => ({

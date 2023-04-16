@@ -6,7 +6,7 @@ import React, { FC, useState, useCallback } from 'react'
 import { PubSubEvents } from '@/typings'
 import { useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useDepositMargin } from '@/hooks/useTrading'
+import { useMarginOperation } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
@@ -21,7 +21,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const { deposit } = useDepositMargin()
+  const { deposit } = useMarginOperation()
   const { protocolConfig } = useProtocolConf(marginToken)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')

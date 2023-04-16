@@ -8,12 +8,12 @@ import { ThemeContext } from '@/providers/Theme'
 import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { usePosDATStore } from '@/store/usePosDAT'
 import { useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
+import { usePositionOperation } from '@/hooks/useTrading'
 import { findMarginToken, findToken } from '@/config/tokens'
 import { PubSubEvents, QuoteTokenKeys } from '@/typings'
 import { useMarginToken, useQuoteToken } from '@/store'
 import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
-import { useCloseAllPositions, useClosePosition, useTakeProfitOrStopLoss } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
@@ -32,9 +32,7 @@ const MyPosition: FC = () => {
   const { data: signer } = useSigner()
   const { address } = useAccount()
 
-  const { close: close1 } = useClosePosition()
-  const { close: close2 } = useCloseAllPositions()
-  const { takeProfitOrStopLoss } = useTakeProfitOrStopLoss()
+  const { closePosition, closeAllPositions, takeProfitOrStopLoss } = usePositionOperation()
 
   const quoteToken = useQuoteToken((state) => state.quoteToken)
   const brokerBound = useBrokerInfo((state) => state.brokerBound)
@@ -88,7 +86,7 @@ const MyPosition: FC = () => {
         side,
         whetherStud(targetPosOrd, closingAmount)
       )
-      const status = await close1(
+      const status = await closePosition(
         protocolConfig.exchange,
         brokerBound.broker,
         spotPrices[quoteToken],
@@ -122,7 +120,7 @@ const MyPosition: FC = () => {
     onCloseDialogEv()
 
     if (brokerBound?.broker && protocolConfig) {
-      const status = await close2(protocolConfig.exchange, brokerBound.broker)
+      const status = await closeAllPositions(protocolConfig.exchange, brokerBound.broker)
 
       if (status) {
         // succeed

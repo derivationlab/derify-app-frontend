@@ -63,7 +63,7 @@ export const estimateGas = async (
   contract: Contract,
   methodName: string,
   methodArgs: unknown[] = [],
-  gasMarginPer10000 = 2000
+  gasMarginPer10000 = 0
 ): Promise<BigNumber> => {
   if (!contract[methodName]) {
     throw new Error(`Method ${methodName} doesn't exist on ${contract.address}`)

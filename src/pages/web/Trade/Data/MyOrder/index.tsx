@@ -7,9 +7,9 @@ import React, { FC, useMemo, useState, useContext } from 'react'
 import { ThemeContext } from '@/providers/Theme'
 import { usePosDATStore } from '@/store/usePosDAT'
 import { useMarginToken } from '@/store'
+import { usePositionOperation } from '@/hooks/useTrading'
 import { PubSubEvents, QuoteTokenKeys } from '@/typings'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
-import { useCancelAllPositions, useCancelPosition } from '@/hooks/useTrading'
 
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
@@ -28,10 +28,10 @@ const MyOrder: FC = () => {
   const profitLossOrd = usePosDATStore((state) => state.profitLossOrd)
   const profitLossOrdLoaded = usePosDATStore((state) => state.loaded)
 
-  const { close } = useCancelPosition()
+  const { cancelPosition } = usePositionOperation()
   const { protocolConfig } = useProtocolConf(marginToken)
   const { match: matchFactoryConfig } = useFactoryConf('', marginToken)
-  const { cancel: cancelAllPositions } = useCancelAllPositions()
+  const { cancelAllPositions } = usePositionOperation()
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
@@ -46,7 +46,7 @@ const MyOrder: FC = () => {
     if (matchFactoryConfig) {
       const { side, orderType, timestamp, quoteToken } = targetPosOrd
 
-      const status = await close(matchFactoryConfig[quoteToken as QuoteTokenKeys], orderType, side, timestamp)
+      const status = await cancelPosition(matchFactoryConfig[quoteToken as QuoteTokenKeys], orderType, side, timestamp)
 
       if (status) {
         // succeed
@@ -101,7 +101,7 @@ const MyOrder: FC = () => {
           </div>
           <Button onClick={() => setDialogStatus('cancel-all-position')}>
             {t('Trade.MyOrder.CancelAll', 'CANCEL ALL')}
-            <Image src={`icon/close-white${theme === 'Dark' ? '-dark' : ''}.svg`} />
+            <Image src={`icon/cancelPosition-white${theme === 'Dark' ? '-dark' : ''}.svg`} />
           </Button>
         </>
       )

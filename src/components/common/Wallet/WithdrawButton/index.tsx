@@ -6,7 +6,7 @@ import React, { FC, useState, useCallback } from 'react'
 import { PubSubEvents } from '@/typings'
 import { useMarginToken } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useWithdrawMargin } from '@/hooks/useTrading'
+import { useMarginOperation } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import WithdrawDialog from '@/components/common/Wallet/WithdrawButton/Withdraw'
@@ -21,7 +21,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
 
   const marginToken = useMarginToken((state) => state.marginToken)
 
-  const { withdraw } = useWithdrawMargin()
+  const { withdraw } = useMarginOperation()
   const { protocolConfig } = useProtocolConf(marginToken)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')

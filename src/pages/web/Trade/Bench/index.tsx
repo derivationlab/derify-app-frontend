@@ -5,8 +5,8 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { findToken } from '@/config/tokens'
 import { useBrokerInfo } from '@/store/useBrokerInfo'
 import { isOpeningMinLimit } from '@/hooks/helper'
-import { useOpeningPosition } from '@/hooks/useTrading'
 import { reducer, stateInit } from '@/reducers/openingPosition'
+import { usePositionOperation } from '@/hooks/useTrading'
 import { OpeningType, useCalcOpeningDAT } from '@/store/useCalcOpeningDAT'
 import { PubSubEvents, PositionSideTypes } from '@/typings'
 import { useConfigInfo, useMarginToken, useQuoteToken } from '@/store'
@@ -43,10 +43,10 @@ const Bench: FC = () => {
   const updateOpeningType = useCalcOpeningDAT((state) => state.updateOpeningType)
   const updateOpeningPrice = useCalcOpeningDAT((state) => state.updateOpeningPrice)
 
-  const { opening } = useOpeningPosition()
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { indicators } = useIndicatorsConf(quoteToken)
   const { protocolConfig } = useProtocolConf(marginToken)
+  const { increasePosition } = usePositionOperation()
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(indicators?.longPmrRate)
@@ -96,7 +96,7 @@ const Bench: FC = () => {
     if (brokerBound?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
 
-      const status = await opening(
+      const status = await increasePosition(
         protocolConfig.exchange,
         brokerBound.broker,
         findToken(quoteToken).tokenAddress,

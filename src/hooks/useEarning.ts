@@ -96,7 +96,7 @@ export const useStakingDrf = () => {
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(c, 'stakingDrf', [_amount], 0)
+      const gasLimit = await estimateGas(c, 'stakingDrf', [_amount])
       const res = await c.stakingDrf(_amount, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
@@ -126,7 +126,7 @@ export const useExchangeBond = () => {
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(c, 'exchangeBond', [_amount], 0)
+      const gasLimit = await estimateGas(c, 'exchangeBond', [_amount])
       const res = await c.exchangeBond(_amount, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
@@ -147,7 +147,7 @@ export const useRedeemDrf = () => {
     const _amount = inputParameterConversion(amount, 8)
 
     try {
-      const gasLimit = await estimateGas(c, 'redeemDrf', [_amount], 0)
+      const gasLimit = await estimateGas(c, 'redeemDrf', [_amount])
       const res = await c.redeemDrf(_amount, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
@@ -168,7 +168,7 @@ export const useRedeemBondFromBank = () => {
     const _amount = inputParameterConversion(amount, 8)
 
     try {
-      const gasLimit = await estimateGas(c, 'redeemBondFromBank', [_amount], 0)
+      const gasLimit = await estimateGas(c, 'redeemBondFromBank', [_amount])
       const res = await c.redeemBondFromBank(_amount, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
@@ -193,7 +193,7 @@ export const useDepositBondToBank = () => {
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(c, 'depositBondToBank', [_amount], 0)
+      const gasLimit = await estimateGas(c, 'depositBondToBank', [_amount])
       const res = await c.depositBondToBank(_amount, { gasLimit })
       const receipt = await res.wait()
       return receipt.status

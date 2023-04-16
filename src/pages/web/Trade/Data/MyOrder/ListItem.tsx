@@ -4,14 +4,14 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
 
 import { MobileContext } from '@/providers/Mobile'
+import { useMarginToken } from '@/store'
 import { PositionSideTypes } from '@/typings'
-
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
-import { useMarginToken } from '@/store'
+import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   data?: Record<string, any>
@@ -23,6 +23,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginToken((state) => state.marginToken)
+
   const memoTimestamp = useMemo(() => {
     return dayjs((data?.timestamp ?? 0) * 1000)
   }, [data?.timestamp])
@@ -55,7 +56,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
         footer={`${data?.quoteToken} / ${marginToken}`}
       >
         <span>
-          {data?.size} / {data?.volume}
+          {data?.size} / {keepDecimals(data?.volume, 2)}
         </span>
       </DataAtom>
     ),

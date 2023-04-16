@@ -5,8 +5,8 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { findToken } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/withdraw'
 import { getTraderWithdrawAmount } from '@/api'
-import { isET, isGT, isGTET, keepDecimals } from '@/utils/tools'
 import { useMarginTokenStore, useTraderInfoStore } from '@/store'
+import { bnDiv, bnMinus, bnMul, isET, isGT, isGTET, keepDecimals } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -32,8 +32,8 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const memoMargin = useMemo(() => {
     if (variablesLoaded) {
       const { marginBalance, availableMargin } = variables
-      const p1 = Number(marginBalance) - Number(availableMargin)
-      const p2 = isET(marginBalance, 0) ? 0 : (p1 / Number(marginBalance)) * 100
+      const p1 = bnMinus(marginBalance, availableMargin)
+      const p2 = isET(marginBalance, 0) ? 0 : bnMul(bnDiv(p1, marginBalance), 100)
       return [keepDecimals(p1, findToken(marginToken).decimals), keepDecimals(p2, 2)]
     }
     return [0, 0]
@@ -49,22 +49,21 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const onChange = (v: string) => {
     if (isGTET(variables.availableMargin, v) && isGT(v, 0)) {
-      dispatch({ type: 'SET_DISABLED', payload: false })
-      dispatch({ type: 'SET_WITHDRAW_AMOUNT', payload: v })
+      dispatch({ type: 'SET_MARGIN_DAT', payload: { disabled: false, amount: v } })
     } else {
-      dispatch({ type: 'SET_DISABLED', payload: true })
-      dispatch({ type: 'SET_WITHDRAW_AMOUNT', payload: '0' })
+      dispatch({ type: 'SET_MARGIN_DAT', payload: { disabled: true, amount: '0' } })
     }
   }
 
   const funcAsync = async (account: string, amount: number) => {
     const { data } = await getTraderWithdrawAmount(account, amount, findToken(marginToken).tokenAddress)
-    dispatch({ type: 'SET_WITHDRAW_DAT', payload: data })
+
+    dispatch({ type: 'SET_NECESSARY', payload: data })
   }
 
   useEffect(() => {
-    if (address && Number(state.withdrawAmount) > 0) void funcAsync(address, Number(state.withdrawAmount))
-  }, [address, state.withdrawAmount])
+    if (address && Number(state.marginDAT.amount) > 0) void funcAsync(address, Number(state.marginDAT.amount))
+  }, [address, state.marginDAT])
 
   return (
     <Dialog
@@ -94,17 +93,14 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
               title={t('Trade.Withdraw.AmountToWithdraw', 'Amount to withdraw')}
               onChange={onChange}
             />
-            {state.withdrawData?.bMarginTokenAmount > 0 && (
+            {state.necessary?.bMarginTokenAmount > 0 && (
               <p
                 className="tips"
                 dangerouslySetInnerHTML={{
                   __html: t('Trade.Withdraw.WithdrawTip', '', {
                     MarginToken: marginToken,
-                    MarginAmount: keepDecimals(state.withdrawData?.marginTokenAmount, findToken(marginToken).decimals),
-                    bMarginAmount: keepDecimals(
-                      state.withdrawData?.bMarginTokenAmount,
-                      findToken(marginToken).decimals
-                    ),
+                    MarginAmount: keepDecimals(state.necessary?.marginTokenAmount, findToken(marginToken).decimals),
+                    bMarginAmount: keepDecimals(state.necessary?.bMarginTokenAmount, findToken(marginToken).decimals),
                     bMarginToken: `b${marginToken}`
                   })
                 }}
@@ -112,7 +108,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             )}
           </div>
         </div>
-        <Button onClick={() => onClick(state.withdrawAmount)} disabled={!memoDisabled || state.disabled}>
+        <Button onClick={() => onClick(state.marginDAT.amount)} disabled={!memoDisabled || state.marginDAT.disabled}>
           {t('Trade.Withdraw.Confirm', 'Confirm')}
         </Button>
       </div>

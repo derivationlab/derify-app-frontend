@@ -1,10 +1,10 @@
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useReducer } from 'react'
+import React, { FC, useReducer } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
-import { useMarginTokenStore, useBalancesStore } from '@/store'
 import { reducer, stateInit } from '@/reducers/withdraw'
+import { useMarginTokenStore, useBalancesStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -27,17 +27,11 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const balances = useBalancesStore((state) => state.balances)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const memoDisabled = useMemo(() => {
-    return isGT(balances[marginToken], 0)
-  }, [balances])
-
   const onChange = (v: string) => {
     if (isGTET(balances[marginToken], v) && isGT(v, 0)) {
-      dispatch({ type: 'SET_DISABLED', payload: false })
-      dispatch({ type: 'SET_DEPOSIT_AMOUNT', payload: v })
+      dispatch({ type: 'SET_MARGIN_DAT', payload: { disabled: false, amount: v } })
     } else {
-      dispatch({ type: 'SET_DISABLED', payload: true })
-      dispatch({ type: 'SET_DEPOSIT_AMOUNT', payload: '0' })
+      dispatch({ type: 'SET_MARGIN_DAT', payload: { disabled: true, amount: '0' } })
     }
   }
 
@@ -68,7 +62,10 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             />
           </div>
         </div>
-        <Button onClick={() => onClick(state.depositAmount)} disabled={!memoDisabled || state.disabled}>
+        <Button
+          onClick={() => onClick(state.marginDAT.amount)}
+          disabled={!isGT(balances[marginToken], 0) || state.marginDAT.disabled}
+        >
           {t('Trade.Deposit.Confirm', 'Confirm')}
         </Button>
       </div>

@@ -5,32 +5,16 @@ import { inputParameterConversion } from '@/utils/tools'
 import { estimateGas, setAllowance } from '@/utils/practicalMethod'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 
-export const useWithdrawPositionReward = () => {
-  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
-    if (!signer) return false
-    const c = getDerifyRewardsContract(rewards, signer)
-
-    try {
-      const res = await c.withdrawPositionReward()
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  return { withdraw }
-}
-
-export const useWithdrawAllEdrf = () => {
-  const withdraw = async (signer?: TSigner): Promise<boolean> => {
+export const useRedeemDrf = () => {
+  const redeem = async (amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyProtocolContract(signer)
+    const _amount = inputParameterConversion(amount, 8)
 
     try {
-      const res = await c.withdrawAllEdrf()
+      const gasLimit = await estimateGas(c, 'redeemDrf', [_amount])
+      const res = await c.redeemDrf(_amount, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
@@ -39,44 +23,7 @@ export const useWithdrawAllEdrf = () => {
     }
   }
 
-  return { withdraw }
-}
-
-export const useWithdrawAllBond = () => {
-  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
-    if (!signer) return false
-
-    const c = getDerifyRewardsContract(rewards, signer)
-
-    try {
-      const res = await c.withdrawAllBond()
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  return { withdraw }
-}
-
-export const useWithdrawRankReward = () => {
-  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
-    if (!signer) return false
-    const c = getDerifyRewardsContract(rewards, signer)
-
-    try {
-      const res = await c.withdrawRankReward()
-      const receipt = await res.wait()
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }
-
-  return { withdraw }
+  return { redeem }
 }
 
 export const useStakingDrf = () => {
@@ -139,16 +86,14 @@ export const useExchangeBond = () => {
   return { exchange }
 }
 
-export const useRedeemDrf = () => {
-  const redeem = async (amount: string, signer?: TSigner): Promise<boolean> => {
+export const useWithdrawAllEdrf = () => {
+  const withdraw = async (signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyProtocolContract(signer)
-    const _amount = inputParameterConversion(amount, 8)
 
     try {
-      const gasLimit = await estimateGas(c, 'redeemDrf', [_amount])
-      const res = await c.redeemDrf(_amount, { gasLimit })
+      const res = await c.withdrawAllEdrf()
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
@@ -157,19 +102,17 @@ export const useRedeemDrf = () => {
     }
   }
 
-  return { redeem }
+  return { withdraw }
 }
 
-export const useRedeemBondFromBank = () => {
-  const redeem = async (rewards: string, amount: string, signer?: TSigner): Promise<boolean> => {
+export const useWithdrawAllBond = () => {
+  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyRewardsContract(rewards, signer)
-    const _amount = inputParameterConversion(amount, 8)
 
     try {
-      const gasLimit = await estimateGas(c, 'redeemBondFromBank', [_amount])
-      const res = await c.redeemBondFromBank(_amount, { gasLimit })
+      const res = await c.withdrawAllBond()
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
@@ -178,7 +121,7 @@ export const useRedeemBondFromBank = () => {
     }
   }
 
-  return { redeem }
+  return { withdraw }
 }
 
 export const useDepositBondToBank = () => {
@@ -204,4 +147,61 @@ export const useDepositBondToBank = () => {
   }
 
   return { deposit }
+}
+
+export const useWithdrawRankReward = () => {
+  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
+    if (!signer) return false
+    const c = getDerifyRewardsContract(rewards, signer)
+
+    try {
+      const res = await c.withdrawRankReward()
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
+
+  return { withdraw }
+}
+
+export const useRedeemBondFromBank = () => {
+  const redeem = async (rewards: string, amount: string, signer?: TSigner): Promise<boolean> => {
+    if (!signer) return false
+
+    const c = getDerifyRewardsContract(rewards, signer)
+    const _amount = inputParameterConversion(amount, 8)
+
+    try {
+      const gasLimit = await estimateGas(c, 'redeemBondFromBank', [_amount])
+      const res = await c.redeemBondFromBank(_amount, { gasLimit })
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
+
+  return { redeem }
+}
+
+export const useWithdrawPositionReward = () => {
+  const withdraw = async (rewards: string, signer?: TSigner): Promise<boolean> => {
+    if (!signer) return false
+    const c = getDerifyRewardsContract(rewards, signer)
+
+    try {
+      const res = await c.withdrawPositionReward()
+      const receipt = await res.wait()
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
+
+  return { withdraw }
 }

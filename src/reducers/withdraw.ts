@@ -1,32 +1,24 @@
 interface ActionType {
-  type: 'SET_DISABLED' | 'SET_WITHDRAW_AMOUNT' | 'SET_WITHDRAW_DAT' | 'SET_DEPOSIT_AMOUNT'
+  type: 'SET_MARGIN_DAT' | 'SET_NECESSARY'
   payload: any
 }
 
 interface StateType {
-  disabled: boolean
-  withdrawData: Record<string, any>
-  depositAmount: string
-  withdrawAmount: string
+  marginDAT: { disabled: boolean; amount: string }
+  necessary: Record<string, any>
 }
 
 const stateInit: StateType = {
-  disabled: false,
-  withdrawData: {},
-  depositAmount: '',
-  withdrawAmount: ''
+  marginDAT: { disabled: false, amount: '0' },
+  necessary: {}
 }
 
 function reducer(state: StateType, action: ActionType): StateType {
   switch (action.type) {
-    case 'SET_DISABLED':
-      return { ...state, disabled: action.payload }
-    case 'SET_WITHDRAW_DAT':
-      return { ...state, withdrawData: action.payload }
-    case 'SET_DEPOSIT_AMOUNT':
-      return { ...state, depositAmount: action.payload }
-    case 'SET_WITHDRAW_AMOUNT':
-      return { ...state, withdrawAmount: action.payload }
+    case 'SET_MARGIN_DAT':
+      return { ...state, marginDAT: { ...state.marginDAT, ...action.payload } }
+    case 'SET_NECESSARY':
+      return { ...state, necessary: action.payload }
     default:
       return state
   }

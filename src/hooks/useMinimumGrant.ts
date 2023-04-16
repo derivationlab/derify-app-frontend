@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { safeInterceptionValues } from '@/utils/tools'
+import { formatUnits } from '@/utils/tools'
+import { PLATFORM_TOKEN } from '@/config/tokens'
 import { getDerifyPmrContract, getDerifyRankContract, getDerifyBrokerRewardsContract } from '@/utils/contractHelpers'
 
 export const useMinimumGrant = ({ rank = '', awards = '', mining = '' } = {}) => {
@@ -17,9 +18,9 @@ export const useMinimumGrant = ({ rank = '', awards = '', mining = '' } = {}) =>
         const res3 = await c3.minGrantAmount()
 
         return [
-          safeInterceptionValues(res1, 18, 18),
-          safeInterceptionValues(res2, 18, 18),
-          safeInterceptionValues(res3, 18, 18)
+          formatUnits(res1, PLATFORM_TOKEN.precision),
+          formatUnits(res2, PLATFORM_TOKEN.precision),
+          formatUnits(res3, PLATFORM_TOKEN.precision)
         ]
       }
       return ['0', '0', '0']

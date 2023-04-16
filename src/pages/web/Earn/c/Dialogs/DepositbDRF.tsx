@@ -4,7 +4,7 @@ import React, { FC, useReducer, useEffect } from 'react'
 
 import { isGT, isGTET } from '@/utils/tools'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { reducer, stateInit } from '@/reducers/deposit'
+import { reducer, stateInit } from '@/reducers/staking'
 import { getTokenBalance, useMarginTokenStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'

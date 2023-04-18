@@ -2,6 +2,7 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useReducer } from 'react'
 
+import { MarginTokenState } from '@/store/types'
 import { reducer, stateInit } from '@/reducers/withdraw'
 import { useMarginTokenStore, useBalancesStore } from '@/store'
 import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
@@ -25,7 +26,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const balances = useBalancesStore((state) => state.balances)
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const onChange = (v: string) => {
     if (isGTET(balances[marginToken], v) && isGT(v, 0)) {

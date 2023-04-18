@@ -1,41 +1,112 @@
 import Table from 'rc-table'
-import React, { FC, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import React, { FC, useEffect, useMemo } from 'react'
 
+import { findToken } from '@/config/tokens'
 import { useMarginTokenStore } from '@/store'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { bnMul, nonBigNumberInterception } from '@/utils/tools'
+import {
+  useBuyBackParams,
+  useRewardsParams,
+  useProtocolParams,
+  useClearingParams,
+  useExchangeParams,
+  useGrantPlanParams
+} from '@/hooks/useSysParams'
 
 const System: FC = () => {
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
   const { t } = useTranslation()
 
-  const isLoading = false
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const [systemRelevantData] = useState([
-    { parameters: t('Nav.SystemParameters.OpenClosePositionLimit'), value: '2' },
-    { parameters: t('Nav.SystemParameters.BuybackFundRatio'), value: '20%' },
-    { parameters: t('Nav.SystemParameters.MinPositionValue'), value: '500' },
-    { parameters: t('Nav.SystemParameters.MMRMaintenanceMarginRatio'), value: '1%' },
-    { parameters: t('Nav.SystemParameters.LMRLiquidationMarginRatio'), value: '0.5%' },
-    { parameters: t('Nav.SystemParameters.MultiplierofMMRAfterADL'), value: '2' },
-    { parameters: t('Nav.SystemParameters.iAPRofbToken'), value: '10%' },
-    { parameters: t('Nav.SystemParameters.eDRFMintperblock'), value: '0.00003472' },
-    { parameters: t('Nav.SystemParameters.BrokerPrivilegeFeeeDRF'), value: '60,000' },
-    { parameters: t('Nav.SystemParameters.eDRFforbrokerprivilegeperblock'), value: '0.02083333' },
-    { parameters: t('Nav.SystemParameters.MultiplierofGasFee'), value: '1.5' },
-    { parameters: t('Nav.SystemParameters.Buybackcycleblocks'), value: '30,000' },
-    { parameters: t('Nav.SystemParameters.BuybackSlippageTolerance'), value: '2%' },
-    { parameters: t('Nav.SystemParameters.MinGrantDRFspositionmining'), value: '1000' },
-    { parameters: t('Nav.SystemParameters.MinGrantDRFsbroker'), value: '1000' }
-  ])
+  const { protocolConfig } = useProtocolConf(marginToken)
+  const { data: buyBackParams } = useBuyBackParams(findToken(marginToken).tokenAddress)
+  const { data: protocolParams } = useProtocolParams()
+  const { data: rewardsParams, refetch: refetchRewardsParams } = useRewardsParams(protocolConfig?.rewards)
+  const { data: exchangeParams, refetch: refetchExchangeParams } = useExchangeParams(protocolConfig?.exchange)
+  const { data: clearingParams, refetch: refetchClearingParams } = useClearingParams(protocolConfig?.clearing)
+  const { data: grantPlanParams, refetch: refetchGrantPlanParams } = useGrantPlanParams(protocolConfig)
+  console.info(buyBackParams)
+  const system = useMemo(() => {
+    return [
+      {
+        parameters: t('Nav.SystemParameters.OpenClosePositionLimit'),
+        value: nonBigNumberInterception(exchangeParams.thetaRatio, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.BuybackFundRatio'),
+        value: `${nonBigNumberInterception(bnMul(exchangeParams.buyBackFundRatio, 100), 4)}%`
+      },
+      {
+        parameters: t('Nav.SystemParameters.MinPositionValue'),
+        value: nonBigNumberInterception(exchangeParams.minOpenAmount, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.MMRMaintenanceMarginRatio'),
+        value: `${nonBigNumberInterception(bnMul(clearingParams.marginMaintenanceRatio, 100), 4)}%`
+      },
+      {
+        parameters: t('Nav.SystemParameters.LMRLiquidationMarginRatio'),
+        value: `${nonBigNumberInterception(bnMul(clearingParams.marginLiquidationRatio, 100), 4)}%`
+      },
+      {
+        parameters: t('Nav.SystemParameters.MultiplierofMMRAfterADL'),
+        value: nonBigNumberInterception(clearingParams.marginMaintenanceRatioMultiple, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.iAPRofbToken'),
+        value: `${nonBigNumberInterception(bnMul(rewardsParams.bondAnnualInterestRate, 100), 4)}%`
+      },
+      {
+        parameters: t('Nav.SystemParameters.eDRFMintperblock'),
+        value: nonBigNumberInterception(protocolParams.unitStakingNumber, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.BrokerPrivilegeFeeeDRF'),
+        value: nonBigNumberInterception(protocolParams.brokerApplyNumber, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.eDRFforbrokerprivilegeperblock'),
+        value: nonBigNumberInterception(protocolParams.brokerValidUnitNumber, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.MultiplierofGasFee'),
+        value: nonBigNumberInterception(clearingParams.gasFeeRewardRatio, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.Buybackcycleblocks'),
+        value: nonBigNumberInterception(buyBackParams.buyback_period, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.BuybackSlippageTolerance'),
+        value: `${bnMul(buyBackParams.buyback_sllipage, 100)}%`
+      },
+      {
+        parameters: t('Nav.SystemParameters.MinGrantDRFspositionmining'),
+        value: nonBigNumberInterception(grantPlanParams.mining, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.MinGrantDRFsbroker'),
+        value: nonBigNumberInterception(grantPlanParams.awards, 8)
+      },
+      {
+        parameters: t('Nav.SystemParameters.MinGrantDRFstradingcompetition'),
+        value: nonBigNumberInterception(grantPlanParams.rank, 8)
+      }
+    ]
+  }, [exchangeParams, clearingParams, grantPlanParams, protocolParams])
 
-  const [tradingToken] = useState([
-    { parameters: t('Nav.SystemParameters.kPCFRate'), value: '1,000' },
-    { parameters: t('Nav.SystemParameters.yPCFRate'), value: '300,000,000' },
-    { parameters: t('Nav.SystemParameters.PCF'), value: '0.12%' },
-    { parameters: t('Nav.SystemParameters.TradingFeeRatio'), value: '0.1%' },
-    { parameters: t('Nav.SystemParameters.Maxlimitorders'), value: '10' },
-    { parameters: t('Nav.SystemParameters.Maxleverage'), value: '75' }
-  ])
+  const trading = useMemo(() => {
+    return [
+      { parameters: t('Nav.SystemParameters.kPCFRate'), value: '' },
+      { parameters: t('Nav.SystemParameters.yPCFRate'), value: '' },
+      { parameters: t('Nav.SystemParameters.PCF'), value: '' },
+      { parameters: t('Nav.SystemParameters.TradingFeeRatio'), value: '' },
+      { parameters: t('Nav.SystemParameters.Maxlimitorders'), value: '' },
+      { parameters: t('Nav.SystemParameters.Maxleverage'), value: '' }
+    ]
+  }, [t])
 
   const webColumns = [
     {
@@ -49,10 +120,14 @@ const System: FC = () => {
     }
   ]
 
-  const memoEmptyText = useMemo(() => {
-    if (isLoading) return 'Loading'
-    return ''
-  }, [isLoading])
+  useEffect(() => {
+    if (protocolConfig) {
+      void refetchRewardsParams()
+      void refetchExchangeParams()
+      void refetchClearingParams()
+      void refetchGrantPlanParams()
+    }
+  }, [protocolConfig])
 
   return (
     <div className="web-table-page">
@@ -62,25 +137,11 @@ const System: FC = () => {
       <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.SystemRelevant')}</h3>
       </header>
-      <Table
-        className="web-broker-table"
-        emptyText={memoEmptyText}
-        // @ts-ignore
-        columns={webColumns}
-        data={systemRelevantData}
-        rowKey="parameters"
-      />
+      <Table className="web-broker-table" columns={webColumns} data={system} rowKey="parameters" />
       <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.TradingToken')}</h3>
       </header>
-      <Table
-        className="web-broker-table"
-        emptyText={memoEmptyText}
-        // @ts-ignore
-        columns={webColumns}
-        data={tradingToken}
-        rowKey="parameters"
-      />
+      <Table className="web-broker-table" columns={webColumns} data={trading} rowKey="parameters" />
     </div>
   )
 }

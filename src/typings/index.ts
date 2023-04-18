@@ -1,6 +1,6 @@
-import GlobalType from '@/typings/global'
-import { contractInfo } from '@/hooks/useProtocolConfig'
 import { Signer } from 'ethers'
+
+import GlobalType from '@/typings/global'
 
 export enum ChainId {
   MAINNET = 56,
@@ -19,11 +19,25 @@ export type AllTokenKeys = 'btc' | 'busd' | 'eth' | 'drf' | 'edrf'
 
 export type ContractKeys = 'multicall' | 'derifyProtocol'
 
+export const protocolConfig = {
+  rank: '',
+  awards: '',
+  mining: '',
+  factory: '',
+  rewards: '',
+  exchange: '',
+  clearing: '',
+  priceFeed: '',
+  bMarginToken: ''
+}
+
+export type ProtocolConfig = typeof protocolConfig
+
 export type MarginToken = { [key in MarginTokenKeys]: any }
 
 export type MarginTokenWithQuote = { [key in MarginTokenKeys]: { [key in QuoteTokenKeys]: any } }
 
-export type MarginTokenWithContract = { [key in MarginTokenKeys]: typeof contractInfo }
+export type MarginTokenWithContract = { [key in MarginTokenKeys]: typeof protocolConfig }
 
 export enum PositionOrderTypes {
   Market,

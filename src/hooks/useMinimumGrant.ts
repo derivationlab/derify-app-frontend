@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { formatUnits } from '@/utils/tools'
 import { PLATFORM_TOKEN } from '@/config/tokens'
-import { getDerifyPmrContract, getDerifyRankContract, getDerifyBrokerRewardsContract } from '@/utils/contractHelpers'
+import { getDerifyPmrContract, getDerifyRankContract, getDerifyBRewardsContract } from '@/utils/contractHelpers'
 
 export const useMinimumGrant = ({ rank = '', awards = '', mining = '' } = {}) => {
   const { data, refetch, isLoading } = useQuery(
@@ -11,7 +11,7 @@ export const useMinimumGrant = ({ rank = '', awards = '', mining = '' } = {}) =>
       if (rank && awards && mining) {
         const c1 = getDerifyPmrContract(mining)
         const c2 = getDerifyRankContract(rank)
-        const c3 = getDerifyBrokerRewardsContract(awards)
+        const c3 = getDerifyBRewardsContract(awards)
 
         const res1 = await c1.minGrantAmount()
         const res2 = await c2.minGrantAmount()

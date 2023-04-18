@@ -9,7 +9,7 @@ import { allowanceApprove } from '@/utils/allowanceApprove'
 import { findMarginToken, findToken } from '@/config/tokens'
 import { bnDiv, inputParameterConversion } from '@/utils/tools'
 import { PositionSideTypes, PositionTriggerTypes, TSigner } from '@/typings'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
+import { getDerifyDerivativeContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 
 export const usePositionOperation = () => {
   const { data: signer } = useSigner()
@@ -118,7 +118,7 @@ export const usePositionOperation = () => {
 
       if (!signer) return false
 
-      const c = getDerifyDerivativePairContract(pairAddress, signer)
+      const c = getDerifyDerivativeContract(pairAddress, signer)
 
       try {
         if (orderType === PositionTriggerTypes.Limit) {
@@ -185,7 +185,7 @@ export const usePositionOperation = () => {
   ): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyDerivativePairContract(pairAddress, signer)
+    const c = getDerifyDerivativeContract(pairAddress, signer)
     const job = calcProfitOrLoss(takeProfitPrice, stopLossPrice)
 
     if (isEmpty(job)) return true

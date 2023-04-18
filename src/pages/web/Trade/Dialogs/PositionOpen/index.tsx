@@ -33,7 +33,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
 
   const { spotPrice } = useSpotPrice(quoteToken, marginToken)
-  const { factoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { factoryConfig } = useFactoryConf(marginToken, quoteToken)
   const { protocolConfig } = useProtocolConf(marginToken)
   const { openingMaxLimit } = useOpeningMaxLimit(quoteToken, marginToken)
 

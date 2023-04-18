@@ -7,8 +7,8 @@ import React, { FC, useMemo, useContext, useCallback, useEffect, useReducer } fr
 
 import { bnDiv } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
-import { useConfigInfoStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
+import { useConfigInfoStore } from '@/store'
 import { reducer, stateInit } from '@/reducers/records'
 import { getMySpaceMarginTokenList } from '@/api'
 import { findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
@@ -42,10 +42,10 @@ const MySpace: FC = () => {
   const { data: allBrokerRewards, refetch: allBrokerRewardsRefetch } = useAllBrokerRewards(address, protocolConfig)
 
   const emptyText = useMemo(() => {
-    if (state.records.loaded) return 'Loading'
-    if (isEmpty(state.records.records)) return 'No Record'
+    if (state.records.loaded) return t('common.Loading')
+    if (isEmpty(state.records.records)) return t('common.NoRecord')
     return ''
-  }, [state.records])
+  }, [t, state.records])
 
   const mColumns = useMemo(() => {
     return [

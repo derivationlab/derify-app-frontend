@@ -236,3 +236,17 @@ export const getTradingCompetitionRanks = async (marginToken: string, page: numb
   const response = await get(`api/trading_competition_ranks/${marginToken}`)
   return response
 }
+
+export const getBuyBackParams = async (marginToken: string) => {
+  const response = await get(
+    `https://admin-test-api.derify.exchange/sys/param`,
+    { marginToken },
+    {
+      headers: {
+        'x-access-token':
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJEZXJpZnlBZG1pbiIsInJvbGUiOjIsImlhdCI6MTY4MTc0NjQzNCwiZXhwIjoxNjgxNzg5NjM0fQ.AyHx17ctarfU2suuJrCovFf2iMxAQoh7alzOtydnEdE'
+      }
+    }
+  )
+  return response
+}

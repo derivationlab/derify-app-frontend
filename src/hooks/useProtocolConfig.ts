@@ -3,20 +3,9 @@ import { isEmpty } from 'lodash'
 import contracts from '@/config/contracts'
 import { MARGIN_TOKENS } from '@/config/tokens'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
-import { MarginTokenWithContract } from '@/typings'
+import { MarginTokenWithContract, protocolConfig } from '@/typings'
 
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
-
-export const contractInfo = {
-  rank: '',
-  awards: '',
-  mining: '',
-  factory: '',
-  rewards: '',
-  exchange: '',
-  priceFeed: '',
-  bMarginToken: ''
-}
 
 export const initial = (): MarginTokenWithContract => {
   let value = Object.create(null)
@@ -24,7 +13,7 @@ export const initial = (): MarginTokenWithContract => {
   MARGIN_TOKENS.forEach((t) => {
     value = {
       ...value,
-      [t.symbol]: contractInfo
+      [t.symbol]: protocolConfig
     }
   })
 
@@ -51,6 +40,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
         derifyFactory,
         derifyRewards,
         derifyExchange,
+        derifyClearing,
         derifyBrokerRewards,
         marginTokenPriceFeed
       } = addresses
@@ -64,6 +54,7 @@ export const useProtocolConfig = (): { data?: MarginTokenWithContract; isLoading
           rewards: derifyRewards,
           factory: derifyFactory,
           exchange: derifyExchange,
+          clearing: derifyClearing,
           priceFeed: marginTokenPriceFeed,
           bMarginToken
         }

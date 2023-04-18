@@ -30,7 +30,7 @@ const MyOrder: FC = () => {
   const profitLossOrdLoaded = usePositionStore((state) => state.loaded)
 
   const { protocolConfig } = useProtocolConf(marginToken)
-  const { match: matchFactoryConfig } = useFactoryConf('', marginToken)
+  const { match: matchFactoryConfig } = useFactoryConf(marginToken)
   const { cancelAllPositions, cancelPosition } = usePositionOperation()
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})

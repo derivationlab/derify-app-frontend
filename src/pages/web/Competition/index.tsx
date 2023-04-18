@@ -52,10 +52,10 @@ const CompetitionRank: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const emptyText = useMemo(() => {
-    if (state.grantData.isLoaded) return 'Loading'
-    if (isEmpty(state.grantData.records)) return 'No Record'
+    if (state.grantData.isLoaded) return t('common.Loading')
+    if (isEmpty(state.grantData.records)) return t('common.NoRecord')
     return ''
-  }, [state.grantData])
+  }, [t, state.grantData])
 
   const mColumns = [
     {

@@ -129,10 +129,10 @@ const Plan: FC = () => {
   }, [t, blockNumber, mTokenPrices])
 
   const emptyText = useMemo(() => {
-    if (state.records.loaded) return 'Loading'
+    if (state.records.loaded) return t('common.Loading')
     if (isEmpty(state.records.records)) return t('NewDashboard.BuybackPlan.NoResultsFound')
     return ''
-  }, [state.records])
+  }, [t, state.records])
 
   // const onSearch = () => {
   //   if (keyword) {

@@ -42,7 +42,7 @@ const MyPosition: FC = () => {
 
   const { spotPrices } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
-  const { match: matchFactoryConfig } = useFactoryConf(quoteToken, marginToken)
+  const { match: matchFactoryConfig } = useFactoryConf(marginToken, quoteToken)
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')

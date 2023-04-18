@@ -1,18 +1,20 @@
 import { create } from 'zustand'
+import { BigNumber } from 'ethers'
 
 import multicall from '@/utils/multicall'
+import { formatUnits } from '@/utils/tools'
 import { BalancesState } from '@/store/types'
 import tokens, { findToken, MARGIN_TOKENS } from '@/config/tokens'
-import { formatUnits, safeInterceptionValues } from '@/utils/tools'
 import { getBep20Contract, getJsonRpcProvider } from '@/utils/contractHelpers'
 
 import erc20Abi from '@/config/abi/erc20.json'
 
-const TOKENS = [tokens.edrf, ...MARGIN_TOKENS]
+const jsonRpc = getJsonRpcProvider()
+const _tokens = [tokens.edrf, ...MARGIN_TOKENS]
 const initial = (): Record<string, string> => {
   let value = Object.create(null)
 
-  TOKENS.forEach((t) => {
+  _tokens.forEach((t) => {
     value = {
       ...value,
       [t.symbol]: '0',
@@ -31,12 +33,10 @@ export const getTokenBalance = async (account: string, address: string) => {
   return formatUnits(res, findToken(address).precision)
 }
 
-const jsonRpc = getJsonRpcProvider()
-
 export const getTokenBalances = async (account: string) => {
   let initialVal = initial()
 
-  const calls = TOKENS.map((t) => ({ address: t.tokenAddress, name: 'balanceOf', params: [account] }))
+  const calls = _tokens.map((t) => ({ address: t.tokenAddress, name: 'balanceOf', params: [account] }))
 
   const res = await multicall(erc20Abi, calls)
   const bnb = await jsonRpc.getBalance(account)
@@ -44,13 +44,13 @@ export const getTokenBalances = async (account: string) => {
   const bnbBalance = formatUnits(bnb, 18)
 
   if (res.length > 0) {
-    res.forEach((t: any, index: number) => {
-      const precision = TOKENS[index].precision
-      const balance = safeInterceptionValues(String(t), precision, precision)
+    res.forEach((t: BigNumber[], index: number) => {
+      const precision = _tokens[index].precision
+      const balance = formatUnits(t[0], precision)
       initialVal = {
         ...initialVal,
-        [TOKENS[index].symbol]: balance,
-        [TOKENS[index].symbol.toLowerCase()]: balance
+        [_tokens[index].symbol]: balance,
+        [_tokens[index].symbol.toLowerCase()]: balance
       }
     })
   }

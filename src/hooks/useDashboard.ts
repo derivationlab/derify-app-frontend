@@ -11,7 +11,7 @@ import {
   getDerifyPmrContract,
   getDerifyRankContract,
   getDerifyRewardsContract,
-  getDerifyBrokerRewardsContract
+  getDerifyBRewardsContract
 } from '@/utils/contractHelpers'
 
 export const useRankReward = (trader?: string, rewards?: string) => {
@@ -62,7 +62,7 @@ export const useAddGrant = () => {
         c = getDerifyPmrContract(address, signer)
       }
       if (type === 'awards') {
-        c = getDerifyBrokerRewardsContract(address, signer)
+        c = getDerifyBRewardsContract(address, signer)
       }
 
       const _amount = inputParameterConversion(amount, 18)

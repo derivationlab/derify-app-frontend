@@ -196,6 +196,7 @@ const usePositionStore = create<PositionState>((set) => ({
   profitLossOrd: [],
   loaded: false,
   fetch: async (trader: string, factoryConfig: Rec) => {
+    console.info(trader)
     const [positionOrd, profitLossOrd] = await getMyPositionsData(trader, factoryConfig)
     set({ positionOrd, profitLossOrd, loaded: true })
   }

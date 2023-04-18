@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import { findToken } from '@/config/tokens'
 import { OpeningState } from '@/store/types'
 import { MarginTokenKeys } from '@/typings'
-import { getDerifyDerivativePairContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
+import { getDerifyDerivativeContract, getDerifyExchangeContract } from '@/utils/contractHelpers'
 import { formatUnits, inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
 
 export enum OpeningType {
@@ -36,7 +36,7 @@ const getMaxVolume = async (
 }
 
 const getTFRValue = async (address: string) => {
-  const c = getDerifyDerivativePairContract(address)
+  const c = getDerifyDerivativeContract(address)
 
   // todo 价值转换？
 

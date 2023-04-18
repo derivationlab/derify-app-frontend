@@ -77,10 +77,10 @@ const Trader: FC = () => {
   }
 
   const memoEmptyText = useMemo(() => {
-    if (state.records.loaded) return 'Loading'
-    if (isEmpty(state.records?.records)) return 'No Record'
+    if (state.records.loaded) return t('common.Loading')
+    if (isEmpty(state.records?.records)) return t('common.NoRecord')
     return ''
-  }, [state.records])
+  }, [t, state.records])
 
   useEffect(() => {
     void fetchData()

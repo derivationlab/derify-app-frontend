@@ -7,7 +7,7 @@ import { MobileContext } from '@/providers/Mobile'
 import { PositionSideTypes } from '@/typings'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'
-import { useMarginTokenStore, useQuoteTokenStore, useTraderInfoStore } from '@/store'
+import { useMarginTokenStore, useQuoteTokenStore, useSysParamsStore, useTraderInfoStore } from '@/store'
 
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
@@ -25,6 +25,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
+  const sysParams = useSysParamsStore((state) => state.sysParams)
   const variables = useTraderInfoStore((state) => state.variables)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
@@ -106,7 +107,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       const { marginBalance = 0, totalPositionAmount = 0 } = variables
       const mul = data.side === PositionSideTypes.short ? -1 : 1
 
-      const p1 = bnMul(totalPositionAmount, 0.01)
+      const p1 = bnMul(totalPositionAmount, sysParams.marginLiquidationRatio)
       const p2 = bnMinus(marginBalance, p1)
       const p3 = bnDiv(p2, data.size)
       const p4 = bnMul(p3, mul)
@@ -122,7 +123,9 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.LiqPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>{lp}</span>
+        <span>
+          {lp}-{sysParams.marginLiquidationRatio}
+        </span>
       </DataAtom>
     )
   }, [data, spotPrices, variables, variablesLoaded, t])

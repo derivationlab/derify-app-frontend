@@ -1,21 +1,8 @@
 import { useMemo } from 'react'
 
-import { useConfigInfoStore, usePairsInfoStore } from '@/store'
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys, QuoteTokenKeys } from '@/typings'
-
-export const useOpeningMaxLimit = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
-  const openingMaxLimit = useConfigInfoStore((state) => state.openingMaxLimit)
-  const openingMaxLimitLoaded = useConfigInfoStore((state) => state.openingMaxLimitLoaded)
-
-  const _openingMaxLimit = useMemo(() => {
-    if (openingMaxLimitLoaded) return openingMaxLimit[marginToken as MarginTokenKeys][quoteToken as QuoteTokenKeys]
-  }, [quoteToken, marginToken, openingMaxLimit, openingMaxLimitLoaded])
-
-  return {
-    openingMaxLimit: _openingMaxLimit
-  }
-}
+import { useConfigInfoStore, usePairsInfoStore } from '@/store'
 
 export const useSpotPrice = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
   const spotPrices = usePairsInfoStore((state) => state.spotPrices)
@@ -36,7 +23,7 @@ export const useSpotPrice = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = 
   }
 }
 
-export const useFactoryConf = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
+export const useFactoryConf = (marginToken = MARGIN_TOKENS[0].symbol, quoteToken = QUOTE_TOKENS[0].symbol) => {
   const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)
   const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
 
@@ -91,5 +78,18 @@ export const useIndicatorsConf = (quoteToken = QUOTE_TOKENS[0].symbol) => {
 
   return {
     indicators: _indicators
+  }
+}
+
+export const useOpeningMaxLimit = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
+  const openingMaxLimit = useConfigInfoStore((state) => state.openingMaxLimit)
+  const openingMaxLimitLoaded = useConfigInfoStore((state) => state.openingMaxLimitLoaded)
+
+  const _openingMaxLimit = useMemo(() => {
+    if (openingMaxLimitLoaded) return openingMaxLimit[marginToken as MarginTokenKeys][quoteToken as QuoteTokenKeys]
+  }, [quoteToken, marginToken, openingMaxLimit, openingMaxLimitLoaded])
+
+  return {
+    openingMaxLimit: _openingMaxLimit
   }
 }

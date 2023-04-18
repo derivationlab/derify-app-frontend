@@ -1,11 +1,12 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect, useMemo } from 'react'
+import React, { FC, useEffect } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useConfigInfoStore, useMarginTokenStore } from '@/store'
-import { usePositionStore } from '@/store/usePosition'
+import { useClearingParams } from '@/hooks/useSysParams'
+import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
+import { useMarginTokenStore, useSysParamsStore, usePositionStore } from '@/store'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
 
@@ -17,26 +18,29 @@ const Data: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const fetchTraderPos = usePositionStore((state) => state.fetch)
-  const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)
-  const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const fetchTraderPos = usePositionStore((state) => state.fetch)
+  const updateSysParams = useSysParamsStore((state) => state.updateSysParams)
 
-  const _factoryConfig = useMemo(() => {
-    if (factoryConfigLoaded && factoryConfig) return factoryConfig[marginToken]
-  }, [marginToken, factoryConfig, factoryConfigLoaded])
-
-  useEffect(() => {
-    if (address && _factoryConfig) void fetchTraderPos(address, _factoryConfig)
-  }, [_factoryConfig, address])
+  const { protocolConfig } = useProtocolConf(marginToken)
+  const { match: factoryConfig } = useFactoryConf(marginToken)
+  const { data: clearingParams, refetch: refetchClearingParams } = useClearingParams(protocolConfig?.clearing)
 
   useEffect(() => {
+    if (protocolConfig) void refetchClearingParams()
+  }, [protocolConfig])
+
+  useEffect(() => {
+    if (clearingParams) updateSysParams(clearingParams as any)
+  }, [clearingParams])
+
+  useEffect(() => {
+    if (address && factoryConfig) void fetchTraderPos(address, factoryConfig)
+
     PubSub.subscribe(PubSubEvents.UPDATE_OPENED_POSITION, () => {
-      if (address && _factoryConfig) {
-        void fetchTraderPos(address, _factoryConfig)
-      }
+      if (address && factoryConfig) void fetchTraderPos(address, factoryConfig)
     })
-  }, [factoryConfig, address])
+  }, [address, factoryConfig])
 
   return (
     <Tabs className="web-trade-data">

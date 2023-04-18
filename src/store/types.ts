@@ -1,3 +1,5 @@
+import { sysParams } from '@/store/useSysParams'
+
 import { OpeningType } from '@/store/useOpening'
 import { InitialTraderVariablesType } from '@/hooks/helper'
 import {
@@ -39,6 +41,12 @@ export interface OpeningState {
     exchange: string,
     marginToken: MarginTokenKeys
   ) => Promise<void>
+}
+
+export interface SysParamsState {
+  loaded: boolean
+  sysParams: typeof sysParams
+  updateSysParams: (p: typeof sysParams) => void
 }
 
 export interface BalancesState {

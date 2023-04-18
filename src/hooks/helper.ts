@@ -11,7 +11,7 @@ import {
   getDerifyRewardsContract,
   getDerifyProtocolContract,
   getDerifyExchangeContract,
-  getDerifyDerivativePairContract
+  getDerifyDerivativeContract
 } from '@/utils/contractHelpers'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 import {
@@ -338,7 +338,7 @@ export const calcTradingFee = async (
   openingAmount: string | number,
   spotPrice: string
 ): Promise<number> => {
-  const c = getDerifyDerivativePairContract(pairAddress)
+  const c = getDerifyDerivativeContract(pairAddress)
 
   const response = await c.tradingFeeRatio()
 
@@ -386,7 +386,7 @@ export const calcChangeFee = async (
     ? inputParameterConversion(bnDiv(amount, spotPrice), 8)
     : inputParameterConversion(amount, 8)
   const exchangeContract = getDerifyExchangeContract(exchange)
-  const derivativeContract = getDerifyDerivativePairContract(derivative)
+  const derivativeContract = getDerifyDerivativeContract(derivative)
 
   const liquidityPool = await exchangeContract.liquidityPool()
   const longTotalSize = await derivativeContract.longTotalSize()

@@ -38,22 +38,6 @@ export const getMulticallContract = (signer?: Signer | Provider | null) => {
   return getContract(multiCallAbi, contracts.multicall.contractAddress, signer)
 }
 
-export const getDerifyRewardsContract = (address: string, signer?: Signer | Provider | null) => {
-  return getContract(DerifyRewardsAbi, address, signer)
-}
-
-export const getDerifyExchangeContract = (address: string, signer?: Signer | Provider | null) => {
-  return getContract(DerifyExchangeAbi, address, signer)
-}
-
-export const getDerifyDerivativePairContract = (pairAddress: string, signer?: Signer | Provider | null) => {
-  return getContract(DerifyDerivativeAbi, pairAddress, signer)
-}
-
-export const getDerifyProtocolContract = (signer?: Signer | Provider | null) => {
-  return getContract(DerifyProtocolAbi, contracts.derifyProtocol.contractAddress, signer)
-}
-
 export const getDerifyPmrContract = (address: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyPmrAbi, address, signer)
 }
@@ -62,6 +46,22 @@ export const getDerifyRankContract = (address: string, signer?: Signer | Provide
   return getContract(DerifyRankAbi, address, signer)
 }
 
-export const getDerifyBrokerRewardsContract = (address: string, signer?: Signer | Provider | null) => {
+export const getDerifyRewardsContract = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(DerifyRewardsAbi, address, signer)
+}
+
+export const getDerifyBRewardsContract = (address: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyBrokerRewardsAbi, address, signer)
+}
+
+export const getDerifyExchangeContract = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(DerifyExchangeAbi, address, signer)
+}
+
+export const getDerifyProtocolContract = (signer?: Signer | Provider | null) => {
+  return getContract(DerifyProtocolAbi, contracts.derifyProtocol.contractAddress, signer)
+}
+
+export const getDerifyDerivativeContract = (pairAddress: string, signer?: Signer | Provider | null) => {
+  return getContract(DerifyDerivativeAbi, pairAddress, signer)
 }

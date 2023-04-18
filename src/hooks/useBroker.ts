@@ -20,7 +20,7 @@ export const useApplyBroker = () => {
       if (!signer) return false
 
       const c = getDerifyProtocolContract(signer)
-      const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 8)
+      const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 18)
 
       try {
         const approve = await allowanceApprove(
@@ -70,7 +70,8 @@ export const useWithdrawReward = () => {
 export const useExtendPeriod = () => {
   const extend = async (amount: string, signer: Signer): Promise<boolean> => {
     const c = getDerifyProtocolContract(signer)
-    const _amount = inputParameterConversion(amount, 8)
+    const _amount1 = inputParameterConversion(amount, 8)
+    const _amount2 = inputParameterConversion(amount, 18)
 
     try {
       if (!signer) return false
@@ -79,12 +80,12 @@ export const useExtendPeriod = () => {
         signer,
         contracts.derifyProtocol.contractAddress,
         tokens.edrf.tokenAddress,
-        amount
+        _amount2
       )
 
       if (!approve) return false
 
-      const response = await c.burnEdrfExtendValidPeriod(_amount)
+      const response = await c.burnEdrfExtendValidPeriod(_amount1)
       const receipt = await response.wait()
 
       return receipt.status

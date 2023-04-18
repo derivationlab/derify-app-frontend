@@ -32,20 +32,21 @@ export const useStakingDrf = () => {
     if (!signer) return false
 
     const c = getDerifyProtocolContract(signer)
-    const _amount = inputParameterConversion(amount, 8)
+    const _amount1 = inputParameterConversion(amount, 8)
+    const _amount2 = inputParameterConversion(amount, 18)
 
     try {
       const approve = await allowanceApprove(
         signer,
         contracts.derifyProtocol.contractAddress,
         tokens.drf.tokenAddress,
-        _amount
+        _amount2
       )
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(c, 'stakingDrf', [_amount])
-      const res = await c.stakingDrf(_amount, { gasLimit })
+      const gasLimit = await estimateGas(c, 'stakingDrf', [_amount1])
+      const res = await c.stakingDrf(_amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
@@ -67,15 +68,16 @@ export const useExchangeBond = () => {
     if (!signer) return false
 
     const c = getDerifyRewardsContract(rewards, signer)
-    const _amount = inputParameterConversion(amount, 8)
+    const _amount1 = inputParameterConversion(amount, 8)
+    const _amount2 = inputParameterConversion(amount, 18)
 
     try {
-      const approve = await allowanceApprove(signer, rewards, bMarginToken, _amount)
+      const approve = await allowanceApprove(signer, rewards, bMarginToken, _amount2)
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(c, 'exchangeBond', [_amount])
-      const res = await c.exchangeBond(_amount, { gasLimit })
+      const gasLimit = await estimateGas(c, 'exchangeBond', [_amount1])
+      const res = await c.exchangeBond(_amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {
@@ -130,15 +132,16 @@ export const useDepositBondToBank = () => {
     if (!signer) return false
 
     const c = getDerifyRewardsContract(rewards, signer)
-    const _amount = inputParameterConversion(amount, 8)
+    const _amount1 = inputParameterConversion(amount, 8)
+    const _amount2 = inputParameterConversion(amount, 18)
 
     try {
-      const approve = await allowanceApprove(signer, rewards, bMarginToken, _amount)
+      const approve = await allowanceApprove(signer, rewards, bMarginToken, _amount2)
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(c, 'depositBondToBank', [_amount])
-      const res = await c.depositBondToBank(_amount, { gasLimit })
+      const gasLimit = await estimateGas(c, 'depositBondToBank', [_amount1])
+      const res = await c.depositBondToBank(_amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {

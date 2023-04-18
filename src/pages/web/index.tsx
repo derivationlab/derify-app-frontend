@@ -2,9 +2,9 @@ import { useLocation } from 'react-router-dom'
 import React, { FC, useEffect, useState } from 'react'
 
 import { getIpLocation } from '@/api'
-import { useMarginTokenStore } from '@/store'
 import { findMarginToken } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
+import { useMarginTokenStore } from '@/store'
 import { Redirect, Switch, Route } from '@/components/common/Route'
 import {
   RBrokerList,
@@ -52,14 +52,6 @@ const Web: FC = () => {
   const updateMarginToken = useMarginTokenStore((state) => state.updateMarginToken)
 
   useEffect(() => {
-    const path = pathname.split('/')
-    const find = findMarginToken(path[1])
-    const margin = find ? find.symbol : marginToken
-    // console.info(margin)
-    updateMarginToken(margin as MarginTokenKeys)
-  }, [pathname, marginToken])
-
-  useEffect(() => {
     const func = async () => {
       const data = await getIpLocation()
       setVisible(!data)
@@ -67,6 +59,14 @@ const Web: FC = () => {
 
     void func()
   }, [])
+
+  useEffect(() => {
+    const path = pathname.split('/')
+    const find = findMarginToken(path[1])
+    const margin = find ? find.symbol : marginToken
+    // console.info(margin)
+    updateMarginToken(margin as MarginTokenKeys)
+  }, [pathname, marginToken])
 
   return (
     <>

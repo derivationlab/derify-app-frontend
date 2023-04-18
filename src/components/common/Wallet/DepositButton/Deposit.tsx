@@ -2,9 +2,9 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useReducer } from 'react'
 
-import { isGT, isGTET } from '@/utils/tools'
 import { reducer, stateInit } from '@/reducers/withdraw'
 import { useMarginTokenStore, useBalancesStore } from '@/store'
+import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -55,7 +55,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           </div>
           <div className="amount">
             <AmountInput
-              max={balances[marginToken]}
+              max={nonBigNumberInterception(balances[marginToken], 8)}
               unit={marginToken}
               title={t('Trade.Deposit.AmountToDeposit', 'Amount to deposit')}
               onChange={onChange}

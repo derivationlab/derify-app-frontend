@@ -28,8 +28,7 @@ export const allowanceApprove = async (
 
   try {
     const allowance = await getAllowance(c, signer, spender)
-    console.info(String(allowance))
-    console.info(amount)
+    
     if (BigNumber.from(allowance).lte(amount)) {
       const gasLimit = await estimateGas(c, 'approve', [spender, amount])
       const tx = await c.approve(spender, amount, { gasLimit })

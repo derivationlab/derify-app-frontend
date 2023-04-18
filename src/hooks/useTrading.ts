@@ -257,16 +257,17 @@ export const useMarginOperation = () => {
   const deposit = async (exchange: string, amount: string, marginToken: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
+    const _amount1 = inputParameterConversion(amount, 8)
+    const _amount2 = inputParameterConversion(amount, 18)
     const c = getDerifyExchangeContract(exchange, signer)
 
     try {
-      const _amount = inputParameterConversion(amount, 8)
-      const approve = await allowanceApprove(signer, exchange, findToken(marginToken).tokenAddress, _amount)
+      const approve = await allowanceApprove(signer, exchange, findToken(marginToken).tokenAddress, _amount2)
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(c, 'deposit', [_amount])
-      const res = await c.deposit(_amount, { gasLimit })
+      const gasLimit = await estimateGas(c, 'deposit', [_amount1])
+      const res = await c.deposit(_amount1, { gasLimit })
       const receipt = await res.wait()
       return receipt.status
     } catch (e) {

@@ -1,10 +1,12 @@
 import Table from 'rc-table'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect, useMemo } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { findToken } from '@/config/tokens'
+import { pairOptions } from '@/data'
+import { QuoteTokenKeys } from '@/typings'
 import { useMarginTokenStore } from '@/store'
-import { useProtocolConf } from '@/hooks/useMatchConf'
+import { findToken, QUOTE_TOKENS } from '@/config/tokens'
+import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
 import { bnMul, nonBigNumberInterception } from '@/utils/tools'
 import {
   useBuyBackParams,
@@ -12,22 +14,31 @@ import {
   useProtocolParams,
   useClearingParams,
   useExchangeParams,
-  useGrantPlanParams
+  useGrantPlanParams,
+  useTradePairParams
 } from '@/hooks/useSysParams'
+
+import Select from '@/components/common/Form/Select'
+
+const initSelectPair = QUOTE_TOKENS[0].symbol as QuoteTokenKeys
 
 const System: FC = () => {
   const { t } = useTranslation()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
+  const [selectPair, setSelectPair] = useState<QuoteTokenKeys>(initSelectPair)
+
   const { protocolConfig } = useProtocolConf(marginToken)
+  const { match: factoryConfig } = useFactoryConf(marginToken)
   const { data: buyBackParams } = useBuyBackParams(findToken(marginToken).tokenAddress)
   const { data: protocolParams } = useProtocolParams()
   const { data: rewardsParams, refetch: refetchRewardsParams } = useRewardsParams(protocolConfig?.rewards)
   const { data: exchangeParams, refetch: refetchExchangeParams } = useExchangeParams(protocolConfig?.exchange)
   const { data: clearingParams, refetch: refetchClearingParams } = useClearingParams(protocolConfig?.clearing)
   const { data: grantPlanParams, refetch: refetchGrantPlanParams } = useGrantPlanParams(protocolConfig)
-  console.info(buyBackParams)
+  const { data: tradePairParams, refetch: refetchTradePairParams } = useTradePairParams(factoryConfig?.[selectPair])
+
   const system = useMemo(() => {
     return [
       {
@@ -99,16 +110,25 @@ const System: FC = () => {
 
   const trading = useMemo(() => {
     return [
-      { parameters: t('Nav.SystemParameters.kPCFRate'), value: '' },
-      { parameters: t('Nav.SystemParameters.yPCFRate'), value: '' },
-      { parameters: t('Nav.SystemParameters.PCF'), value: '' },
-      { parameters: t('Nav.SystemParameters.TradingFeeRatio'), value: '' },
-      { parameters: t('Nav.SystemParameters.Maxlimitorders'), value: '' },
-      { parameters: t('Nav.SystemParameters.Maxleverage'), value: '' }
+      { parameters: t('Nav.SystemParameters.kPCFRate'), value: nonBigNumberInterception(tradePairParams.kRatio, 8) },
+      { parameters: t('Nav.SystemParameters.yPCFRate'), value: nonBigNumberInterception(tradePairParams.gRatio, 8) },
+      {
+        parameters: t('Nav.SystemParameters.PCF'),
+        value: `${nonBigNumberInterception(bnMul(tradePairParams.roRatio, 100), 4)}%`
+      },
+      {
+        parameters: t('Nav.SystemParameters.TradingFeeRatio'),
+        value: `${nonBigNumberInterception(bnMul(tradePairParams.tradingFeeRatio, 100), 4)}%`
+      },
+      { parameters: t('Nav.SystemParameters.Maxlimitorders'), value: tradePairParams.maxLimitOrderSize },
+      {
+        parameters: t('Nav.SystemParameters.Maxleverage'),
+        value: nonBigNumberInterception(tradePairParams.maxLeverage, 0)
+      }
     ]
-  }, [t])
+  }, [t, tradePairParams])
 
-  const webColumns = [
+  const columns = [
     {
       title: t('Nav.SystemParameters.Parameters'),
       dataIndex: 'parameters',
@@ -129,6 +149,10 @@ const System: FC = () => {
     }
   }, [protocolConfig])
 
+  useEffect(() => {
+    if (factoryConfig) void refetchTradePairParams()
+  }, [selectPair, factoryConfig])
+
   return (
     <div className="web-table-page">
       <div className="web-system-title">
@@ -137,11 +161,14 @@ const System: FC = () => {
       <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.SystemRelevant')}</h3>
       </header>
-      <Table className="web-broker-table" columns={webColumns} data={system} rowKey="parameters" />
+      <Table className="web-broker-table" columns={columns} data={system} rowKey="parameters" />
       <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.TradingToken')}</h3>
+        <aside>
+          <Select value={selectPair} objOptions={pairOptions} onChange={(v) => setSelectPair(v as any)} />
+        </aside>
       </header>
-      <Table className="web-broker-table" columns={webColumns} data={trading} rowKey="parameters" />
+      <Table className="web-broker-table" columns={columns} data={trading} rowKey="parameters" />
     </div>
   )
 }

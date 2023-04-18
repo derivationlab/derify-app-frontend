@@ -13,6 +13,7 @@ import derifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import derifyClearingAbi from '@/config/abi/DerifyClearing.json'
 import derifyExchangeAbi from '@/config/abi/DerifyExchange.json'
+import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 export const initBuyBackParams = {
   buyback_period: '0',
@@ -47,6 +48,37 @@ export const initGrantPlanParams = {
   rank: '0',
   awards: '0',
   mining: '0'
+}
+
+export const initTradePairParams = {
+  kRatio: '0',
+  gRatio: '0',
+  roRatio: '0',
+  maxLeverage: '0',
+  tradingFeeRatio: '0',
+  maxLimitOrderSize: '0',
+  tradingFeePmrRatio: '0',
+  tradingFeeBrokerRatio: '0',
+  tradingFeeInusranceRatio: '0'
+}
+
+export const useBuyBackParams = (marginToken: string) => {
+  const { data, refetch, isLoading } = useQuery(
+    ['useBuyBackParams'],
+    async (): Promise<typeof initBuyBackParams> => {
+      const { data } = await getBuyBackParams(marginToken)
+      return data ?? initBuyBackParams
+    },
+    {
+      retry: 0,
+      initialData: initBuyBackParams,
+      refetchInterval: 30000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data, refetch, isLoading }
 }
 
 export const useRewardsParams = (rewards?: string) => {
@@ -266,16 +298,84 @@ export const useGrantPlanParams = (config?: ProtocolConfig) => {
   return { data, refetch, isLoading }
 }
 
-export const useBuyBackParams = (marginToken: string) => {
+export const useTradePairParams = (address?: string) => {
   const { data, refetch, isLoading } = useQuery(
-    ['useBuyBackParams'],
-    async (): Promise<typeof initBuyBackParams> => {
-      const { data } = await getBuyBackParams(marginToken)
-      return data
+    ['useTradePairParams'],
+    async (): Promise<typeof initTradePairParams> => {
+      if (address) {
+        const base = { address }
+        const calls = [
+          {
+            name: 'tradingFeeRatio',
+            ...base
+          },
+          {
+            name: 'tradingFeePmrRatio',
+            ...base
+          },
+          {
+            name: 'tradingFeeInusranceRatio',
+            ...base
+          },
+          {
+            name: 'tradingFeeBrokerRatio',
+            ...base
+          },
+          {
+            name: 'kRatio',
+            ...base
+          },
+          {
+            name: 'gRatio',
+            ...base
+          },
+          {
+            name: 'roRatio',
+            ...base
+          },
+          {
+            name: 'maxLeverage',
+            ...base
+          },
+          {
+            name: 'maxLimitOrderSize',
+            ...base
+          }
+        ]
+
+        const response = await multicall(derifyDerivativeAbi, calls)
+
+        const [
+          tradingFeeRatio,
+          tradingFeePmrRatio,
+          tradingFeeInusranceRatio,
+          tradingFeeBrokerRatio,
+          kRatio,
+          gRatio,
+          roRatio,
+          maxLeverage,
+          maxLimitOrderSize
+        ] = response
+
+        return {
+          ...initTradePairParams,
+          kRatio: formatUnits(String(kRatio), 8),
+          gRatio: formatUnits(String(gRatio), 8),
+          roRatio: formatUnits(String(roRatio), 8),
+          maxLeverage: formatUnits(String(maxLeverage), 8),
+          tradingFeeRatio: formatUnits(String(tradingFeeRatio), 8),
+          maxLimitOrderSize: String(maxLimitOrderSize),
+          tradingFeePmrRatio: formatUnits(String(tradingFeePmrRatio), 8),
+          tradingFeeBrokerRatio: formatUnits(String(tradingFeeBrokerRatio), 8),
+          tradingFeeInusranceRatio: formatUnits(String(tradingFeeInusranceRatio), 8)
+        }
+      }
+
+      return initTradePairParams
     },
     {
       retry: 0,
-      initialData: initBuyBackParams,
+      initialData: initTradePairParams,
       refetchInterval: 30000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
@@ -284,3 +384,112 @@ export const useBuyBackParams = (marginToken: string) => {
 
   return { data, refetch, isLoading }
 }
+
+/**
+ getDerivativeParams = async (
+ factoryConfig: { [key in QuoteTokenKeys]: string },
+ clearing?: string
+ ): Promise<Record<string, any>[]> => {
+    const keys = Object.keys(factoryConfig)
+    const calls = keys.map((k: string) => {
+      const base = {
+        address: factoryConfig[k as QuoteTokenKeys],
+        clearing,
+        quoteToken: k,
+        aggregator: aggregatorsAddr[k]
+      }
+
+      return [
+        {
+          name: 'exchange',
+          ...base
+        },
+        {
+          name: 'tradingFeeRatio',
+          ...base
+        },
+        {
+          name: 'tradingFeePmrRatio',
+          ...base
+        },
+        {
+          name: 'tradingFeeInusranceRatio',
+          ...base
+        },
+        {
+          name: 'tradingFeeBrokerRatio',
+          ...base
+        },
+        {
+          name: 'kRatio',
+          ...base
+        },
+        {
+          name: 'gRatio',
+          ...base
+        },
+        {
+          name: 'roRatio',
+          ...base
+        },
+        {
+          name: 'maxLeverage',
+          ...base
+        },
+        {
+          name: 'maxLimitOrderSize',
+          ...base
+        }
+      ]
+    })
+    const flatterCalls = flatten(calls)
+
+    const response = await multicall(DerifyDerivativeAbi, flatterCalls)
+
+    if (!isEmpty(response)) {
+      const _chunk = chunk(response, flatterCalls.length / keys.length)
+      const output = _chunk.map(
+        (
+          [
+            exchange,
+            tradingFeeRatio,
+            tradingFeePmrRatio,
+            tradingFeeInusranceRatio,
+            tradingFeeBrokerRatio,
+            kRatio,
+            gRatio,
+            roRatio,
+            maxLeverage,
+            maxLimitOrderSize
+          ],
+          index
+        ) => {
+          return {
+            quote: calls[index][0].quoteToken,
+            owner: calls[index][0].address,
+            kRatio: safeInterceptionValues(String(kRatio)),
+            gRatio: safeInterceptionValues(String(gRatio)),
+            roRatio: safeInterceptionValues(String(roRatio)),
+            exchange,
+            clearing: calls[index][0].clearing,
+            aggregator: calls[index][0].aggregator,
+            maxLeverage: safeInterceptionValues(String(maxLeverage)),
+            tradingFeeRatio: safeInterceptionValues(String(tradingFeeRatio)),
+            maxLimitOrderSize: String(maxLimitOrderSize),
+            tradingFeePmrRatio: safeInterceptionValues(String(tradingFeePmrRatio)),
+            tradingFeeBrokerRatio: safeInterceptionValues(String(tradingFeeBrokerRatio)),
+            tradingFeeInusranceRatio: safeInterceptionValues(String(tradingFeeInusranceRatio))
+          }
+        }
+      )
+
+      console.info(output)
+      this.pairsParams = output
+
+      return output
+    }
+
+    return []
+  }
+
+ */

@@ -11,11 +11,11 @@ import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
 import { useIndicatorsConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import {
   OpeningType,
-  useConfigInfoStore,
-  useMarginTokenStore,
-  useQuoteTokenStore,
   useOpeningStore,
-  useBrokerInfoStore
+  useQuoteTokenStore,
+  useBrokerInfoStore,
+  useConfigInfoStore,
+  useMarginTokenStore
 } from '@/store'
 
 import Button from '@/components/common/Button'

@@ -5,11 +5,11 @@ import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 
-import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
 import { useAllMarginBalances } from '@/hooks/useMySpaceInfo'
+import { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { getMySpaceMarginTokenList } from '@/api'
 
 import { Select } from '@/components/common/Form'
@@ -26,13 +26,13 @@ const MarginToken: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const updateMarginToken = useMarginTokenStore((state) => state.updateMarginToken)
 
-  const { data: marginBalances, refetch: marginBalancesRefetch, isLoading } = useAllMarginBalances(address)
+  const { data, refetch, isLoading } = useAllMarginBalances(address)
 
-  const marginOptions = useMemo(() => {
+  const options = useMemo(() => {
     if (!state.records.loaded && !isLoading) {
-      const _ = MARGIN_TOKENS.map((token) => {
+      const mapping = MARGIN_TOKENS.map((token) => {
         const p0 = state.records.records.find((data) => data.symbol === token.symbol)
-        const p1 = marginBalances[token.symbol as MarginTokenKeys]
+        const p1 = data[token.symbol as MarginTokenKeys]
         return {
           apy: p0?.max_pm_apy ?? 0,
           icon: findToken(token.symbol).icon,
@@ -42,10 +42,10 @@ const MarginToken: FC = () => {
           marginBalance: p1
         }
       })
-      return orderBy(_, ['marginBalance', 'apy'], 'desc')
+      return orderBy(mapping, ['marginBalance', 'apy'], 'desc')
     }
     return []
-  }, [isLoading, state.records, marginBalances])
+  }, [data, isLoading, state.records])
 
   // todo more margins loading...
   const fetchData = useCallback(
@@ -64,8 +64,8 @@ const MarginToken: FC = () => {
 
   useEffect(() => {
     if (address) {
+      void refetch()
       void fetchData()
-      void marginBalancesRefetch()
     }
   }, [address])
 
@@ -87,11 +87,11 @@ const MarginToken: FC = () => {
           </div>
         )}
         className="web-trade-bench-margin-select"
-        objOptions={marginOptions}
+        objOptions={options}
         labelRenderer={() => (
           <div className="web-dashboard-add-grant-margin-label">
-            <Image src={DEFAULT_MARGIN_TOKEN.icon} />
-            <span>{DEFAULT_MARGIN_TOKEN.symbol}</span>
+            <Image src={findToken(marginToken).icon} />
+            <span>{findToken(marginToken).symbol}</span>
           </div>
         )}
         filterPlaceholder="Search name or contract address..."

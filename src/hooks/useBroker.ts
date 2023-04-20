@@ -13,36 +13,32 @@ import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/too
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 
 export const useApplyBroker = () => {
-  const { data: s } = useSigner()
-  const applyBroker = useCallback(
-    async (burnLimitAmount: string, signer: Signer): Promise<boolean> => {
-      // console.info(s)
-      if (!signer) return false
+  const applyBroker = async (burnLimitAmount: string, signer: Signer): Promise<boolean> => {
+    // console.info(s)
+    if (!signer) return false
 
-      const c = getDerifyProtocolContract(signer)
-      const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 18)
+    const c = getDerifyProtocolContract(signer)
+    const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 18)
 
-      try {
-        const approve = await allowanceApprove(
-          signer,
-          contracts.derifyProtocol.contractAddress,
-          tokens.edrf.tokenAddress,
-          _burnLimitAmount
-        )
+    try {
+      const approve = await allowanceApprove(
+        signer,
+        contracts.derifyProtocol.contractAddress,
+        tokens.edrf.tokenAddress,
+        _burnLimitAmount
+      )
 
-        if (!approve) return false
+      if (!approve) return false
 
-        const response = await c.applyBroker()
-        const receipt = await response.wait()
+      const response = await c.applyBroker()
+      const receipt = await response.wait()
 
-        return receipt.status
-      } catch (e) {
-        console.info(e)
-        return false
-      }
-    },
-    [s]
-  )
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }
 
   return { applyBroker }
 }

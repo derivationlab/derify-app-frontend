@@ -107,7 +107,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       const { marginBalance = 0, totalPositionAmount = 0 } = variables
       const mul = data.side === PositionSideTypes.short ? -1 : 1
 
-      const p1 = bnMul(totalPositionAmount, sysParams.marginLiquidationRatio)
+      const p1 = bnMul(totalPositionAmount, sysParams.marginMaintenanceRatio)
       const p2 = bnMinus(marginBalance, p1)
       const p3 = bnDiv(p2, data.size)
       const p4 = bnMul(p3, mul)
@@ -123,9 +123,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.LiqPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>
-          {lp}-{sysParams.marginLiquidationRatio}
-        </span>
+        <span>{lp}</span>
       </DataAtom>
     )
   }, [data, spotPrices, variables, variablesLoaded, t])

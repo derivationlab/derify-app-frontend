@@ -6,6 +6,11 @@ import { formDataPost, get, post } from '@/utils/http'
 
 dayjs.extend(utc)
 
+export const getDRFPrice = async () => {
+  const response = await get('api/drf_price')
+  return response
+}
+
 export const getBrokerRankValue = async (trader: string, marginToken: string) => {
   const response = await get(`api/brokers_rank/${marginToken}/${trader}`)
   return response

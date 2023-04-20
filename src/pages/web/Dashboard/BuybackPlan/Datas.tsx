@@ -1,21 +1,22 @@
 import { useBlockNumber } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
-import { useConfigInfoStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
+import { useConfigInfoStore } from '@/store'
 import { useMulCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 import { DEFAULT_MARGIN_TOKEN, PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { getDRFPrice } from '@/api'
 
 const Datas: FC = () => {
   const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
 
+  const [tokenPrice, setTokenPrice] = useState<number>(0)
   const mTokenPrices = useConfigInfoStore((state) => state.mTokenPrices)
-  const mTokenPricesLoaded = useConfigInfoStore((state) => state.mTokenPricesLoaded)
 
   const { data: dashboardDAT } = useMulCurrentIndexDAT()
 
@@ -27,18 +28,24 @@ const Datas: FC = () => {
   }, [dashboardDAT, mTokenPrices])
 
   const tokenDecimal = useMemo(() => {
-    if (!mTokenPricesLoaded) return 2
-    if (
-      isLT(mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys], 1) &&
-      isGT(mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys], 0)
-    )
-      return 4
+    if (tokenPrice === 0) return 2
+    if (isLT(tokenPrice, 1) && isGT(tokenPrice, 0)) return 4
     return 2
-  }, [mTokenPrices, mTokenPricesLoaded])
+  }, [tokenPrice])
 
   const totalDestroyed = useMemo(() => {
     return dashboardDAT[DEFAULT_MARGIN_TOKEN.symbol]?.drfBurnt ?? 0
   }, [dashboardDAT])
+
+  useEffect(() => {
+    const func = async () => {
+      const { data } = await getDRFPrice()
+
+      setTokenPrice(data)
+    }
+
+    void func()
+  }, [blockNumber])
 
   return (
     <div className="web-dashboard-plan-datas">
@@ -52,7 +59,7 @@ const Datas: FC = () => {
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.CurrentDRFPrice', '', { Coin: PLATFORM_TOKEN.symbol })} </header>
         <section>
-          <BalanceShow value={mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]} decimal={tokenDecimal} />
+          <BalanceShow value={tokenPrice} decimal={tokenDecimal} />
           <u>{VALUATION_TOKEN_SYMBOL}</u>
         </section>
       </div>

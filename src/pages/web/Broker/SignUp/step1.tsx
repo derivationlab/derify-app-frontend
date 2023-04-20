@@ -7,10 +7,11 @@ import React, { FC, useCallback, useMemo, useState } from 'react'
 import { PubSubEvents } from '@/typings'
 import { useApplyBroker } from '@/hooks/useBroker'
 import { useConfigInfoStore, useBalancesStore } from '@/store'
-import { isET, isLT, thousandthsDivision } from '@/utils/tools'
+import { isET, isLT, keepDecimals, nonBigNumberInterception, thousandthsDivision } from '@/utils/tools'
 
 import Button from '@/components/common/Button'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import tokens from '@/config/tokens'
 
 const BrokerSignUpStep1: FC = () => {
   const history = useHistory()
@@ -73,12 +74,13 @@ const BrokerSignUpStep1: FC = () => {
         <section className="web-broker-sign-up-step-1">
           <p>{t('Broker.Reg.Getting', 'Getting broker privilege will cost you')}</p>
           <em>
-            {thousandthsDivision(brokerParams.burnLimitAmount)}
+            {thousandthsDivision(nonBigNumberInterception(brokerParams.burnLimitAmount, tokens.edrf.decimals))}
             <u>eDRF</u>
           </em>
           <hr />
           <span>
-            {t('Broker.Reg.WalletBalance', 'Wallet Balance')}: {thousandthsDivision(balances['edrf'])} eDRF
+            {t('Broker.Reg.WalletBalance', 'Wallet Balance')}: {keepDecimals(balances['edrf'], tokens.edrf.decimals)}{' '}
+            eDRF
           </span>
           <address>{address}</address>
         </section>

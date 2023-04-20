@@ -8,7 +8,7 @@ import React, { FC, useMemo, useState, useContext, useEffect, useReducer, useCal
 import { isGT, isGTET } from '@/utils/tools'
 import { useConfigInfoStore } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
-import { useBuyBackPool } from '@/hooks/useBuyBackPool'
+import { useBuyBackPool } from '@/hooks/useDashboard'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
 import { STATIC_RESOURCES_URL } from '@/config'

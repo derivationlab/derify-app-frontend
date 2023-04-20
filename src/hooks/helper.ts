@@ -495,6 +495,12 @@ export const getTraderRewardDAT = async (trader: string, reward: string): Promis
   return output
 }
 
+export const getBankBDRFPoolDAT = async (reward: string) => {
+  const c = getDerifyRewardsContract(reward)
+  const d = await c.bankBondPool()
+  return safeInterceptionValues(String(d), 8)
+}
+
 export const getTraderStakingDAT = async (trader: string): Promise<Record<string, any>> => {
   let output = {}
   const calls = [
@@ -527,11 +533,5 @@ export const getStakingDrfPoolDAT = async () => {
   const d = await c.stakingDrfPool()
   // const d1 = await c.getAllBrokers()
   // console.info(d1)
-  return safeInterceptionValues(String(d), 8)
-}
-
-export const getBankBDRFPoolDAT = async (reward: string) => {
-  const c = getDerifyRewardsContract(reward)
-  const d = await c.bankBondPool()
   return safeInterceptionValues(String(d), 8)
 }

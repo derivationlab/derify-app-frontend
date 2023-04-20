@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-import { useSpotPrices } from '@/hooks/useSpotPrices'
+import { usePCFAndPrice } from '@/hooks/usePairIndicator'
 import { getOpeningMaxLimit } from '@/hooks/helper'
 import { MarginTokenWithContract } from '@/typings'
 import { useConfigInfoStore, usePairsInfoStore } from '@/store'
@@ -15,7 +15,7 @@ export default function TradingUpdater(): null {
   const updateOpeningMaxLimit = useConfigInfoStore((state) => state.updateOpeningMaxLimit)
 
   // for pcf and spot price
-  const { data1: pcfDAT, data2: spotPriceDAT, refetch: refetchSpotPrices } = useSpotPrices(factoryConfig)
+  const { data1: pcfDAT, data2: spotPriceDAT, refetch: refetchSpotPrices } = usePCFAndPrice(factoryConfig)
 
   useEffect(() => {
     if (factoryConfig && factoryConfigLoaded) void refetchSpotPrices()

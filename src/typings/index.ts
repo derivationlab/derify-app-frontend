@@ -33,6 +33,8 @@ export const protocolConfig = {
 
 export type ProtocolConfig = typeof protocolConfig
 
+export type QuoteToken = { [key in QuoteTokenKeys]: any }
+
 export type MarginToken = { [key in MarginTokenKeys]: any }
 
 export type MarginTokenWithQuote = { [key in MarginTokenKeys]: { [key in QuoteTokenKeys]: any } }

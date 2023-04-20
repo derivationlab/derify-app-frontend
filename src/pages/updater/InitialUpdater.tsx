@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi'
 import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo } from 'react'
 
-import { useMinimumGrant } from '@/hooks/useMinimumGrant'
+import { useMinimumGrant } from '@/hooks/useDashboard'
 import { useProtocolConfig } from '@/hooks/useProtocolConfig'
 import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys, MarginTokenWithContract, PubSubEvents } from '@/typings'

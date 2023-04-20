@@ -10,7 +10,7 @@ import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useTraderBondBalance } from '@/hooks/useQueryApi'
 import { isGT, isLT, keepDecimals } from '@/utils/tools'
 import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
-import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useEarning'
+import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useTrading'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import DecimalShow from '@/components/common/DecimalShow'

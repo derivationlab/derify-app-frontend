@@ -7,13 +7,13 @@ import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useE
 
 import { useConfigInfoStore } from '@/store'
 import { MobileContext } from '@/providers/Mobile'
-import { useBuyBackPool } from '@/hooks/useBuyBackPool'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
 import { bnMul, keepDecimals } from '@/utils/tools'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { getDashboardMarginTokenList } from '@/api'
-import { useMulCurrentTradingAmount, usePairIndicators, usePositionInfo } from '@/hooks/useMarketInfo'
+import { useBuyBackPool, usePositionInfo } from '@/hooks/useDashboard'
+import { useMulCurrentTradingAmount, usePairIndicators } from '@/hooks/useQueryApi'
 
 // import { Input } from '@/components/common/Form'
 import Button from '@/components/common/Button'

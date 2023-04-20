@@ -8,7 +8,7 @@ import { MobileContext } from '@/providers/Mobile'
 import tokens, { findToken } from '@/config/tokens'
 import { bnMul, isGT, isLT, keepDecimals } from '@/utils/tools'
 import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
-import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useEarning'
+import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useTrading'
 import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
 
 import QuestionPopover from '@/components/common/QuestionPopover'

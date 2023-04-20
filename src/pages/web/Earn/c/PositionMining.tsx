@@ -5,7 +5,7 @@ import React, { FC, useCallback, useContext, useMemo } from 'react'
 
 import { MobileContext } from '@/providers/Mobile'
 import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useWithdrawPositionReward } from '@/hooks/useEarning'
+import { useWithdrawPositionReward } from '@/hooks/useTrading'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { bnPlus, isGT, isLT, keepDecimals } from '@/utils/tools'
 import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'

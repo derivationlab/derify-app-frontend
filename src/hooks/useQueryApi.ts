@@ -1,8 +1,9 @@
 import { isEmpty } from 'lodash'
 import { useQuery } from '@tanstack/react-query'
 
-import { MarginToken } from '@/typings'
-import { MARGIN_TOKENS } from '@/config/tokens'
+import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'
+import { findMarginToken, findToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { MarginToken, MarginTokenKeys, QuoteToken, QuoteTokenKeys } from '@/typings'
 import {
   getCurrentIndexDAT,
   getTraderBondBalance,
@@ -14,10 +15,11 @@ import {
   getCurrentPositionsAmount,
   getActiveRankGrantTotalAmount,
   getCurrentTotalTradingNetValue,
-  getCurrentTotalPositionsNetValue
+  getCurrentTotalPositionsNetValue,
+  getPairIndicator
 } from '@/api'
 
-const initialMulCurrentIndexOutput = (): MarginToken => {
+const initial1 = (): MarginToken => {
   let value = Object.create(null)
 
   MARGIN_TOKENS.forEach((t) => {
@@ -28,6 +30,32 @@ const initialMulCurrentIndexOutput = (): MarginToken => {
   })
 
   return value
+}
+
+const initial2 = (): MarginToken => {
+  let value = Object.create(null)
+
+  MARGIN_TOKENS.forEach((t) => {
+    value = {
+      ...value,
+      [t.symbol]: '0'
+    }
+  })
+
+  return value
+}
+
+export const initial3 = (): QuoteToken => {
+  let quote = Object.create(null)
+
+  QUOTE_TOKENS.forEach((t) => {
+    quote = {
+      ...quote,
+      [t.symbol]: {}
+    }
+  })
+
+  return quote
 }
 
 export const useCurrentIndexDAT = (marginToken: string) => {
@@ -53,7 +81,7 @@ export const useCurrentIndexDAT = (marginToken: string) => {
 }
 
 export const useMulCurrentIndexDAT = () => {
-  let output = initialMulCurrentIndexOutput()
+  let output = initial1()
 
   const { data } = useQuery(
     ['useMulCurrentIndexDAT'],
@@ -293,4 +321,148 @@ export const useCurrentTotalPositionsNetValue = (marginToken: string, quoteToken
   )
 
   return { refetch, data }
+}
+
+export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<string, any> } => {
+  const output = initial3()
+
+  const { data } = useQuery(
+    ['usePairIndicator'],
+    async (): Promise<Record<string, any>[]> => {
+      const m = findMarginToken(marginToken)!
+      const data = await getPairIndicator(m.tokenAddress)
+      // console.info(data?.data)
+      return data?.data ?? []
+    },
+    {
+      retry: false,
+      initialData: [],
+      refetchInterval: 3000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  if (data.length > 0) {
+    data.forEach(
+      ({
+        token,
+        longDrfPmrRate = 0,
+        shortDrfPmrRate = 0,
+        price_change_rate = 0,
+        longMarginTokenPmrRate = 0,
+        shortMarginTokenPmrRate = 0,
+        ...rest
+      }: Record<string, any>) => {
+        const quote = findToken(token).symbol as QuoteTokenKeys
+        const longPmrRate = bnPlus(longDrfPmrRate, longMarginTokenPmrRate)
+        const shortPmrRate = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
+        const pmrRateMax = keepDecimals(Math.max(Number(longPmrRate), Number(shortPmrRate)), 4)
+
+        output[quote] = {
+          ...output[quote],
+          ...rest,
+          apy: pmrRateMax,
+          token,
+          longPmrRate,
+          shortPmrRate,
+          price_change_rate
+        }
+      }
+    )
+    // console.info(output)
+    return { data: output }
+  }
+
+  return { data: undefined }
+}
+
+export const usePairIndicators = () => {
+  const output = initial1()
+
+  const { data } = useQuery(
+    ['usePairIndicators'],
+    async () => {
+      const promises = MARGIN_TOKENS.map(async (token) => {
+        return [await getPairIndicator(token.tokenAddress).then(({ data }) => data)]
+      })
+
+      const response = await Promise.all(promises)
+
+      if (response.length > 0) {
+        response.forEach(([data], index) => {
+          data.forEach(
+            ({
+              token,
+              longDrfPmrRate = 0,
+              shortDrfPmrRate = 0,
+              longMarginTokenPmrRate = 0,
+              shortMarginTokenPmrRate = 0
+            }: Record<string, any>) => {
+              const long = bnPlus(longDrfPmrRate, longMarginTokenPmrRate)
+              const short = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
+              const apyMax = isGTET(long, short) ? long : short
+
+              output[MARGIN_TOKENS[index].symbol as MarginTokenKeys] = {
+                ...output[MARGIN_TOKENS[index].symbol as MarginTokenKeys],
+                [findToken(token).symbol]: Number(apyMax)
+              }
+            }
+          )
+        })
+        // console.info(output)
+
+        return output
+      }
+
+      return output
+    },
+    {
+      retry: false,
+      initialData: output,
+      refetchInterval: 6000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data }
+}
+
+export const useMulCurrentTradingAmount = () => {
+  let output = initial2()
+
+  const { data, refetch } = useQuery(
+    ['useMulCurrentTradingAmount'],
+    async (): Promise<Record<string, any>> => {
+      const promises = MARGIN_TOKENS.map(async (token) => {
+        return [await getCurrentTradingAmount('all', token.tokenAddress).then(({ data }) => data)]
+      })
+
+      const response = await Promise.all(promises)
+
+      if (response.length > 0) {
+        response.forEach(([margin], index) => {
+          output = {
+            ...output,
+            [MARGIN_TOKENS[index].symbol]: margin[0]?.trading_amount ?? 0
+          }
+        })
+        // console.info(output)
+
+        return output
+      }
+
+      return output
+    },
+    {
+      retry: 0,
+      initialData: output,
+      refetchInterval: 6000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data, refetch }
 }

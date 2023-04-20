@@ -1,12 +1,12 @@
 import { create } from 'zustand'
 
 import { PairsInfoState, Rec } from '@/store/types'
-import { initialPCFAndSpotPrice } from '@/hooks/useSpotPrices'
-import { initial as initialIndicator } from '@/hooks/usePairIndicator'
+import { initialPCFAndPrice } from '@/hooks/usePairIndicator'
+import { initial3 as initialIndicator } from '@/hooks/useQueryApi'
 
 const usePairsInfoStore = create<PairsInfoState>((set) => ({
-  pcfRatios: initialPCFAndSpotPrice(),
-  spotPrices: initialPCFAndSpotPrice(),
+  pcfRatios: initialPCFAndPrice(),
+  spotPrices: initialPCFAndPrice(),
   indicators: initialIndicator(),
   pcfRatiosLoaded: false,
   indicatorsLoaded: false,

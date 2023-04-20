@@ -7,7 +7,7 @@ import React, { FC, useCallback, useContext, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/providers/Mobile'
-import { useBrokerInfo } from '@/hooks/useBrokerInfo'
+import { useBrokerInfo } from '@/hooks/useBroker'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useWithdrawReward } from '@/hooks/useBroker'
 import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'

@@ -17,7 +17,7 @@ export const sysParams = {
   ...initGrantPlanParams
 }
 
-const useSysParamsStore = create<SysParamsState>((set, get) => ({
+const useSysParamsStore = create<SysParamsState>((set) => ({
   sysParams: sysParams,
   loaded: false,
   updateSysParams: (data: typeof sysParams) =>

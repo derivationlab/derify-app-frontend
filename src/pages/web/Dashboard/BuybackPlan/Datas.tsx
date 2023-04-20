@@ -4,18 +4,19 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
+import { getDRFPrice } from '@/api'
 import { MarginTokenKeys } from '@/typings'
 import { useConfigInfoStore } from '@/store'
 import { useMulCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 import { DEFAULT_MARGIN_TOKEN, PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { getDRFPrice } from '@/api'
 
 const Datas: FC = () => {
   const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
 
   const [tokenPrice, setTokenPrice] = useState<number>(0)
+
   const mTokenPrices = useConfigInfoStore((state) => state.mTokenPrices)
 
   const { data: dashboardDAT } = useMulCurrentIndexDAT()

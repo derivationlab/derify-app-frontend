@@ -126,7 +126,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         <span>{lp}</span>
       </DataAtom>
     )
-  }, [data, spotPrices, variables, variablesLoaded, t])
+  }, [t, data, sysParams, variables, spotPrices, variablesLoaded])
 
   const atom5Tsx = useMemo(() => {
     return (

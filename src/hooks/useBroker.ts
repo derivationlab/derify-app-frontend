@@ -5,13 +5,13 @@ import { useCallback } from 'react'
 
 import tokens from '@/config/tokens'
 import contracts from '@/config/contracts'
+import { estimateGas } from '@/utils/estimateGas'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
 
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
-import { estimateGas } from '@/utils/estimateGas'
 
 const init = {
   drfRewardBalance: '0',
@@ -20,7 +20,7 @@ const init = {
   accumulatedMarginTokenReward: '0'
 }
 
-export const useBrokerInfo = (trader = '', rewards = ''): { data: Record<string, any>; isLoading: boolean } => {
+export const useBrokerInfo = (trader = '', rewards = ''): { data: typeof init; isLoading: boolean } => {
   const { data, isLoading } = useQuery(
     ['useRankReward'],
     async () => {

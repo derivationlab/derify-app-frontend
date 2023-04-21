@@ -14,11 +14,11 @@ ReactDOM.render(
     <MobileProvider>
       <BrowserRouter>
         <QueryClientProvider>
-          <WagmiClientProvider>
-            <ThemeProvider>
+          <ThemeProvider>
+            <WagmiClientProvider>
               <App />
-            </ThemeProvider>
-          </WagmiClientProvider>
+            </WagmiClientProvider>
+          </ThemeProvider>
         </QueryClientProvider>
       </BrowserRouter>
     </MobileProvider>

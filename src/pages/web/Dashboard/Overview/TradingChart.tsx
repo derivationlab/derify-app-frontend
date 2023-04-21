@@ -11,7 +11,7 @@ import { BarChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 const time = days().utc().startOf('days').format()
-let output: Record<string, any> = {
+let output: { day_time: string, trading_net_value: number } = {
   day_time: time,
   trading_net_value: 0
 }

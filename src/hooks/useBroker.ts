@@ -11,6 +11,7 @@ import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/con
 import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
 
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import { estimateGas } from '@/utils/estimateGas'
 
 const init = {
   drfRewardBalance: '0',
@@ -83,26 +84,6 @@ export const useApplyBroker = () => {
   return { applyBroker }
 }
 
-export const useWithdrawReward = () => {
-  const withdraw = useCallback(async (signer: Signer, address: string): Promise<boolean> => {
-    if (!signer) return false
-
-    const c = getDerifyRewardsContract(address, signer)
-
-    try {
-      const response = await c.withdrawBrokerReward()
-      const receipt = await response.wait()
-
-      return receipt.status
-    } catch (e) {
-      console.info(e)
-      return false
-    }
-  }, [])
-
-  return { withdraw }
-}
-
 export const useExtendPeriod = () => {
   const extend = async (amount: string, signer: Signer): Promise<boolean> => {
     const c = getDerifyProtocolContract(signer)
@@ -121,7 +102,8 @@ export const useExtendPeriod = () => {
 
       if (!approve) return false
 
-      const response = await c.burnEdrfExtendValidPeriod(_amount1)
+      const gasLimit = await estimateGas(c, 'burnEdrfExtendValidPeriod', [_amount1], 2000)
+      const response = await c.burnEdrfExtendValidPeriod(_amount1, { gasLimit })
       const receipt = await response.wait()
 
       return receipt.status
@@ -161,4 +143,24 @@ export const useBrokerParams = (): { data?: Record<string, any>; isLoading: bool
   }
 
   return { isLoading }
+}
+
+export const useWithdrawReward = () => {
+  const withdraw = useCallback(async (signer: Signer, address: string): Promise<boolean> => {
+    if (!signer) return false
+
+    const c = getDerifyRewardsContract(address, signer)
+
+    try {
+      const response = await c.withdrawBrokerReward()
+      const receipt = await response.wait()
+
+      return receipt.status
+    } catch (e) {
+      console.info(e)
+      return false
+    }
+  }, [])
+
+  return { withdraw }
 }

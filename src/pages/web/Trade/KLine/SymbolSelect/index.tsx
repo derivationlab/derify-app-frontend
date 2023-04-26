@@ -2,17 +2,17 @@ import classNames from 'classnames'
 import { useClickAway } from 'react-use'
 import React, { FC, useState, useRef, useContext } from 'react'
 
+import { keepDecimals } from '@/utils/tools'
 import { useSpotPrice } from '@/hooks/useMatchConf'
 import { MobileContext } from '@/providers/Mobile'
-
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginTokenStore, usePairsInfoStore, useQuoteTokenStore } from '@/store'
 
+import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import ChangePercent from '@/components/common/ChangePercent'
 
 import Options from './Options'
-import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   onToggle?: () => void
@@ -54,7 +54,9 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
           {VALUATION_TOKEN_SYMBOL}
         </h4>
         <aside>
-          <BalanceShow value={keepDecimals(spotPrice, 2)} />
+          <Skeleton rowsProps={{ rows: 1 }} animation loading={Number(spotPrice) === 0}>
+            <BalanceShow value={keepDecimals(spotPrice, 2)} />
+          </Skeleton>
           <ChangePercent value={indicators[quoteToken]?.price_change_rate ?? 0} />
         </aside>
       </div>

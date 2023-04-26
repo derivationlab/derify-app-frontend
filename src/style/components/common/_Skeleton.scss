@@ -1,0 +1,96 @@
+$skeleton-radius: 20px;
+$skeleton-row-height: 26px;
+$skeleton-row-height-mobile: rem(16);
+$skeleton-row-margin-bottom: 18px;
+$transition-duration-skeleton: 1.5s;
+$skeleton-color-bg: $cf7;
+$skeleton-color-animate-bg: rgba($cf7, 0.45);
+$skeleton-color-bg-dark: $c33;
+$skeleton-color-animate-bg-dark: rgba($c33, 0.45);
+$transition-linear-bezier: cubic-bezier(0, 0, 1, 1);
+$skeleton-class-prefix: 'web-c-skeleton';
+
+.#{$skeleton-class-prefix} {
+  display: flex;
+
+  &-content {
+    flex: 1;
+    overflow: hidden;
+
+    .#{$skeleton-class-prefix}-rows {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .#{$skeleton-class-prefix}-row {
+      background-color: $skeleton-color-bg;
+      height: $skeleton-row-height;
+      border-radius: $skeleton-radius;
+      width: 100px;
+    }
+
+    .#{$skeleton-class-prefix}-row:not(:last-child) {
+      margin-bottom: $skeleton-row-margin-bottom;
+    }
+  }
+
+  &-animate {
+    .#{$skeleton-class-prefix}-row {
+      background: linear-gradient(
+                      90deg,
+                      $skeleton-color-bg 25%,
+                      $skeleton-color-animate-bg 37%,
+                      $skeleton-color-bg 63%
+      );
+      background-size: 400% 100%;
+      animation: $transition-duration-skeleton $transition-linear-bezier infinite;
+
+      @include animation-keyframes {
+        0% {
+          background-position: 100% 50%;
+        }
+
+        100% {
+          background-position: 0 50%;
+        }
+      }
+    }
+  }
+}
+
+.dark {
+  .#{$skeleton-class-prefix} {
+    &-content {
+      .#{$skeleton-class-prefix}-row {
+        background-color: $skeleton-color-bg-dark;
+      }
+    }
+
+    &-animate {
+      .#{$skeleton-class-prefix}-row {
+        background: linear-gradient(
+                        90deg,
+                        $skeleton-color-bg-dark 25%,
+                        $skeleton-color-animate-bg-dark 37%,
+                        $skeleton-color-bg-dark 63%
+        );
+        background-size: 400% 100%;
+      }
+    }
+  }
+}
+
+.mobile-mode{
+  .#{$skeleton-class-prefix} {
+    display: flex;margin-left: rem(10);
+
+    &-content {
+      .#{$skeleton-class-prefix}-row {
+        width: rem(60);
+        height: $skeleton-row-height-mobile;
+      }
+    }
+  }
+
+}

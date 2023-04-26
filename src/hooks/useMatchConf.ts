@@ -6,12 +6,8 @@ import { useConfigInfoStore, usePairsInfoStore } from '@/store'
 
 export const useSpotPrice = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
   const spotPrices = usePairsInfoStore((state) => state.spotPrices)
-  const spotPricesLoaded = usePairsInfoStore((state) => state.spotPricesLoaded)
 
-  const spotPrice = useMemo(() => {
-    if (spotPricesLoaded) return spotPrices[marginToken][quoteToken]
-    return 0
-  }, [spotPrices, marginToken, quoteToken, spotPricesLoaded])
+  const spotPrice = useMemo(() => spotPrices[marginToken][quoteToken], [spotPrices, marginToken, quoteToken])
 
   const _spotPrices = useMemo(() => {
     return spotPrices[marginToken]

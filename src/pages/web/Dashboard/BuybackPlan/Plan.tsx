@@ -12,7 +12,7 @@ import { useBuyBackPool } from '@/hooks/useDashboard'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
 import { STATIC_RESOURCES_URL } from '@/config'
-import { getBuyBackMarginTokenList } from '@/api'
+import { getBuyBackPlans } from '@/api'
 import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 // import { Input } from '@/components/common/Form'
@@ -151,7 +151,7 @@ const Plan: FC = () => {
   const fetchData = useCallback(
     async (index = 0) => {
       // keyword
-      const { data } = await getBuyBackMarginTokenList(index, 10)
+      const { data } = await getBuyBackPlans(index, 10)
 
       // console.info(data)
 

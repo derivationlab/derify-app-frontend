@@ -10,10 +10,10 @@ import {
   getTraderEDRFBalance,
   getCurrentInsuranceDAT,
   getCurrentTradingAmount,
-  getActiveRankGrantCount,
-  getActiveRankGrantRatios,
+  getGrantPlanCount,
+  getGrantPlanRatios,
   getCurrentPositionsAmount,
-  getActiveRankGrantTotalAmount,
+  getGrantPlanAmount,
   getCurrentTotalTradingNetValue,
   getCurrentTotalPositionsNetValue,
   getPairIndicator
@@ -199,9 +199,9 @@ export const useCurrentTradingAmount = (address: string, marginToken: string) =>
 
 export const useActiveRankGrantCount = (marginToken: string) => {
   const { data } = useQuery(
-    ['getActiveRankGrantCount'],
+    ['getGrantPlanCount'],
     async (): Promise<{ count: number }> => {
-      const data = await getActiveRankGrantCount(marginToken)
+      const data = await getGrantPlanCount(marginToken)
       return data?.data ?? { count: 0 }
     },
     {
@@ -218,10 +218,10 @@ export const useActiveRankGrantCount = (marginToken: string) => {
 
 export const useActiveRankGrantRatios = (marginToken: string, trader?: string) => {
   const { data } = useQuery(
-    ['getActiveRankGrantRatios'],
+    ['getGrantPlanRatios'],
     async (): Promise<number> => {
       if (trader) {
-        const data = await getActiveRankGrantRatios(marginToken, trader)
+        const data = await getGrantPlanRatios(marginToken, trader)
 
         const _data = data?.data ?? []
 
@@ -265,9 +265,9 @@ export const useCurrentPositionsAmount = (quoteToken: string, marginToken: strin
 
 export const useActiveRankGrantTotalAmount = (marginToken: string) => {
   const { data } = useQuery(
-    ['getActiveRankGrantTotalAmount'],
+    ['getGrantPlanAmount'],
     async (): Promise<{ totalAmount: number }> => {
-      const data = await getActiveRankGrantTotalAmount(marginToken)
+      const data = await getGrantPlanAmount(marginToken)
       return data?.data ?? { totalAmount: 10 }
     },
     {

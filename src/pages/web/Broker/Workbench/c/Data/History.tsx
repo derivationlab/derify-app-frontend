@@ -9,7 +9,7 @@ import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { reducer, stateInit } from '@/reducers/records'
-import { getBrokerAccountFlow } from '@/api'
+import { getBrokerRevenueRecord } from '@/api'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 
 import Pagination from '@/components/common/Pagination'
@@ -83,7 +83,7 @@ const History: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerAccountFlow(address, findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getBrokerRevenueRecord(address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

@@ -1082,7 +1082,7 @@
         "type": "address"
       }
     ],
-    "name": "getBrokerInfo",
+    "name": "getBrokerInfoWithBrokerId",
     "outputs": [
       {
         "internalType": "uint256",

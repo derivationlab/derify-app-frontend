@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { findToken } from '@/config/tokens'
-
+import { dayjsStartOf } from '@/utils/tools'
+import { useMarginTokenStore } from '@/store'
 import { useCurrentInsuranceDAT } from '@/hooks/useQueryApi'
 import { getHistoryInsuranceDAT } from '@/api'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
@@ -12,9 +13,9 @@ import { SelectTimesOptions, SelectTimesValues } from '@/data'
 import { AreaChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useMarginTokenStore } from '@/store'
 
-const time = days().utc().startOf('days').format()
+const time = dayjsStartOf()
+
 let output: Record<string, any> = {
   day_time: time,
   insurance_pool: 0

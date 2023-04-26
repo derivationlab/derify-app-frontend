@@ -1,8 +1,8 @@
-import days from 'dayjs'
 import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
+import { dayjsStartOf } from '@/utils/tools'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { getHistoryTotalTradingNetValue } from '@/api'
 import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
@@ -10,8 +10,8 @@ import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
 import { BarChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
-const time = days().utc().startOf('days').format()
-let output: { day_time: string, trading_net_value: number } = {
+const time = dayjsStartOf()
+let output: { day_time: string; trading_net_value: number } = {
   day_time: time,
   trading_net_value: 0
 }

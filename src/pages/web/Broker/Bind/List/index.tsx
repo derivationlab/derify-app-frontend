@@ -7,7 +7,7 @@ import React, { FC, useCallback, useEffect, useContext, useReducer } from 'react
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/brokerBind'
-import { bindYourBroker, getBrokersList } from '@/api'
+import { bindingYourBroker, getBrokersList } from '@/api'
 import {
   SelectLangOptionsForFilter as SelectLangOptions,
   SelectCommunityOptionsForFilter as SelectCommunityOptions
@@ -52,7 +52,7 @@ const List: FC = () => {
     dispatch({ type: 'SET_OPT_SELECT', payload: { i: state.toBindDAT.id } })
     dispatch({ type: 'SET_SHOW_MODAL', payload: '' })
 
-    const data = await bindYourBroker({ trader: address, brokerId: state.toBindDAT.id })
+    const data = await bindingYourBroker({ trader: address, brokerId: state.toBindDAT.id })
 
     if (data.code === 0) {
       // succeed

@@ -8,7 +8,7 @@ import { useBrokerParams } from '@/hooks/useBroker'
 import { useConfigInfoStore, useMarginTokenStore, useBrokerInfoStore } from '@/store'
 
 export default function BrokerUpdater(): null {
-  const { address, status } = useAccount();
+  const { address, status } = useAccount()
 
   const { data: brokerParams, isLoading: brokerParamsIsLoading } = useBrokerParams()
 

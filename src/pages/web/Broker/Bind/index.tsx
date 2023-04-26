@@ -6,7 +6,7 @@ import React, { ChangeEvent, FC, useState, useContext } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { MobileContext } from '@/providers/Mobile'
-import { bindYourBroker, getBrokerInfoById } from '@/api'
+import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
 
 import Button from '@/components/common/Button'
 import BrokerDialog from './BrokerDialog'
@@ -33,7 +33,7 @@ const Bind: FC = () => {
 
     setVisibleStatus('')
 
-    const data = await bindYourBroker({ trader: address, brokerId })
+    const data = await bindingYourBroker({ trader: address, brokerId })
     if (data.code === 0) {
       // succeed
       PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
@@ -51,7 +51,7 @@ const Bind: FC = () => {
   const onConfirmEv = async () => {
     setLoading(true)
 
-    const { data } = await getBrokerInfoById(brokerId)
+    const { data } = await getBrokerInfoWithBrokerId(brokerId)
 
     if (data && data[0]) {
       setBrokerData(data[0])

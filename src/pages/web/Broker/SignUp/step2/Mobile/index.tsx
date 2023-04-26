@@ -9,7 +9,7 @@ import { PubSubEvents } from '@/typings'
 import { calcShortHash } from '@/utils/tools'
 import { SelectLangOptions } from '@/data'
 import { useBrokerInfoStore } from '@/store'
-import { getBrokerInfoById, updateBrokerInfo } from '@/api'
+import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
 
 import Button from '@/components/common/Button'
 
@@ -92,7 +92,7 @@ const BrokerSignUpStep2Mobile: FC = () => {
       return
     }
 
-    const { data: brokerInfo } = await getBrokerInfoById(brokerId)
+    const { data: brokerInfo } = await getBrokerInfoWithBrokerId(brokerId)
 
     if (!isEmpty(brokerInfo) && brokerInfo[0]?.broker !== address) {
       window.toast.error(t('Broker.Reg.Occupied', 'Your Code is occupied, choose another one.'))

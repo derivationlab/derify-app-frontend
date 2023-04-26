@@ -1,8 +1,8 @@
-import days from 'dayjs'
 import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
+import { dayjsStartOf } from '@/utils/tools'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { getHistoryTotalPositionsNetValue } from '@/api'
 import { useCurrentTotalPositionsNetValue } from '@/hooks/useQueryApi'
@@ -10,7 +10,7 @@ import { useCurrentTotalPositionsNetValue } from '@/hooks/useQueryApi'
 import { AreaChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
-const time = days().utc().startOf('days').format()
+const time = dayjsStartOf()
 let output: Record<string, any> = {
   day_time: time,
   total_positions_net_value: 0

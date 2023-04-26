@@ -7,7 +7,7 @@ import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } fr
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { getTradingCompetitionRanks } from '@/api'
+import { getCompetitionRanks } from '@/api'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
 
@@ -97,7 +97,7 @@ const CompetitionRank: FC = () => {
 
   const fetchData = useCallback(
     async (index = 0) => {
-      const { data } = await getTradingCompetitionRanks(findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getCompetitionRanks(findToken(marginToken).tokenAddress, index, 10)
 
       console.info(data)
 

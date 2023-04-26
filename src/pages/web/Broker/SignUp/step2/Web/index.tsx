@@ -11,7 +11,7 @@ import { PubSubEvents } from '@/typings'
 import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
 import { useBrokerInfoStore } from '@/store'
-import { getBrokerInfoById, updateBrokerInfo } from '@/api'
+import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
 import { defaultValues, FormInputProps, patterns, rules } from '../config'
 
 import Button from '@/components/common/Button'
@@ -84,7 +84,7 @@ const BrokerSignUpStep2: FC = () => {
       return
     }
 
-    const { data: brokerInfo } = await getBrokerInfoById(id)
+    const { data: brokerInfo } = await getBrokerInfoWithBrokerId(id)
 
     if (!isEmpty(brokerInfo) && brokerInfo[0]?.broker !== address) {
       window.toast.error(t('Broker.Reg.Occupied', 'Your Code is occupied, choose another one.'))

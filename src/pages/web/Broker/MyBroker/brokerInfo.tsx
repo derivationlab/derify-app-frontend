@@ -5,7 +5,7 @@ import React, { FC, useEffect, useState } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { useBrokerInfoStore } from '@/store'
-import { bindYourBroker, getBrokerInfoById } from '@/api'
+import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
 
 import Loading from '@/components/common/Loading'
 import BrokerCard from './c/BrokerCard'
@@ -25,7 +25,7 @@ const BrokerInfo: FC = () => {
   const bindBrokerFunc = async () => {
     const toast = window.toast.loading('binding...')
 
-    const data = await bindYourBroker({ trader: address, brokerId })
+    const data = await bindingYourBroker({ trader: address, brokerId })
 
     if (data.code === 0) {
       // succeed
@@ -47,7 +47,7 @@ const BrokerInfo: FC = () => {
     if (bound?.broker) {
       history.push('/broker')
     } else {
-      const { data } = await getBrokerInfoById(brokerId)
+      const { data } = await getBrokerInfoWithBrokerId(brokerId)
 
       if (data.length > 0) {
         const [info] = data

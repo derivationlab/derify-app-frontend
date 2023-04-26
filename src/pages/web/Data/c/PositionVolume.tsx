@@ -1,22 +1,20 @@
-import days from 'dayjs'
 import { isArray } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 import { findToken } from '@/config/tokens'
-
+import { useMarginTokenStore } from '@/store'
 import { getHistoryPositionsDAT } from '@/api'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { bnDiv, bnMul, bnPlus, isGT, keepDecimals } from '@/utils/tools'
+import { bnDiv, bnMul, bnPlus, dayjsStartOf, isGT, keepDecimals } from '@/utils/tools'
 import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
 
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { BarChart } from '@/components/common/Chart'
-import { useMarginTokenStore } from '@/store'
 
-const time = days().utc().startOf('days').format()
+const time = dayjsStartOf()
 let output: Record<string, any> = {
   long: '0%',
   short: '0%',

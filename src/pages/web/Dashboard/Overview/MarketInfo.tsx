@@ -11,7 +11,7 @@ import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
 import { bnMul, keepDecimals } from '@/utils/tools'
 import { STATIC_RESOURCES_URL } from '@/config'
-import { getDashboardMarginTokenList } from '@/api'
+import { getMarginTokenList } from '@/api'
 import { useBuyBackPool, usePositionInfo } from '@/hooks/useDashboard'
 import { useMulCurrentTradingAmount, usePairIndicators } from '@/hooks/useQueryApi'
 
@@ -137,7 +137,7 @@ const MarketInfo: FC = () => {
   const fetchData = useCallback(
     async (index = 0) => {
       // keyword
-      const { data } = await getDashboardMarginTokenList(index, 10)
+      const { data } = await getMarginTokenList(index, 10)
 
       // console.info(data)
 

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { getGrantList } from '@/api'
+import { getGrantPlanList } from '@/api'
 import { all, grantTargetOptions } from '@/reducers/addGrant'
 import { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
@@ -37,7 +37,7 @@ const GrantList: FC = () => {
     const _grantStatus = grantStateOptions.find((t) => t.value === grantStatus)?.key ?? 'all'
     const _grantTarget = targetOptions.find((t) => t.value === grantTarget)?.nick ?? 'all'
 
-    const { data } = await getGrantList(_marginToken, _grantTarget, _grantStatus, index, 8)
+    const { data } = await getGrantPlanList(_marginToken, _grantTarget, _grantStatus, index, 8)
 
     const sort = orderBy(data?.records ?? [], ['open'], 'desc')
 

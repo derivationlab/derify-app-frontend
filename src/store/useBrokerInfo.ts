@@ -3,19 +3,19 @@ import { create } from 'zustand'
 import { BrokerInfoState } from '@/store/types'
 import { getDerifyProtocolContract } from '@/utils/contractHelpers'
 import {
-  getBrokerRankValue,
-  getBrokerInfoByAddr,
-  getBrokerValidPeriod,
-  getBrokerRegisterTime,
+  getBrokerRanking,
+  getBrokerInfoWithAddress,
+  getBrokerValidityPeriod,
+  getBrokerRegistrationTime,
   getBrokerRewardsToday,
-  getBrokerInfoByTrader
+  getBrokerBound
 } from '@/api'
 
-const getBrokerInfo = async (trader: string): Promise<boolean> => {
+const getBrokerInfoWithBrokerId = async (trader: string): Promise<boolean> => {
   const c = getDerifyProtocolContract()
 
   try {
-    await c.getBrokerInfo(trader)
+    await c.getBrokerInfoWithBrokerId(trader)
     return true
   } catch (e) {
     return false
@@ -29,13 +29,13 @@ const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
   brokerInfoLoaded: false,
   brokerBoundLoaded: false,
   fetchBrokerInfo: async (trader: string, marginToken: string) => {
-    const data = await getBrokerInfo(trader)
+    const data = await getBrokerInfoWithBrokerId(trader)
 
     if (data) {
-      const { data: rank = 0 } = await getBrokerRankValue(trader, marginToken)
-      const { data: time = 0 } = await getBrokerRegisterTime(trader)
-      const { data: period = 0 } = await getBrokerValidPeriod(trader)
-      const { data: info = {} } = await getBrokerInfoByAddr(trader)
+      const { data: rank = 0 } = await getBrokerRanking(trader, marginToken)
+      const { data: time = 0 } = await getBrokerRegistrationTime(trader)
+      const { data: period = 0 } = await getBrokerValidityPeriod(trader)
+      const { data: info = {} } = await getBrokerInfoWithAddress(trader)
       const { data: rewards = {} } = await getBrokerRewardsToday(trader, marginToken)
       // console.info(rewards)
       set({
@@ -55,7 +55,7 @@ const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
     }
   },
   fetchBrokerBound: async (trader: string) => {
-    const data = await getBrokerInfoByTrader(trader)
+    const data = await getBrokerBound(trader)
 
     // console.info(`fetchBrokerBound`)
     // console.info(data?.data)

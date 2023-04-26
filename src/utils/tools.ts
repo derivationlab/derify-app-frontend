@@ -1,11 +1,16 @@
 import BN from 'bignumber.js'
 import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
 import { ethers } from 'ethers'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { formatUnits as _formatUnits } from '@ethersproject/units'
 
+import utc from 'dayjs/plugin/utc'
+import duration from 'dayjs/plugin/duration'
+
+dayjs.extend(utc)
 dayjs.extend(duration)
+
+export const dayjsStartOf = (): string => dayjs().utc().startOf('days').format()
 
 export const calcDateDuration = (s: number): [number, string, string, string, boolean] => {
   const duration = dayjs.duration(dayjs(s).diff(dayjs()))

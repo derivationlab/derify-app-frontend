@@ -10,7 +10,7 @@ import { keepDecimals } from '@/utils/tools'
 import { EXPLORER_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
-import { getBrokerRewardTx } from '@/api'
+import { getBrokerTransactions } from '@/api'
 import { reducer, stateInit } from '@/reducers/records'
 
 import Pagination from '@/components/common/Pagination'
@@ -110,7 +110,7 @@ const Transaction: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerRewardTx(address, findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getBrokerTransactions(address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

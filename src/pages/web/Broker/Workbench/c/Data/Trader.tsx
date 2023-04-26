@@ -9,7 +9,7 @@ import { EXPLORER_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { reducer, stateInit } from '@/reducers/records'
-import { getListOfAllUsersOfBroker } from '@/api'
+import { getBrokerSubordinate } from '@/api'
 
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
@@ -61,7 +61,7 @@ const Trader: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getListOfAllUsersOfBroker(address, findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getBrokerSubordinate(address, findToken(marginToken).tokenAddress, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

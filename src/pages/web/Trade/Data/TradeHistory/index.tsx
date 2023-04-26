@@ -7,7 +7,7 @@ import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 
 import { reducer, stateInit } from '@/reducers/records'
-import { getTraderTradeFlow } from '@/api'
+import { getTradingHistory } from '@/api'
 
 import Loading from '@/components/common/Loading'
 import Pagination from '@/components/common/Pagination'
@@ -25,7 +25,7 @@ const TradeHistory: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getTraderTradeFlow(findToken(marginToken).tokenAddress, address, index, 10)
+      const { data } = await getTradingHistory(findToken(marginToken).tokenAddress, address, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

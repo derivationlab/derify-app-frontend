@@ -7,6 +7,13 @@ export enum ChainId {
   TESTNET = 97
 }
 
+export enum ConnectorIds {
+  MetaMask = 'metaMask',
+  Injected = 'injected',
+  WalletLink = 'coinbaseWallet',
+  WalletConnect = 'walletConnectLegacy'
+}
+
 export type TSigner = Signer | null | undefined
 
 export type ChainIdRec = { [key in GlobalType.Chain]: string }

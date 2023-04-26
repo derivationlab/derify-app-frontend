@@ -2,10 +2,7 @@
 
 interface Window {
   toast: any
-  ethereum?: {
-    request: (...args: unknown[]) => Promise<any>
-    on: (p: string, f?: (k: unknown) => void) => void
-  }
+  ethereum?: GlobalType.Ethereum
 }
 
 namespace NodeJS {

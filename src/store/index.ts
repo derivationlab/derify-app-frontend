@@ -1,4 +1,5 @@
 export * from './useRpcNode'
+export * from './useSharing'
 export * from './useOpening'
 export * from './usePosition'
 export * from './useBalances'

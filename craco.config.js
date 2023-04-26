@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 
 const P = (p) => path.join(__dirname, p)
@@ -11,9 +12,16 @@ module.exports = {
     alias: {
       '@': P('src')
     },
-    externals: {
-      geoip2: 'geoip2'
+    resolve: {
+      fallback: {
+        buffer: require.resolve('buffer/')
+      }
     },
+    plugins: [
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer']
+      })
+    ],
     configure: (webpackConfig, { env }) => {
       if (env === 'production') {
         webpackConfig.plugins.push(

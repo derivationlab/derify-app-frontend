@@ -2,8 +2,8 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { last, sortBy } from 'lodash'
 
-import { RpcNodeState } from '@/store/types'
 import { checkRpcHealthStatus } from '@/api'
+import { RpcNodeState, WalletState } from '@/store/types'
 import { CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
 
 const loadJsonFile = (key: string, path = '/abi'): Promise<Record<string, any>> => {
@@ -92,4 +92,10 @@ const useRpcNodeStore = create(
   )
 )
 
-export { useRpcNodeStore }
+const useWalletStore = create<WalletState>((set) => ({
+  account: '',
+  loaded: false,
+  updateAccount: (data: string) => set(() => ({ account: data, loaded: true }))
+}))
+
+export { useRpcNodeStore, useWalletStore }

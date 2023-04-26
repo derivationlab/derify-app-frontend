@@ -9,19 +9,20 @@ export const _getAddress = (address: ChainIdRec): string => {
   return address[chainId].toLowerCase()
 }
 
-export const getAddress1 = (address: ChainIdRec, chainId: ChainId): string => {
-  return address[chainId].toLowerCase()
-}
-
-export function addressCheck(address: string) {
+export function addressCheck(address: string, key?: string) {
   try {
+    if (!address) {
+      warning(false, `${key} ▶ contract address not set`)
+      return ''
+    }
+
     const check = getAddress(address)
 
-    warning(address === check, `Invalid checksum address: ${address}`)
+    warning(address === check, `${key} ▶ valid checksum address: ${address}`)
 
     return check
   } catch (error) {
-    invariant(false, `Invalid address: ${address}`)
+    invariant(false, `${key} ▶ invalid address: ${address}`)
   }
 }
 
@@ -53,7 +54,7 @@ class Token {
   checkAddress<T>(address: T): T {
     let obj = Object.create(null)
     for (const key in address) {
-      const check = addressCheck(String(address[key]))
+      const check = addressCheck(String(address[key]), `${this.name}-${key}`)
       obj = { ...obj, [key]: check }
     }
     return obj as T

@@ -1,12 +1,14 @@
 import { useTranslation } from 'react-i18next'
-import { useAccount, useConnect, useNetwork, useSwitchNetwork } from 'wagmi'
-import React, { FC, useEffect, useState, useMemo, useCallback } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
+import { Wallet } from '@/components/common/Wallet/wallets'
 import { traderInfoUpdates } from '@/api'
+import { SharingEvents, useSharingStore, useWalletStore } from '@/store'
+import useConnecting from '@/hooks/useConnecting'
 
 import Button from '@/components/common/Button'
 import WalletDialog from '@/components/common/Wallet'
-import AccountDialog from '@/components/common/Wallet/Account'
 
 interface Props {
   size?: 'mini' | 'default'
@@ -16,73 +18,52 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   const { t } = useTranslation()
   const { chain, chains } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
-  const { connectAsync, connectors, isLoading } = useConnect()
-  const { connector: activeConnector, isConnected, address } = useAccount()
+  const { isConnected, address } = useAccount()
 
+  const [visibleStatus, setModalStatus] = useState<boolean>(false)
   const [needSwitchNet, setNeedSwitchNet] = useState<boolean>(false)
-  const [showWalletInf, setShowWalletInf] = useState<boolean>(false)
-  const [visibleStatus, setVisibleStatus] = useState<string>('')
 
-  const todoWalletLogin = async (connectorsIndex: number) => {
-    const connector = connectors[connectorsIndex]
+  const { connectWallet } = useConnecting()
 
-    if (connector === undefined) {
-      window.toast.error('Wallet Connector is undefined. Please refresh and try again.')
-      return
-    }
+  const sharing = useSharingStore((state) => state.sharing)
+  const updateSharing = useSharingStore((state) => state.updateSharing)
+  const updateAccount = useWalletStore((state) => state.updateAccount)
 
-    if (!connector.ready && connectorsIndex === 0) {
-      window.open('https://metamask.io/download/', '_blank')
-      return
-    }
+  const connectWalletFunc = async (wallet: Wallet) => {
+    const { installed, connectorId, downloadLink } = wallet
+    // console.info(installed)
+    // console.info(connectorId)
+    // console.info(window.ethereum)
+    if (installed === false) return window.open(downloadLink, '_blank')
 
-    const connectRes = await connectAsync({ connector })
+    const connected = await connectWallet(connectorId)
 
-    if (!connectRes) {
-      window.toast.error('Wallet Connector could not connect. Please refresh and try again.')
-      return
-    }
-
-    if (connectRes.chain.unsupported) {
-      setNeedSwitchNet(true)
-      return
-    }
+    if (connected && connected.chain.unsupported) setNeedSwitchNet(true)
   }
-
-  const memoAccountHide = useMemo(() => {
-    if (address) return address.replace(/(\w{5})\w*(\w{4})/, '$1...$2')
-    return ''
-  }, [address])
-
-  const onClickWalletCb = useCallback(() => {
-    if (address) {
-      setShowWalletInf(!showWalletInf)
-    } else {
-      setVisibleStatus('connect')
-    }
-  }, [address, showWalletInf])
-
-  const onCloseDialogEv = () => setVisibleStatus('')
-
-  useEffect(() => {
-    if (!isLoading && activeConnector && address) setVisibleStatus('')
-  }, [address, isLoading, activeConnector])
-
-  useEffect(() => {
-    if (!activeConnector) setShowWalletInf(false)
-  }, [activeConnector])
 
   useEffect(() => {
     if ((chain?.unsupported || needSwitchNet) && switchNetwork) switchNetwork(chains[0]?.id)
   }, [chain, needSwitchNet, switchNetwork, chains])
 
   useEffect(() => {
-    const func = (trader: string) => {
-      void traderInfoUpdates({ trader })
-    }
+    if (sharing === SharingEvents.connectWallet) {
+      console.info(`sharing:${sharing}`)
 
+      setModalStatus(true)
+
+      updateSharing(undefined)
+    }
+  }, [sharing])
+
+  useEffect(() => {
     if (isConnected && address) {
-      func(address)
+      setModalStatus(false)
+
+      updateAccount(address)
+
+      void traderInfoUpdates({ trader: address })
+    } else {
+      updateAccount('')
     }
   }, [isConnected, address])
 
@@ -90,15 +71,15 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
     <>
       {isConnected && address ? (
         <Button className="c-connect-wallet-btn" size={size} to="/space">
-          {memoAccountHide}
+          {address.replace(/(\w{5})\w*(\w{4})/, '$1...$2')}
         </Button>
       ) : (
-        <Button className="c-connect-wallet-btn" size={size} onClick={onClickWalletCb}>
+        <Button className="c-connect-wallet-btn" size={size} onClick={() => setModalStatus(true)}>
           {t('Nav.Nav.ConnectWallet', 'Connect Wallet')}
         </Button>
       )}
-      <WalletDialog visible={visibleStatus === 'connect'} onClose={onCloseDialogEv} onClick={todoWalletLogin} />
-      <AccountDialog visible={visibleStatus === 'account'} onClose={onCloseDialogEv} />
+      <WalletDialog visible={visibleStatus} onClose={() => setModalStatus(false)} onClick={connectWalletFunc} />
+      {/*<AccountDialog visible={visibleStatus === 'account'} onClose={onCloseDialogEv} />*/}
     </>
   )
 }

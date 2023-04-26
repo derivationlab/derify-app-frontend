@@ -1,6 +1,7 @@
 import { sysParams } from '@/store/useSysParams'
 
 import { OpeningType } from '@/store/useOpening'
+import { SharingEvents } from '@/store/useSharing'
 import { InitialTraderVariablesType } from '@/hooks/helper'
 import {
   ChainId,
@@ -12,6 +13,12 @@ import {
 } from '@/typings'
 
 export type Rec = Record<string, any>
+
+export interface WalletState {
+  loaded: boolean
+  account: string
+  updateAccount: (data: string) => void
+}
 
 export interface RpcNodeState {
   rpc: string
@@ -41,6 +48,11 @@ export interface OpeningState {
     exchange: string,
     marginToken: MarginTokenKeys
   ) => Promise<void>
+}
+
+export interface SharingState {
+  sharing: SharingEvents | undefined
+  updateSharing: (data: SharingEvents | undefined) => void
 }
 
 export interface SysParamsState {

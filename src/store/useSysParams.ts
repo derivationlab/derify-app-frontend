@@ -22,8 +22,8 @@ const useSysParamsStore = create<SysParamsState>((set) => ({
   loaded: false,
   updateSysParams: (data: typeof sysParams) =>
     set(() => {
-      console.info('updateSysParams:')
-      console.info(data)
+      // console.info('updateSysParams:')
+      // console.info(data)
       return { sysParams: data, loaded: true }
     })
 }))

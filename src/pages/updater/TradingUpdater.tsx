@@ -10,16 +10,11 @@ export default function TradingUpdater(): null {
   const protocolConfig = useConfigInfoStore((state) => state.protocolConfig)
   const updatePCFRatios = usePairsInfoStore((state) => state.updatePCFRatios)
   const updateSpotPrices = usePairsInfoStore((state) => state.updateSpotPrices)
-  const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
   const protocolConfigLoaded = useConfigInfoStore((state) => state.protocolConfigLoaded)
   const updateOpeningMaxLimit = useConfigInfoStore((state) => state.updateOpeningMaxLimit)
 
   // for pcf and spot price
-  const { data1: pcfDAT, data2: spotPriceDAT, refetch: refetchSpotPrices } = usePCFAndPrice(factoryConfig)
-
-  useEffect(() => {
-    if (factoryConfig && factoryConfigLoaded) void refetchSpotPrices()
-  }, [factoryConfig, factoryConfigLoaded])
+  const { data1: pcfDAT, data2: spotPriceDAT } = usePCFAndPrice(factoryConfig)
 
   useEffect(() => {
     updatePCFRatios(pcfDAT)

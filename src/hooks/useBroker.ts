@@ -1,5 +1,4 @@
 import { Signer } from 'ethers'
-import { isEmpty } from 'lodash'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
@@ -7,11 +6,8 @@ import tokens from '@/config/tokens'
 import contracts from '@/config/contracts'
 import { estimateGas } from '@/utils/estimateGas'
 import { allowanceApprove } from '@/utils/allowanceApprove'
-import { useQueryMulticall } from '@/hooks/useQueryContract'
+import { formatUnits, inputParameterConversion } from '@/utils/tools'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
-import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
-
-import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 
 const brokerInfoInit = {
   drfRewardBalance: '0',
@@ -114,38 +110,6 @@ export const useExtendPeriod = () => {
   }
 
   return { extend }
-}
-
-export const useBrokerParams = (): {
-  data?: { burnLimitAmount: string; burnLimitPerDay: number }
-  isLoading: boolean
-} => {
-  const calls = [
-    {
-      name: 'brokerApplyNumber',
-      address: contracts.derifyProtocol.contractAddress
-    },
-    {
-      name: 'brokerValidUnitNumber',
-      address: contracts.derifyProtocol.contractAddress
-    }
-  ]
-
-  const { data, isLoading } = useQueryMulticall(derifyProtocolAbi, calls, 30000)
-
-  if (!isLoading && !isEmpty(data)) {
-    const [brokerApplyNumber, brokerValidUnitNumber] = data
-    const mul = bnMul(String(brokerValidUnitNumber), 24 * 3600)
-    return {
-      data: {
-        burnLimitAmount: formatUnits(String(brokerApplyNumber)),
-        burnLimitPerDay: Math.ceil(bnDiv(mul, 3 * Math.pow(10, 8)) as any)
-      },
-      isLoading
-    }
-  }
-
-  return { isLoading }
 }
 
 export const useWithdrawReward = () => {

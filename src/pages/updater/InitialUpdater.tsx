@@ -14,13 +14,14 @@ export default function InitialUpdater(): null {
   const { address } = useAccount()
   const { pathname } = useLocation()
 
-  const { data: protocolConfDAT, isLoading: protocolConfDATIsLoading } = useProtocolConfig()
+  const { marginData, brokerData, isLoading } = useProtocolConfig()
 
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const fetchBalances = useBalancesStore((state) => state.fetch)
   const resetBalances = useBalancesStore((state) => state.reset)
   const resetVariables = useTraderInfoStore((state) => state.reset)
   const updateVariables = useTraderInfoStore((state) => state.updateVariables)
+  const updateBrokerParams = useConfigInfoStore((state) => state.updateBrokerParams)
   const updateMTokenPrices = useConfigInfoStore((state) => state.updateMTokenPrices)
   const updateMinimumGrant = useConfigInfoStore((state) => state.updateMinimumGrant)
   const updateFactoryConfig = useConfigInfoStore((state) => state.updateFactoryConfig)
@@ -32,9 +33,8 @@ export default function InitialUpdater(): null {
     return find?.symbol ?? DEFAULT_MARGIN_TOKEN.symbol
   }, [pathname]) as MarginTokenKeys
 
-  const { data: minimumGrant, refetch } = useMinimumGrant(protocolConfDAT?.[marginToken])
+  const { data: minimumGrant, refetch } = useMinimumGrant(marginData?.[marginToken])
 
-  // for tokens balance
   useEffect(() => {
     if (!address) {
       void resetBalances()
@@ -48,65 +48,59 @@ export default function InitialUpdater(): null {
     })
   }, [address])
 
-  // for protocol abi config
   useEffect(() => {
-    if (!protocolConfDATIsLoading && protocolConfDAT) {
-      updateProtocolConfig(protocolConfDAT)
+    if (!isLoading) {
+      if (brokerData) updateBrokerParams(brokerData)
+      if (marginData) updateProtocolConfig(marginData)
     }
-  }, [protocolConfDATIsLoading])
+  }, [isLoading])
 
-  // for factory abi config
   useEffect(() => {
-    const func = async (protocolConfDAT: MarginTokenWithContract) => {
-      const data = await getFactoryConfig(protocolConfDAT)
+    const func = async (marginData: MarginTokenWithContract) => {
+      const data = await getFactoryConfig(marginData)
       updateFactoryConfig(data)
     }
 
-    if (!protocolConfDATIsLoading && protocolConfDAT) void func(protocolConfDAT)
-  }, [protocolConfDATIsLoading, protocolConfDAT])
+    if (!isLoading && marginData) void func(marginData)
+  }, [isLoading, marginData])
 
-  // for opening min limit config
   useEffect(() => {
-    const func = async (protocolConfDAT: MarginTokenWithContract) => {
-      const data1 = await getOpeningMinLimit(protocolConfDAT)
-      const data2 = await getMarginTokenPrice(protocolConfDAT)
+    const func = async (marginData: MarginTokenWithContract) => {
+      const data1 = await getOpeningMinLimit(marginData)
+      const data2 = await getMarginTokenPrice(marginData)
       updateOpeningMinLimit(data1)
       updateMTokenPrices(data2)
     }
 
-    if (!protocolConfDATIsLoading && protocolConfDAT) void func(protocolConfDAT)
-  }, [protocolConfDATIsLoading, protocolConfDAT])
+    if (!isLoading && marginData) void func(marginData)
+  }, [isLoading, marginData])
 
-  // for trader variables
   useEffect(() => {
     const func = async (account: string, protocolConfig: MarginTokenWithContract) => {
       const data = await getTraderVariables(account, protocolConfig[marginToken].exchange)
       updateVariables(data)
     }
 
-    if (address && !protocolConfDATIsLoading && protocolConfDAT) {
-      void func(address, protocolConfDAT)
+    if (address && !isLoading && marginData) {
+      void func(address, marginData)
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_TRADER_VARIABLES, () => {
       console.info('UPDATE_TRADER_VARIABLES')
-      if (address && !protocolConfDATIsLoading && protocolConfDAT) {
-        void func(address, protocolConfDAT)
+      if (address && !isLoading && marginData) {
+        void func(address, marginData)
       }
     })
-  }, [protocolConfDATIsLoading, protocolConfDAT, address, marginToken, quoteToken])
+  }, [isLoading, marginData, address, marginToken, quoteToken])
 
-  // switch margin token need reset trader variables
   useEffect(() => {
     resetVariables()
   }, [marginToken])
 
-  // for add grant config
   useEffect(() => {
-    if (!protocolConfDATIsLoading && protocolConfDAT) void refetch()
-  }, [protocolConfDATIsLoading, protocolConfDAT])
+    if (!isLoading && marginData) void refetch()
+  }, [isLoading, marginData])
 
-  // for add grant config
   useEffect(() => {
     updateMinimumGrant(minimumGrant)
   }, [minimumGrant])

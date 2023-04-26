@@ -87,7 +87,7 @@ export const usePCFAndPrice = (config?: MarginTokenWithQuote) => {
     {
       retry: false,
       initialData: { output1, output2 },
-      refetchInterval: 3000,
+      refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }

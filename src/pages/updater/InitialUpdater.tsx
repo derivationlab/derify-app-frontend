@@ -51,23 +51,29 @@ export default function InitialUpdater(): null {
   useEffect(() => {
     if (!isLoading) {
       if (brokerData) updateBrokerParams(brokerData)
-      if (marginData) updateProtocolConfig(marginData)
+      if (marginData) {
+        void refetch()
+
+        updateProtocolConfig(marginData)
+      }
     }
   }, [isLoading])
 
   useEffect(() => {
-    const func = async (marginData: MarginTokenWithContract) => {
-      const data = await getFactoryConfig(marginData)
-      updateFactoryConfig(data)
-    }
+    resetVariables()
+  }, [marginToken])
 
-    if (!isLoading && marginData) void func(marginData)
-  }, [isLoading, marginData])
+  useEffect(() => {
+    updateMinimumGrant(minimumGrant)
+  }, [minimumGrant])
 
   useEffect(() => {
     const func = async (marginData: MarginTokenWithContract) => {
+      const data0 = await getFactoryConfig(marginData)
       const data1 = await getOpeningMinLimit(marginData)
       const data2 = await getMarginTokenPrice(marginData)
+
+      updateFactoryConfig(data0)
       updateOpeningMinLimit(data1)
       updateMTokenPrices(data2)
     }
@@ -92,18 +98,6 @@ export default function InitialUpdater(): null {
       }
     })
   }, [isLoading, marginData, address, marginToken, quoteToken])
-
-  useEffect(() => {
-    resetVariables()
-  }, [marginToken])
-
-  useEffect(() => {
-    if (!isLoading && marginData) void refetch()
-  }, [isLoading, marginData])
-
-  useEffect(() => {
-    updateMinimumGrant(minimumGrant)
-  }, [minimumGrant])
 
   return null
 }

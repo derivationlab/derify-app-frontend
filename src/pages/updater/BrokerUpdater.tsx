@@ -1,14 +1,12 @@
 import PubSub from 'pubsub-js'
-import { useAccount } from 'wagmi'
 import { useEffect } from 'react'
 
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
-import { useMarginTokenStore, useBrokerInfoStore } from '@/store'
+import { useMarginTokenStore, useBrokerInfoStore, useWalletStore } from '@/store'
 
 export default function BrokerUpdater(): null {
-  const { address, status } = useAccount()
-
+  const address = useWalletStore((state) => state.account)
   const fetchBrokerInfo = useBrokerInfoStore((state) => state.fetchBrokerInfo)
   const resetBrokerInfo = useBrokerInfoStore((state) => state.resetBrokerInfo)
   const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
@@ -37,7 +35,7 @@ export default function BrokerUpdater(): null {
         void fetchBrokerBound(address)
       }
     })
-  }, [address, status])
+  }, [address])
 
   return null
 }

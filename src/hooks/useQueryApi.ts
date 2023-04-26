@@ -337,7 +337,7 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
     {
       retry: false,
       initialData: [],
-      refetchInterval: 3000,
+      refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }

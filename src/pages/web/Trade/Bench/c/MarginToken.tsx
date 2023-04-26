@@ -8,7 +8,7 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
-import { useAllMarginBalances } from '@/hooks/useMySpaceInfo'
+import { useAllMarginBalances } from '@/hooks/useProfile'
 import { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { getMySpaceMarginTokenList } from '@/api'
 

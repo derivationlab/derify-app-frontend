@@ -6,11 +6,11 @@ import { useQuery } from '@tanstack/react-query'
 
 import contracts from '@/config/contracts'
 import multicall from '@/utils/multicall'
-import { MarginToken } from '@/typings'
 import { estimateGas } from '@/utils/estimateGas'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { bnPlus, formatUnits, inputParameterConversion } from '@/utils/tools'
 import tokens, { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
+import { MarginToken, MarginTokenKeys, MarginTokenWithQuote, ProtocolConfig, QuoteToken } from '@/typings'
 import {
   getDerifyPmrContract,
   getDerifyRankContract,
@@ -18,8 +18,8 @@ import {
   getDerifyBRewardsContract
 } from '@/utils/contractHelpers'
 
-import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
-import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 const initial = (): MarginToken => {
   let value = Object.create(null)
@@ -75,13 +75,13 @@ export const useAddGrant = () => {
   return { addGrantPlan }
 }
 
-export const useRankReward = (trader?: string, rewards?: string) => {
+export const useRankReward = (trader?: string, config?: string) => {
   const output = { drfBalance: '0', drfAccumulatedBalance: '0' }
   const { data, refetch, isLoading } = useQuery(
     ['useRankReward'],
     async () => {
-      if (trader && rewards) {
-        const c = getDerifyRewardsContract(rewards)
+      if (trader && config) {
+        const c = getDerifyRewardsContract(config)
 
         const response = await c.getRankReward(trader)
 
@@ -119,7 +119,7 @@ export const useBuyBackPool = () => {
         marginToken: token.symbol
       }))
 
-      const response = await multicall(DerifyProtocolAbi, calls)
+      const response = await multicall(derifyProtocolAbi, calls)
 
       if (!isEmpty(response)) {
         response.forEach(([data]: any, index: number) => {
@@ -147,11 +147,12 @@ export const useBuyBackPool = () => {
   return { data, isLoading }
 }
 
-export const useMinimumGrant = ({ rank = '', awards = '', mining = '' } = {}) => {
+export const useMinimumGrant = (config?: ProtocolConfig) => {
   const { data, refetch, isLoading } = useQuery(
     ['useMinimumGrant'],
     async () => {
-      if (rank && awards && mining) {
+      if (config?.rank && config?.awards && config?.mining) {
+        const { rank, awards, mining } = config
         const c1 = getDerifyPmrContract(mining)
         const c2 = getDerifyRankContract(rank)
         const c3 = getDerifyBRewardsContract(awards)
@@ -180,23 +181,23 @@ export const useMinimumGrant = ({ rank = '', awards = '', mining = '' } = {}) =>
   return { data, refetch, isLoading }
 }
 
-export const usePositionInfo = (factoryConfig?: Record<string, any>) => {
+export const usePositionInfo = (config?: MarginTokenWithQuote) => {
   let output = initial()
   const { data, refetch } = useQuery(
     ['usePositionInfo'],
     async () => {
-      if (factoryConfig && factoryConfig[DEFAULT_MARGIN_TOKEN.symbol].BTC) {
-        const calls = Object.values(factoryConfig).map((quotes: string, j) =>
+      if (config && config[DEFAULT_MARGIN_TOKEN.symbol as MarginTokenKeys].BTC) {
+        const calls = Object.values(config).map((quotes: QuoteToken, j) =>
           Object.values(quotes).map((quote, k) => ({
             name: 'getSideTotalAmount',
             address: quote,
             quoteToken: Object.keys(quotes)[k],
-            marginToken: Object.keys(factoryConfig)[j]
+            marginToken: Object.keys(config)[j]
           }))
         )
         const flatterCalls = flatten(calls)
 
-        const response = await multicall(DerifyDerivativeAbi, flatterCalls)
+        const response = await multicall(derifyDerivativeAbi, flatterCalls)
 
         if (response.length > 0) {
           const _chunk = chunk(response, response.length / 2)
@@ -207,7 +208,7 @@ export const usePositionInfo = (factoryConfig?: Record<string, any>) => {
             }, 0)
             output = {
               ...output,
-              [Object.keys(factoryConfig)[index]]: sum
+              [Object.keys(config)[index]]: sum
             }
           })
 

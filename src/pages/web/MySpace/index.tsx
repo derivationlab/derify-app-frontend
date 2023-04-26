@@ -12,12 +12,7 @@ import { useConfigInfoStore } from '@/store'
 import { reducer, stateInit } from '@/reducers/records'
 import { getMySpaceMarginTokenList } from '@/api'
 import { findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
-import {
-  useTraderVariables,
-  useAllBrokerRewards,
-  useAllTraderRewards,
-  useAllMarginBalances
-} from '@/hooks/useMySpaceInfo'
+import { useTraderVariables, useAllBrokerRewards, useAllTraderRewards, useAllMarginBalances } from '@/hooks/useProfile'
 
 import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
 import Button from '@/components/common/Button'
@@ -71,7 +66,7 @@ const MySpace: FC = () => {
       {
         title: 'Balance/Rate',
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
+        render: (symbol: string) => {
           const p1 = traderVariables[symbol as MarginTokenKeys]
           const p2 = marginBalances[symbol as MarginTokenKeys]
           const per = Number(p1) === 0 ? 0 : bnDiv(p2, p1)

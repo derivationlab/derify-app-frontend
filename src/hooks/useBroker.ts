@@ -11,16 +11,16 @@ import { useQueryMulticall } from '@/hooks/useQueryContract'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
 import { bnDiv, bnMul, formatUnits, inputParameterConversion } from '@/utils/tools'
 
-import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 
-const init = {
+const brokerInfoInit = {
   drfRewardBalance: '0',
   accumulatedDrfReward: '0',
   marginTokenRewardBalance: '0',
   accumulatedMarginTokenReward: '0'
 }
 
-export const useBrokerInfo = (trader = '', rewards = ''): { data: typeof init; isLoading: boolean } => {
+export const useBrokerInfo = (trader = '', rewards = ''): { data: typeof brokerInfoInit; isLoading: boolean } => {
   const { data, isLoading } = useQuery(
     ['useRankReward'],
     async () => {
@@ -32,18 +32,18 @@ export const useBrokerInfo = (trader = '', rewards = ''): { data: typeof init; i
         const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } =
           response
         return {
-          ...init,
+          ...brokerInfoInit,
           drfRewardBalance: formatUnits(drfRewardBalance),
           accumulatedDrfReward: formatUnits(accumulatedDrfReward),
           marginTokenRewardBalance: formatUnits(marginTokenRewardBalance),
           accumulatedMarginTokenReward: formatUnits(accumulatedMarginTokenReward)
         }
       }
-      return init
+      return brokerInfoInit
     },
     {
       retry: false,
-      initialData: init,
+      initialData: brokerInfoInit,
       refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
@@ -59,14 +59,14 @@ export const useApplyBroker = () => {
     if (!signer) return false
 
     const c = getDerifyProtocolContract(signer)
-    const _burnLimitAmount = inputParameterConversion(burnLimitAmount, 18)
+    const burnLimitAmountPrecision18 = inputParameterConversion(burnLimitAmount, 18)
 
     try {
       const approve = await allowanceApprove(
         signer,
         contracts.derifyProtocol.contractAddress,
         tokens.edrf.tokenAddress,
-        _burnLimitAmount
+        burnLimitAmountPrecision18
       )
 
       if (!approve) return false
@@ -87,8 +87,8 @@ export const useApplyBroker = () => {
 export const useExtendPeriod = () => {
   const extend = async (amount: string, signer: Signer): Promise<boolean> => {
     const c = getDerifyProtocolContract(signer)
-    const _amount1 = inputParameterConversion(amount, 8)
-    const _amount2 = inputParameterConversion(amount, 18)
+    const amountPrecision8 = inputParameterConversion(amount, 8)
+    const amountPrecision18 = inputParameterConversion(amount, 18)
 
     try {
       if (!signer) return false
@@ -97,13 +97,13 @@ export const useExtendPeriod = () => {
         signer,
         contracts.derifyProtocol.contractAddress,
         tokens.edrf.tokenAddress,
-        _amount2
+        amountPrecision18
       )
 
       if (!approve) return false
 
-      const gasLimit = await estimateGas(c, 'burnEdrfExtendValidPeriod', [_amount1], 2000)
-      const response = await c.burnEdrfExtendValidPeriod(_amount1, { gasLimit })
+      const gasLimit = await estimateGas(c, 'burnEdrfExtendValidPeriod', [amountPrecision8], 2000)
+      const response = await c.burnEdrfExtendValidPeriod(amountPrecision8, { gasLimit })
       const receipt = await response.wait()
 
       return receipt.status
@@ -116,7 +116,10 @@ export const useExtendPeriod = () => {
   return { extend }
 }
 
-export const useBrokerParams = (): { data?: Record<string, any>; isLoading: boolean } => {
+export const useBrokerParams = (): {
+  data?: { burnLimitAmount: string; burnLimitPerDay: number }
+  isLoading: boolean
+} => {
   const calls = [
     {
       name: 'brokerApplyNumber',
@@ -128,7 +131,7 @@ export const useBrokerParams = (): { data?: Record<string, any>; isLoading: bool
     }
   ]
 
-  const { data, isLoading } = useQueryMulticall(DerifyProtocolAbi, calls, 30000)
+  const { data, isLoading } = useQueryMulticall(derifyProtocolAbi, calls, 30000)
 
   if (!isLoading && !isEmpty(data)) {
     const [brokerApplyNumber, brokerValidUnitNumber] = data

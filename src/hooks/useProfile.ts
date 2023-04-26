@@ -5,11 +5,11 @@ import multicall from '@/utils/multicall'
 import contracts from '@/config/contracts'
 import { formatUnits, isLT } from '@/utils/tools'
 import { getDerifyExchangeContract } from '@/utils/contractHelpers'
-import { MarginToken, MarginTokenKeys } from '@/typings'
 import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
+import { MarginToken, MarginTokenKeys, MarginTokenWithContract } from '@/typings'
 
-import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
-import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import derifyRewardsAbi from '@/config/abi/DerifyRewards.json'
+import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 
 const initial1 = (): MarginToken => {
   let value = Object.create(null)
@@ -40,59 +40,13 @@ const initial2 = (): MarginToken => {
   return value
 }
 
-export const useAllMarginBalances = (trader?: string) => {
-  let output = initial1()
-  const { data, refetch, isLoading } = useQuery(
-    ['useAllMarginBalances'],
-    async () => {
-      if (trader) {
-        const base = {
-          name: 'getAllMarginBalances',
-          address: contracts.derifyProtocol.contractAddress
-        }
-        const calls = MARGIN_TOKENS.map((token) => ({
-          ...base,
-          params: [
-            [
-              {
-                traders: [trader],
-                balances: [],
-                marginToken: token.tokenAddress
-              }
-            ]
-          ]
-        }))
-
-        const res = await multicall(DerifyProtocolAbi, calls)
-
-        if (res.length > 0) {
-          res.forEach(([margin]: any[], index: number) => {
-            const [{ balances }] = margin
-            output = {
-              ...output,
-              [MARGIN_TOKENS[index].symbol]: formatUnits(String(balances), 8)
-            }
-          })
-        }
-        // console.info(output)
-        return output
-      }
-
-      return initial1()
-    },
-    {
-      retry: false,
-      initialData: initial1(),
-      refetchInterval: 6000,
-      keepPreviousData: true,
-      refetchOnWindowFocus: false
-    }
-  )
-
-  return { data, refetch, isLoading }
+const innerFunc = async (address: string, trader: string) => {
+  const c = getDerifyExchangeContract(address)
+  const response = await c.getTraderVariables(trader)
+  return response
 }
 
-export const useAllTraderRewards = (trader?: string, config?: Record<string, any>) => {
+export const useAllTraderRewards = (trader?: string, config?: MarginTokenWithContract) => {
   let output = initial2()
 
   const { data, refetch, isLoading } = useQuery(
@@ -110,7 +64,7 @@ export const useAllTraderRewards = (trader?: string, config?: Record<string, any
             marginToken: Object.keys(config)[index]
           }))
 
-          const response = await multicall(DerifyRewardsAbi, calls)
+          const response = await multicall(derifyRewardsAbi, calls)
 
           if (!isEmpty(response)) {
             response.forEach((data: any, index: number) => {
@@ -151,7 +105,7 @@ export const useAllTraderRewards = (trader?: string, config?: Record<string, any
   return { data, refetch, isLoading }
 }
 
-export const useAllBrokerRewards = (trader?: string, config?: Record<string, any>) => {
+export const useAllBrokerRewards = (trader?: string, config?: MarginTokenWithContract) => {
   let output = initial2()
 
   const { data, refetch, isLoading } = useQuery(
@@ -169,7 +123,7 @@ export const useAllBrokerRewards = (trader?: string, config?: Record<string, any
             marginToken: Object.keys(config)[index]
           }))
 
-          const response = await multicall(DerifyRewardsAbi, calls)
+          const response = await multicall(derifyRewardsAbi, calls)
 
           if (!isEmpty(response)) {
             response.forEach((data: any, index: number) => {
@@ -205,19 +159,65 @@ export const useAllBrokerRewards = (trader?: string, config?: Record<string, any
   return { data, refetch, isLoading }
 }
 
-const innerFunc = async (address: string, trader: string) => {
-  const c = getDerifyExchangeContract(address)
-  const response = await c.getTraderVariables(trader)
-  return response
+export const useAllMarginBalances = (trader?: string) => {
+  let output = initial1()
+  const { data, refetch, isLoading } = useQuery(
+    ['useAllMarginBalances'],
+    async () => {
+      if (trader) {
+        const base = {
+          name: 'getAllMarginBalances',
+          address: contracts.derifyProtocol.contractAddress
+        }
+        const calls = MARGIN_TOKENS.map((token) => ({
+          ...base,
+          params: [
+            [
+              {
+                traders: [trader],
+                balances: [],
+                marginToken: token.tokenAddress
+              }
+            ]
+          ]
+        }))
+
+        const res = await multicall(derifyProtocolAbi, calls)
+
+        if (res.length > 0) {
+          res.forEach(([margin]: any[], index: number) => {
+            const [{ balances }] = margin
+            output = {
+              ...output,
+              [MARGIN_TOKENS[index].symbol]: formatUnits(String(balances), 8)
+            }
+          })
+        }
+        // console.info(output)
+        return output
+      }
+
+      return initial1()
+    },
+    {
+      retry: false,
+      initialData: initial1(),
+      refetchInterval: 6000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data, refetch, isLoading }
 }
 
-export const useTraderVariables = (trader?: string, config?: Record<string, any>) => {
+export const useTraderVariables = (trader?: string, config?: MarginTokenWithContract) => {
   let output = initial1()
 
   const { data, refetch } = useQuery(
     ['useTraderVariables'],
     async () => {
-      if (trader && config && config[DEFAULT_MARGIN_TOKEN.symbol].exchange) {
+      if (trader && config && config[DEFAULT_MARGIN_TOKEN.symbol as MarginTokenKeys].exchange) {
         const promises = Object.keys(config).map(async (key) => [
           await innerFunc(config[key as MarginTokenKeys].exchange, trader).catch(() => null)
         ])

@@ -7,7 +7,7 @@ import { formatUnits, safeInterceptionValues } from '@/utils/tools'
 import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 
-import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 export const initialPCFAndPrice = (): MarginTokenWithQuote => {
   let value = Object.create(null)
@@ -29,50 +29,50 @@ export const initialPCFAndPrice = (): MarginTokenWithQuote => {
   return value
 }
 
-export const usePCFAndPrice = (factoryConfig?: Record<string, any>) => {
+export const usePCFAndPrice = (config?: MarginTokenWithQuote) => {
   const output1 = initialPCFAndPrice()
   const output2 = initialPCFAndPrice()
 
   const { data, refetch, isLoading } = useQuery(
     ['usePCFAndPrice'],
     async () => {
-      if (factoryConfig && factoryConfig[DEFAULT_MARGIN_TOKEN.symbol].BTC) {
-        const calls1: any[] = []
-        const calls2: any[] = []
+      if (config && config[DEFAULT_MARGIN_TOKEN.symbol as MarginTokenKeys].BTC) {
+        const pcfCalls: any[] = []
+        const priceCalls: any[] = []
 
-        for (const k in factoryConfig) {
-          for (const j in factoryConfig[k as MarginTokenKeys]) {
-            calls1.push({
+        for (const k in config) {
+          for (const j in config[k as MarginTokenKeys]) {
+            pcfCalls.push({
               name: 'getPositionChangeFeeRatio',
-              address: factoryConfig[k as MarginTokenKeys][j as QuoteTokenKeys],
+              address: config[k as MarginTokenKeys][j as QuoteTokenKeys],
               quoteToken: j,
               marginToken: k
             })
-            calls2.push({
+            priceCalls.push({
               name: 'getSpotPrice',
-              address: factoryConfig[k as MarginTokenKeys][j as QuoteTokenKeys],
+              address: config[k as MarginTokenKeys][j as QuoteTokenKeys],
               quoteToken: j,
               marginToken: k
             })
           }
         }
 
-        const calls = [...calls1, ...calls2]
+        const calls = [...pcfCalls, ...priceCalls]
 
-        const response = await multicall(DerifyDerivativeAbi, calls)
+        const response = await multicall(derifyDerivativeAbi, calls)
 
         if (!isEmpty(response)) {
-          const _chunk = chunk(response, calls1.length) as any[]
+          const _chunk = chunk(response, pcfCalls.length) as any[]
           _chunk[0].forEach((ratio: BigNumberish, index: number) => {
             const _ratio = formatUnits(String(ratio), 8)
-            const { marginToken, quoteToken } = calls1[index]
+            const { marginToken, quoteToken } = pcfCalls[index]
             output1[marginToken as MarginTokenKeys] = {
               ...output1[marginToken as MarginTokenKeys],
               [quoteToken]: _ratio
             }
           })
           _chunk[1].forEach((spotPrice: BigNumberish, index: number) => {
-            const { marginToken, quoteToken } = calls2[index]
+            const { marginToken, quoteToken } = priceCalls[index]
             output2[marginToken as MarginTokenKeys] = {
               ...output2[marginToken as MarginTokenKeys],
               [quoteToken]: safeInterceptionValues(String(spotPrice), 8)

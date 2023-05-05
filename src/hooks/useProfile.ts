@@ -201,7 +201,6 @@ export const useAllMarginBalances = (trader?: string) => {
     },
     {
       retry: false,
-      initialData: initial1(),
       refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false

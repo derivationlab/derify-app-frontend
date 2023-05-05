@@ -10,8 +10,8 @@ import { MobileContext } from '@/providers/Mobile'
 import { MarginTokenKeys } from '@/typings'
 import { useConfigInfoStore } from '@/store'
 import { reducer, stateInit } from '@/reducers/records'
-import { getMySpaceMarginTokenList } from '@/api'
-import { findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
+import { getMarginTokenList } from '@/api'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { useTraderVariables, useAllBrokerRewards, useAllTraderRewards, useAllMarginBalances } from '@/hooks/useProfile'
 
 import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
@@ -25,22 +25,16 @@ const MySpace: FC = () => {
   const history = useHistory()
 
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
   const { address } = useAccount()
 
+  const { mobile } = useContext(MobileContext)
+
   const protocolConfig = useConfigInfoStore((state) => state.protocolConfig)
-  const protocolConfigLoaded = useConfigInfoStore((state) => state.protocolConfigLoaded)
 
-  const { data: marginBalances, refetch: marginBalancesRefetch, isLoading } = useAllMarginBalances(address)
-  const { data: traderVariables, refetch: traderVariablesRefetch } = useTraderVariables(address, protocolConfig)
-  const { data: allTraderRewards, refetch: allTraderRewardsRefetch } = useAllTraderRewards(address, protocolConfig)
-  const { data: allBrokerRewards, refetch: allBrokerRewardsRefetch } = useAllBrokerRewards(address, protocolConfig)
-
-  const emptyText = useMemo(() => {
-    if (state.records.loaded) return t('common.Loading')
-    if (isEmpty(state.records.records)) return t('common.NoRecord')
-    return ''
-  }, [t, state.records])
+  const { data: marginBalances, isLoading: marginBalancesLoaded } = useAllMarginBalances(address)
+  const { data: traderVariables } = useTraderVariables(address, protocolConfig)
+  const { data: allTraderRewards } = useAllTraderRewards(address, protocolConfig)
+  const { data: allBrokerRewards } = useAllBrokerRewards(address, protocolConfig)
 
   const mColumns = useMemo(() => {
     return [
@@ -65,21 +59,20 @@ const MySpace: FC = () => {
       },
       {
         title: 'Balance/Rate',
-        dataIndex: 'symbol',
-        render: (symbol: string) => {
-          const p1 = traderVariables[symbol as MarginTokenKeys]
-          const p2 = marginBalances[symbol as MarginTokenKeys]
-          const per = Number(p1) === 0 ? 0 : bnDiv(p2, p1)
+        dataIndex: 'marginBalance',
+        render: (_: string, record: Record<string, any>) => {
+          const param = traderVariables[record.symbol as MarginTokenKeys]
+          const percentage = Number(param) === 0 ? 0 : bnDiv(_, param)
           return (
             <>
-              <BalanceShow value={p2} unit={symbol} />
-              <BalanceShow value={per} percent />
+              <BalanceShow value={_} unit={record.symbol} />
+              <BalanceShow value={percentage} percent />
             </>
           )
         }
       }
     ]
-  }, [t, traderVariables, marginBalances])
+  }, [t, traderVariables])
 
   const wColumns = useMemo(() => {
     return [
@@ -89,10 +82,12 @@ const MySpace: FC = () => {
         dataIndex: 'marginBalance',
         width: 250,
         render: (_: string, record: Record<string, any>) => {
+          const param = traderVariables[record.symbol as MarginTokenKeys]
+          const percentage = Number(param) === 0 ? 0 : bnDiv(_, param)
           return (
             <>
               <BalanceShow value={_} unit={record.symbol} />
-              <BalanceShow value={record.marginRate} percent />
+              <BalanceShow value={percentage} percent />
             </>
           )
         }
@@ -102,7 +97,7 @@ const MySpace: FC = () => {
         dataIndex: 'positionVolume',
         width: 250,
         render: (_: string, record: Record<string, any>) => {
-          return <BalanceShow value={_} unit={record.symbol} />
+          return <BalanceShow value={traderVariables[record.symbol as MarginTokenKeys]} unit={record.symbol} />
         }
       },
       {
@@ -110,10 +105,11 @@ const MySpace: FC = () => {
         dataIndex: 'rewards1',
         width: 250,
         render: (_: Record<string, any>, record: Record<string, any>) => {
+          const rewards = allTraderRewards[record.symbol as MarginTokenKeys]
           return (
             <>
-              <BalanceShow value={_[record.symbol]} rule="0.00" unit={record.symbol} />
-              <BalanceShow value={_.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
+              <BalanceShow value={rewards[record.symbol]} rule="0.00" unit={record.symbol} />
+              <BalanceShow value={rewards.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
             </>
           )
         }
@@ -123,10 +119,11 @@ const MySpace: FC = () => {
         dataIndex: 'rewards2',
         width: 250,
         render: (_: Record<string, any>, record: Record<string, any>) => {
+          const rewards2 = allBrokerRewards[record.symbol as MarginTokenKeys]
           return (
             <>
-              <BalanceShow value={_[record.symbol]} rule="0.00" unit={record.symbol} />
-              <BalanceShow value={_.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
+              <BalanceShow value={rewards2[record.symbol]} rule="0.00" unit={record.symbol} />
+              <BalanceShow value={rewards2.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
             </>
           )
         }
@@ -145,38 +142,34 @@ const MySpace: FC = () => {
         }
       }
     ]
-  }, [t, traderVariables, marginBalances, allTraderRewards, allBrokerRewards])
+  }, [t, traderVariables, allTraderRewards, allBrokerRewards])
 
-  const initDAT = useMemo(() => {
-    if (!state.records.loaded && !isLoading) {
-      const _ = MARGIN_TOKENS.map((token) => {
-        const p0 = state.records.records.find((data) => data.symbol === token.symbol)
-        const p1 = traderVariables[token.symbol as MarginTokenKeys]
-        const p2 = marginBalances[token.symbol as MarginTokenKeys]
-        const p3 = Number(p1) === 0 ? 0 : bnDiv(p2, p1)
-        const rewards1 = allTraderRewards[token.symbol as MarginTokenKeys]
-        const rewards2 = allBrokerRewards[token.symbol as MarginTokenKeys]
+  const initData = useMemo(() => {
+    if (!state.records.loaded && !marginBalancesLoaded && marginBalances) {
+      const _ = state.records.records.map((token) => {
+        const marginBalance = marginBalances[token.symbol as MarginTokenKeys]
         return {
-          apy: p0?.max_pm_apy ?? 0,
-          open: p0?.open ?? 0,
+          apy: token.max_pm_apy,
+          open: token.open,
           symbol: token.symbol,
-          rewards1,
-          rewards2,
-          marginRate: p3,
-          marginBalance: p2,
-          positionVolume: traderVariables[token.symbol as MarginTokenKeys]
+          marginBalance,
         }
       })
       return orderBy(_, ['marginBalance', 'apy'], 'desc')
     }
     return []
-  }, [isLoading, state.records, traderVariables, marginBalances, allBrokerRewards, allTraderRewards])
+  }, [state.records, marginBalances, marginBalancesLoaded])
 
-  const fetchData = useCallback(
+  const emptyText = useMemo(() => {
+    if (state.records.loaded || marginBalancesLoaded) return t('common.Loading')
+    if (isEmpty(state.records.records)) return t('common.NoRecord')
+    return ''
+  }, [t, state.records, marginBalancesLoaded])
+
+  const _getMarginTokenList = useCallback(
     async (index = 0) => {
       if (address) {
-        const { data } = await getMySpaceMarginTokenList(address, index, 10)
-
+        const { data } = await getMarginTokenList(index)
         dispatch({
           type: 'SET_RECORDS',
           payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
@@ -189,23 +182,12 @@ const MySpace: FC = () => {
   const pageChange = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
-    void fetchData(index)
+    void _getMarginTokenList(index)
   }
 
   useEffect(() => {
-    if (address) {
-      void fetchData()
-      void marginBalancesRefetch()
-    }
+    if (address) void _getMarginTokenList()
   }, [address])
-
-  useEffect(() => {
-    if (address && protocolConfigLoaded && protocolConfig) {
-      void traderVariablesRefetch()
-      void allTraderRewardsRefetch()
-      void allBrokerRewardsRefetch()
-    }
-  }, [address, protocolConfig, protocolConfigLoaded])
 
   return (
     <div className="web-table-page">
@@ -214,7 +196,7 @@ const MySpace: FC = () => {
       </header>
       <Table
         rowKey="symbol"
-        data={initDAT}
+        data={initData}
         // @ts-ignore
         columns={mobile ? mColumns : wColumns}
         className="web-broker-table web-space-table"

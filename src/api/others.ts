@@ -23,6 +23,11 @@ export const getPairIndicator = async (token: string) => {
   return response
 }
 
+export const getMarginTokenList = async (page = 0, offset = 10) => {
+  const response = await get(`api/margin_token_list_apy/${page}/${offset}`)
+  return response
+}
+
 export const getTradersRankList = async (marginToken: string, page: number, offset: number) => {
   const response = await get(`api/traders_rank_list/${marginToken}/${page}/${offset}`)
   return response
@@ -30,11 +35,6 @@ export const getTradersRankList = async (marginToken: string, page: number, offs
 
 export const getTraderWithdrawAmount = async (trader: string, amount: number, marginToken: string) => {
   const response = await get(`api/trader_withdraw_amounts/${trader}/${amount}/${marginToken}`)
-  return response
-}
-
-export const getMySpaceMarginTokenList = async (trader: string, page: number, offset: number) => {
-  const response = await get(`api/margin_token_list/${trader}/${page}/${offset}`)
   return response
 }
 

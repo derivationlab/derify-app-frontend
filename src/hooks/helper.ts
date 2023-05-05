@@ -202,12 +202,12 @@ export const getTraderVariables = async (trader: string, exchange: string): Prom
       const { marginRate, marginBalance, totalPositionAmount } = getTraderVariables
 
       return {
-        balance: safeInterceptionValues(balance),
-        marginRate: safeInterceptionValues(marginRate, 4),
-        totalMargin: safeInterceptionValues(totalMargin),
-        marginBalance: safeInterceptionValues(marginBalance),
-        availableMargin: safeInterceptionValues(availableMargin, 8),
-        totalPositionAmount: safeInterceptionValues(totalPositionAmount)
+        balance: formatUnits(balance, 8),
+        marginRate: formatUnits(marginRate, 8),
+        totalMargin: formatUnits(totalMargin, 8),
+        marginBalance: formatUnits(marginBalance, 8),
+        availableMargin: formatUnits(availableMargin, 8),
+        totalPositionAmount: formatUnits(totalPositionAmount, 8)
       }
     }
 

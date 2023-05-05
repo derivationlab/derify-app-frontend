@@ -34,6 +34,7 @@ const PositionMining: FC = () => {
   const { data: positionsAmount } = useCurrentPositionsAmount('all', findToken(marginToken).tokenAddress)
 
   const memoPositionApy = useMemo(() => {
+    console.info(indicators)
     const values = Object.values(indicators)
     if (indicatorsLoaded) {
       const apy = values.map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))

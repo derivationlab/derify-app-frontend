@@ -15,11 +15,6 @@ export const getCurrentIndexDAT = async (address: string) => {
   return response
 }
 
-export const getMarginTokenList = async (page: number, offset: number) => {
-  const response = await get(`api/dashboard_margin_token_list/${page}/${offset}`)
-  return response
-}
-
 export const getCurrentTotalTradingNetValue = async (marginToken: string, quoteToken: string) => {
   const response = await get(`api/current_total_trading_net_value/${quoteToken}/${marginToken}`)
   return response

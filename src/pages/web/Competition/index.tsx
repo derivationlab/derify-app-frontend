@@ -7,7 +7,7 @@ import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } fr
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { getCompetitionRanks } from '@/api'
+import { getCompetitionList, getCompetitionRank } from '@/api'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
 
@@ -97,21 +97,31 @@ const CompetitionRank: FC = () => {
 
   const fetchData = useCallback(
     async (index = 0) => {
-      const { data } = await getCompetitionRanks(findToken(marginToken).tokenAddress, index, 10)
+      // const { data } = await getCompetitionRank(findToken(marginToken).tokenAddress, index, 10)
 
-      console.info(data)
+      // console.info(data)
 
-      dispatch({
-        type: 'SET_GRANT_DAT',
-        payload: { records: data, totalItems: data.length, isLoaded: false }
-        // payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-      })
+      // dispatch({
+      //   type: 'SET_GRANT_DAT',
+      //   payload: { records: data, totalItems: data.length, isLoaded: false }
+      //   // payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+      // })
     },
     [marginToken]
   )
 
+  const _getCompetitionRank = useCallback(async () => {
+    const { data } = await getCompetitionRank(findToken(marginToken).tokenAddress, 'active', 1)
+    console.info(data)
+  }, [marginToken])
+
+  const _getCompetitionList = useCallback(async () => {
+    const { data } = await getCompetitionList(findToken(marginToken).tokenAddress)
+    console.info(data)
+  }, [marginToken])
+
   useEffect(() => {
-    void fetchData()
+    void _getCompetitionList()
   }, [])
 
   return (

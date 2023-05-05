@@ -5,7 +5,6 @@ import contracts from '@/config/contracts'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 import { ProtocolConfig } from '@/typings'
-import { getBuyBackParams } from '@/api'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
 import { getDerifyBRewardsContract, getDerifyPmrContract, getDerifyRankContract } from '@/utils/contractHelpers'
 
@@ -62,25 +61,6 @@ export const initTradePairParams = {
   tradingFeeInusranceRatio: '0'
 }
 
-export const useBuyBackParams = (marginToken: string) => {
-  const { data, refetch, isLoading } = useQuery(
-    ['useBuyBackParams'],
-    async (): Promise<typeof initBuyBackParams> => {
-      const { data } = await getBuyBackParams(marginToken)
-      return data ?? initBuyBackParams
-    },
-    {
-      retry: 0,
-      initialData: initBuyBackParams,
-      refetchInterval: 30000,
-      keepPreviousData: true,
-      refetchOnWindowFocus: false
-    }
-  )
-
-  return { data, refetch, isLoading }
-}
-
 export const useRewardsParams = (rewards?: string) => {
   const { data, refetch, isLoading } = useQuery(
     ['useRewardsParams'],
@@ -114,7 +94,7 @@ export const useRewardsParams = (rewards?: string) => {
     {
       retry: 0,
       initialData: initRewardsParams,
-      refetchInterval: 30000,
+      refetchInterval: false,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
@@ -161,7 +141,7 @@ export const useExchangeParams = (exchange?: string) => {
     {
       retry: 0,
       initialData: initExchangeParams,
-      refetchInterval: 30000,
+      refetchInterval: false,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
@@ -218,7 +198,7 @@ export const useClearingParams = (clearing?: string) => {
     {
       retry: 0,
       initialData: initClearingParams,
-      refetchInterval: 30000,
+      refetchInterval: false,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
@@ -289,7 +269,7 @@ export const useGrantPlanParams = (config?: ProtocolConfig) => {
     {
       retry: 0,
       initialData: initGrantPlanParams,
-      refetchInterval: 30000,
+      refetchInterval: false,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
@@ -376,7 +356,7 @@ export const useTradePairParams = (address?: string) => {
     {
       retry: 0,
       initialData: initTradePairParams,
-      refetchInterval: 30000,
+      refetchInterval: false,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }

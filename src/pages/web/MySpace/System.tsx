@@ -4,12 +4,12 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import { pairOptions } from '@/data'
 import { QuoteTokenKeys } from '@/typings'
+import { getSystemParams } from '@/api'
 import { useMarginTokenStore } from '@/store'
 import { findToken, QUOTE_TOKENS } from '@/config/tokens'
 import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
 import { bnMul, nonBigNumberInterception } from '@/utils/tools'
 import {
-  useBuyBackParams,
   useRewardsParams,
   useProtocolParams,
   useClearingParams,
@@ -22,16 +22,21 @@ import Select from '@/components/common/Form/Select'
 
 const initSelectPair = QUOTE_TOKENS[0].symbol as QuoteTokenKeys
 
+const systemParamsInit = {
+  buybackPeriod: 0,
+  buybackSlippage: '0'
+}
+
 const System: FC = () => {
   const { t } = useTranslation()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const [selectPair, setSelectPair] = useState<QuoteTokenKeys>(initSelectPair)
+  const [systemParams, setSystemParams] = useState<typeof systemParamsInit>(systemParamsInit)
 
   const { protocolConfig } = useProtocolConf(marginToken)
   const { match: factoryConfig } = useFactoryConf(marginToken)
-  const { data: buyBackParams } = useBuyBackParams(findToken(marginToken).tokenAddress)
   const { data: protocolParams } = useProtocolParams()
   const { data: rewardsParams, refetch: refetchRewardsParams } = useRewardsParams(protocolConfig?.rewards)
   const { data: exchangeParams, refetch: refetchExchangeParams } = useExchangeParams(protocolConfig?.exchange)
@@ -87,11 +92,11 @@ const System: FC = () => {
       },
       {
         parameters: t('Nav.SystemParameters.Buybackcycleblocks'),
-        value: nonBigNumberInterception(buyBackParams.buyback_period, 8)
+        value: nonBigNumberInterception(systemParams.buybackPeriod, 8)
       },
       {
         parameters: t('Nav.SystemParameters.BuybackSlippageTolerance'),
-        value: `${bnMul(buyBackParams.buyback_sllipage, 100)}%`
+        value: `${bnMul(systemParams.buybackSlippage, 100)}%`
       },
       {
         parameters: t('Nav.SystemParameters.MinGrantDRFspositionmining'),
@@ -106,7 +111,7 @@ const System: FC = () => {
         value: nonBigNumberInterception(grantPlanParams.rank, 8)
       }
     ]
-  }, [exchangeParams, clearingParams, grantPlanParams, protocolParams])
+  }, [systemParams, exchangeParams, clearingParams, grantPlanParams, protocolParams])
 
   const trading = useMemo(() => {
     return [
@@ -139,6 +144,19 @@ const System: FC = () => {
       dataIndex: 'value'
     }
   ]
+
+  useEffect(() => {
+    const func = async () => {
+      const { data } = await getSystemParams(findToken(marginToken).tokenAddress)
+
+      setSystemParams({
+        buybackPeriod: data.buyback_period,
+        buybackSlippage: data.buyback_sllipage
+      })
+    }
+
+    void func()
+  }, [marginToken])
 
   useEffect(() => {
     if (protocolConfig) {

@@ -13,22 +13,13 @@ export const getIpLocation = async () => {
   return response
 }
 
-export const getPairIndicator = async (token: string) => {
-  const response = await get(`api/app_data/${token}`)
+export const getSystemParams = async (marginToken: string) => {
+  const response = await get(`api/sys_param/${marginToken}`)
   return response
 }
 
-export const getBuyBackParams = async (marginToken: string) => {
-  const response = await get(
-    `https://admin-test-api.derify.exchange/sys/param`,
-    { marginToken },
-    {
-      headers: {
-        'x-access-token':
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJEZXJpZnlBZG1pbiIsInJvbGUiOjIsImlhdCI6MTY4MTc0NjQzNCwiZXhwIjoxNjgxNzg5NjM0fQ.AyHx17ctarfU2suuJrCovFf2iMxAQoh7alzOtydnEdE'
-      }
-    }
-  )
+export const getPairIndicator = async (token: string) => {
+  const response = await get(`api/app_data/${token}`)
   return response
 }
 

@@ -1,17 +1,20 @@
 import dayjs from 'dayjs'
-import React, { FC, useState, useMemo, useReducer } from 'react'
+import React, { FC, useState, useMemo, useReducer, useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
+import Skeleton from '@/components/common/Skeleton'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import { Select, Input } from '@/components/common/Form'
 
 import { useConfigInfoStore, useBalancesStore } from '@/store'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
-import { isET, isLT, keepDecimals, safeInterceptionValues } from '@/utils/tools'
+import { isET, isLT, keepDecimals, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
+import { getMarginTokenList } from '@/api'
+import { useMarginListStore } from '@/store/useMarginToken'
 
 interface Props {
   visible: boolean
@@ -34,16 +37,8 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
 
   const balances = useBalancesStore((state) => state.balances)
   const minimumGrant = useConfigInfoStore((state) => state.minimumGrant)
-
-  const disabled = useMemo(() => {
-    const p1 = minimumGrant[state.grantTarget as any]
-    const p2 = balances[PLATFORM_TOKEN.symbol]
-    if (isET(p2, 0) || isET(p1, 0)) return true
-    if (isLT(p2, p1)) return true
-    if (isLT(state.amountInp || 0, p1)) return true
-    if (state.grantDays < limitDays.grantDays[0] || state.grantDays > limitDays.grantDays[1]) return true
-    if (state.cliffDays < limitDays.cliffDays[0] || state.cliffDays > limitDays.cliffDays[1]) return true
-  }, [balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
+  const marginList = useMarginListStore((state) => state.marginList)
+  const marginListLoaded = useMarginListStore((state) => state.marginListLoaded)
 
   const periodDate = useMemo(() => {
     const format = 'MM/DD/YYYY HH:mm:ss'
@@ -52,19 +47,37 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     return [dayjs().add(start).utc().format(format), dayjs().add(end).utc().format(format)]
   }, [state.grantDays, state.cliffDays])
 
-  const marginOptions = useMemo(
-    () =>
-      MARGIN_TOKENS.map((t) => ({
-        value: t.symbol,
-        label: t.symbol,
-        icon: `market/${t.symbol.toLowerCase()}.svg`
-      })),
-    []
-  )
+  const options = useMemo(() => {
+    if (marginListLoaded) {
+      return marginList
+        .map((token) => {
+          if (token.open > 0)
+            return {
+              value: token.symbol,
+              label: token.symbol,
+              icon: `market/${token.symbol.toLowerCase()}.svg`
+            }
+        })
+        .filter((token) => token)
+    }
+
+    return []
+  }, [marginList, marginListLoaded])
+
+  const disabled = useMemo(() => {
+    const p1 = minimumGrant[state.grantTarget as any]
+    const p2 = balances[PLATFORM_TOKEN.symbol]
+    if (options.length === 0) return true
+    if (isET(p2, 0) || isET(p1, 0)) return true
+    if (isLT(p2, p1)) return true
+    if (isLT(state.amountInp || 0, p1)) return true
+    if (state.grantDays < limitDays.grantDays[0] || state.grantDays > limitDays.grantDays[1]) return true
+    if (state.cliffDays < limitDays.cliffDays[0] || state.cliffDays > limitDays.cliffDays[1]) return true
+  }, [options, balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
 
   const currentMargin = useMemo(
-    () => marginOptions.find((item: any) => item.value === state.marginToken) ?? marginOptions[0],
-    [state.marginToken, marginOptions]
+    () => options.find((item: any) => item.value === state.marginToken) ?? options[0],
+    [state.marginToken, options]
   )
 
   const currentTarget = useMemo(
@@ -101,32 +114,37 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
         <>
           <div className="web-dashboard-add-grant-dialog">
             <div className="web-dashboard-add-grant-dialog-selects">
-              <Select
-                filter
-                label={t('NewDashboard.GrantList.Margin', 'Margin')}
-                value={state.marginToken}
-                onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
-                renderer={(item) => (
-                  <div className="web-select-options-item">
-                    {item.icon && <Image src={item.icon} />}
-                    {item.label}
-                  </div>
-                )}
-                objOptions={marginOptions}
-                labelRenderer={(item) => (
-                  <div className="web-dashboard-add-grant-margin-label">
-                    {item.icon && <Image src={item.icon} />}
-                    <span>{item.label}</span>
-                  </div>
-                )}
-                filterPlaceholder="Search name or contract address..."
-              />
+              <div className="web-dashboard-add-grant-dialog-label">
+                <label>{t('NewDashboard.GrantList.Margin')}</label>
+                <Skeleton rowsProps={{ rows: 1 }} animation loading={options.length === 0}>
+                  <Select
+                    filter
+                    value={state.marginToken}
+                    onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
+                    renderer={(item) => (
+                      <div className="web-select-options-item">
+                        <Image src={item.icon} />
+                        {item.label}
+                      </div>
+                    )}
+                    objOptions={options as any}
+                    labelRenderer={(item) => (
+                      <div className="web-dashboard-add-grant-margin-label">
+                        <Image src={item.icon} />
+                        <span>{item.label}</span>
+                      </div>
+                    )}
+                    filterPlaceholder="Search name or contract address..."
+                  />
+                </Skeleton>
+              </div>
               <hr />
               <Select
                 label={t('NewDashboard.GrantList.Target', 'Target')}
                 value={state.grantTarget}
                 onChange={(v) => dispatch({ type: 'SET_GRANT_TARGET', payload: v })}
                 objOptions={targetOptions as any}
+                className="relative"
               />
             </div>
             <div className="web-dashboard-add-grant-dialog-volume">
@@ -138,10 +156,13 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
                 {PLATFORM_TOKEN.symbol}
               </p>
               <AmountInput
-                max={safeInterceptionValues(balances[PLATFORM_TOKEN.symbol], findToken(PLATFORM_TOKEN.symbol).decimals)}
+                max={nonBigNumberInterception(
+                  balances[PLATFORM_TOKEN.symbol],
+                  findToken(PLATFORM_TOKEN.symbol).decimals
+                )}
                 unit={PLATFORM_TOKEN.symbol}
                 title={t('NewDashboard.GrantList.Volume', 'Volume')}
-                initial={minimumGrant[state.grantTarget as any]}
+                initial={nonBigNumberInterception(minimumGrant[state.grantTarget as any])}
                 onChange={(v) => dispatch({ type: 'SET_AMOUNT_INP', payload: v })}
               />
             </div>
@@ -186,8 +207,8 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             <dl>
               <dt>{t('NewDashboard.GrantList.Margin', 'Margin')}</dt>
               <dd>
-                <Image src={currentMargin.icon} />
-                {currentMargin.label}
+                <Image src={currentMargin?.icon} />
+                {currentMargin?.label}
               </dd>
             </dl>
             <dl>

@@ -147,7 +147,7 @@
         border: 0;min-width: auto;padding: 0;
       }
       .web-select-options {
-        left: -36px;right: -36px!important;top:70px!important;
+        left: -36px;right: -36px!important;top:50px!important;
         ul li.active, .web-select-options ul li.active:hover{
           background-color: $cf7;
           color:$red;
@@ -155,6 +155,7 @@
       }
     }
     .web-select-show{position: static}
+    .web-c-skeleton{padding: 11px 0}
   }
   .web-form-input input {
     font-weight: bold;
@@ -270,6 +271,7 @@
           left: rem(-24);right: rem(-24)!important;top:rem(40)!important;
         }
       }
+      .web-c-skeleton{padding: rem(10) 0}
     }
   }
 }
@@ -307,7 +309,6 @@
       &-select{
         .web-select-show-button label{color:$cff!important;}
         .web-select-options {
-          left: -36px;right: -36px!important;top:70px!important;
           ul li.active, .web-select-options ul li.active:hover{
             background-color: $yellow;
             color:$c00;

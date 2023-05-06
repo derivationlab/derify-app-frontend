@@ -9,6 +9,7 @@ import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys, MarginTokenWithContract, PubSubEvents } from '@/typings'
 import { useConfigInfoStore, useQuoteTokenStore, useBalancesStore, useTraderInfoStore } from '@/store'
 import { getFactoryConfig, getMarginTokenPrice, getOpeningMinLimit, getTraderVariables } from '@/hooks/helper'
+import { useMarginListStore } from '@/store/useMarginToken'
 
 export default function InitialUpdater(): null {
   const { address } = useAccount()
@@ -19,6 +20,7 @@ export default function InitialUpdater(): null {
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const fetchBalances = useBalancesStore((state) => state.fetch)
   const resetBalances = useBalancesStore((state) => state.reset)
+  const getMarginList = useMarginListStore((state) => state.getMarginList)
   const resetVariables = useTraderInfoStore((state) => state.reset)
   const updateVariables = useTraderInfoStore((state) => state.updateVariables)
   const updateBrokerParams = useConfigInfoStore((state) => state.updateBrokerParams)
@@ -34,6 +36,10 @@ export default function InitialUpdater(): null {
   }, [pathname]) as MarginTokenKeys
 
   const { data: minimumGrant, refetch } = useMinimumGrant(marginData?.[marginToken])
+
+  useEffect(() => {
+    void getMarginList()
+  }, [])
 
   useEffect(() => {
     if (!address) {

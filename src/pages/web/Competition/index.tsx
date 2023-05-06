@@ -98,9 +98,7 @@ const CompetitionRank: FC = () => {
   const fetchData = useCallback(
     async (index = 0) => {
       // const { data } = await getCompetitionRank(findToken(marginToken).tokenAddress, index, 10)
-
       // console.info(data)
-
       // dispatch({
       //   type: 'SET_GRANT_DAT',
       //   payload: { records: data, totalItems: data.length, isLoaded: false }

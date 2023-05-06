@@ -87,11 +87,6 @@ export interface PairsInfoState {
   updatePCFRatios: (p: Rec) => void
 }
 
-export interface DashboardState {
-  dashboardDAT: Rec
-  updateDashboardDAT: (p: Rec) => void
-}
-
 export interface PoolsInfoState {
   drfPoolBalance: string
   bondPoolBalance: string
@@ -148,9 +143,10 @@ export interface QuoteTokenState {
   updateQuoteToken: (p: QuoteTokenKeys) => void
 }
 
-export interface MarginTokenState {
-  marginToken: MarginTokenKeys
-  updateMarginToken: (p: MarginTokenKeys) => void
+export interface MarginListState {
+  marginList: Rec[]
+  marginListLoaded: boolean
+  getMarginList: (index?: number) => Promise<void>
 }
 
 export interface MarginTokenState {

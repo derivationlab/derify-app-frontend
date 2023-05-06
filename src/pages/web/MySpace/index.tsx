@@ -152,7 +152,7 @@ const MySpace: FC = () => {
           apy: token.max_pm_apy,
           open: token.open,
           symbol: token.symbol,
-          marginBalance,
+          marginBalance
         }
       })
       return orderBy(_, ['marginBalance', 'apy'], 'desc')

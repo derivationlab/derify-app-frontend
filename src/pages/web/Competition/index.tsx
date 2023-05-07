@@ -1,19 +1,18 @@
+import dayjs from 'dayjs'
 import Table from 'rc-table'
-import { isEmpty } from 'lodash'
 import { useAccount } from 'wagmi'
+import { upperFirst, isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
-
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { getCompetitionList, getCompetitionRank } from '@/api'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
-import { grantStateOptions, reducer, stateInit } from '@/reducers/addGrant'
-
+import { reducer, stateInit } from '@/reducers/competitionRank'
 import Image from '@/components/common/Image'
 import Select from '@/components/common/Form/Select'
-import Pagination from '@/components/common/Pagination'
+// import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
 interface RowTextProps {
@@ -52,18 +51,18 @@ const CompetitionRank: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const emptyText = useMemo(() => {
-    if (state.grantData.isLoaded) return t('common.Loading')
-    if (isEmpty(state.grantData.records)) return t('common.NoRecord')
+    if (state.records.loaded) return t('common.Loading')
+    if (isEmpty(state.records.records)) return t('common.NoRecord')
     return ''
-  }, [t, state.grantData])
+  }, [t, state.records])
 
   const mColumns = [
     {
       title: t('Earn.CompetitionRank.Address'),
-      dataIndex: 'ranks',
+      dataIndex: 'user',
       width: mobile ? '' : 600,
-      render: (_: any[]) => {
-        return <RowName data={_[0]} />
+      render: (_: string, data: Record<string, any>) => {
+        return <RowName data={data} />
       }
     },
     {
@@ -71,8 +70,8 @@ const CompetitionRank: FC = () => {
       dataIndex: 'amount',
       width: mobile ? '' : 250,
       render: (_: string, data: Record<string, any>) => {
-        const amount = keepDecimals(data.ranks[0]?.amount, findToken(marginToken).decimals)
-        const platform = keepDecimals(data.ranks[0]?.awards, PLATFORM_TOKEN.decimals)
+        const amount = keepDecimals(data.amount, findToken(marginToken).decimals)
+        const platform = keepDecimals(data.awards, PLATFORM_TOKEN.decimals)
         return (
           <>
             <BalanceShow value={amount} unit={marginToken} />
@@ -85,55 +84,65 @@ const CompetitionRank: FC = () => {
       title: t('Earn.CompetitionRank.Rank'),
       dataIndex: 'rank',
       width: mobile ? '' : 200,
-      render: (text: string) => <RowText value={`#${1}`} />
+      render: (_: string) => <RowText value={_} />
     }
   ]
 
-  const pageChange = (index: number) => {
-    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-
-    void fetchData(index)
-  }
-
-  const fetchData = useCallback(
-    async (index = 0) => {
-      // const { data } = await getCompetitionRank(findToken(marginToken).tokenAddress, index, 10)
-      // console.info(data)
-      // dispatch({
-      //   type: 'SET_GRANT_DAT',
-      //   payload: { records: data, totalItems: data.length, isLoaded: false }
-      //   // payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-      // })
-    },
-    [marginToken]
-  )
-
   const _getCompetitionRank = useCallback(async () => {
-    const { data } = await getCompetitionRank(findToken(marginToken).tokenAddress, 'active', 1)
-    console.info(data)
-  }, [marginToken])
+    const [id, status] = state.filterCondition.split('#')
+
+    const { data } = await getCompetitionRank(status, id)
+
+    if (data) {
+      const _ = data.map((d: Record<string, any>, index: number) => ({
+        ...d,
+        rank: `#${++index}`
+      }))
+      dispatch({ type: 'SET_RECORDS', payload: { records: _, loaded: false } })
+    }
+  }, [marginToken, state.filterCondition])
 
   const _getCompetitionList = useCallback(async () => {
     const { data } = await getCompetitionList(findToken(marginToken).tokenAddress)
-    console.info(data)
+
+    if (data) {
+      const _ = data.map((d: Record<string, any>) => ({
+        label: `${upperFirst(d.status)} | ${dayjs(d.start_time).utc().format('MM/DD/YYYY HH:mm:ss')} UTC`,
+        value: `${d.id}#${d.status}`
+      }))
+
+      dispatch({ type: 'SET_FILTER_CONDITION', payload: _[0].value })
+      dispatch({ type: 'SET_FILTER_CONDITIONS', payload: _ })
+    }
   }, [marginToken])
 
   useEffect(() => {
     void _getCompetitionList()
   }, [])
 
+  useEffect(() => {
+    if (state.filterCondition) {
+      void _getCompetitionRank()
+    }
+  }, [marginToken, state.filterCondition])
+
   return (
     <div className="web-competition-rank">
-      <h2>Trading Competition Rank</h2>
+      <h2>{t('Earn.Trading.TradingCompetitionRank')}</h2>
       <aside>
         <Select
-          value={state.grantStatus}
-          onChange={(v) => dispatch({ type: 'SET_GRANT_STATUS', payload: v })}
-          objOptions={grantStateOptions as any}
+          value={state.filterCondition}
+          onChange={(v) => dispatch({ type: 'SET_FILTER_CONDITION', payload: v })}
+          objOptions={state.filterConditions as any}
         />
       </aside>
-      <Table data={state.grantData.records} rowKey="id" columns={mColumns} emptyText={emptyText} />
-      {/*<Pagination page={state.pageIndex} total={state.rankData.totalItems} onChange={pageChange} />*/}
+      <Table
+        data={state.records.records}
+        rowKey="user"
+        columns={mColumns}
+        emptyText={emptyText}
+        rowClassName={(record) => (address === record.user ? 'active' : '')}
+      />
     </div>
   )
 }

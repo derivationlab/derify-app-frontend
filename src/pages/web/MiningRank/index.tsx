@@ -115,7 +115,7 @@ const Rank: FC = () => {
 
   return (
     <div className="web-mining-rank">
-      <h2>Position Mining Rank</h2>
+      <h2>{t('Earn.PositionMining.PositionMiningRank')}</h2>
       <Table
         data={state.records.records}
         rowKey="user"

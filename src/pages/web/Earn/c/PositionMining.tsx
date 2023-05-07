@@ -2,15 +2,13 @@ import { Link } from 'react-router-dom'
 import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useContext, useMemo } from 'react'
-
 import { MobileContext } from '@/providers/Mobile'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useWithdrawPositionReward } from '@/hooks/useTrading'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { bnPlus, isGT, isLT, keepDecimals } from '@/utils/tools'
 import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { useTraderInfoStore, useMarginTokenStore, usePairsInfoStore } from '@/store'
-
+import { bnPlus, isGT, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
@@ -34,7 +32,6 @@ const PositionMining: FC = () => {
   const { data: positionsAmount } = useCurrentPositionsAmount('all', findToken(marginToken).tokenAddress)
 
   const memoPositionApy = useMemo(() => {
-    console.info(indicators)
     const values = Object.values(indicators)
     if (indicatorsLoaded) {
       const apy = values.map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))
@@ -133,7 +130,7 @@ const PositionMining: FC = () => {
         <div className="web-eran-item-card">
           <main>
             <h4>{t('Earn.PositionMining.Positions', 'Positions')}</h4>
-            <BalanceShow value={variables?.totalPositionAmount ?? 0} unit={marginToken} />
+            <BalanceShow value={nonBigNumberInterception(variables?.totalPositionAmount ?? 0)} unit={marginToken} />
             <div className="block" />
             <p>
               {t('Earn.PositionMining.TotalPositions', 'Total positions')} :{' '}

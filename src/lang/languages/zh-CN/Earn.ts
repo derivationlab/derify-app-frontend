@@ -1,5 +1,3 @@
-import CompetitionRank from '@/pages/web/Competition'
-
 export default {
   section: 'Earn',
   dicts: {
@@ -14,7 +12,6 @@ export default {
       ClaimAll: '全部提现',
       Positions: '我的持仓',
       OpenPosition: '开仓',
-      // 以下为2023年03月23日新增
       RankList: '排行榜',
       PositionMiningRank: '持仓挖矿排名',
       Address: '地址',
@@ -23,6 +20,7 @@ export default {
     },
     Trading: {
       TradingCompetition: '交易比赛',
+      TradingCompetitionRank: '交易比赛排名',
       HigherTheRanking: '排名越靠前交易奖励越多',
       JoinTrading: '参加交易比赛赚取奖励',
       RANK: '排名',

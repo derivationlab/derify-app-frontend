@@ -20,6 +20,7 @@ export default {
     },
     Trading: {
       TradingCompetition: 'Trading Competition',
+      TradingCompetitionRank: 'Trading Competition Rank',
       HigherTheRanking: 'Higher the ranking, more rewards from trading',
       JoinTrading: 'Join trading competition to earn rewards',
       RANK: 'RANK',

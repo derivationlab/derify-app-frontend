@@ -62,17 +62,28 @@
   }
 }
 
-
 .web-mining-rank,
 .web-competition-rank {
   @extend .web-broker-rank;
   .rc-table-row.active{
     * {
-      color: $yellow;
+      color: $primary;
     }
   }
 }
 
 .web-competition-rank{
   aside{display: flex;justify-content: flex-end;margin-bottom: 30px}
+}
+
+.dark {
+  .web-mining-rank,
+  .web-competition-rank {
+    @extend .web-broker-rank;
+    .rc-table-row.active{
+      * {
+        color: $yellow;
+      }
+    }
+  }
 }

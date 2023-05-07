@@ -41,13 +41,7 @@ export const getCompetitionList = async (marginToken: string, page?: number, off
   return response
 }
 
-export const getCompetitionRank = async (
-  marginToken: string,
-  status: string,
-  grantId: number,
-  page?: number,
-  offset?: number
-) => {
+export const getCompetitionRank = async (status: string, grantId: string, page?: number, offset?: number) => {
   const response = await get(`api/trading_competition_ranks/${status}/${grantId}`)
   return response
 }

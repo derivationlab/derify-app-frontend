@@ -11,11 +11,11 @@ import {
   getBrokerBound
 } from '@/api'
 
-const getBrokerInfoWithBrokerId = async (trader: string): Promise<boolean> => {
+const isIdentityValid = async (trader: string): Promise<boolean> => {
   const c = getDerifyProtocolContract()
 
   try {
-    await c.getBrokerInfoWithBrokerId(trader)
+    await c.getBrokerInfo(trader)
     return true
   } catch (e) {
     return false
@@ -29,7 +29,7 @@ const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
   brokerInfoLoaded: false,
   brokerBoundLoaded: false,
   fetchBrokerInfo: async (trader: string, marginToken: string) => {
-    const data = await getBrokerInfoWithBrokerId(trader)
+    const data = await isIdentityValid(trader)
 
     if (data) {
       const { data: rank = 0 } = await getBrokerRanking(trader, marginToken)

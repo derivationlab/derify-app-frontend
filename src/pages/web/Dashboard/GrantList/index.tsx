@@ -1,43 +1,46 @@
 import PubSub from 'pubsub-js'
 import { debounce, orderBy } from 'lodash'
 import { useTranslation } from 'react-i18next'
-
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
-
+import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { getGrantPlanList } from '@/api'
+import { useMarginListStore } from '@/store/useMarginToken'
 import { all, grantTargetOptions } from '@/reducers/addGrant'
-import { findToken, MARGIN_TOKENS } from '@/config/tokens'
-import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
-
+import { grantStateOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { Select } from '@/components/common/Form'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-
 import ListItem from './ListItem'
 import AddGrant from './AddGrant'
 
-const targetOptions = grantTargetOptions(true)
+const grantTarget = grantTargetOptions(true)
 
 const GrantList: FC = () => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const pageChange = useCallback(
-    (index: number) => {
-      dispatch({ type: 'SET_PAGE_INDEX', payload: index })
+  const marginList = useMarginListStore((state) => state.marginList)
+  const marginListLoaded = useMarginListStore((state) => state.marginListLoaded)
 
-      void fetchData(index, state.marginToken, state.grantStatus, state.grantTarget)
-    },
-    [state.marginToken, state.grantStatus, state.grantTarget]
-  )
+  const options = useMemo(() => {
+    if (marginListLoaded) {
+      const _ = marginList.map((token) => ({
+        value: token.symbol,
+        label: token.symbol,
+        icon: `market/${token.symbol.toLowerCase()}.svg`
+      }))
 
-  const fetchData = useCallback(async (index = 0, marginToken, grantStatus, grantTarget) => {
-    const _marginToken = findToken(marginToken)?.tokenAddress ?? 'all'
-    const _grantStatus = grantStateOptions.find((t) => t.value === grantStatus)?.key ?? 'all'
-    const _grantTarget = targetOptions.find((t) => t.value === grantTarget)?.nick ?? 'all'
+      return [all, ..._]
+    }
 
-    const { data } = await getGrantPlanList(_marginToken, _grantTarget, _grantStatus, index, 8)
+    return [all]
+  }, [marginList, marginListLoaded])
+
+  const _getGrantPlanList = useCallback(async (index = 0, marginToken, grantStatus, grantTarget) => {
+    const token = findToken(marginToken)?.tokenAddress ?? 'all'
+
+    const { data } = await getGrantPlanList(token, grantTarget, grantStatus, index, 8)
 
     const sort = orderBy(data?.records ?? [], ['open'], 'desc')
 
@@ -47,24 +50,27 @@ const GrantList: FC = () => {
     })
   }, [])
 
-  const marginOptions = useMemo(() => {
-    const base = MARGIN_TOKENS.map((t) => ({
-      value: t.symbol,
-      label: t.symbol,
-      icon: `market/${t.symbol.toLowerCase()}.svg`
-    }))
+  const pageChange = useCallback(
+    (index: number) => {
+      dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
-    return [all, ...base]
-  }, [])
+      void _getGrantPlanList(index, state.marginToken, state.grantStatus, state.grantTarget1)
+    },
+    [state.marginToken, state.grantStatus, state.grantTarget1]
+  )
 
   const debounceSearch = useCallback(
     debounce((marginToken, grantStatus, grantTarget) => {
-      void fetchData(0, marginToken, grantStatus, grantTarget)
+      void _getGrantPlanList(0, marginToken, grantStatus, grantTarget)
     }, 1000),
     []
   )
 
   useEffect(() => {
+    if (state.marginToken || state.grantStatus || state.grantTarget1) {
+      void debounceSearch(state.marginToken, state.grantStatus, state.grantTarget1)
+    }
+
     PubSub.subscribe(PubSubEvents.UPDATE_GRANT_LIST, () => {
       console.info(`UPDATE_GRANT_LIST`)
 
@@ -77,22 +83,9 @@ const GrantList: FC = () => {
       dispatch({ type: 'SET_GRANT_STATUS', payload: '' })
       dispatch({ type: 'SET_MARGIN_TOKEN', payload: '' })
 
-      void fetchData(0, state.marginToken, state.grantStatus, state.grantTarget)
+      void debounceSearch(state.marginToken, state.grantStatus, state.grantTarget1)
     })
-
-    void fetchData(0, state.marginToken, state.grantStatus, state.grantTarget)
-  }, [state.marginToken, state.grantStatus, state.grantTarget])
-
-  useEffect(() => {
-    if (state.marginToken || state.grantStatus || state.grantTarget) {
-      dispatch({
-        type: 'SET_GRANT_DAT',
-        payload: { records: [], totalItems: 0, isLoaded: true }
-      })
-
-      void debounceSearch(state.marginToken, state.grantStatus, state.grantTarget)
-    }
-  }, [state.marginToken, state.grantStatus, state.grantTarget])
+  }, [state.marginToken, state.grantStatus, state.grantTarget1])
 
   return (
     <div className="web-dashboard">
@@ -101,15 +94,15 @@ const GrantList: FC = () => {
           large
           filter
           label={t('NewDashboard.GrantList.Margin', 'Margin')}
-          value={state.marginToken}
-          onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
+          value={state.marginToken1}
+          onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN1', payload: v })}
           renderer={(props) => (
             <div className="web-select-options-item">
               {props.icon && <Image src={props.icon} />}
               {props.label}
             </div>
           )}
-          objOptions={marginOptions}
+          objOptions={options as any}
           labelRenderer={(props) => (
             <div className="web-dashboard-add-grant-margin-label">
               {props.icon && <Image src={props.icon} />}
@@ -121,9 +114,9 @@ const GrantList: FC = () => {
         <Select
           large
           label={t('NewDashboard.GrantList.Target', 'Target')}
-          value={state.grantTarget}
-          onChange={(v) => dispatch({ type: 'SET_GRANT_TARGET', payload: v })}
-          objOptions={targetOptions as any}
+          value={state.grantTarget1}
+          onChange={(v) => dispatch({ type: 'SET_GRANT_TARGET1', payload: v })}
+          objOptions={grantTarget as any}
         />
         <Select
           large

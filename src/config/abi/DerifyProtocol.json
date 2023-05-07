@@ -85,6 +85,11 @@
           },
           {
             "internalType": "address",
+            "name": "marginTokenPriceFeedDeployer",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
             "name": "derifyExchangeModule",
             "type": "address"
           }
@@ -580,22 +585,7 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "marginToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "marginTokenPriceFeed",
-        "type": "address"
-      },
-      {
         "components": [
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
           {
             "internalType": "address",
             "name": "marginToken",
@@ -603,165 +593,37 @@
           },
           {
             "internalType": "address",
-            "name": "tokenDRF",
+            "name": "protocolSafeAddress",
             "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "routers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "path",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "gasRouters",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "gasPath",
+            "type": "address[]"
           },
           {
             "internalType": "uint256",
             "name": "minGrantAmount",
             "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyRewards",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IDeployDerifyPmr.DerifyPmrParam",
-        "name": "derifyPmrParam",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "marginToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenDRF",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minGrantAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyRewards",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IDeployDerifyBrokerRewards.DerifyBrokerRewardsParam",
-        "name": "derifyBrokerRewardsParam",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "marginToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenDRF",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minGrantAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyRewards",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IDeployDerifyRank.DerifyRankParam",
-        "name": "derifyRankParam",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyDerivativeDeployer",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "marginToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "protocol",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IDeployDerifyFactory.DerifyFactoryParam",
-        "name": "derifyFactoryParam",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "exchangeModule",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "factory",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "rewards",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "protocol",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "clearing",
-            "type": "address"
           },
           {
             "internalType": "address",
             "name": "buyBackExecutor",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "marginToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenDRF",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenWBNB",
             "type": "address"
           },
           {
@@ -778,104 +640,20 @@
             "internalType": "uint256",
             "name": "minOpenAmount",
             "type": "uint256"
-          }
-        ],
-        "internalType": "struct IDeployDerifyExchange.DerifyExchangeParam",
-        "name": "derifyExchangeParam",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "minter",
-            "type": "address"
           },
           {
             "internalType": "string",
-            "name": "name",
+            "name": "bMarginTokenName",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "symbol",
+            "name": "bMarginTokenSymbol",
             "type": "string"
-          },
-          {
-            "internalType": "uint8",
-            "name": "decimals",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct IDeployBMarginToken.BMarginTokenParam",
-        "name": "bMarginTokenParam",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
           },
           {
             "internalType": "address",
             "name": "rewardsExecutor",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "protocol",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "exchange",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "marginToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "bMarginToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenDRF",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenEDRF",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenWBNB",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyPmr",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyBrokerRewards",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyRank",
             "type": "address"
           },
           {
@@ -890,44 +668,12 @@
           },
           {
             "internalType": "address",
-            "name": "exchangeModule",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IDeployDerifyRewards.DerifyRewardsParam",
-        "name": "derifyRewardsParam",
-        "type": "tuple"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
             "name": "clearingExecutor",
             "type": "address"
           },
           {
             "internalType": "address",
             "name": "ordersExecutor",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "factory",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "exchange",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "marginToken",
             "type": "address"
           },
           {
@@ -949,25 +695,10 @@
             "internalType": "uint256",
             "name": "gasFeeRewardRatio",
             "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "protocol",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenWBNB",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "exchangeModule",
-            "type": "address"
           }
         ],
-        "internalType": "struct IDeployDerifyClearing.DerifyClearingParam",
-        "name": "derifyClearingParam",
+        "internalType": "struct IDerifyProtocol.AddMarginTokenParameters",
+        "name": "addMarginTokenParameters",
         "type": "tuple"
       }
     ],

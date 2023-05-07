@@ -1,4 +1,12 @@
 import { get } from '@/utils/http'
+import { GrantKeys } from '@/typings'
+
+const grantTarget: { [key in GrantKeys | 'all']: string } = {
+  all: 'all',
+  rank: 'rank',
+  mining: 'pmr',
+  awards: 'broker_rewards'
+}
 
 export const getGrantPlanList = async (
   marginToken: string,
@@ -7,7 +15,9 @@ export const getGrantPlanList = async (
   page: number,
   offset: number
 ) => {
-  const response = await get(`api/grant_list/${marginToken}/${target}/${status}/${page}/${offset}`)
+  const response = await get(
+    `api/grant_list/${marginToken}/${grantTarget[target as GrantKeys]}/${status}/${page}/${offset}`
+  )
   return response
 }
 

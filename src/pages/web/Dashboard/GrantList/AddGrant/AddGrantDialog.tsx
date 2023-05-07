@@ -1,20 +1,18 @@
 import dayjs from 'dayjs'
-import React, { FC, useState, useMemo, useReducer, useCallback, useEffect } from 'react'
+import React, { FC, useState, useMemo, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
-
+import { GrantKeys } from '@/typings'
+import { useMarginListStore } from '@/store/useMarginToken'
+import { useConfigInfoStore, useBalancesStore } from '@/store'
+import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
+import { DEFAULT_MARGIN_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { isET, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import { Select, Input } from '@/components/common/Form'
-
-import { useConfigInfoStore, useBalancesStore } from '@/store'
-import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
-import { DEFAULT_MARGIN_TOKEN, findToken, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
-import { isET, isLT, keepDecimals, nonBigNumberInterception, safeInterceptionValues } from '@/utils/tools'
-import { getMarginTokenList } from '@/api'
-import { useMarginListStore } from '@/store/useMarginToken'
 
 interface Props {
   visible: boolean
@@ -27,7 +25,7 @@ const limitDays = {
   cliffDays: [0, 3650]
 }
 
-const targetOptions = grantTargetOptions()
+const grantTarget = grantTargetOptions()
 
 const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   const { t } = useTranslation()
@@ -65,12 +63,12 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   }, [marginList, marginListLoaded])
 
   const disabled = useMemo(() => {
-    const p1 = minimumGrant[state.grantTarget as any]
-    const p2 = balances[PLATFORM_TOKEN.symbol]
+    const amount = minimumGrant[state.grantTarget as GrantKeys]
+    const balance = balances[PLATFORM_TOKEN.symbol]
     if (options.length === 0) return true
-    if (isET(p2, 0) || isET(p1, 0)) return true
-    if (isLT(p2, p1)) return true
-    if (isLT(state.amountInp || 0, p1)) return true
+    if (isET(balance, 0) || isET(amount, 0)) return true
+    if (isLT(balance, amount)) return true
+    if (isLT(state.amountInp || 0, amount)) return true
     if (state.grantDays < limitDays.grantDays[0] || state.grantDays > limitDays.grantDays[1]) return true
     if (state.cliffDays < limitDays.cliffDays[0] || state.cliffDays > limitDays.cliffDays[1]) return true
   }, [options, balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
@@ -81,33 +79,31 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   )
 
   const currentTarget = useMemo(
-    () => grantTargetOptions().find((item: any) => item.value === state.grantTarget),
+    () => grantTarget.find((item: any) => item.value === state.grantTarget) ?? grantTarget[0],
     [state.grantTarget]
   )
 
-  const clearState = () => {
+  const clearSetState = () => {
     setToggle(false)
     dispatch({ type: 'SET_AMOUNT_INP', payload: '' })
     dispatch({ type: 'SET_GRANT_DAYS', payload: 1 })
     dispatch({ type: 'SET_CLIFF_DAYS', payload: 0 })
     dispatch({ type: 'SET_MARGIN_TOKEN', payload: DEFAULT_MARGIN_TOKEN.symbol })
-    dispatch({ type: 'SET_GRANT_TARGET', payload: grantTargetOptions()[0].value })
+    dispatch({ type: 'SET_GRANT_TARGET', payload: grantTarget[0].value })
   }
 
-  const _onConfirm = () => {
-    onConfirm(state.marginToken, currentTarget?.key, state.amountInp, state.grantDays, state.cliffDays)
+  const addGrantConfirm = () => {
+    onConfirm(state.marginToken, currentTarget?.value, state.amountInp, state.grantDays, state.cliffDays)
   }
 
   return (
     <Dialog
       width="540px"
+      title={t(`NewDashboard.GrantList.${toggle ? 'AddGrant' : 'GrantInfo'}`)}
       visible={visible}
-      title={
-        toggle ? t('NewDashboard.GrantList.AddGrant', 'Add Grant') : t('NewDashboard.GrantList.GrantInfo', 'Grant Info')
-      }
       onClose={() => {
-        clearState()
         onClose()
+        clearSetState()
       }}
     >
       {!toggle ? (
@@ -143,7 +139,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
                 label={t('NewDashboard.GrantList.Target', 'Target')}
                 value={state.grantTarget}
                 onChange={(v) => dispatch({ type: 'SET_GRANT_TARGET', payload: v })}
-                objOptions={targetOptions as any}
+                objOptions={grantTarget as any}
                 className="relative"
               />
             </div>
@@ -162,7 +158,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
                 )}
                 unit={PLATFORM_TOKEN.symbol}
                 title={t('NewDashboard.GrantList.Volume', 'Volume')}
-                initial={nonBigNumberInterception(minimumGrant[state.grantTarget as any])}
+                initial={nonBigNumberInterception(minimumGrant[state.grantTarget as GrantKeys])}
                 onChange={(v) => dispatch({ type: 'SET_AMOUNT_INP', payload: v })}
               />
             </div>
@@ -233,8 +229,8 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
           <Button
             className="web-dashboard-add-grant-dialog-confirm"
             onClick={() => {
-              clearState()
-              _onConfirm()
+              clearSetState()
+              addGrantConfirm()
             }}
           >
             {t('NewDashboard.GrantList.Confirm', 'Confirm')}

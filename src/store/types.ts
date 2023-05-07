@@ -1,5 +1,4 @@
 import { sysParams } from '@/store/useSysParams'
-
 import { OpeningType } from '@/store/useOpening'
 import { SharingEvents } from '@/store/useSharing'
 import { InitialTraderVariablesType } from '@/hooks/helper'
@@ -11,6 +10,7 @@ import {
   MarginTokenWithQuote,
   MarginTokenWithContract
 } from '@/typings'
+import { minimumGrantInit } from '@/hooks/useDashboard'
 
 export type Rec = Record<string, any>
 
@@ -119,7 +119,7 @@ export interface TraderInfoState {
 export interface ConfigInfoState {
   brokerParams: { burnLimitAmount: string; burnLimitPerDay: string }
   mTokenPrices: MarginToken
-  minimumGrant: string[]
+  minimumGrant: typeof minimumGrantInit
   openingMinLimit: MarginToken
   openingMaxLimit: MarginTokenWithQuote
   factoryConfig: MarginTokenWithQuote
@@ -129,7 +129,7 @@ export interface ConfigInfoState {
   factoryConfigLoaded: boolean
   protocolConfigLoaded: boolean
   mTokenPricesLoaded: boolean
-  updateMinimumGrant: (p: string[]) => void
+  updateMinimumGrant: (p: typeof minimumGrantInit) => void
   updateFactoryConfig: (p: MarginTokenWithQuote) => void
   updateProtocolConfig: (p: MarginTokenWithContract) => void
   updateOpeningMinLimit: (p: MarginToken) => void

@@ -3,35 +3,28 @@ import { Contract } from 'ethers'
 import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
-
 import contracts from '@/config/contracts'
 import multicall from '@/utils/multicall'
 import { estimateGas } from '@/utils/estimateGas'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { bnPlus, formatUnits, inputParameterConversion } from '@/utils/tools'
 import tokens, { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
-import { MarginToken, MarginTokenKeys, MarginTokenWithQuote, ProtocolConfig, QuoteToken } from '@/typings'
+import { GrantKeys, MarginToken, MarginTokenKeys, MarginTokenWithQuote, ProtocolConfig, QuoteToken } from '@/typings'
 import {
   getDerifyPmrContract,
   getDerifyRankContract,
   getDerifyRewardsContract,
   getDerifyBRewardsContract
 } from '@/utils/contractHelpers'
-
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
-const initial = (): MarginToken => {
-  let value = Object.create(null)
+let outputInit = initial()
 
-  MARGIN_TOKENS.forEach((t) => {
-    value = {
-      ...value,
-      [t.symbol]: '0'
-    }
-  })
-
-  return value
+export const minimumGrantInit: { [key in GrantKeys]: string } = {
+  rank: '0',
+  mining: '0',
+  awards: '0'
 }
 
 export const useAddGrant = () => {
@@ -108,7 +101,6 @@ export const useRankReward = (trader?: string, config?: string) => {
 }
 
 export const useBuyBackPool = () => {
-  let output = initial()
   const { data, isLoading } = useQuery(
     ['useBuyBackPool'],
     async () => {
@@ -123,21 +115,21 @@ export const useBuyBackPool = () => {
 
       if (!isEmpty(response)) {
         response.forEach(([data]: any, index: number) => {
-          output = {
-            ...output,
+          outputInit = {
+            ...outputInit,
             [calls[index].marginToken]: formatUnits(String(data[0]), 8)
           }
         })
 
         // console.info(output)
-        return output
+        return outputInit
       }
 
-      return output
+      return outputInit
     },
     {
       retry: false,
-      initialData: output,
+      initialData: outputInit,
       refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
@@ -150,7 +142,7 @@ export const useBuyBackPool = () => {
 export const useMinimumGrant = (config?: ProtocolConfig) => {
   const { data, refetch, isLoading } = useQuery(
     ['useMinimumGrant'],
-    async () => {
+    async (): Promise<typeof minimumGrantInit> => {
       if (config?.rank && config?.awards && config?.mining) {
         const { rank, awards, mining } = config
         const c1 = getDerifyPmrContract(mining)
@@ -161,17 +153,18 @@ export const useMinimumGrant = (config?: ProtocolConfig) => {
         const res2 = await c2.minGrantAmount()
         const res3 = await c3.minGrantAmount()
 
-        return [
-          formatUnits(res1, PLATFORM_TOKEN.precision),
-          formatUnits(res2, PLATFORM_TOKEN.precision),
-          formatUnits(res3, PLATFORM_TOKEN.precision)
-        ]
+        return {
+          ...minimumGrantInit,
+          rank: formatUnits(res2, PLATFORM_TOKEN.precision),
+          mining: formatUnits(res1, PLATFORM_TOKEN.precision),
+          awards: formatUnits(res3, PLATFORM_TOKEN.precision)
+        }
       }
-      return ['0', '0', '0']
+      return minimumGrantInit
     },
     {
       retry: false,
-      initialData: ['0', '0', '0'],
+      initialData: minimumGrantInit,
       refetchInterval: 60000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
@@ -182,7 +175,6 @@ export const useMinimumGrant = (config?: ProtocolConfig) => {
 }
 
 export const usePositionInfo = (config?: MarginTokenWithQuote) => {
-  let output = initial()
   const { data, refetch } = useQuery(
     ['usePositionInfo'],
     async () => {
@@ -206,25 +198,25 @@ export const usePositionInfo = (config?: MarginTokenWithQuote) => {
               const s2 = bnPlus(formatUnits(longTotalAmount, 8), formatUnits(shortTotalAmount, 8))
               return bnPlus(s1, s2)
             }, 0)
-            output = {
-              ...output,
+            outputInit = {
+              ...outputInit,
               [Object.keys(config)[index]]: sum
             }
           })
 
           // console.info(output)
 
-          return output
+          return outputInit
         }
 
-        return output
+        return outputInit
       }
 
-      return output
+      return outputInit
     },
     {
       retry: false,
-      initialData: output,
+      initialData: outputInit,
       refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
@@ -232,4 +224,17 @@ export const usePositionInfo = (config?: MarginTokenWithQuote) => {
   )
 
   return { data, refetch }
+}
+
+function initial(): MarginToken {
+  let value = Object.create(null)
+
+  MARGIN_TOKENS.forEach((t) => {
+    value = {
+      ...value,
+      [t.symbol]: '0'
+    }
+  })
+
+  return value
 }

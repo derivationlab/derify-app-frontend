@@ -75,3 +75,5 @@ export enum PubSubEvents {
   UPDATE_TRADER_VARIABLES = 'UPDATE_TRADER_VARIABLES',
   UPDATE_BROKER_BOUND_DAT = 'UPDATE_BROKER_BOUND_DAT'
 }
+
+export type GrantKeys = 'rank' | 'mining' | 'awards'

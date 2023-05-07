@@ -1,14 +1,14 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { initial as initialProtocolConfig } from '@/hooks/useProtocolConfig'
 import { ConfigInfoState, QuoteTokenState, MarginTokenState } from '@/store/types'
 import { initialOpeningMinLimit, initialFactoryConfig, initialOpeningMaxLimit } from '@/hooks/helper'
 import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+import { minimumGrantInit } from '@/hooks/useDashboard'
 
 const useConfigInfoStore = create<ConfigInfoState>((set) => ({
-  minimumGrant: ['0', '0', '0'],
+  minimumGrant: minimumGrantInit,
   brokerParams: { burnLimitAmount: '0', burnLimitPerDay: '0' },
   mTokenPrices: initialOpeningMinLimit(),
   factoryConfig: initialFactoryConfig(),
@@ -54,7 +54,7 @@ const useConfigInfoStore = create<ConfigInfoState>((set) => ({
     set((state) => {
       return { brokerParams: { ...state.brokerParams, ...data } }
     }),
-  updateMinimumGrant: (data: any) =>
+  updateMinimumGrant: (data: typeof minimumGrantInit) =>
     set(() => {
       return { minimumGrant: data }
     })

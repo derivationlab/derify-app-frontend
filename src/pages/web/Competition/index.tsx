@@ -9,7 +9,7 @@ import { useMarginTokenStore } from '@/store'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { getCompetitionList, getCompetitionRank } from '@/api'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
-import { grantStateOptions, reducer, stateInit } from '@/reducers/grantList'
+import { grantStateOptions, reducer, stateInit } from '@/reducers/addGrant'
 
 import Image from '@/components/common/Image'
 import Select from '@/components/common/Form/Select'

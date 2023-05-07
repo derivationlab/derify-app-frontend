@@ -1,14 +1,10 @@
 import { isEmpty } from 'lodash'
 import { useInterval } from 'react-use'
 import React, { FC, useState, useCallback, useRef, useEffect } from 'react'
-
 import { findToken } from '@/config/tokens'
 import { KLineTimes } from '@/data'
-import { useSpotPrice } from '@/hooks/useMatchConf'
-import { useMarginTokenStore, useQuoteTokenStore } from '@/store'
-
+import { useMarginTokenStore, usePairsInfoStore, useQuoteTokenStore } from '@/store'
 import { getKLineDAT, getKlineEndTime, reorganizeLastPieceOfData } from './help'
-
 import { Select } from '@/components/common/Form'
 import Loading from '@/components/common/Loading'
 import KLineChart from '@/components/common/Chart/KLine'
@@ -25,10 +21,9 @@ const Chart: FC = () => {
   const store = useRef<Record<string, any>>({})
   const kline = useRef<KlineChartProps>(null)
 
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
 
   const [loading, setLoading] = useState<boolean>(false)
   const [timeLine, setTimeLine] = useState(60 * 60 * 1000)
@@ -45,7 +40,7 @@ const Chart: FC = () => {
 
       store.current = data[data.length - 1] // keep original data
 
-      const reorganize = reorganizeLastPieceOfData(data, spotPrice)
+      const reorganize = reorganizeLastPieceOfData(data, spotPrices[marginToken][quoteToken])
 
       setChartData(reorganize)
 
@@ -54,7 +49,7 @@ const Chart: FC = () => {
 
     onetime = true
     setLoading(false)
-  }, [spotPrice, timeLine])
+  }, [spotPrices[marginToken][quoteToken], timeLine])
 
   const getMoreData = useCallback(
     async (lastTime: number) => {
@@ -77,7 +72,7 @@ const Chart: FC = () => {
           store.current = data[0]
         }
 
-        const reorganize = reorganizeLastPieceOfData(data, spotPrice)
+        const reorganize = reorganizeLastPieceOfData(data, spotPrices[marginToken][quoteToken])
 
         kline.current.update(reorganize[0])
       }
@@ -91,10 +86,10 @@ const Chart: FC = () => {
 
   useEffect(() => {
     if (!isEmpty(store.current) && kline.current) {
-      const reorganize = reorganizeLastPieceOfData([store.current], spotPrice)
+      const reorganize = reorganizeLastPieceOfData([store.current], spotPrices[marginToken][quoteToken])
       kline.current.update(reorganize[0])
     }
-  }, [chartData, spotPrice])
+  }, [chartData, spotPrices[marginToken][quoteToken]])
 
   useEffect(() => {
     kline.current && kline.current.reset()

@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-
 import { usePCFAndPrice } from '@/hooks/usePairIndicator'
 import { getOpeningMaxLimit } from '@/hooks/helper'
 import { MarginTokenWithContract } from '@/typings'
@@ -10,16 +9,23 @@ export default function TradingUpdater(): null {
   const protocolConfig = useConfigInfoStore((state) => state.protocolConfig)
   const updatePCFRatios = usePairsInfoStore((state) => state.updatePCFRatios)
   const updateSpotPrices = usePairsInfoStore((state) => state.updateSpotPrices)
+  const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
   const protocolConfigLoaded = useConfigInfoStore((state) => state.protocolConfigLoaded)
   const updateOpeningMaxLimit = useConfigInfoStore((state) => state.updateOpeningMaxLimit)
 
   // for pcf and spot price
-  const { data1: pcfDAT, data2: spotPriceDAT } = usePCFAndPrice(factoryConfig)
+  const { data, refetch } = usePCFAndPrice(factoryConfig, factoryConfigLoaded)
 
   useEffect(() => {
-    updatePCFRatios(pcfDAT)
-    updateSpotPrices(spotPriceDAT)
-  }, [pcfDAT, spotPriceDAT])
+    if (data) {
+      updatePCFRatios(data.pcfs)
+      updateSpotPrices(data.prices)
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (factoryConfigLoaded && factoryConfig) void refetch()
+  }, [factoryConfig, factoryConfigLoaded])
 
   useEffect(() => {
     const func = async (protocolConfig: MarginTokenWithContract) => {
@@ -28,7 +34,7 @@ export default function TradingUpdater(): null {
     }
 
     if (protocolConfigLoaded && protocolConfig) void func(protocolConfig)
-  }, [protocolConfigLoaded, protocolConfig])
+  }, [protocolConfig, protocolConfigLoaded])
 
   return null
 }

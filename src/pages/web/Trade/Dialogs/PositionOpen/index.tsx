@@ -1,16 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import { isEmpty, debounce } from 'lodash'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
-
 import { keepDecimals } from '@/utils/tools'
-import { useMarginTokenStore, useQuoteTokenStore } from '@/store'
 import { PositionSideTypes } from '@/typings'
-
 import { reducer, stateInit } from '@/reducers/opening'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
-import { useFactoryConf, useOpeningMaxLimit, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
-
+import { useFactoryConf, useOpeningMaxLimit, useProtocolConf } from '@/hooks/useMatchConf'
+import { useMarginTokenStore, usePairsInfoStore, useQuoteTokenStore } from '@/store'
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -29,17 +26,17 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const { t } = useTranslation()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { factoryConfig } = useFactoryConf(marginToken, quoteToken)
   const { protocolConfig } = useProtocolConf(marginToken)
   const { openingMaxLimit } = useOpeningMaxLimit(quoteToken, marginToken)
 
   const checkOpeningVolFunc = async () => {
     const volume = checkOpeningVol(
-      spotPrice,
+      spotPrices[marginToken][quoteToken],
       data.volume,
       data.side,
       data.openType,
@@ -92,18 +89,18 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible])
 
   useEffect(() => {
-    if (visible && state.validOpeningVol && protocolConfig && factoryConfig && spotPrice) {
-      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrice, factoryConfig)
+    if (visible && state.validOpeningVol && protocolConfig && factoryConfig && spotPrices[marginToken][quoteToken]) {
+      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrices[marginToken][quoteToken], factoryConfig)
       void calcCFeeFunc(
         data?.side,
         state.validOpeningVol.value,
         data?.symbol,
-        spotPrice,
+        spotPrices[marginToken][quoteToken],
         factoryConfig,
         protocolConfig.exchange
       )
     }
-  }, [visible, spotPrice, factoryConfig, protocolConfig, state.validOpeningVol])
+  }, [visible, factoryConfig, protocolConfig, state.validOpeningVol, spotPrices[marginToken][quoteToken]])
 
   return (
     <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>

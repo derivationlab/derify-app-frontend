@@ -1,28 +1,26 @@
 import PubSub from 'pubsub-js'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
-
 import { findToken } from '@/config/tokens'
 import { isOpeningMinLimit } from '@/hooks/helper'
 import { reducer, stateInit } from '@/reducers/opening'
 import { usePositionOperation } from '@/hooks/useTrading'
 import { PubSubEvents, PositionSideTypes } from '@/typings'
+import { useIndicatorsConf, useProtocolConf } from '@/hooks/useMatchConf'
 import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
-import { useIndicatorsConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import {
   OpeningType,
   useOpeningStore,
   useQuoteTokenStore,
   useBrokerInfoStore,
   useConfigInfoStore,
-  useMarginTokenStore
+  useMarginTokenStore,
+  usePairsInfoStore
 } from '@/store'
-
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
 import { LeverageSelect } from '@/components/common/Form'
-
 import Row from './c/Row'
 import Col from './c/Col'
 import Info from './c/Info'
@@ -35,6 +33,7 @@ const Bench: FC = () => {
 
   const { t } = useTranslation()
 
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
@@ -48,7 +47,6 @@ const Bench: FC = () => {
   const updateOpeningType = useOpeningStore((state) => state.updateOpeningType)
   const updateOpeningPrice = useOpeningStore((state) => state.updateOpeningPrice)
 
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { indicators } = useIndicatorsConf(quoteToken)
   const { protocolConfig } = useProtocolConf(marginToken)
   const { increasePosition } = usePositionOperation()
@@ -90,7 +88,7 @@ const Bench: FC = () => {
   }, [openingPrice])
 
   const isOrderConversion = (openType: OpeningType, price: string): boolean => {
-    return openType === OpeningType.Limit ? isET(spotPrice, price) : false
+    return openType === OpeningType.Limit ? isET(spotPrices[marginToken][quoteToken], price) : false
   }
 
   const openPositionFunc = async (amount: number) => {
@@ -136,14 +134,14 @@ const Bench: FC = () => {
   const openPositionDialog = async (side: PositionSideTypes) => {
     if (protocolConfig) {
       let _openType = openingType
-      const _realPrice = openingType === OpeningType.Market ? spotPrice : openingPrice
+      const _realPrice = openingType === OpeningType.Market ? spotPrices[marginToken][quoteToken] : openingPrice
 
       const isLimit = isOpeningMinLimit(
         mTokenPrices[marginToken],
         openingMinLimit[marginToken],
         state.openingAmount,
         state.tokenSelect,
-        spotPrice
+        spotPrices[marginToken][quoteToken]
       )
 
       if (isLimit) {
@@ -162,10 +160,10 @@ const Bench: FC = () => {
 
       if (openingType === OpeningType.Limit) {
         if (side === PositionSideTypes.long) {
-          if (isGT(openingPrice, spotPrice)) _openType = 0
+          if (isGT(openingPrice, spotPrices[marginToken][quoteToken])) _openType = 0
         }
         if (side === PositionSideTypes.short) {
-          if (isLT(openingPrice, spotPrice)) _openType = 0
+          if (isLT(openingPrice, spotPrices[marginToken][quoteToken])) _openType = 0
         }
       }
 
@@ -183,10 +181,10 @@ const Bench: FC = () => {
   }
 
   useEffect(() => {
-    if (isGT(spotPrice, 0)) {
-      updateOpeningPrice(spotPrice)
+    if (isGT(spotPrices[marginToken][quoteToken], 0)) {
+      updateOpeningPrice(spotPrices[marginToken][quoteToken])
     }
-  }, [spotPrice])
+  }, [spotPrices[marginToken][quoteToken]])
 
   useEffect(() => {
     dispatch({ type: 'SET_TOKEN_SELECT', payload: marginToken })

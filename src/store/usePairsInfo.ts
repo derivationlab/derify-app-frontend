@@ -1,7 +1,6 @@
 import { create } from 'zustand'
-
-import { PairsInfoState, Rec } from '@/store/types'
 import { initialPCFAndPrice } from '@/hooks/usePairIndicator'
+import { PairsInfoState, Rec } from '@/store/types'
 import { initial3 as initialIndicator } from '@/hooks/useQueryApi'
 
 const usePairsInfoStore = create<PairsInfoState>((set) => ({

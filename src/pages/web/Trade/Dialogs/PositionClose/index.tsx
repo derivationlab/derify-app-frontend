@@ -1,17 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useEffect } from 'react'
-
 import { PositionSideTypes } from '@/typings'
-import { useIndicatorsConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { useIndicatorsConf } from '@/hooks/useMatchConf'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useOpeningStore, useMarginTokenStore } from '@/store'
+import { useOpeningStore, useMarginTokenStore, usePairsInfoStore } from '@/store'
 import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
-
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
-
 import QuantityInput from './QuantityInput'
 
 interface Props {
@@ -25,17 +22,20 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const closingAmount = useOpeningStore((state) => state.closingAmount)
   const updateClosingType = useOpeningStore((state) => state.updateClosingType)
   const updateClosingAmount = useOpeningStore((state) => state.updateClosingAmount)
 
-  const { spotPrice } = useSpotPrice(data?.quoteToken, marginToken)
   const { indicators } = useIndicatorsConf(data?.quoteToken)
 
   const memoVolume = useMemo(() => {
-    return nonBigNumberInterception(bnMul(spotPrice, data?.size), findToken(marginToken).decimals)
-  }, [data, spotPrice, marginToken])
+    return nonBigNumberInterception(
+      bnMul(spotPrices[marginToken][data?.quoteToken], data?.size),
+      findToken(marginToken).decimals
+    )
+  }, [data, spotPrices, marginToken])
 
   const memoChangeRate = useMemo(() => {
     return bnMul(indicators?.price_change_rate ?? 0, 100)
@@ -69,7 +69,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 </h4>
               </header>
               <section className="web-trade-dialog-position-info-data">
-                <BalanceShow value={spotPrice} unit="" />
+                <BalanceShow value={spotPrices[marginToken][data?.quoteToken]} unit="" />
                 <span className={isGTET(memoChangeRate, 0) ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
               </section>
               <section className="web-trade-dialog-position-info-count">

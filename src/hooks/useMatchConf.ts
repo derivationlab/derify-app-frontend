@@ -4,21 +4,6 @@ import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys, QuoteTokenKeys } from '@/typings'
 import { useConfigInfoStore, usePairsInfoStore } from '@/store'
 
-export const useSpotPrice = (quoteToken = QUOTE_TOKENS[0].symbol, marginToken = MARGIN_TOKENS[0].symbol) => {
-  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
-
-  const spotPrice = useMemo(() => spotPrices[marginToken][quoteToken], [spotPrices, marginToken, quoteToken])
-
-  const _spotPrices = useMemo(() => {
-    return spotPrices[marginToken]
-  }, [spotPrices, marginToken])
-
-  return {
-    spotPrice,
-    spotPrices: _spotPrices
-  }
-}
-
 export const useFactoryConf = (marginToken = MARGIN_TOKENS[0].symbol, quoteToken = QUOTE_TOKENS[0].symbol) => {
   const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)
   const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)

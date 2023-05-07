@@ -1,14 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
-
 import { PositionSideTypes } from '@/typings'
 import { reducer, stateInit } from '@/reducers/opening'
 import { isGT, keepDecimals } from '@/utils/tools'
 import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
+import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
-import { useMarginTokenStore, useQuoteTokenStore, useOpeningStore } from '@/store'
-
+import { useMarginTokenStore, useQuoteTokenStore, useOpeningStore, usePairsInfoStore } from '@/store'
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import MultipleStatus from '@/components/web/MultipleStatus'
@@ -27,21 +25,21 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const { t } = useTranslation()
 
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const closingType = useOpeningStore((state) => state.closingType)
   const closingAmount = useOpeningStore((state) => state.closingAmount)
 
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { factoryConfig } = useFactoryConf(marginToken, quoteToken)
   const { protocolConfig } = useProtocolConf(marginToken)
 
   const calcTFeeFunc = useCallback(async () => {
     if (factoryConfig) {
-      const fee = await calcTradingFee(factoryConfig, closingType, closingAmount, spotPrice)
+      const fee = await calcTradingFee(factoryConfig, closingType, closingAmount, spotPrices[marginToken][quoteToken])
       dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
     }
-  }, [data, factoryConfig, spotPrice, closingAmount])
+  }, [data, spotPrices, factoryConfig, closingAmount])
 
   const calcCFeeFunc = useCallback(async () => {
     if (factoryConfig && protocolConfig) {
@@ -49,14 +47,14 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
         data?.side,
         closingType,
         closingAmount,
-        spotPrice,
+        spotPrices[marginToken][quoteToken],
         protocolConfig.exchange,
         factoryConfig
       )
 
       dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
     }
-  }, [data, spotPrice, factoryConfig, protocolConfig, closingAmount, closingType])
+  }, [data, spotPrices, factoryConfig, protocolConfig, closingAmount, closingType])
 
   useEffect(() => {
     if (!visible) {

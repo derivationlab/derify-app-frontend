@@ -1,14 +1,11 @@
 import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-
-import { useIndicatorsConf, useSpotPrice } from '@/hooks/useMatchConf'
+import { useIndicatorsConf } from '@/hooks/useMatchConf'
 import { PositionSideTypes } from '@/typings'
-
-import { useMarginTokenStore } from '@/store'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useMarginTokenStore, usePairsInfoStore } from '@/store'
 import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
-
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Form/Input'
@@ -26,9 +23,9 @@ interface Props {
 const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const { spotPrice } = useSpotPrice(data?.quoteToken, marginToken)
   const { indicators } = useIndicatorsConf(data?.quoteToken)
 
   const [stopLossPrice, setStopLossPrice] = useState<any>('')
@@ -231,7 +228,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
-              <BalanceShow value={spotPrice} unit="" />
+              <BalanceShow value={spotPrices[marginToken][data?.quoteToken]} unit="" />
               <span className={memoChangeRate >= 0 ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
             </section>
             <section className="web-trade-dialog-position-info-count">

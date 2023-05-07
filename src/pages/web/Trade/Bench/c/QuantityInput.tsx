@@ -2,18 +2,14 @@ import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
-
 import { findToken } from '@/config/tokens'
+import { useProtocolConf } from '@/hooks/useMatchConf'
 import { MarginTokenKeys, PubSubEvents } from '@/typings'
-import { useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
-import { OpeningType, useOpeningStore, useMarginTokenStore, useQuoteTokenStore } from '@/store'
-
-import { Select, Input } from '@/components/common/Form'
+import { OpeningType, useOpeningStore, useMarginTokenStore, useQuoteTokenStore, usePairsInfoStore } from '@/store'
+import { Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
-
 import Row from './Row'
-import Col from './Col'
 
 interface Props {
   type: string
@@ -27,6 +23,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const { address } = useAccount()
 
   const maxVolume = useOpeningStore((state) => state.maxVolume)
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const openingType = useOpeningStore((state) => state.openingType)
   const leverageNow = useOpeningStore((state) => state.leverageNow)
@@ -34,13 +31,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
   const openingPrice = useOpeningStore((state) => state.openingPrice)
   const fetchMaxVolume = useOpeningStore((state) => state.fetchMaxVolume)
 
-  const { spotPrice } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
-
-  const onSelectChange = (val: string | number) => {
-    onChange(0)
-    onTypeChange(val)
-  }
 
   const visibleMaxVol = useMemo(() => {
     return nonBigNumberInterception(maxVolume?.[type] ?? 0, findToken(type)?.decimals ?? 2)
@@ -70,7 +61,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
       void _fetchMaxVolume(
         address,
         protocolConfig.exchange,
-        spotPrice,
+        spotPrices[marginToken][quoteToken],
         openingPrice,
         openingType,
         quoteToken,
@@ -83,7 +74,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
         void _fetchMaxVolume(
           address,
           protocolConfig.exchange,
-          spotPrice,
+          spotPrices[marginToken][quoteToken],
           openingPrice,
           openingType,
           quoteToken,
@@ -91,7 +82,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
         )
       }
     })
-  }, [address, spotPrice, quoteToken, openingType, leverageNow, marginToken, openingPrice, protocolConfig])
+  }, [address, spotPrices, quoteToken, openingType, leverageNow, marginToken, openingPrice, protocolConfig])
 
   return (
     <>

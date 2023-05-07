@@ -3,15 +3,20 @@ import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { useSigner, useAccount } from 'wagmi'
 import React, { FC, useState, useMemo, useContext } from 'react'
-
 import { ThemeContext } from '@/providers/Theme'
 import { usePositionOperation } from '@/hooks/useTrading'
 import { findMarginToken, findToken } from '@/config/tokens'
 import { PubSubEvents, QuoteTokenKeys } from '@/typings'
+import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
 import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
-import { useFactoryConf, useProtocolConf, useSpotPrice } from '@/hooks/useMatchConf'
-import { useOpeningStore, useBrokerInfoStore, usePositionStore, useMarginTokenStore, useQuoteTokenStore } from '@/store'
-
+import {
+  useOpeningStore,
+  useBrokerInfoStore,
+  usePositionStore,
+  useMarginTokenStore,
+  useQuoteTokenStore,
+  usePairsInfoStore
+} from '@/store'
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Loading from '@/components/common/Loading'
@@ -19,7 +24,6 @@ import PositionCloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import PositionClosePreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
 import PositionCloseConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
 import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
-
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
 
@@ -32,6 +36,7 @@ const MyPosition: FC = () => {
 
   const { closePosition, closeAllPositions, takeProfitOrStopLoss } = usePositionOperation()
 
+  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const positionOrd = usePositionStore((state) => state.positionOrd)
@@ -40,7 +45,6 @@ const MyPosition: FC = () => {
   const closingAmount = useOpeningStore((state) => state.closingAmount)
   const positionOrdLoaded = usePositionStore((state) => state.loaded)
 
-  const { spotPrices } = useSpotPrice(quoteToken, marginToken)
   const { protocolConfig } = useProtocolConf(marginToken)
   const { match: matchFactoryConfig } = useFactoryConf(marginToken, quoteToken)
 
@@ -48,7 +52,10 @@ const MyPosition: FC = () => {
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
   const isFull = ({ size = 0, quoteToken = '' }, amount: string): boolean => {
-    const u = nonBigNumberInterception(bnMul(spotPrices[quoteToken], size), findToken(marginToken).decimals)
+    const u = nonBigNumberInterception(
+      bnMul(spotPrices[marginToken][quoteToken], size),
+      findToken(marginToken).decimals
+    )
     return findMarginToken(closingType) ? isGTET(amount, u) : isGTET(amount, size)
   }
 
@@ -74,7 +81,7 @@ const MyPosition: FC = () => {
       const status = await closePosition(
         protocolConfig.exchange,
         brokerBound.broker,
-        spotPrices[quoteToken],
+        spotPrices[marginToken][quoteToken],
         quoteToken,
         closingType,
         closingAmount,

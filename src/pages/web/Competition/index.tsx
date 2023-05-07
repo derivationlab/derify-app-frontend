@@ -12,6 +12,7 @@ import { calcShortHash, keepDecimals } from '@/utils/tools'
 import { reducer, stateInit } from '@/reducers/competitionRank'
 import Image from '@/components/common/Image'
 import Select from '@/components/common/Form/Select'
+import Skeleton from '@/components/common/Skeleton'
 // import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 
@@ -130,11 +131,13 @@ const CompetitionRank: FC = () => {
     <div className="web-competition-rank">
       <h2>{t('Earn.Trading.TradingCompetitionRank')}</h2>
       <aside>
-        <Select
-          value={state.filterCondition}
-          onChange={(v) => dispatch({ type: 'SET_FILTER_CONDITION', payload: v })}
-          objOptions={state.filterConditions as any}
-        />
+        <Skeleton rowsProps={{ rows: 1 }} animation loading={state.filterConditions.length === 0}>
+          <Select
+            value={state.filterCondition}
+            onChange={(v) => dispatch({ type: 'SET_FILTER_CONDITION', payload: v })}
+            objOptions={state.filterConditions as any}
+          />
+        </Skeleton>
       </aside>
       <Table
         data={state.records.records}

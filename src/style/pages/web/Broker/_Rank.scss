@@ -60,6 +60,12 @@
       }
     }
   }
+  .web-competition-rank{
+    aside{margin-bottom: rem(10)}
+    .web-c-skeleton-content .web-c-skeleton-row{
+      height: rem(36);width: rem(200);
+    }
+  }
 }
 
 .web-mining-rank,
@@ -74,6 +80,9 @@
 
 .web-competition-rank{
   aside{display: flex;justify-content: flex-end;margin-bottom: 30px}
+  .web-c-skeleton-content .web-c-skeleton-row{
+    height: 48px;width: 200px;
+  }
 }
 
 .dark {

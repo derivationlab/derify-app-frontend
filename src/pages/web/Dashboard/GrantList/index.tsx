@@ -54,9 +54,9 @@ const GrantList: FC = () => {
     (index: number) => {
       dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
-      void _getGrantPlanList(index, state.marginToken, state.grantStatus, state.grantTarget1)
+      void _getGrantPlanList(index, state.marginToken1, state.grantStatus, state.grantTarget1)
     },
-    [state.marginToken, state.grantStatus, state.grantTarget1]
+    [state.marginToken1, state.grantStatus, state.grantTarget1]
   )
 
   const debounceSearch = useCallback(
@@ -67,8 +67,8 @@ const GrantList: FC = () => {
   )
 
   useEffect(() => {
-    if (state.marginToken || state.grantStatus || state.grantTarget1) {
-      void debounceSearch(state.marginToken, state.grantStatus, state.grantTarget1)
+    if (state.marginToken1 || state.grantStatus || state.grantTarget1) {
+      void debounceSearch(state.marginToken1, state.grantStatus, state.grantTarget1)
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_GRANT_LIST, () => {
@@ -83,9 +83,9 @@ const GrantList: FC = () => {
       dispatch({ type: 'SET_GRANT_STATUS', payload: '' })
       dispatch({ type: 'SET_MARGIN_TOKEN', payload: '' })
 
-      void debounceSearch(state.marginToken, state.grantStatus, state.grantTarget1)
+      void debounceSearch(state.marginToken1, state.grantStatus, state.grantTarget1)
     })
-  }, [state.marginToken, state.grantStatus, state.grantTarget1])
+  }, [state.marginToken1, state.grantStatus, state.grantTarget1])
 
   return (
     <div className="web-dashboard">

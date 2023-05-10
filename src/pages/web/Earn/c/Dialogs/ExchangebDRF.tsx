@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { isGT, isGTET } from '@/utils/tools'
+import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useTraderInfoStore, useMarginTokenStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
@@ -60,7 +60,7 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           </div>
           <div className="amount">
             <AmountInput
-              max={rewardsInfo?.exchangeable ?? 0}
+              max={nonBigNumberInterception(rewardsInfo?.exchangeable ?? 0, 2)}
               title={t('Earn.bDRFPool.AmountToExchange', 'Amount to exchange')}
               unit={`b${marginToken}`}
               onChange={onChangeEv}

@@ -2,7 +2,7 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useReducer, useEffect } from 'react'
 
-import { isGT, isGTET } from '@/utils/tools'
+import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { reducer, stateInit } from '@/reducers/staking'
 import { getTokenBalance, useMarginTokenStore } from '@/store'
@@ -66,7 +66,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           </div>
           <div className="amount">
             <AmountInput
-              max={state.depositDAT.balance}
+              max={nonBigNumberInterception(state.depositDAT.balance, 2)}
               title={t('Earn.bDRFPool.AmountToDeposit', 'Amount to deposit')}
               unit={`b${marginToken}`}
               onChange={onChangeEv}

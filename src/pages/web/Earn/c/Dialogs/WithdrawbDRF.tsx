@@ -2,7 +2,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 
-import { isGT, isGTET } from '@/utils/tools'
+import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import { useTraderInfoStore, useMarginTokenStore } from '@/store'
 
 import Dialog from '@/components/common/Dialog'
@@ -60,7 +60,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           </div>
           <div className="amount">
             <AmountInput
-              max={rewardsInfo?.bondReturnBalance ?? 0}
+              max={nonBigNumberInterception(rewardsInfo?.bondReturnBalance ?? 0, 2)}
               title={t('Earn.bDRFPool.AmountToWithdraw', 'Amount to withdraw')}
               unit={`b${marginToken}`}
               onChange={onChangeEv}

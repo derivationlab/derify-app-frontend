@@ -29,8 +29,7 @@ export const getTokenBalance = async (account: string, address: string) => {
   const c = getBep20Contract(address)
 
   const res = await c.balanceOf(account)
-
-  return formatUnits(res, findToken(address).precision)
+  return formatUnits(res, findToken(address)?.precision ?? 18)
 }
 
 export const getTokenBalances = async (account: string) => {

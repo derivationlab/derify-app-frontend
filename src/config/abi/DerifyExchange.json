@@ -15,6 +15,12 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "marginToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "marginTokenAmount",
         "type": "uint256"
@@ -29,6 +35,12 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "gasFee",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "bnbAmount",
         "type": "uint256"
       },
       {
@@ -89,6 +101,12 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "marginToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "int256",
         "name": "amount",
         "type": "int256"
@@ -117,6 +135,12 @@
         "internalType": "enum IDerifyExchange.PoolUpdateType",
         "name": "poolUpdateType",
         "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "marginToken",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -1108,6 +1132,11 @@
             "type": "address"
           },
           {
+            "internalType": "address",
+            "name": "tokenWBNB",
+            "type": "address"
+          },
+          {
             "internalType": "uint256",
             "name": "thetaRatio",
             "type": "uint256"
@@ -1456,6 +1485,19 @@
   },
   {
     "inputs": [],
+    "name": "tokenWBNB",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "totalAccountBalance",
     "outputs": [
       {
@@ -1527,5 +1569,9 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ]

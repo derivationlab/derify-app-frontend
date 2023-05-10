@@ -2,39 +2,61 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_factory",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_exchange",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_marginToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_marginMaintenanceRatio",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_marginMaintenanceRatioMultiple",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_marginLiquidationRatio",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_gasFeeRewardRatio",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "address",
+            "name": "factory",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "exchange",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "marginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "marginMaintenanceRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "marginMaintenanceRatioMultiple",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "marginLiquidationRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gasFeeRewardRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "protocol",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "tokenWBNB",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "exchangeModule",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IDerifyClearing.ClearInitParams",
+        "name": "params",
+        "type": "tuple"
       }
     ],
     "stateMutability": "nonpayable",
@@ -174,6 +196,25 @@
       }
     ],
     "name": "Paused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Received",
     "type": "event"
   },
   {
@@ -345,6 +386,19 @@
   {
     "inputs": [],
     "name": "exchange",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "exchangeModule",
     "outputs": [
       {
         "internalType": "address",
@@ -800,6 +854,19 @@
   },
   {
     "inputs": [],
+    "name": "protocol",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -855,6 +922,19 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "tokenWBNB",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -929,5 +1009,9 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ]

@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 
-import { findToken } from '@/config/tokens'
+import { findToken, MARGIN_TOKENS } from '@/config/tokens'
 import { MarginTokenKeys } from '@/typings'
 import { reducer, stateInit } from '@/reducers/records'
 import { getMarginTokenList } from '@/api'
@@ -31,17 +31,22 @@ const MarginToken: FC = () => {
 
   const options = useMemo(() => {
     if (!state.records.loaded && !marginBalancesLoaded && marginBalances) {
-      const _ = state.records.records.map((token) => {
-        const marginBalance = marginBalances[token.symbol as MarginTokenKeys]
-        return {
-          apy: token.max_pm_apy,
-          open: token.open,
-          icon: findToken(token.symbol).icon,
-          value: token.symbol,
-          label: token.symbol,
-          marginBalance
-        }
-      })
+      const _ = state.records.records
+        .map((token) => {
+          const find = MARGIN_TOKENS.find((margin) => margin.symbol === token.symbol)
+          if (find) {
+            const marginBalance = marginBalances[token.symbol as MarginTokenKeys]
+            return {
+              apy: token.max_pm_apy,
+              open: token.open,
+              icon: findToken(token.symbol)?.icon,
+              value: token.symbol,
+              label: token.symbol,
+              marginBalance
+            }
+          }
+        })
+        .filter((x) => x)
       return orderBy(_, ['marginBalance', 'apy'], 'desc')
     }
     return []

@@ -22,8 +22,8 @@ const useConfigInfoStore = create<ConfigInfoState>((set) => ({
   openingMaxLimitLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
-      // console.info('updateFactoryConfig:')
-      // console.info(data)
+      console.info('updateFactoryConfig:')
+      console.info(data)
       return { factoryConfig: data, factoryConfigLoaded: true }
     }),
   updateProtocolConfig: (data: MarginTokenWithContract) =>

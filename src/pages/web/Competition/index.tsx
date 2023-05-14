@@ -95,10 +95,7 @@ const CompetitionRank: FC = () => {
     const { data } = await getCompetitionRank(status, id)
 
     if (data) {
-      const _ = data.map((d: Record<string, any>, index: number) => ({
-        ...d,
-        rank: `#${++index}`
-      }))
+      const _ = data.map((d: Record<string, any>, index: number) => ({ ...d, rank: `#${++index}` }))
       dispatch({ type: 'SET_RECORDS', payload: { records: _, loaded: false } })
     }
   }, [marginToken, state.filterCondition])
@@ -123,6 +120,7 @@ const CompetitionRank: FC = () => {
 
   useEffect(() => {
     if (state.filterCondition) {
+      dispatch({ type: 'SET_RECORDS', payload: { loaded: true } })
       void _getCompetitionRank()
     }
   }, [marginToken, state.filterCondition])

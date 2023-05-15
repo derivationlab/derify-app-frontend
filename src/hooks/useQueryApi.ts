@@ -354,7 +354,7 @@ export const usePairIndicator = (marginToken: MarginTokenKeys): { data?: Record<
         shortMarginTokenPmrRate = 0,
         ...rest
       }: Record<string, any>) => {
-        const quote = findToken(token).symbol as QuoteTokenKeys
+        const quote = findToken(token)?.symbol as QuoteTokenKeys
         const longPmrRate = bnPlus(longDrfPmrRate, longMarginTokenPmrRate)
         const shortPmrRate = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
         const pmrRateMax = keepDecimals(Math.max(Number(longPmrRate), Number(shortPmrRate)), 4)

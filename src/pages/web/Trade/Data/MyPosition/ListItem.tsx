@@ -137,25 +137,23 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
 
   const atom6Tsx = useMemo(() => {
     let alertLevel = 0
-    const base = Number(variables.marginRate) * 100
-
-    if (base > 20) alertLevel = 0
-    else if (base > 5) alertLevel = 1
-    else if (base > 2) alertLevel = 2
-    else if (base > 1.33) alertLevel = 3
-    else if (base > 1.11) alertLevel = 4
+    if (isGT(variables.marginRate, bnMul(sysParams.marginMaintenanceRatio, 5))) alertLevel = 0
+    else if (isGT(variables.marginRate, bnMul(sysParams.marginMaintenanceRatio, 4))) alertLevel = 1
+    else if (isGT(variables.marginRate, bnMul(sysParams.marginMaintenanceRatio, 3))) alertLevel = 2
+    else if (isGT(variables.marginRate, bnMul(sysParams.marginMaintenanceRatio, 2))) alertLevel = 3
+    else if (isGT(variables.marginRate, sysParams.marginMaintenanceRatio)) alertLevel = 4
     else alertLevel = 5
 
     return (
       <DataAtom hover label={t('Trade.MyPosition.MarginRate', 'Margin Rate')} tip={t('Trade.MyPosition.MarginRateTip')}>
-        <span className={classNames('reminder', `${base >= 0 ? 'up' : 'down'}`)}>
-          {judgeUpsAndDowns(base as any)}
-          {keepDecimals(base, 2)}%
+        <span className={classNames('reminder', `${Number(variables.marginRate) >= 0 ? 'up' : 'down'}`)}>
+          {judgeUpsAndDowns(variables.marginRate as any)}
+          {keepDecimals(Number(variables.marginRate) * 100, 2)}%
         </span>
         <Reminder alertLevel={alertLevel} />
       </DataAtom>
     )
-  }, [variables.marginRate, t])
+  }, [t, variables.marginRate, sysParams.marginMaintenanceRatio])
 
   const atom7Tsx = useMemo(
     () => (

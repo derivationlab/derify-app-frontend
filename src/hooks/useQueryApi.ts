@@ -403,14 +403,15 @@ export const usePairIndicators = () => {
               const short = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
               const apyMax = isGTET(long, short) ? long : short
 
-              output[MARGIN_TOKENS[index].symbol as MarginTokenKeys] = {
-                ...output[MARGIN_TOKENS[index].symbol as MarginTokenKeys],
-                [findToken(token).symbol]: Number(apyMax)
-              }
+              if (MARGIN_TOKENS[index].symbol)
+                output[MARGIN_TOKENS[index].symbol as MarginTokenKeys] = {
+                  ...output[MARGIN_TOKENS[index].symbol as MarginTokenKeys],
+                  [findToken(token)?.symbol]: Number(apyMax)
+                }
             }
           )
         })
-        // console.info(output)
+        console.info(output)
 
         return output
       }

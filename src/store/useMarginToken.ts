@@ -14,7 +14,7 @@ const useMarginListStore = create<MarginListState>((set) => ({
   marginListLoaded: false,
   getMarginList: async (index = 0) => {
     const data = await getMarginList(index)
-    // console.info(data)
+    console.info(data)
     set({ marginList: data, marginListLoaded: true })
   }
 }))

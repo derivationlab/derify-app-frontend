@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js'
 import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useState, useCallback } from 'react'
+import React, { FC, useState, useCallback, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
 import { useMarginTokenStore } from '@/store'
@@ -10,6 +10,7 @@ import { useMarginOperation } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
+import { useMarginListStore } from '@/store/useMarginToken'
 
 interface Props {
   size?: string
@@ -20,11 +21,21 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const { data: signer } = useSigner()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-
+  const marginList = useMarginListStore((state) => state.marginList)
+  const marginListLoaded = useMarginListStore((state) => state.marginListLoaded)
+  console.info(marginList, marginToken)
   const { deposit } = useMarginOperation()
   const { protocolConfig } = useProtocolConf(marginToken)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
+
+  const isDisabled = useMemo(() => {
+    if (marginListLoaded) {
+      const find = marginList.find((margin) => margin.symbol === marginToken)
+      return !find
+    }
+    return true
+  }, [marginToken, marginListLoaded])
 
   // deposit
   const onConfirmDepositEv = useCallback(
@@ -56,7 +67,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
   return (
     <>
-      <Button size={size} onClick={() => setDialogStatus('deposit')}>
+      <Button size={size} onClick={() => setDialogStatus('deposit')} disabled={isDisabled}>
         {t('Nav.Account.Deposit', 'Deposit')}
       </Button>
       <DepositDialog

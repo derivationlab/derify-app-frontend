@@ -12,6 +12,7 @@ import { reducer, stateInit } from '@/reducers/records'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useAccount } from 'wagmi'
 
 interface RowTextProps {
   value: string | number
@@ -39,14 +40,13 @@ const Rank: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
+  const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const fetchData = useCallback(async (index = 0) => {
     const { data } = await getBrokersRankList(index, 10, findToken(marginToken).tokenAddress)
-
-    console.info(data)
 
     dispatch({
       type: 'SET_RECORDS',
@@ -133,6 +133,7 @@ const Rank: FC = () => {
         columns={mobile ? mColumns : wColumns}
         data={state.records.records}
         rowKey="id"
+        rowClassName={(record) => (address === record.broker ? 'active' : '')}
       />
       <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </div>

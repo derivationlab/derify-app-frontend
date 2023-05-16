@@ -114,7 +114,7 @@ const Plan: FC = () => {
         title: t('NewDashboard.BuybackPlan.RemainingBlock', 'Remaining block'),
         dataIndex: 'last_buy_back_block',
         render: (value: number, data: Record<any, any>) => {
-          const block = data.open ? Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber : 0
+          const block = Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber
           return <BalanceShow value={block} rule="0,0" unit="Block" />
         }
       },

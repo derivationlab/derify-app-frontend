@@ -1,18 +1,21 @@
 import dayjs from 'dayjs'
+
 import React, { FC, useState, useMemo, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
-import { GrantKeys } from '@/typings'
-import { useMarginTokenListStore } from '@/store/useMarginTokenList'
-import { useConfigInfoStore, useBalancesStore } from '@/store'
-import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
-import { DEFAULT_MARGIN_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { isET, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
-import Dialog from '@/components/common/Dialog'
+
 import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
+import Input from '@/components/common/Form/Input'
+import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
 import AmountInput from '@/components/common/Wallet/AmountInput'
-import { Select, Input } from '@/components/common/Form'
+import { DEFAULT_MARGIN_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
+import { useConfigInfoStore, useBalancesStore } from '@/store'
+import { useMarginTokenListStore } from '@/store/useMarginTokenList'
+import { GrantKeys } from '@/typings'
+import { isET, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   visible: boolean
@@ -145,17 +148,10 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             </div>
             <div className="web-dashboard-add-grant-dialog-volume">
               <p>
-                Max:{' '}
-                <em>
-                  {keepDecimals(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2, true)}
-                </em>{' '}
-                {PLATFORM_TOKEN.symbol}
+                Max: <em>{keepDecimals(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2, true)}</em> {PLATFORM_TOKEN.symbol}
               </p>
               <AmountInput
-                max={nonBigNumberInterception(
-                  balances?.[PLATFORM_TOKEN.symbol] ?? 0,
-                  2
-                )}
+                max={nonBigNumberInterception(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2)}
                 unit={PLATFORM_TOKEN.symbol}
                 title={t('NewDashboard.GrantList.Volume', 'Volume')}
                 initial={nonBigNumberInterception(minimumGrant[state.grantTarget as GrantKeys])}

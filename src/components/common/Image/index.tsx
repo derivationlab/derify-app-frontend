@@ -1,5 +1,7 @@
-import React, { FC, useMemo, ImgHTMLAttributes } from 'react'
 import classNames from 'classnames'
+
+import React, { FC, useMemo, ImgHTMLAttributes } from 'react'
+
 import { STATIC_RESOURCES_URL } from '@/config'
 
 interface ImageProps extends Partial<ImgHTMLAttributes<HTMLElement>> {

@@ -1,17 +1,17 @@
 import classNames from 'classnames'
 import { orderBy } from 'lodash'
 import { useAccount } from 'wagmi'
-import { useHistory } from 'react-router-dom'
+
+import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import { useHistory } from 'react-router-dom'
 
-import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
-
-import { Select } from '@/components/common/Form'
+import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
-import { MarginTokenState } from '@/store/types'
 import { useMarginBalances } from '@/hooks/useMarginBalances'
+import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 
 const MarginToken: FC = () => {
   const history = useHistory()
@@ -26,32 +26,30 @@ const MarginToken: FC = () => {
 
   const options = useMemo(() => {
     if (marginTokenList.length) {
-      const _ = marginTokenList
-        .map((token) => {
-          const marginBalance = marginBalances?.[token.symbol] ?? 0
-          return {
-            apy: token.max_pm_apy,
-            open: token.open,
-            icon: `market/${token.symbol.toLowerCase()}.svg`,
-            value: token.symbol,
-            label: token.symbol,
-            marginBalance
-          }
-        })
+      const _ = marginTokenList.map((token) => {
+        const marginBalance = marginBalances?.[token.symbol] ?? 0
+        return {
+          apy: token.max_pm_apy,
+          open: token.open,
+          icon: `market/${token.symbol.toLowerCase()}.svg`,
+          value: token.symbol,
+          label: token.symbol,
+          marginBalance
+        }
+      })
       return orderBy(_, ['marginBalance', 'apy'], 'desc')
     }
     return []
   }, [marginBalances, marginTokenList])
 
   return (
-    <div className='web-trade-bench-margin'>
+    <div className="web-trade-bench-margin">
       <label>{t('Trade.Bench.Margin')}</label>
       <Skeleton rowsProps={{ rows: 1 }} animation loading={!marginTokenListLoaded}>
         <Select
           filter
           value={marginToken as any}
           onChange={(v) => {
-            // updateMarginToken(v as MarginTokenKeys)
             history.push(`/${v}/trade`)
           }}
           renderer={(props) => (
@@ -60,15 +58,15 @@ const MarginToken: FC = () => {
               {props?.label}
             </div>
           )}
-          className='web-trade-bench-margin-select'
+          className="web-trade-bench-margin-select"
           objOptions={options as any}
           labelRenderer={() => (
-            <div className='web-dashboard-add-grant-margin-label'>
+            <div className="web-dashboard-add-grant-margin-label">
               <Image src={`market/${marginToken.symbol.toLowerCase()}.svg`} />
               <span>{marginToken.symbol}</span>
             </div>
           )}
-          filterPlaceholder='Search name or contract address...'
+          filterPlaceholder="Search name or contract address..."
         />
       </Skeleton>
     </div>

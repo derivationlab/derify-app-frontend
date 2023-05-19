@@ -1,13 +1,15 @@
 import PubSub from 'pubsub-js'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import Button from '@/components/common/Button'
+import LeverageSelect from '@/components/common/Form/LeverageSelect'
+import NotConnect from '@/components/web/NotConnect'
 import { isOpeningMinLimit } from '@/hooks/helper'
-import { reducer, stateInit } from '@/reducers/opening'
 import { usePositionOperation } from '@/hooks/useTrading'
-import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
-import { MarginTokenState, QuoteTokenState } from '@/store/types'
-import { PubSubEvents, PositionSideTypes, PositionOrderTypes } from '@/typings'
-import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
+import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
+import { reducer, stateInit } from '@/reducers/opening'
 import {
   usePositionOperationStore,
   useQuoteTokenStore,
@@ -18,16 +20,17 @@ import {
   useProtocolConfigStore,
   useMarginPriceStore
 } from '@/store'
-import Button from '@/components/common/Button'
-import NotConnect from '@/components/web/NotConnect'
-import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
-import { LeverageSelect } from '@/components/common/Form'
-import Row from './c/Row'
+import { MarginTokenState, QuoteTokenState } from '@/store/types'
+import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
+import { PubSubEvents, PositionSideTypes, PositionOrderTypes } from '@/typings'
+import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
+
 import Col from './c/Col'
 import Info from './c/Info'
+import OpenTypeSelect from './c/OpenTypeSelect'
 import PriceInput from './c/PriceInput'
 import QuantityInput from './c/QuantityInput'
-import OpenTypeSelect from './c/OpenTypeSelect'
+import Row from './c/Row'
 
 const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)

@@ -2,8 +2,8 @@ import type { Signer } from 'ethers'
 import { BigNumberish, Contract, BigNumber } from 'ethers'
 
 import tokens from '@/config/tokens'
-import { estimateGas } from '@/utils/estimateGas'
 import { getBep20Contract } from '@/utils/contractHelpers'
+import { estimateGas } from '@/utils/estimateGas'
 
 const getAllowance = async (c: Contract, signer: Signer, spender: string): Promise<BigNumberish> => {
   if (!c) {

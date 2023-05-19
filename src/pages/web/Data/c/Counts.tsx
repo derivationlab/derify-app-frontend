@@ -1,18 +1,17 @@
 import React, { FC, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
-
-import { nonBigNumberInterception } from '@/utils/tools'
 import { DEFAULT_MARGIN_TOKEN, findToken } from '@/config/tokens'
+import { useCurrentIndexDAT } from '@/hooks/useQueryApi'
 import { useMarginTokenStore } from '@/store'
+import { nonBigNumberInterception } from '@/utils/tools'
 
 const Counts: FC = () => {
   const { t } = useTranslation()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
+  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(marginToken.address)
 
   useEffect(() => {
     void dashboardDATRefetch()

@@ -1,21 +1,21 @@
 import dayjs from 'dayjs'
 import PubSub from 'pubsub-js'
-import { Link } from 'react-router-dom'
 import { useAccount, useSigner } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useCallback, useContext, useMemo } from 'react'
 
-import { PubSubEvents } from '@/typings'
-import { MobileContext } from '@/providers/Mobile'
-import { useBrokerInfo } from '@/hooks/useBroker'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useWithdrawReward } from '@/hooks/useBroker'
-import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
-import { useMarginTokenStore, useBrokerInfoStore } from '@/store'
+import React, { FC, useCallback, useContext, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { useBrokerInfo } from '@/hooks/useBroker'
+import { useWithdrawReward } from '@/hooks/useBroker'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { MobileContext } from '@/providers/Mobile'
+import { useMarginTokenStore, useBrokerInfoStore, useProtocolConfigStore } from '@/store'
+import { PubSubEvents } from '@/typings'
+import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 const Dashboard: FC = () => {
   const { t } = useTranslation()
@@ -27,8 +27,8 @@ const Dashboard: FC = () => {
 
   const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
-  const { protocolConfig } = useProtocolConf(marginToken)
   const { data: brokerAssets } = useBrokerInfo(address, protocolConfig?.rewards)
 
   const withdrawFunc = useCallback(async () => {
@@ -74,13 +74,13 @@ const Dashboard: FC = () => {
       <div className="web-broker-dashboard-balance">
         <section>
           <h3>{t('Broker.BV.BrokerAccountBalance', 'Broker Account Balance')}</h3>
-          <BalanceShow value={memoTotalBalance[0]} unit={marginToken} />
+          <BalanceShow value={memoTotalBalance[0]} unit={marginToken.symbol} />
           <BalanceShow value={memoTotalBalance[1]} unit={PLATFORM_TOKEN.symbol} />
           <p
             dangerouslySetInnerHTML={{
               __html: t('Broker.BV.EarnedTip', '', {
-                Amount: keepDecimals(memoHistoryBalance[0], findToken(marginToken).decimals),
-                Margin: marginToken,
+                Amount: keepDecimals(memoHistoryBalance[0], 2),
+                Margin: marginToken.symbol,
                 DRF: keepDecimals(memoHistoryBalance[1], tokens.drf.decimals),
                 time: brokerInfo?.registerTime ? dayjs(brokerInfo?.registerTime).format('MMM DD, YYYY') : '--'
               })
@@ -97,11 +97,11 @@ const Dashboard: FC = () => {
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>
               <section>
-                <BalanceShow value={brokerInfo?.margin_token_reward ?? 0} unit={marginToken} />
+                <BalanceShow value={brokerInfo?.margin_token_reward ?? 0} unit={marginToken.symbol} />
                 <BalanceShow value={brokerInfo?.drf_reward ?? 0} unit={PLATFORM_TOKEN.symbol} />
               </section>
               <footer>
-                <Link to={`/${marginToken}/broker/rank`}>
+                <Link to={`/${marginToken.symbol}/broker/rank`}>
                   {t('Broker.BV.BrokerRank', 'Broker Rank')} #{brokerInfo?.rank}
                 </Link>
               </footer>
@@ -124,7 +124,7 @@ const Dashboard: FC = () => {
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>
               <section>
-                <BalanceShow value={brokerInfo?.margin_token_reward ?? 0} unit={marginToken} />
+                <BalanceShow value={brokerInfo?.margin_token_reward ?? 0} unit={marginToken.symbol} />
                 <BalanceShow value={brokerInfo?.drf_reward ?? 0} unit={PLATFORM_TOKEN.symbol} />
               </section>
               <footer
@@ -150,7 +150,7 @@ const Dashboard: FC = () => {
               <header>{t('Broker.BV.BrokerRank', 'Broker Rank')}</header>
               <section>#{brokerInfo?.rank}</section>
               <footer>
-                <Link to={`/${marginToken}/broker/rank`}>{t('Broker.BV.RankList', 'Rank List')}</Link>
+                <Link to={`/${marginToken.symbol}/broker/rank`}>{t('Broker.BV.RankList', 'Rank List')}</Link>
               </footer>
             </main>
           </>

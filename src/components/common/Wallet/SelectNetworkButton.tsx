@@ -1,15 +1,15 @@
 import classNames from 'classnames'
-import { useClickAway } from 'react-use'
-import { useTranslation } from 'react-i18next'
-import { bsc, bscTestnet } from 'wagmi/chains'
-import React, { FC, useState, useRef, useEffect, useCallback } from 'react'
-
-import { ChainId } from '@/typings'
 import { Chain, useNetwork, useSwitchNetwork } from 'wagmi'
+import { bsc, bscTestnet } from 'wagmi/chains'
 
-import Image from '@/components/common/Image'
+import React, { FC, useState, useRef, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useClickAway } from 'react-use'
+
 import Button from '@/components/common/Button'
+import Image from '@/components/common/Image'
 import { useRpcNodeStore } from '@/store'
+import { ChainId } from '@/typings'
 
 const networks = {
   [ChainId.MAINNET]: {

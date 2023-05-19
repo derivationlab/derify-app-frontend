@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
-import { Rec, TraderInfoState } from '@/store/types'
 import { initialTraderVariables, InitialTraderVariablesType } from '@/hooks/helper'
+import { Rec, TraderInfoState } from '@/store/types'
 
 const useTraderInfoStore = create<TraderInfoState>((set) => ({
   variables: initialTraderVariables,

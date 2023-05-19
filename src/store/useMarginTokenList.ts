@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+
 import { getMarginTokenList } from '@/api'
 import { MarginTokenListState } from '@/store/types'
 

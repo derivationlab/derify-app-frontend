@@ -1,7 +1,8 @@
 import { create } from 'zustand'
+
 import { initialPCFAndPrice } from '@/hooks/usePairIndicator'
-import { PairsInfoState, Rec } from '@/store/types'
 import { initial3 as initialIndicator } from '@/hooks/useQueryApi'
+import { PairsInfoState, Rec } from '@/store/types'
 
 const usePairsInfoStore = create<PairsInfoState>((set) => ({
   pcfRatios: initialPCFAndPrice(),

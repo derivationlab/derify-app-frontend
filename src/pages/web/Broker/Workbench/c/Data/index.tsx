@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
 
-import Trader from './Trader'
 import History from './History'
+import Trader from './Trader'
 import Transaction from './Transaction'
 
 const Data: FC = () => {

@@ -1,18 +1,16 @@
-import days from 'dayjs'
 import { isArray } from 'lodash'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { findToken } from '@/config/tokens'
-import { dayjsStartOf } from '@/utils/tools'
-import { useMarginTokenStore } from '@/store'
-import { useCurrentInsuranceDAT } from '@/hooks/useQueryApi'
 import { getHistoryInsuranceDAT } from '@/api'
-import { SelectTimesOptions, SelectTimesValues } from '@/data'
-
 import { AreaChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { SelectTimesOptions, SelectTimesValues } from '@/data'
+import { useCurrentInsuranceDAT } from '@/hooks/useQueryApi'
+import { useMarginTokenStore } from '@/store'
+import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
 
@@ -29,7 +27,7 @@ const InsurancePool: FC = () => {
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const { data: insuranceVolume } = useCurrentInsuranceDAT(findToken(marginToken).tokenAddress)
+  const { data: insuranceVolume } = useCurrentInsuranceDAT(marginToken.address)
 
   const combineDAT = useMemo(() => {
     if (insuranceVolume) {
@@ -40,10 +38,7 @@ const InsurancePool: FC = () => {
   }, [insuranceData, insuranceVolume])
 
   const historyDAT = useCallback(async () => {
-    const { data: history } = await getHistoryInsuranceDAT(
-      SelectTimesValues[timeSelectVal],
-      findToken(marginToken).tokenAddress
-    )
+    const { data: history } = await getHistoryInsuranceDAT(SelectTimesValues[timeSelectVal], marginToken.address)
 
     if (isArray(history)) {
       // Huge data will have hidden dangers todo
@@ -61,7 +56,7 @@ const InsurancePool: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.InsurancePool', 'Insurance Pool')} :
-          <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={marginToken} />
+          <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={marginToken.symbol} />
         </h3>
         <aside>
           <Select

@@ -1,7 +1,8 @@
-import React, { FC, useState, useRef } from 'react'
-import { useClickAway } from 'react-use'
 import classNames from 'classnames'
+
+import React, { FC, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useClickAway } from 'react-use'
 
 import { Communitys } from '@/data/links'
 

@@ -1,18 +1,18 @@
 import { isArray } from 'lodash'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { ThemeContext } from '@/providers/Theme'
-import { findToken } from '@/config/tokens'
-import { useMarginTokenStore } from '@/store'
 import { getHistoryPositionsDAT } from '@/api'
-import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import { bnDiv, bnMul, bnPlus, dayjsStartOf, isGT, keepDecimals } from '@/utils/tools'
-import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
-
+import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { BarChart } from '@/components/common/Chart'
+import { findToken } from '@/config/tokens'
+import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
+import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { ThemeContext } from '@/providers/Theme'
+import { useMarginTokenStore } from '@/store'
+import { bnDiv, bnMul, bnPlus, dayjsStartOf, isGT, keepDecimals } from '@/utils/tools'
 
 const time = dayjsStartOf()
 let output: Record<string, any> = {
@@ -36,7 +36,7 @@ const PositionVolume: FC = () => {
 
   const { data: positionsDAT, refetch } = useCurrentPositionsAmount(
     SelectSymbolTokens[pairSelectVal],
-    findToken(marginToken).tokenAddress
+    marginToken.address
   )
 
   const barColor = useMemo(() => {
@@ -64,7 +64,7 @@ const PositionVolume: FC = () => {
     const { data: history } = await getHistoryPositionsDAT(
       SelectSymbolTokens[pairSelectVal],
       SelectTimesValues[timeSelectVal],
-      findToken(marginToken).tokenAddress
+      marginToken.address
     )
 
     if (isArray(history)) {
@@ -120,7 +120,7 @@ const PositionVolume: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.PositionVolume', 'Position Volume')} :
-          <BalanceShow value={totalAmount?.volume} unit={marginToken} />
+          <BalanceShow value={totalAmount?.volume} unit={marginToken.symbol} />
         </h3>
         <aside>
           <Select

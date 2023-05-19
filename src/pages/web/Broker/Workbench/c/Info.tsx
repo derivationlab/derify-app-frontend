@@ -1,21 +1,21 @@
+import classNames from 'classnames'
 import dayjs from 'dayjs'
 import PubSub from 'pubsub-js'
-import classNames from 'classnames'
 import { useSigner } from 'wagmi'
-import { useHistory } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useCallback, useState, useMemo } from 'react'
 
-import { copyText } from '@/utils/tools'
-import { PubSubEvents } from '@/typings'
+import React, { FC, useCallback, useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
+
+import Button from '@/components/common/Button'
+import Image from '@/components/common/Image'
+import QuestionPopover from '@/components/common/QuestionPopover'
+import ExtendDialog from '@/components/common/Wallet/Extend'
 import { API_PREFIX_URL } from '@/config'
 import { useExtendPeriod } from '@/hooks/useBroker'
 import { useBrokerInfoStore } from '@/store'
-
-import Image from '@/components/common/Image'
-import Button from '@/components/common/Button'
-import ExtendDialog from '@/components/common/Wallet/Extend'
-import QuestionPopover from '@/components/common/QuestionPopover'
+import { PubSubEvents } from '@/typings'
+import { copyText } from '@/utils/tools'
 
 const Info: FC = () => {
   const history = useHistory()

@@ -1,4 +1,5 @@
 import React, { FC, useState, useEffect, createContext } from 'react'
+
 import { isMobile } from '@/utils/tools'
 
 export const MobileContext = createContext({

@@ -1,14 +1,14 @@
-import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
+
+import React, { FC, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
-import { useTraderInfoStore, useMarginTokenStore } from '@/store'
-
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import Dialog from '@/components/common/Dialog'
 import AmountInput from '@/components/common/Wallet/AmountInput'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useTraderInfoStore, useMarginTokenStore } from '@/store'
+import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   visible: boolean
@@ -44,7 +44,7 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     <Dialog
       width="540px"
       visible={visible}
-      title={t('Earn.bDRFPool.ExchangeBDRF', { Token: `b${marginToken}` })}
+      title={t('Earn.bDRFPool.ExchangeBDRF', { Token: `b${marginToken.symbol}` })}
       onClose={onClose}
     >
       <div className="web-deposit-dialog">
@@ -53,7 +53,10 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.bDRFPool.Exchangeable', 'Exchangeable')}</dt>
               <dd>
-                <BalanceShow value={rewardsInfo?.exchangeable ?? 0} unit={`b${marginToken}→${marginToken}`} />
+                <BalanceShow
+                  value={rewardsInfo?.exchangeable ?? 0}
+                  unit={`b${marginToken.symbol}→${marginToken.symbol}`}
+                />
               </dd>
             </dl>
             <address>{address}</address>
@@ -62,7 +65,7 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <AmountInput
               max={nonBigNumberInterception(rewardsInfo?.exchangeable ?? 0, 2)}
               title={t('Earn.bDRFPool.AmountToExchange', 'Amount to exchange')}
-              unit={`b${marginToken}`}
+              unit={`b${marginToken.symbol}`}
               onChange={onChangeEv}
             />
           </div>

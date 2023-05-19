@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 
 interface Props {

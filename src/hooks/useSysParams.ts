@@ -1,18 +1,17 @@
-import { isEmpty } from 'lodash'
 import { useQuery } from '@tanstack/react-query'
+import { isEmpty } from 'lodash'
 
+import derifyClearingAbi from '@/config/abi/DerifyClearing.json'
+import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import derifyExchangeAbi from '@/config/abi/DerifyExchange.json'
+import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import derifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import contracts from '@/config/contracts'
+import { useQueryMulticall } from '@/hooks/useQueryContract'
+import { ProtocolConfig } from '@/typings'
+import { getDerifyBRewardsContract, getDerifyPmrContract, getDerifyRankContract } from '@/utils/contractHelpers'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
-import { ProtocolConfig } from '@/typings'
-import { useQueryMulticall } from '@/hooks/useQueryContract'
-import { getDerifyBRewardsContract, getDerifyPmrContract, getDerifyRankContract } from '@/utils/contractHelpers'
-
-import derifyRewardsAbi from '@/config/abi/DerifyRewards.json'
-import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
-import derifyClearingAbi from '@/config/abi/DerifyClearing.json'
-import derifyExchangeAbi from '@/config/abi/DerifyExchange.json'
-import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 
 export const initBuyBackParams = {
   buyback_period: '0',
@@ -186,11 +185,11 @@ export const useProtocolParams = () => {
   return { data: initProtocolParams, isLoading }
 }
 
-export const useGrantPlanParams = (config?: ProtocolConfig) => {
+export const useGrantPlanParams = (config?: ProtocolConfig | null) => {
   const { data, refetch, isLoading } = useQuery(
     ['useGrantPlanParams'],
     async (): Promise<typeof initGrantPlanParams> => {
-      if (config?.rank && config?.mining && config?.awards) {
+      if (config) {
         const pmrContract = getDerifyPmrContract(config.mining)
         const rankContract = getDerifyRankContract(config.rank)
         const bRewardsContract = getDerifyBRewardsContract(config.awards)

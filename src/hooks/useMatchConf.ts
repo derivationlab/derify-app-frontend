@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
 import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
-import { MarginTokenKeys, QuoteTokenKeys } from '@/typings'
 import { useConfigInfoStore, usePairsInfoStore } from '@/store'
+import { MarginTokenKeys, QuoteTokenKeys } from '@/typings'
 
 export const useFactoryConf = (marginToken = MARGIN_TOKENS[0].symbol, quoteToken = QUOTE_TOKENS[0].symbol) => {
   const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)

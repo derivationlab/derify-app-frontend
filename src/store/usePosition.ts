@@ -1,11 +1,12 @@
-import { create } from 'zustand'
-import { isEmpty } from 'lodash'
 import { BigNumber } from 'ethers'
-import multicall from '@/utils/multicall'
-import { PositionState, Rec } from '@/store/types'
-import { bnMul, formatUnits } from '@/utils/tools'
-import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
+import { isEmpty } from 'lodash'
+import { create } from 'zustand'
+
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
+import { PositionState, Rec } from '@/store/types'
+import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
+import multicall from '@/utils/multicall'
+import { bnMul, formatUnits } from '@/utils/tools'
 
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
   isUsed ? formatUnits(stopPrice, 8) : '--'

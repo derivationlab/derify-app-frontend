@@ -1,15 +1,15 @@
 import PubSub from 'pubsub-js'
 import { useSigner } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useState, useCallback, useMemo } from 'react'
 
-import { PubSubEvents } from '@/typings'
-import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
-import { useMarginOperation } from '@/hooks/useTrading'
+import React, { FC, useState, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
+import { useMarginOperation } from '@/hooks/useTrading'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
+import { PubSubEvents } from '@/typings'
 
 interface Props {
   size?: string
@@ -27,7 +27,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
   const isDisabled = useMemo(() => {
-    if (marginTokenList.length) return !(marginTokenList.find((margin) => margin.symbol === marginToken.symbol)?.open)
+    if (marginTokenList.length) return !marginTokenList.find((margin) => margin.symbol === marginToken.symbol)?.open
     return true
   }, [marginToken, marginTokenList])
 

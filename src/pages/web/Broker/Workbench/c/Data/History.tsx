@@ -1,16 +1,19 @@
-import Table from 'rc-table'
 import { isEmpty } from 'lodash'
+import Table from 'rc-table'
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useEffect, useMemo, useContext, useReducer } from 'react'
-import { keepDecimals } from '@/utils/tools'
-import { PLATFORM_TOKEN } from '@/config/tokens'
-import { MobileContext } from '@/providers/Mobile'
-import { EXPLORER_SCAN_URL } from '@/config'
-import { reducer, stateInit } from '@/reducers/records'
-import { useMarginTokenStore } from '@/store'
+import { useTranslation } from 'react-i18next'
+
 import { getBrokerRevenueRecord } from '@/api'
 import Pagination from '@/components/common/Pagination'
+import { EXPLORER_SCAN_URL } from '@/config'
+import { PLATFORM_TOKEN } from '@/config/tokens'
+import { MobileContext } from '@/providers/Mobile'
+import { reducer, stateInit } from '@/reducers/records'
+import { useMarginTokenStore } from '@/store'
+import { keepDecimals } from '@/utils/tools'
+
 import { RowTime, calcShortHash, calcTimeStr } from './common'
 
 interface DataProps {

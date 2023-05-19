@@ -1,4 +1,5 @@
 import store from 'store'
+
 import { toType } from './tools'
 
 const isNum = (num: any) => {

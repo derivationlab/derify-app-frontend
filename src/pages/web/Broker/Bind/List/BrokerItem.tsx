@@ -1,11 +1,10 @@
 import React, { FC, useState, useRef, useMemo, useEffect, useContext, BaseSyntheticEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { MobileContext } from '@/providers/Mobile'
-
-import Image from '@/components/common/Image'
 import Button from '@/components/common/Button'
+import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { MobileContext } from '@/providers/Mobile'
 
 interface Props {
   data: Record<string, any>

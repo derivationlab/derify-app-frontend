@@ -1,14 +1,16 @@
 import { isEmpty } from 'lodash'
-import { useInterval } from 'react-use'
+
 import React, { FC, useCallback, useRef, useEffect, useReducer, useMemo } from 'react'
+import { useInterval } from 'react-use'
+
+import KLineChart from '@/components/common/Chart/KLine'
+import Select from '@/components/common/Form/Select'
+import Spinner from '@/components/common/Spinner'
 import { KLineTimes } from '@/data'
 import { reducer, stateInit } from '@/reducers/kline'
 import { useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
+
 import { getKLineDAT, getKlineEndTime, reorganizeLastPieceOfData } from './help'
-import { Select } from '@/components/common/Form'
-import Loading from '@/components/common/Loading'
-import KLineChart from '@/components/common/Chart/KLine'
-import Spinner from '@/components/common/Spinner'
 
 interface KlineChartProps {
   reset: () => void

@@ -1,8 +1,8 @@
 import React, { FC, useState, useEffect } from 'react'
 
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
-import { Input } from '@/components/common/Form'
+import Dialog from '@/components/common/Dialog'
+import Input from '@/components/common/Form/Input'
 
 import { rules2 as rules, CommunityProps } from '../../config'
 

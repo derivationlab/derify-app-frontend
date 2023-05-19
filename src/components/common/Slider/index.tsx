@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
 import classNames from 'classnames'
-import ReactSlider from 'react-slider'
 import { last, head, round } from 'lodash'
+
+import React, { FC } from 'react'
+import ReactSlider from 'react-slider'
 
 interface Props {
   value: number

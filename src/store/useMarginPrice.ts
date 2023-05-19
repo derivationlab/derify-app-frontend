@@ -1,7 +1,8 @@
 import { create } from 'zustand'
-import { formatUnits } from '@/utils/tools'
+
 import { MarginPriceState } from '@/store/types'
 import { getPriceFeedContract } from '@/utils/contractHelpers'
+import { formatUnits } from '@/utils/tools'
 
 const getMarginPrice = async (address: string): Promise<string> => {
   const contract = getPriceFeedContract(address)

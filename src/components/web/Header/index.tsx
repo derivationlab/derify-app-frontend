@@ -1,17 +1,17 @@
 import classNames from 'classnames'
+
+import React, { FC, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
-import React, { FC, useContext } from 'react'
 
+import ConnectButton from '@/components/common/Wallet/ConnectButton'
+import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 import { WEBSITE_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 
-import ConnectButton from '@/components/common/Wallet/ConnectButton'
-import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
-
-import Tool from './Tool'
 import MHeader from './MHeader'
+import Tool from './Tool'
 
 const Header: FC = () => {
   const { t } = useTranslation()
@@ -30,9 +30,9 @@ const Header: FC = () => {
           <a href={WEBSITE_URL}>Derify protocol</a>
         </h1>
         <nav className="web-header-nav">
-          <NavLink to={`/${marginToken}/trade`}>{t('Nav.Nav.Trade', 'Trade')}</NavLink>
-          <NavLink to={`/${marginToken}/earn`}>{t('Nav.Nav.Earn', 'Earn')}</NavLink>
-          <NavLink to={`/${marginToken}/data`}>{t('Nav.Nav.Data', 'Data')}</NavLink>
+          <NavLink to={`/${marginToken.symbol}/trade`}>{t('Nav.Nav.Trade', 'Trade')}</NavLink>
+          <NavLink to={`/${marginToken.symbol}/earn`}>{t('Nav.Nav.Earn', 'Earn')}</NavLink>
+          <NavLink to={`/${marginToken.symbol}/data`}>{t('Nav.Nav.Data', 'Data')}</NavLink>
           <NavLink to={`/broker`} className={classNames({ active: pathname.indexOf('broker') > -1 })}>
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>

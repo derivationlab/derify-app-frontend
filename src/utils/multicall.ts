@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+
 import { getMulticallContract } from '@/utils/contractHelpers'
 
 type MultiCallResponse<T> = T | null

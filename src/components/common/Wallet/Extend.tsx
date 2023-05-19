@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next'
 import React, { ChangeEvent, FC, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { bnDiv, isET, isLT, isLTET } from '@/utils/tools'
-import { useConfigInfoStore, useBalancesStore } from '@/store'
-
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useBrokerExtend } from '@/hooks/useBrokerExtend'
+import { useBalancesStore } from '@/store'
+import { bnDiv, isET, isLT, isLTET } from '@/utils/tools'
 
 interface Props {
   visible: boolean
@@ -16,24 +16,24 @@ interface Props {
 
 const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
+  const { brokerExtend } = useBrokerExtend()
 
   const balances = useBalancesStore((state) => state.balances)
-  const brokerParams = useConfigInfoStore((state) => state.brokerParams)
 
   const [burnAmount, setBurnAmount] = useState<string>('')
 
   const memoDisabled = useMemo(() => {
-    return isLTET(burnAmount, 0) || isET(balances['edrf'], 0) || isLT(balances['edrf'], burnAmount)
+    return isLTET(burnAmount, 0) || isET(balances?.['edrf'] ?? 0, 0) || isLT(balances?.['edrf'] ?? 0, burnAmount)
   }, [balances, burnAmount])
 
   const memoAddDays = useMemo(() => {
-    if (Number(burnAmount) <= 0) {
+    if (Number(burnAmount) <= 0 || brokerExtend.burnLimitPerDay === 0) {
       return '0'
     } else {
-      const div = bnDiv(burnAmount, brokerParams.burnLimitPerDay)
+      const div = bnDiv(burnAmount, brokerExtend.burnLimitPerDay)
       return Math.floor(div as any)
     }
-  }, [burnAmount, brokerParams])
+  }, [burnAmount, brokerExtend])
 
   const onChangeEv = (e: ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value
@@ -41,7 +41,7 @@ const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   const setMaxValueEv = () => {
-    setBurnAmount(balances['edrf'])
+    setBurnAmount(balances?.['edrf'] ?? 0)
   }
 
   return (
@@ -57,13 +57,13 @@ const ExtendDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Broker.Extend.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balances['edrf']} unit="eDRF" />
+                <BalanceShow value={balances?.['edrf'] ?? 0} unit="eDRF" />
               </dd>
             </dl>
             <dl>
               <dt>{t('Broker.Extend.BrokerPrivilegePricePerDay', 'Broker privilege price per day')}</dt>
               <dd>
-                <BalanceShow value={brokerParams.burnLimitPerDay} unit="eDRF" />
+                <BalanceShow value={brokerExtend.burnLimitPerDay} unit="eDRF" />
               </dd>
             </dl>
           </div>

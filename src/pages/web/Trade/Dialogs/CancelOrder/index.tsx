@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
 
 interface Props {
   data?: Record<string, any>

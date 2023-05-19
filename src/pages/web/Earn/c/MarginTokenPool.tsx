@@ -1,26 +1,26 @@
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useState, useContext, useCallback } from 'react'
 
+import React, { FC, useMemo, useState, useContext, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import Button from '@/components/common/Button'
+import DecimalShow from '@/components/common/DecimalShow'
+import QuestionPopover from '@/components/common/QuestionPopover'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import NotConnect from '@/components/web/NotConnect'
 import { findToken } from '@/config/tokens'
-import { PubSubEvents } from '@/typings'
-import { MobileContext } from '@/providers/Mobile'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useTraderBondBalance } from '@/hooks/useQueryApi'
-import { isGT, isLT, keepDecimals } from '@/utils/tools'
-import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
 import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useTrading'
-
-import QuestionPopover from '@/components/common/QuestionPopover'
-import DecimalShow from '@/components/common/DecimalShow'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import Button from '@/components/common/Button'
-import NotConnect from '@/components/web/NotConnect'
+import { MobileContext } from '@/providers/Mobile'
+import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { PubSubEvents } from '@/typings'
+import { isGT, isLT, keepDecimals } from '@/utils/tools'
 
 import DepositbDRFDialog from './Dialogs/DepositbDRF'
-import WithdrawbDRFDialog from './Dialogs/WithdrawbDRF'
 import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
+import WithdrawbDRFDialog from './Dialogs/WithdrawbDRF'
 
 const MarginTokenPool: FC = () => {
   const { t } = useTranslation()
@@ -31,13 +31,13 @@ const MarginTokenPool: FC = () => {
   const rewardsInfo = useTraderInfoStore((state) => state.rewardsInfo)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const bondPoolBalance = usePoolsInfoStore((state) => state.bondPoolBalance)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const { redeem } = useRedeemBondFromBank()
   const { deposit } = useDepositBondToBank()
   const { exchange } = useExchangeBond()
   const { withdraw } = useWithdrawAllBond()
-  const { protocolConfig } = useProtocolConf(marginToken)
-  const { data: bondBalance, isLoading } = useTraderBondBalance(address, findToken(marginToken).tokenAddress)
+  const { data: bondBalance, isLoading } = useTraderBondBalance(address, marginToken.address)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
@@ -149,10 +149,10 @@ const MarginTokenPool: FC = () => {
       <div className="web-eran-item">
         <header className="web-eran-item-header">
           <h3>
-            {t('Earn.bDRFPool.bDRFPool', { Token: `b${marginToken}` })}
-            <QuestionPopover text={t('Earn.bDRFPool.bDRFPoolTip', { APR: memoAPY, Token: `b${marginToken}` })} />
+            {t('Earn.bDRFPool.bDRFPool', { Token: `b${marginToken.symbol}` })}
+            <QuestionPopover text={t('Earn.bDRFPool.bDRFPoolTip', { APR: memoAPY, Token: `b${marginToken.symbol}` })} />
           </h3>
-          <p>{t('Earn.bDRFPool.bDRFPoolTitle', { Token: `b${marginToken}`, Margin: marginToken })}</p>
+          <p>{t('Earn.bDRFPool.bDRFPoolTitle', { Token: `b${marginToken.symbol}`, Margin: marginToken.symbol })}</p>
         </header>
         <section className="web-eran-item-main">
           <div className="web-eran-item-dashboard">
@@ -164,13 +164,13 @@ const MarginTokenPool: FC = () => {
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
               <BalanceShow
                 value={bondBalance ?? 0}
-                unit={`b${marginToken}`}
+                unit={`b${marginToken.symbol}`}
                 decimal={isLoading ? 2 : isLT(bondBalance ?? 0, 1) && isGT(bondBalance ?? 0, 0) ? 8 : 2}
               />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} :{' '}
-                <strong>{keepDecimals(rewardsInfo?.exchangeable ?? 0, 2)}</strong> {`b${marginToken}`}
+                <strong>{keepDecimals(rewardsInfo?.exchangeable ?? 0, 2)}</strong> {`b${marginToken.symbol}`}
               </p>
             </main>
             <aside>
@@ -185,11 +185,11 @@ const MarginTokenPool: FC = () => {
           <div className="web-eran-item-card">
             <main>
               <h4>{t('Earn.bDRFPool.Deposited', 'Deposited')}</h4>
-              <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken}`} />
+              <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken.symbol}`} />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} :{' '}
-                <strong>{keepDecimals(bondPoolBalance, 2)}</strong> {`b${marginToken}`}
+                <strong>{keepDecimals(bondPoolBalance, 2)}</strong> {`b${marginToken.symbol}`}
               </p>
             </main>
             <aside>

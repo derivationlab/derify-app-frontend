@@ -1,7 +1,9 @@
 import i18n from 'i18next'
+
 import { initReactI18next } from 'react-i18next'
-import Cache from '@/utils/cache'
+
 import { LANG_CACHE_KEY } from '@/config'
+import Cache from '@/utils/cache'
 
 const langFiles = require.context('./languages', false, /.ts$/)
 

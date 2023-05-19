@@ -2,13 +2,12 @@ import React, { FC, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 
-import { useMarginTokenStore } from '@/store'
-
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
+import { useMarginTokenStore } from '@/store'
 
-import Tool from './Tool'
 import MNav from './MNav'
+import Tool from './Tool'
 
 const MHeader: FC = () => {
   const { t } = useTranslation()
@@ -18,11 +17,11 @@ const MHeader: FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const navList = [
-    { url: `/${marginToken}/trade`, name: t('Nav.Nav.Trade', 'Trade') },
-    { url: `/${marginToken}/earn`, name: t('Nav.Nav.Earn', 'Earn') },
-    { url: `/${marginToken}/data`, name: t('Nav.Nav.Data', 'Data') },
+    { url: `/${marginToken.symbol}/trade`, name: t('Nav.Nav.Trade', 'Trade') },
+    { url: `/${marginToken.symbol}/earn`, name: t('Nav.Nav.Earn', 'Earn') },
+    { url: `/${marginToken.symbol}/data`, name: t('Nav.Nav.Data', 'Data') },
     { url: `/broker`, name: t('Nav.Nav.Broker', 'Broker') }
-    // { url: `/${marginToken}/dashboard`, name: t('Nav.Nav.Dashboard', 'Dashboard') }
+    // { url: `/${marginToken.symbol}/dashboard`, name: t('Nav.Nav.Dashboard', 'Dashboard') }
   ]
 
   const [showMenu, setShowMenu] = useState<boolean>(false)

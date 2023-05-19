@@ -1,5 +1,5 @@
-import { get } from '@/utils/http'
 import { GrantKeys } from '@/typings'
+import { get } from '@/utils/http'
 
 const grantTarget: { [key in GrantKeys | 'all']: string } = {
   all: 'all',

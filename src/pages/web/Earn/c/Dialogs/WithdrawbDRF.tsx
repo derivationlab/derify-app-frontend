@@ -1,14 +1,14 @@
-import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
+
+import React, { FC, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
-import { useTraderInfoStore, useMarginTokenStore } from '@/store'
-
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import Dialog from '@/components/common/Dialog'
 import AmountInput from '@/components/common/Wallet/AmountInput'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useTraderInfoStore, useMarginTokenStore } from '@/store'
+import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   visible: boolean
@@ -44,7 +44,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     <Dialog
       width="540px"
       visible={visible}
-      title={t('Earn.bDRFPool.WithdrawBDRF', { Token: `b${marginToken}` })}
+      title={t('Earn.bDRFPool.WithdrawBDRF', { Token: `b${marginToken.symbol}` })}
       onClose={onClose}
     >
       <div className="web-deposit-dialog">
@@ -53,7 +53,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.bDRFPool.Withdrawable', 'Withdrawable')}</dt>
               <dd>
-                <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken}`} />
+                <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken.symbol}`} />
               </dd>
             </dl>
             <address>{address}</address>
@@ -62,7 +62,7 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <AmountInput
               max={nonBigNumberInterception(rewardsInfo?.bondReturnBalance ?? 0, 2)}
               title={t('Earn.bDRFPool.AmountToWithdraw', 'Amount to withdraw')}
-              unit={`b${marginToken}`}
+              unit={`b${marginToken.symbol}`}
               onChange={onChangeEv}
             />
           </div>

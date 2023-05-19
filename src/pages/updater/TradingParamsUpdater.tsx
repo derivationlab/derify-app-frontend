@@ -1,7 +1,9 @@
-import { useEffect } from 'react'
-import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
-import { useProtocolConfigStore, useTraderVariablesStore } from '@/store'
 import { useAccount } from 'wagmi'
+
+import { useEffect } from 'react'
+
+import { useProtocolConfigStore, useTraderVariablesStore } from '@/store'
+import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
 
 export default function TradingParamsUpdater(): null {
   const { address } = useAccount()

@@ -1,8 +1,9 @@
 import React, { FC, useContext } from 'react'
+
 import { MobileContext } from '@/providers/Mobile'
 
-import Step2Web from './Web'
 import Step2Mobile from './Mobile'
+import Step2Web from './Web'
 
 const BrokerSignUpStep2: FC = () => {
   const { mobile } = useContext(MobileContext)

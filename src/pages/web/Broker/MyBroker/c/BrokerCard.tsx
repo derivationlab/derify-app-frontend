@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -35,7 +35,7 @@ const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
           <div className="web-my-broker-header-lang">
             <span>{broker?.language}</span>
           </div>
-          <Link className="web-my-broker-header-rank" to={`/${marginToken}/broker/rank`}>
+          <Link className="web-my-broker-header-rank" to={`/${marginToken.symbol}/broker/rank`}>
             {t('Broker.BV.RankList', 'Rank List')}
           </Link>
         </div>

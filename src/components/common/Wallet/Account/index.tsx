@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
-import { useTranslation } from 'react-i18next'
 import { useAccount, useDisconnect } from 'wagmi'
 
-import Dialog from '@/components/common/Dialog'
+import React, { FC } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
 
 import DepositButton from '../DepositButton'
 import WithdrawButton from '../WithdrawButton'

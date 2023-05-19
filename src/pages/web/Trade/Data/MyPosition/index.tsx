@@ -1,30 +1,34 @@
-import PubSub from 'pubsub-js'
 import { isEmpty } from 'lodash'
-import { useTranslation } from 'react-i18next'
+import PubSub from 'pubsub-js'
 import { useSigner, useAccount } from 'wagmi'
+
 import React, { FC, useState, useMemo, useContext, useCallback } from 'react'
-import { ThemeContext } from '@/providers/Theme'
+import { useTranslation } from 'react-i18next'
+
+import Button from '@/components/common/Button'
+import Image from '@/components/common/Image'
+import Spinner from '@/components/common/Spinner'
 import { useIsMarginToken } from '@/hooks/useIsMarginToken'
-import { PubSubEvents, Rec } from '@/typings'
 import { usePositionOperation } from '@/hooks/useTrading'
-import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
+import PositionClosePreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
+import PositionCloseConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
+import PositionCloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
+import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
+import { ThemeContext } from '@/providers/Theme'
 import {
   useBrokerInfoStore,
   usePositionStore,
   useQuoteTokenStore,
   useTokenSpotPricesStore,
   useProtocolConfigStore,
-  useDerivativeListStore, usePositionOperationStore
+  useDerivativeListStore,
+  usePositionOperationStore
 } from '@/store'
-import Image from '@/components/common/Image'
-import Button from '@/components/common/Button'
-import Spinner from '@/components/common/Spinner'
-import PositionCloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
-import PositionClosePreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
-import PositionCloseConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
-import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
-import ListItem from './ListItem'
+import { PubSubEvents, Rec } from '@/typings'
+import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
+
 import NoRecord from '../c/NoRecord'
+import ListItem from './ListItem'
 
 const MyPosition: FC = () => {
   const { t } = useTranslation()

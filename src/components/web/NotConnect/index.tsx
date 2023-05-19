@@ -1,5 +1,6 @@
-import React, { FC, useMemo } from 'react'
 import { useAccount } from 'wagmi'
+
+import React, { FC, useMemo } from 'react'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 

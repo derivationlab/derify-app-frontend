@@ -1,14 +1,14 @@
 import { isArray } from 'lodash'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { dayjsStartOf } from '@/utils/tools'
-import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { getHistoryTotalTradingNetValue } from '@/api'
-import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
-
 import { BarChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
+import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
 let output: { day_time: string; trading_net_value: number } = {

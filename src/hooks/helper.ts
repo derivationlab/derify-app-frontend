@@ -1,18 +1,23 @@
-import BN from 'bignumber.js'
 import { BigNumberish } from '@ethersproject/bignumber'
+import BN from 'bignumber.js'
 import { flatten, isEmpty } from 'lodash'
 
-import multicall from '@/utils/multicall'
+import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
+import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
+import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
+import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 import contracts from '@/config/contracts'
-import { PositionOrderTypes, PositionSideTypes } from '@/typings'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { PositionOrderTypes, PositionSideTypes } from '@/typings'
+import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
 import {
   getDerifyRewardsContract,
   getDerifyProtocolContract,
   getDerifyExchangeContract,
   getDerifyDerivativeContract
 } from '@/utils/contractHelpers'
-import { MarginToken, MarginTokenKeys, MarginTokenWithContract, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+import multicall from '@/utils/multicall'
 import {
   isGT,
   isLT,
@@ -22,12 +27,6 @@ import {
   inputParameterConversion,
   nonBigNumberInterception
 } from '@/utils/tools'
-
-import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
-import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
-import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
-import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
-import MarginTokenPriceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 
 export const initialFactoryConfig = (): MarginTokenWithQuote => {
   let value = Object.create(null)

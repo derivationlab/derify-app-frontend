@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+
 import { useMarginTokenListStore } from '@/store'
 
 export const useIsMarginToken = (key: string) => {

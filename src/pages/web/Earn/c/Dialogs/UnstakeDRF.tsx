@@ -1,14 +1,14 @@
-import React, { FC, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
+
+import React, { FC, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { isGT, isGTET } from '@/utils/tools'
-import { useTraderInfoStore } from '@/store'
-
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import Dialog from '@/components/common/Dialog'
 import AmountInput from '@/components/common/Wallet/AmountInput'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { useTraderInfoStore } from '@/store'
+import { isGT, isGTET } from '@/utils/tools'
 
 interface Props {
   visible: boolean

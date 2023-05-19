@@ -1,15 +1,17 @@
-import Table from 'rc-table'
 import { isEmpty } from 'lodash'
+import Table from 'rc-table'
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
-import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore } from '@/store'
+import { useTranslation } from 'react-i18next'
+
 import { getBrokersRankList } from '@/api'
-import { reducer, stateInit } from '@/reducers/records'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { MobileContext } from '@/providers/Mobile'
+import { reducer, stateInit } from '@/reducers/records'
+import { useMarginTokenStore } from '@/store'
 
 interface RowTextProps {
   value: string | number

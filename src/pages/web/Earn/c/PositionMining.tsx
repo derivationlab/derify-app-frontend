@@ -1,52 +1,58 @@
-import { Link } from 'react-router-dom'
 import { useSigner } from 'wagmi'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useCallback, useContext, useMemo } from 'react'
-import { MobileContext } from '@/providers/Mobile'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useWithdrawPositionReward } from '@/hooks/useTrading'
-import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
-import tokens, { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { useTraderInfoStore, useMarginTokenStore, usePairsInfoStore } from '@/store'
-import { bnPlus, isGT, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+
 import Button from '@/components/common/Button'
-import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import NotConnect from '@/components/web/NotConnect'
+import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
+import { useCurrentOpenInterest } from '@/hooks/useCurrentOpenInterest'
+import { useWithdrawPositionReward } from '@/hooks/useTrading'
+import { MobileContext } from '@/providers/Mobile'
+import {
+  useTraderInfoStore,
+  useMarginTokenStore,
+  useTraderVariablesStore,
+  useMarginIndicatorsStore,
+  useProtocolConfigStore
+} from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { bnPlus, isGT, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
-  const variables = useTraderInfoStore((state) => state.variables)
-  const indicators = usePairsInfoStore((state) => state.indicators)
+  const variables = useTraderVariablesStore((state) => state.variables)
+  const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const rewardsInfo = useTraderInfoStore((state) => state.rewardsInfo)
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const variablesLoaded = useTraderInfoStore((state) => state.variablesLoaded)
-  const indicatorsLoaded = usePairsInfoStore((state) => state.indicatorsLoaded)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const { withdraw } = useWithdrawPositionReward()
-  const { protocolConfig } = useProtocolConf(marginToken)
-  const { data: positionsAmount } = useCurrentPositionsAmount('all', findToken(marginToken).tokenAddress)
+  const { data: currentOpenInterest } = useCurrentOpenInterest('all', marginToken.address)
 
   const memoPositionApy = useMemo(() => {
-    const values = Object.values(indicators)
-    if (indicatorsLoaded) {
-      const apy = values.map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))
+    if (indicators) {
+      const apy = Object.values(indicators).map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))
       return Math.max.apply(null, apy) * 100
     }
     return '0'
-  }, [indicatorsLoaded, indicators])
+  }, [indicators])
 
   const memoPositionsAm = useMemo(() => {
-    if (positionsAmount) {
-      const { long_position_amount, short_position_amount } = positionsAmount
+    if (currentOpenInterest) {
+      const { long_position_amount = 0, short_position_amount = 0 } = currentOpenInterest
       return bnPlus(long_position_amount, short_position_amount)
     }
     return '0'
-  }, [positionsAmount])
+  }, [currentOpenInterest])
 
   const memoDisabled = useMemo(() => {
     return isGT(rewardsInfo?.drfBalance ?? 0, 0) || isGT(rewardsInfo?.marginTokenBalance ?? 0, 0)
@@ -90,7 +96,7 @@ const PositionMining: FC = () => {
             <h4>{t('Earn.PositionMining.Claimable', 'Claimable')}</h4>
             <BalanceShow
               value={rewardsInfo?.marginTokenBalance ?? 0}
-              unit={marginToken}
+              unit={marginToken.symbol}
               decimal={
                 !variablesLoaded
                   ? 2
@@ -113,10 +119,8 @@ const PositionMining: FC = () => {
             />
             <p>
               {t('Earn.PositionMining.TotalEarned', 'Total earned :')}{' '}
-              <strong>
-                {keepDecimals(rewardsInfo?.marginTokenAccumulatedBalance ?? 0, findToken(marginToken).decimals)}
-              </strong>{' '}
-              {marginToken} {t('Earn.PositionMining.And', 'and')}{' '}
+              <strong>{keepDecimals(rewardsInfo?.marginTokenAccumulatedBalance ?? 0, 2)}</strong> {marginToken.symbol}{' '}
+              {t('Earn.PositionMining.And', 'and')}{' '}
               <strong>{keepDecimals(rewardsInfo?.drfAccumulatedBalance ?? 0, tokens.drf.decimals)}</strong> DRF
             </p>
           </main>
@@ -124,21 +128,24 @@ const PositionMining: FC = () => {
             <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
               {t('Earn.PositionMining.ClaimAll', 'Claim All')}
             </Button>
-            <Link to={`/${marginToken}/mining/rank`}>{t('Broker.BV.RankList')}</Link>
+            <Link to={`/${marginToken.symbol}/mining/rank`}>{t('Broker.BV.RankList')}</Link>
           </aside>
         </div>
         <div className="web-eran-item-card">
           <main>
             <h4>{t('Earn.PositionMining.Positions', 'Positions')}</h4>
-            <BalanceShow value={nonBigNumberInterception(variables?.totalPositionAmount ?? 0)} unit={marginToken} />
+            <BalanceShow
+              value={nonBigNumberInterception(variables?.totalPositionAmount ?? 0)}
+              unit={marginToken.symbol}
+            />
             <div className="block" />
             <p>
               {t('Earn.PositionMining.TotalPositions', 'Total positions')} :{' '}
-              <strong>{keepDecimals(memoPositionsAm, findToken(marginToken).decimals)}</strong> {marginToken}
+              <strong>{keepDecimals(memoPositionsAm, 2)}</strong> {marginToken.symbol}
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken}/trade`}>
+            <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken.symbol}/trade`}>
               {t('Earn.PositionMining.OpenPosition', 'Open Position')}
             </Button>
           </aside>

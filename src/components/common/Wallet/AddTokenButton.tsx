@@ -1,16 +1,16 @@
-import React, { FC, useState, useRef, useMemo } from 'react'
-import { useAccount } from 'wagmi'
-import { useClickAway } from 'react-use'
 import classNames from 'classnames'
-import { useTranslation } from 'react-i18next'
+import { useAccount } from 'wagmi'
 
-import tokens from '@/config/tokens'
-import { addToken } from '@/utils/addToken'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { PANCAKE_SWAP_URL } from '@/config'
-import { useMarginTokenStore } from '@/store'
+import React, { FC, useState, useRef, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useClickAway } from 'react-use'
 
 import Button from '@/components/common/Button'
+import { PANCAKE_SWAP_URL } from '@/config'
+import tokens from '@/config/tokens'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { addToken } from '@/utils/addToken'
 
 const AddTokenButton: FC = () => {
   const ref = useRef(null)
@@ -19,21 +19,20 @@ const AddTokenButton: FC = () => {
   const { address } = useAccount()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-
-  const { protocolConfig } = useProtocolConf(marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
 
   const memoTokens = useMemo(() => {
     return [
-      {
-        swap: `swap?inputCurrency=${tokens.busd.tokenAddress}&outputCurrency=${tokens.drf.tokenAddress}`,
-        image: '',
-        symbol: tokens.drf.symbol,
-        address: tokens.drf.tokenAddress,
-        decimals: tokens.drf.precision,
-        direction: 0
-      },
+      // {
+      //   swap: `swap?inputCurrency=${tokens.busd.tokenAddress}&outputCurrency=${tokens.drf.tokenAddress}`,
+      //   image: '',
+      //   symbol: tokens.drf.symbol,
+      //   address: tokens.drf.tokenAddress,
+      //   decimals: tokens.drf.precision,
+      //   direction: 0
+      // },
       {
         image: '',
         symbol: tokens.edrf.symbol,

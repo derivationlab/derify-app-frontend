@@ -1,8 +1,10 @@
+import classNames from 'classnames'
+
 import React, { FC, useRef, useState, useMemo } from 'react'
 import { useClickAway } from 'react-use'
-import classNames from 'classnames'
+
 // import { toType } from '@/utils/tools'
-import { Input } from '@/components/common/Form'
+import Input from '@/components/common/Form/Input'
 
 export interface OptionProps {
   value: string | number

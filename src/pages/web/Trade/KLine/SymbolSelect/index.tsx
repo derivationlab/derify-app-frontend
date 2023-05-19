@@ -1,11 +1,14 @@
 import classNames from 'classnames'
-import { useClickAway } from 'react-use'
+
 import React, { FC, useState, useRef, useContext, useMemo } from 'react'
-import { MobileContext } from '@/providers/Mobile'
-import { useMarginIndicatorsStore, useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
+import { useClickAway } from 'react-use'
+
+import ChangePercent from '@/components/common/ChangePercent'
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import ChangePercent from '@/components/common/ChangePercent'
+import { MobileContext } from '@/providers/Mobile'
+import { useMarginIndicatorsStore, useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
+
 import Options from './Options'
 
 interface Props {

@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 
 import Dashboard from './c/Dashboard'
-import Info from './c/Info'
 import Data from './c/Data'
+import Info from './c/Info'
 
 const BrokerWorkbench: FC = () => {
   return (

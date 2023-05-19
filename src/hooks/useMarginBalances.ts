@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 
-import multicall from '@/utils/multicall'
+import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
+import { marginTokenList } from '@/store'
+import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
-import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
-import { marginTokenList } from '@/store'
-
-export const useMarginBalances = (trader?: string, list?: typeof marginTokenList[]) => {
+export const useMarginBalances = (trader?: string, list?: (typeof marginTokenList)[]) => {
   let output = Object.create(null)
   const { data, refetch, isLoading } = useQuery(
     ['useMarginBalances'],

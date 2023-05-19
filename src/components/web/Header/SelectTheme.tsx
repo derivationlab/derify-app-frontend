@@ -1,10 +1,10 @@
-import React, { FC, useState, useMemo, useRef, useContext } from 'react'
 import classNames from 'classnames'
-import { useClickAway } from 'react-use'
+
+import React, { FC, useState, useMemo, useRef, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useClickAway } from 'react-use'
 
 import { ThemeOptions } from '@/data'
-
 import { ThemeContext } from '@/providers/Theme'
 
 const SelectTheme: FC = () => {

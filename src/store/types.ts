@@ -1,5 +1,11 @@
-import { SharingEvents } from '@/store/useSharing'
 import { InitialTraderVariablesType } from '@/hooks/helper'
+import { minimumGrantInit } from '@/hooks/useDashboard'
+import { getTokenBalances } from '@/store/useBalances'
+import { derivativeList } from '@/store/useDerivativeList'
+import { marginToken } from '@/store/useMarginToken'
+import { marginTokenList } from '@/store/useMarginTokenList'
+import { quoteToken } from '@/store/useQuoteToken'
+import { SharingEvents } from '@/store/useSharing'
 import {
   ChainId,
   MarginToken,
@@ -9,12 +15,6 @@ import {
   ProtocolConfig,
   PositionOrderTypes
 } from '@/typings'
-import { minimumGrantInit } from '@/hooks/useDashboard'
-import { marginTokenList } from '@/store/useMarginTokenList'
-import { marginToken } from '@/store/useMarginToken'
-import { derivativeList } from '@/store/useDerivativeList'
-import { quoteToken } from '@/store/useQuoteToken'
-import { getTokenBalances } from '@/store/useBalances'
 
 export type Rec = Record<string, any>
 
@@ -61,7 +61,7 @@ export interface SharingState {
 export interface BalancesState {
   loaded: boolean
   balances: Rec | null
-  getTokenBalances: (account: string, list: typeof marginTokenList[]) => Promise<void>
+  getTokenBalances: (account: string, list: (typeof marginTokenList)[]) => Promise<void>
   reset: () => void
 }
 

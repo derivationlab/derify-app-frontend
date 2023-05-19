@@ -1,10 +1,10 @@
-import React, { FC, useMemo } from 'react'
 import { useAccount, useNetwork } from 'wagmi'
 
-import { FaucetLinks } from '@/data/links'
+import React, { FC, useMemo } from 'react'
 
-import NotConnect from '@/components/web/NotConnect'
 import Button from '@/components/common/Button'
+import NotConnect from '@/components/web/NotConnect'
+import { FaucetLinks } from '@/data/links'
 
 const Faucet: FC = () => {
   const { address } = useAccount()

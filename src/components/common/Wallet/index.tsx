@@ -1,10 +1,9 @@
 import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getWallets, Wallet } from '@/components/common/Wallet/wallets'
-
 import Dialog from '@/components/common/Dialog'
 import Image from '@/components/common/Image'
+import { getWallets, Wallet } from '@/components/common/Wallet/wallets'
 
 interface Props {
   visible: boolean

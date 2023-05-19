@@ -1,6 +1,7 @@
 import { create } from 'zustand'
-import { ProtocolConfig } from '@/typings'
+
 import { ProtocolConfigState } from '@/store/types'
+import { ProtocolConfig } from '@/typings'
 import { getDerifyProtocolContract } from '@/utils/contractHelpers'
 
 const protocolContract = getDerifyProtocolContract()

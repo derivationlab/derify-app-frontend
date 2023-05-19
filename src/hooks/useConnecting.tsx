@@ -1,5 +1,6 @@
-import { useCallback } from 'react'
 import { useConnect, ConnectorNotFoundError, ResourceUnavailableError } from 'wagmi'
+
+import { useCallback } from 'react'
 
 import { ConnectorIds } from '@/typings'
 

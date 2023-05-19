@@ -1,7 +1,8 @@
 // @ts-nocheck
+import classNames from 'classnames'
 
 import React, { FC, ReactNode, useContext } from 'react'
-import classNames from 'classnames'
+
 import Image from '@/components/common/Image'
 
 import FormContext from './FormContext'

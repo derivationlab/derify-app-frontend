@@ -1,5 +1,6 @@
-import numeral from 'numeral'
 import classNames from 'classnames'
+import numeral from 'numeral'
+
 import React, { FC, useMemo } from 'react'
 
 import { bnMul } from '@/utils/tools'

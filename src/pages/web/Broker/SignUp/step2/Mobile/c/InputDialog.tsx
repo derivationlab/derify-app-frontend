@@ -1,8 +1,9 @@
 import React, { FC, useState, ReactNode, useEffect } from 'react'
 
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
-import { Input } from '@/components/common/Form'
+import Dialog from '@/components/common/Dialog'
+import Input from '@/components/common/Form/Input'
+
 interface Props {
   show: boolean
   readOnly?: boolean
@@ -16,7 +17,7 @@ interface Props {
   maxLength?: number
 }
 
-const InputDialog: FC<Props> = ({ show, title, type, value, onClose, onConfirm, tip, rules, maxLength, readOnly }) => {
+const InputDialog: FC<Props> = ({ show, title, type, value, onClose, onConfirm, tip, rules, readOnly }) => {
   const [currValue, setCurrValue] = useState(value)
 
   const confirmFunc = () => {

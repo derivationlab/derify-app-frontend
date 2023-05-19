@@ -1,15 +1,15 @@
 import { useBlockNumber } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { getDRFPrice } from '@/api'
-import { MarginTokenKeys } from '@/typings'
-import { useConfigInfoStore } from '@/store'
-import { useMulCurrentIndexDAT } from '@/hooks/useQueryApi'
-import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { DEFAULT_MARGIN_TOKEN, PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useMulCurrentIndexDAT } from '@/hooks/useQueryApi'
+import { useConfigInfoStore } from '@/store'
+import { MarginTokenKeys } from '@/typings'
+import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 
 const Datas: FC = () => {
   const { t } = useTranslation()

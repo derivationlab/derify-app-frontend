@@ -1,15 +1,18 @@
-import dayjs from 'dayjs'
 import classNames from 'classnames'
-import { useTranslation } from 'react-i18next'
+import dayjs from 'dayjs'
+
 import React, { FC, useMemo, useContext } from 'react'
-import { keepDecimals } from '@/utils/tools'
+import { useTranslation } from 'react-i18next'
+
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { PositionSideTypes } from '@/typings'
-import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import ItemHeader from '../c/ItemHeader'
+import { keepDecimals } from '@/utils/tools'
+
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
+import ItemHeader from '../c/ItemHeader'
 
 interface Props {
   data?: Record<string, any>

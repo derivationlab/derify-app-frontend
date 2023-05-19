@@ -1,24 +1,24 @@
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useContext, useEffect, useCallback } from 'react'
 
-import { PubSubEvents } from '@/typings'
-import { useRankReward } from '@/hooks/useDashboard'
-import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore } from '@/store'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useWithdrawRankReward } from '@/hooks/useTrading'
-import { bnMul, isET, isGT, isLT, keepDecimals } from '@/utils/tools'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { useActiveRankGrantCount, useActiveRankGrantRatios, useActiveRankGrantTotalAmount } from '@/hooks/useQueryApi'
+import React, { FC, useContext, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 import Button from '@/components/common/Button'
-import NotConnect from '@/components/web/NotConnect'
 import DecimalShow from '@/components/common/DecimalShow'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { Link } from 'react-router-dom'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import NotConnect from '@/components/web/NotConnect'
+import { PLATFORM_TOKEN } from '@/config/tokens'
+import { useRankReward } from '@/hooks/useDashboard'
+import { useActiveRankGrantCount, useActiveRankGrantRatios, useActiveRankGrantTotalAmount } from '@/hooks/useQueryApi'
+import { useWithdrawRankReward } from '@/hooks/useTrading'
+import { MobileContext } from '@/providers/Mobile'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { PubSubEvents } from '@/typings'
+import { bnMul, isET, isGT, isLT, keepDecimals } from '@/utils/tools'
 
 const Competition: FC = () => {
   const { t } = useTranslation()
@@ -26,13 +26,13 @@ const Competition: FC = () => {
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const { withdraw } = useWithdrawRankReward()
-  const { protocolConfig } = useProtocolConf(marginToken)
-  const { data: grantRatio } = useActiveRankGrantRatios(findToken(marginToken).tokenAddress, address)
-  const { data: grantAmount } = useActiveRankGrantTotalAmount(findToken(marginToken).tokenAddress)
-  const { data: activeGrant } = useActiveRankGrantCount(findToken(marginToken).tokenAddress)
+  const { data: grantRatio } = useActiveRankGrantRatios(marginToken.address, address)
+  const { data: grantAmount } = useActiveRankGrantTotalAmount(marginToken.address)
+  const { data: activeGrant } = useActiveRankGrantCount(marginToken.address)
   const { data: rankReward, refetch, isLoading } = useRankReward(address, protocolConfig?.rewards)
 
   const withdrawFunc = useCallback(async () => {
@@ -97,7 +97,7 @@ const Competition: FC = () => {
             >
               {t('Earn.bDRFPool.ClaimAll', 'Claim All')}
             </Button>
-            <Link to={`/${marginToken}/competition/rank`}>{t('Broker.BV.RankList')}</Link>
+            <Link to={`/${marginToken.symbol}/competition/rank`}>{t('Broker.BV.RankList')}</Link>
           </aside>
         </div>
         <div className="web-eran-item-card">
@@ -110,7 +110,7 @@ const Competition: FC = () => {
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken}/trade`}>
+            <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken.symbol}/trade`}>
               {t('Earn.Trading.Trade')}
             </Button>
           </aside>

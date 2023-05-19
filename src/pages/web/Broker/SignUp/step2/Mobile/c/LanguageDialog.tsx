@@ -1,10 +1,9 @@
 import React, { FC, useState, useEffect } from 'react'
 
-import { SelectLangOptions } from '@/data'
-
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
-import { Select } from '@/components/common/Form'
+import Dialog from '@/components/common/Dialog'
+import Select from '@/components/common/Form/Select'
+import { SelectLangOptions } from '@/data'
 
 interface Props {
   show: boolean

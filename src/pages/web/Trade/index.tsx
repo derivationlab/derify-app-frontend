@@ -1,11 +1,14 @@
 import classNames from 'classnames'
 import { useAccount } from 'wagmi'
+
 import React, { FC, useState, useContext } from 'react'
-import { MobileContext } from '@/providers/Mobile'
+
 import TradingParamsUpdater from '@/pages/updater/TradingParamsUpdater'
+import { MobileContext } from '@/providers/Mobile'
+
+import Bench from './Bench'
 import Data from './Data'
 import KLine from './KLine'
-import Bench from './Bench'
 import Chart from './KLine/Chart'
 import HeaderData from './KLine/HeaderData'
 import MobileFixed from './KLine/MobileFixed'

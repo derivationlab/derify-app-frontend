@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
-import Plan from './Plan'
 import Datas from './Datas'
+import Plan from './Plan'
 
 const BuybackPlan: FC = () => {
   return (

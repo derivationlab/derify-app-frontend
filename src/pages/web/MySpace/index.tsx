@@ -1,23 +1,23 @@
-import Table from 'rc-table'
 import { isEmpty, orderBy } from 'lodash'
+import Table from 'rc-table'
 import { useAccount } from 'wagmi'
-import { useHistory } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useMemo, useContext, useCallback, useEffect, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
 
-import { bnDiv } from '@/utils/tools'
-import { MobileContext } from '@/providers/Mobile'
-import { MarginTokenKeys } from '@/typings'
-import { useConfigInfoStore } from '@/store'
-import { reducer, stateInit } from '@/reducers/records'
 import { getMarginTokenList } from '@/api'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { useTraderVariables, useAllBrokerRewards, useAllTraderRewards, useAllMarginBalances } from '@/hooks/useProfile'
-
-import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
 import Button from '@/components/common/Button'
 import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { useTraderVariables, useAllBrokerRewards, useAllTraderRewards, useAllMarginBalances } from '@/hooks/useProfile'
+import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
+import { MobileContext } from '@/providers/Mobile'
+import { reducer, stateInit } from '@/reducers/records'
+import { useConfigInfoStore } from '@/store'
+import { MarginTokenKeys } from '@/typings'
+import { bnDiv } from '@/utils/tools'
 
 const MySpace: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)

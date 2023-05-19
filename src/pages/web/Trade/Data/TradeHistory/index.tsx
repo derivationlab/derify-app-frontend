@@ -1,15 +1,18 @@
-import PubSub from 'pubsub-js'
 import { isEmpty } from 'lodash'
+import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
+
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
-import { PubSubEvents } from '@/typings'
+
 import { getTradingHistory } from '@/api'
+import Pagination from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
-import Spinner from '@/components/common/Spinner'
-import Pagination from '@/components/common/Pagination'
-import ListItem from './ListItem'
+import { PubSubEvents } from '@/typings'
+
 import NoRecord from '../c/NoRecord'
+import ListItem from './ListItem'
 
 const TradeHistory: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)

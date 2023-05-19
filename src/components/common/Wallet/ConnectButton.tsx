@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect, useState } from 'react'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { Wallet } from '@/components/common/Wallet/wallets'
-import { traderInfoUpdates } from '@/api'
-import { SharingEvents, useSharingStore, useWalletStore } from '@/store'
-import useConnecting from '@/hooks/useConnecting'
+import React, { FC, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
+import { traderInfoUpdates } from '@/api'
 import Button from '@/components/common/Button'
 import WalletDialog from '@/components/common/Wallet'
+import { Wallet } from '@/components/common/Wallet/wallets'
+import useConnecting from '@/hooks/useConnecting'
+import { SharingEvents, useSharingStore, useWalletStore } from '@/store'
 
 interface Props {
   size?: 'mini' | 'default'

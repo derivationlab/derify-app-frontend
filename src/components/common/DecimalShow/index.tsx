@@ -1,6 +1,7 @@
-import React, { FC, useMemo, useContext } from 'react'
 import classNames from 'classnames'
 import numeral from 'numeral'
+
+import React, { FC, useMemo, useContext } from 'react'
 
 import { MobileContext } from '@/providers/Mobile'
 

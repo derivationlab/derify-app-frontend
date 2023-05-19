@@ -1,84 +1,73 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
-import { useLocation } from 'react-router-dom'
-import { useEffect, useMemo } from 'react'
-import { useMinimumGrant } from '@/hooks/useDashboard'
-import { useProtocolConfig } from '@/hooks/useProtocolConfig'
-import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
-import { MarginTokenKeys, MarginTokenWithContract, PubSubEvents } from '@/typings'
-import { useConfigInfoStore, useQuoteTokenStore, useTraderInfoStore } from '@/store'
-import { getFactoryConfig, getMarginTokenPrice, getTraderVariables } from '@/hooks/helper'
+
+import { useEffect } from 'react'
+
+import { useMarginIndicators } from '@/hooks/useMarginIndicators'
+import { useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
+import {
+  useBalancesStore,
+  useDerivativeListStore,
+  useMarginPriceStore,
+  useMarginTokenListStore,
+  useMarginTokenStore,
+  useProtocolConfigStore,
+  useTokenSpotPricesStore
+} from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { useMarginIndicatorsStore } from '@/store/useMarginIndicators'
+import { PubSubEvents } from '@/typings'
 
 export default function GlobalUpdater(): null {
   const { address } = useAccount()
-  const { pathname } = useLocation()
 
-  const { marginData, brokerData, isLoading } = useProtocolConfig()
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const fetchBalances = useBalancesStore((state) => state.getTokenBalances)
+  const resetBalances = useBalancesStore((state) => state.reset)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const getMarginPrice = useMarginPriceStore((state) => state.getMarginPrice)
+  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
+  const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
 
-  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
-  const resetVariables = useTraderInfoStore((state) => state.reset)
-  const updateVariables = useTraderInfoStore((state) => state.updateVariables)
-  const updateBrokerParams = useConfigInfoStore((state) => state.updateBrokerParams)
-  const updateMTokenPrices = useConfigInfoStore((state) => state.updateMTokenPrices)
-  const updateMinimumGrant = useConfigInfoStore((state) => state.updateMinimumGrant)
-  const updateFactoryConfig = useConfigInfoStore((state) => state.updateFactoryConfig)
-  const updateProtocolConfig = useConfigInfoStore((state) => state.updateProtocolConfig)
+  const { data: tokenSpotPrices } = useTokenSpotPrices(derAddressList)
+  const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
-  const marginToken = useMemo(() => {
-    const find = MARGIN_TOKENS.find((m) => pathname.includes(m.symbol))
-    return find?.symbol ?? DEFAULT_MARGIN_TOKEN.symbol
-  }, [pathname]) as MarginTokenKeys
-
-  const { data: minimumGrant, refetch } = useMinimumGrant(marginData?.[marginToken])
-
+  // Token balances
   useEffect(() => {
-    if (!isLoading) {
-      if (brokerData) updateBrokerParams(brokerData)
-      if (marginData) {
-        void refetch()
-
-        updateProtocolConfig(marginData)
-      }
-    }
-  }, [isLoading])
-
-  useEffect(() => {
-    resetVariables()
-  }, [marginToken])
-
-  useEffect(() => {
-    updateMinimumGrant(minimumGrant)
-  }, [minimumGrant])
-
-  useEffect(() => {
-    const func = async (marginData: MarginTokenWithContract) => {
-      const data0 = await getFactoryConfig(marginData)
-      const data2 = await getMarginTokenPrice(marginData)
-
-      updateFactoryConfig(data0)
-      updateMTokenPrices(data2)
+    if (!address) {
+      void resetBalances()
+    } else {
+      if (marginTokenList.length) void fetchBalances(address, marginTokenList)
     }
 
-    if (!isLoading && marginData) void func(marginData)
-  }, [isLoading, marginData])
-
-  useEffect(() => {
-    const func = async (account: string, protocolConfig: MarginTokenWithContract) => {
-      const data = await getTraderVariables(account, protocolConfig[marginToken].exchange)
-      updateVariables(data)
-    }
-
-    if (address && !isLoading && marginData) {
-      void func(address, marginData)
-    }
-
-    PubSub.subscribe(PubSubEvents.UPDATE_TRADER_VARIABLES, () => {
-      console.info('UPDATE_TRADER_VARIABLES')
-      if (address && !isLoading && marginData) {
-        void func(address, marginData)
-      }
+    PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
+      console.info('UPDATE_BALANCE')
+      if (address && marginTokenList.length) void fetchBalances(address, marginTokenList)
     })
-  }, [isLoading, marginData, address, marginToken, quoteToken])
+  }, [address, marginTokenList])
+
+  // Margin price
+  useEffect(() => {
+    if (protocolConfig) {
+      void getMarginPrice(protocolConfig.priceFeed)
+    }
+  }, [protocolConfig])
+
+  // Spot price
+  useEffect(() => {
+    if (tokenSpotPrices) {
+      updateTokenSpotPrices(tokenSpotPrices)
+    }
+  }, [tokenSpotPrices])
+
+  // Margin indicators
+  useEffect(() => {
+    if (marginIndicators) {
+      updateMarginIndicators(marginIndicators)
+    }
+  }, [marginIndicators])
 
   return null
 }

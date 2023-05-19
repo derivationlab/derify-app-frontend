@@ -1,13 +1,15 @@
-import dayjs from 'dayjs'
 import classNames from 'classnames'
+import dayjs from 'dayjs'
+
 import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { GrantKeys } from '@/typings'
-import { keepDecimals } from '@/utils/tools'
+
+import Image from '@/components/common/Image'
 import { STATIC_RESOURCES_URL } from '@/config'
 import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { grantTargetOptions, grantStateOptions } from '@/reducers/addGrant'
-import Image from '@/components/common/Image'
+import { GrantKeys } from '@/typings'
+import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   data: any

@@ -2,10 +2,10 @@ import React, { FC, useState, ReactNode } from 'react'
 
 import Image from '@/components/common/Image'
 
+import CommunityDialog from './CommunityDialog'
 import InputDialog from './InputDialog'
 import LanguageDialog from './LanguageDialog'
 import LogoDialog from './LogoDialog'
-import CommunityDialog from './CommunityDialog'
 
 interface Props {
   label: string

@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 
-import TradingVolume from './c/TradingVolume'
-import PositionVolume from './c/PositionVolume'
 import InsurancePool from './c/InsurancePool'
+import PositionVolume from './c/PositionVolume'
+import TradingVolume from './c/TradingVolume'
 
 const Dashborad: FC = () => {
   return (

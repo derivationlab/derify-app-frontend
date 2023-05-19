@@ -1,13 +1,12 @@
 import { isEmpty } from 'lodash'
 
+import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import { MARGIN_TOKENS } from '@/config/tokens'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
-import { bnDiv, bnMul, formatUnits } from '@/utils/tools'
 import { MarginTokenWithContract, ProtocolConfig, protocolConfig } from '@/typings'
-
-import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import { getDerifyProtocolContract } from '@/utils/contractHelpers'
+import { bnDiv, bnMul, formatUnits } from '@/utils/tools'
 
 export const initial = (): MarginTokenWithContract => {
   let value = Object.create(null)

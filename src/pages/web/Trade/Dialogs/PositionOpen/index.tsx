@@ -1,24 +1,27 @@
-import { useTranslation } from 'react-i18next'
 import { isEmpty, debounce } from 'lodash'
+
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
-import { keepDecimals } from '@/utils/tools'
-import { PositionSideTypes, Rec } from '@/typings'
-import { reducer, stateInit } from '@/reducers/opening'
+import { useTranslation } from 'react-i18next'
+
+import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
+import QuestionPopover from '@/components/common/QuestionPopover'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import MultipleStatus from '@/components/web/MultipleStatus'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
+import { reducer, stateInit } from '@/reducers/opening'
 import {
   useDerivativeListStore,
-  useMarginTokenStore, useOpeningMaxLimitStore,
+  useMarginTokenStore,
+  useOpeningMaxLimitStore,
   useProtocolConfigStore,
   useQuoteTokenStore,
   useTokenSpotPricesStore
 } from '@/store'
-import Dialog from '@/components/common/Dialog'
-import Button from '@/components/common/Button'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import MultipleStatus from '@/components/web/MultipleStatus'
-import QuestionPopover from '@/components/common/QuestionPopover'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
+import { PositionSideTypes, Rec } from '@/typings'
+import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   data: Record<string, any>
@@ -112,30 +115,28 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible, derAddressList, protocolConfig, state.validOpeningVol, spotPrice])
 
   return (
-    <Dialog width='540px' visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
-      <div className='web-trade-dialog web-trade-dialog-position-close'>
-        <div className='web-trade-dialog-body'>
-          <div className='web-trade-dialog-position-info'>
-            <header className='web-trade-dialog-position-info-header'>
+    <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
+      <div className="web-trade-dialog web-trade-dialog-position-close">
+        <div className="web-trade-dialog-body">
+          <div className="web-trade-dialog-position-info">
+            <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>
-                  {quoteToken.symbol}
-                </strong>
+                <strong>{quoteToken.symbol}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>
-            <section className='web-trade-dialog-position-info-data'>
+            <section className="web-trade-dialog-position-info-data">
               {data?.openType === 0 ? (
                 <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>
               ) : (
                 <p>
-                  <BalanceShow value={data?.price} unit='' />
+                  <BalanceShow value={data?.price} unit="" />
                   <em>{t('Trade.Bench.LimitPrice', 'Limit Price')}</em>
                 </p>
               )}
             </section>
           </div>
-          <div className='web-trade-dialog-position-confirm'>
+          <div className="web-trade-dialog-position-confirm">
             <dl>
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
               {data?.side === PositionSideTypes.twoWay ? (
@@ -145,12 +146,12 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   ) : (
                     <section>
                       <aside>
-                        <MultipleStatus direction='Long' />
+                        <MultipleStatus direction="Long" />
                         <em>{keepDecimals(state.validOpeningVol.value / 2, findToken(data?.symbol).decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                       <aside>
-                        <MultipleStatus direction='Short' />
+                        <MultipleStatus direction="Short" />
                         <em>{keepDecimals(state.validOpeningVol.value / 2, findToken(data?.symbol).decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
@@ -173,7 +174,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             <dl>
               <dt>
                 {t('Trade.COP.PCFEstimate', 'PCF(Estimate)')}
-                <QuestionPopover size='mini' text={t('Trade.COP.PCFEstimateTip', 'PCF(Estimate)')} />
+                <QuestionPopover size="mini" text={t('Trade.COP.PCFEstimateTip', 'PCF(Estimate)')} />
               </dt>
               <dd>
                 {!state.posChangeFee.loaded ? (
@@ -190,7 +191,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               <dt>
                 {t('Trade.COP.TradingFee', 'Trading Fee')}
                 <QuestionPopover
-                  size='mini'
+                  size="mini"
                   text={t('Trade.COP.TradingFeeTip', 'Trading Fee=Trading volume*Trading Fee Rate')}
                 />
               </dt>

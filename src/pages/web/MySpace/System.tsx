@@ -1,26 +1,22 @@
 import Table from 'rc-table'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { pairOptions } from '@/data'
-import { QuoteTokenKeys } from '@/typings'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { getSystemParams } from '@/api'
-import { useMarginTokenStore } from '@/store'
-import { findToken, QUOTE_TOKENS } from '@/config/tokens'
-import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
-import { bnMul, nonBigNumberInterception } from '@/utils/tools'
+import Select from '@/components/common/Form/Select'
+import { pairOptions } from '@/data'
+import { useClearingParams } from '@/hooks/useClearingParams'
 import {
   useRewardsParams,
   useProtocolParams,
-  useClearingParams,
   useExchangeParams,
   useGrantPlanParams,
   useTradePairParams
 } from '@/hooks/useSysParams'
-
-import Select from '@/components/common/Form/Select'
-
-const initSelectPair = QUOTE_TOKENS[0].symbol as QuoteTokenKeys
+import { useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { bnMul, nonBigNumberInterception } from '@/utils/tools'
 
 const systemParamsInit = {
   buybackPeriod: 0,
@@ -30,19 +26,20 @@ const systemParamsInit = {
 const System: FC = () => {
   const { t } = useTranslation()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
 
-  const [selectPair, setSelectPair] = useState<QuoteTokenKeys>(initSelectPair)
-  const [systemParams, setSystemParams] = useState<typeof systemParamsInit>(systemParamsInit)
+  const [parameters, setParameters] = useState<typeof systemParamsInit>(systemParamsInit)
+  const [derivative, setDerivative] = useState<string>(derivativeList[0]?.name)
 
-  const { protocolConfig } = useProtocolConf(marginToken)
-  const { match: factoryConfig } = useFactoryConf(marginToken)
   const { data: protocolParams } = useProtocolParams()
+  const { clearingParams } = useClearingParams(protocolConfig?.clearing)
   const { data: rewardsParams, refetch: refetchRewardsParams } = useRewardsParams(protocolConfig?.rewards)
   const { data: exchangeParams, refetch: refetchExchangeParams } = useExchangeParams(protocolConfig?.exchange)
-  const { data: clearingParams, refetch: refetchClearingParams } = useClearingParams(protocolConfig?.clearing)
   const { data: grantPlanParams, refetch: refetchGrantPlanParams } = useGrantPlanParams(protocolConfig)
-  const { data: tradePairParams, refetch: refetchTradePairParams } = useTradePairParams(factoryConfig?.[selectPair])
+  const { data: tradePairParams, refetch: refetchTradePairParams } = useTradePairParams(derAddressList?.[derivative])
 
   const system = useMemo(() => {
     return [
@@ -92,11 +89,11 @@ const System: FC = () => {
       },
       {
         parameters: t('Nav.SystemParameters.Buybackcycleblocks'),
-        value: nonBigNumberInterception(systemParams.buybackPeriod, 8)
+        value: nonBigNumberInterception(parameters.buybackPeriod, 8)
       },
       {
         parameters: t('Nav.SystemParameters.BuybackSlippageTolerance'),
-        value: `${bnMul(systemParams.buybackSlippage, 100)}%`
+        value: `${bnMul(parameters.buybackSlippage, 100)}%`
       },
       {
         parameters: t('Nav.SystemParameters.MinGrantDRFspositionmining'),
@@ -111,7 +108,7 @@ const System: FC = () => {
         value: nonBigNumberInterception(grantPlanParams.rank, 8)
       }
     ]
-  }, [systemParams, exchangeParams, clearingParams, grantPlanParams, protocolParams])
+  }, [parameters, exchangeParams, clearingParams, grantPlanParams, protocolParams])
 
   const trading = useMemo(() => {
     return [
@@ -147,9 +144,8 @@ const System: FC = () => {
 
   useEffect(() => {
     const func = async () => {
-      const { data } = await getSystemParams(findToken(marginToken).tokenAddress)
-
-      setSystemParams({
+      const { data } = await getSystemParams(marginToken.address)
+      setParameters({
         buybackPeriod: data.buyback_period,
         buybackSlippage: data.buyback_sllipage
       })
@@ -162,19 +158,18 @@ const System: FC = () => {
     if (protocolConfig) {
       void refetchRewardsParams()
       void refetchExchangeParams()
-      void refetchClearingParams()
       void refetchGrantPlanParams()
     }
   }, [protocolConfig])
 
   useEffect(() => {
-    if (factoryConfig) void refetchTradePairParams()
-  }, [selectPair, factoryConfig])
+    if (derAddressList) void refetchTradePairParams()
+  }, [derivative, derAddressList])
 
   return (
     <div className="web-table-page">
       <div className="web-system-title">
-        {t('Nav.SystemParameters.SystemParameters')}-{marginToken}
+        {t('Nav.SystemParameters.SystemParameters')}-{marginToken.symbol}
       </div>
       <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.SystemRelevant')}</h3>
@@ -183,7 +178,7 @@ const System: FC = () => {
       <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.TradingToken')}</h3>
         <aside>
-          <Select value={selectPair} objOptions={pairOptions} onChange={(v) => setSelectPair(v as any)} />
+          <Select value={derivative} objOptions={pairOptions} onChange={(v) => setDerivative(v as any)} />
         </aside>
       </header>
       <Table className="web-broker-table" columns={columns} data={trading} rowKey="parameters" />

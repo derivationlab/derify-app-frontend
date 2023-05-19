@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
 import { MarginTokenState } from '@/store/types'
 
 export const marginToken = { symbol: '', address: '' }

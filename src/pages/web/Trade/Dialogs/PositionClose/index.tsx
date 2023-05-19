@@ -1,7 +1,10 @@
-import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useEffect } from 'react'
-import { MarginTokenState } from '@/store/types'
-import { PositionSideTypes } from '@/typings'
+import { useTranslation } from 'react-i18next'
+
+import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import MultipleStatus from '@/components/web/MultipleStatus'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import {
   usePositionOperationStore,
@@ -9,11 +12,10 @@ import {
   useTokenSpotPricesStore,
   useMarginIndicatorsStore
 } from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { PositionSideTypes } from '@/typings'
 import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
-import Dialog from '@/components/common/Dialog'
-import Button from '@/components/common/Button'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import MultipleStatus from '@/components/web/MultipleStatus'
+
 import QuantityInput from './QuantityInput'
 
 interface Props {
@@ -93,10 +95,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
             <QuantityInput
               value={closingAmount}
               maxSwap={memoVolume}
-              maxSize={data?.size}
-              quoteToken={data?.quoteToken}
               marginToken={marginToken.symbol}
-              onSymbol={() => null}
               onChange={(v) => updateClosingAmount(v as any)}
             />
           </div>

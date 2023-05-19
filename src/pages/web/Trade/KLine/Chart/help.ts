@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 
-import { sleep } from '@/utils/tools'
 import { getKLineDAT as getKLineDataApi } from '@/api'
+import { sleep } from '@/utils/tools'
 
 interface klineData {
   open: number

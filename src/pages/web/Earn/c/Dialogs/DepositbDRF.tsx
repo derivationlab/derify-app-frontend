@@ -1,16 +1,16 @@
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useReducer, useEffect } from 'react'
 
-import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
+import React, { FC, useReducer, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
+import AmountInput from '@/components/common/Wallet/AmountInput'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { reducer, stateInit } from '@/reducers/staking'
-import { getTokenBalance, useMarginTokenStore } from '@/store'
-
-import Dialog from '@/components/common/Dialog'
-import Button from '@/components/common/Button'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import AmountInput from '@/components/common/Wallet/AmountInput'
+import { getTokenBalance, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   visible: boolean
@@ -25,8 +25,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { address } = useAccount()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-
-  const { protocolConfig } = useProtocolConf(marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const onChangeEv = (v: string) => {
     if (isGTET(state.depositDAT.balance, v) && isGT(v, 0)) {
@@ -50,7 +49,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     <Dialog
       width="540px"
       visible={visible}
-      title={t('Earn.bDRFPool.DepositbDRF', { Token: `b${marginToken}` })}
+      title={t('Earn.bDRFPool.DepositbDRF', { Token: `b${marginToken.symbol}` })}
       onClose={onClose}
     >
       <div className="web-deposit-dialog">
@@ -59,7 +58,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.bDRFPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={state.depositDAT.balance} unit={`b${marginToken}`} />
+                <BalanceShow value={state.depositDAT.balance} unit={`b${marginToken.symbol}`} />
               </dd>
             </dl>
             <address>{address}</address>
@@ -68,7 +67,7 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <AmountInput
               max={nonBigNumberInterception(state.depositDAT.balance, 2)}
               title={t('Earn.bDRFPool.AmountToDeposit', 'Amount to deposit')}
-              unit={`b${marginToken}`}
+              unit={`b${marginToken.symbol}`}
               onChange={onChangeEv}
             />
           </div>

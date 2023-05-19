@@ -1,17 +1,18 @@
 import PubSub from 'pubsub-js'
-import { useHistory } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import { useAccount, useSigner } from 'wagmi'
-import React, { FC, useCallback, useMemo, useState } from 'react'
 
-import { PubSubEvents } from '@/typings'
-import { useApplyBroker } from '@/hooks/useBroker'
-import { useConfigInfoStore, useBalancesStore } from '@/store'
-import { isET, isLT, keepDecimals, nonBigNumberInterception, thousandthsDivision } from '@/utils/tools'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
 
 import Button from '@/components/common/Button'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import tokens from '@/config/tokens'
+import { useApplyBroker } from '@/hooks/useBroker'
+import { useBrokerExtend } from '@/hooks/useBrokerExtend'
+import { useBalancesStore } from '@/store'
+import { PubSubEvents } from '@/typings'
+import { isET, isLT, keepDecimals, nonBigNumberInterception, thousandthsDivision } from '@/utils/tools'
 
 const BrokerSignUpStep1: FC = () => {
   const history = useHistory()
@@ -21,9 +22,9 @@ const BrokerSignUpStep1: FC = () => {
   const { address } = useAccount()
 
   const { applyBroker } = useApplyBroker()
+  const { brokerExtend } = useBrokerExtend()
 
   const balances = useBalancesStore((state) => state.balances)
-  const brokerParams = useConfigInfoStore((state) => state.brokerParams)
   const balanceLoaded = useBalancesStore((state) => state.loaded)
 
   const [loading, setLoading] = useState<boolean>(false)
@@ -34,7 +35,7 @@ const BrokerSignUpStep1: FC = () => {
     setLoading(true)
 
     if (signer) {
-      const status = await applyBroker(brokerParams.burnLimitAmount, signer)
+      const status = await applyBroker(brokerExtend.burnLimitAmount, signer)
 
       if (status) {
         // succeed
@@ -50,19 +51,19 @@ const BrokerSignUpStep1: FC = () => {
     setLoading(false)
 
     window.toast.dismiss(toast)
-  }, [address, signer])
+  }, [address, signer, brokerExtend])
 
   const memoDisabled = useMemo(() => {
     return (
       isET(balances?.['edrf'] ?? 0, 0) ||
-      isET(brokerParams.burnLimitAmount, 0) ||
-      isLT(balances?.['edrf'] ?? 0, brokerParams.burnLimitAmount)
+      isET(brokerExtend.burnLimitAmount, 0) ||
+      isLT(balances?.['edrf'] ?? 0, brokerExtend.burnLimitAmount)
     )
-  }, [balances, brokerParams.burnLimitAmount])
+  }, [balances, brokerExtend.burnLimitAmount])
 
   const memoInsufficient = useMemo(() => {
-    return isET(balances?.['edrf'] ?? 0, 0) || isLT(balances?.['edrf'] ?? 0, brokerParams.burnLimitAmount)
-  }, [balances, brokerParams.burnLimitAmount])
+    return isET(balances?.['edrf'] ?? 0, 0) || isLT(balances?.['edrf'] ?? 0, brokerExtend.burnLimitAmount)
+  }, [balances, brokerExtend.burnLimitAmount])
 
   return (
     <div className="web-broker-sign-up">
@@ -74,18 +75,22 @@ const BrokerSignUpStep1: FC = () => {
         <section className="web-broker-sign-up-step-1">
           <p>{t('Broker.Reg.Getting', 'Getting broker privilege will cost you')}</p>
           <em>
-            {thousandthsDivision(nonBigNumberInterception(brokerParams.burnLimitAmount, tokens.edrf.decimals))}
+            {thousandthsDivision(nonBigNumberInterception(brokerExtend.burnLimitAmount, tokens.edrf.decimals))}
             <u>eDRF</u>
           </em>
           <hr />
           <span>
-            {t('Broker.Reg.WalletBalance', 'Wallet Balance')}: {keepDecimals(balances?.['edrf'] ?? 0, tokens.edrf.decimals)}{' '}
-            eDRF
+            {t('Broker.Reg.WalletBalance', 'Wallet Balance')}:{' '}
+            {keepDecimals(balances?.['edrf'] ?? 0, tokens.edrf.decimals)} eDRF
           </span>
           <address>{address}</address>
         </section>
         <footer className="web-broker-sign-up-footer">
-          <Button onClick={fetchData} disabled={!balanceLoaded || memoDisabled} loading={loading}>
+          <Button
+            onClick={fetchData}
+            disabled={!balanceLoaded || memoDisabled || Number(brokerExtend.burnLimitAmount) === 0}
+            loading={loading}
+          >
             {balanceLoaded && memoInsufficient
               ? t('Broker.Reg.Insufficient', 'Insufficient eDRF')
               : t('Broker.Reg.Confirm', 'Confirm')}

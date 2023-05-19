@@ -1,6 +1,7 @@
+import classNames from 'classnames'
+
 import React, { FC, useMemo } from 'react'
 import { createPortal } from 'react-dom'
-import classNames from 'classnames'
 
 interface Props {
   show: boolean

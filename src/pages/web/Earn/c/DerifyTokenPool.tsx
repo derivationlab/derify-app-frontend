@@ -1,21 +1,23 @@
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useState, useContext, useEffect, useCallback } from 'react'
 
-import { PubSubEvents } from '@/typings'
-import { MobileContext } from '@/providers/Mobile'
-import tokens, { findToken } from '@/config/tokens'
-import { bnMul, isGT, isLT, keepDecimals } from '@/utils/tools'
+import React, { FC, useMemo, useState, useContext, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import Button from '@/components/common/Button'
+import DecimalShow from '@/components/common/DecimalShow'
+import QuestionPopover from '@/components/common/QuestionPopover'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import NotConnect from '@/components/web/NotConnect'
+import tokens from '@/config/tokens'
 import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useTrading'
+import { MobileContext } from '@/providers/Mobile'
 import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { PubSubEvents } from '@/typings'
+import { bnMul, isGT, isLT, keepDecimals } from '@/utils/tools'
 
-import QuestionPopover from '@/components/common/QuestionPopover'
-import DecimalShow from '@/components/common/DecimalShow'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import Button from '@/components/common/Button'
-import NotConnect from '@/components/web/NotConnect'
 import StakeDRFDialog from './Dialogs/StakeDRF'
 import UnstakeDRFDialog from './Dialogs/UnstakeDRF'
 
@@ -23,18 +25,17 @@ const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
-
   const { mobile } = useContext(MobileContext)
 
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const stakingInfo = useTraderInfoStore((state) => state.stakingInfo)
   const drfPoolBalance = usePoolsInfoStore((state) => state.drfPoolBalance)
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
   const { data: edrfBalance, isLoading } = useTraderEDRFBalance(address)
-  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(findToken(marginToken).tokenAddress)
+  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(marginToken.address)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 

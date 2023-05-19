@@ -1,15 +1,16 @@
+import 'rc-collapse/assets/index.css'
+import 'rc-dialog/assets/index.css'
+import 'rc-table/assets/index.css'
+import 'rc-tabs/assets/index.css'
+
+import React, { lazy, Suspense } from 'react'
 import toast from 'react-hot-toast'
 import { Route, Switch } from 'react-router-dom'
-import React, { lazy, Suspense } from 'react'
-import 'rc-dialog/assets/index.css'
-import 'rc-collapse/assets/index.css'
-import 'rc-tabs/assets/index.css'
-import 'rc-table/assets/index.css'
+
+import Spinner from '@/components/common/Spinner'
 import { useMarginLoading } from '@/hooks/useMarginLoading'
 import BrokerUpdater from '@/pages/updater/BrokerUpdater'
 import GlobalUpdater from '@/pages/updater/GlobalUpdater'
-import GlobalUpdater1 from '@/pages/updater/GlobalUpdater1'
-import Spinner from '@/components/common/Spinner'
 import '@/style/style.scss'
 
 window.toast = toast
@@ -24,7 +25,6 @@ function App() {
   return (
     <>
       <GlobalUpdater />
-      <GlobalUpdater1 />
       <BrokerUpdater />
 
       <Suspense fallback={null}>

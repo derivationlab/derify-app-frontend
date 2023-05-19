@@ -1,9 +1,10 @@
-import { useEffectOnce } from 'react-use'
 import { useEffect, useMemo } from 'react'
+import { useEffectOnce } from 'react-use'
+
+import { useMarginTokenStore, useOpeningMaxLimitStore, useProtocolConfigStore, useQuoteTokenStore } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useDerivativeListStore } from '@/store/useDerivativeList'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
-import { useMarginTokenStore, useOpeningMaxLimitStore, useProtocolConfigStore, useQuoteTokenStore } from '@/store'
 
 export const useMarginLoading = () => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)

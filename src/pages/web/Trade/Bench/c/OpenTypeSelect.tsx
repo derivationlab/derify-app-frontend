@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Select } from '@/components/common/Form'
+import Select from '@/components/common/Form/Select'
 import { PositionOrderTypes } from '@/typings'
 
 interface Props {

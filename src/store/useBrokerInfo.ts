@@ -1,6 +1,5 @@
 import { create } from 'zustand'
-import { BrokerInfoState } from '@/store/types'
-import { getDerifyProtocolContract } from '@/utils/contractHelpers'
+
 import {
   getBrokerBound,
   getBrokerRanking,
@@ -9,6 +8,8 @@ import {
   getBrokerInfoWithAddress,
   getBrokerRegistrationTime
 } from '@/api'
+import { BrokerInfoState } from '@/store/types'
+import { getDerifyProtocolContract } from '@/utils/contractHelpers'
 
 const isIdentityValid = async (trader: string): Promise<boolean> => {
   const c = getDerifyProtocolContract()

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
-import React, { FC, useContext } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+
+import React, { FC, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 import { keepDecimals } from '@/utils/tools'

@@ -1,11 +1,13 @@
 import classNames from 'classnames'
-import { useClickAway } from 'react-use'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useState, useRef, useMemo } from 'react'
-import tokens from '@/config/tokens'
-import { addToken } from '@/utils/addToken'
+import { useTranslation } from 'react-i18next'
+import { useClickAway } from 'react-use'
+
 import { PANCAKE_SWAP_URL } from '@/config'
+import tokens from '@/config/tokens'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { addToken } from '@/utils/addToken'
 
 const AddTokenTool: FC = () => {
   const ref = useRef(null)

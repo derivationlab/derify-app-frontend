@@ -1,5 +1,5 @@
-import { ChainIdRec } from '@/typings'
 import { _getAddress, addressCheck } from '@/class/Token'
+import { ChainIdRec } from '@/typings'
 
 class Contract {
   readonly name: string

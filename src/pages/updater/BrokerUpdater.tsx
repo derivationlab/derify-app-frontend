@@ -1,8 +1,10 @@
 import PubSub from 'pubsub-js'
+
 import { useEffect } from 'react'
-import { PubSubEvents } from '@/typings'
-import { MarginTokenState } from '@/store/types'
+
 import { useMarginTokenStore, useBrokerInfoStore, useWalletStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { PubSubEvents } from '@/typings'
 
 export default function BrokerUpdater(): null {
   const address = useWalletStore((state) => state.account)

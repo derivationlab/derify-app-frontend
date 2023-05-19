@@ -1,6 +1,7 @@
-import React, { FC, useMemo } from 'react'
-import { times } from 'lodash'
 import classNames from 'classnames'
+import { times } from 'lodash'
+
+import React, { FC, useMemo } from 'react'
 
 interface Props {
   alertLevel?: number

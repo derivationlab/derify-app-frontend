@@ -1,6 +1,7 @@
-import React, { FC, useRef, useState, useMemo } from 'react'
-import { useClickAway } from 'react-use'
 import classNames from 'classnames'
+
+import React, { FC, useRef, useState } from 'react'
+import { useClickAway } from 'react-use'
 
 import Button from '@/components/common/Button'
 import Slider from '@/components/common/Slider'

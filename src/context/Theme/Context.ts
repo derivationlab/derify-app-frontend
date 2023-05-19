@@ -1,4 +1,5 @@
 import { createContext } from 'react'
+
 import { ThemeOptions } from '@/data'
 
 const ThemeContext = createContext({

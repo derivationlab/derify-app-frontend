@@ -1,9 +1,6 @@
-import { isEmpty } from 'lodash'
 import { useQuery } from '@tanstack/react-query'
+import { isEmpty } from 'lodash'
 
-import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'
-import { findMarginToken, findToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
-import { MarginToken, MarginTokenKeys, QuoteToken, QuoteTokenKeys } from '@/typings'
 import {
   getCurrentIndexDAT,
   getTraderBondBalance,
@@ -18,6 +15,9 @@ import {
   getCurrentTotalPositionsNetValue,
   getPairIndicator
 } from '@/api'
+import { findMarginToken, findToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { MarginToken, MarginTokenKeys, QuoteToken, QuoteTokenKeys } from '@/typings'
+import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'
 
 const initial1 = (): MarginToken => {
   let value = Object.create(null)

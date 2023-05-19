@@ -1,50 +1,29 @@
-import React, { FC, useCallback, useMemo, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { isGT } from '@/utils/tools'
-import { MarginTokenKeys } from '@/typings'
-import { findMarginToken } from '@/config/tokens'
-
-import { Select, Input } from '@/components/common/Form'
+import Input from '@/components/common/Form/Input'
 import PercentButton from '@/components/common/Form/PercentButton'
+import { isGT } from '@/utils/tools'
 
 interface Props {
   value: string
   maxSwap: string
-  maxSize: string
-  quoteToken: string
   marginToken: string
-  onSymbol: (value: MarginTokenKeys) => void
   onChange: (value: string | number) => void
 }
 
-const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxSwap, maxSize, quoteToken, marginToken }) => {
+const QuantityInput: FC<Props> = ({ value, onChange, maxSwap, marginToken }) => {
   const { t } = useTranslation()
-
-  const [closingType, setClosingType] = useState<string>(marginToken)
-
-  const maxVolume = useMemo(() => (findMarginToken(closingType) ? maxSwap : maxSize), [closingType, maxSwap, maxSize])
-
-  const closingTypeChange = (symbol: any) => {
-    if (findMarginToken(symbol)) {
-      onChange(maxSwap)
-    } else {
-      onChange(maxSize)
-    }
-
-    onSymbol(symbol)
-    setClosingType(symbol)
-  }
 
   const validateEnteredValueCb = useCallback(
     (amount: string) => {
-      if (isGT(amount, maxVolume)) {
-        onChange(maxVolume)
+      if (isGT(amount, maxSwap)) {
+        onChange(maxSwap)
       } else {
         onChange(amount)
       }
     },
-    [maxVolume]
+    [maxSwap]
   )
 
   return (
@@ -55,7 +34,7 @@ const QuantityInput: FC<Props> = ({ value, onSymbol, onChange, maxSwap, maxSize,
         {/*<Select value={closingType} onChange={closingTypeChange} options={[marginToken]} />*/}
         <div className="web-select-show-button">{marginToken}</div>
       </section>
-      <PercentButton currValue={value} value={maxVolume} onChange={(amount) => onChange(amount)} />
+      <PercentButton currValue={value} value={maxSwap} onChange={(amount) => onChange(amount)} />
     </div>
   )
 }

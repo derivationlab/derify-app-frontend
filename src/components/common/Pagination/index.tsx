@@ -1,5 +1,7 @@
-import React, { FC, useMemo } from 'react'
 import classNames from 'classnames'
+
+import React, { FC, useMemo } from 'react'
+
 interface Props {
   pageSize?: number
   total: number

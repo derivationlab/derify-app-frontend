@@ -1,8 +1,9 @@
-import React, { PropsWithChildren } from 'react'
 import cls from 'classnames'
 
-import { SkeletonProps } from './interface'
+import React, { PropsWithChildren } from 'react'
+
 import SkeletonRows from './SkeletonRows'
+import { SkeletonProps } from './interface'
 
 function SkeletonComponent(props: PropsWithChildren<SkeletonProps>) {
   const { loading = true, children, className, animation, rowsProps } = props

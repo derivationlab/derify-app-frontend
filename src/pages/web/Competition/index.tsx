@@ -1,20 +1,22 @@
 import dayjs from 'dayjs'
+import { upperFirst, isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
-import { upperFirst, isEmpty } from 'lodash'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
-import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore } from '@/store'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { useTranslation } from 'react-i18next'
+
 import { getCompetitionList, getCompetitionRank } from '@/api'
-import { calcShortHash, keepDecimals } from '@/utils/tools'
-import { reducer, stateInit } from '@/reducers/competitionRank'
-import Image from '@/components/common/Image'
 import Select from '@/components/common/Form/Select'
+import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
 // import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { MobileContext } from '@/providers/Mobile'
+import { reducer, stateInit } from '@/reducers/competitionRank'
+import { useMarginTokenStore } from '@/store'
+import { calcShortHash, keepDecimals } from '@/utils/tools'
 
 interface RowTextProps {
   value: string | number
@@ -71,11 +73,11 @@ const CompetitionRank: FC = () => {
       dataIndex: 'amount',
       width: mobile ? '' : 250,
       render: (_: string, data: Record<string, any>) => {
-        const amount = keepDecimals(data.amount, findToken(marginToken).decimals)
+        const amount = keepDecimals(data.amount, 2)
         const platform = keepDecimals(data.awards, PLATFORM_TOKEN.decimals)
         return (
           <>
-            <BalanceShow value={amount} unit={marginToken} />
+            <BalanceShow value={amount} unit={marginToken.symbol} />
             <BalanceShow value={platform} unit={PLATFORM_TOKEN.symbol} />
           </>
         )
@@ -101,7 +103,7 @@ const CompetitionRank: FC = () => {
   }, [marginToken, state.filterCondition])
 
   const _getCompetitionList = useCallback(async () => {
-    const { data } = await getCompetitionList(findToken(marginToken).tokenAddress)
+    const { data } = await getCompetitionList(marginToken.address)
 
     if (data) {
       const _ = data.map((d: Record<string, any>) => ({

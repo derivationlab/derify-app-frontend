@@ -1,18 +1,21 @@
 import classNames from 'classnames'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useMemo, useContext } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useClearingParams } from '@/hooks/useClearingParams'
 import { MobileContext } from '@/providers/Mobile'
+import { useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore, useTraderInfoStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
-import { useClearingParams } from '@/hooks/useClearingParams'
-import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'
-import { useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore, useTraderInfoStore } from '@/store'
-import ItemHeader from '../c/ItemHeader'
+
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
-import Reminder from '../c/Reminder'
 import EditButton from '../c/EditButton'
+import ItemHeader from '../c/ItemHeader'
+import Reminder from '../c/Reminder'
 
 interface Props {
   data: Record<string, any>

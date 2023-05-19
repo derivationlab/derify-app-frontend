@@ -1,6 +1,7 @@
-import React, { FC, useContext } from 'react'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import dayjs from 'dayjs'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+
+import React, { FC, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 import { keepDecimals } from '@/utils/tools'

@@ -1,11 +1,12 @@
+import { BigNumberish } from '@ethersproject/bignumber'
 import { useQuery } from '@tanstack/react-query'
 import { chunk, isEmpty } from 'lodash'
-import { BigNumberish } from '@ethersproject/bignumber'
-import multicall from '@/utils/multicall'
-import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
-import { formatUnits, safeInterceptionValues } from '@/utils/tools'
-import { MarginTokenKeys, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+
 import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import { MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
+import { MarginTokenKeys, MarginTokenWithQuote, QuoteTokenKeys } from '@/typings'
+import multicall from '@/utils/multicall'
+import { formatUnits, safeInterceptionValues } from '@/utils/tools'
 
 export const initialPCFAndPrice = (): MarginTokenWithQuote => {
   let value = Object.create(null)

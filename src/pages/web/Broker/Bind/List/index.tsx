@@ -1,34 +1,31 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
+
+import React, { FC, useCallback, useEffect, useContext, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory, Link } from 'react-router-dom'
-import React, { FC, useCallback, useEffect, useContext, useReducer } from 'react'
 
-import { PubSubEvents } from '@/typings'
-import { MobileContext } from '@/providers/Mobile'
-import { reducer, stateInit } from '@/reducers/brokerBind'
 import { bindingYourBroker, getBrokersList } from '@/api'
+import Select from '@/components/common/Form/Select'
+import Loading from '@/components/common/Loading'
+import Pagination from '@/components/common/Pagination'
 import {
   SelectLangOptionsForFilter as SelectLangOptions,
   SelectCommunityOptionsForFilter as SelectCommunityOptions
 } from '@/data'
+import { MobileContext } from '@/providers/Mobile'
+import { reducer, stateInit } from '@/reducers/brokerBind'
+import { useMarginTokenStore } from '@/store'
+import { PubSubEvents } from '@/typings'
 
-import Pagination from '@/components/common/Pagination'
-import Loading from '@/components/common/Loading'
-import Select from '@/components/common/Form/Select'
 import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
-
-import { findToken } from '@/config/tokens'
-import { useMarginTokenStore } from '@/store'
 
 const pageSize = 10
 
 const List: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
-
   const history = useHistory()
-
   const { t } = useTranslation()
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
@@ -76,13 +73,7 @@ const List: FC = () => {
     async (index: number) => {
       const {
         data: { records, totalItems }
-      } = await getBrokersList(
-        findToken(marginToken).tokenAddress,
-        index,
-        pageSize,
-        state.optSelect.l,
-        state.optSelect.c
-      )
+      } = await getBrokersList(marginToken.address, index, pageSize, state.optSelect.l, state.optSelect.c)
       dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: false, records, totalItems } })
     },
     [state.optSelect, marginToken]

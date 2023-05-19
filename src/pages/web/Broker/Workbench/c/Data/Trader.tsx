@@ -1,18 +1,18 @@
-import Table from 'rc-table'
 import { isEmpty } from 'lodash'
+import Table from 'rc-table'
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { findToken } from '@/config/tokens'
-import { EXPLORER_SCAN_URL } from '@/config'
-import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore } from '@/store'
-import { reducer, stateInit } from '@/reducers/records'
 import { getBrokerSubordinate } from '@/api'
-
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
+import { EXPLORER_SCAN_URL } from '@/config'
+import { findToken } from '@/config/tokens'
+import { MobileContext } from '@/providers/Mobile'
+import { reducer, stateInit } from '@/reducers/records'
+import { useMarginTokenStore } from '@/store'
 
 import { RowTime, calcShortHash } from './common'
 
@@ -61,7 +61,7 @@ const Trader: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerSubordinate(address, findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getBrokerSubordinate(address, marginToken.address, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

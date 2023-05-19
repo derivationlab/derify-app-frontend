@@ -1,12 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
-import ThemeProvider from '@/providers/Theme'
-import MobileProvider from '@/providers/Mobile'
-import QueryClientProvider from '@/providers/QueryClient'
-import WagmiClientProvider from '@/providers/WagmiClient'
+
 import App from '@/App'
 import '@/lang'
+import MobileProvider from '@/providers/Mobile'
+import QueryClientProvider from '@/providers/QueryClient'
+import ThemeProvider from '@/providers/Theme'
+import WagmiClientProvider from '@/providers/WagmiClient'
 
 ReactDOM.render(
   <React.StrictMode>

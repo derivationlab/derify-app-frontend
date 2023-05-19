@@ -1,9 +1,30 @@
-import { useLocation } from 'react-router-dom'
 import React, { FC, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+
 import { getIpLocation } from '@/api'
-import { useMarginTokenStore } from '@/store'
 import { Redirect, Switch, Route } from '@/components/common/Route'
-import { useMarginTokenListStore } from '@/store/useMarginTokenList'
+import Toast from '@/components/common/Toast'
+import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
+import Header from '@/components/web/Header'
+import BrokerBind from '@/pages/web/Broker/Bind'
+import BrokerBindList from '@/pages/web/Broker/Bind/List'
+import BrokerBound from '@/pages/web/Broker/MyBroker'
+import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
+import BrokerRank from '@/pages/web/Broker/Rank'
+import BrokerSignUpStep1 from '@/pages/web/Broker/SignUp/step1'
+import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
+import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
+import BrokerWorkbench from '@/pages/web/Broker/Workbench'
+import CompetitionRank from '@/pages/web/Competition'
+import BuybackPlan from '@/pages/web/Dashboard/BuybackPlan'
+import GrantList from '@/pages/web/Dashboard/GrantList'
+import Overview from '@/pages/web/Dashboard/Overview'
+import Data from '@/pages/web/Data'
+import Earn from '@/pages/web/Earn'
+import Faucet from '@/pages/web/Faucet'
+import MiningRank from '@/pages/web/Mining'
+import MySpace from '@/pages/web/MySpace'
+import System from '@/pages/web/MySpace/System'
 import {
   RBrokerList,
   RBrokerBound,
@@ -16,49 +37,29 @@ import {
   RBrokerSignUpStep1,
   RBrokerSignUpStep2
 } from '@/pages/web/Route'
-import Header from '@/components/web/Header'
-import Toast from '@/components/common/Toast'
-import Earn from '@/pages/web/Earn'
 import Trade from '@/pages/web/Trade'
-import Data from '@/pages/web/Data'
-import Faucet from '@/pages/web/Faucet'
-import BrokerRank from '@/pages/web/Broker/Rank'
-import BrokerBind from '@/pages/web/Broker/Bind'
-import BrokerBound from '@/pages/web/Broker/MyBroker'
-import BrokerBindList from '@/pages/web/Broker/Bind/List'
-import BrokerWorkbench from '@/pages/web/Broker/Workbench'
-import BrokerSignUpStep1 from '@/pages/web/Broker/SignUp/step1'
-import BrokerSignUpStep2 from '@/pages/web/Broker/SignUp/step2'
-import BrokerSignUpStep3 from '@/pages/web/Broker/SignUp/step3'
-import BrokerInfo from '@/pages/web/Broker/MyBroker/brokerInfo'
-import MiningRank from '@/pages/web/Mining'
-import CompetitionRank from '@/pages/web/Competition'
-import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
-import MySpace from '@/pages/web/MySpace'
-import System from '@/pages/web/MySpace/System'
-import Overview from '@/pages/web/Dashboard/Overview'
-import GrantList from '@/pages/web/Dashboard/GrantList'
-import BuybackPlan from '@/pages/web/Dashboard/BuybackPlan'
+import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 
 const Web: FC = () => {
   const { pathname } = useLocation()
 
   const [visible, setVisible] = useState<boolean>(false)
 
-  const { symbol } = useMarginTokenStore((state) => state.marginToken)
+  const { symbol } = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const updateMarginToken = useMarginTokenStore((state) => state.updateMarginToken)
+  const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
 
   useEffect(() => {
     const func = async () => {
       const data = await getIpLocation()
-      // setVisible(!data)
+      setVisible(!data)
     }
 
     void func()
   }, [])
 
-  // 当手动在浏览器地址栏输入的时候
   useEffect(() => {
     const path = pathname.split('/')
     const find = marginTokenList.find((margin) => margin.symbol === path[1])

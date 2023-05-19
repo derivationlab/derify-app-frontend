@@ -1,20 +1,22 @@
-import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
-import { MarginTokenState } from '@/store/types'
-import { PositionSideTypes } from '@/typings'
-import { reducer, stateInit } from '@/reducers/opening'
-import { isGT, keepDecimals } from '@/utils/tools'
+import { useTranslation } from 'react-i18next'
+
+import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
+import QuestionPopover from '@/components/common/QuestionPopover'
+import MultipleStatus from '@/components/web/MultipleStatus'
 import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
+import { reducer, stateInit } from '@/reducers/opening'
 import {
   useMarginTokenStore,
   useTokenSpotPricesStore,
   useProtocolConfigStore,
-  useDerivativeListStore, usePositionOperationStore
+  useDerivativeListStore,
+  usePositionOperationStore
 } from '@/store'
-import Dialog from '@/components/common/Dialog'
-import Button from '@/components/common/Button'
-import MultipleStatus from '@/components/web/MultipleStatus'
-import QuestionPopover from '@/components/common/QuestionPopover'
+import { MarginTokenState } from '@/store/types'
+import { PositionSideTypes } from '@/typings'
+import { isGT, keepDecimals } from '@/utils/tools'
 
 interface Props {
   data?: Record<string, any>

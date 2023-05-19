@@ -1,13 +1,14 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
-import { useHistory, useParams } from 'react-router-dom'
+
 import React, { FC, useEffect, useState } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 
-import { PubSubEvents } from '@/typings'
-import { useBrokerInfoStore } from '@/store'
 import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
-
 import Loading from '@/components/common/Loading'
+import { useBrokerInfoStore } from '@/store'
+import { PubSubEvents } from '@/typings'
+
 import BrokerCard from './c/BrokerCard'
 
 const BrokerInfo: FC = () => {

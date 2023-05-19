@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+
 import Chart from './Chart'
 import HeaderData from './HeaderData'
 import SymbolSelect from './SymbolSelect'

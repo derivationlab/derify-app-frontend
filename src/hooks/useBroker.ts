@@ -1,13 +1,14 @@
-import { Signer } from 'ethers'
 import { useQuery } from '@tanstack/react-query'
+import { Signer } from 'ethers'
+
 import { useCallback } from 'react'
 
-import tokens from '@/config/tokens'
 import contracts from '@/config/contracts'
-import { estimateGas } from '@/utils/estimateGas'
+import tokens from '@/config/tokens'
 import { allowanceApprove } from '@/utils/allowanceApprove'
-import { formatUnits, inputParameterConversion } from '@/utils/tools'
 import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
+import { estimateGas } from '@/utils/estimateGas'
+import { formatUnits, inputParameterConversion } from '@/utils/tools'
 
 const brokerInfoInit = {
   drfRewardBalance: '0',

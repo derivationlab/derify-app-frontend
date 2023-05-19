@@ -1,19 +1,19 @@
-import Table from 'rc-table'
 import classNames from 'classnames'
 import { isEmpty } from 'lodash'
+import Table from 'rc-table'
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 
-import { findToken } from '@/config/tokens'
-import { keepDecimals } from '@/utils/tools'
+import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { getBrokerTransactions } from '@/api'
+import Pagination from '@/components/common/Pagination'
 import { EXPLORER_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore } from '@/store'
-import { getBrokerTransactions } from '@/api'
 import { reducer, stateInit } from '@/reducers/records'
-
-import Pagination from '@/components/common/Pagination'
+import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { keepDecimals } from '@/utils/tools'
 
 import { RowTime, calcShortHash, calcTimeStr } from './common'
 
@@ -82,7 +82,7 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
 const judgeUpsAndDowns = (data: string): string => (Number(data) > 0 ? '+' : '')
 
 const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   // const { mobile } = useContext(MobileContext)
   const up = useMemo(() => Number(data.pnl_margin_token) > 0, [data.pnl_margin_token])
@@ -110,7 +110,7 @@ const Transaction: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerTransactions(address, findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getBrokerTransactions(address, marginToken.address, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

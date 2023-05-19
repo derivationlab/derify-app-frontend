@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Input } from '@/components/common/Form'
+import Input from '@/components/common/Form/Input'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface InputProps {

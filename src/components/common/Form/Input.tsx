@@ -1,6 +1,8 @@
-import React, { FC, ChangeEvent, ReactNode } from 'react'
 import classNames from 'classnames'
 import { isNaN } from 'lodash'
+
+import React, { FC, ChangeEvent, ReactNode } from 'react'
+
 interface InputProps {
   type?: string
   value: number | string

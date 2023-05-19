@@ -1,10 +1,8 @@
 import { isEmpty } from 'lodash'
 
-import multicall from '@/utils/multicall'
-import {
-  formatUnits,
-} from '@/utils/tools'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
+import multicall from '@/utils/multicall'
+import { formatUnits } from '@/utils/tools'
 
 const initialTraderVariables = {
   balance: '0',

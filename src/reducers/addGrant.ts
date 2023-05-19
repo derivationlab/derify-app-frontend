@@ -1,5 +1,5 @@
-import { GrantKeys } from '@/typings'
 import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
+import { GrantKeys } from '@/typings'
 
 interface StateType {
   disabled: boolean

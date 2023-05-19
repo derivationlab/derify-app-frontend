@@ -1,14 +1,15 @@
-import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { PositionSideTypes } from '@/typings'
-import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginIndicatorsStore, useMarginTokenStore, useTokenSpotPricesStore } from '@/store'
-import { bnMinus, bnMul, isET, isGT, keepDecimals, safeInterceptionValues } from '@/utils/tools'
-import Dialog from '@/components/common/Dialog'
+import { useTranslation } from 'react-i18next'
+
 import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
 import Input from '@/components/common/Form/Input'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useMarginIndicatorsStore, useMarginTokenStore, useTokenSpotPricesStore } from '@/store'
+import { PositionSideTypes } from '@/typings'
+import { bnMinus, bnMul, isET, isGT, keepDecimals, safeInterceptionValues } from '@/utils/tools'
 
 interface Props {
   data?: Record<string, any>

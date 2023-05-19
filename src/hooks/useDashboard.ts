@@ -1,23 +1,25 @@
-import { chunk, flatten, isEmpty } from 'lodash'
-import { Contract } from 'ethers'
-import { useSigner } from 'wagmi'
-import { useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Contract } from 'ethers'
+import { chunk, flatten, isEmpty } from 'lodash'
+import { useSigner } from 'wagmi'
+
+import { useCallback } from 'react'
+
+import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
-import multicall from '@/utils/multicall'
-import { estimateGas } from '@/utils/estimateGas'
-import { allowanceApprove } from '@/utils/allowanceApprove'
-import { bnPlus, formatUnits, inputParameterConversion } from '@/utils/tools'
 import tokens, { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS, PLATFORM_TOKEN } from '@/config/tokens'
 import { GrantKeys, MarginToken, MarginTokenKeys, MarginTokenWithQuote, ProtocolConfig, QuoteToken } from '@/typings'
+import { allowanceApprove } from '@/utils/allowanceApprove'
 import {
   getDerifyPmrContract,
   getDerifyRankContract,
   getDerifyRewardsContract,
   getDerifyBRewardsContract
 } from '@/utils/contractHelpers'
-import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
-import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import { estimateGas } from '@/utils/estimateGas'
+import multicall from '@/utils/multicall'
+import { bnPlus, formatUnits, inputParameterConversion } from '@/utils/tools'
 
 let outputInit = initial()
 

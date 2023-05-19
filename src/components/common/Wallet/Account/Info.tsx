@@ -1,10 +1,9 @@
 import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useMarginTokenStore, useTraderInfoStore, useTraderVariablesStore } from '@/store'
-
-import Skeleton from '@/components/common/Skeleton'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import Skeleton from '@/components/common/Skeleton'
+import { useMarginTokenStore, useTraderInfoStore, useTraderVariablesStore } from '@/store'
 
 import BalanceShow from '../BalanceShow'
 

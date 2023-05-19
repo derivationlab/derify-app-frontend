@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, createContext } from 'react'
 
-import Cache from '@/utils/cache'
 import { ThemeOptions } from '@/data'
+import Cache from '@/utils/cache'
 
 const CacheKey = 'THEME-KEY'
 

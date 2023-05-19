@@ -1,12 +1,12 @@
 import { Chain, createClient } from 'wagmi'
 import { configureChains } from 'wagmi'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
-
 import { bsc, bscTestnet } from 'wagmi/chains'
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+
 import { CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
 
 const chain = getDefaultChainInfo()

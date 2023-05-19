@@ -1,10 +1,11 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useEffect, useMemo } from 'react'
-import { MarginTokenState, QuoteTokenState } from '@/store/types'
-import { PositionOrderTypes, PubSubEvents, Rec } from '@/typings'
-import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { useTranslation } from 'react-i18next'
+
+import Input from '@/components/common/Form/Input'
+import PercentButton from '@/components/common/Form/PercentButton'
 import {
   usePositionOperationStore,
   useMarginTokenStore,
@@ -12,8 +13,10 @@ import {
   useProtocolConfigStore,
   useTokenSpotPricesStore
 } from '@/store'
-import { Input } from '@/components/common/Form'
-import PercentButton from '@/components/common/Form/PercentButton'
+import { MarginTokenState, QuoteTokenState } from '@/store/types'
+import { PositionOrderTypes, PubSubEvents, Rec } from '@/typings'
+import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+
 import Row from './Row'
 
 interface Props {
@@ -97,7 +100,7 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
         <div className="web-trade-bench-pane-volume-max">
           <span>Max: </span>
           <em>{keepDecimals(disposableAmount?.[type] ?? 0, 2)}</em>
-          <u>{' '}{type}</u>
+          <u> {type}</u>
         </div>
       </Row>
       <Row mb="16">

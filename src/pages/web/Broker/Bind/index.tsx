@@ -1,14 +1,15 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
-import { useHistory } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+
 import React, { ChangeEvent, FC, useState, useContext } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
 
-import { PubSubEvents } from '@/typings'
-import { MobileContext } from '@/providers/Mobile'
 import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
-
 import Button from '@/components/common/Button'
+import { MobileContext } from '@/providers/Mobile'
+import { PubSubEvents } from '@/typings'
+
 import BrokerDialog from './BrokerDialog'
 
 const Bind: FC = () => {

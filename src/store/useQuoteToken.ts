@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
 import { QuoteTokenState } from '@/store/types'
 
 export const quoteToken = { symbol: '', address: '' }

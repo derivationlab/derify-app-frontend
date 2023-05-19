@@ -1,7 +1,7 @@
 import React, { FC, useContext } from 'react'
 
-import { num2size } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
+import { num2size } from '@/utils/tools'
 
 interface Props {
   mb?: string | number

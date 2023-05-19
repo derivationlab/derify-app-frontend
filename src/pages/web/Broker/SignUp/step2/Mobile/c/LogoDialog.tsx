@@ -1,7 +1,7 @@
 import React, { FC, useState, ReactNode, ChangeEvent, useEffect } from 'react'
 
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
 
 interface Props {
   show: boolean

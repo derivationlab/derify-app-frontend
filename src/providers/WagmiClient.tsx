@@ -1,6 +1,7 @@
-import React from 'react'
 import { WagmiConfig } from 'wagmi'
 import type { WagmiConfigProps } from 'wagmi'
+
+import React from 'react'
 
 import { client } from '@/utils/wagmiConfig'
 

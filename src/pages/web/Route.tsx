@@ -1,14 +1,14 @@
 import { isEmpty } from 'lodash'
 import { useAccount } from 'wagmi'
-import { Redirect, useParams } from 'react-router-dom'
-import React, { PropsWithChildren, useMemo } from 'react'
 
-import { findMarginToken } from '@/config/tokens'
-import { useMarginTokenStore, useBrokerInfoStore } from '@/store'
+import React, { PropsWithChildren, useMemo } from 'react'
+import { Redirect, useParams } from 'react-router-dom'
 
 import Loading from '@/components/common/Loading'
-import BrokerConnect from '@/pages/web/Broker/c/Connect'
 import Spinner from '@/components/common/Spinner'
+import { findMarginToken } from '@/config/tokens'
+import BrokerConnect from '@/pages/web/Broker/c/Connect'
+import { useMarginTokenStore, useBrokerInfoStore } from '@/store'
 
 export const RBrokerList = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
@@ -51,10 +51,10 @@ export const RBrokerBound = (props: PropsWithChildren<any>) => {
     if (!address) return <BrokerConnect />
     if (brokerInfoLoaded && brokerBoundLoaded) {
       if (!isEmpty(brokerInfo)) {
-        return <Redirect to={`/${marginToken}/broker/workbench`} />
+        return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
       }
       if (!isEmpty(brokerBound)) {
-        return pathKey ? find ? children : <Redirect to={`/${marginToken}/${pathKey}`} /> : children
+        return pathKey ? find ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} /> : children
       }
       return <Redirect to="/broker/bind" />
     }
@@ -95,7 +95,7 @@ export const RBrokerToBind = (props: PropsWithChildren<any>) => {
     if (!address) return <BrokerConnect />
     if (brokerBoundLoaded && brokerInfoLoaded) {
       if (!isEmpty(brokerBound)) return <Redirect to="/broker" />
-      if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken}/broker/workbench`} />
+      if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
       return children
     }
     return <Loading show type="fixed" />
@@ -149,7 +149,7 @@ export const RBrokerWorkbench = (props: PropsWithChildren<any>) => {
     if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
       if (!isEmpty(brokerInfo)) {
-        return pathKey ? find ? children : <Redirect to={`/${marginToken}/${pathKey}`} /> : children
+        return pathKey ? find ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} /> : children
       }
       return <Redirect to="/broker" />
     }
@@ -169,7 +169,7 @@ export const RBrokerSignUpStep1 = (props: PropsWithChildren<any>) => {
   return useMemo(() => {
     if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
-      if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken}/broker/workbench`} />
+      if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
       return children
     }
     return <Loading show type="fixed" />
@@ -188,7 +188,7 @@ export const RBrokerSignUpStep2 = (props: PropsWithChildren<any>) => {
   return useMemo(() => {
     if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
-      if (brokerInfo?.is_enable) return <Redirect to={`/${marginToken}/broker/workbench`} />
+      if (brokerInfo?.is_enable) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
       return children
     }
     return <Loading show type="fixed" />

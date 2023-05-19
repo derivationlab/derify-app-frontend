@@ -1,21 +1,21 @@
-import PubSub from 'pubsub-js'
 import { isEmpty } from 'lodash'
+import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
+
+import React, { FC, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory, useLocation } from 'react-router-dom'
-import React, { FC, useState, useEffect } from 'react'
 
-import { PubSubEvents } from '@/typings'
-import { calcShortHash } from '@/utils/tools'
+import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
+import Button from '@/components/common/Button'
+import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
 import { useBrokerInfoStore } from '@/store'
-import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
+import { PubSubEvents } from '@/typings'
+import { calcShortHash } from '@/utils/tools'
 
-import Button from '@/components/common/Button'
-
-import MFormItem from './c/FormItem'
 import { patterns, rules } from '../config'
-import { API_PREFIX_URL } from '@/config'
+import MFormItem from './c/FormItem'
 
 const BrokerSignUpStep2Mobile: FC = () => {
   const history = useHistory()

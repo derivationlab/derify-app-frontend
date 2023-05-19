@@ -1,9 +1,10 @@
+import classNames from 'classnames'
+import { useAccount } from 'wagmi'
+
 import React, { FC, useState, useRef } from 'react'
-import { useClickAway } from 'react-use'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
-import { useAccount } from 'wagmi'
-import classNames from 'classnames'
+import { useClickAway } from 'react-use'
 
 import { WEBSITE_URL } from '@/config'
 import { Communitys } from '@/data/links'

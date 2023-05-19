@@ -1,19 +1,19 @@
-import Table from 'rc-table'
 import { isEmpty } from 'lodash'
-import { useTranslation } from 'react-i18next'
+import Table from 'rc-table'
+import { useAccount } from 'wagmi'
+
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { calcShortHash, keepDecimals } from '@/utils/tools'
-import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore } from '@/store'
 import { getTradersRankList } from '@/api'
-import { reducer, stateInit } from '@/reducers/records'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-import { useAccount } from 'wagmi'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { MobileContext } from '@/providers/Mobile'
+import { reducer, stateInit } from '@/reducers/records'
+import { useMarginTokenStore } from '@/store'
+import { calcShortHash, keepDecimals } from '@/utils/tools'
 
 interface RowTextProps {
   value: string | number
@@ -52,7 +52,7 @@ const Rank: FC = () => {
 
   const fetchData = useCallback(
     async (index = 0) => {
-      const { data } = await getTradersRankList(findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getTradersRankList(marginToken.address, index, 10)
 
       // console.info(data)
 
@@ -91,11 +91,11 @@ const Rank: FC = () => {
       width: mobile ? '' : 250,
       render: (_: string, data: Record<string, any>) => {
         const { total_margin_token_reward = 0, total_drf_reward = 0 } = data ?? {}
-        const margin = keepDecimals(total_margin_token_reward, findToken(marginToken).decimals)
+        const margin = keepDecimals(total_margin_token_reward, 2)
         const platform = keepDecimals(total_drf_reward, PLATFORM_TOKEN.decimals)
         return (
           <>
-            <BalanceShow value={margin} unit={marginToken} />
+            <BalanceShow value={margin} unit={marginToken.symbol} />
             <BalanceShow value={platform} unit={PLATFORM_TOKEN.symbol} />
           </>
         )

@@ -1,20 +1,21 @@
 import { isEmpty } from 'lodash'
 import { useSigner } from 'wagmi'
+
 import { useCallback } from 'react'
 
 import contracts from '@/config/contracts'
-import { estimateGas } from '@/utils/estimateGas'
-import { calcProfitOrLoss } from '@/hooks/helper'
-import { allowanceApprove } from '@/utils/allowanceApprove'
 import tokens, { findMarginToken, findToken } from '@/config/tokens'
-import { bnDiv, inputParameterConversion } from '@/utils/tools'
+import { calcProfitOrLoss } from '@/hooks/helper'
 import { PositionOrderTypes, PositionSideTypes, PositionTriggerTypes, TSigner } from '@/typings'
+import { allowanceApprove } from '@/utils/allowanceApprove'
 import {
   getDerifyRewardsContract,
   getDerifyExchangeContract,
   getDerifyProtocolContract,
   getDerifyDerivativeContract
 } from '@/utils/contractHelpers'
+import { estimateGas } from '@/utils/estimateGas'
+import { bnDiv, inputParameterConversion } from '@/utils/tools'
 
 export const useRedeemDrf = () => {
   const redeem = async (amount: string, signer?: TSigner): Promise<boolean> => {

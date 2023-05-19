@@ -1,25 +1,25 @@
-import React, { FC, useEffect } from 'react'
 import { useAccount } from 'wagmi'
+
+import React, { FC, useEffect } from 'react'
 import { useInterval } from 'react-use'
 
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useMarginTokenStore, usePoolsInfoStore, useTraderInfoStore } from '@/store'
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
-import PositionMining from './c/PositionMining'
+import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useMarginTokenStore, usePoolsInfoStore, useProtocolConfigStore, useTraderInfoStore } from '@/store'
+
 import CompetitionPool from './c/Competition'
-import MarginTokenPool from './c/MarginTokenPool'
 import DerifyTokenPool from './c/DerifyTokenPool'
+import MarginTokenPool from './c/MarginTokenPool'
+import PositionMining from './c/PositionMining'
 
 const Eran: FC = () => {
   const { address } = useAccount()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateRewardsInfo = useTraderInfoStore((state) => state.updateRewardsInfo)
   const updateStakingInfo = useTraderInfoStore((state) => state.updateStakingInfo)
   const updateDrfPoolBalance = usePoolsInfoStore((state) => state.updateDrfPoolBalance)
   const updateBondPoolBalance = usePoolsInfoStore((state) => state.updateBondPoolBalance)
-
-  const { protocolConfig } = useProtocolConf(marginToken)
 
   const _getTraderRewardDAT = async (trader: string, protocolConfig: string) => {
     const rewards = await getTraderRewardDAT(trader, protocolConfig)

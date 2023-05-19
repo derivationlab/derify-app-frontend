@@ -1,6 +1,7 @@
-import React, { FC } from 'react'
 import cls from 'classnames'
 import { isArray, times } from 'lodash'
+
+import React, { FC } from 'react'
 
 import { SkeletonRowsProps } from './interface'
 

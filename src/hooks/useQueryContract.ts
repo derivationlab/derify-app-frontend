@@ -1,6 +1,6 @@
-import { isEmpty } from 'lodash'
-import { Contract } from 'ethers'
 import { useQuery } from '@tanstack/react-query'
+import { Contract } from 'ethers'
+import { isEmpty } from 'lodash'
 
 import multicall, { Call } from '@/utils/multicall'
 

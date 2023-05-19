@@ -1,17 +1,17 @@
 import { isArray } from 'lodash'
-import { useTranslation } from 'react-i18next'
+
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { findToken } from '@/config/tokens'
-import { dayjsStartOf } from '@/utils/tools'
-import { useMarginTokenStore } from '@/store'
 import { getHistoryTradingDAT } from '@/api'
-import { useCurrentTradingAmount } from '@/hooks/useQueryApi'
-import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
-
 import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { findToken } from '@/config/tokens'
+import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
+import { useCurrentTradingAmount } from '@/hooks/useQueryApi'
+import { useMarginTokenStore } from '@/store'
+import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
 let output: Record<string, any> = {
@@ -30,14 +30,14 @@ const TradingVolume: FC = () => {
 
   const { data: tradingVolume, refetch } = useCurrentTradingAmount(
     SelectSymbolTokens[pairSelectVal],
-    findToken(marginToken).tokenAddress
+    marginToken.address
   )
 
   const historyDAT = useCallback(async () => {
     const { data: trading } = await getHistoryTradingDAT(
       SelectSymbolTokens[pairSelectVal],
       SelectTimesValues[timeSelectVal],
-      findToken(marginToken).tokenAddress
+      marginToken.address
     )
 
     if (isArray(trading)) {
@@ -65,7 +65,7 @@ const TradingVolume: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.TradingVolume', 'Trading Volume')} :
-          <BalanceShow value={tradingVolume?.[0]?.trading_amount ?? 0} unit={marginToken} />
+          <BalanceShow value={tradingVolume?.[0]?.trading_amount ?? 0} unit={marginToken.symbol} />
         </h3>
         <aside>
           <Select

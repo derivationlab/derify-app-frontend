@@ -1,14 +1,15 @@
-import { useTranslation } from 'react-i18next'
 import React, { FC, useContext, useMemo } from 'react'
-import { MobileContext } from '@/providers/Mobile'
-import { isLTET, keepDecimals } from '@/utils/tools'
-import { useDerivativeListStore } from '@/store/useDerivativeList'
+import { useTranslation } from 'react-i18next'
+
+import QuestionPopover from '@/components/common/QuestionPopover'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useCurrentOpenInterest } from '@/hooks/useCurrentOpenInterest'
 import { usePositionChangeFeeRatios } from '@/hooks/usePositionChangeFeeRatios'
-import { MarginTokenState, QuoteTokenState } from '@/store/types'
+import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useQuoteTokenStore, useMarginIndicatorsStore } from '@/store'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import QuestionPopover from '@/components/common/QuestionPopover'
+import { MarginTokenState, QuoteTokenState } from '@/store/types'
+import { useDerivativeListStore } from '@/store/useDerivativeList'
+import { isLTET, keepDecimals } from '@/utils/tools'
 
 const HeaderData: FC = () => {
   const { t } = useTranslation()

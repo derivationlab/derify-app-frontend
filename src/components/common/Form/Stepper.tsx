@@ -1,5 +1,7 @@
-import React, { FC, useState, useEffect, useImperativeHandle, ChangeEvent } from 'react'
 import classNames from 'classnames'
+
+import React, { FC, useState, useEffect, useImperativeHandle, ChangeEvent } from 'react'
+
 interface Props {
   value?: number
   min?: number

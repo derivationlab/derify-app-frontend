@@ -1,6 +1,6 @@
-import warning from 'tiny-warning'
-import invariant from 'tiny-invariant'
 import { getAddress } from '@ethersproject/address'
+import invariant from 'tiny-invariant'
+import warning from 'tiny-warning'
 
 import { ChainId, ChainIdRec } from '@/typings'
 

@@ -1,9 +1,10 @@
-import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo } from 'react'
-import { isLTET, keepDecimals } from '@/utils/tools'
-import { useMarginIndicatorsStore, useQuoteTokenStore } from '@/store'
-import ConnectButton from '@/components/common/Wallet/ConnectButton'
+import { useTranslation } from 'react-i18next'
+
 import Button from '@/components/common/Button'
+import ConnectButton from '@/components/common/Wallet/ConnectButton'
+import { useMarginIndicatorsStore, useQuoteTokenStore } from '@/store'
+import { isLTET, keepDecimals } from '@/utils/tools'
 
 interface Props {
   address?: string

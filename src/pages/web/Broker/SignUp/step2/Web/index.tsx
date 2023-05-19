@@ -1,21 +1,26 @@
-import PubSub from 'pubsub-js'
 import { isEmpty } from 'lodash'
+import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { useHistory, useLocation } from 'react-router-dom'
-import React, { FC, useContext, useEffect } from 'react'
 
-import { ThemeContext } from '@/providers/Theme'
-import { PubSubEvents } from '@/typings'
+import React, { FC, useContext, useEffect } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useHistory, useLocation } from 'react-router-dom'
+
+import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
+import Button from '@/components/common/Button'
+import Form from '@/components/common/Form/Form'
+import FormInput from '@/components/common/Form/FormInput'
+import FormItem from '@/components/common/Form/FormItem'
+import FormSelect from '@/components/common/Form/FormSelect'
+import FormUploadImage from '@/components/common/Form/FormUploadImage'
 import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
+import { ThemeContext } from '@/providers/Theme'
 import { useBrokerInfoStore } from '@/store'
-import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
-import { defaultValues, FormInputProps, patterns, rules } from '../config'
+import { PubSubEvents } from '@/typings'
 
-import Button from '@/components/common/Button'
-import { Form, FormInput, FormItem, FormSelect, FormUploadImage } from '@/components/common/Form'
+import { defaultValues, FormInputProps, patterns, rules } from '../config'
 
 export const AccountTip: FC = () => {
   const { t } = useTranslation()

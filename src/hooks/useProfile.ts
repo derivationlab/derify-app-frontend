@@ -1,16 +1,15 @@
-import { isEmpty } from 'lodash'
 import { useQuery } from '@tanstack/react-query'
+import { isEmpty } from 'lodash'
 
-import multicall from '@/utils/multicall'
-import contracts from '@/config/contracts'
-import { formatUnits, isLT } from '@/utils/tools'
-import { getDerifyExchangeContract } from '@/utils/contractHelpers'
-import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
-import { MarginToken, MarginTokenKeys, MarginTokenWithContract } from '@/typings'
-
-import derifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import derifyRewardsAbi from '@/config/abi/DerifyRewards.json'
+import contracts from '@/config/contracts'
+import { DEFAULT_MARGIN_TOKEN, MARGIN_TOKENS } from '@/config/tokens'
 import { marginTokenList } from '@/store'
+import { MarginToken, MarginTokenKeys, MarginTokenWithContract } from '@/typings'
+import { getDerifyExchangeContract } from '@/utils/contractHelpers'
+import multicall from '@/utils/multicall'
+import { formatUnits, isLT } from '@/utils/tools'
 
 const initial1 = (): MarginToken => {
   let value = Object.create(null)
@@ -160,7 +159,7 @@ export const useAllBrokerRewards = (trader?: string, config?: MarginTokenWithCon
   return { data, refetch, isLoading }
 }
 
-export const useAllMarginBalances = (trader?: string, list?: typeof marginTokenList[]) => {
+export const useAllMarginBalances = (trader?: string, list?: (typeof marginTokenList)[]) => {
   let output = initial1()
   const { data, refetch, isLoading } = useQuery(
     ['useAllMarginBalances'],

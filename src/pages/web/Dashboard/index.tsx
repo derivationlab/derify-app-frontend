@@ -1,14 +1,14 @@
-import React, { FC } from 'react'
 import { useAccount } from 'wagmi'
+
+import React, { FC } from 'react'
+
 import { Redirect, Switch, Route } from '@/components/common/Route'
-
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
+import { useMarginTokenStore } from '@/store'
 
-import Overview from './Overview'
 import BuybackPlan from './BuybackPlan'
 import GrantList from './GrantList'
-
-import { useMarginTokenStore } from '@/store'
+import Overview from './Overview'
 
 const Dashboard: FC = () => {
   const { address } = useAccount()
@@ -17,8 +17,8 @@ const Dashboard: FC = () => {
 
   return (
     <Switch>
-      <Route path="/dashboard" exact render={() => <Redirect to={`/${marginToken}/dashboard/overview`} />} />
-      <Route path={`/${marginToken}/dashboard/overview`} component={Overview} />
+      <Route path="/dashboard" exact render={() => <Redirect to={`/${marginToken.symbol}/dashboard/overview`} />} />
+      <Route path={`/${marginToken.symbol}/dashboard/overview`} component={Overview} />
       <Route path="/dashboard/buyback" component={BuybackPlan} />
       <Route path="/dashboard/grant" component={!address ? GrantList : BrokerConnect} />
     </Switch>

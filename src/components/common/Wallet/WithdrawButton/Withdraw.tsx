@@ -1,15 +1,16 @@
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
-import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
-import { reducer, stateInit } from '@/reducers/withdraw'
+import React, { FC, useEffect, useMemo, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { getTraderWithdrawAmount } from '@/api'
+import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
+import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { reducer, stateInit } from '@/reducers/withdraw'
 import { useMarginTokenStore, useTraderInfoStore, useTraderVariablesStore } from '@/store'
 import { bnDiv, bnMinus, bnMul, isET, isGT, isGTET, keepDecimals } from '@/utils/tools'
 
-import Dialog from '@/components/common/Dialog'
-import Button from '@/components/common/Button'
-import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import AmountInput from '../AmountInput'
 
 interface Props {

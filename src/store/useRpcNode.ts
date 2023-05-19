@@ -1,10 +1,10 @@
+import { last, sortBy } from 'lodash'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { last, sortBy } from 'lodash'
 
 import { checkRpcHealthStatus } from '@/api'
-import { RpcNodeState, WalletState } from '@/store/types'
 import { CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
+import { RpcNodeState, WalletState } from '@/store/types'
 
 const loadJsonFile = (key: string, path = '/abi'): Promise<Record<string, any>> => {
   return new Promise((resolve, reject) => {

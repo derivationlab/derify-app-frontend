@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
+import Dialog from '@/components/common/Dialog'
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
 

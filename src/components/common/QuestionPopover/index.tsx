@@ -1,9 +1,10 @@
-import React, { FC, useState, useRef, useMemo } from 'react'
-import { useClickAway, useHover } from 'react-use'
 import classNames from 'classnames'
 
-import { getMaxZIndex } from '@/utils/tools'
+import React, { FC, useState, useRef, useMemo } from 'react'
+import { useClickAway, useHover } from 'react-use'
+
 import Image from '@/components/common/Image'
+import { getMaxZIndex } from '@/utils/tools'
 
 interface Props {
   text: string

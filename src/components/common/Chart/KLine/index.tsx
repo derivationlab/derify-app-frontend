@@ -1,5 +1,6 @@
-import React, { FC, useState, useEffect, useRef, useImperativeHandle, useContext } from 'react'
 import { init, Chart } from 'klinecharts'
+
+import React, { FC, useState, useEffect, useRef, useImperativeHandle, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
 

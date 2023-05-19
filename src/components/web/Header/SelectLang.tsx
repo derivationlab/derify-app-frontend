@@ -1,11 +1,12 @@
-import React, { FC, useState, useRef } from 'react'
-import { useClickAway } from 'react-use'
-import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 
-import Cache from '@/utils/cache'
+import React, { FC, useState, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useClickAway } from 'react-use'
+
 import { LANG_CACHE_KEY } from '@/config'
 import { languages } from '@/lang'
+import Cache from '@/utils/cache'
 
 const SelectLang: FC = () => {
   const { t } = useTranslation()

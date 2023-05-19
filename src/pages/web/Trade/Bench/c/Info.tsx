@@ -9,11 +9,11 @@ const BenchInfo: FC = () => {
   return (
     <div className="web-trade-bench-info">
       <MarginToken />
-      {/*<AccountInfo size="mini" />*/}
-      {/*<section>*/}
-      {/*  <DepositButton size="mini" />*/}
-      {/*  <WithdrawButton size="mini" />*/}
-      {/*</section>*/}
+      <AccountInfo size="mini" />
+      <section>
+        <DepositButton size="mini" />
+        <WithdrawButton size="mini" />
+      </section>
     </div>
   )
 }

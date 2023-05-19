@@ -3,13 +3,12 @@ import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
 import contracts from '@/config/contracts'
-import { OpeningType } from '@/store'
 import { estimateGas } from '@/utils/estimateGas'
 import { calcProfitOrLoss } from '@/hooks/helper'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import tokens, { findMarginToken, findToken } from '@/config/tokens'
 import { bnDiv, inputParameterConversion } from '@/utils/tools'
-import { PositionSideTypes, PositionTriggerTypes, TSigner } from '@/typings'
+import { PositionOrderTypes, PositionSideTypes, PositionTriggerTypes, TSigner } from '@/typings'
 import {
   getDerifyRewardsContract,
   getDerifyExchangeContract,
@@ -230,7 +229,7 @@ export const useMarginOperation = () => {
     const _amount2 = inputParameterConversion(amount, 18)
 
     try {
-      const approve = await allowanceApprove(signer, exchange, findToken(marginToken).tokenAddress, _amount2)
+      const approve = await allowanceApprove(signer, exchange, marginToken, _amount2)
 
       if (!approve) return false
 
@@ -273,7 +272,7 @@ export const usePositionOperation = () => {
     brokerId: string,
     quoteToken: string,
     positionSide: PositionSideTypes,
-    openingType: OpeningType,
+    openingType: PositionOrderTypes,
     pricingType: string,
     openingPrice: string,
     posLeverage: number,
@@ -286,7 +285,7 @@ export const usePositionOperation = () => {
 
     const _posLeverage = inputParameterConversion(posLeverage, 8)
     const _pricingType = findMarginToken(pricingType) ? 1 : 0
-    const _openingType = conversion ? OpeningType.Market : openingType
+    const _openingType = conversion ? PositionOrderTypes.Market : openingType
     const _openingSize = inputParameterConversion(openingSize, 8)
     const _openingPrice = inputParameterConversion(openingPrice, 8)
 

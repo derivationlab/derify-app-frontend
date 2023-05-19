@@ -191,90 +191,90 @@ const Bench: FC = () => {
     <>
       <div className="web-trade-bench">
         <Info />
-        {/*<div className="web-trade-bench-pane">*/}
-        {/*  <Row>*/}
-        {/*    <Col label={t('Trade.Bench.PriceType', 'Price Type')}>*/}
-        {/*      <OpenTypeSelect value={openingType} onChange={updateOpeningType} />*/}
-        {/*    </Col>*/}
-        {/*    <Col label={t('Trade.Bench.Leverage', 'Leverage')}>*/}
-        {/*      <LeverageSelect className="web-trade-bench-leverage" value={leverageNow} onChange={updateLeverageNow} />*/}
-        {/*    </Col>*/}
-        {/*  </Row>*/}
-        {/*  <Row>*/}
-        {/*    <Col label={t('Trade.Bench.Price', 'Price')}>*/}
-        {/*      <PriceInput*/}
-        {/*        value={openingPrice}*/}
-        {/*        onChange={(v) => updateOpeningPrice(v as any)}*/}
-        {/*        disabled={openingType === PositionOrderTypes.Market}*/}
-        {/*      />*/}
-        {/*    </Col>*/}
-        {/*  </Row>*/}
-        {/*  <QuantityInput*/}
-        {/*    type={marginToken.symbol}*/}
-        {/*    value={state.openingAmount}*/}
-        {/*    onChange={(val) => dispatch({ type: 'SET_OPENING_AMOUNT', payload: val })}*/}
-        {/*  />*/}
-        {/*  <Row>*/}
-        {/*    <Col>*/}
-        {/*      <Button*/}
-        {/*        loading={!disposableAmountLoaded}*/}
-        {/*        noDisabledStyle*/}
-        {/*        className="web-trade-bench-button-short"*/}
-        {/*        onClick={() => openPositionDialog(PositionSideTypes.long)}*/}
-        {/*        type="buy"*/}
-        {/*      >*/}
-        {/*        <strong>{t('Trade.Bench.Long', 'Long')}</strong>*/}
-        {/*        <em>*/}
-        {/*          {keepDecimals(memoLongPosApy, 2)}%<u>APR</u>*/}
-        {/*        </em>*/}
-        {/*      </Button>*/}
-        {/*    </Col>*/}
-        {/*    <Col>*/}
-        {/*      <Button*/}
-        {/*        loading={!disposableAmountLoaded}*/}
-        {/*        disabled={memoDisabled1 || memoDisabled2}*/}
-        {/*        noDisabledStyle*/}
-        {/*        className="web-trade-bench-button-short"*/}
-        {/*        onClick={() => openPositionDialog(PositionSideTypes.short)}*/}
-        {/*        type="sell"*/}
-        {/*      >*/}
-        {/*        <strong>{t('Trade.Bench.Short', 'Short')}</strong>*/}
-        {/*        <em>*/}
-        {/*          {keepDecimals(memoShortPosApy, 2)}%<u>APR</u>*/}
-        {/*        </em>*/}
-        {/*      </Button>*/}
-        {/*    </Col>*/}
-        {/*  </Row>*/}
-        {/*  {openingType === PositionOrderTypes.Market && (*/}
-        {/*    <Row>*/}
-        {/*      <Col>*/}
-        {/*        <Button*/}
-        {/*          loading={!disposableAmountLoaded}*/}
-        {/*          disabled={memoDisabled1 || memoDisabled2}*/}
-        {/*          noDisabledStyle*/}
-        {/*          className="web-trade-bench-button-full"*/}
-        {/*          onClick={() => openPositionDialog(PositionSideTypes.twoWay)}*/}
-        {/*          outline*/}
-        {/*          full*/}
-        {/*          type="blue"*/}
-        {/*        >*/}
-        {/*          <strong>{t('Trade.Bench.TowWay', '2-Way')}</strong>*/}
-        {/*          <em>*/}
-        {/*            {keepDecimals(memo2WayPosApy, 2)}%<u>APR</u>*/}
-        {/*          </em>*/}
-        {/*        </Button>*/}
-        {/*      </Col>*/}
-        {/*    </Row>*/}
-        {/*  )}*/}
-        {/*</div>*/}
+        <div className="web-trade-bench-pane">
+          <Row>
+            <Col label={t('Trade.Bench.PriceType', 'Price Type')}>
+              <OpenTypeSelect value={openingType} onChange={updateOpeningType} />
+            </Col>
+            <Col label={t('Trade.Bench.Leverage', 'Leverage')}>
+              <LeverageSelect className="web-trade-bench-leverage" value={leverageNow} onChange={updateLeverageNow} />
+            </Col>
+          </Row>
+          <Row>
+            <Col label={t('Trade.Bench.Price', 'Price')}>
+              <PriceInput
+                value={openingPrice}
+                onChange={(v) => updateOpeningPrice(v as any)}
+                disabled={openingType === PositionOrderTypes.Market}
+              />
+            </Col>
+          </Row>
+          <QuantityInput
+            type={marginToken.symbol}
+            value={state.openingAmount}
+            onChange={(val) => dispatch({ type: 'SET_OPENING_AMOUNT', payload: val })}
+          />
+          <Row>
+            <Col>
+              <Button
+                loading={!disposableAmountLoaded}
+                noDisabledStyle
+                className="web-trade-bench-button-short"
+                onClick={() => openPositionDialog(PositionSideTypes.long)}
+                type="buy"
+              >
+                <strong>{t('Trade.Bench.Long', 'Long')}</strong>
+                <em>
+                  {keepDecimals(memoLongPosApy, 2)}%<u>APR</u>
+                </em>
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                loading={!disposableAmountLoaded}
+                disabled={memoDisabled1 || memoDisabled2}
+                noDisabledStyle
+                className="web-trade-bench-button-short"
+                onClick={() => openPositionDialog(PositionSideTypes.short)}
+                type="sell"
+              >
+                <strong>{t('Trade.Bench.Short', 'Short')}</strong>
+                <em>
+                  {keepDecimals(memoShortPosApy, 2)}%<u>APR</u>
+                </em>
+              </Button>
+            </Col>
+          </Row>
+          {openingType === PositionOrderTypes.Market && (
+            <Row>
+              <Col>
+                <Button
+                  loading={!disposableAmountLoaded}
+                  disabled={memoDisabled1 || memoDisabled2}
+                  noDisabledStyle
+                  className="web-trade-bench-button-full"
+                  onClick={() => openPositionDialog(PositionSideTypes.twoWay)}
+                  outline
+                  full
+                  type="blue"
+                >
+                  <strong>{t('Trade.Bench.TowWay', '2-Way')}</strong>
+                  <em>
+                    {keepDecimals(memo2WayPosApy, 2)}%<u>APR</u>
+                  </em>
+                </Button>
+              </Col>
+            </Row>
+          )}
+        </div>
         <NotConnect />
       </div>
-      {/*<PositionOpenDialog*/}
-      {/*  data={state.openingParams}*/}
-      {/*  visible={state.modalStatus}*/}
-      {/*  onClose={() => dispatch({ type: 'SET_MODAL_STATUS', payload: false })}*/}
-      {/*  onClick={openPositionFunc}*/}
-      {/*/>*/}
+      <PositionOpenDialog
+        data={state.openingParams}
+        visible={state.modalStatus}
+        onClose={() => dispatch({ type: 'SET_MODAL_STATUS', payload: false })}
+        onClick={openPositionFunc}
+      />
     </>
   )
 }

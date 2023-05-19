@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback, useMemo } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useMarginTokenStore } from '@/store'
-import { useProtocolConf } from '@/hooks/useMatchConf'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { useMarginOperation } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
@@ -19,23 +18,18 @@ interface Props {
 const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
+  const { deposit } = useMarginOperation()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
-
-  const { deposit } = useMarginOperation()
-  const { protocolConfig } = useProtocolConf(marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
   const isDisabled = useMemo(() => {
-    if (marginTokenListLoaded) {
-      const find = marginTokenList.find((margin) => margin.symbol === marginToken)
-      return !find
-    }
+    if (marginTokenList.length) return !(marginTokenList.find((margin) => margin.symbol === marginToken.symbol)?.open)
     return true
-  }, [marginToken, marginTokenListLoaded])
+  }, [marginToken, marginTokenList])
 
   // deposit
   const onConfirmDepositEv = useCallback(
@@ -44,8 +38,8 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (protocolConfig) {
-        const status = await deposit(protocolConfig.exchange, amount, marginToken, signer)
+      if (protocolConfig && signer) {
+        const status = await deposit(protocolConfig.exchange, amount, marginToken.address, signer)
 
         if (status) {
           // succeed
@@ -67,7 +61,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
   return (
     <>
-      <Button size={size} onClick={() => setDialogStatus('deposit')} disabled={isDisabled}>
+      <Button size={size} onClick={() => setDialogStatus('deposit')} disabled={isDisabled || !protocolConfig}>
         {t('Nav.Account.Deposit', 'Deposit')}
       </Button>
       <DepositDialog

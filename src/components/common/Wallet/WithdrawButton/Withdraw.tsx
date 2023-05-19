@@ -2,10 +2,9 @@ import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
-import { findToken } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/withdraw'
 import { getTraderWithdrawAmount } from '@/api'
-import { useMarginTokenStore, useTraderInfoStore } from '@/store'
+import { useMarginTokenStore, useTraderInfoStore, useTraderVariablesStore } from '@/store'
 import { bnDiv, bnMinus, bnMul, isET, isGT, isGTET, keepDecimals } from '@/utils/tools'
 
 import Dialog from '@/components/common/Dialog'
@@ -25,7 +24,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
 
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const variables = useTraderInfoStore((state) => state.variables)
+  const variables = useTraderVariablesStore((state) => state.variables)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const variablesLoaded = useTraderInfoStore((state) => state.variablesLoaded)
 
@@ -37,7 +36,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
       return [keepDecimals(p1, 2), keepDecimals(p2, 2)]
     }
     return [0, 0]
-  }, [marginToken, variablesLoaded])
+  }, [variablesLoaded])
 
   const memoDisabled = useMemo(() => {
     if (variablesLoaded) {
@@ -82,7 +81,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
               </dd>
             </dl>
             <address>
-              {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{memoMargin[0]}</em> {marginToken}{' '}
+              {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{memoMargin[0]}</em> {marginToken.symbol}{' '}
               <em>( {memoMargin[1]}%)</em>
             </address>
           </div>
@@ -98,10 +97,10 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 className="tips"
                 dangerouslySetInnerHTML={{
                   __html: t('Trade.Withdraw.WithdrawTip', '', {
-                    MarginToken: marginToken,
+                    MarginToken: marginToken.symbol,
                     MarginAmount: keepDecimals(state.necessary?.marginTokenAmount, 2),
                     bMarginAmount: keepDecimals(state.necessary?.bMarginTokenAmount, 2),
-                    bMarginToken: `b${marginToken}`
+                    bMarginToken: `b${marginToken.symbol}`
                   })
                 }}
               />

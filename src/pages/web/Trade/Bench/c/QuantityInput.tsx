@@ -40,13 +40,13 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
     return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
   }, [quoteToken, tokenSpotPrices])
 
-  const visibleMaxVol = useMemo(() => {
+  const maximum = useMemo(() => {
     return nonBigNumberInterception(disposableAmount?.[type] ?? 0, 2)
   }, [disposableAmount, type])
 
   useEffect(() => {
-    if (value > visibleMaxVol) onChange(visibleMaxVol)
-  }, [value, visibleMaxVol])
+    if (value > maximum) onChange(maximum)
+  }, [value, maximum])
 
   const _getDisposableAmount = (
     account: string,
@@ -96,8 +96,8 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
         <header className="web-trade-bench-pane-volume-header">{t('Trade.Bench.Volume', 'Volume')}</header>
         <div className="web-trade-bench-pane-volume-max">
           <span>Max: </span>
-          <em>{keepDecimals(disposableAmount?.[type] ?? 0, 2)} </em>
-          <u>{type}</u>
+          <em>{keepDecimals(disposableAmount?.[type] ?? 0, 2)}</em>
+          <u>{' '}{type}</u>
         </div>
       </Row>
       <Row mb="16">
@@ -109,12 +109,12 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
         />
         <div className="web-trade-bench-pane-volume-type">
           <div className="web-select-show-button">
-            <label>{marginToken}</label>
+            <label>{marginToken.symbol}</label>
           </div>
         </div>
       </Row>
       <Row mb="36">
-        <PercentButton currValue={value} value={visibleMaxVol} onChange={(val) => onChange(val)} />
+        <PercentButton currValue={value} value={maximum} onChange={(val) => onChange(val)} />
       </Row>
     </>
   )

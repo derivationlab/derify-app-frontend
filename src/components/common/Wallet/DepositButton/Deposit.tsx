@@ -26,7 +26,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const onChange = (v: string) => {
-    if (isGTET(balances[marginToken.symbol], v) && isGT(v, 0)) {
+    if (isGTET(balances?.[marginToken.symbol]?? 0, v) && isGT(v, 0)) {
       dispatch({ type: 'SET_MARGIN_DAT', payload: { disabled: false, amount: v } })
     } else {
       dispatch({ type: 'SET_MARGIN_DAT', payload: { disabled: true, amount: '0' } })
@@ -46,14 +46,14 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Trade.Deposit.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balances[marginToken.symbol]} unit={marginToken.symbol} />
+                <BalanceShow value={balances?.[marginToken.symbol] ?? 0} unit={marginToken.symbol} />
               </dd>
             </dl>
             <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={nonBigNumberInterception(balances[marginToken.symbol], 8)}
+              max={nonBigNumberInterception(balances?.[marginToken.symbol] ?? 0, 8)}
               unit={marginToken.symbol}
               title={t('Trade.Deposit.AmountToDeposit', 'Amount to deposit')}
               onChange={onChange}
@@ -62,7 +62,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
         </div>
         <Button
           onClick={() => onClick(state.marginDAT.amount)}
-          disabled={!isGT(balances[marginToken.symbol], 0) || state.marginDAT.disabled}
+          disabled={!isGT(balances?.[marginToken.symbol] ?? 0, 0) || state.marginDAT.disabled}
         >
           {t('Trade.Deposit.Confirm', 'Confirm')}
         </Button>

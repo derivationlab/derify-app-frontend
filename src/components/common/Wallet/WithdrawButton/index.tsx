@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useCallback } from 'react'
 
 import { PubSubEvents } from '@/typings'
-import { useMarginTokenStore } from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMarginOperation } from '@/hooks/useTrading'
 
@@ -18,11 +18,9 @@ interface Props {
 const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
-
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
-
   const { withdraw } = useMarginOperation()
-  const { protocolConfig } = useProtocolConf(marginToken)
+
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -33,7 +31,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
 
       setDialogStatus('')
 
-      if (protocolConfig) {
+      if (protocolConfig && signer) {
         const status = await withdraw(protocolConfig.exchange, amount, signer)
         if (status) {
           // succeed
@@ -54,7 +52,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
   )
   return (
     <>
-      <Button size={size} outline onClick={() => setDialogStatus('withdraw')}>
+      <Button size={size} outline onClick={() => setDialogStatus('withdraw')} disabled={!protocolConfig}>
         {t('Nav.Account.Withdraw', 'Withdraw')}
       </Button>
       <WithdrawDialog

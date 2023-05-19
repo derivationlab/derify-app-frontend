@@ -190,6 +190,13 @@ export interface MarginPriceState {
   getMarginPrice: (address: string) => Promise<void>
 }
 
+export interface TraderVariablesState {
+  variables: InitialTraderVariablesType
+  variablesLoaded: boolean
+  getTraderVariables: (address: string, exchange: string) => Promise<void>
+  reset: () => void
+}
+
 export interface OpeningMaxLimitState {
   openingMaxLimit: Rec | null
   openingMaxLimitLoaded: boolean

@@ -2,12 +2,11 @@ import dayjs from 'dayjs'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
-
 import { MobileContext } from '@/providers/Mobile'
 import { PositionSideTypes } from '@/typings'
-import { keepDecimals, safeInterceptionValues } from '@/utils/tools'
-import { findMarginToken, findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { useDerivativeListStore, useMarginTokenListStore } from '@/store'
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
 import ItemHeader from '../c/ItemHeader'
@@ -20,12 +19,17 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+
   const memoQuoteToken = useMemo(() => {
-    return findToken(data?.token)?.symbol
+    if (derivativeList.length) return derivativeList.find((d) => d.token === data?.token)?.name ?? ''
+    return ''
   }, [data?.token])
 
   const memoMarginToken = useMemo(() => {
-    return findMarginToken(data?.margin_token)?.symbol
+    if (marginTokenList.length) return marginTokenList.find((d) => d.margin_token === data?.margin_token)?.symbol ?? ''
+    return ''
   }, [data?.margin_token])
 
   const memoTimestamp = useMemo(() => {
@@ -34,14 +38,14 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
 
   const memoTradingFee = useMemo(() => {
     if (data?.trading_fee) {
-      return (safeInterceptionValues(data?.trading_fee) as any) * -1
+      return (nonBigNumberInterception(data?.trading_fee) as any) * -1
     }
     return '--'
   }, [data?.trading_fee])
 
   const memoChangeFee = useMemo(() => {
     if (data?.position_change_fee) {
-      return (safeInterceptionValues(data?.position_change_fee) as any) * -1
+      return (nonBigNumberInterception(data?.position_change_fee) as any) * -1
     }
     return '--'
   }, [data?.position_change_fee])
@@ -91,7 +95,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         footer={memoMarginToken}
       >
         <span className={classNames({ up: data?.pnl_margin_token > 0, down: data?.pnl_margin_token < 0 })}>
-          {data?.pnl_margin_token ? safeInterceptionValues(data?.pnl_margin_token) : '--'}
+          {data?.pnl_margin_token ? nonBigNumberInterception(data?.pnl_margin_token) : '--'}
         </span>
       </DataAtom>
     ),
@@ -126,9 +130,9 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
       <DataAtom
         label={t('Trade.TradeHistory.VolumeBase', 'Volume (Base)')}
         tip={t('Trade.TradeHistory.VolumeBaseTip')}
-        footer={findToken(data?.token).symbol}
+        footer={memoQuoteToken.replace(VALUATION_TOKEN_SYMBOL, '')}
       >
-        {keepDecimals(data?.size, findToken(data?.token).decimals)}
+        {keepDecimals(data?.size, 2)}
       </DataAtom>
     ),
     [data?.size, data?.token, t]
@@ -140,7 +144,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         tip={t('Trade.TradeHistory.VolumeQuotedTip')}
         footer={memoMarginToken}
       >
-        {safeInterceptionValues(data?.amount)}
+        {nonBigNumberInterception(data?.amount)}
       </DataAtom>
     ),
     [data?.amount, memoMarginToken, t]
@@ -148,7 +152,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const atom7Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.TradeHistory.Price', 'Price')} footer={VALUATION_TOKEN_SYMBOL}>
-        {safeInterceptionValues(data?.price)}
+        {nonBigNumberInterception(data?.price)}
       </DataAtom>
     ),
     [data?.price, t]
@@ -164,10 +168,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
 
   return (
     <div className="web-trade-data-item">
-      <ItemHeader
-        symbol={`${memoQuoteToken}${VALUATION_TOKEN_SYMBOL}`}
-        direction={PositionSideTypes[data?.side] as any}
-      />
+      <ItemHeader symbol={memoQuoteToken} direction={PositionSideTypes[data?.side] as any} />
       {mobile ? (
         <>
           <AtomWrap>

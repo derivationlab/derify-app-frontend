@@ -1,9 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useEffect } from 'react'
+import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
-import { useIndicatorsConf } from '@/hooks/useMatchConf'
-import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useOpeningStore, useMarginTokenStore, usePairsInfoStore } from '@/store'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import {
+  usePositionOperationStore,
+  useMarginTokenStore,
+  useTokenSpotPricesStore,
+  useMarginIndicatorsStore
+} from '@/store'
 import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
@@ -22,24 +27,25 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
-  const closingAmount = useOpeningStore((state) => state.closingAmount)
-  const updateClosingType = useOpeningStore((state) => state.updateClosingType)
-  const updateClosingAmount = useOpeningStore((state) => state.updateClosingAmount)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const closingAmount = usePositionOperationStore((state) => state.closingAmount)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+  const updateClosingType = usePositionOperationStore((state) => state.updateClosingType)
+  const updateClosingAmount = usePositionOperationStore((state) => state.updateClosingAmount)
 
-  const { indicators } = useIndicatorsConf(data?.quoteToken)
+  const spotPrice = useMemo(() => {
+    return tokenSpotPrices?.[data?.derivative] ?? '0'
+  }, [data, tokenSpotPrices])
 
   const memoVolume = useMemo(() => {
-    return nonBigNumberInterception(
-      bnMul(spotPrices[marginToken][data?.quoteToken], data?.size),
-      findToken(marginToken).decimals
-    )
-  }, [data, spotPrices, marginToken])
+    return nonBigNumberInterception(bnMul(spotPrice, data?.size), 2)
+  }, [data, spotPrice])
 
   const memoChangeRate = useMemo(() => {
-    return bnMul(indicators?.price_change_rate ?? 0, 100)
-  }, [indicators])
+    const base = marginIndicators?.[data?.contract]?.price_change_rate ?? 0
+    return bnMul(base, 100)
+  }, [marginIndicators])
 
   useEffect(() => {
     if (!visible) updateClosingAmount('0')
@@ -48,7 +54,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible, memoVolume])
 
   useEffect(() => {
-    updateClosingType(marginToken)
+    updateClosingType(marginToken.symbol)
   }, [marginToken])
 
   return (
@@ -64,12 +70,12 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
             <div className="web-trade-dialog-position-info">
               <header className="web-trade-dialog-position-info-header">
                 <h4>
-                  <strong>{`${data?.quoteToken}${VALUATION_TOKEN_SYMBOL}`}</strong>
+                  <strong>{data?.derivative}</strong>
                   <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
                 </h4>
               </header>
               <section className="web-trade-dialog-position-info-data">
-                <BalanceShow value={spotPrices[marginToken][data?.quoteToken]} unit="" />
+                <BalanceShow value={spotPrice} unit="" />
                 <span className={isGTET(memoChangeRate, 0) ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
               </section>
               <section className="web-trade-dialog-position-info-count">
@@ -79,8 +85,8 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 </p>
                 <p>
                   {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} :{' '}
-                  <em>{keepDecimals(data?.size ?? 0, findToken(data?.quoteToken).decimals)}</em> {data?.quoteToken} /{' '}
-                  <em>{keepDecimals(memoVolume, findToken(marginToken).decimals)}</em> {marginToken}
+                  <em>{keepDecimals(data?.size ?? 0, 2)}</em> {data?.derivative?.replace(VALUATION_TOKEN_SYMBOL, '')} /{' '}
+                  <em>{keepDecimals(memoVolume, 2)}</em> {marginToken.symbol}
                 </p>
               </section>
             </div>
@@ -89,8 +95,8 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
               maxSwap={memoVolume}
               maxSize={data?.size}
               quoteToken={data?.quoteToken}
-              marginToken={marginToken}
-              onSymbol={updateClosingType}
+              marginToken={marginToken.symbol}
+              onSymbol={() => null}
               onChange={(v) => updateClosingAmount(v as any)}
             />
           </div>

@@ -22,8 +22,8 @@ const useConfigInfoStore = create<ConfigInfoState>((set) => ({
   openingMaxLimitLoaded: false,
   updateFactoryConfig: (data: MarginTokenWithQuote) =>
     set(() => {
-      console.info('updateFactoryConfig:')
-      console.info(data)
+      // console.info('updateFactoryConfig:')
+      // console.info(data)
       return { factoryConfig: data, factoryConfigLoaded: true }
     }),
   updateProtocolConfig: (data: MarginTokenWithContract) =>
@@ -60,38 +60,4 @@ const useConfigInfoStore = create<ConfigInfoState>((set) => ({
     })
 }))
 
-const useQuoteTokenStore = create(
-  persist<QuoteTokenState>(
-    (set) => ({
-      quoteToken: QUOTE_TOKENS[0].symbol as QuoteTokenKeys,
-      updateQuoteToken: (data: QuoteTokenKeys) =>
-        set(() => {
-          // console.info('updateQuoteToken:')
-          // console.info(data)
-          return { quoteToken: data }
-        })
-    }),
-    {
-      name: 'quoteToken'
-    }
-  )
-)
-
-const useMarginTokenStore = create(
-  persist<MarginTokenState>(
-    (set) => ({
-      marginToken: MARGIN_TOKENS[0].symbol as MarginTokenKeys,
-      updateMarginToken: (data: MarginTokenKeys) =>
-        set(() => {
-          // console.info('updateMarginToken:')
-          // console.info(data)
-          return { marginToken: data }
-        })
-    }),
-    {
-      name: 'marginToken'
-    }
-  )
-)
-
-export { useConfigInfoStore, useQuoteTokenStore, useMarginTokenStore }
+export { useConfigInfoStore }

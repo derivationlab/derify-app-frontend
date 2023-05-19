@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
-
-import SymbolSelect from './SymbolSelect'
-import HeaderData from './HeaderData'
 import Chart from './Chart'
+import HeaderData from './HeaderData'
+import SymbolSelect from './SymbolSelect'
 
 const KLine: FC = () => {
   const hideChart = false
+
   return (
     <div className="web-trade-kline">
       <header className="web-trade-kline-header">

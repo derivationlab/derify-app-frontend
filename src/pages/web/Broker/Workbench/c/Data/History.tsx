@@ -3,17 +3,14 @@ import { isEmpty } from 'lodash'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo, useContext, useReducer } from 'react'
-
-import { EXPLORER_SCAN_URL } from '@/config'
 import { keepDecimals } from '@/utils/tools'
+import { PLATFORM_TOKEN } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore } from '@/store'
+import { EXPLORER_SCAN_URL } from '@/config'
 import { reducer, stateInit } from '@/reducers/records'
+import { useMarginTokenStore } from '@/store'
 import { getBrokerRevenueRecord } from '@/api'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-
 import Pagination from '@/components/common/Pagination'
-
 import { RowTime, calcShortHash, calcTimeStr } from './common'
 
 interface DataProps {
@@ -83,7 +80,7 @@ const History: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerRevenueRecord(address, findToken(marginToken).tokenAddress, index, 10)
+      const { data } = await getBrokerRevenueRecord(address, marginToken.address, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',
@@ -120,7 +117,7 @@ const History: FC = () => {
       dataIndex: 'amount',
       width: mobile ? '' : 268,
       render: (_: string, data: Record<string, any>) => {
-        const usd_amount = keepDecimals(data?.margin_token_amount ?? 0, findToken(data?.margin_token).decimals)
+        const usd_amount = keepDecimals(data?.margin_token_amount ?? 0, 2)
         const drf_amount = keepDecimals(data?.drf_amount ?? 0, PLATFORM_TOKEN.decimals)
 
         return (
@@ -136,7 +133,7 @@ const History: FC = () => {
       dataIndex: 'balance',
       width: mobile ? '' : 268,
       render: (_: string, data: Record<string, any>) => {
-        const usd_balance = keepDecimals(data?.margin_token_balance ?? 0, findToken(data?.margin_token).decimals)
+        const usd_balance = keepDecimals(data?.margin_token_balance ?? 0, 2)
         const drf_balance = keepDecimals(data?.drf_balance ?? 0, PLATFORM_TOKEN.decimals)
         return (
           <>

@@ -1,14 +1,13 @@
 import { create } from 'zustand'
-
 import { BrokerInfoState } from '@/store/types'
 import { getDerifyProtocolContract } from '@/utils/contractHelpers'
 import {
+  getBrokerBound,
   getBrokerRanking,
-  getBrokerInfoWithAddress,
-  getBrokerValidityPeriod,
-  getBrokerRegistrationTime,
   getBrokerRewardsToday,
-  getBrokerBound
+  getBrokerValidityPeriod,
+  getBrokerInfoWithAddress,
+  getBrokerRegistrationTime
 } from '@/api'
 
 const isIdentityValid = async (trader: string): Promise<boolean> => {
@@ -32,19 +31,19 @@ const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
     const data = await isIdentityValid(trader)
 
     if (data) {
-      const { data: rank = 0 } = await getBrokerRanking(trader, marginToken)
       const { data: time = 0 } = await getBrokerRegistrationTime(trader)
-      const { data: period = 0 } = await getBrokerValidityPeriod(trader)
       const { data: info = {} } = await getBrokerInfoWithAddress(trader)
+      const { data: period = 0 } = await getBrokerValidityPeriod(trader)
+      const { data: rank = 0 } = await getBrokerRanking(trader, marginToken)
       const { data: rewards = {} } = await getBrokerRewardsToday(trader, marginToken)
-      // console.info(rewards)
+
       set({
         brokerInfo: {
           rank,
+          period,
           ...info,
           ...rewards,
-          registerTime: time,
-          validPeriodDays: period
+          registerTime: time
         },
         brokerInfoLoaded: true
       })

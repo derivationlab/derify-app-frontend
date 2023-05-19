@@ -1,11 +1,9 @@
 import { useLocation } from 'react-router-dom'
 import React, { FC, useEffect, useState } from 'react'
-
 import { getIpLocation } from '@/api'
-import { findMarginToken } from '@/config/tokens'
-import { MarginTokenKeys } from '@/typings'
 import { useMarginTokenStore } from '@/store'
 import { Redirect, Switch, Route } from '@/components/common/Route'
+import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 import {
   RBrokerList,
   RBrokerBound,
@@ -18,7 +16,6 @@ import {
   RBrokerSignUpStep1,
   RBrokerSignUpStep2
 } from '@/pages/web/Route'
-
 import Header from '@/components/web/Header'
 import Toast from '@/components/common/Toast'
 import Earn from '@/pages/web/Earn'
@@ -48,31 +45,32 @@ const Web: FC = () => {
 
   const [visible, setVisible] = useState<boolean>(false)
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const { symbol } = useMarginTokenStore((state) => state.marginToken)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const updateMarginToken = useMarginTokenStore((state) => state.updateMarginToken)
 
   useEffect(() => {
     const func = async () => {
       const data = await getIpLocation()
-      setVisible(!data)
+      // setVisible(!data)
     }
 
     void func()
   }, [])
 
+  // 当手动在浏览器地址栏输入的时候
   useEffect(() => {
     const path = pathname.split('/')
-    const find = findMarginToken(path[1])
-    const margin = find ? find.symbol : marginToken
-    // console.info(margin)
-    updateMarginToken(margin as MarginTokenKeys)
-  }, [pathname, marginToken])
+    const find = marginTokenList.find((margin) => margin.symbol === path[1])
+    const margin = find || marginTokenList[0]
+    updateMarginToken({ address: margin.margin_token, symbol: margin.symbol })
+  }, [pathname, marginTokenList])
 
   return (
     <>
       <Header />
       <Switch>
-        <Route path="/" exact render={() => <Redirect to={`/${marginToken}/trade`} />} />
+        <Route path="/" exact render={() => <Redirect to={`/${symbol}/trade`} />} />
         <Route
           path="/:id/earn"
           exact
@@ -212,8 +210,8 @@ const Web: FC = () => {
         />
         <Route path="/faucet" render={() => <Faucet />} />
         <Route path="/space" render={() => <MySpace />} />
-        <Route path={`/${marginToken}/system/parameters`} render={() => <System />} />
-        <Route path="*" render={() => <Redirect to={`/${marginToken}/trade`} />} />
+        <Route path={`/${symbol}/system/parameters`} render={() => <System />} />
+        <Route path="*" render={() => <Redirect to={`/${symbol}/trade`} />} />
       </Switch>
       <Toast />
       <AccessDeniedDialog visible={visible} />

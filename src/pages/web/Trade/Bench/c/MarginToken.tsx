@@ -5,74 +5,53 @@ import { useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 
-import { findToken, MARGIN_TOKENS } from '@/config/tokens'
-import { MarginTokenKeys } from '@/typings'
-import { reducer, stateInit } from '@/reducers/records'
-import { getMarginTokenList } from '@/api'
-import { useMarginTokenStore } from '@/store'
-import { useAllMarginBalances } from '@/hooks/useProfile'
+import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
 
 import { Select } from '@/components/common/Form'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
+import { MarginTokenState } from '@/store/types'
+import { useMarginBalances } from '@/hooks/useMarginBalances'
 
 const MarginToken: FC = () => {
-  const [state, dispatch] = useReducer(reducer, stateInit)
-
   const history = useHistory()
-
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
-  const updateMarginToken = useMarginTokenStore((state) => state.updateMarginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const { data: marginBalances, isLoading: marginBalancesLoaded } = useAllMarginBalances(address)
+  const { data: marginBalances } = useMarginBalances(address, marginTokenList)
 
   const options = useMemo(() => {
-    if (!state.records.loaded && !marginBalancesLoaded && marginBalances) {
-      const _ = state.records.records
+    if (marginTokenList.length) {
+      const _ = marginTokenList
         .map((token) => {
-          const find = MARGIN_TOKENS.find((margin) => margin.symbol === token.symbol)
-          if (find) {
-            const marginBalance = marginBalances[token.symbol as MarginTokenKeys]
-            return {
-              apy: token.max_pm_apy,
-              open: token.open,
-              icon: findToken(token.symbol)?.icon,
-              value: token.symbol,
-              label: token.symbol,
-              marginBalance
-            }
+          const marginBalance = marginBalances?.[token.symbol] ?? 0
+          return {
+            apy: token.max_pm_apy,
+            open: token.open,
+            icon: `market/${token.symbol.toLowerCase()}.svg`,
+            value: token.symbol,
+            label: token.symbol,
+            marginBalance
           }
         })
-        .filter((x) => x)
       return orderBy(_, ['marginBalance', 'apy'], 'desc')
     }
     return []
-  }, [state.records, marginBalances, marginBalancesLoaded])
-
-  const _getMarginTokenList = useCallback(async (index = 0) => {
-    const { data } = await getMarginTokenList(index)
-    dispatch({
-      type: 'SET_RECORDS',
-      payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-    })
-  }, [])
-
-  useEffect(() => {
-    void _getMarginTokenList()
-  }, [])
+  }, [marginBalances, marginTokenList])
 
   return (
-    <div className="web-trade-bench-margin">
+    <div className='web-trade-bench-margin'>
       <label>{t('Trade.Bench.Margin')}</label>
-      <Skeleton rowsProps={{ rows: 1 }} animation loading={options.length === 0}>
+      <Skeleton rowsProps={{ rows: 1 }} animation loading={!marginTokenListLoaded}>
         <Select
           filter
           value={marginToken as any}
           onChange={(v) => {
-            updateMarginToken(v as MarginTokenKeys)
+            // updateMarginToken(v as MarginTokenKeys)
             history.push(`/${v}/trade`)
           }}
           renderer={(props) => (
@@ -81,15 +60,15 @@ const MarginToken: FC = () => {
               {props?.label}
             </div>
           )}
-          className="web-trade-bench-margin-select"
+          className='web-trade-bench-margin-select'
           objOptions={options as any}
           labelRenderer={() => (
-            <div className="web-dashboard-add-grant-margin-label">
-              <Image src={findToken(marginToken).icon} />
-              <span>{findToken(marginToken).symbol}</span>
+            <div className='web-dashboard-add-grant-margin-label'>
+              <Image src={`market/${marginToken.symbol.toLowerCase()}.svg`} />
+              <span>{marginToken.symbol}</span>
             </div>
           )}
-          filterPlaceholder="Search name or contract address..."
+          filterPlaceholder='Search name or contract address...'
         />
       </Skeleton>
     </div>

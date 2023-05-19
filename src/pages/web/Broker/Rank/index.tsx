@@ -1,18 +1,15 @@
 import Table from 'rc-table'
 import { isEmpty } from 'lodash'
+import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
-
-import { findToken } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { getBrokersRankList } from '@/api'
 import { reducer, stateInit } from '@/reducers/records'
-
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useAccount } from 'wagmi'
 
 interface RowTextProps {
   value: string | number
@@ -46,7 +43,7 @@ const Rank: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const fetchData = useCallback(async (index = 0) => {
-    const { data } = await getBrokersRankList(index, 10, findToken(marginToken).tokenAddress)
+    const { data } = await getBrokersRankList(index, 10, marginToken.address)
 
     dispatch({
       type: 'SET_RECORDS',
@@ -91,7 +88,7 @@ const Rank: FC = () => {
         const { accumulated_margin_token_reward = 0, accumulated_drf_reward = 0 } = data ?? {}
         return (
           <>
-            <BalanceShow value={accumulated_margin_token_reward} unit={marginToken} />
+            <BalanceShow value={accumulated_margin_token_reward} unit={marginToken.symbol} />
             <BalanceShow value={accumulated_drf_reward} unit="DRF" />
           </>
         )
@@ -105,7 +102,7 @@ const Rank: FC = () => {
         const { today_margin_token_reward = 0, today_drf_reward = 0 } = data ?? {}
         return (
           <>
-            <BalanceShow value={today_margin_token_reward} unit={marginToken} />
+            <BalanceShow value={today_margin_token_reward} unit={marginToken.symbol} />
             <BalanceShow value={today_drf_reward} unit="DRF" />
           </>
         )

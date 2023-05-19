@@ -23,7 +23,7 @@
     }
   }
   &-wrap {
-    display: flex;flex-flow: column;align-items: center;
+    display: flex;flex-flow: column;align-items: center;min-height: 240px;position: relative;
     &-item {}
     & > .web-button {
       margin: 36px auto 24px;

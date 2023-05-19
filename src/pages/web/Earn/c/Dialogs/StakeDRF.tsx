@@ -27,11 +27,11 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [depositAmount, setDepositAmount] = useState<string>('0')
 
   const memoDisabled = useMemo(() => {
-    return isGT(balances['drf'], 0)
+    return isGT(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 0)
   }, [balances])
 
   const onChangeEv = (v: string) => {
-    if (isGTET(balances['drf'], v) && isGT(v, 0)) {
+    if (isGTET(balances?.[PLATFORM_TOKEN.symbol] ?? 0, v) && isGT(v, 0)) {
       setIsDisabled(false)
       setDepositAmount(v)
     } else {
@@ -48,14 +48,14 @@ const StakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.DerifyTokenPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={balances[PLATFORM_TOKEN.symbol]} unit={PLATFORM_TOKEN.symbol} />
+                <BalanceShow value={balances?.[PLATFORM_TOKEN.symbol] ?? 0} unit={PLATFORM_TOKEN.symbol} />
               </dd>
             </dl>
             <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={balances[PLATFORM_TOKEN.symbol]}
+              max={balances?.[PLATFORM_TOKEN.symbol] ?? 0}
               title={t('Earn.DerifyTokenPool.AmountToStake', 'Amount to stake')}
               unit={PLATFORM_TOKEN.symbol}
               onChange={onChangeEv}

@@ -54,14 +54,14 @@ const BrokerSignUpStep1: FC = () => {
 
   const memoDisabled = useMemo(() => {
     return (
-      isET(balances['edrf'], 0) ||
+      isET(balances?.['edrf'] ?? 0, 0) ||
       isET(brokerParams.burnLimitAmount, 0) ||
-      isLT(balances['edrf'], brokerParams.burnLimitAmount)
+      isLT(balances?.['edrf'] ?? 0, brokerParams.burnLimitAmount)
     )
   }, [balances, brokerParams.burnLimitAmount])
 
   const memoInsufficient = useMemo(() => {
-    return isET(balances['edrf'], 0) || isLT(balances['edrf'], brokerParams.burnLimitAmount)
+    return isET(balances?.['edrf'] ?? 0, 0) || isLT(balances?.['edrf'] ?? 0, brokerParams.burnLimitAmount)
   }, [balances, brokerParams.burnLimitAmount])
 
   return (
@@ -79,7 +79,7 @@ const BrokerSignUpStep1: FC = () => {
           </em>
           <hr />
           <span>
-            {t('Broker.Reg.WalletBalance', 'Wallet Balance')}: {keepDecimals(balances['edrf'], tokens.edrf.decimals)}{' '}
+            {t('Broker.Reg.WalletBalance', 'Wallet Balance')}: {keepDecimals(balances?.['edrf'] ?? 0, tokens.edrf.decimals)}{' '}
             eDRF
           </span>
           <address>{address}</address>

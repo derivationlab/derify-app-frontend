@@ -3,35 +3,29 @@ import { isEmpty } from 'lodash'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useState, useContext } from 'react'
-
 import { ThemeContext } from '@/providers/Theme'
+import { PubSubEvents } from '@/typings'
 import { usePositionStore } from '@/store/usePosition'
-import { useMarginTokenStore } from '@/store'
 import { usePositionOperation } from '@/hooks/useTrading'
-import { PubSubEvents, QuoteTokenKeys } from '@/typings'
-import { useFactoryConf, useProtocolConf } from '@/hooks/useMatchConf'
-
+import { useDerivativeListStore, useProtocolConfigStore } from '@/store'
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
-import Loading from '@/components/common/Loading'
+import Spinner from '@/components/common/Spinner'
 import ListItem from './ListItem'
 import NoRecord from '../c/NoRecord'
 
 const MyOrder: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
-
   const { theme } = useContext(ThemeContext)
+  const { cancelAllPositions, cancelPosition } = usePositionOperation()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
   const profitLossOrd = usePositionStore((state) => state.profitLossOrd)
   const profitLossOrdLoaded = usePositionStore((state) => state.loaded)
-
-  const { protocolConfig } = useProtocolConf(marginToken)
-  const { match: matchFactoryConfig } = useFactoryConf(marginToken)
-  const { cancelAllPositions, cancelPosition } = usePositionOperation()
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
 
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
@@ -48,10 +42,10 @@ const MyOrder: FC = () => {
 
     clear()
 
-    if (matchFactoryConfig) {
-      const { side, orderType, timestamp, quoteToken } = targetPosOrd
+    if (derAddressList) {
+      const { side, orderType, timestamp, derivative } = targetPosOrd
 
-      const status = await cancelPosition(matchFactoryConfig[quoteToken as QuoteTokenKeys], orderType, side, timestamp)
+      const status = await cancelPosition(derAddressList[derivative], orderType, side, timestamp)
 
       if (status) {
         // succeed
@@ -90,7 +84,7 @@ const MyOrder: FC = () => {
 
   const positions = useMemo(() => {
     if (!address) return <NoRecord show />
-    if (!profitLossOrdLoaded) return <Loading show type="section" />
+    if (!profitLossOrdLoaded) return <Spinner absolute />
     if (!isEmpty(profitLossOrd)) {
       return (
         <>

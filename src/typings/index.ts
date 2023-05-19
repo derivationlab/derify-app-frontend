@@ -2,6 +2,8 @@ import { Signer } from 'ethers'
 
 import GlobalType from '@/typings/global'
 
+export type Rec = Record<string, any>
+
 export enum ChainId {
   MAINNET = 56,
   TESTNET = 97

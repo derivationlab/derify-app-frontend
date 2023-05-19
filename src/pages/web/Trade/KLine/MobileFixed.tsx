@@ -1,10 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo } from 'react'
-
 import { isLTET, keepDecimals } from '@/utils/tools'
-import { useQuoteTokenStore } from '@/store'
-import { useIndicatorsConf } from '@/hooks/useMatchConf'
-
+import { useMarginIndicatorsStore, useQuoteTokenStore } from '@/store'
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import Button from '@/components/common/Button'
 
@@ -18,26 +15,25 @@ const MobileFixed: FC<Props> = ({ address, isKline, goBench }) => {
   const { t } = useTranslation()
 
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
-
-  const { indicators } = useIndicatorsConf(quoteToken)
+  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
 
   const memoLongPosApy = useMemo(() => {
-    const p = Number(indicators?.longPmrRate)
+    const p = Number(marginIndicators?.[quoteToken.address]?.longPmrRate ?? 0)
     if (p >= 0) {
       const apy = p * 100
       return isLTET(apy, 0) ? 0 : apy
     }
     return '--'
-  }, [indicators])
+  }, [quoteToken, marginIndicators])
 
   const memoShortPosApy = useMemo(() => {
-    const p = Number(indicators?.shortPmrRate)
+    const p = Number(marginIndicators?.[quoteToken.address]?.shortPmrRate)
     if (p >= 0) {
       const apy = p * 100
       return isLTET(apy, 0) ? 0 : apy
     }
     return '--'
-  }, [indicators])
+  }, [quoteToken, marginIndicators])
 
   if (!isKline) return null
 

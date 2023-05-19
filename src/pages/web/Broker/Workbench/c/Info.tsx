@@ -66,11 +66,11 @@ const Info: FC = () => {
   }
 
   const memoIsExpired = useMemo(() => {
-    return brokerInfo?.validPeriodDays <= 0
+    return brokerInfo?.period <= 0
   }, [brokerInfo])
 
   const memoExpireDate = useMemo(() => {
-    const days = brokerInfo?.validPeriodDays
+    const days = brokerInfo?.period
     if (days && days >= 0) {
       return dayjs().add(days, 'days').format('YYYY-MM-DD')
     }
@@ -138,7 +138,7 @@ const Info: FC = () => {
               </dd>
             ) : (
               <dd>
-                {brokerInfo?.validPeriodDays ?? 0}
+                {brokerInfo?.period ?? 0}
                 <small>{t('Broker.BV.days', 'days')}</small>
               </dd>
             )}

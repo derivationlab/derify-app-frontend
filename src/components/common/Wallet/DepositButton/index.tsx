@@ -10,7 +10,7 @@ import { useMarginOperation } from '@/hooks/useTrading'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
-import { useMarginListStore } from '@/store/useMarginToken'
+import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 
 interface Props {
   size?: string
@@ -21,21 +21,21 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const { data: signer } = useSigner()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-  const marginList = useMarginListStore((state) => state.marginList)
-  const marginListLoaded = useMarginListStore((state) => state.marginListLoaded)
-  console.info(marginList, marginToken)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
+
   const { deposit } = useMarginOperation()
   const { protocolConfig } = useProtocolConf(marginToken)
 
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
   const isDisabled = useMemo(() => {
-    if (marginListLoaded) {
-      const find = marginList.find((margin) => margin.symbol === marginToken)
+    if (marginTokenListLoaded) {
+      const find = marginTokenList.find((margin) => margin.symbol === marginToken)
       return !find
     }
     return true
-  }, [marginToken, marginListLoaded])
+  }, [marginToken, marginTokenListLoaded])
 
   // deposit
   const onConfirmDepositEv = useCallback(

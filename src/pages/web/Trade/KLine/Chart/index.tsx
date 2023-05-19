@@ -1,13 +1,14 @@
 import { isEmpty } from 'lodash'
 import { useInterval } from 'react-use'
-import React, { FC, useState, useCallback, useRef, useEffect } from 'react'
-import { findToken } from '@/config/tokens'
+import React, { FC, useCallback, useRef, useEffect, useReducer, useMemo } from 'react'
 import { KLineTimes } from '@/data'
-import { useMarginTokenStore, usePairsInfoStore, useQuoteTokenStore } from '@/store'
+import { reducer, stateInit } from '@/reducers/kline'
+import { useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
 import { getKLineDAT, getKlineEndTime, reorganizeLastPieceOfData } from './help'
 import { Select } from '@/components/common/Form'
 import Loading from '@/components/common/Loading'
 import KLineChart from '@/components/common/Chart/KLine'
+import Spinner from '@/components/common/Spinner'
 
 interface KlineChartProps {
   reset: () => void
@@ -20,42 +21,38 @@ let onetime = false
 const Chart: FC = () => {
   const store = useRef<Record<string, any>>({})
   const kline = useRef<KlineChartProps>(null)
+  const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
 
-  const [loading, setLoading] = useState<boolean>(false)
-  const [timeLine, setTimeLine] = useState(60 * 60 * 1000)
-  const [chartData, setChartData] = useState<Record<string, any>[]>([])
+  const spotPrice = useMemo(() => {
+    return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
+  }, [quoteToken, tokenSpotPrices])
 
   const getBaseData = useCallback(async () => {
-    if (!onetime) setLoading(true)
+    if (!onetime) dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
 
     if (kline.current) {
       // kline.current.reset()
 
-      const tokenAddress = findToken(quoteToken).tokenAddress
-      const { data, more } = await getKLineDAT(tokenAddress, timeLine, getKlineEndTime(), 130, true)
+      const { data, more } = await getKLineDAT(quoteToken.address, state.kline.timeLine, getKlineEndTime(), 130, true)
 
       store.current = data[data.length - 1] // keep original data
 
-      const reorganize = reorganizeLastPieceOfData(data, spotPrices[marginToken][quoteToken])
+      const reorganize = reorganizeLastPieceOfData(data, spotPrice)
 
-      setChartData(reorganize)
-
+      dispatch({ type: 'SET_KLINE_INIT', payload: { data: reorganize } })
       kline.current.initData(reorganize, more)
     }
 
     onetime = true
-    setLoading(false)
-  }, [spotPrices[marginToken][quoteToken], timeLine])
+    dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: false } })
+  }, [spotPrice, state.kline.timeLine])
 
   const getMoreData = useCallback(
     async (lastTime: number) => {
-      const tokenAddress = findToken(quoteToken).tokenAddress
-
-      return await getKLineDAT(tokenAddress, timeLine, lastTime, 50, false)
+      return await getKLineDAT(quoteToken.address, state.kline.timeLine, lastTime, 50, false)
     },
     [quoteToken]
   )
@@ -63,16 +60,14 @@ const Chart: FC = () => {
   useInterval(() => {
     const func = async () => {
       if (kline.current) {
-        const tokenAddress = findToken(quoteToken).tokenAddress
-
-        const { data } = await getKLineDAT(tokenAddress, timeLine, getKlineEndTime(), 1, false)
+        const { data } = await getKLineDAT(quoteToken.address, state.kline.timeLine, getKlineEndTime(), 1, false)
         // console.info(timestamp, data[0]?.timestamp)
         if (store.current?.timestamp !== data[0]?.timestamp) {
           kline.current.update(store.current)
           store.current = data[0]
         }
 
-        const reorganize = reorganizeLastPieceOfData(data, spotPrices[marginToken][quoteToken])
+        const reorganize = reorganizeLastPieceOfData(data, spotPrice)
 
         kline.current.update(reorganize[0])
       }
@@ -82,35 +77,35 @@ const Chart: FC = () => {
 
   useEffect(() => {
     void getBaseData()
-  }, [timeLine, quoteToken])
+  }, [quoteToken, state.kline.timeLine])
 
   useEffect(() => {
     if (!isEmpty(store.current) && kline.current) {
-      const reorganize = reorganizeLastPieceOfData([store.current], spotPrices[marginToken][quoteToken])
+      const reorganize = reorganizeLastPieceOfData([store.current], spotPrice)
       kline.current.update(reorganize[0])
     }
-  }, [chartData, spotPrices[marginToken][quoteToken]])
+  }, [spotPrice, state.kline.data])
 
   useEffect(() => {
     kline.current && kline.current.reset()
-    setLoading(true)
+    dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
   }, [quoteToken])
 
   return (
     <div className="web-trade-kline-chart">
       <Select
-        value={timeLine}
+        value={state.kline.timeLine}
         objOptions={KLineTimes}
         onChange={(val) => {
           onetime = false
-          setTimeLine(Number(val))
+          dispatch({ type: 'SET_KLINE_INIT', payload: { timeLine: Number(val) } })
         }}
       />
       <div className="web-trade-kline-chart-layout">
         {/* @ts-ignore */}
         <KLineChart cRef={kline} getMoreData={(timeLine: number) => getMoreData(timeLine)} />
       </div>
-      <Loading show={loading} type="float" />
+      {state.kline.loaded && <Spinner absolute />}
     </div>
   )
 }

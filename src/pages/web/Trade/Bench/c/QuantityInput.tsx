@@ -2,11 +2,16 @@ import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useEffect, useMemo } from 'react'
-import { findToken } from '@/config/tokens'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { MarginTokenKeys, PubSubEvents } from '@/typings'
+import { MarginTokenState, QuoteTokenState } from '@/store/types'
+import { PositionOrderTypes, PubSubEvents, Rec } from '@/typings'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
-import { OpeningType, useOpeningStore, useMarginTokenStore, useQuoteTokenStore, usePairsInfoStore } from '@/store'
+import {
+  usePositionOperationStore,
+  useMarginTokenStore,
+  useQuoteTokenStore,
+  useProtocolConfigStore,
+  useTokenSpotPricesStore
+} from '@/store'
 import { Input } from '@/components/common/Form'
 import PercentButton from '@/components/common/Form/PercentButton'
 import Row from './Row'
@@ -15,53 +20,54 @@ interface Props {
   type: string
   value: number | string
   onChange: (value: number | string) => void
-  onTypeChange: (value: string | number) => void
 }
 
-const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
+const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const maxVolume = useOpeningStore((state) => state.maxVolume)
-  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
-  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
-  const openingType = useOpeningStore((state) => state.openingType)
-  const leverageNow = useOpeningStore((state) => state.leverageNow)
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
-  const openingPrice = useOpeningStore((state) => state.openingPrice)
-  const fetchMaxVolume = useOpeningStore((state) => state.fetchMaxVolume)
+  const disposableAmount = usePositionOperationStore((state) => state.disposableAmount)
+  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
+  const openingType = usePositionOperationStore((state) => state.openingType)
+  const leverageNow = usePositionOperationStore((state) => state.leverageNow)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const openingPrice = usePositionOperationStore((state) => state.openingPrice)
+  const getDisposableAmount = usePositionOperationStore((state) => state.getDisposableAmount)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
 
-  const { protocolConfig } = useProtocolConf(marginToken)
+  const spotPrice = useMemo(() => {
+    return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
+  }, [quoteToken, tokenSpotPrices])
 
   const visibleMaxVol = useMemo(() => {
-    return nonBigNumberInterception(maxVolume?.[type] ?? 0, findToken(type)?.decimals ?? 2)
-  }, [maxVolume, type])
+    return nonBigNumberInterception(disposableAmount?.[type] ?? 0, 2)
+  }, [disposableAmount, type])
 
   useEffect(() => {
     if (value > visibleMaxVol) onChange(visibleMaxVol)
   }, [value, visibleMaxVol])
 
-  const _fetchMaxVolume = (
+  const _getDisposableAmount = (
     account: string,
-    protocolConfig: string,
+    exchange: string,
     spotPrice: string,
     openingPrice: string,
-    openingType: OpeningType,
-    quoteToken: string,
-    marginToken: MarginTokenKeys
+    openingType: PositionOrderTypes,
+    quoteToken: Rec,
+    marginToken: Rec
   ) => {
-    const price = openingType === OpeningType.Market ? spotPrice : openingPrice
-    const qtAddress = findToken(quoteToken)?.tokenAddress
+    const price = openingType === PositionOrderTypes.Market ? spotPrice : openingPrice
 
-    void fetchMaxVolume(qtAddress, account, price, protocolConfig, marginToken)
+    void getDisposableAmount(quoteToken, account, price, exchange, marginToken)
   }
 
   useEffect(() => {
     if (address && protocolConfig) {
-      void _fetchMaxVolume(
+      void _getDisposableAmount(
         address,
         protocolConfig.exchange,
-        spotPrices[marginToken][quoteToken],
+        spotPrice,
         openingPrice,
         openingType,
         quoteToken,
@@ -71,10 +77,10 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
 
     PubSub.subscribe(PubSubEvents.UPDATE_POSITION_VOLUME, () => {
       if (address && protocolConfig) {
-        void _fetchMaxVolume(
+        void _getDisposableAmount(
           address,
           protocolConfig.exchange,
-          spotPrices[marginToken][quoteToken],
+          spotPrice,
           openingPrice,
           openingType,
           quoteToken,
@@ -82,7 +88,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
         )
       }
     })
-  }, [address, spotPrices, quoteToken, openingType, leverageNow, marginToken, openingPrice, protocolConfig])
+  }, [address, spotPrice, quoteToken, openingType, leverageNow, marginToken, openingPrice, protocolConfig])
 
   return (
     <>
@@ -90,7 +96,7 @@ const QuantityInput: FC<Props> = ({ value, onChange, type, onTypeChange }) => {
         <header className="web-trade-bench-pane-volume-header">{t('Trade.Bench.Volume', 'Volume')}</header>
         <div className="web-trade-bench-pane-volume-max">
           <span>Max: </span>
-          <em>{keepDecimals(maxVolume?.[type] ?? 0, findToken(type)?.decimals ?? 2)} </em>
+          <em>{keepDecimals(disposableAmount?.[type] ?? 0, 2)} </em>
           <u>{type}</u>
         </div>
       </Row>

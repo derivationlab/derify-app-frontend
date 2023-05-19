@@ -1,12 +1,8 @@
 import classNames from 'classnames'
 import { useAccount } from 'wagmi'
 import React, { FC, useState, useContext } from 'react'
-
 import { MobileContext } from '@/providers/Mobile'
-
-import TradingUpdater from '@/pages/updater/TradingUpdater'
-import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
-
+import OpeningPositionParamsUpdater from '@/pages/updater/OpeningPositionParamsUpdater'
 import Data from './Data'
 import KLine from './KLine'
 import Bench from './Bench'
@@ -16,18 +12,15 @@ import MobileFixed from './KLine/MobileFixed'
 import SymbolSelect from './KLine/SymbolSelect'
 
 const Trade: FC = () => {
-  const [toggle, setToggle] = useState<boolean>(false)
-
-  const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
+  const { address } = useAccount()
+  const [toggle, setToggle] = useState<boolean>(false)
 
   if (mobile) {
     return (
       <>
+        <OpeningPositionParamsUpdater />
         <div className="web-trade">
-          <TradingUpdater />
-          <IndicatorsUpdater />
-
           <div className="web-trade-mobile-header">
             <SymbolSelect onToggle={() => setToggle(!toggle)} />
             <div className={classNames({ none: toggle })}>
@@ -47,9 +40,7 @@ const Trade: FC = () => {
 
   return (
     <div className="web-trade">
-      <TradingUpdater />
-      <IndicatorsUpdater />
-
+      <OpeningPositionParamsUpdater />
       <main className="web-trade-main">
         <KLine />
         <Data />

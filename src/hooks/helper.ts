@@ -4,8 +4,7 @@ import { flatten, isEmpty } from 'lodash'
 
 import multicall from '@/utils/multicall'
 import contracts from '@/config/contracts'
-import { OpeningType } from '@/store'
-import { PositionSideTypes } from '@/typings'
+import { PositionOrderTypes, PositionSideTypes } from '@/typings'
 import { findMarginToken, MARGIN_TOKENS, QUOTE_TOKENS } from '@/config/tokens'
 import {
   getDerifyRewardsContract,
@@ -356,11 +355,11 @@ export const checkOpeningVol = (
   spotPrice: string,
   openingSize: string,
   positionSide: PositionSideTypes,
-  openingType: OpeningType,
+  openingType: PositionOrderTypes,
   tokenSelect: string,
   openingMaxLimit: string
 ) => {
-  if (positionSide === PositionSideTypes.twoWay || openingType !== OpeningType.Market) return openingSize
+  if (positionSide === PositionSideTypes.twoWay || openingType !== PositionOrderTypes.Market) return openingSize
   if (findMarginToken(tokenSelect)) {
     const mul = Number(spotPrice) * Number(openingMaxLimit)
     return isGT(openingSize, mul) ? mul : openingSize

@@ -8,6 +8,7 @@ import { useMarginTokenStore, useBrokerInfoStore } from '@/store'
 
 import Loading from '@/components/common/Loading'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
+import Spinner from '@/components/common/Spinner'
 
 export const RBrokerList = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
@@ -62,8 +63,6 @@ export const RBrokerBound = (props: PropsWithChildren<any>) => {
 }
 
 export const RWithMarToken = (props: PropsWithChildren<any>) => {
-  const params: any = useParams()
-
   const { address } = useAccount()
   const { children, pathKey } = props
 
@@ -71,19 +70,14 @@ export const RWithMarToken = (props: PropsWithChildren<any>) => {
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const brokerBoundLoaded = useBrokerInfoStore((state) => state.brokerBoundLoaded)
 
-  const find = useMemo(() => {
-    if (params?.id) return findMarginToken(params.id)
-  }, [params?.id])
-
   return useMemo(() => {
-    const out = find ? children : <Redirect to={`/${marginToken}/${pathKey}`} />
-    if (!address) return out
+    if (!address) return children
     if (brokerBoundLoaded) {
-      if (!isEmpty(brokerBound)) return out
+      if (!isEmpty(brokerBound)) return children
       return <Redirect to="/broker/bind" />
     }
-    return <Loading show type="fixed" />
-  }, [find, address, pathKey, marginToken, brokerBound, brokerBoundLoaded])
+    return <Spinner fixed />
+  }, [address, pathKey, marginToken, brokerBound, brokerBoundLoaded])
 }
 
 export const RBrokerToBind = (props: PropsWithChildren<any>) => {

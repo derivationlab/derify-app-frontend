@@ -2,12 +2,10 @@ import classNames from 'classnames'
 import { useClickAway } from 'react-use'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useState, useRef, useMemo } from 'react'
-
 import tokens from '@/config/tokens'
 import { addToken } from '@/utils/addToken'
-import { useProtocolConf } from '@/hooks/useMatchConf'
 import { PANCAKE_SWAP_URL } from '@/config'
-import { useMarginTokenStore } from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 
 const AddTokenTool: FC = () => {
   const ref = useRef(null)
@@ -17,8 +15,7 @@ const AddTokenTool: FC = () => {
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-
-  const { protocolConfig } = useProtocolConf(marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const memoTokens = useMemo(() => {
     return [
@@ -39,7 +36,7 @@ const AddTokenTool: FC = () => {
       },
       {
         image: '',
-        symbol: `b${marginToken}`,
+        symbol: `b${marginToken.symbol}`,
         address: protocolConfig?.bMarginToken,
         decimals: 18,
         direction: 1

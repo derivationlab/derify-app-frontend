@@ -13,10 +13,12 @@ import multiCallAbi from '@/config/abi/MM.json'
 import DerifyPmrAbi from '@/config/abi/DerifyPmr.json'
 import DerifyRankAbi from '@/config/abi/DerifyRank.json'
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
+import factoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import DerifyBrokerRewardsAbi from '@/config/abi/DerifyBrokerRewards.json'
+import priceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 
 export const getJsonRpcProvider = (): StaticJsonRpcProvider => {
   const local = localStorage.getItem('best-rpc')
@@ -64,4 +66,12 @@ export const getDerifyProtocolContract = (signer?: Signer | Provider | null) => 
 
 export const getDerifyDerivativeContract = (pairAddress: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyDerivativeAbi, pairAddress, signer)
+}
+
+export const getFactoryContract = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(factoryAbi, address, signer)
+}
+
+export const getPriceFeedContract = (address: string, signer?: Signer | Provider | null) => {
+  return getContract(priceFeedAbi, address, signer)
 }

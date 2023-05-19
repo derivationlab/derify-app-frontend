@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import React, { FC, useState, useMemo, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GrantKeys } from '@/typings'
-import { useMarginListStore } from '@/store/useMarginToken'
+import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 import { useConfigInfoStore, useBalancesStore } from '@/store'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { DEFAULT_MARGIN_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
@@ -35,8 +35,8 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
 
   const balances = useBalancesStore((state) => state.balances)
   const minimumGrant = useConfigInfoStore((state) => state.minimumGrant)
-  const marginList = useMarginListStore((state) => state.marginList)
-  const marginListLoaded = useMarginListStore((state) => state.marginListLoaded)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
   const periodDate = useMemo(() => {
     const format = 'MM/DD/YYYY HH:mm:ss'
@@ -46,8 +46,8 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   }, [state.grantDays, state.cliffDays])
 
   const options = useMemo(() => {
-    if (marginListLoaded) {
-      return marginList
+    if (marginTokenListLoaded) {
+      return marginTokenList
         .map((token) => {
           if (token.open > 0)
             return {
@@ -60,11 +60,11 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     }
 
     return []
-  }, [marginList, marginListLoaded])
+  }, [marginTokenListLoaded])
 
   const disabled = useMemo(() => {
     const amount = minimumGrant[state.grantTarget as GrantKeys]
-    const balance = balances[PLATFORM_TOKEN.symbol]
+    const balance = balances?.[PLATFORM_TOKEN.symbol] ?? 0
     if (options.length === 0) return true
     if (isET(balance, 0) || isET(amount, 0)) return true
     if (isLT(balance, amount)) return true
@@ -147,14 +147,14 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
               <p>
                 Max:{' '}
                 <em>
-                  {keepDecimals(balances[PLATFORM_TOKEN.symbol], findToken(PLATFORM_TOKEN.symbol).decimals, true)}
+                  {keepDecimals(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2, true)}
                 </em>{' '}
                 {PLATFORM_TOKEN.symbol}
               </p>
               <AmountInput
                 max={nonBigNumberInterception(
-                  balances[PLATFORM_TOKEN.symbol],
-                  findToken(PLATFORM_TOKEN.symbol).decimals
+                  balances?.[PLATFORM_TOKEN.symbol] ?? 0,
+                  2
                 )}
                 unit={PLATFORM_TOKEN.symbol}
                 title={t('NewDashboard.GrantList.Volume', 'Volume')}

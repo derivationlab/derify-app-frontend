@@ -1,13 +1,18 @@
 import { useTranslation } from 'react-i18next'
 import { isEmpty, debounce } from 'lodash'
-import React, { FC, useCallback, useEffect, useReducer } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { keepDecimals } from '@/utils/tools'
-import { PositionSideTypes } from '@/typings'
+import { PositionSideTypes, Rec } from '@/typings'
 import { reducer, stateInit } from '@/reducers/opening'
 import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
-import { useFactoryConf, useOpeningMaxLimit, useProtocolConf } from '@/hooks/useMatchConf'
-import { useMarginTokenStore, usePairsInfoStore, useQuoteTokenStore } from '@/store'
+import {
+  useDerivativeListStore,
+  useMarginTokenStore, useOpeningMaxLimitStore,
+  useProtocolConfigStore,
+  useQuoteTokenStore,
+  useTokenSpotPricesStore
+} from '@/store'
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -26,17 +31,20 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const { t } = useTranslation()
 
-  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const openingMaxLimit = useOpeningMaxLimitStore((state) => state.openingMaxLimit)
 
-  const { factoryConfig } = useFactoryConf(marginToken, quoteToken)
-  const { protocolConfig } = useProtocolConf(marginToken)
-  const { openingMaxLimit } = useOpeningMaxLimit(quoteToken, marginToken)
+  const spotPrice = useMemo(() => {
+    return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
+  }, [quoteToken, tokenSpotPrices])
 
-  const checkOpeningVolFunc = async () => {
+  const _checkOpeningVol = async (openingMaxLimit: Rec) => {
     const volume = checkOpeningVol(
-      spotPrices[marginToken][quoteToken],
+      spotPrice,
       data.volume,
       data.side,
       data.openType,
@@ -76,8 +84,8 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   )
 
   useEffect(() => {
-    if (!isEmpty(data) && visible) {
-      void checkOpeningVolFunc()
+    if (!isEmpty(data) && visible && openingMaxLimit) {
+      void _checkOpeningVol(openingMaxLimit)
     }
   }, [data, visible])
 
@@ -89,18 +97,18 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible])
 
   useEffect(() => {
-    if (visible && state.validOpeningVol && protocolConfig && factoryConfig && spotPrices[marginToken][quoteToken]) {
-      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrices[marginToken][quoteToken], factoryConfig)
+    if (visible && state.validOpeningVol && protocolConfig && derAddressList && spotPrice) {
+      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrice, derAddressList[quoteToken.symbol])
       void calcCFeeFunc(
         data?.side,
         state.validOpeningVol.value,
         data?.symbol,
-        spotPrices[marginToken][quoteToken],
-        factoryConfig,
+        spotPrice,
+        derAddressList[quoteToken.symbol],
         protocolConfig.exchange
       )
     }
-  }, [visible, factoryConfig, protocolConfig, state.validOpeningVol, spotPrices[marginToken][quoteToken]])
+  }, [visible, derAddressList, protocolConfig, state.validOpeningVol, spotPrice])
 
   return (
     <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
@@ -172,7 +180,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>calculating...</small>
                 ) : (
                   <div>
-                    <em>{keepDecimals(state.posChangeFee.value, findToken(marginToken).decimals)}</em>
+                    <em>{keepDecimals(state.posChangeFee.value, 2)}</em>
                     <u>{marginToken}</u>
                   </div>
                 )}
@@ -191,7 +199,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>calculating...</small>
                 ) : (
                   <div>
-                    <em>-{keepDecimals(state.tradingFeeInfo.value, findToken(marginToken).decimals)}</em>
+                    <em>-{keepDecimals(state.tradingFeeInfo.value, 2)}</em>
                     <u>{marginToken}</u>
                   </div>
                 )}

@@ -1,27 +1,25 @@
 import { create } from 'zustand'
 import { isEmpty } from 'lodash'
 import { BigNumber } from 'ethers'
-
 import multicall from '@/utils/multicall'
 import { PositionState, Rec } from '@/store/types'
 import { bnMul, formatUnits } from '@/utils/tools'
 import { PositionTriggerTypes, PositionSideTypes } from '@/typings'
-
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
   isUsed ? formatUnits(stopPrice, 8) : '--'
 
-const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<Rec[][]> => {
+const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<Rec[][]> => {
   const positionOrd: Rec[] = []
   const profitLossOrd: Rec[] = []
 
-  const calls = Object.keys(factoryConfig).map((key) => {
+  const calls = Object.keys(derAddressList).map((key) => {
     return {
       name: 'getTraderDerivativePositions',
       params: [trader],
-      address: factoryConfig[key],
-      quoteToken: key
+      address: derAddressList[key],
+      derivative: key
     }
   })
 
@@ -50,7 +48,8 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
           size,
           side: PositionSideTypes.long,
           leverage: formatUnits(long.leverage, 8),
-          quoteToken: calls[i].quoteToken,
+          contract: calls[i].address,
+          derivative: calls[i].derivative,
           averagePrice: formatUnits(long.price, 8),
           stopLossPrice: priceFormat(longOrderStopLossPosition),
           takeProfitPrice: priceFormat(longOrderStopProfitPosition)
@@ -65,7 +64,8 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
           size,
           side: PositionSideTypes.short,
           leverage: formatUnits(short.leverage, 8),
-          quoteToken: calls[i].quoteToken,
+          contract: calls[i].address,
+          derivative: calls[i].derivative,
           averagePrice: formatUnits(short.price, 8),
           stopLossPrice: priceFormat(shortOrderStopLossPosition),
           takeProfitPrice: priceFormat(shortOrderStopProfitPosition)
@@ -84,10 +84,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
             side: PositionSideTypes.long,
             price,
             volume,
+            contract: calls[i].address,
             leverage: formatUnits(order.leverage),
             timestamp: String(order.timestamp),
             orderType: PositionTriggerTypes.Limit,
-            quoteToken: calls[i].quoteToken
+            derivative: calls[i].derivative
           })
         }
       })
@@ -104,10 +105,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
             side: PositionSideTypes.short,
             price,
             volume,
+            contract: calls[i].address,
             leverage: formatUnits(order.leverage),
             timestamp: String(order.timestamp),
             orderType: PositionTriggerTypes.Limit,
-            quoteToken: calls[i].quoteToken
+            derivative: calls[i].derivative
           })
         }
       })
@@ -123,10 +125,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
           side: PositionSideTypes.long,
           price,
           volume,
+          contract: calls[i].address,
           leverage: formatUnits(long.leverage),
           orderType: PositionTriggerTypes.StopProfit,
           timestamp: String(longOrderStopProfitPosition.timestamp),
-          quoteToken: calls[i].quoteToken
+          derivative: calls[i].derivative
         })
       }
 
@@ -141,10 +144,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
           side: PositionSideTypes.long,
           price,
           volume,
+          contract: calls[i].address,
           leverage: formatUnits(long.leverage),
           orderType: PositionTriggerTypes.StopLoss,
           timestamp: String(longOrderStopLossPosition.timestamp),
-          quoteToken: calls[i].quoteToken
+          derivative: calls[i].derivative
         })
       }
 
@@ -159,10 +163,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
           side: PositionSideTypes.short,
           price,
           volume,
+          contract: calls[i].address,
           leverage: formatUnits(short.leverage),
           orderType: PositionTriggerTypes.StopLoss,
           timestamp: String(shortOrderStopLossPosition.timestamp),
-          quoteToken: calls[i].quoteToken
+          derivative: calls[i].derivative
         })
       }
 
@@ -177,10 +182,11 @@ const getMyPositionsData = async (trader: string, factoryConfig: Rec): Promise<R
           side: PositionSideTypes.short,
           price,
           volume,
+          contract: calls[i].address,
           leverage: formatUnits(short.leverage),
           orderType: PositionTriggerTypes.StopProfit,
           timestamp: String(shortOrderStopProfitPosition.timestamp),
-          quoteToken: calls[i].quoteToken
+          derivative: calls[i].derivative
         })
       }
     }
@@ -195,8 +201,9 @@ const usePositionStore = create<PositionState>((set) => ({
   positionOrd: [],
   profitLossOrd: [],
   loaded: false,
-  fetch: async (trader: string, factoryConfig: Rec) => {
-    const [positionOrd, profitLossOrd] = await getMyPositionsData(trader, factoryConfig)
+  fetch: async (trader: string, derAddressList: Rec) => {
+    const [positionOrd, profitLossOrd] = await getMyPositionsData(trader, derAddressList)
+
     set({ positionOrd, profitLossOrd, loaded: true })
   }
 }))

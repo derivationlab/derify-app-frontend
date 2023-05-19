@@ -1,11 +1,9 @@
-import BN from 'bignumber.js'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { useIndicatorsConf } from '@/hooks/useMatchConf'
 import { PositionSideTypes } from '@/typings'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginTokenStore, usePairsInfoStore } from '@/store'
-import { bnMinus, bnMul, keepDecimals, safeInterceptionValues } from '@/utils/tools'
+import { useMarginIndicatorsStore, useMarginTokenStore, useTokenSpotPricesStore } from '@/store'
+import { bnMinus, bnMul, isET, isGT, keepDecimals, safeInterceptionValues } from '@/utils/tools'
 import Dialog from '@/components/common/Dialog'
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Form/Input'
@@ -23,15 +21,18 @@ interface Props {
 const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
-  const spotPrices = usePairsInfoStore((state) => state.spotPrices)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-
-  const { indicators } = useIndicatorsConf(data?.quoteToken)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
 
   const [stopLossPrice, setStopLossPrice] = useState<any>('')
   const [stopLossAmount, setStopLossAmount] = useState<any>()
   const [takeProfitPrice, setTakeProfitPrice] = useState<any>('')
   const [takeProfitAmount, setTakeProfitAmount] = useState<any>()
+
+  const spotPrice = useMemo(() => {
+    return tokenSpotPrices?.[data?.derivative] ?? '0'
+  }, [data, tokenSpotPrices])
 
   const memoStopLoss = useMemo(() => {
     return (
@@ -45,8 +46,8 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   }, [data])
 
   const memoChangeRate = useMemo(() => {
-    return Number(indicators?.price_change_rate ?? 0) * 100
-  }, [indicators])
+    return bnMul(marginIndicators?.[data?.contract]?.price_change_rate ?? 0, 100)
+  }, [marginIndicators])
 
   const memoTakeProfit = useMemo(() => {
     return (
@@ -76,11 +77,10 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   const calcLossAmountCb = useCallback(
     (v) => {
       if (v && data) {
-        const amount = new BN(v)
-          .minus(data?.averagePrice)
-          .times(data?.size)
-          .times(data?.side === PositionSideTypes.long ? 1 : -1)
-        setStopLossAmount(safeInterceptionValues(String(amount)))
+        const p1 = bnMinus(v, data?.averagePrice)
+        const p2 = bnMul(p1, data?.size)
+        const p3 = bnMul(p2, data?.side === PositionSideTypes.long ? 1 : -1)
+        setStopLossAmount(p3)
       } else {
         setStopLossAmount(0)
       }
@@ -89,11 +89,11 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   )
 
   const calcPriceShowFunc = (price: string | number) => {
-    return new BN(price).isGreaterThan(0) ? price : '--'
+    return isGT(price, 0) ? price : '--'
   }
 
   const calcAmountShowFunc = (price: string | number, amount: string | number) => {
-    if (new BN(price).isGreaterThan(0)) return !new BN(amount).isZero() ? `${amount > 0 ? '+' : ''}${amount}` : '--'
+    if (isGT(price, 0)) return Number(amount) !== 0 ? `${amount > 0 ? '+' : ''}${keepDecimals(amount, 2)}` : '--'
     return '--'
   }
 
@@ -122,10 +122,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     }
 
     // todo need to be optimized!!!
-    if (
-      new BN(stopLossPrice).isEqualTo(data?.stopLossPrice) ||
-      (stopLossPrice === '' && data?.stopLossPrice === '--')
-    ) {
+    if (isET(stopLossPrice, data?.stopLossPrice) || (stopLossPrice === '' && data?.stopLossPrice === '--')) {
       SL = 0
     } else if (stopLossPrice === '') {
       SL = -1
@@ -134,10 +131,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     }
 
     // todo need to be optimized!!!
-    if (
-      new BN(takeProfitPrice).isEqualTo(data?.takeProfitPrice) ||
-      (takeProfitPrice === '' && data?.takeProfitPrice === '--')
-    ) {
+    if (isET(takeProfitPrice, data?.takeProfitPrice) || (takeProfitPrice === '' && data?.takeProfitPrice === '--')) {
       TP = 0
     } else if (takeProfitPrice === '') {
       TP = -1
@@ -223,13 +217,13 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{`${data?.quoteToken}${VALUATION_TOKEN_SYMBOL}`}</strong>
+                <strong>{data?.derivative}</strong>
                 <MultipleStatus direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
-              <BalanceShow value={spotPrices[marginToken][data?.quoteToken]} unit="" />
-              <span className={memoChangeRate >= 0 ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
+              <BalanceShow value={spotPrice} unit="" />
+              <span className={Number(memoChangeRate) >= 0 ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
             </section>
             <section className="web-trade-dialog-position-info-count">
               <p>
@@ -262,7 +256,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
                 <em className={Number(takeProfitAmount) > 0 ? 'buy' : 'sell'}>
                   {calcAmountShowFunc(takeProfitPrice, takeProfitAmount)}
                 </em>{' '}
-                {marginToken}.
+                {marginToken.symbol}.
               </p>
             </section>
             <header>
@@ -286,7 +280,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
                 <em className={Number(stopLossAmount) > 0 ? 'buy' : 'sell'}>
                   {calcAmountShowFunc(stopLossPrice, stopLossAmount)}
                 </em>{' '}
-                {marginToken}.
+                {marginToken.symbol}.
               </p>
             </section>
           </div>
@@ -296,7 +290,5 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     </Dialog>
   )
 }
-
-TakeProfitAndStopLoss.defaultProps = {}
 
 export default TakeProfitAndStopLoss

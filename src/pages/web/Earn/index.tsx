@@ -5,9 +5,6 @@ import { useInterval } from 'react-use'
 import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMarginTokenStore, usePoolsInfoStore, useTraderInfoStore } from '@/store'
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
-
-import IndicatorsUpdater from '@/pages/updater/IndicatorsUpdater'
-
 import PositionMining from './c/PositionMining'
 import CompetitionPool from './c/Competition'
 import MarginTokenPool from './c/MarginTokenPool'
@@ -67,8 +64,6 @@ const Eran: FC = () => {
 
   return (
     <div className="web-eran">
-      <IndicatorsUpdater />
-
       <PositionMining />
       <CompetitionPool />
       <DerifyTokenPool />

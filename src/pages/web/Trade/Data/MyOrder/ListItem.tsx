@@ -2,16 +2,14 @@ import dayjs from 'dayjs'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import React, { FC, useMemo, useContext } from 'react'
-
+import { keepDecimals } from '@/utils/tools'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { PositionSideTypes } from '@/typings'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-
 import ItemHeader from '../c/ItemHeader'
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
-import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   data?: Record<string, any>
@@ -53,7 +51,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
       <DataAtom
         label={t('Trade.MyOrder.Volume', 'Volume')}
         tip={t('Trade.MyOrder.VolumeTip')}
-        footer={`${data?.quoteToken} / ${marginToken}`}
+        footer={`${data?.derivative?.replace(VALUATION_TOKEN_SYMBOL, '')} / ${marginToken.symbol}`}
       >
         <span>
           {data?.size} / {keepDecimals(data?.volume, 2)}
@@ -83,7 +81,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
     <>
       <div className="web-trade-data-item">
         <ItemHeader
-          symbol={`${data?.quoteToken}${VALUATION_TOKEN_SYMBOL}`}
+          symbol={data?.derivative}
           multiple={data?.leverage}
           direction={PositionSideTypes[data?.side] as any}
           buttonText={t('Trade.MyOrder.Cancel', 'Cancel')}

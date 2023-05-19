@@ -34,7 +34,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
       const { marginBalance, availableMargin } = variables
       const p1 = bnMinus(marginBalance, availableMargin)
       const p2 = isET(marginBalance, 0) ? 0 : bnMul(bnDiv(p1, marginBalance), 100)
-      return [keepDecimals(p1, findToken(marginToken).decimals), keepDecimals(p2, 2)]
+      return [keepDecimals(p1, 2), keepDecimals(p2, 2)]
     }
     return [0, 0]
   }, [marginToken, variablesLoaded])
@@ -56,7 +56,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   }
 
   const funcAsync = async (account: string, amount: number) => {
-    const { data } = await getTraderWithdrawAmount(account, amount, findToken(marginToken).tokenAddress)
+    const { data } = await getTraderWithdrawAmount(account, amount, marginToken.address)
 
     dispatch({ type: 'SET_NECESSARY', payload: data })
   }
@@ -78,7 +78,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Trade.Withdraw.Withdrawable', 'Withdrawable')}</dt>
               <dd>
-                <BalanceShow value={variables.availableMargin} unit={marginToken} />
+                <BalanceShow value={variables.availableMargin} unit={marginToken.symbol} />
               </dd>
             </dl>
             <address>
@@ -89,7 +89,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           <div className="amount">
             <AmountInput
               max={variables.availableMargin}
-              unit={marginToken}
+              unit={marginToken.symbol}
               title={t('Trade.Withdraw.AmountToWithdraw', 'Amount to withdraw')}
               onChange={onChange}
             />
@@ -99,8 +99,8 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 dangerouslySetInnerHTML={{
                   __html: t('Trade.Withdraw.WithdrawTip', '', {
                     MarginToken: marginToken,
-                    MarginAmount: keepDecimals(state.necessary?.marginTokenAmount, findToken(marginToken).decimals),
-                    bMarginAmount: keepDecimals(state.necessary?.bMarginTokenAmount, findToken(marginToken).decimals),
+                    MarginAmount: keepDecimals(state.necessary?.marginTokenAmount, 2),
+                    bMarginAmount: keepDecimals(state.necessary?.bMarginTokenAmount, 2),
                     bMarginToken: `b${marginToken}`
                   })
                 }}
@@ -115,7 +115,5 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     </Dialog>
   )
 }
-
-WithdrawDialog.defaultProps = {}
 
 export default WithdrawDialog

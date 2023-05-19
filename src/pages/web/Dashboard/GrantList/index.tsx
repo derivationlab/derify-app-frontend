@@ -5,7 +5,7 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { findToken } from '@/config/tokens'
 import { PubSubEvents } from '@/typings'
 import { getGrantPlanList } from '@/api'
-import { useMarginListStore } from '@/store/useMarginToken'
+import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 import { all, grantTargetOptions } from '@/reducers/addGrant'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { Select } from '@/components/common/Form'
@@ -20,12 +20,12 @@ const GrantList: FC = () => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
 
-  const marginList = useMarginListStore((state) => state.marginList)
-  const marginListLoaded = useMarginListStore((state) => state.marginListLoaded)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
   const options = useMemo(() => {
-    if (marginListLoaded) {
-      const _ = marginList.map((token) => ({
+    if (marginTokenListLoaded) {
+      const _ = marginTokenList.map((token) => ({
         value: token.symbol,
         label: token.symbol,
         icon: `market/${token.symbol.toLowerCase()}.svg`
@@ -35,7 +35,7 @@ const GrantList: FC = () => {
     }
 
     return [all]
-  }, [marginList, marginListLoaded])
+  }, [marginTokenListLoaded])
 
   const _getGrantPlanList = useCallback(async (index = 0, marginToken, grantStatus, grantTarget) => {
     const token = findToken(marginToken)?.tokenAddress ?? 'all'

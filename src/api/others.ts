@@ -23,8 +23,18 @@ export const getPairIndicator = async (token: string) => {
   return response
 }
 
-export const getMarginTokenList = async (page = 0, offset = 10) => {
+export const getMarginIndicators = async (token: string) => {
+  const response = await get(`api/app_data/${token}`)
+  return response
+}
+
+export const getMarginTokenList = async (page = 0, offset = 30) => {
   const response = await get(`api/margin_token_list_apy/${page}/${offset}`)
+  return response
+}
+
+export const getDerivativeList = async (marginToken: string, page = 0, size = 30) => {
+  const response = await get(`api/derivative_list/${marginToken}/${page}/${size}`)
   return response
 }
 

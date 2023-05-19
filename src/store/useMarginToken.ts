@@ -1,22 +1,19 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { MarginTokenState } from '@/store/types'
 
-import { MarginListState } from '@/store/types'
-import { getMarginTokenList } from '@/api'
+export const marginToken = { symbol: '', address: '' }
 
-const getMarginList = async (index = 0, offset = 30) => {
-  const { data } = await getMarginTokenList(index, offset)
+const useMarginTokenStore = create(
+  persist<MarginTokenState>(
+    (set) => ({
+      marginToken: marginToken,
+      updateMarginToken: (data: typeof marginToken) => set({ marginToken: data })
+    }),
+    {
+      name: 'marginToken'
+    }
+  )
+)
 
-  return data ? data?.records : []
-}
-
-const useMarginListStore = create<MarginListState>((set) => ({
-  marginList: [],
-  marginListLoaded: false,
-  getMarginList: async (index = 0) => {
-    const data = await getMarginList(index)
-    console.info(data)
-    set({ marginList: data, marginListLoaded: true })
-  }
-}))
-
-export { useMarginListStore }
+export { useMarginTokenStore }

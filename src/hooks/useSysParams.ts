@@ -150,63 +150,6 @@ export const useExchangeParams = (exchange?: string) => {
   return { data, refetch, isLoading }
 }
 
-export const useClearingParams = (clearing?: string) => {
-  const { data, refetch, isLoading } = useQuery(
-    ['useClearingParams'],
-    async (): Promise<typeof initClearingParams> => {
-      if (clearing) {
-        const base = { address: clearing }
-        const calls = [
-          {
-            name: 'marginMaintenanceRatio',
-            ...base
-          },
-          {
-            name: 'marginMaintenanceRatioMultiple',
-            ...base
-          },
-          {
-            name: 'marginLiquidationRatio',
-            ...base
-          },
-          {
-            name: 'gasFeeRewardRatio',
-            ...base
-          }
-        ]
-
-        const response = await multicall(derifyClearingAbi, calls)
-
-        const [
-          [marginMaintenanceRatio],
-          [marginMaintenanceRatioMultiple],
-          [marginLiquidationRatio],
-          [gasFeeRewardRatio]
-        ] = response
-
-        return {
-          ...initClearingParams,
-          gasFeeRewardRatio: formatUnits(gasFeeRewardRatio, 8),
-          marginLiquidationRatio: formatUnits(marginLiquidationRatio, 8),
-          marginMaintenanceRatio: formatUnits(marginMaintenanceRatio, 8),
-          marginMaintenanceRatioMultiple: formatUnits(marginMaintenanceRatioMultiple, 8)
-        }
-      }
-
-      return initClearingParams
-    },
-    {
-      retry: 0,
-      initialData: initClearingParams,
-      refetchInterval: false,
-      keepPreviousData: true,
-      refetchOnWindowFocus: false
-    }
-  )
-
-  return { data, refetch, isLoading }
-}
-
 export const useProtocolParams = () => {
   const base = { address: contracts.derifyProtocol.contractAddress }
   const calls = [

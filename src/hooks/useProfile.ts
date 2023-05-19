@@ -10,6 +10,7 @@ import { MarginToken, MarginTokenKeys, MarginTokenWithContract } from '@/typings
 
 import derifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
+import { marginTokenList } from '@/store'
 
 const initial1 = (): MarginToken => {
   let value = Object.create(null)
@@ -159,12 +160,12 @@ export const useAllBrokerRewards = (trader?: string, config?: MarginTokenWithCon
   return { data, refetch, isLoading }
 }
 
-export const useAllMarginBalances = (trader?: string) => {
+export const useAllMarginBalances = (trader?: string, list?: typeof marginTokenList[]) => {
   let output = initial1()
   const { data, refetch, isLoading } = useQuery(
     ['useAllMarginBalances'],
     async () => {
-      if (trader) {
+      if (trader && list && list.length) {
         const base = {
           name: 'getAllMarginBalances',
           address: contracts.derifyProtocol.contractAddress

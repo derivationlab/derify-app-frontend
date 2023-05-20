@@ -9,13 +9,14 @@ import { useTranslation } from 'react-i18next'
 import { getBuyBackPlans } from '@/api'
 // import { Input } from '@/components/common/Form'
 import Pagination from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { STATIC_RESOURCES_URL } from '@/config'
-import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useBuyBackPool } from '@/hooks/useDashboard'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
-import { useConfigInfoStore } from '@/store'
+import { useMarginPriceStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 import { isGT, isGTET } from '@/utils/tools'
 
@@ -34,7 +35,7 @@ const Plan: FC = () => {
 
   const { data: buyBackInfo } = useBuyBackPool()
 
-  const mTokenPrices = useConfigInfoStore((state) => state.mTokenPrices)
+  const marginPrice = useMarginPriceStore((state) => state.marginPrice)
 
   // const [keyword, setKeyword] = useState('')
   const [keyword] = useState('')
@@ -55,11 +56,7 @@ const Plan: FC = () => {
         render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
           <>
             <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
-            <div
-              className={classNames(
-                isGTET(data?.last_drf_price, mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]) ? 'rise' : 'fall'
-              )}
-            >
+            <div className={classNames(isGTET(data?.last_drf_price, marginPrice) ? 'rise' : 'fall')}>
               <BalanceShow value={data?.last_drf_price} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
           </>
@@ -80,7 +77,7 @@ const Plan: FC = () => {
         }
       }
     ]
-  }, [t, blockNumber, mTokenPrices])
+  }, [t, blockNumber, marginPrice])
 
   const wColumns = useMemo(() => {
     return [
@@ -100,11 +97,7 @@ const Plan: FC = () => {
         dataIndex: 'last_drf_price',
         render: (value: number, data: Record<string, any>) => {
           return (
-            <div
-              className={classNames(
-                isGT(value, mTokenPrices[PLATFORM_TOKEN.symbol as MarginTokenKeys]) ? 'rise' : 'fall'
-              )}
-            >
+            <div className={classNames(isGT(value, marginPrice) ? 'rise' : 'fall')}>
               <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
           )
@@ -126,10 +119,10 @@ const Plan: FC = () => {
         }
       }
     ]
-  }, [t, blockNumber, mTokenPrices])
+  }, [t, blockNumber, marginPrice])
 
   const emptyText = useMemo(() => {
-    if (state.records.loaded) return t('common.Loading')
+    if (state.records.loaded) return <Spinner small />
     if (isEmpty(state.records.records)) return t('NewDashboard.BuybackPlan.NoResultsFound')
     return ''
   }, [t, state.records])

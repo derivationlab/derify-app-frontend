@@ -8,7 +8,6 @@ import { useClickAway } from 'react-use'
 import Button from '@/components/common/Button'
 import { PANCAKE_SWAP_URL } from '@/config'
 import tokens from '@/config/tokens'
-import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { addToken } from '@/utils/addToken'
 

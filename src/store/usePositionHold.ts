@@ -198,7 +198,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
   return []
 }
 
-const usePositionStore = create<PositionState>((set) => ({
+const usePositionHoldStore = create<PositionState>((set) => ({
   positionOrd: [],
   profitLossOrd: [],
   loaded: false,
@@ -209,4 +209,4 @@ const usePositionStore = create<PositionState>((set) => ({
   }
 }))
 
-export { usePositionStore }
+export { usePositionHoldStore }

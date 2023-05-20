@@ -1,46 +1,43 @@
 import classNames from 'classnames'
-import { isEmpty, orderBy } from 'lodash'
+import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 
-import React, { FC, useMemo, useState, useContext, useReducer, useCallback, useEffect } from 'react'
+import React, { FC, useMemo, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
-import { getMarginTokenList } from '@/api'
-// import { Input } from '@/components/common/Form'
 import Button from '@/components/common/Button'
 import DecimalShow from '@/components/common/DecimalShow'
-import Pagination from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
+// import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { STATIC_RESOURCES_URL } from '@/config'
-import { useBuyBackPool, usePositionInfo } from '@/hooks/useDashboard'
-import { useMulCurrentTradingAmount, usePairIndicators } from '@/hooks/useQueryApi'
+import { useBoundPools } from '@/hooks/useBoundPools'
+import { useCurrentTrading } from '@/hooks/useCurrentTrading'
+import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
 import { MobileContext } from '@/providers/Mobile'
-import { reducer, stateInit } from '@/reducers/records'
-import { useConfigInfoStore } from '@/store'
-import { MarginTokenKeys } from '@/typings'
+import { useMarginTokenListStore } from '@/store'
 import { bnMul, keepDecimals } from '@/utils/tools'
 
 import { TableMargin } from '../c/TableCol'
 
 const MarketInfo: FC = () => {
-  const [state, dispatch] = useReducer(reducer, stateInit)
-
   const history = useHistory()
 
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const factoryConfig = useConfigInfoStore((state) => state.factoryConfig)
-  const factoryConfigLoaded = useConfigInfoStore((state) => state.factoryConfigLoaded)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const { data: indicators } = usePairIndicators()
-  const { data: exchangeInfo } = useBuyBackPool()
-  const { data: tradingAmount } = useMulCurrentTradingAmount()
-  const { data: positionInfo, refetch: positionInfoRefetch } = usePositionInfo(factoryConfig)
+  const { data: boundPools } = useBoundPools(marginTokenList)
+  const { data: tradingVol } = useCurrentTrading(marginTokenList)
+  const { data: indicators } = useAllMarginIndicators(marginTokenList)
+  // const { data: positionInfo, refetch: positionInfoRefetch } = usePositionInfo(marginTokenList)
+  console.info('useCurrentTrading')
+  console.info(tradingVol)
 
   // const [keyword, setKeyword] = useState('')
-  const [keyword] = useState('')
 
   const mColumns = useMemo(() => {
     return [
@@ -56,8 +53,8 @@ const MarketInfo: FC = () => {
         dataIndex: 'symbol',
         render: (symbol: string) => (
           <>
-            <BalanceShow value={tradingAmount[symbol]} unit={symbol} />
-            <BalanceShow value={positionInfo[symbol as MarginTokenKeys]} unit={symbol} />
+            <BalanceShow value={boundPools?.[symbol] ?? 0} unit={symbol} />
+            {/*<BalanceShow value={positionInfo[symbol as MarginTokenKeys]} unit={symbol} />*/}
           </>
         )
       },
@@ -65,13 +62,16 @@ const MarketInfo: FC = () => {
         title: 'Max APR',
         dataIndex: 'symbol',
         render: (symbol: string) => {
-          const apy = Math.max.apply(null, Object.values(indicators[symbol as MarginTokenKeys]))
-          const per = keepDecimals(bnMul(apy, 100), 2)
-          return <DecimalShow value={per} percent black />
+          if (indicators?.[symbol]) {
+            const apy = Math.max.apply(null, Object.values(indicators[symbol]))
+            const per = keepDecimals(bnMul(apy, 100), 2)
+            return <DecimalShow value={per} percent black />
+          }
+          return <DecimalShow value={0} percent black />
         }
       }
     ]
-  }, [t, indicators, exchangeInfo, positionInfo])
+  }, [t, indicators, boundPools])
 
   const wColumns = useMemo(() => {
     return [
@@ -80,26 +80,29 @@ const MarketInfo: FC = () => {
         title: t('NewDashboard.Overview.MaxPositionMiningAPY'),
         dataIndex: 'symbol',
         render: (symbol: string) => {
-          const apy = Math.max.apply(null, Object.values(indicators[symbol as MarginTokenKeys]))
-          return <BalanceShow value={apy} percent />
+          if (indicators?.[symbol]) {
+            const apy = Math.max.apply(null, Object.values(indicators[symbol]))
+            return <BalanceShow value={apy} percent />
+          }
+          return <BalanceShow value={0} percent />
         }
       },
       {
         title: t('NewDashboard.Overview.TradingVolume'),
         dataIndex: 'symbol',
         render: (symbol: string) => {
-          return <BalanceShow value={tradingAmount[symbol]} unit={symbol} />
+          return <BalanceShow value={tradingVol?.[symbol] ?? 0} unit={symbol} />
         }
       },
       {
         title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
-        render: (symbol: string) => <BalanceShow value={positionInfo[symbol as MarginTokenKeys]} unit={symbol} />
+        render: (symbol: string) => <BalanceShow value={0} unit={symbol} />
       },
       {
         title: t('NewDashboard.Overview.BuybackPool'),
         dataIndex: 'symbol',
-        render: (symbol: string) => <BalanceShow value={exchangeInfo[symbol as MarginTokenKeys]} unit={symbol} />
+        render: (symbol: string) => <BalanceShow value={boundPools?.[symbol] ?? 0} unit={symbol} />
       },
       {
         title: t('NewDashboard.Overview.DetailInfo'),
@@ -112,13 +115,13 @@ const MarketInfo: FC = () => {
         )
       }
     ]
-  }, [t, indicators, exchangeInfo, positionInfo])
+  }, [t, tradingVol, indicators, boundPools])
 
   const emptyText = useMemo(() => {
-    if (state.records.loaded) return t('common.Loading')
-    if (isEmpty(state.records.records)) return t('NewDashboard.Overview.NoResultsFound')
+    if (!marginTokenListLoaded) return <Spinner small />
+    if (isEmpty(marginTokenList)) return t('NewDashboard.Overview.NoResultsFound')
     return ''
-  }, [t, state.records])
+  }, [t, marginTokenListLoaded])
 
   // const onSearch = () => {
   //   if (keyword) {
@@ -134,50 +137,6 @@ const MarketInfo: FC = () => {
   //   []
   // )
 
-  const fetchData = useCallback(
-    async (index = 0) => {
-      // keyword
-      const { data } = await getMarginTokenList(index, 10)
-
-      // console.info(data)
-
-      const sort = orderBy(data?.records ?? [], ['max_pm_apy', 'open'], 'desc')
-
-      dispatch({
-        type: 'SET_RECORDS',
-        payload: { records: sort, totalItems: data?.totalItems ?? 0, isLoaded: false }
-      })
-    },
-    [keyword]
-  )
-
-  const pageChange = (index: number) => {
-    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-
-    void fetchData(index)
-  }
-
-  useEffect(() => {
-    void fetchData()
-  }, [])
-
-  // useEffect(() => {
-  //   if (keyword) {
-  //     dispatch({
-  //       type: 'SET_MARKET_DAT',
-  //       payload: { records: [], totalItems: 0, isLoaded: true }
-  //     })
-  //
-  //     void debounceSearch(keyword)
-  //   }
-  // }, [keyword])
-
-  useEffect(() => {
-    if (factoryConfigLoaded && factoryConfig) {
-      void positionInfoRefetch()
-    }
-  }, [factoryConfig, factoryConfigLoaded])
-
   return (
     <div className="web-dashboard-overview-market">
       <header className="web-dashboard-section-header">
@@ -191,14 +150,14 @@ const MarketInfo: FC = () => {
       </header>
       <Table
         rowKey="symbol"
-        data={state.records.records}
+        data={marginTokenList}
         // @ts-ignore
         columns={mobile ? mColumns : wColumns}
         className={classNames('web-broker-table', { 'web-space-table': mobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
+      {/*<Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />*/}
     </div>
   )
 }

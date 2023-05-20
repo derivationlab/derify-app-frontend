@@ -5,7 +5,7 @@ import React, { FC, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
-import { usePositionStore, useDerivativeListStore } from '@/store'
+import { usePositionHoldStore, useDerivativeListStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 
 import MyOrder from './MyOrder'
@@ -17,7 +17,7 @@ const Data: FC = () => {
   const { address } = useAccount()
 
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
-  const fetchTraderPos = usePositionStore((state) => state.fetch)
+  const fetchTraderPos = usePositionHoldStore((state) => state.fetch)
 
   useEffect(() => {
     if (address && derAddressList) void fetchTraderPos(address, derAddressList)

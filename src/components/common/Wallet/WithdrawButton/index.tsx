@@ -6,9 +6,8 @@ import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
 import WithdrawDialog from '@/components/common/Wallet/WithdrawButton/Withdraw'
-import { useProtocolConf } from '@/hooks/useMatchConf'
 import { useMarginOperation } from '@/hooks/useTrading'
-import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 
 interface Props {

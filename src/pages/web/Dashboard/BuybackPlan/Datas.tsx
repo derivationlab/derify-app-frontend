@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next'
 
 import { getDRFPrice } from '@/api'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { DEFAULT_MARGIN_TOKEN, PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMulCurrentIndexDAT } from '@/hooks/useQueryApi'
-import { useConfigInfoStore } from '@/store'
-import { MarginTokenKeys } from '@/typings'
+import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useCurrentIndex } from '@/hooks/useCurrentIndex'
+import { useMarginPriceStore, useMarginTokenListStore, useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 
 const Datas: FC = () => {
@@ -17,16 +17,19 @@ const Datas: FC = () => {
 
   const [tokenPrice, setTokenPrice] = useState<number>(0)
 
-  const mTokenPrices = useConfigInfoStore((state) => state.mTokenPrices)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const marginPrice = useMarginPriceStore((state) => state.marginPrice)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
 
-  const { data: dashboardDAT } = useMulCurrentIndexDAT()
+  const { data: currentIndex } = useCurrentIndex(marginTokenList)
 
   const totalBuyback = useMemo(() => {
-    return Object.values(dashboardDAT).reduce((p, n, index) => {
-      const margin = Object.keys(dashboardDAT)[index] as MarginTokenKeys
-      return bnPlus(bnMul(n.drfBuyBack ?? 0, mTokenPrices[margin]), p)
-    }, 0)
-  }, [dashboardDAT, mTokenPrices])
+    if (currentIndex) {
+      const values = Object.values(currentIndex) as any[]
+      return values.reduce((p, n) => bnPlus(bnMul(n.drfBuyBack ?? 0, marginPrice), p), '0')
+    }
+    return 0
+  }, [currentIndex, marginPrice])
 
   const tokenDecimal = useMemo(() => {
     if (tokenPrice === 0) return 2
@@ -35,8 +38,8 @@ const Datas: FC = () => {
   }, [tokenPrice])
 
   const totalDestroyed = useMemo(() => {
-    return dashboardDAT[DEFAULT_MARGIN_TOKEN.symbol]?.drfBurnt ?? 0
-  }, [dashboardDAT])
+    return currentIndex?.[marginToken.symbol]?.drfBurnt ?? 0
+  }, [marginToken, currentIndex])
 
   useEffect(() => {
     const func = async () => {

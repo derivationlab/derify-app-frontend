@@ -29,10 +29,10 @@ const PositionMining: FC = () => {
   const { mobile } = useContext(MobileContext)
 
   const variables = useTraderVariablesStore((state) => state.variables)
+  const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
   const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const rewardsInfo = useTraderInfoStore((state) => state.rewardsInfo)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const variablesLoaded = useTraderInfoStore((state) => state.variablesLoaded)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const { withdraw } = useWithdrawPositionReward()

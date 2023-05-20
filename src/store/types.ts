@@ -105,12 +105,8 @@ export interface BrokerInfoState {
 export interface TraderInfoState {
   rewardsInfo: Rec
   stakingInfo: Rec
-  variables: InitialTraderVariablesType
-  variablesLoaded: boolean
-  updateVariables: (p: InitialTraderVariablesType) => void
   updateStakingInfo: (p: Rec) => void
   updateRewardsInfo: (p: Rec) => void
-  reset: () => void
 }
 
 export interface ConfigInfoState {

@@ -26,8 +26,8 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const variables = useTraderVariablesStore((state) => state.variables)
+  const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-  const variablesLoaded = useTraderInfoStore((state) => state.variablesLoaded)
 
   const memoMargin = useMemo(() => {
     if (variablesLoaded) {

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
 import Button from '@/components/common/Button'
+import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useAllMarginProtocol } from '@/hooks/useAllMarginProtocol'
@@ -18,7 +19,6 @@ import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenListStore } from '@/store'
 import { bnDiv } from '@/utils/tools'
-import Spinner from '@/components/common/Spinner'
 
 const MySpace: FC = () => {
   const history = useHistory()

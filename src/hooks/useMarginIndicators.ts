@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getMarginIndicators } from '@/api'
-import { bnPlus, keepDecimals } from '@/utils/tools'
-
-const output = Object.create(null)
+import { getMarginIndicators, getPairIndicator } from '@/api'
+import { marginTokenList } from '@/store'
+import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'
 
 /**
  {
@@ -17,6 +16,7 @@ const output = Object.create(null)
  * @param marginTokenAddress
  */
 export const useMarginIndicators = (marginTokenAddress: string) => {
+  const output = Object.create(null)
   const { data } = useQuery(
     ['useMarginIndicators'],
     async () => {
@@ -54,6 +54,60 @@ export const useMarginIndicators = (marginTokenAddress: string) => {
       retry: false,
       initialData: null,
       refetchInterval: 10000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data }
+}
+
+export const useAllMarginIndicators = (list: (typeof marginTokenList)[]) => {
+  const output = Object.create(null)
+
+  const { data } = useQuery(
+    ['useAllMarginIndicators'],
+    async () => {
+      if (list.length) {
+        const promises = list.map(async (token) => {
+          return [await getPairIndicator(token.margin_token).then(({ data }) => data)]
+        })
+
+        const response = await Promise.all(promises)
+
+        if (response.length > 0) {
+          response.forEach(([data], index) => {
+            data.forEach(
+              ({
+                token,
+                longDrfPmrRate = 0,
+                shortDrfPmrRate = 0,
+                longMarginTokenPmrRate = 0,
+                shortMarginTokenPmrRate = 0
+              }: Record<string, any>) => {
+                const long = bnPlus(longDrfPmrRate, longMarginTokenPmrRate)
+                const short = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
+                const apyMax = isGTET(long, short) ? long : short
+
+                output[list[index].symbol] = {
+                  ...output[list[index].symbol],
+                  [token]: Number(apyMax)
+                }
+              }
+            )
+          })
+          console.info(output)
+
+          return output
+        }
+      }
+
+      return null
+    },
+    {
+      retry: false,
+      initialData: null,
+      refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }

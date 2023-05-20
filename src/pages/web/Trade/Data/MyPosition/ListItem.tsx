@@ -6,7 +6,13 @@ import { useTranslation } from 'react-i18next'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore, useTraderInfoStore } from '@/store'
+import {
+  useMarginTokenStore,
+  useProtocolConfigStore,
+  useTokenSpotPricesStore,
+  useTraderInfoStore,
+  useTraderVariablesStore
+} from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'
@@ -29,10 +35,10 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const variables = useTraderInfoStore((state) => state.variables)
+  const variables = useTraderVariablesStore((state) => state.variables)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const variablesLoaded = useTraderInfoStore((state) => state.variablesLoaded)
+  const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
 
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)

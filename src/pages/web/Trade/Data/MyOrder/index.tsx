@@ -13,7 +13,7 @@ import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import { ThemeContext } from '@/providers/Theme'
 import { useDerivativeListStore, useProtocolConfigStore } from '@/store'
-import { usePositionStore } from '@/store/usePosition'
+import { usePositionHoldStore } from '@/store/usePositionHold'
 import { PubSubEvents } from '@/typings'
 
 import NoRecord from '../c/NoRecord'
@@ -25,8 +25,8 @@ const MyOrder: FC = () => {
   const { theme } = useContext(ThemeContext)
   const { cancelAllPositions, cancelPosition } = usePositionOperation()
 
-  const profitLossOrd = usePositionStore((state) => state.profitLossOrd)
-  const profitLossOrdLoaded = usePositionStore((state) => state.loaded)
+  const profitLossOrd = usePositionHoldStore((state) => state.profitLossOrd)
+  const profitLossOrdLoaded = usePositionHoldStore((state) => state.loaded)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
 

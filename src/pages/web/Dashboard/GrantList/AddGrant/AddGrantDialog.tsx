@@ -11,10 +11,11 @@ import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import { DEFAULT_MARGIN_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
-import { useConfigInfoStore, useBalancesStore } from '@/store'
+import { useBalancesStore } from '@/store'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
-import { GrantKeys } from '@/typings'
+import { GrantKeys, protocolConfig } from '@/typings'
 import { isET, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
@@ -33,13 +34,13 @@ const grantTarget = grantTargetOptions()
 const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
-
   const [toggle, setToggle] = useState<boolean>(false)
 
   const balances = useBalancesStore((state) => state.balances)
-  const minimumGrant = useConfigInfoStore((state) => state.minimumGrant)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
+
+  const { minimumGrant } = useMinimumGrant(protocolConfig)
 
   const periodDate = useMemo(() => {
     const format = 'MM/DD/YYYY HH:mm:ss'
@@ -48,7 +49,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     return [dayjs().add(start).utc().format(format), dayjs().add(end).utc().format(format)]
   }, [state.grantDays, state.cliffDays])
 
-  const options = useMemo(() => {
+  const marginOptions = useMemo(() => {
     if (marginTokenListLoaded) {
       return marginTokenList
         .map((token) => {
@@ -68,17 +69,17 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   const disabled = useMemo(() => {
     const amount = minimumGrant[state.grantTarget as GrantKeys]
     const balance = balances?.[PLATFORM_TOKEN.symbol] ?? 0
-    if (options.length === 0) return true
+    if (marginOptions.length === 0) return true
     if (isET(balance, 0) || isET(amount, 0)) return true
     if (isLT(balance, amount)) return true
     if (isLT(state.amountInp || 0, amount)) return true
     if (state.grantDays < limitDays.grantDays[0] || state.grantDays > limitDays.grantDays[1]) return true
     if (state.cliffDays < limitDays.cliffDays[0] || state.cliffDays > limitDays.cliffDays[1]) return true
-  }, [options, balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
+  }, [marginOptions, balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
 
   const currentMargin = useMemo(
-    () => options.find((item: any) => item.value === state.marginToken) ?? options[0],
-    [state.marginToken, options]
+    () => marginOptions.find((item: any) => item.value === state.marginToken) ?? marginOptions[0],
+    [state.marginToken, marginOptions]
   )
 
   const currentTarget = useMemo(
@@ -115,18 +116,18 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             <div className="web-dashboard-add-grant-dialog-selects">
               <div className="web-dashboard-add-grant-dialog-label">
                 <label>{t('NewDashboard.GrantList.Margin')}</label>
-                <Skeleton rowsProps={{ rows: 1 }} animation loading={options.length === 0}>
+                <Skeleton rowsProps={{ rows: 1 }} animation loading={marginOptions.length === 0}>
                   <Select
                     filter
                     value={state.marginToken}
                     onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
                     renderer={(item) => (
-                      <div className="web-select-options-item">
+                      <div className="web-select-marginOptions-item">
                         <Image src={item.icon} />
                         {item.label}
                       </div>
                     )}
-                    objOptions={options as any}
+                    objOptions={marginOptions as any}
                     labelRenderer={(item) => (
                       <div className="web-dashboard-add-grant-margin-label">
                         <Image src={item.icon} />

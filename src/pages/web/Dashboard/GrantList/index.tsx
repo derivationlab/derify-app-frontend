@@ -8,7 +8,7 @@ import { getGrantPlanList } from '@/api'
 import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
-import { findToken } from '@/config/tokens'
+import Spinner from '@/components/common/Spinner'
 import { all, grantTargetOptions } from '@/reducers/addGrant'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
@@ -26,10 +26,10 @@ const GrantList: FC = () => {
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const options = useMemo(() => {
+  const marginOptions = useMemo(() => {
     if (marginTokenListLoaded) {
       const _ = marginTokenList.map((token) => ({
-        value: token.symbol,
+        value: token.margin_token,
         label: token.symbol,
         icon: `market/${token.symbol.toLowerCase()}.svg`
       }))
@@ -41,9 +41,7 @@ const GrantList: FC = () => {
   }, [marginTokenListLoaded])
 
   const _getGrantPlanList = useCallback(async (index = 0, marginToken, grantStatus, grantTarget) => {
-    const token = findToken(marginToken)?.tokenAddress ?? 'all'
-
-    const { data } = await getGrantPlanList(token, grantTarget, grantStatus, index, 8)
+    const { data } = await getGrantPlanList(marginToken, grantTarget, grantStatus, index, 8)
 
     const sort = orderBy(data?.records ?? [], ['open'], 'desc')
 
@@ -105,7 +103,7 @@ const GrantList: FC = () => {
               {props.label}
             </div>
           )}
-          objOptions={options as any}
+          objOptions={marginOptions as any}
           labelRenderer={(props) => (
             <div className="web-dashboard-add-grant-margin-label">
               {props.icon && <Image src={props.icon} />}
@@ -131,9 +129,11 @@ const GrantList: FC = () => {
       </header>
       <div className="web-dashboard-grant-list">
         <AddGrant />
-        {state.grantData.records.map((item, index) => (
-          <ListItem key={index} data={item} />
-        ))}
+        {state.grantData.isLoaded ? (
+          <Spinner small />
+        ) : (
+          state.grantData.records.map((item, index) => <ListItem key={index} data={item} />)
+        )}
       </div>
       <Pagination page={state.pageIndex} pageSize={8} total={state.grantData.totalItems} onChange={pageChange} />
     </div>

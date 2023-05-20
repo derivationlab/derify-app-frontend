@@ -1,3 +1,4 @@
+import { orderBy } from 'lodash'
 import { create } from 'zustand'
 
 import { getMarginTokenList } from '@/api'
@@ -41,12 +42,14 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
     console.info(`保证金列表:`)
     console.info(data)
 
-    if (data.length)
+    if (data.length) {
+      const _ = orderBy(data, ['max_pm_apy', 'open'], 'desc')
       set({
-        marginTokenList: data,
-        marginTokenSymbol: data.map((margin) => margin.symbol),
+        marginTokenList: _,
+        marginTokenSymbol: _.map((margin) => margin.symbol),
         marginTokenListLoaded: true
       })
+    }
   }
 }))
 

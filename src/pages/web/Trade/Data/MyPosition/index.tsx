@@ -17,7 +17,7 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 import { ThemeContext } from '@/providers/Theme'
 import {
   useBrokerInfoStore,
-  usePositionStore,
+  usePositionHoldStore,
   useQuoteTokenStore,
   useTokenSpotPricesStore,
   useProtocolConfigStore,
@@ -39,13 +39,13 @@ const MyPosition: FC = () => {
 
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
-  const positionOrd = usePositionStore((state) => state.positionOrd)
+  const positionOrd = usePositionHoldStore((state) => state.positionOrd)
   const closingType = usePositionOperationStore((state) => state.closingType)
   const closingAmount = usePositionOperationStore((state) => state.closingAmount)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
-  const positionOrdLoaded = usePositionStore((state) => state.loaded)
+  const positionOrdLoaded = usePositionHoldStore((state) => state.loaded)
 
   const isMarginToken = useIsMarginToken(closingType)
 
@@ -57,7 +57,7 @@ const MyPosition: FC = () => {
   }, [quoteToken, tokenSpotPrices])
 
   const isFullSize = useCallback(
-    ({ size = 0, quoteToken = '' }, amount: string): boolean => {
+    ({ size = 0 }, amount: string): boolean => {
       const u = nonBigNumberInterception(bnMul(spotPrice, size))
       return isMarginToken ? isGTET(amount, u) : isGTET(amount, size)
     },

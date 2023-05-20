@@ -7,11 +7,11 @@ import { getHistoryPositionsDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { findToken } from '@/config/tokens'
-import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
+import { SelectTimesOptions, SelectTimesValues } from '@/data'
 import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
 import { ThemeContext } from '@/providers/Theme'
-import { useMarginTokenStore } from '@/store'
+import { useDerivativeListStore, useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { bnDiv, bnMul, bnPlus, dayjsStartOf, isGT, keepDecimals } from '@/utils/tools'
 
 const time = dayjsStartOf()
@@ -28,16 +28,33 @@ const PositionVolume: FC = () => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
 
-  const [positionData, setPositionsData] = useState<Record<string, any>[]>([])
+  const [positionsData, setPositionsData] = useState<Record<string, any>[]>([])
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
-  const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
+  const [derivativeSel, setDerivativeSel] = useState<string>('All Derivatives')
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
 
-  const { data: positionsDAT, refetch } = useCurrentPositionsAmount(
-    SelectSymbolTokens[pairSelectVal],
-    marginToken.address
-  )
+  const derivative = useMemo(() => {
+    const base = {
+      key: 'All Derivatives',
+      val: 'all'
+    }
+    if (derivativeList.length) {
+      const _derivative = derivativeList.map((derivative) => ({
+        key: derivative.name,
+        val: derivative.token
+      }))
+      return [base, ..._derivative]
+    }
+    return [base]
+  }, [derivativeList])
+
+  const derAddress = useMemo(() => {
+    return derivative.find((d) => d.key === derivativeSel)?.val ?? ''
+  }, [derivative, derivativeSel])
+
+  const { data: positionsDAT } = useCurrentPositionsAmount(derAddress, marginToken.address)
 
   const barColor = useMemo(() => {
     let longColor = '#24ce7d'
@@ -62,7 +79,7 @@ const PositionVolume: FC = () => {
 
   const historyDAT = useCallback(async () => {
     const { data: history } = await getHistoryPositionsDAT(
-      SelectSymbolTokens[pairSelectVal],
+      derAddress,
       SelectTimesValues[timeSelectVal],
       marginToken.address
     )
@@ -79,7 +96,7 @@ const PositionVolume: FC = () => {
 
       setPositionsData(convert)
     }
-  }, [timeSelectVal, pairSelectVal])
+  }, [timeSelectVal, derAddress])
 
   const totalAmount = useMemo(() => {
     if (positionsDAT) {
@@ -104,16 +121,12 @@ const PositionVolume: FC = () => {
   }, [positionsDAT])
 
   const combineDAT = useMemo(() => {
-    return [...positionData, totalAmount]
-  }, [positionData, totalAmount])
+    return [...positionsData, totalAmount]
+  }, [positionsData, totalAmount])
 
   useEffect(() => {
     void historyDAT()
-  }, [historyDAT, timeSelectVal, pairSelectVal])
-
-  useEffect(() => {
-    void refetch()
-  }, [pairSelectVal])
+  }, [historyDAT, timeSelectVal, derivativeSel])
 
   return (
     <div className="web-data-chart">
@@ -129,9 +142,9 @@ const PositionVolume: FC = () => {
             onChange={(value) => setTimeSelectVal(String(value))}
           />
           <Select
-            value={pairSelectVal}
-            options={SelectSymbolOptions}
-            onChange={(value) => setPairSelectVal(String(value))}
+            value={derivativeSel}
+            options={derivative.map((d) => d.key)}
+            onChange={(value) => setDerivativeSel(value as string)}
           />
         </aside>
       </header>

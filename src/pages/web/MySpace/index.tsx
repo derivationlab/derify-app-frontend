@@ -2,39 +2,38 @@ import { isEmpty, orderBy } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useMemo, useContext, useCallback, useEffect, useReducer } from 'react'
+import React, { FC, useMemo, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
-import { getMarginTokenList } from '@/api'
 import Button from '@/components/common/Button'
-import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
-import { useTraderVariables, useAllBrokerRewards, useAllTraderRewards, useAllMarginBalances } from '@/hooks/useProfile'
+import { PLATFORM_TOKEN } from '@/config/tokens'
+import { useAllMarginProtocol } from '@/hooks/useAllMarginProtocol'
+import { useBrokerRewards } from '@/hooks/useBrokerRewards'
+import { useMarginBalances } from '@/hooks/useMarginBalances'
+import { usePositionRewards } from '@/hooks/usePositionRewards'
+import { useTraderVariables } from '@/hooks/useTraderVariables'
 import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
 import { MobileContext } from '@/providers/Mobile'
-import { reducer, stateInit } from '@/reducers/records'
-import { useConfigInfoStore } from '@/store'
-import { MarginTokenKeys } from '@/typings'
+import { useMarginTokenListStore } from '@/store'
 import { bnDiv } from '@/utils/tools'
+import Spinner from '@/components/common/Spinner'
 
 const MySpace: FC = () => {
-  const [state, dispatch] = useReducer(reducer, stateInit)
-
   const history = useHistory()
-
   const { t } = useTranslation()
   const { address } = useAccount()
-
   const { mobile } = useContext(MobileContext)
 
-  const protocolConfig = useConfigInfoStore((state) => state.protocolConfig)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const { data: marginBalances, isLoading: marginBalancesLoaded } = useAllMarginBalances(address)
-  const { data: traderVariables } = useTraderVariables(address, protocolConfig)
-  const { data: allTraderRewards } = useAllTraderRewards(address, protocolConfig)
-  const { data: allBrokerRewards } = useAllBrokerRewards(address, protocolConfig)
+  const { marginProtocol } = useAllMarginProtocol(marginTokenList)
+  const { data: marginBalances } = useMarginBalances(address, marginTokenList)
+  const { data: traderVariables } = useTraderVariables(address, marginProtocol)
+  const { data: positionRewards } = usePositionRewards(address, marginProtocol)
+  const { data: allBrokerRewards } = useBrokerRewards(address, marginProtocol)
 
   const mColumns = useMemo(() => {
     return [
@@ -42,8 +41,7 @@ const MySpace: FC = () => {
         title: t('Nav.MySpace.Margin'),
         dataIndex: 'symbol',
         render: (symbol: string) => {
-          const icon = findToken(symbol).icon
-          return <TableMargin icon={icon} name={symbol} />
+          return <TableMargin icon={`market/${symbol.toLowerCase()}.svg`} name={symbol} />
         }
       },
       {
@@ -52,7 +50,7 @@ const MySpace: FC = () => {
         render: (symbol: string) => {
           return (
             <>
-              <BalanceShow value={traderVariables[symbol as MarginTokenKeys]} unit={symbol} />
+              <BalanceShow value={traderVariables?.[symbol] ?? 0} unit={symbol} />
             </>
           )
         }
@@ -61,7 +59,7 @@ const MySpace: FC = () => {
         title: 'Balance/Rate',
         dataIndex: 'marginBalance',
         render: (_: string, record: Record<string, any>) => {
-          const param = traderVariables[record.symbol as MarginTokenKeys]
+          const param = traderVariables?.[record.symbol] ?? 0
           const percentage = Number(param) === 0 ? 0 : bnDiv(_, param)
           return (
             <>
@@ -82,7 +80,7 @@ const MySpace: FC = () => {
         dataIndex: 'marginBalance',
         width: 250,
         render: (_: string, record: Record<string, any>) => {
-          const param = traderVariables[record.symbol as MarginTokenKeys]
+          const param = traderVariables?.[record.symbol] ?? 0
           const percentage = Number(param) === 0 ? 0 : bnDiv(_, param)
           return (
             <>
@@ -97,7 +95,7 @@ const MySpace: FC = () => {
         dataIndex: 'positionVolume',
         width: 250,
         render: (_: string, record: Record<string, any>) => {
-          return <BalanceShow value={traderVariables[record.symbol as MarginTokenKeys]} unit={record.symbol} />
+          return <BalanceShow value={traderVariables?.[record.symbol] ?? 0} unit={record.symbol} />
         }
       },
       {
@@ -105,7 +103,7 @@ const MySpace: FC = () => {
         dataIndex: 'rewards1',
         width: 250,
         render: (_: Record<string, any>, record: Record<string, any>) => {
-          const rewards = allTraderRewards[record.symbol as MarginTokenKeys]
+          const rewards = positionRewards?.[record.symbol] ?? 0
           return (
             <>
               <BalanceShow value={rewards[record.symbol]} rule="0.00" unit={record.symbol} />
@@ -119,11 +117,11 @@ const MySpace: FC = () => {
         dataIndex: 'rewards2',
         width: 250,
         render: (_: Record<string, any>, record: Record<string, any>) => {
-          const rewards2 = allBrokerRewards[record.symbol as MarginTokenKeys]
+          const rewards = allBrokerRewards?.[record.symbol] ?? 0
           return (
             <>
-              <BalanceShow value={rewards2[record.symbol]} rule="0.00" unit={record.symbol} />
-              <BalanceShow value={rewards2.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
+              <BalanceShow value={rewards[record.symbol]} rule="0.00" unit={record.symbol} />
+              <BalanceShow value={rewards.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
             </>
           )
         }
@@ -142,12 +140,12 @@ const MySpace: FC = () => {
         }
       }
     ]
-  }, [t, traderVariables, allTraderRewards, allBrokerRewards])
+  }, [t, traderVariables, allBrokerRewards])
 
   const initData = useMemo(() => {
-    if (!state.records.loaded && !marginBalancesLoaded && marginBalances) {
-      const _ = state.records.records.map((token) => {
-        const marginBalance = marginBalances[token.symbol as MarginTokenKeys]
+    if (marginTokenListLoaded && marginBalances) {
+      const _ = marginTokenList.map((token) => {
+        const marginBalance = marginBalances[token.symbol]
         return {
           apy: token.max_pm_apy,
           open: token.open,
@@ -158,36 +156,13 @@ const MySpace: FC = () => {
       return orderBy(_, ['marginBalance', 'apy'], 'desc')
     }
     return []
-  }, [state.records, marginBalances, marginBalancesLoaded])
+  }, [marginBalances, marginTokenListLoaded])
 
   const emptyText = useMemo(() => {
-    if (state.records.loaded || marginBalancesLoaded) return t('common.Loading')
-    if (isEmpty(state.records.records)) return t('common.NoRecord')
+    if (!marginTokenListLoaded || !marginBalances) return <Spinner small />
+    if (isEmpty(marginTokenList)) return t('common.NoRecord')
     return ''
-  }, [t, state.records, marginBalancesLoaded])
-
-  const _getMarginTokenList = useCallback(
-    async (index = 0) => {
-      if (address) {
-        const { data } = await getMarginTokenList(index)
-        dispatch({
-          type: 'SET_RECORDS',
-          payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-        })
-      }
-    },
-    [address]
-  )
-
-  const pageChange = (index: number) => {
-    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-
-    void _getMarginTokenList(index)
-  }
-
-  useEffect(() => {
-    if (address) void _getMarginTokenList()
-  }, [address])
+  }, [t, marginBalances, marginTokenListLoaded])
 
   return (
     <div className="web-table-page">
@@ -203,7 +178,7 @@ const MySpace: FC = () => {
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
+      {/*<Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />*/}
     </div>
   )
 }

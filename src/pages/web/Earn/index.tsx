@@ -4,8 +4,7 @@ import React, { FC, useEffect } from 'react'
 import { useInterval } from 'react-use'
 
 import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
-import { useProtocolConf } from '@/hooks/useMatchConf'
-import { useMarginTokenStore, usePoolsInfoStore, useProtocolConfigStore, useTraderInfoStore } from '@/store'
+import { usePoolsInfoStore, useProtocolConfigStore, useTraderInfoStore } from '@/store'
 
 import CompetitionPool from './c/Competition'
 import DerifyTokenPool from './c/DerifyTokenPool'

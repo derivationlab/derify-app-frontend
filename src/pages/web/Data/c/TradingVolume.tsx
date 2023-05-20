@@ -7,10 +7,10 @@ import { getHistoryTradingDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { findToken } from '@/config/tokens'
-import { SelectTimesOptions, SelectSymbolOptions, SelectSymbolTokens, SelectTimesValues } from '@/data'
+import { SelectTimesOptions, SelectTimesValues } from '@/data'
 import { useCurrentTradingAmount } from '@/hooks/useQueryApi'
-import { useMarginTokenStore } from '@/store'
+import { useDerivativeListStore, useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
@@ -24,18 +24,40 @@ const TradingVolume: FC = () => {
 
   const [tradingData, setTradingData] = useState<Record<string, any>[]>([])
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
-  const [pairSelectVal, setPairSelectVal] = useState<string>('All Derivatives')
+  const [derivativeSel, setDerivativeSel] = useState<string>('All Derivatives')
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
 
-  const { data: tradingVolume, refetch } = useCurrentTradingAmount(
-    SelectSymbolTokens[pairSelectVal],
-    marginToken.address
-  )
+  const derivative = useMemo(() => {
+    const base = {
+      key: 'All Derivatives',
+      val: 'all'
+    }
+    if (derivativeList.length) {
+      const _derivative = derivativeList.map((derivative) => ({
+        key: derivative.name,
+        val: derivative.token
+      }))
+      return [base, ..._derivative]
+    }
+    return [base]
+  }, [derivativeList])
+
+  const derAddress = useMemo(() => {
+    return derivative.find((d) => d.key === derivativeSel)?.val ?? ''
+  }, [derivative, derivativeSel])
+
+  const { data: tradingVolume } = useCurrentTradingAmount(derAddress, marginToken.address)
+
+  const combineDAT = useMemo(() => {
+    if (tradingVolume) output = { day_time: time, ...tradingVolume[0] }
+    return [...tradingData, output]
+  }, [tradingData, tradingVolume])
 
   const historyDAT = useCallback(async () => {
     const { data: trading } = await getHistoryTradingDAT(
-      SelectSymbolTokens[pairSelectVal],
+      derAddress,
       SelectTimesValues[timeSelectVal],
       marginToken.address
     )
@@ -45,20 +67,11 @@ const TradingVolume: FC = () => {
       const convert = trading.map((o) => ({ ...o, trading_amount: Number(o.trading_amount) })).reverse()
       setTradingData(convert)
     }
-  }, [timeSelectVal, pairSelectVal])
-
-  const combineDAT = useMemo(() => {
-    if (tradingVolume) output = { day_time: time, ...tradingVolume[0] }
-    return [...tradingData, output]
-  }, [tradingData, tradingVolume])
+  }, [timeSelectVal, derAddress])
 
   useEffect(() => {
     void historyDAT()
-  }, [historyDAT, timeSelectVal, pairSelectVal])
-
-  useEffect(() => {
-    void refetch()
-  }, [pairSelectVal])
+  }, [historyDAT, timeSelectVal, derivativeSel])
 
   return (
     <div className="web-data-chart">
@@ -74,9 +87,9 @@ const TradingVolume: FC = () => {
             onChange={(value) => setTimeSelectVal(String(value))}
           />
           <Select
-            value={pairSelectVal}
-            options={SelectSymbolOptions}
-            onChange={(value) => setPairSelectVal(String(value))}
+            value={derivativeSel}
+            options={derivative.map((d) => d.key)}
+            onChange={(value) => setDerivativeSel(value as string)}
           />
         </aside>
       </header>

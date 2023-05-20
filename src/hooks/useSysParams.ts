@@ -225,6 +225,7 @@ export const useTradePairParams = (address?: string) => {
     ['useTradePairParams'],
     async (): Promise<typeof initTradePairParams> => {
       if (address) {
+        console.info(address)
         const base = { address }
         const calls = [
           {

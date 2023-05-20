@@ -180,13 +180,16 @@ export const useCurrentTradingAmount = (address: string, marginToken: string) =>
   const { data, refetch } = useQuery(
     ['useCurrentTradingAmount'],
     async (): Promise<any[]> => {
-      const data = await getCurrentTradingAmount(address, marginToken)
-      return data?.data ?? []
+      if (address && marginToken) {
+        const data = await getCurrentTradingAmount(address, marginToken)
+        return data?.data
+      }
+      return []
     },
     {
       retry: 0,
       initialData: [],
-      refetchInterval: 10000,
+      refetchInterval: 5000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
@@ -246,8 +249,11 @@ export const useCurrentPositionsAmount = (quoteToken: string, marginToken: strin
   const { data, refetch } = useQuery(
     ['useCurrentPositionsAmount'],
     async (): Promise<Record<string, any>> => {
-      const data = await getCurrentPositionsAmount(quoteToken, marginToken)
-      return data?.data ?? {}
+      if (quoteToken && marginToken) {
+        const data = await getCurrentPositionsAmount(quoteToken, marginToken)
+        return data?.data ?? {}
+      }
+      return {}
     },
     {
       retry: 0,

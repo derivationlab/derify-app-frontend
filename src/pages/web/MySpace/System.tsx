@@ -5,15 +5,9 @@ import { useTranslation } from 'react-i18next'
 
 import { getSystemParams } from '@/api'
 import Select from '@/components/common/Form/Select'
-import { pairOptions } from '@/data'
 import { useClearingParams } from '@/hooks/useClearingParams'
-import {
-  useRewardsParams,
-  useProtocolParams,
-  useExchangeParams,
-  useGrantPlanParams,
-  useTradePairParams
-} from '@/hooks/useSysParams'
+import { useDerivativeParams } from '@/hooks/useDerivativeParams'
+import { useRewardsParams, useProtocolParams, useExchangeParams, useGrantPlanParams } from '@/hooks/useSysParams'
 import { useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { bnMul, nonBigNumberInterception } from '@/utils/tools'
@@ -32,14 +26,14 @@ const System: FC = () => {
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
 
   const [parameters, setParameters] = useState<typeof systemParamsInit>(systemParamsInit)
-  const [derivative, setDerivative] = useState<string>(derivativeList[0]?.name)
+  const [derivative, setDerivative] = useState<string>('')
 
   const { data: protocolParams } = useProtocolParams()
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
+  const { derivativeParams } = useDerivativeParams(derAddressList?.[derivative])
   const { data: rewardsParams, refetch: refetchRewardsParams } = useRewardsParams(protocolConfig?.rewards)
   const { data: exchangeParams, refetch: refetchExchangeParams } = useExchangeParams(protocolConfig?.exchange)
   const { data: grantPlanParams, refetch: refetchGrantPlanParams } = useGrantPlanParams(protocolConfig)
-  const { data: tradePairParams, refetch: refetchTradePairParams } = useTradePairParams(derAddressList?.[derivative])
 
   const system = useMemo(() => {
     return [
@@ -112,23 +106,23 @@ const System: FC = () => {
 
   const trading = useMemo(() => {
     return [
-      { parameters: t('Nav.SystemParameters.kPCFRate'), value: nonBigNumberInterception(tradePairParams.kRatio, 8) },
-      { parameters: t('Nav.SystemParameters.yPCFRate'), value: nonBigNumberInterception(tradePairParams.gRatio, 8) },
+      { parameters: t('Nav.SystemParameters.kPCFRate'), value: nonBigNumberInterception(derivativeParams.kRatio, 8) },
+      { parameters: t('Nav.SystemParameters.yPCFRate'), value: nonBigNumberInterception(derivativeParams.gRatio, 8) },
       {
         parameters: t('Nav.SystemParameters.PCF'),
-        value: `${nonBigNumberInterception(bnMul(tradePairParams.roRatio, 100), 4)}%`
+        value: `${nonBigNumberInterception(bnMul(derivativeParams.roRatio, 100), 4)}%`
       },
       {
         parameters: t('Nav.SystemParameters.TradingFeeRatio'),
-        value: `${nonBigNumberInterception(bnMul(tradePairParams.tradingFeeRatio, 100), 4)}%`
+        value: `${nonBigNumberInterception(bnMul(derivativeParams.tradingFeeRatio, 100), 4)}%`
       },
-      { parameters: t('Nav.SystemParameters.Maxlimitorders'), value: tradePairParams.maxLimitOrderSize },
+      { parameters: t('Nav.SystemParameters.Maxlimitorders'), value: derivativeParams.maxLimitOrderSize },
       {
         parameters: t('Nav.SystemParameters.Maxleverage'),
-        value: nonBigNumberInterception(tradePairParams.maxLeverage, 0)
+        value: nonBigNumberInterception(derivativeParams.maxLeverage, 0)
       }
     ]
-  }, [t, tradePairParams])
+  }, [t, derivativeParams])
 
   const columns = [
     {
@@ -141,6 +135,16 @@ const System: FC = () => {
       dataIndex: 'value'
     }
   ]
+
+  const derivativeOptions = useMemo(() => {
+    if (derivativeList.length) {
+      return derivativeList.map((derivative) => ({
+        label: derivative.name,
+        value: derivative.name
+      }))
+    }
+    return []
+  }, [derivativeList])
 
   useEffect(() => {
     const func = async () => {
@@ -163,8 +167,10 @@ const System: FC = () => {
   }, [protocolConfig])
 
   useEffect(() => {
-    if (derAddressList) void refetchTradePairParams()
-  }, [derivative, derAddressList])
+    if (derivativeList.length) {
+      setDerivative(derivativeList[0].name)
+    }
+  }, [derivativeList])
 
   return (
     <div className="web-table-page">
@@ -178,7 +184,7 @@ const System: FC = () => {
       <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.TradingToken')}</h3>
         <aside>
-          <Select value={derivative} objOptions={pairOptions} onChange={(v) => setDerivative(v as any)} />
+          <Select value={derivative} objOptions={derivativeOptions} onChange={(v) => setDerivative(v as any)} />
         </aside>
       </header>
       <Table className="web-broker-table" columns={columns} data={trading} rowKey="parameters" />

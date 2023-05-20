@@ -12,10 +12,3 @@ export const pairOptions = QUOTE_TOKENS.map((t) => ({
   label: `${t.symbol}USD`,
   value: t.symbol
 }))
-
-export const SelectSymbolOptions = ['All Derivatives', ...Object.keys(output())]
-
-export const SelectSymbolTokens: Record<string, string> = {
-  'All Derivatives': 'all',
-  ...output()
-}

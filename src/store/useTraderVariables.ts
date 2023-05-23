@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash'
 import { create } from 'zustand'
 
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
-import { Rec, TraderVariablesState } from '@/store/types'
+import { TraderVariablesState } from '@/store/types'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 

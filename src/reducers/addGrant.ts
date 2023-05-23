@@ -89,7 +89,7 @@ function reducer(state: StateType, action: ActionType): StateType {
     case 'SET_DISABLED':
       return { ...state, disabled: action.payload }
     case 'SET_GRANT_DAT':
-      return { ...state, grantData: action.payload }
+      return { ...state, grantData: { ...state.grantData, ...action.payload } }
     case 'SET_GRANT_DAYS':
       return { ...state, grantDays: action.payload }
     case 'SET_CLIFF_DAYS':

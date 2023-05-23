@@ -13,9 +13,9 @@ import AmountInput from '@/components/common/Wallet/AmountInput'
 import { DEFAULT_MARGIN_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
 import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
-import { useBalancesStore } from '@/store'
+import { useBalancesStore, useProtocolConfigStore } from '@/store'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
-import { GrantKeys, protocolConfig } from '@/typings'
+import { GrantKeys } from '@/typings'
 import { isET, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
@@ -37,6 +37,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   const [toggle, setToggle] = useState<boolean>(false)
 
   const balances = useBalancesStore((state) => state.balances)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
@@ -122,7 +123,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
                     value={state.marginToken}
                     onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
                     renderer={(item) => (
-                      <div className="web-select-marginOptions-item">
+                      <div className="web-select-options-item">
                         <Image src={item.icon} />
                         {item.label}
                       </div>

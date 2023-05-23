@@ -1,6 +1,5 @@
 import { InitialTraderVariablesType } from '@/hooks/helper'
 import { minimumGrantInit } from '@/hooks/useDashboard'
-import { getTokenBalances } from '@/store/useBalances'
 import { derivativeList } from '@/store/useDerivativeList'
 import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList } from '@/store/useMarginTokenList'
@@ -9,7 +8,6 @@ import { SharingEvents } from '@/store/useSharing'
 import {
   ChainId,
   MarginToken,
-  MarginTokenKeys,
   MarginTokenWithQuote,
   MarginTokenWithContract,
   ProtocolConfig,

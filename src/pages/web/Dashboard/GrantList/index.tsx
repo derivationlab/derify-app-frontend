@@ -69,6 +69,8 @@ const GrantList: FC = () => {
 
   useEffect(() => {
     if (state.marginToken1 || state.grantStatus || state.grantTarget1) {
+      dispatch({ type: 'SET_GRANT_DAT', payload: { isLoaded: true } })
+
       void debounceSearch(state.marginToken1, state.grantStatus, state.grantTarget1)
     }
 

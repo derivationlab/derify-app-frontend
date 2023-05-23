@@ -22,7 +22,7 @@ export const usePositionChangeFeeRatios = (list?: Rec | null) => {
     ['usePositionChangeFeeRatios'],
     async () => {
       if (list) {
-        let calls: Rec[] = []
+        const calls: Rec[] = []
         const keys = Object.keys(list)
         keys.forEach((token) => {
           if (list[token] !== ZERO) {

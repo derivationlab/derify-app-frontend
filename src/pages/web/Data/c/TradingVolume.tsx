@@ -8,7 +8,7 @@ import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
-import { useCurrentTradingAmount } from '@/hooks/useQueryApi'
+import { useCurrentTrading } from '@/hooks/useCurrentTrading'
 import { useDerivativeListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { dayjsStartOf } from '@/utils/tools'
@@ -48,7 +48,7 @@ const TradingVolume: FC = () => {
     return derivative.find((d) => d.key === derivativeSel)?.val ?? ''
   }, [derivative, derivativeSel])
 
-  const { data: tradingVolume } = useCurrentTradingAmount(derAddress, marginToken.address)
+  const { data: tradingVolume } = useCurrentTrading(derAddress, marginToken.address)
 
   const combineDAT = useMemo(() => {
     if (tradingVolume) output = { day_time: time, ...tradingVolume[0] }

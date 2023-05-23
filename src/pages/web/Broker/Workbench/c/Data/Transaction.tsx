@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 
 import { getBrokerTransactions } from '@/api'
 import Pagination from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
 import { EXPLORER_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
@@ -126,7 +127,7 @@ const Transaction: FC = () => {
   }
 
   const memoEmptyText = useMemo(() => {
-    if (state.records.loaded) return t('common.Loading')
+    if (state.records.loaded) return <Spinner small />
     if (isEmpty(state.records?.records)) return t('common.NoRecord')
     return ''
   }, [t, state.records])

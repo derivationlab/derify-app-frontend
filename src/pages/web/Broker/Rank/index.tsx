@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { getBrokersRankList } from '@/api'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
@@ -60,7 +61,7 @@ const Rank: FC = () => {
   }
 
   const emptyText = useMemo(() => {
-    if (state.records.loaded) return t('common.Loading')
+    if (state.records.loaded) return <Spinner small />
     if (isEmpty(state.records.records)) return t('common.NoRecord')
     return ''
   }, [t, state.records])

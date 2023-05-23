@@ -1,44 +1,28 @@
 import { useQuery } from '@tanstack/react-query'
+import { isEmpty } from 'lodash'
 
 import { getCurrentTradingAmount } from '@/api'
-import { marginTokenList } from '@/store'
 
-export const useCurrentTrading = (list: (typeof marginTokenList)[]) => {
-  let output = Object.create(null)
-
+export const useCurrentTrading = (address: string, marginToken: string) => {
   const { data, refetch } = useQuery(
-    ['useCurrentTrading'],
-    async () => {
-      if (list.length) {
-        const promises = list.map(async (token) => {
-          return [await getCurrentTradingAmount('all', token.margin_token).then(({ data }) => data)]
-        })
-
-        const response = await Promise.all(promises)
-
-        if (response.length > 0) {
-          response.forEach(([margin], index) => {
-            output = {
-              ...output,
-              [list[index].symbol]: margin[0]?.trading_amount ?? 0
-            }
-          })
-          // console.info(output)
-
-          return output
-        }
+    ['useCurrentTradingAmount'],
+    async (): Promise<any[]> => {
+      if (address && marginToken) {
+        const data = await getCurrentTradingAmount(address, marginToken)
+        return data?.data
       }
-
-      return null
+      return []
     },
     {
       retry: 0,
-      initialData: null,
-      refetchInterval: 6000,
+      initialData: [],
+      refetchInterval: 5000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  return { data, refetch }
+  if (!isEmpty(data)) return { refetch, data }
+
+  return { refetch }
 }

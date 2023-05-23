@@ -24,7 +24,7 @@ export type QuoteTokenKeys = 'BTC' | 'ETH'
 
 export type MarginTokenKeys = 'DRF' | 'BUSD'
 
-export type AllTokenKeys = 'btc' | 'busd' | 'eth' | 'drf' | 'edrf'
+export type AllTokenKeys = 'busd' | 'drf' | 'edrf'
 
 export type ContractKeys = 'multicall' | 'derifyProtocol'
 

@@ -4,8 +4,8 @@ import { useSigner } from 'wagmi'
 import { useCallback } from 'react'
 
 import contracts from '@/config/contracts'
-import tokens, { findMarginToken, findToken } from '@/config/tokens'
-import { calcProfitOrLoss } from '@/hooks/helper'
+import tokens from '@/config/tokens'
+import { calcProfitOrLoss } from '@/funcs/helper'
 import { PositionOrderTypes, PositionSideTypes, PositionTriggerTypes, TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import {
@@ -285,7 +285,7 @@ export const usePositionOperation = () => {
     const c = getDerifyExchangeContract(exchange, signer)
 
     const _posLeverage = inputParameterConversion(posLeverage, 8)
-    const _pricingType = findMarginToken(pricingType) ? 1 : 0
+    const _pricingType = 1
     const _openingType = conversion ? PositionOrderTypes.Market : openingType
     const _openingSize = inputParameterConversion(openingSize, 8)
     const _openingPrice = inputParameterConversion(openingPrice, 8)
@@ -339,18 +339,17 @@ export const usePositionOperation = () => {
       if (!signer) return false
 
       const c = getDerifyExchangeContract(exchange, signer)
-      const tokenAddress = findToken(quoteToken).tokenAddress
 
       if (whetherStud) {
         _positionSize = inputParameterConversion(positionSize, 8)
       } else {
-        const size = findMarginToken(marginToken) ? bnDiv(closeAmount, spotPrice) : closeAmount
+        const size = bnDiv(closeAmount, spotPrice)
         _positionSize = inputParameterConversion(size, 8)
       }
 
       try {
-        const gasLimit = await estimateGas(c, 'closePosition', [brokerId, tokenAddress, positionSide, _positionSize])
-        const res = await c.closePosition(brokerId, tokenAddress, positionSide, _positionSize, { gasLimit })
+        const gasLimit = await estimateGas(c, 'closePosition', [brokerId, quoteToken, positionSide, _positionSize])
+        const res = await c.closePosition(brokerId, quoteToken, positionSide, _positionSize, { gasLimit })
         const receipt = await res.wait()
         return receipt.status
       } catch (e) {

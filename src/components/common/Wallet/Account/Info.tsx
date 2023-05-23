@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import Skeleton from '@/components/common/Skeleton'
-import { useMarginTokenStore, useTraderInfoStore, useTraderVariablesStore } from '@/store'
+import { useMarginTokenStore, useTraderEarningStore, useTraderVariablesStore } from '@/store'
 
 import BalanceShow from '../BalanceShow'
 

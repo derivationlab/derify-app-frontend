@@ -5,7 +5,7 @@ import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import MultipleStatus from '@/components/web/MultipleStatus'
-import { calcChangeFee, calcTradingFee } from '@/hooks/helper'
+import { calcChangeFee, calcTradingFee } from '@/funcs/helper'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
   useMarginTokenStore,
@@ -43,13 +43,14 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   }, [tokenSpotPrices])
 
   const calcTFeeFunc = async () => {
-    const fee = await calcTradingFee(derAddressList?.[data?.derivative], closingType, closingAmount, spotPrice)
+    const derivative = derAddressList?.[data?.derivative]?.derivative ?? ''
+    const fee = await calcTradingFee(derivative, closingType, closingAmount, spotPrice)
     dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
   }
 
   const calcCFeeFunc = async () => {
     const exchange = protocolConfig?.exchange ?? ''
-    const derivative = derAddressList?.[data?.derivative]
+    const derivative = derAddressList?.[data?.derivative]?.derivative ?? ''
 
     const fee = await calcChangeFee(data?.side, closingType, closingAmount, spotPrice, exchange, derivative)
 

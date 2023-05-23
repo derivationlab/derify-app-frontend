@@ -1,18 +1,10 @@
-import { InitialTraderVariablesType } from '@/hooks/helper'
-import { minimumGrantInit } from '@/hooks/useDashboard'
-import { derivativeList } from '@/store/useDerivativeList'
+import { DerAddressList, derivativeList } from '@/store/useDerivativeList'
 import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList } from '@/store/useMarginTokenList'
 import { quoteToken } from '@/store/useQuoteToken'
 import { SharingEvents } from '@/store/useSharing'
-import {
-  ChainId,
-  MarginToken,
-  MarginTokenWithQuote,
-  MarginTokenWithContract,
-  ProtocolConfig,
-  PositionOrderTypes
-} from '@/typings'
+import { InitialTraderVariablesType } from '@/store/useTraderVariables'
+import { ChainId, ProtocolConfig, PositionOrderTypes } from '@/typings'
 
 export type Rec = Record<string, any>
 
@@ -70,18 +62,6 @@ export interface PositionState {
   fetch: (trader: string, factoryConfig: Rec) => Promise<void>
 }
 
-export interface PairsInfoState {
-  spotPrices: Rec
-  indicators: Rec
-  pcfRatios: Rec
-  pcfRatiosLoaded: boolean
-  indicatorsLoaded: boolean
-  spotPricesLoaded: boolean
-  updateSpotPrices: (p: Rec) => void
-  updateIndicators: (p: Rec) => void
-  updatePCFRatios: (p: Rec) => void
-}
-
 export interface PoolsInfoState {
   drfPoolBalance: string
   bondPoolBalance: string
@@ -100,33 +80,11 @@ export interface BrokerInfoState {
   resetBrokerBound: () => void
 }
 
-export interface TraderInfoState {
+export interface TraderEarningState {
   rewardsInfo: Rec
   stakingInfo: Rec
   updateStakingInfo: (p: Rec) => void
   updateRewardsInfo: (p: Rec) => void
-}
-
-export interface ConfigInfoState {
-  brokerParams: { burnLimitAmount: string; burnLimitPerDay: string }
-  mTokenPrices: MarginToken
-  minimumGrant: typeof minimumGrantInit
-  openingMinLimit: MarginToken
-  openingMaxLimit: MarginTokenWithQuote
-  factoryConfig: MarginTokenWithQuote
-  protocolConfig: MarginTokenWithContract
-  openingMinLimitLoaded: boolean
-  openingMaxLimitLoaded: boolean
-  factoryConfigLoaded: boolean
-  protocolConfigLoaded: boolean
-  mTokenPricesLoaded: boolean
-  updateMinimumGrant: (p: typeof minimumGrantInit) => void
-  updateFactoryConfig: (p: MarginTokenWithQuote) => void
-  updateProtocolConfig: (p: MarginTokenWithContract) => void
-  updateOpeningMinLimit: (p: MarginToken) => void
-  updateMTokenPrices: (p: MarginToken) => void
-  updateOpeningMaxLimit: (p: MarginTokenWithQuote) => void
-  updateBrokerParams: (p: Rec) => void
 }
 
 export interface ProtocolConfigState {
@@ -153,7 +111,7 @@ export interface MarginTokenListState {
 }
 
 export interface DerivativeListState {
-  derAddressList: Rec | null
+  derAddressList: DerAddressList
   derivativeList: (typeof derivativeList)[]
   derivativeListLoaded: boolean
   getDerivativeList: (marginTokenAddress: string) => Promise<void>

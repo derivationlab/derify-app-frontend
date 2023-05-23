@@ -8,7 +8,7 @@ import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { reducer, stateInit } from '@/reducers/withdraw'
-import { useMarginTokenStore, useTraderInfoStore, useTraderVariablesStore } from '@/store'
+import { useMarginTokenStore, useTraderEarningStore, useTraderVariablesStore } from '@/store'
 import { bnDiv, bnMinus, bnMul, isET, isGT, isGTET, keepDecimals } from '@/utils/tools'
 
 import AmountInput from '../AmountInput'

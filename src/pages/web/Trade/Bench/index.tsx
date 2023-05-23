@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import Button from '@/components/common/Button'
 import LeverageSelect from '@/components/common/Form/LeverageSelect'
 import NotConnect from '@/components/web/NotConnect'
-import { isOpeningMinLimit } from '@/hooks/helper'
+import { isOpeningMinLimit } from '@/funcs/helper'
 import { usePositionOperation } from '@/hooks/useTrading'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
 import { reducer, stateInit } from '@/reducers/opening'
@@ -143,13 +143,7 @@ const Bench: FC = () => {
       let _openType = openingType
       const _realPrice = openingType === PositionOrderTypes.Market ? spotPrice : openingPrice
 
-      const isLimit = isOpeningMinLimit(
-        marginPrice,
-        openingMinLimit,
-        state.openingAmount,
-        marginToken.symbol,
-        spotPrice
-      )
+      const isLimit = isOpeningMinLimit(marginPrice, openingMinLimit, state.openingAmount)
 
       if (isLimit) {
         window.toast.error(

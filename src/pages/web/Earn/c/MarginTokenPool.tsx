@@ -9,10 +9,10 @@ import DecimalShow from '@/components/common/DecimalShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
-import { useTraderBondBalance } from '@/hooks/useQueryApi'
+import { useTraderBondBalance } from '@/hooks/useTraderBondBalance'
 import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { useTraderEarningStore, usePoolsInfoStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 import { isGT, isLT, keepDecimals } from '@/utils/tools'
 
@@ -26,7 +26,7 @@ const MarginTokenPool: FC = () => {
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
-  const rewardsInfo = useTraderInfoStore((state) => state.rewardsInfo)
+  const rewardsInfo = useTraderEarningStore((state) => state.rewardsInfo)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const bondPoolBalance = usePoolsInfoStore((state) => state.bondPoolBalance)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)

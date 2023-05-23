@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 
-import React, { FC, useState, useMemo, useReducer } from 'react'
+import React, { FC, useState, useMemo, useReducer, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
@@ -10,7 +10,7 @@ import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
 import AmountInput from '@/components/common/Wallet/AmountInput'
-import { DEFAULT_MARGIN_TOKEN, findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { useBalancesStore, useProtocolConfigStore } from '@/store'
@@ -93,13 +93,19 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     dispatch({ type: 'SET_AMOUNT_INP', payload: '' })
     dispatch({ type: 'SET_GRANT_DAYS', payload: 1 })
     dispatch({ type: 'SET_CLIFF_DAYS', payload: 0 })
-    dispatch({ type: 'SET_MARGIN_TOKEN', payload: DEFAULT_MARGIN_TOKEN.symbol })
+    dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].symbol })
     dispatch({ type: 'SET_GRANT_TARGET', payload: grantTarget[0].value })
   }
 
   const addGrantConfirm = () => {
     onConfirm(state.marginToken, currentTarget?.value, state.amountInp, state.grantDays, state.cliffDays)
   }
+
+  useEffect(() => {
+    if (marginTokenList.length) {
+      dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].symbol })
+    }
+  }, [marginTokenList])
 
   return (
     <Dialog
@@ -212,7 +218,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             <dl>
               <dt>{t('NewDashboard.GrantList.Rewards', 'Rewards')}</dt>
               <dd>
-                {keepDecimals(state.amountInp, findToken(PLATFORM_TOKEN.symbol).decimals, true)} {PLATFORM_TOKEN.symbol}
+                {keepDecimals(state.amountInp, 2, true)} {PLATFORM_TOKEN.symbol}
               </dd>
             </dl>
             <dl>

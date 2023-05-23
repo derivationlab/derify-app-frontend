@@ -10,7 +10,7 @@ import {
   useMarginTokenStore,
   useProtocolConfigStore,
   useTokenSpotPricesStore,
-  useTraderInfoStore,
+  useTraderEarningStore,
   useTraderVariablesStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'

@@ -3,8 +3,8 @@ import { useAccount } from 'wagmi'
 import React, { FC, useEffect } from 'react'
 import { useInterval } from 'react-use'
 
-import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/hooks/helper'
-import { usePoolsInfoStore, useProtocolConfigStore, useTraderInfoStore } from '@/store'
+import { getBankBDRFPoolDAT, getStakingDrfPoolDAT, getTraderRewardDAT, getTraderStakingDAT } from '@/funcs/helper'
+import { usePoolsInfoStore, useProtocolConfigStore, useTraderEarningStore } from '@/store'
 
 import CompetitionPool from './c/Competition'
 import DerifyTokenPool from './c/DerifyTokenPool'
@@ -15,8 +15,8 @@ const Eran: FC = () => {
   const { address } = useAccount()
 
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const updateRewardsInfo = useTraderInfoStore((state) => state.updateRewardsInfo)
-  const updateStakingInfo = useTraderInfoStore((state) => state.updateStakingInfo)
+  const updateRewardsInfo = useTraderEarningStore((state) => state.updateRewardsInfo)
+  const updateStakingInfo = useTraderEarningStore((state) => state.updateStakingInfo)
   const updateDrfPoolBalance = usePoolsInfoStore((state) => state.updateDrfPoolBalance)
   const updateBondPoolBalance = usePoolsInfoStore((state) => state.updateBondPoolBalance)
 

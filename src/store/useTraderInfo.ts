@@ -1,11 +1,10 @@
 import { create } from 'zustand'
 
-import { Rec, TraderInfoState } from '@/store/types'
+import { Rec, TraderEarningState } from '@/store/types'
 
-const useTraderInfoStore = create<TraderInfoState>((set) => ({
+const useTraderEarningStore = create<TraderEarningState>((set) => ({
   rewardsInfo: {},
   stakingInfo: {},
-  variablesLoaded: false,
   updateStakingInfo: (data: Rec) =>
     set(() => {
       // console.info(`updateStakingInfo:`)
@@ -20,4 +19,4 @@ const useTraderInfoStore = create<TraderInfoState>((set) => ({
     })
 }))
 
-export { useTraderInfoStore }
+export { useTraderEarningStore }

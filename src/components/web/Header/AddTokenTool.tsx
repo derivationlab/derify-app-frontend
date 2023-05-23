@@ -11,7 +11,6 @@ import { addToken } from '@/utils/addToken'
 
 const AddTokenTool: FC = () => {
   const ref = useRef(null)
-
   const { t } = useTranslation()
 
   const [menuStatus, setMenuStatus] = useState<boolean>(false)
@@ -22,36 +21,46 @@ const AddTokenTool: FC = () => {
   const memoTokens = useMemo(() => {
     return [
       {
-        swap: `swap?inputCurrency=${tokens.busd.tokenAddress}&outputCurrency=${tokens.drf.tokenAddress}`,
-        image: '',
+        image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19025.png',
         symbol: tokens.drf.symbol,
         address: tokens.drf.tokenAddress,
-        decimals: tokens.drf.precision,
-        direction: 0
+        decimals: tokens.drf.precision
       },
       {
-        image: '',
+        image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19025.png',
         symbol: tokens.edrf.symbol,
         address: tokens.edrf.tokenAddress,
-        decimals: tokens.edrf.precision,
-        direction: 0
+        decimals: tokens.edrf.precision
       },
       {
-        image: '',
+        image: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19025.png',
         symbol: `b${marginToken.symbol}`,
         address: protocolConfig?.bMarginToken,
-        decimals: 18,
-        direction: 1
+        decimals: 18
       }
     ]
   }, [protocolConfig, marginToken])
+
+  const pancakeSwap = useMemo(() => {
+    const { symbol, precision: decimals, tokenAddress: address } = tokens.drf
+    const { tokenAddress: busd } = tokens.busd
+    const swap = `swap?inputCurrency=${busd}&outputCurrency=${address}`
+    return [
+      {
+        swap,
+        symbol,
+        address,
+        direction: 0
+      }
+    ]
+  }, [])
 
   const _addToken = (token: Record<string, any>) => {
     void addToken(token.address, token.symbol, token.decimals, token.image)
     setMenuStatus(false)
   }
 
-  const buyToken = (token: Record<string, any>) => {
+  const _buyToken = (token: Record<string, any>) => {
     if (token.direction === 'Sell') {
       window.open(`${PANCAKE_SWAP_URL}swap?inputCurrency=${token.address}`)
     } else {
@@ -66,7 +75,7 @@ const AddTokenTool: FC = () => {
     <div className="web-header-select-lang" ref={ref}>
       <div className="web-header-select-lang-label" onClick={() => setMenuStatus(!menuStatus)}>
         <label>{t('Nav.Tool.Token')}</label>
-        <span></span>
+        <span />
       </div>
       <ul className={classNames('web-header-select-lang-menu', { show: menuStatus })}>
         {memoTokens.map((token, index) => (
@@ -75,8 +84,8 @@ const AddTokenTool: FC = () => {
           </li>
         ))}
         <hr />
-        {memoTokens.slice(0, 1).map((token, index) => (
-          <li key={`buy-${index}`} onClick={() => buyToken(token)}>
+        {pancakeSwap.map((token, index) => (
+          <li key={`buy-${index}`} onClick={() => _buyToken(token)}>
             {token.direction === 0
               ? t('Nav.AddToken.Buy', 'Add Token', { token: token.symbol })
               : t('Nav.AddToken.Sell', 'Add Token', { token: token.symbol })}

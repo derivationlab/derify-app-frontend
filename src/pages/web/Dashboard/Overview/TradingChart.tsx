@@ -7,7 +7,7 @@ import { getHistoryTotalTradingNetValue } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useCurrentTotalTradingNetValue } from '@/hooks/useQueryApi'
+import { useCurrentNetTrading } from '@/hooks/useCurrentNetTrading'
 import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
@@ -21,7 +21,7 @@ const TradingChart: FC = () => {
 
   const { t } = useTranslation()
 
-  const { data } = useCurrentTotalTradingNetValue('all', 'all')
+  const { data } = useCurrentNetTrading('all', 'all')
 
   const combineDAT = useMemo(() => {
     if (data) output = { day_time: time, trading_net_value: data?.trading_net_value ?? 0 }

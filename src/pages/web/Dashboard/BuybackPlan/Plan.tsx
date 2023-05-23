@@ -55,7 +55,7 @@ const Plan: FC = () => {
         align: 'right',
         render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
           <>
-            <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
+            <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} />
             <div className={classNames(isGTET(data?.last_drf_price, marginPrice) ? 'rise' : 'fall')}>
               <BalanceShow value={data?.last_drf_price} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
@@ -90,12 +90,12 @@ const Plan: FC = () => {
       {
         title: t('NewDashboard.BuybackPlan.BuybackPool', 'Buyback Pool'),
         dataIndex: 'symbol',
-        render: (symbol: MarginTokenKeys) => <BalanceShow value={buyBackInfo[symbol]} unit={symbol} />
+        render: (symbol: MarginTokenKeys) => <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} />
       },
       {
         title: t('NewDashboard.BuybackPlan.DRFPriceLastCycle', 'DRF Price(Last Cycle)'),
         dataIndex: 'last_drf_price',
-        render: (value: number, data: Record<string, any>) => {
+        render: (value: number) => {
           return (
             <div className={classNames(isGT(value, marginPrice) ? 'rise' : 'fall')}>
               <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />

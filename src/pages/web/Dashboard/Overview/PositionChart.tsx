@@ -7,7 +7,7 @@ import { getHistoryTotalPositionsNetValue } from '@/api'
 import { AreaChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useCurrentTotalPositionsNetValue } from '@/hooks/useQueryApi'
+import { useCurrentNetPositions } from '@/hooks/useCurrentNetPositions'
 import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
@@ -20,7 +20,7 @@ const PositionChart: FC = () => {
   const [chartData, setChartData] = useState<any>([])
   const { t } = useTranslation()
 
-  const { data } = useCurrentTotalPositionsNetValue('all', 'all')
+  const { data } = useCurrentNetPositions('all', 'all')
 
   const combineDAT = useMemo(() => {
     if (data) output = { day_time: time, ...data }

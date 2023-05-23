@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { getDRFPrice } from '@/api'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useCurrentIndex } from '@/hooks/useCurrentIndex'
+import { useAllCurrentIndex } from '@/hooks/useAllCurrentIndex'
 import { useMarginPriceStore, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
@@ -21,7 +21,7 @@ const Datas: FC = () => {
   const marginPrice = useMarginPriceStore((state) => state.marginPrice)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
 
-  const { data: currentIndex } = useCurrentIndex(marginTokenList)
+  const { data: currentIndex } = useAllCurrentIndex(marginTokenList)
 
   const totalBuyback = useMemo(() => {
     if (currentIndex) {

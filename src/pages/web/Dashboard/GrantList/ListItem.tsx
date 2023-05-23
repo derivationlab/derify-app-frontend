@@ -6,8 +6,9 @@ import { useTranslation } from 'react-i18next'
 
 import Image from '@/components/common/Image'
 import { STATIC_RESOURCES_URL } from '@/config'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { PLATFORM_TOKEN } from '@/config/tokens'
 import { grantTargetOptions, grantStateOptions } from '@/reducers/addGrant'
+import { useMarginTokenListStore } from '@/store'
 import { GrantKeys } from '@/typings'
 import { keepDecimals } from '@/utils/tools'
 
@@ -26,14 +27,16 @@ const grantTargetMatch: Record<string, GrantKeys> = {
 const ListItem: FC<Props> = ({ data }) => {
   const { t } = useTranslation()
 
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+
   const grantState = useMemo(() => {
     const find = grantStateOptions.find((s) => s.value === data.status)
     return find?.label ?? ''
   }, [data])
 
   const marginToken = useMemo(() => {
-    return findToken(data?.margin_token ?? '')
-  }, [data])
+    return marginTokenList.find((margin) => margin.margin_token === data?.margin_token)
+  }, [data, marginTokenList])
 
   const grantTarget = useMemo(() => {
     return targetOptions.find((t) => t.value === grantTargetMatch[data.target])?.label

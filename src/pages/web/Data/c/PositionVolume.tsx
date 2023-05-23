@@ -8,7 +8,7 @@ import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
-import { useCurrentPositionsAmount } from '@/hooks/useQueryApi'
+import { useCurrentPositions } from '@/hooks/useCurrentPositions'
 import { ThemeContext } from '@/providers/Theme'
 import { useDerivativeListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -54,7 +54,7 @@ const PositionVolume: FC = () => {
     return derivative.find((d) => d.key === derivativeSel)?.val ?? ''
   }, [derivative, derivativeSel])
 
-  const { data: positionsDAT } = useCurrentPositionsAmount(derAddress, marginToken.address)
+  const { data: positionsDAT } = useCurrentPositions(derAddress, marginToken.address)
 
   const barColor = useMemo(() => {
     let longColor = '#24ce7d'

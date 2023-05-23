@@ -30,7 +30,7 @@ const System: FC = () => {
 
   const { data: protocolParams } = useProtocolParams()
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
-  const { derivativeParams } = useDerivativeParams(derAddressList?.[derivative])
+  const { derivativeParams } = useDerivativeParams(derAddressList?.[derivative]?.derivative ?? '')
   const { data: rewardsParams, refetch: refetchRewardsParams } = useRewardsParams(protocolConfig?.rewards)
   const { data: exchangeParams, refetch: refetchExchangeParams } = useExchangeParams(protocolConfig?.exchange)
   const { data: grantPlanParams, refetch: refetchGrantPlanParams } = useGrantPlanParams(protocolConfig)

@@ -8,7 +8,7 @@ import { AreaChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { SelectTimesOptions, SelectTimesValues } from '@/data'
-import { useCurrentInsuranceDAT } from '@/hooks/useQueryApi'
+import { useCurrentInsurance } from '@/hooks/useCurrentInsurance'
 import { useMarginTokenStore } from '@/store'
 import { dayjsStartOf } from '@/utils/tools'
 
@@ -27,7 +27,7 @@ const InsurancePool: FC = () => {
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const { data: insuranceVolume } = useCurrentInsuranceDAT(marginToken.address)
+  const { data: insuranceVolume } = useCurrentInsurance(marginToken.address)
 
   const combineDAT = useMemo(() => {
     if (insuranceVolume) {

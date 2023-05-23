@@ -12,8 +12,8 @@ import Spinner from '@/components/common/Spinner'
 // import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { STATIC_RESOURCES_URL } from '@/config'
+import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
 import { useBoundPools } from '@/hooks/useBoundPools'
-import { useCurrentTrading } from '@/hooks/useCurrentTrading'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenListStore } from '@/store'
@@ -31,7 +31,7 @@ const MarketInfo: FC = () => {
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
   const { data: boundPools } = useBoundPools(marginTokenList)
-  const { data: tradingVol } = useCurrentTrading(marginTokenList)
+  const { data: tradingVol } = useAllCurrentTrading(marginTokenList)
   const { data: indicators } = useAllMarginIndicators(marginTokenList)
   // const { data: positionInfo, refetch: positionInfoRefetch } = usePositionInfo(marginTokenList)
   console.info('useCurrentTrading')

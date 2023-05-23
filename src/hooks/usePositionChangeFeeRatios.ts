@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { ZERO } from '@/config'
 import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
+import { DerAddressList } from '@/store'
 import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
@@ -17,7 +18,7 @@ let output = Object.create(null)
 }
  * @param list
  */
-export const usePositionChangeFeeRatios = (list?: Rec | null) => {
+export const usePositionChangeFeeRatios = (list?: DerAddressList) => {
   const { data, refetch, isLoading } = useQuery(
     ['usePositionChangeFeeRatios'],
     async () => {
@@ -25,11 +26,11 @@ export const usePositionChangeFeeRatios = (list?: Rec | null) => {
         const calls: Rec[] = []
         const keys = Object.keys(list)
         keys.forEach((token) => {
-          if (list[token] !== ZERO) {
+          if (list[token].derivative !== ZERO) {
             calls.push({
               name: 'getPositionChangeFeeRatio',
               token,
-              address: list[token]
+              address: list[token].derivative
             })
           }
         })

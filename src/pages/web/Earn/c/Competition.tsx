@@ -12,7 +12,9 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useRankReward } from '@/hooks/useDashboard'
-import { useActiveRankGrantCount, useActiveRankGrantRatios, useActiveRankGrantTotalAmount } from '@/hooks/useQueryApi'
+import { useGrantRatios } from '@/hooks/useGrantRatios'
+import { useGrantTotalAmount } from '@/hooks/useGrantTotalAmount'
+import { useGrantTotalCount } from '@/hooks/useGrantTotalCount'
 import { useWithdrawRankReward } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
@@ -30,9 +32,9 @@ const Competition: FC = () => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const { withdraw } = useWithdrawRankReward()
-  const { data: grantRatio } = useActiveRankGrantRatios(marginToken.address, address)
-  const { data: grantAmount } = useActiveRankGrantTotalAmount(marginToken.address)
-  const { data: activeGrant } = useActiveRankGrantCount(marginToken.address)
+  const { data: grantRatio } = useGrantRatios(marginToken.address, address)
+  const { data: grantAmount } = useGrantTotalAmount(marginToken.address)
+  const { data: activeGrant } = useGrantTotalCount(marginToken.address)
   const { data: rankReward, refetch, isLoading } = useRankReward(address, protocolConfig?.rewards)
 
   const withdrawFunc = useCallback(async () => {

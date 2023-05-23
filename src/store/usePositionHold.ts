@@ -15,14 +15,13 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
   const positionOrd: Rec[] = []
   const profitLossOrd: Rec[] = []
 
-  const calls = Object.keys(derAddressList).map((key) => {
-    return {
-      name: 'getTraderDerivativePositions',
-      params: [trader],
-      address: derAddressList[key],
-      derivative: key
-    }
-  })
+  const calls = Object.keys(derAddressList).map((key) => ({
+    name: 'getTraderDerivativePositions',
+    token: derAddressList[key].token,
+    params: [trader],
+    address: derAddressList[key].derivative,
+    derivative: key
+  }))
 
   const response = await multicall(DerifyDerivativAbi, calls)
 
@@ -48,6 +47,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
         positionOrd.push({
           size,
           side: PositionSideTypes.long,
+          token: calls[i].token,
           leverage: formatUnits(long.leverage, 8),
           contract: calls[i].address,
           derivative: calls[i].derivative,
@@ -64,6 +64,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
         positionOrd.push({
           size,
           side: PositionSideTypes.short,
+          token: calls[i].token,
           leverage: formatUnits(short.leverage, 8),
           contract: calls[i].address,
           derivative: calls[i].derivative,
@@ -83,6 +84,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
           profitLossOrd.push({
             size,
             side: PositionSideTypes.long,
+            token: calls[i].token,
             price,
             volume,
             contract: calls[i].address,
@@ -104,6 +106,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
           profitLossOrd.push({
             size,
             side: PositionSideTypes.short,
+            token: calls[i].token,
             price,
             volume,
             contract: calls[i].address,
@@ -124,6 +127,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
         profitLossOrd.push({
           size,
           side: PositionSideTypes.long,
+          token: calls[i].token,
           price,
           volume,
           contract: calls[i].address,
@@ -143,6 +147,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
         profitLossOrd.push({
           size,
           side: PositionSideTypes.long,
+          token: calls[i].token,
           price,
           volume,
           contract: calls[i].address,
@@ -162,6 +167,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
         profitLossOrd.push({
           size,
           side: PositionSideTypes.short,
+          token: calls[i].token,
           price,
           volume,
           contract: calls[i].address,
@@ -181,6 +187,7 @@ const getMyPositionsData = async (trader: string, derAddressList: Rec): Promise<
         profitLossOrd.push({
           size,
           side: PositionSideTypes.short,
+          token: calls[i].token,
           price,
           volume,
           contract: calls[i].address,

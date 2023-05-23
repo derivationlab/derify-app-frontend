@@ -48,7 +48,7 @@ const MyOrder: FC = () => {
     if (derAddressList) {
       const { side, orderType, timestamp, derivative } = targetPosOrd
 
-      const status = await cancelPosition(derAddressList[derivative], orderType, side, timestamp)
+      const status = await cancelPosition(derAddressList[derivative].derivative, orderType, side, timestamp)
 
       if (status) {
         // succeed

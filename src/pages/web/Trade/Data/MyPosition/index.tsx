@@ -82,12 +82,12 @@ const MyPosition: FC = () => {
     clearing()
 
     if (signer && brokerBound?.broker && protocolConfig) {
-      const { side, size, quoteToken } = targetPosOrd
+      const { side, size, token } = targetPosOrd
       const status = await closePosition(
         protocolConfig.exchange,
         brokerBound.broker,
         spotPrice,
-        quoteToken,
+        token,
         closingType,
         closingAmount,
         size,
@@ -139,7 +139,7 @@ const MyPosition: FC = () => {
     if (signer && derAddressList) {
       const { side, TP, SL } = params
 
-      const status = await takeProfitOrStopLoss(derAddressList[quoteToken.symbol], side, TP, SL)
+      const status = await takeProfitOrStopLoss(derAddressList[quoteToken.symbol].derivative, side, TP, SL)
 
       if (status) {
         window.toast.success(t('common.success', 'success'))

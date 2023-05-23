@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 
 import { getBrokerRevenueRecord } from '@/api'
 import Pagination from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
 import { EXPLORER_SCAN_URL } from '@/config'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
@@ -99,7 +100,7 @@ const History: FC = () => {
   }
 
   const memoEmptyText = useMemo(() => {
-    if (state.records.loaded) return t('common.Loading')
+    if (state.records.loaded) return <Spinner small />
     if (isEmpty(state.records?.records)) return t('common.NoRecord')
     return ''
   }, [t, state.records])

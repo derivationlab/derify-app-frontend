@@ -14,7 +14,7 @@ import { useCurrentOpenInterest } from '@/hooks/useCurrentOpenInterest'
 import { useWithdrawPositionReward } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
 import {
-  useTraderInfoStore,
+  useTraderEarningStore,
   useMarginTokenStore,
   useTraderVariablesStore,
   useMarginIndicatorsStore,
@@ -31,7 +31,7 @@ const PositionMining: FC = () => {
   const variables = useTraderVariablesStore((state) => state.variables)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
   const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-  const rewardsInfo = useTraderInfoStore((state) => state.rewardsInfo)
+  const rewardsInfo = useTraderEarningStore((state) => state.rewardsInfo)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 

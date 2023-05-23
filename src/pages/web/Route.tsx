@@ -20,7 +20,7 @@ export const RBrokerList = (props: PropsWithChildren<any>) => {
   return useMemo(() => {
     if (!address) return <BrokerConnect />
     if (brokerBoundLoaded) {
-      if (!isEmpty(brokerBound)) return <Redirect to='/broker' />
+      if (!isEmpty(brokerBound)) return <Redirect to="/broker" />
       return children
     }
     return <Spinner fixed />
@@ -50,7 +50,7 @@ export const RBrokerBound = (props: PropsWithChildren<any>) => {
         const find = marginTokenList.find((margin) => margin.symbol === params?.id)
         return pathKey ? find ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} /> : children
       }
-      return <Redirect to='/broker/bind' />
+      return <Redirect to="/broker/bind" />
     }
     return <Spinner fixed />
   }, [params, address, pathKey, brokerInfo, brokerBound, marginToken, brokerInfoLoaded, brokerBoundLoaded])
@@ -73,7 +73,7 @@ export const RWithMarToken = (props: PropsWithChildren<any>) => {
     if (!address) return out
     if (brokerBoundLoaded) {
       if (!isEmpty(brokerBound)) return out
-      return <Redirect to='/broker/bind' />
+      return <Redirect to="/broker/bind" />
     }
     return <Spinner fixed />
   }, [params, address, pathKey, marginToken, brokerBound, brokerBoundLoaded])
@@ -93,7 +93,7 @@ export const RBrokerToBind = (props: PropsWithChildren<any>) => {
   return useMemo(() => {
     if (!address) return <BrokerConnect />
     if (brokerBoundLoaded && brokerInfoLoaded) {
-      if (!isEmpty(brokerBound)) return <Redirect to='/broker' />
+      if (!isEmpty(brokerBound)) return <Redirect to="/broker" />
       if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
       return children
     }
@@ -122,7 +122,7 @@ export const RBrokerProfile = (props: PropsWithChildren<any>) => {
     if (!address) return <BrokerConnect />
     if (brokerBoundLoaded) {
       if (!isEmpty(brokerBound)) {
-        return <Redirect to='/broker' />
+        return <Redirect to="/broker" />
       }
       return children
     }
@@ -148,7 +148,7 @@ export const RBrokerWorkbench = (props: PropsWithChildren<any>) => {
         const find = marginTokenList.find((margin) => margin.symbol === params?.id)
         return pathKey ? find ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} /> : children
       }
-      return <Redirect to='/broker' />
+      return <Redirect to="/broker" />
     }
     return <Spinner fixed />
   }, [params, address, pathKey, brokerInfo, marginToken, marginTokenList, brokerInfoLoaded])
@@ -204,7 +204,7 @@ export const RBrokerSignUpStep3 = (props: PropsWithChildren<any>) => {
     if (!address) return <BrokerConnect />
     if (brokerInfoLoaded) {
       if (!isEmpty(brokerInfo)) return children
-      return <Redirect to='/broker/bind' />
+      return <Redirect to="/broker/bind" />
     }
     return <Spinner fixed />
   }, [address, brokerInfo, brokerInfoLoaded])

@@ -8,8 +8,7 @@ import Dialog from '@/components/common/Dialog'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
-import { findToken, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/hooks/helper'
+import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/funcs/helper'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
   useDerivativeListStore,
@@ -102,13 +101,14 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   useEffect(() => {
     if (visible && state.validOpeningVol && protocolConfig && derAddressList && spotPrice) {
-      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrice, derAddressList[quoteToken.symbol])
+      const derivative = derAddressList[quoteToken.symbol].derivative
+      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrice, derivative)
       void calcCFeeFunc(
         data?.side,
         state.validOpeningVol.value,
         data?.symbol,
         spotPrice,
-        derAddressList[quoteToken.symbol],
+        derivative,
         protocolConfig.exchange
       )
     }
@@ -147,12 +147,12 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <section>
                       <aside>
                         <MultipleStatus direction="Long" />
-                        <em>{keepDecimals(state.validOpeningVol.value / 2, findToken(data?.symbol).decimals)}</em>
+                        <em>{keepDecimals(state.validOpeningVol.value / 2, 2)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                       <aside>
                         <MultipleStatus direction="Short" />
-                        <em>{keepDecimals(state.validOpeningVol.value / 2, findToken(data?.symbol).decimals)}</em>
+                        <em>{keepDecimals(state.validOpeningVol.value / 2, 2)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                     </section>
@@ -164,7 +164,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <small>calculating...</small>
                   ) : (
                     <span>
-                      <em>{keepDecimals(state.validOpeningVol.value, findToken(data?.symbol).decimals)}</em>
+                      <em>{keepDecimals(state.validOpeningVol.value, 2)}</em>
                       <u>{data?.symbol}</u>
                     </span>
                   )}

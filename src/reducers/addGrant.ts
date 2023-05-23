@@ -1,4 +1,3 @@
-import { DEFAULT_MARGIN_TOKEN } from '@/config/tokens'
 import { GrantKeys } from '@/typings'
 
 interface StateType {
@@ -77,7 +76,7 @@ const stateInit: StateType = {
   amountInp: '',
   pageIndex: 0,
   grantData: { records: [], totalItems: 0, isLoaded: true },
-  marginToken: DEFAULT_MARGIN_TOKEN.symbol,
+  marginToken: '',
   marginToken1: all.value,
   grantStatus: grantStateOptions[0].value,
   grantTarget: grantTargetOptions()[0].value,

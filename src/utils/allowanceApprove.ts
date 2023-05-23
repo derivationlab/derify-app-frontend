@@ -1,7 +1,6 @@
 import type { Signer } from 'ethers'
 import { BigNumberish, Contract, BigNumber } from 'ethers'
 
-import tokens from '@/config/tokens'
 import { getBep20Contract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 
@@ -22,8 +21,6 @@ export const allowanceApprove = async (
   token: string,
   amount: string
 ): Promise<boolean> => {
-  if (token === tokens.eth.tokenAddress) return true
-
   const c = getBep20Contract(token, signer)
 
   try {

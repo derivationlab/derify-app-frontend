@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
 
-import React, { FC, useMemo, useState, useContext, useEffect, useCallback } from 'react'
+import React, { FC, useState, useContext, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
@@ -10,10 +10,11 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
 import tokens from '@/config/tokens'
-import { useCurrentIndexDAT, useTraderEDRFBalance } from '@/hooks/useQueryApi'
+import { useCurrentIndex } from '@/hooks/useCurrentIndex'
+import { useTraderEDRFBalance } from '@/hooks/useTraderEDRFBalance'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderInfoStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
+import { useTraderEarningStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PubSubEvents } from '@/typings'
 import { bnMul, isGT, isLT, keepDecimals } from '@/utils/tools'
@@ -28,20 +29,16 @@ const DerifyTokenPool: FC = () => {
   const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const stakingInfo = useTraderInfoStore((state) => state.stakingInfo)
+  const stakingInfo = useTraderEarningStore((state) => state.stakingInfo)
   const drfPoolBalance = usePoolsInfoStore((state) => state.drfPoolBalance)
 
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
+  const { data: dashboardDAT } = useCurrentIndex(marginToken.address)
   const { data: edrfBalance, isLoading } = useTraderEDRFBalance(address)
-  const { data: dashboardDAT, refetch: dashboardDATRefetch } = useCurrentIndexDAT(marginToken.address)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
-
-  const memoDisabled = useMemo(() => {
-    return isGT(edrfBalance ?? 0, 0)
-  }, [edrfBalance])
 
   const closeDialog = () => setVisibleStatus('')
 
@@ -103,10 +100,6 @@ const DerifyTokenPool: FC = () => {
     window.toast.dismiss(toast)
   }, [signer])
 
-  useEffect(() => {
-    void dashboardDATRefetch()
-  }, [marginToken])
-
   return (
     <>
       <div className="web-eran-item">
@@ -137,7 +130,7 @@ const DerifyTokenPool: FC = () => {
               />
             </main>
             <aside>
-              <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
+              <Button size={mobile ? 'mini' : 'default'} disabled={!isGT(edrfBalance ?? 0, 0)} onClick={withdrawFunc}>
                 {t('Earn.DerifyTokenPool.ClaimAll', 'Claim All')}
               </Button>
             </aside>

@@ -2,36 +2,6 @@ import Token from '@/class/Token'
 import { ChainId, AllTokenKeys } from '@/typings'
 
 export const tokens: { [key in AllTokenKeys]: Token } = {
-  btc: new Token(
-    'Bitcoin',
-    'BTC',
-    {
-      [ChainId.MAINNET]: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
-      [ChainId.TESTNET]: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599'
-    },
-    8,
-    8
-  ),
-  eth: new Token(
-    'Etherum',
-    'ETH',
-    {
-      [ChainId.MAINNET]: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
-      [ChainId.TESTNET]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
-    },
-    18,
-    8
-  ),
-  busd: new Token(
-    'Binance USD',
-    'BUSD',
-    {
-      [ChainId.MAINNET]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-      [ChainId.TESTNET]: '0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba'
-    },
-    18,
-    2
-  ),
   drf: new Token(
     'Derify Protocol',
     'DRF',
@@ -51,33 +21,21 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
     },
     18,
     2
+  ),
+  busd: new Token(
+    'Binance USD',
+    'BUSD',
+    {
+      [ChainId.MAINNET]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+      [ChainId.TESTNET]: '0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba'
+    },
+    18,
+    2
   )
 }
-
-export const QUOTE_TOKENS = [tokens.btc, tokens.eth]
-
-export const MARGIN_TOKENS = [tokens.busd, tokens.drf]
 
 export const VALUATION_TOKEN_SYMBOL = 'USD'
 
-export const DEFAULT_MARGIN_TOKEN = tokens.busd
-
 export const PLATFORM_TOKEN = tokens.drf
-
-export const findToken = (key: string): Token => {
-  const upper = key.toUpperCase()
-  const lower = key.toLowerCase()
-  return Object.values(tokens).find(
-    (t) => t.symbol === upper || t.symbol === lower || t.symbol === key || t.tokenAddress === key.toLowerCase()
-  )!
-}
-
-export const findMarginToken = (key: string): Token | undefined => {
-  const upper = key.toUpperCase()
-  const lower = key.toLowerCase()
-  return MARGIN_TOKENS.find(
-    (t) => t.symbol === upper || t.symbol === lower || t.symbol === key || t.tokenAddress === key.toLowerCase()
-  )
-}
 
 export default tokens

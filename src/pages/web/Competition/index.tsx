@@ -10,9 +10,10 @@ import { getCompetitionList, getCompetitionRank } from '@/api'
 import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
+import Spinner from '@/components/common/Spinner'
 // import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { findToken, PLATFORM_TOKEN } from '@/config/tokens'
+import { PLATFORM_TOKEN } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/competitionRank'
 import { useMarginTokenStore } from '@/store'
@@ -54,7 +55,7 @@ const CompetitionRank: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const emptyText = useMemo(() => {
-    if (state.records.loaded) return t('common.Loading')
+    if (state.records.loaded) return <Spinner small />
     if (isEmpty(state.records.records)) return t('common.NoRecord')
     return ''
   }, [t, state.records])

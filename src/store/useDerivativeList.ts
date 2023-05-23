@@ -5,6 +5,8 @@ import factoryAbi from '@/config/abi/DerifyFactory.json'
 import { DerivativeListState } from '@/store/types'
 import multicall from '@/utils/multicall'
 
+export type DerAddressList = { [key: string]: { token: string; derivative: string } } | null
+
 export const derivativeList = {
   open: '',
   name: '',
@@ -23,8 +25,7 @@ export const derivativeList = {
 }
  */
 export const getDerAddressList = async (address: string, list: (typeof derivativeList)[]) => {
-  console.info('getDerAddressList')
-  let output = Object.create(null)
+  const output = Object.create(null)
   const calls = list.map((derivative) => ({
     name: 'getDerivative',
     params: [derivative.token],
@@ -34,10 +35,10 @@ export const getDerAddressList = async (address: string, list: (typeof derivativ
   const response = await multicall(factoryAbi, calls)
 
   response.forEach(([address]: string[], index: number) => {
-    output = {
-      ...output,
-      [list[index].name]: address
-      // [list[index].token]: address
+    output[list[index].name] = {
+      ...output[list[index].name],
+      token: calls[index].params[0],
+      derivative: address
     }
   })
   // console.info(output)

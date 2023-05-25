@@ -148,7 +148,7 @@ const Bench: FC = () => {
         window.toast.error(
           t('Trade.Bench.TheMinimumPositionValue', {
             USD: openingMinLimit,
-            Token: marginToken,
+            Token: marginToken.symbol,
             Margin: keepDecimals(bnDiv(openingMinLimit, marginPrice), 2)
           })
         )

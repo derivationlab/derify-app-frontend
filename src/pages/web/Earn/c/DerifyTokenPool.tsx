@@ -9,12 +9,14 @@ import DecimalShow from '@/components/common/DecimalShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
-import tokens from '@/config/tokens'
+import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
 import { useCurrentIndex } from '@/hooks/useCurrentIndex'
+import { usePoolStaking } from '@/hooks/usePoolStaking'
+import { useStakingDRF } from '@/hooks/useStakingDRF'
 import { useTraderEDRFBalance } from '@/hooks/useTraderEDRFBalance'
 import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderEarningStore, usePoolsInfoStore, useMarginTokenStore } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PubSubEvents } from '@/typings'
 import { bnMul, isGT, isLT, keepDecimals } from '@/utils/tools'
@@ -29,12 +31,12 @@ const DerifyTokenPool: FC = () => {
   const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const stakingInfo = useTraderEarningStore((state) => state.stakingInfo)
-  const drfPoolBalance = usePoolsInfoStore((state) => state.drfPoolBalance)
 
   const { redeem } = useRedeemDrf()
   const { staking } = useStakingDrf()
   const { withdraw } = useWithdrawAllEdrf()
+  const { data: drfBalance } = useStakingDRF()
+  const { data: stakingInfo } = usePoolStaking(address)
   const { data: dashboardDAT } = useCurrentIndex(marginToken.address)
   const { data: edrfBalance, isLoading } = useTraderEDRFBalance(address)
 
@@ -138,11 +140,11 @@ const DerifyTokenPool: FC = () => {
           <div className="web-eran-item-card">
             <main>
               <h4>{t('Earn.DerifyTokenPool.Staked', 'Staked')}</h4>
-              <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit="DRF" />
+              <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit={PLATFORM_TOKEN.symbol} />
               <div className="block" />
               <p>
                 {t('Earn.DerifyTokenPool.CurrentPoolSize', 'Current pool size')} :{' '}
-                <strong>{keepDecimals(drfPoolBalance, tokens.drf.decimals)}</strong> DRF
+                <strong>{keepDecimals(drfBalance, tokens.drf.decimals)}</strong> {PLATFORM_TOKEN.symbol}
               </p>
             </main>
             <aside>

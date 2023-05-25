@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import { PositionOperationState } from '@/store/types'
 import { PositionOrderTypes } from '@/typings'
 
-const usePositionOperationStore = create<PositionOperationState>((set, get) => ({
+const usePositionOperationStore = create<PositionOperationState>((set) => ({
   openingType: PositionOrderTypes.Market,
   leverageNow: 30,
   closingType: '',

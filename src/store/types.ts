@@ -55,9 +55,7 @@ export interface PositionState {
 }
 
 export interface PoolsInfoState {
-  drfPoolBalance: string
   bondPoolBalance: string
-  updateDrfPoolBalance: (p: string) => void
   updateBondPoolBalance: (p: string) => void
 }
 

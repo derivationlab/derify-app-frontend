@@ -7,7 +7,7 @@ import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useTraderEarningStore } from '@/store'
+import { usePoolStaking } from '@/hooks/usePoolStaking'
 import { isGT, isGTET } from '@/utils/tools'
 
 interface Props {
@@ -23,7 +23,7 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')
 
-  const stakingInfo = useTraderEarningStore((state) => state.stakingInfo)
+  const { data: stakingInfo } = usePoolStaking(address)
 
   const memoDisabled = useMemo(() => {
     return isGT(stakingInfo?.drfBalance ?? 0, 0)

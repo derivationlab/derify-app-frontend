@@ -15,7 +15,7 @@ import {
   useTokenSpotPricesStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
-import { PositionOrderTypes, PubSubEvents, Rec } from '@/typings'
+import { PositionOrderTypes, PubSubEvents } from '@/typings'
 import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Row from './Row'

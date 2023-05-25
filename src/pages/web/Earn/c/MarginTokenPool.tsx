@@ -9,10 +9,12 @@ import DecimalShow from '@/components/common/DecimalShow'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
+import { useBankBond } from '@/hooks/useBankBond'
+import { usePoolEarning } from '@/hooks/usePoolEarning'
 import { useTraderBondBalance } from '@/hooks/useTraderBondBalance'
 import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
-import { useTraderEarningStore, usePoolsInfoStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 import { isGT, isLT, keepDecimals } from '@/utils/tools'
 
@@ -26,15 +28,15 @@ const MarginTokenPool: FC = () => {
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
-  const rewardsInfo = useTraderEarningStore((state) => state.rewardsInfo)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-  const bondPoolBalance = usePoolsInfoStore((state) => state.bondPoolBalance)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const { redeem } = useRedeemBondFromBank()
   const { deposit } = useDepositBondToBank()
   const { exchange } = useExchangeBond()
   const { withdraw } = useWithdrawAllBond()
+  const { data: bankBalance } = useBankBond(protocolConfig?.rewards)
+  const { data: rewardsInfo } = usePoolEarning(address, protocolConfig?.rewards)
   const { data: bondBalance, isLoading } = useTraderBondBalance(address, marginToken.address)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
@@ -186,8 +188,8 @@ const MarginTokenPool: FC = () => {
               <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken.symbol}`} />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} :{' '}
-                <strong>{keepDecimals(bondPoolBalance, 2)}</strong> {`b${marginToken.symbol}`}
+                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{keepDecimals(bankBalance, 2)}</strong>{' '}
+                {`b${marginToken.symbol}`}
               </p>
             </main>
             <aside>

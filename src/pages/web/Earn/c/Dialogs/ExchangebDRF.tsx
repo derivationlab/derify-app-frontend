@@ -7,7 +7,8 @@ import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useTraderEarningStore, useMarginTokenStore } from '@/store'
+import { usePoolEarning } from '@/hooks/usePoolEarning'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
@@ -21,10 +22,12 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { address } = useAccount()
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-  const rewardsInfo = useTraderEarningStore((state) => state.rewardsInfo)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const [depositAmount, setDepositAmount] = useState<string>('0')
+
+  const { data: rewardsInfo } = usePoolEarning(address, protocolConfig?.rewards)
 
   const memoDisabled = useMemo(() => {
     return isGT(rewardsInfo?.exchangeable ?? 0, 0)

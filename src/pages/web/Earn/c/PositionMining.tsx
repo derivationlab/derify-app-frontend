@@ -1,4 +1,4 @@
-import { useSigner } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 
 import React, { FC, useCallback, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,31 +11,27 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
 import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
 import { useCurrentOpenInterest } from '@/hooks/useCurrentOpenInterest'
+import { usePoolEarning } from '@/hooks/usePoolEarning'
 import { useWithdrawPositionReward } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
-import {
-  useTraderEarningStore,
-  useMarginTokenStore,
-  useTraderVariablesStore,
-  useMarginIndicatorsStore,
-  useProtocolConfigStore
-} from '@/store'
+import { useMarginTokenStore, useTraderVariablesStore, useMarginIndicatorsStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { bnPlus, isGT, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
+  const { address } = useAccount()
   const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
 
   const variables = useTraderVariablesStore((state) => state.variables)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
   const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-  const rewardsInfo = useTraderEarningStore((state) => state.rewardsInfo)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
   const { withdraw } = useWithdrawPositionReward()
+  const { data: rewardsInfo } = usePoolEarning(address, protocolConfig?.rewards)
   const { data: currentOpenInterest } = useCurrentOpenInterest('all', marginToken.address)
 
   const memoPositionApy = useMemo(() => {

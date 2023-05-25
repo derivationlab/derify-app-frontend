@@ -32,7 +32,7 @@ const calcLeverageMarks = (max: number, limit = 7): number[] => {
   return times(limit, (index) => (index === 0 ? 1 : index * multiple))
 }
 
-const LeverageSelect: FC<Props> = ({ value, onChange, className }) => {
+const LeverageSelect: FC<Props> = ({ onChange, className }) => {
   const ref = useRef(null)
 
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)

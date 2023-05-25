@@ -6,13 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { MobileContext } from '@/providers/Mobile'
-import {
-  useMarginTokenStore,
-  useProtocolConfigStore,
-  useTokenSpotPricesStore,
-  useTraderEarningStore,
-  useTraderVariablesStore
-} from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore, useTraderVariablesStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
 import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'

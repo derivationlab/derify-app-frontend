@@ -44,7 +44,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const calcTFeeFunc = async () => {
     const derivative = derAddressList?.[data?.derivative]?.derivative ?? ''
-    const fee = await calcTradingFee(derivative, closingType, closingAmount, spotPrice)
+    const fee = await calcTradingFee(derivative, closingType, closingAmount)
     dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
   }
 

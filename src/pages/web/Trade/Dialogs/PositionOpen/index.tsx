@@ -60,7 +60,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const calcTFeeFunc = useCallback(
     debounce(async (value: number, symbol: string, spotPrice: string, factoryConfig: string) => {
-      const fee = await calcTradingFee(factoryConfig, symbol, value, spotPrice)
+      const fee = await calcTradingFee(factoryConfig, symbol, value)
 
       dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
     }, 1000),

@@ -42,7 +42,7 @@ const AddTokenTool: FC = () => {
   }, [protocolConfig, marginToken])
 
   const pancakeSwap = useMemo(() => {
-    const { symbol, precision: decimals, tokenAddress: address } = tokens.drf
+    const { symbol, tokenAddress: address } = tokens.drf
     const { tokenAddress: busd } = tokens.busd
     const swap = `swap?inputCurrency=${busd}&outputCurrency=${address}`
     return [

@@ -17,7 +17,6 @@ import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAnd
 import { ThemeContext } from '@/providers/Theme'
 import {
   useBrokerInfoStore,
-  usePositionHoldStore,
   useQuoteTokenStore,
   useTokenSpotPricesStore,
   useProtocolConfigStore,
@@ -30,7 +29,7 @@ import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 import NoRecord from '../c/NoRecord'
 import ListItem from './ListItem'
 
-const MyPosition: FC = () => {
+const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
@@ -39,13 +38,11 @@ const MyPosition: FC = () => {
 
   const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
-  const positionOrd = usePositionHoldStore((state) => state.positionOrd)
   const closingType = usePositionOperationStore((state) => state.closingType)
   const closingAmount = usePositionOperationStore((state) => state.closingAmount)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
-  const positionOrdLoaded = usePositionHoldStore((state) => state.loaded)
 
   const isMarginToken = useIsMarginToken(closingType)
 
@@ -153,12 +150,12 @@ const MyPosition: FC = () => {
 
   const positions = useMemo(() => {
     if (!address) return <NoRecord show />
-    if (!positionOrdLoaded) return <Spinner absolute />
-    if (!isEmpty(positionOrd)) {
+    if (loaded) return <Spinner absolute />
+    if (!isEmpty(data)) {
       return (
         <>
           <div className="web-trade-data-list">
-            {positionOrd.map((d, i) => (
+            {data.map((d: Rec, i: number) => (
               <ListItem key={`my-positions-${i}`} data={d} onEdit={changePosition} onClick={previewPosition} />
             ))}
           </div>
@@ -170,7 +167,7 @@ const MyPosition: FC = () => {
       )
     }
     return <NoRecord show />
-  }, [theme, address, positionOrd, positionOrdLoaded])
+  }, [theme, address, loaded, data])
 
   return (
     <>

@@ -5,10 +5,12 @@ import Cache from '@/utils/cache'
 
 const CacheKey = 'THEME-KEY'
 
-export const ThemeContext = createContext({
-  theme: ThemeOptions[0].toLocaleLowerCase(),
+interface ContextProps {
+  theme: string
   changeTheme: (val: string) => null
-})
+}
+
+export const ThemeContext = createContext({} as ContextProps)
 
 const ThemeProvider: FC = ({ children }) => {
   const [theme, setTheme] = useState<string>(ThemeOptions[0])

@@ -1,5 +1,3 @@
-import React from 'react'
-
 export interface SkeletonProps {
   loading?: boolean
   className?: string

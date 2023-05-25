@@ -1,7 +1,6 @@
 export * from './useRpcNode'
 export * from './useSharing'
 export * from './usePositionOperation'
-export * from './usePositionHold'
 export * from './useBalances'
 export * from './useBrokerInfo'
 export * from './useQuoteToken'

@@ -13,20 +13,17 @@ import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import { ThemeContext } from '@/providers/Theme'
 import { useDerivativeListStore, useProtocolConfigStore } from '@/store'
-import { usePositionHoldStore } from '@/store/usePositionHold'
-import { PubSubEvents } from '@/typings'
+import { PubSubEvents, Rec } from '@/typings'
 
 import NoRecord from '../c/NoRecord'
 import ListItem from './ListItem'
 
-const MyOrder: FC = () => {
+const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { theme } = useContext(ThemeContext)
   const { cancelAllPositions, cancelPosition } = usePositionOperation()
 
-  const profitLossOrd = usePositionHoldStore((state) => state.profitLossOrd)
-  const profitLossOrdLoaded = usePositionHoldStore((state) => state.loaded)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
 
@@ -87,12 +84,12 @@ const MyOrder: FC = () => {
 
   const positions = useMemo(() => {
     if (!address) return <NoRecord show />
-    if (!profitLossOrdLoaded) return <Spinner absolute />
-    if (!isEmpty(profitLossOrd)) {
+    if (!loaded) return <Spinner absolute />
+    if (!isEmpty(data)) {
       return (
         <>
           <div className="web-trade-data-list">
-            {profitLossOrd.map((d, i) => (
+            {data.map((d: Rec, i: number) => (
               <ListItem key={`my-orders-${i}`} data={d} onClick={() => cancel(d)} />
             ))}
           </div>
@@ -104,7 +101,7 @@ const MyOrder: FC = () => {
       )
     }
     return <NoRecord show />
-  }, [address, profitLossOrdLoaded, profitLossOrd, theme])
+  }, [theme, address, loaded, data])
 
   return (
     <>

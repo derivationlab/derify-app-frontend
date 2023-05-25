@@ -1,12 +1,13 @@
+import { BigNumber } from 'ethers'
+import { isEmpty } from 'lodash'
+
 import { useCallback, useEffect, useState } from 'react'
 
+import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 import { Rec } from '@/store/types'
 import { PositionSideTypes, PositionTriggerTypes } from '@/typings'
-import { bnMul, formatUnits } from '@/utils/tools'
-import { BigNumber } from 'ethers'
 import multicall from '@/utils/multicall'
-import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
-import { isEmpty } from 'lodash'
+import { bnMul, formatUnits } from '@/utils/tools'
 
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
   isUsed ? formatUnits(stopPrice, 8) : '--'
@@ -209,21 +210,24 @@ const getOwnedPositions = async (trader: string, derAddressList: Rec): Promise<R
   return []
 }
 
-export const useOwnedPositions = (trader: string, derAddressList: Rec) => {
+export const useOwnedPositions = (trader: string | undefined, derAddressList: Rec | null) => {
   const [ownedPositions, setOwnedPositions] = useState<Rec | undefined>(undefined)
 
-  const func = useCallback(async () => {
-    const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, derAddressList)
+  const func = useCallback(
+    async (trader: string, derAddressList: Rec) => {
+      const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, derAddressList)
 
-    setOwnedPositions({
-      positionOrd,
-      profitLossOrd
-    })
-  }, [trader, derAddressList])
+      setOwnedPositions({
+        positionOrd,
+        profitLossOrd
+      })
+    },
+    [trader, derAddressList]
+  )
 
   useEffect(() => {
     if (trader && derAddressList) {
-      void func()
+      void func(trader, derAddressList)
     }
   }, [trader, derAddressList])
 

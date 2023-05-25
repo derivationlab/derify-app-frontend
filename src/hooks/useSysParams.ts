@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { isEmpty } from 'lodash'
 
-import derifyClearingAbi from '@/config/abi/DerifyClearing.json'
 import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import derifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'

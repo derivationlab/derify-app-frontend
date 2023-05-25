@@ -15,7 +15,7 @@ import {
 export const calcTradingFee = async (
   pairAddress: string,
   tokenSelect: string,
-  openingAmount: string | number,
+  openingAmount: string | number
 ): Promise<number> => {
   const c = getDerifyDerivativeContract(pairAddress)
 

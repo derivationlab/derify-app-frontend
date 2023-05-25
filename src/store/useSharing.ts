@@ -3,8 +3,7 @@ import { create } from 'zustand'
 import { SharingState } from '@/store/types'
 
 export enum SharingEvents {
-  connectWallet = 'connectWallet',
-  showMorePosition = 'showMorePosition'
+  connectWallet = 'connectWallet'
 }
 
 const useSharingStore = create<SharingState>((set) => ({

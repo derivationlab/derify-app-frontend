@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { Chain, useNetwork, useSwitchNetwork } from 'wagmi'
-import { bsc, bscTestnet } from 'wagmi/chains'
+import { bscTestnet } from 'wagmi/chains'
 
 import React, { FC, useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,6 +1,6 @@
 export default {
   section: 'Dashboard',
-  dicts: {
+  dictionary: {
     DRFPrice: 'DRF Price',
     TotalDestroyed: 'Total Destroyed',
     BuybackPool: 'Buyback Pool',

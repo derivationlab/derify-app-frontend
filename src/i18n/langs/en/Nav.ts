@@ -1,6 +1,6 @@
 export default {
   section: 'Nav',
-  dicts: {
+  dictionary: {
     Nav: {
       Trade: 'Trade',
       Earn: 'Earn',

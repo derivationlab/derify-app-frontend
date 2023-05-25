@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useClickAway } from 'react-use'
 
 import { LANG_CACHE_KEY } from '@/config'
-import { languages } from '@/lang'
+import { languageOptions } from '@/i18n'
 import Cache from '@/utils/cache'
 
 const SelectLang: FC = () => {
@@ -24,17 +24,13 @@ const SelectLang: FC = () => {
     <div className="web-header-select-lang" ref={ref}>
       <div className="web-header-select-lang-label" onClick={() => setMenuStatus(!menuStatus)}>
         <label>{t('Nav.Tool.Language', 'Language')}</label>
-        <span>{languages.find((i) => i.value === i18n.language).label}</span>
+        <span>{languageOptions.find((i) => i.lng === i18n.language)?.key}</span>
       </div>
       <ul className={classNames('web-header-select-lang-menu', { show: menuStatus })}>
-        {languages.map(({ label, value }) => {
+        {languageOptions.map(({ key, lng }) => {
           return (
-            <li
-              className={classNames({ active: value === i18n.language })}
-              onClick={() => changelang(value)}
-              key={value}
-            >
-              {label}
+            <li className={classNames({ active: lng === i18n.language })} onClick={() => changelang(lng)} key={lng}>
+              {key}
             </li>
           )
         })}

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 
 import App from '@/App'
-import '@/lang'
+import '@/i18n'
 import MobileProvider from '@/providers/Mobile'
 import QueryClientProvider from '@/providers/QueryClient'
 import ThemeProvider from '@/providers/Theme'

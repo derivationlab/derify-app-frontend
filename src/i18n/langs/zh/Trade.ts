@@ -1,6 +1,6 @@
 export default {
   section: 'Trade',
-  dicts: {
+  dictionary: {
     Derivative: {
       NoTrading: '无交易对'
     },

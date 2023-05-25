@@ -1,6 +1,6 @@
 export default {
   section: 'common',
-  dicts: {
+  dictionary: {
     pending: 'pending...',
     success: 'success',
     failed: 'failed',

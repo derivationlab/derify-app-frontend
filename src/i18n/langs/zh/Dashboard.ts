@@ -1,6 +1,6 @@
 export default {
   section: 'NewDashboard',
-  dicts: {
+  dictionary: {
     Overview: {
       TotalTradingValue: '总交易净值',
       TotalPositionValue: '总持仓净值',

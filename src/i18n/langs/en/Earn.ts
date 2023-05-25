@@ -1,6 +1,6 @@
 export default {
   section: 'Earn',
-  dicts: {
+  dictionary: {
     PositionMining: {
       PositionMining: 'Position Mining',
       PositionMiningTip: 'More postion, more profit from positon mining',

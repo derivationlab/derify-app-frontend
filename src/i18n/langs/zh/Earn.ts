@@ -1,6 +1,6 @@
 export default {
   section: 'Earn',
-  dicts: {
+  dictionary: {
     PositionMining: {
       PositionMining: '持仓挖矿',
       PositionMiningTip: '持有仓位越大，挖矿收益越多',

@@ -1,6 +1,6 @@
 export default {
   section: 'Nav',
-  dicts: {
+  dictionary: {
     Nav: {
       Trade: '交易',
       Earn: '收益',

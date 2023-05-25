@@ -1,6 +1,6 @@
 export default {
   section: 'NewDashboard',
-  dicts: {
+  dictionary: {
     Overview: {
       TotalTradingValue: 'Total Trading Value',
       TotalPositionValue: 'Total Position Value',

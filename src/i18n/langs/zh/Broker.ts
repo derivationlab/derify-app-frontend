@@ -1,6 +1,6 @@
 export default {
   section: 'Broker',
-  dicts: {
+  dictionary: {
     History: {
       Type: '类型',
       Type0: '收入',

@@ -1,6 +1,6 @@
 export default {
   section: 'Dashboard',
-  dicts: {
+  dictionary: {
     DRFPrice: 'DRF 价格',
     TotalDestroyed: '总销毁量',
     BuybackPool: '回购池',

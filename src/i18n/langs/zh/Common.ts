@@ -1,6 +1,6 @@
 export default {
   section: 'common',
-  dicts: {
+  dictionary: {
     pending: '执行中，请稍后',
     success: '执行成功',
     failed: '执行失败',

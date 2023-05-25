@@ -20,7 +20,6 @@ export const useDerivativeParams = (address: string) => {
   const [derivativeParams, setDerivativeParams] = useState<typeof initTradePairParams>(initTradePairParams)
 
   const getDerivativeParams = async () => {
-    console.info(8989)
     const base = { address }
     const calls = [
       {

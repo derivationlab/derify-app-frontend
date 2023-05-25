@@ -47,7 +47,6 @@ const Bench: FC = () => {
   const updateLeverageNow = usePositionOperationStore((state) => state.updateLeverageNow)
   const updateOpeningType = usePositionOperationStore((state) => state.updateOpeningType)
   const updateOpeningPrice = usePositionOperationStore((state) => state.updateOpeningPrice)
-  const disposableAmountLoaded = usePositionOperationStore((state) => state.disposableAmountLoaded)
   const marginPrice = useMarginPriceStore((state) => state.marginPrice)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
@@ -214,7 +213,7 @@ const Bench: FC = () => {
           <Row>
             <Col>
               <Button
-                loading={!disposableAmountLoaded}
+                disabled={memoDisabled1 || memoDisabled2 || !quoteToken.address}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSideTypes.long)}
@@ -228,8 +227,7 @@ const Bench: FC = () => {
             </Col>
             <Col>
               <Button
-                loading={!disposableAmountLoaded}
-                disabled={memoDisabled1 || memoDisabled2}
+                disabled={memoDisabled1 || memoDisabled2 || !quoteToken.address}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSideTypes.short)}
@@ -246,8 +244,7 @@ const Bench: FC = () => {
             <Row>
               <Col>
                 <Button
-                  loading={!disposableAmountLoaded}
-                  disabled={memoDisabled1 || memoDisabled2}
+                  disabled={memoDisabled1 || memoDisabled2 || !quoteToken.address}
                   noDisabledStyle
                   className="web-trade-bench-button-full"
                   onClick={() => openPositionDialog(PositionSideTypes.twoWay)}

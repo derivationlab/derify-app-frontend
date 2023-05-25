@@ -18,7 +18,7 @@ let output = Object.create(null)
 }
  * @param list
  */
-export const useTokenSpotPrices = (list?: DerAddressList) => {
+export const useTokenSpotPrices = (list?: DerAddressList | null) => {
   const { data, refetch, isLoading } = useQuery(
     ['useTokenSpotPrices'],
     async () => {

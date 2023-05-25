@@ -47,8 +47,6 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
 
   useEffect(() => {
     if (sharing === SharingEvents.connectWallet) {
-      console.info(`sharing:${sharing}`)
-
       setModalStatus(true)
 
       updateSharing(undefined)

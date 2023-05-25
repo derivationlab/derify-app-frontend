@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 
 import React, { FC, useState, useRef, useContext, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useClickAway } from 'react-use'
 
 import ChangePercent from '@/components/common/ChangePercent'
@@ -8,6 +9,7 @@ import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginIndicatorsStore, useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
+import { QuoteTokenState } from '@/store/types'
 
 import Options from './Options'
 
@@ -17,13 +19,13 @@ interface Props {
 
 const SymbolSelect: FC<Props> = ({ onToggle }) => {
   const ref = useRef(null)
-
+  const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
+  const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-  const updateQuoteToken = useQuoteTokenStore((state) => state.updateQuoteToken)
 
   const [showOptions, setShowOptions] = useState<boolean>(false)
 
@@ -37,8 +39,8 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
 
   const change = (pair: Record<string, any>) => {
     setShowOptions(false)
-
-    updateQuoteToken(pair.symbol)
+    const { name, token } = pair
+    updateQuoteToken({ symbol: name, address: token })
   }
 
   const toggle = () => {
@@ -51,15 +53,19 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
   return (
     <div className={classNames('web-trade-symbol-select', { show: showOptions })} ref={ref}>
       {mobile && <div className="web-trade-symbol-select-toggle" onClick={toggle} />}
-      <div className="web-trade-symbol-select-curr" onClick={() => setShowOptions(!showOptions)}>
-        <h4>{quoteToken.symbol}</h4>
-        <aside>
-          <Skeleton rowsProps={{ rows: 1 }} animation loading={!tokenSpotPrices}>
-            <BalanceShow value={Number(spotPrice).toFixed(2)} />
-          </Skeleton>
-          <ChangePercent value={indicator} />
-        </aside>
-      </div>
+      {quoteToken.symbol ? (
+        <div className="web-trade-symbol-select-curr" onClick={() => setShowOptions(!showOptions)}>
+          <h4>{quoteToken.symbol}</h4>
+          <aside>
+            <Skeleton rowsProps={{ rows: 1 }} animation loading={!tokenSpotPrices}>
+              <BalanceShow value={Number(spotPrice).toFixed(2)} />
+            </Skeleton>
+            <ChangePercent value={indicator} />
+          </aside>
+        </div>
+      ) : (
+        <div className="web-trade-symbol-select-curr s">{t('Trade.Derivative.NoTrading')}</div>
+      )}
       {showOptions && <Options onChange={change} />}
     </div>
   )

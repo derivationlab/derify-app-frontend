@@ -34,8 +34,6 @@ const MarketInfo: FC = () => {
   const { data: tradingVol } = useAllCurrentTrading(marginTokenList)
   const { data: indicators } = useAllMarginIndicators(marginTokenList)
   // const { data: positionInfo, refetch: positionInfoRefetch } = usePositionInfo(marginTokenList)
-  console.info('useCurrentTrading')
-  console.info(tradingVol)
 
   // const [keyword, setKeyword] = useState('')
 

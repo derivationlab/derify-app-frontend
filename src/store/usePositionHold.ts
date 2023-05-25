@@ -213,6 +213,9 @@ const usePositionHoldStore = create<PositionState>((set) => ({
     const [positionOrd, profitLossOrd] = await getMyPositionsData(trader, derAddressList)
 
     set({ positionOrd, profitLossOrd, loaded: true })
+  },
+  reset: (data: { positionOrd?: Rec[]; profitLossOrd?: Rec[]; loaded?: boolean }) => {
+    set(data)
   }
 }))
 

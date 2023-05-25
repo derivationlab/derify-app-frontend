@@ -35,9 +35,6 @@ const useMarginIndicatorsStore = create<MarginIndicatorsState>((set) => ({
   marginIndicatorsLoaded: false,
   updateMarginIndicators: (data: Rec) =>
     set(() => {
-      console.info('updateMarginIndicators:')
-      console.info(data)
-
       return { marginIndicators: data, marginIndicatorsLoaded: true }
     })
 }))

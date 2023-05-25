@@ -38,30 +38,34 @@ const Chart: FC = () => {
     if (kline.current) {
       // kline.current.reset()
 
-      const { data, more } = await getKLineDAT(quoteToken.address, state.kline.timeLine, getKlineEndTime(), 130, true)
+      if (quoteToken.address) {
+        const { data, more } = await getKLineDAT(quoteToken.address, state.kline.timeLine, getKlineEndTime(), 130, true)
 
-      store.current = data[data.length - 1] // keep original data
+        store.current = data[data.length - 1] // keep original data
 
-      const reorganize = reorganizeLastPieceOfData(data, spotPrice)
+        const reorganize = reorganizeLastPieceOfData(data, spotPrice)
 
-      dispatch({ type: 'SET_KLINE_INIT', payload: { data: reorganize } })
-      kline.current.initData(reorganize, more)
+        dispatch({ type: 'SET_KLINE_INIT', payload: { data: reorganize } })
+        kline.current.initData(reorganize, more)
+      } else {
+        kline.current.initData([], false)
+      }
+
+      onetime = true
+      dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: false } })
     }
-
-    onetime = true
-    dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: false } })
-  }, [spotPrice, state.kline.timeLine])
+  }, [spotPrice, quoteToken, state.kline.timeLine])
 
   const getMoreData = useCallback(
     async (lastTime: number) => {
-      return await getKLineDAT(quoteToken.address, state.kline.timeLine, lastTime, 50, false)
+      if (quoteToken.address) return await getKLineDAT(quoteToken.address, state.kline.timeLine, lastTime, 50, false)
     },
     [quoteToken]
   )
 
   useInterval(() => {
     const func = async () => {
-      if (kline.current) {
+      if (kline.current && quoteToken.address) {
         const { data } = await getKLineDAT(quoteToken.address, state.kline.timeLine, getKlineEndTime(), 1, false)
         // console.info(timestamp, data[0]?.timestamp)
         if (store.current?.timestamp !== data[0]?.timestamp) {
@@ -78,6 +82,7 @@ const Chart: FC = () => {
   }, 60000)
 
   useEffect(() => {
+    dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
     void getBaseData()
   }, [quoteToken, state.kline.timeLine])
 
@@ -90,7 +95,6 @@ const Chart: FC = () => {
 
   useEffect(() => {
     kline.current && kline.current.reset()
-    dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
   }, [quoteToken])
 
   return (

@@ -1,11 +1,15 @@
+import { BigNumberish } from 'ethers'
 import { create } from 'zustand'
 
 import { getDerivativeList } from '@/api'
+import derivativeAbi from '@/config/abi/DerifyDerivative.json'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
 import { DerivativeListState } from '@/store/types'
+import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
+import { formatUnits } from '@/utils/tools'
 
-export type DerAddressList = { [key: string]: { token: string; derivative: string } } | null
+export type DerAddressList = { [key: string]: { token: string; derivative: string } }
 
 export const derivativeList = {
   open: '',
@@ -14,16 +18,6 @@ export const derivativeList = {
   margin_token: ''
 }
 
-/**
- {
-    "MATICUSD": "0x0000000000000000000000000000000000000000",
-    "0x1c4D328CFC04ca709Ba584466139262770C3cB1E": "0x0000000000000000000000000000000000000000",
-    "CAKEUSD": "0x0000000000000000000000000000000000000000",
-    "0x7aBcA3B5f0Ca1da0eC05631d5788907D030D0a22": "0x0000000000000000000000000000000000000000",
-    "BNBUSD": "0x46e0BBa3a5dbB0A062AeC20de78D0E901D9BD428",
-    "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd": "0x46e0BBa3a5dbB0A062AeC20de78D0E901D9BD428"
-}
- */
 export const getDerAddressList = async (address: string, list: (typeof derivativeList)[]) => {
   const output = Object.create(null)
   const calls = list.map((derivative) => ({
@@ -45,18 +39,41 @@ export const getDerAddressList = async (address: string, list: (typeof derivativ
   return output
 }
 
+export const getPosMaxLeverage = async (list: DerAddressList) => {
+  let output = Object.create(null)
+  const keys = Object.keys(list)
+  const calls = keys.map((l) => ({
+    name: 'maxLeverage',
+    address: list[l].derivative
+  }))
+
+  const response = await multicall(derivativeAbi, calls)
+
+  response.forEach((leverage: BigNumberish, index: number) => {
+    output = {
+      ...output,
+      [keys[index]]: formatUnits(String(leverage), 8)
+    }
+  })
+  // console.info(output)
+  return output
+}
+
 const useDerivativeListStore = create<DerivativeListState>((set) => ({
   derivativeList: [],
   derAddressList: null,
+  posMaxLeverage: null,
+  derAddressListLoaded: false,
   derivativeListLoaded: false,
+  posMaxLeverageLoaded: false,
   getDerivativeList: async (marginTokenAddress: string) => {
     const { data } = await getDerivativeList(marginTokenAddress)
     if (data) {
-      console.info(`保证金${marginTokenAddress}交易对列表:`)
-      console.info(data?.records)
+      const records = data?.records ?? []
+      const filter = records.filter((r: Rec) => r.open)
 
       set({
-        derivativeList: data?.records,
+        derivativeList: filter,
         derivativeListLoaded: true
       })
     }
@@ -64,12 +81,21 @@ const useDerivativeListStore = create<DerivativeListState>((set) => ({
   getDerAddressList: async (address: string, list: (typeof derivativeList)[]) => {
     const derAddressList = await getDerAddressList(address, list)
 
-    console.info(`保证金${address}交易对地址列表:`)
-    console.info(derAddressList)
+    set({
+      derAddressList,
+      derAddressListLoaded: true
+    })
+  },
+  getPosMaxLeverage: async (list: DerAddressList) => {
+    const posMaxLeverage = await getPosMaxLeverage(list)
 
     set({
-      derAddressList
+      posMaxLeverage,
+      posMaxLeverageLoaded: true
     })
+  },
+  reset: (data: { derAddressList?: null; posMaxLeverage?: null }) => {
+    set((state) => ({ ...state, ...data }))
   }
 }))
 

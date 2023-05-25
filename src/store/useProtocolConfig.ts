@@ -40,9 +40,6 @@ const useProtocolConfigStore = create<ProtocolConfigState>((set) => ({
   getProtocolConfig: async (marginTokenAddress: string) => {
     const protocolConfig = await getProtocolConfig(marginTokenAddress)
 
-    console.info('protocolConfig:')
-    console.info(protocolConfig)
-
     set({ protocolConfig, protocolConfigLoaded: true })
   }
 }))

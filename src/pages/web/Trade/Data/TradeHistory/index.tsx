@@ -60,7 +60,7 @@ const TradeHistory: FC = () => {
   return (
     <div className="web-trade-data-wrap">
       <div className="web-trade-data-list">{memoTradeHistory}</div>
-      {state.records.totalItems && (
+      {state.records.totalItems > 0 && (
         <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
       )}
     </div>

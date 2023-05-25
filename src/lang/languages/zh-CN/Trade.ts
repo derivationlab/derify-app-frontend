@@ -1,6 +1,9 @@
 export default {
   section: 'Trade',
   dicts: {
+    Derivative: {
+      NoTrading: '无交易对'
+    },
     kline: {
       SearchTip: '搜索衍生品',
       NetPositionRate: '净头寸率',

@@ -9,7 +9,6 @@ import { Route, Switch } from 'react-router-dom'
 
 import Spinner from '@/components/common/Spinner'
 import { useMarginLoading } from '@/hooks/useMarginLoading'
-import BrokerUpdater from '@/pages/updater/BrokerUpdater'
 import GlobalUpdater from '@/pages/updater/GlobalUpdater'
 import '@/style/style.scss'
 
@@ -25,7 +24,6 @@ function App() {
   return (
     <>
       <GlobalUpdater />
-      <BrokerUpdater />
 
       <Suspense fallback={null}>
         <Switch>

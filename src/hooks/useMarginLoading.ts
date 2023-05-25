@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useEffectOnce } from 'react-use'
 
-import { useMarginTokenStore, useOpeningMaxLimitStore, useProtocolConfigStore, useQuoteTokenStore } from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore, useQuoteTokenStore } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useDerivativeListStore } from '@/store/useDerivativeList'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
@@ -15,41 +15,43 @@ export const useMarginLoading = () => {
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const getDerivativeList = useDerivativeListStore((state) => state.getDerivativeList)
   const getDerAddressList = useDerivativeListStore((state) => state.getDerAddressList)
+  const resetDerivative = useDerivativeListStore((state) => state.reset)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const getProtocolConfig = useProtocolConfigStore((state) => state.getProtocolConfig)
-  const getOpeningMaxLimit = useOpeningMaxLimitStore((state) => state.getOpeningMaxLimit)
 
   useEffectOnce(() => {
     void getMarginTokenList()
   })
 
   useEffect(() => {
-    const { address } = marginToken
-    void getProtocolConfig(address)
-    void getDerivativeList(address)
-  }, [marginToken])
-
-  useEffect(() => {
     if (derivativeList.length) {
       const { name, token } = derivativeList[0]
       updateQuoteToken({ symbol: name, address: token })
+    } else {
+      updateQuoteToken({ symbol: '', address: '' })
     }
   }, [derivativeList])
 
   useEffect(() => {
-    if (marginTokenList.length) {
+    if (marginToken) {
+      const { address } = marginToken
+      void getProtocolConfig(address)
+      void getDerivativeList(address)
+    } else if (marginTokenList.length) {
       const { symbol, margin_token } = marginTokenList[0]
       updateMarginToken({ symbol, address: margin_token })
-
       void getProtocolConfig(margin_token)
       void getDerivativeList(margin_token)
     }
-  }, [marginTokenList])
+  }, [marginToken, marginTokenList])
 
   useEffect(() => {
-    if (protocolConfig && derivativeList.length) {
-      void getDerAddressList(protocolConfig.factory, derivativeList)
-      void getOpeningMaxLimit(protocolConfig.exchange, derivativeList)
+    if (protocolConfig) {
+      if (derivativeList.length) {
+        void getDerAddressList(protocolConfig.factory, derivativeList)
+      } else {
+        void resetDerivative({ derAddressList: null })
+      }
     }
   }, [protocolConfig, derivativeList])
 

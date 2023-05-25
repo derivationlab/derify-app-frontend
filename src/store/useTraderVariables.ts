@@ -62,9 +62,6 @@ const useTraderVariablesStore = create<TraderVariablesState>((set) => ({
   getTraderVariables: async (address: string, exchange: string) => {
     const data = await getTraderVariables(address, exchange)
     set(() => {
-      console.info(`getTraderVariables:`)
-      console.info(data)
-
       return { variables: data, variablesLoaded: true }
     })
   },

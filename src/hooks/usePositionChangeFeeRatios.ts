@@ -18,7 +18,7 @@ let output = Object.create(null)
 }
  * @param list
  */
-export const usePositionChangeFeeRatios = (list?: DerAddressList) => {
+export const usePositionChangeFeeRatios = (list?: DerAddressList | null) => {
   const { data, refetch, isLoading } = useQuery(
     ['usePositionChangeFeeRatios'],
     async () => {

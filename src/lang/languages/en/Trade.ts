@@ -1,6 +1,9 @@
 export default {
   section: 'Trade',
   dicts: {
+    Derivative: {
+      NoTrading: 'No Trading Pairs'
+    },
     kline: {
       SearchTip: 'Search derivatives ..',
       NetPositionRate: 'Net Position Rate',

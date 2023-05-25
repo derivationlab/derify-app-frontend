@@ -3,7 +3,7 @@ import { useAccount } from 'wagmi'
 
 import React, { FC, useState, useContext } from 'react'
 
-import TradingParamsUpdater from '@/pages/updater/TradingParamsUpdater'
+import TradingUpdater from '@/pages/updater/TradingUpdater'
 import { MobileContext } from '@/providers/Mobile'
 
 import Bench from './Bench'
@@ -22,7 +22,7 @@ const Trade: FC = () => {
   if (mobile) {
     return (
       <>
-        <TradingParamsUpdater />
+        <TradingUpdater />
         <div className="web-trade">
           <div className="web-trade-mobile-header">
             <SymbolSelect onToggle={() => setToggle(!toggle)} />
@@ -43,7 +43,7 @@ const Trade: FC = () => {
 
   return (
     <div className="web-trade">
-      <TradingParamsUpdater />
+      <TradingUpdater />
       <main className="web-trade-main">
         <KLine />
         <Data />

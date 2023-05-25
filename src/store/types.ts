@@ -20,27 +20,18 @@ export interface RpcNodeState {
 }
 
 export interface PositionOperationState {
-  disposableAmount: Rec | null
   closingType: string
   closingAmount: string
   openingPrice: string
   openingAmount: string
   leverageNow: number
   openingType: PositionOrderTypes
-  disposableAmountLoaded: boolean
   updateClosingType: (p: string) => void
   updateOpeningType: (p: PositionOrderTypes) => void
   updateLeverageNow: (p: number) => void
   updateOpeningPrice: (p: string) => void
   updateOpeningAmount: (p: string) => void
   updateClosingAmount: (p: string) => void
-  getDisposableAmount: (
-    quoteToken: Rec,
-    trader: string,
-    price: string,
-    exchange: string,
-    marginToken: Rec
-  ) => Promise<void>
 }
 
 export interface SharingState {
@@ -60,6 +51,7 @@ export interface PositionState {
   profitLossOrd: Rec[]
   loaded: boolean
   fetch: (trader: string, factoryConfig: Rec) => Promise<void>
+  reset: (data: { positionOrd?: Rec[]; profitLossOrd?: Rec[]; loaded?: boolean }) => void
 }
 
 export interface PoolsInfoState {
@@ -111,11 +103,16 @@ export interface MarginTokenListState {
 }
 
 export interface DerivativeListState {
-  derAddressList: DerAddressList
+  derAddressList: DerAddressList | null
+  posMaxLeverage: { [key: string]: string } | null
   derivativeList: (typeof derivativeList)[]
   derivativeListLoaded: boolean
+  posMaxLeverageLoaded: boolean
+  derAddressListLoaded: boolean
   getDerivativeList: (marginTokenAddress: string) => Promise<void>
   getDerAddressList: (address: string, list: (typeof derivativeList)[]) => Promise<void>
+  getPosMaxLeverage: (list: DerAddressList) => Promise<void>
+  reset: (data: { derAddressList?: null; posMaxLeverage?: null }) => void
 }
 
 export interface MarginIndicatorsState {
@@ -152,5 +149,5 @@ export interface TraderVariablesState {
 export interface OpeningMaxLimitState {
   openingMaxLimit: Rec | null
   openingMaxLimitLoaded: boolean
-  getOpeningMaxLimit: (address: string, list: (typeof derivativeList)[]) => Promise<void>
+  getOpeningMaxLimit: (address: string, list: typeof quoteToken) => Promise<void>
 }

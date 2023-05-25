@@ -7,6 +7,7 @@ import { useMarginIndicators } from '@/hooks/useMarginIndicators'
 import { useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import {
   useBalancesStore,
+  useBrokerInfoStore,
   useDerivativeListStore,
   useMarginPriceStore,
   useMarginTokenListStore,
@@ -30,6 +31,10 @@ export default function GlobalUpdater(): null {
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
   const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
+  const fetchBrokerInfo = useBrokerInfoStore((state) => state.fetchBrokerInfo)
+  const resetBrokerInfo = useBrokerInfoStore((state) => state.resetBrokerInfo)
+  const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
+  const resetBrokerBound = useBrokerInfoStore((state) => state.resetBrokerBound)
 
   const { data: tokenSpotPrices } = useTokenSpotPrices(derAddressList)
   const { data: marginIndicators } = useMarginIndicators(marginToken.address)
@@ -68,6 +73,24 @@ export default function GlobalUpdater(): null {
       updateMarginIndicators(marginIndicators)
     }
   }, [marginIndicators])
+
+  // User broker info
+  useEffect(() => {
+    if (address) {
+      void fetchBrokerInfo(address, marginToken.address)
+      void fetchBrokerBound(address)
+    }
+
+    PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {
+      resetBrokerInfo()
+      if (address) void fetchBrokerInfo(address, marginToken.address)
+    })
+
+    PubSub.subscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT, () => {
+      resetBrokerBound()
+      if (address) void fetchBrokerBound(address)
+    })
+  }, [address, marginToken])
 
   return null
 }

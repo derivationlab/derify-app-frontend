@@ -39,9 +39,6 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
   getMarginTokenList: async () => {
     const data = await _getMarginTokenList()
 
-    console.info(`保证金列表:`)
-    console.info(data)
-
     if (data.length) {
       const _ = orderBy(data, ['max_pm_apy', 'open'], 'desc')
       set({

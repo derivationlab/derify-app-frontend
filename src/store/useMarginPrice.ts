@@ -16,9 +16,6 @@ const useMarginPriceStore = create<MarginPriceState>((set) => ({
   getMarginPrice: async (address: string) => {
     const data = await getMarginPrice(address)
 
-    console.info('getMarginPrice:')
-    console.info(data)
-
     set({ marginPrice: data, marginPriceLoaded: true })
   }
 }))

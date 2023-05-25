@@ -96,8 +96,6 @@ export const useAllMarginIndicators = (list: (typeof marginTokenList)[]) => {
               }
             )
           })
-          console.info(output)
-
           return output
         }
       }

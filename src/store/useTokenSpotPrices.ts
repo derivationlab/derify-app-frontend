@@ -7,9 +7,6 @@ const useTokenSpotPricesStore = create<TokenSpotPricesState>((set) => ({
   tokenSpotPricesLoaded: false,
   updateTokenSpotPrices: (data: Rec) =>
     set(() => {
-      console.info('updateTokenSpotPrices:')
-      console.info(data)
-
       return { tokenSpotPrices: data, tokenSpotPricesLoaded: true }
     })
 }))

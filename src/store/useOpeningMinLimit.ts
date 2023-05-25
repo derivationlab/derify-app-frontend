@@ -16,9 +16,6 @@ const useOpeningMinLimitStore = create<OpeningMinLimitState>((set) => ({
   getOpeningMinLimit: async (address: string) => {
     const data = await getOpeningMinLimit(address)
 
-    console.info('getOpeningMinLimit:')
-    console.info(data)
-
     set({ openingMinLimit: data, openingMinLimitLoaded: true })
   }
 }))

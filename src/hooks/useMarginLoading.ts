@@ -33,7 +33,7 @@ export const useMarginLoading = () => {
   }, [derivativeList])
 
   useEffect(() => {
-    if (marginToken) {
+    if (marginToken.address) {
       const { address } = marginToken
       void getProtocolConfig(address)
       void getDerivativeList(address)

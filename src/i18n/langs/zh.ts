@@ -6,7 +6,7 @@ const filesKeys = files.keys()
 const output = filesKeys.reduce((init: Rec, path) => {
   const { section, dictionary } = files(path).default
   init[section] = dictionary
-  return dictionary
+  return init
 }, {})
 
 export default { desc: languageDesc['zh-CN'], output }

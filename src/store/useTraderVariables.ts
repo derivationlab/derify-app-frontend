@@ -51,7 +51,7 @@ const getTraderVariables = async (trader: string, exchange: string): Promise<Ini
 
     return initialTraderVariables
   } catch (e) {
-    // console.info(e)
+    console.info(e)
     return initialTraderVariables
   }
 }
@@ -61,6 +61,7 @@ const useTraderVariablesStore = create<TraderVariablesState>((set) => ({
   variablesLoaded: false,
   getTraderVariables: async (address: string, exchange: string) => {
     const data = await getTraderVariables(address, exchange)
+
     set(() => {
       return { variables: data, variablesLoaded: true }
     })

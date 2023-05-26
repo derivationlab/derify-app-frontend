@@ -40,8 +40,8 @@ const MySpace: FC = () => {
       {
         title: t('Nav.MySpace.Margin'),
         dataIndex: 'symbol',
-        render: (symbol: string) => {
-          return <TableMargin icon={`market/${symbol.toLowerCase()}.svg`} name={symbol} />
+        render: (symbol: string, record: Record<string, any>) => {
+          return <TableMargin icon={record.logo} name={symbol} />
         }
       },
       {

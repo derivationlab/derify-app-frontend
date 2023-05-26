@@ -89,7 +89,7 @@ export interface QuoteTokenState {
 }
 
 export interface MarginTokenState {
-  marginToken: { symbol: string; address: string }
+  marginToken: typeof marginToken
   updateMarginToken: (data: typeof marginToken) => void
 }
 

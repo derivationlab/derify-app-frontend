@@ -26,6 +26,7 @@ const _getMarginTokenList = async (): Promise<(typeof marginTokenList)[]> => {
 
 export const marginTokenList = {
   open: 0,
+  logo: '',
   name: '',
   symbol: '',
   max_pm_apy: 0,

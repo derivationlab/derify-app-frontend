@@ -11,7 +11,6 @@ import { getBuyBackPlans } from '@/api'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { STATIC_RESOURCES_URL } from '@/config'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useBuyBackPool } from '@/hooks/useDashboard'
 import { MobileContext } from '@/providers/Mobile'
@@ -45,9 +44,7 @@ const Plan: FC = () => {
       {
         title: t('NewDashboard.BuybackPlan.Margin', 'Margin'),
         dataIndex: 'name',
-        render: (_: string, data: Record<string, any>) => (
-          <TableMargin icon={`${STATIC_RESOURCES_URL}market/${data.symbol.toLowerCase()}.svg`} name={data.symbol} />
-        )
+        render: (_: string, data: Record<string, any>) => <TableMargin icon={data.logo} name={data.symbol} />
       },
       {
         title: 'Pool/DRF Price',

@@ -64,7 +64,7 @@ const Web: FC = () => {
     const path = pathname.split('/')
     const find = marginTokenList.find((margin) => margin.symbol === path[1])
     const margin = find || marginTokenList[0]
-    updateMarginToken({ address: margin.margin_token, symbol: margin.symbol })
+    updateMarginToken({ logo: margin.logo, address: margin.margin_token, symbol: margin.symbol })
   }, [pathname, marginTokenList])
 
   return (

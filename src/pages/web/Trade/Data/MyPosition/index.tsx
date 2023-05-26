@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next'
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
-import { useIsMarginToken } from '@/hooks/useIsMarginToken'
 import { usePositionOperation } from '@/hooks/useTrading'
 import PositionClosePreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
 import PositionCloseConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
@@ -44,8 +43,6 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
 
-  const isMarginToken = useIsMarginToken(closingType)
-
   const [targetPosOrd, setTargetPosOrd] = useState<Rec>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -55,10 +52,10 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
 
   const isFullSize = useCallback(
     ({ size = 0 }, amount: string): boolean => {
-      const u = nonBigNumberInterception(bnMul(spotPrice, size))
-      return isMarginToken ? isGTET(amount, u) : isGTET(amount, size)
+      const _ = nonBigNumberInterception(bnMul(spotPrice, size))
+      return isGTET(amount, _)
     },
-    [isMarginToken]
+    [spotPrice]
   )
 
   const clearing = () => setDialogStatus('')
@@ -80,9 +77,12 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
 
     if (signer && brokerBound?.broker && protocolConfig) {
       const { side, size, token } = targetPosOrd
+      const { broker } = brokerBound
+      const { exchange } = protocolConfig
+
       const status = await closePosition(
-        protocolConfig.exchange,
-        brokerBound.broker,
+        exchange,
+        broker,
         spotPrice,
         token,
         closingType,
@@ -95,9 +95,9 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       if (status) {
         window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
+        PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
       } else {
         window.toast.error(t('common.failed', 'failed'))
       }
@@ -117,7 +117,6 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       if (status) {
         window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {

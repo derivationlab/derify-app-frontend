@@ -38,8 +38,8 @@ export const useMarginLoading = () => {
       void getProtocolConfig(address)
       void getDerivativeList(address)
     } else if (marginTokenList.length) {
-      const { symbol, margin_token } = marginTokenList[0]
-      updateMarginToken({ symbol, address: margin_token })
+      const { logo, symbol, margin_token } = marginTokenList[0]
+      updateMarginToken({ logo, symbol, address: margin_token })
       void getProtocolConfig(margin_token)
       void getDerivativeList(margin_token)
     }

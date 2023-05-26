@@ -31,7 +31,7 @@ const MarginToken: FC = () => {
         return {
           apy: token.max_pm_apy,
           open: token.open,
-          icon: `market/${token.symbol.toLowerCase()}.svg`,
+          icon: token.logo,
           value: token.symbol,
           label: token.symbol,
           marginBalance
@@ -62,7 +62,7 @@ const MarginToken: FC = () => {
           objOptions={options as any}
           labelRenderer={() => (
             <div className="web-dashboard-add-grant-margin-label">
-              <Image src={`market/${marginToken.symbol.toLowerCase()}.svg`} />
+              <Image src={marginToken.logo} />
               <span>{marginToken.symbol}</span>
             </div>
           )}

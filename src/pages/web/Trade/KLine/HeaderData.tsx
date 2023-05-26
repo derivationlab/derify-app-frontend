@@ -1,4 +1,4 @@
-import React, { FC, useContext, useMemo } from 'react'
+import React, { FC, useContext, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
@@ -21,7 +21,10 @@ const HeaderData: FC = () => {
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
 
   const { data: pcfRatios } = usePositionChangeFeeRatios(derAddressList)
-  const { data: currentOpenInterest } = useCurrentOpenInterest(quoteToken.address, marginToken.address)
+  const { data: currentOpenInterest, refetch: refetchCurrentOpenInterest } = useCurrentOpenInterest(
+    quoteToken.address,
+    marginToken.address
+  )
 
   const ratio = useMemo(() => {
     const _ = pcfRatios?.[quoteToken.symbol] ?? 0
@@ -51,6 +54,10 @@ const HeaderData: FC = () => {
     }
     return [0, 0]
   }, [currentOpenInterest])
+
+  useEffect(() => {
+    void refetchCurrentOpenInterest()
+  }, [quoteToken.address, marginToken.address])
 
   return (
     <div className="web-trade-kline-header-data">

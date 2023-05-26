@@ -14,8 +14,11 @@ export const useCurrentOpenInterest = (quoteTokenAddress: string, marginTokenAdd
   const { data, refetch } = useQuery(
     ['useCurrentOpenInterest'],
     async () => {
-      const data = await getCurrentPositionsAmount(quoteTokenAddress, marginTokenAddress)
-      return data?.data
+      if (quoteTokenAddress) {
+        const data = await getCurrentPositionsAmount(quoteTokenAddress, marginTokenAddress)
+        return data?.data
+      }
+      return null
     },
     {
       retry: 0,

@@ -1,5 +1,4 @@
 import { isEmpty } from 'lodash'
-import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
@@ -9,7 +8,6 @@ import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
-import { PubSubEvents } from '@/typings'
 
 import NoRecord from '../c/NoRecord'
 import ListItem from './ListItem'
@@ -51,10 +49,6 @@ const TradeHistory: FC = () => {
 
   useEffect(() => {
     void fetchData()
-
-    PubSub.subscribe(PubSubEvents.UPDATE_TRADE_HISTORY, () => {
-      void fetchData()
-    })
   }, [marginToken])
 
   return (

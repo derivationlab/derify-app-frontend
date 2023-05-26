@@ -58,7 +58,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             return {
               value: token.symbol,
               label: token.symbol,
-              icon: `market/${token.symbol.toLowerCase()}.svg`
+              icon: token.logo
             }
         })
         .filter((token) => token)

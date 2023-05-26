@@ -11,7 +11,6 @@ import DecimalShow from '@/components/common/DecimalShow'
 import Spinner from '@/components/common/Spinner'
 // import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { STATIC_RESOURCES_URL } from '@/config'
 import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
 import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
@@ -42,9 +41,7 @@ const MarketInfo: FC = () => {
       {
         title: t('NewDashboard.Overview.Margin'),
         dataIndex: 'name',
-        render: (_: string, data: Record<string, any>) => (
-          <TableMargin icon={`${STATIC_RESOURCES_URL}market/${data.symbol.toLowerCase()}.svg`} name={data.symbol} />
-        )
+        render: (_: string, data: Record<string, any>) => <TableMargin icon={data.logo} name={data.symbol} />
       },
       {
         title: 'Trading/Position',

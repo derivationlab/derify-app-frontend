@@ -31,7 +31,7 @@ const GrantList: FC = () => {
       const _ = marginTokenList.map((token) => ({
         value: token.margin_token,
         label: token.symbol,
-        icon: `market/${token.symbol.toLowerCase()}.svg`
+        icon: token.logo
       }))
 
       return [all, ..._]

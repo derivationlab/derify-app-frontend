@@ -51,7 +51,8 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         // succeed
         window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
+        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+        PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed
@@ -72,8 +73,8 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       if (status) {
         window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+        PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
       } else {
         window.toast.error(t('common.failed', 'failed'))
       }

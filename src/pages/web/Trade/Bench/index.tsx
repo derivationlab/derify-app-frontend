@@ -104,15 +104,18 @@ const Bench: FC = () => {
 
     if (brokerBound?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
-
+      const { broker } = brokerBound
+      const { address } = quoteToken
+      const { exchange } = protocolConfig
+      const { side, price, symbol } = state.openingParams
       const status = await increasePosition(
-        protocolConfig.exchange,
-        brokerBound.broker,
-        quoteToken.address,
-        state.openingParams?.side,
+        exchange,
+        broker,
+        address,
+        side,
         openingType,
-        state.openingParams?.symbol,
-        state.openingParams?.price,
+        symbol,
+        price,
         leverageNow,
         amount,
         conversion
@@ -122,9 +125,9 @@ const Bench: FC = () => {
         // succeed
         window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_TRADE_HISTORY)
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
+        PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
       } else {
         window.toast.error(t('common.failed', 'failed'))
         // failed

@@ -85,7 +85,7 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
 
   const positions = useMemo(() => {
     if (!address) return <NoRecord show />
-    if (!loaded) return <Spinner absolute />
+    if (loaded) return <Spinner absolute />
     if (!isEmpty(data)) {
       return (
         <>

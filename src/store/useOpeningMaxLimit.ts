@@ -24,24 +24,28 @@ const getOpeningMaxLimit = async (address: string, quote: typeof quoteToken) => 
     }
   ]
 
-  // console.info(calls)
-  const response = await multicall(exchangeAbi, flatten(calls))
+  try {
+    // console.info(calls)
+    const response = await multicall(exchangeAbi, flatten(calls))
 
-  if (response.length) {
-    const _chunk = chunk(response, 2)
-    _chunk.forEach((data, index: number) => {
-      const [long, short] = data
-      output[calls[index].token] = {
-        ...output[calls[index].token],
-        long: formatUnits(String(long), 8),
-        short: formatUnits(String(short), 8)
-      }
-    })
-    // console.info(output)
-    return output
+    if (response.length) {
+      const _chunk = chunk(response, 2)
+      _chunk.forEach((data, index: number) => {
+        const [long, short] = data
+        output[calls[index].token] = {
+          ...output[calls[index].token],
+          long: formatUnits(String(long), 8),
+          short: formatUnits(String(short), 8)
+        }
+      })
+      // console.info(output)
+      return output
+    }
+
+    return null
+  } catch (e) {
+    return null
   }
-
-  return null
 }
 
 const useOpeningMaxLimitStore = create<OpeningMaxLimitState>((set) => ({

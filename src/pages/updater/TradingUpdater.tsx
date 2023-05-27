@@ -18,10 +18,9 @@ export default function TradingUpdater(): null {
   const { address } = useAccount()
 
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
-  const resetDerivative = useDerivativeListStore((state) => state.reset)
-  const getPosMaxLeverage = useDerivativeListStore((state) => state.getPosMaxLeverage)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
+  const getPosMaxLeverage = useDerivativeListStore((state) => state.getPosMaxLeverage)
   const getOpeningMinLimit = useOpeningMinLimitStore((state) => state.getOpeningMinLimit)
   const getOpeningMaxLimit = useOpeningMaxLimitStore((state) => state.getOpeningMaxLimit)
   const getTraderVariables = useTraderVariablesStore((state) => state.getTraderVariables)
@@ -41,25 +40,17 @@ export default function TradingUpdater(): null {
 
   // Minimum open position amount
   useEffect(() => {
-    if (protocolConfig) {
-      void getOpeningMinLimit(protocolConfig.exchange)
-    }
+    if (protocolConfig) void getOpeningMinLimit(protocolConfig.exchange)
   }, [protocolConfig])
 
   // Minimum open position amount
   useEffect(() => {
-    if (protocolConfig) {
-      void getOpeningMaxLimit(protocolConfig.exchange, quoteToken)
-    }
-  }, [quoteToken])
+    if (protocolConfig) void getOpeningMaxLimit(protocolConfig.exchange, quoteToken)
+  }, [quoteToken, protocolConfig])
 
   // Trading pairs opening max leverage
   useEffect(() => {
-    if (derAddressList) {
-      void getPosMaxLeverage(derAddressList)
-    } else {
-      void resetDerivative({ posMaxLeverage: null })
-    }
+    void getPosMaxLeverage()
   }, [derAddressList])
 
   return null

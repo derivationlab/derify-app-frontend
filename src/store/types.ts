@@ -108,9 +108,8 @@ export interface DerivativeListState {
   posMaxLeverageLoaded: boolean
   derAddressListLoaded: boolean
   getDerivativeList: (marginTokenAddress: string) => Promise<void>
-  getDerAddressList: (address: string, list: (typeof derivativeList)[]) => Promise<void>
-  getPosMaxLeverage: (list: DerAddressList) => Promise<void>
-  reset: (data: { derAddressList?: null; posMaxLeverage?: null }) => void
+  getDerAddressList: (address: string) => Promise<void>
+  getPosMaxLeverage: () => Promise<void>
 }
 
 export interface MarginIndicatorsState {

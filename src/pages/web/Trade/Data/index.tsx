@@ -23,7 +23,7 @@ const Data: FC = () => {
 
   useEffect(() => {
     PubSub.subscribe(PubSubEvents.UPDATE_OPENED_POSITION, () => {
-      if (address && derAddressList) void getOwnedPositions(address, derAddressList)
+      if (address) void getOwnedPositions(address, derAddressList)
     })
   }, [address, derAddressList])
 

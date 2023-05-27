@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers'
 import { isEmpty } from 'lodash'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 import { Rec } from '@/store/types'
@@ -12,19 +12,19 @@ import { bnMul, formatUnits } from '@/utils/tools'
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
   isUsed ? formatUnits(stopPrice, 8) : '--'
 
-const getOwnedPositions = async (trader: string, derAddressList: Rec): Promise<Rec[][]> => {
+const getOwnedPositions = async (trader: string, derAddressList: any): Promise<Rec[][]> => {
   const positionOrd: Rec[] = []
   const profitLossOrd: Rec[] = []
 
-  const calls = Object.keys(derAddressList).map((key) => ({
-    name: 'getTraderDerivativePositions',
-    token: derAddressList[key].token,
-    params: [trader],
-    address: derAddressList[key].derivative,
-    derivative: key
-  }))
-
   try {
+    const calls = Object.keys(derAddressList).map((key) => ({
+      name: 'getTraderDerivativePositions',
+      token: derAddressList[key].token,
+      params: [trader],
+      address: derAddressList[key].derivative,
+      derivative: key
+    }))
+
     const response = await multicall(DerifyDerivativAbi, calls)
 
     if (!isEmpty(response)) {
@@ -203,36 +203,37 @@ const getOwnedPositions = async (trader: string, derAddressList: Rec): Promise<R
 
       return [positionOrd, profitLossOrd]
     }
+
+    return []
   } catch (e) {
     return []
   }
-
-  return []
 }
 
-export const useOwnedPositions = (trader: string | undefined, derAddressList: Rec | null) => {
+export const useOwnedPositions = (trader: string | undefined, derAddressList: any) => {
+  const [positionLoaded, setPositionLoaded] = useState<boolean>(true)
   const [ownedPositions, setOwnedPositions] = useState<Rec | undefined>(undefined)
 
-  const func = useCallback(
-    async (trader: string, derAddressList: Rec) => {
-      const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, derAddressList)
+  const func = async (trader: string, derAddressList: any) => {
+    const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, derAddressList)
 
-      setOwnedPositions({
-        positionOrd,
-        profitLossOrd
-      })
-    },
-    [trader, derAddressList]
-  )
+    setOwnedPositions({
+      positionOrd,
+      profitLossOrd
+    })
+    setPositionLoaded(false)
+  }
 
   useEffect(() => {
-    if (trader && derAddressList) {
+    setPositionLoaded(true)
+
+    if (trader) {
       void func(trader, derAddressList)
     }
   }, [trader, derAddressList])
 
   return {
-    loaded: !ownedPositions,
+    loaded: positionLoaded,
     ownedPositions,
     getOwnedPositions: func
   }

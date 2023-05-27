@@ -18,48 +18,58 @@ export const derivativeList = {
   margin_token: ''
 }
 
-export const getDerAddressList = async (address: string, list: (typeof derivativeList)[]) => {
+export const getDerAddressList = async (factory: string, list: (typeof derivativeList)[]) => {
   const output = Object.create(null)
   const calls = list.map((derivative) => ({
     name: 'getDerivative',
     params: [derivative.token],
-    address
+    address: factory
   }))
 
-  const response = await multicall(factoryAbi, calls)
+  try {
+    const response = await multicall(factoryAbi, calls)
 
-  response.forEach(([address]: string[], index: number) => {
-    output[list[index].name] = {
-      ...output[list[index].name],
-      token: calls[index].params[0],
-      derivative: address
+    if (response.length) {
+      response.forEach(([address]: string[], index: number) => {
+        output[list[index].name] = {
+          ...output[list[index].name],
+          token: calls[index].params[0],
+          derivative: address
+        }
+      })
+      return output
     }
-  })
-  // console.info(output)
-  return output
+
+    return null
+  } catch (e) {
+    return null
+  }
 }
 
-export const getPosMaxLeverage = async (list: DerAddressList) => {
+export const getPosMaxLeverage = async (list: any) => {
   let output = Object.create(null)
-  const keys = Object.keys(list)
-  const calls = keys.map((l) => ({
-    name: 'maxLeverage',
-    address: list[l].derivative
-  }))
+  try {
+    const keys = Object.keys(list)
+    const calls = keys.map((l) => ({
+      name: 'maxLeverage',
+      address: list[l].derivative
+    }))
+    const response = await multicall(derivativeAbi, calls)
 
-  const response = await multicall(derivativeAbi, calls)
+    response.forEach((leverage: BigNumberish, index: number) => {
+      output = {
+        ...output,
+        [keys[index]]: formatUnits(String(leverage), 8)
+      }
+    })
 
-  response.forEach((leverage: BigNumberish, index: number) => {
-    output = {
-      ...output,
-      [keys[index]]: formatUnits(String(leverage), 8)
-    }
-  })
-  // console.info(output)
-  return output
+    return output
+  } catch (e) {
+    return null
+  }
 }
 
-const useDerivativeListStore = create<DerivativeListState>((set) => ({
+const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
   derivativeList: [],
   derAddressList: null,
   posMaxLeverage: null,
@@ -68,34 +78,18 @@ const useDerivativeListStore = create<DerivativeListState>((set) => ({
   posMaxLeverageLoaded: false,
   getDerivativeList: async (marginTokenAddress: string) => {
     const { data } = await getDerivativeList(marginTokenAddress)
-    if (data) {
-      const records = data?.records ?? []
-      const filter = records.filter((r: Rec) => r.open)
 
-      set({
-        derivativeList: filter,
-        derivativeListLoaded: true
-      })
-    }
+    const records = data?.records ?? []
+    const filter = records.filter((r: Rec) => r.open)
+    set({ derivativeList: filter.length ? filter : [], derivativeListLoaded: true })
   },
-  getDerAddressList: async (address: string, list: (typeof derivativeList)[]) => {
-    const derAddressList = await getDerAddressList(address, list)
-
-    set({
-      derAddressList,
-      derAddressListLoaded: true
-    })
+  getDerAddressList: async (factory: string) => {
+    const derAddressList = await getDerAddressList(factory, get().derivativeList)
+    set({ derAddressList, derAddressListLoaded: true })
   },
-  getPosMaxLeverage: async (list: DerAddressList) => {
-    const posMaxLeverage = await getPosMaxLeverage(list)
-
-    set({
-      posMaxLeverage,
-      posMaxLeverageLoaded: true
-    })
-  },
-  reset: (data: { derAddressList?: null; posMaxLeverage?: null }) => {
-    set((state) => ({ ...state, ...data }))
+  getPosMaxLeverage: async () => {
+    const posMaxLeverage = await getPosMaxLeverage(get().derAddressList)
+    set({ posMaxLeverage, posMaxLeverageLoaded: true })
   }
 }))
 

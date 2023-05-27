@@ -149,7 +149,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
 
   const positions = useMemo(() => {
     if (!address) return <NoRecord show />
-    if (loaded) return <Spinner absolute />
+    if (loaded) return <Spinner absolute small />
     if (!isEmpty(data)) {
       return (
         <>

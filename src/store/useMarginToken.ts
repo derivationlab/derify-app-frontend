@@ -7,9 +7,13 @@ export const marginToken = { logo: '', symbol: '', address: '' }
 
 const useMarginTokenStore = create(
   persist<MarginTokenState>(
-    (set) => ({
+    (set, get) => ({
       marginToken: marginToken,
-      updateMarginToken: (data: typeof marginToken) => set({ marginToken: data })
+      updateMarginToken: (data: typeof marginToken) => {
+        if (get().marginToken.symbol !== data.symbol) {
+          set({ marginToken: data })
+        }
+      }
     }),
     {
       name: 'marginToken'

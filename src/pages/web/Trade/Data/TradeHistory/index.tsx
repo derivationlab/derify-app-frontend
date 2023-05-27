@@ -38,7 +38,7 @@ const TradeHistory: FC = () => {
 
   const memoTradeHistory = useMemo(() => {
     if (!address) return <NoRecord show />
-    if (state.records.loaded) return <Spinner absolute />
+    if (state.records.loaded) return <Spinner absolute small />
     if (!isEmpty(state.records.records)) {
       return state.records.records.map((d: Record<string, any>, i: number) => (
         <ListItem key={`trade-history-${i}`} data={d} />

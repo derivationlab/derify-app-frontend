@@ -5,7 +5,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
-import Loading from '@/components/common/Loading'
+import Spinner from '@/components/common/Spinner'
 import { useBrokerInfoStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 
@@ -70,7 +70,7 @@ const BrokerInfo: FC = () => {
     if (loaded) void brokerInfoFunc()
   }, [loaded, address])
 
-  return infoLoaded ? <Loading show type="fixed" /> : <BrokerCard broker={brokerInfo} />
+  return infoLoaded ? <Spinner fixed /> : <BrokerCard broker={brokerInfo} />
 }
 
 export default BrokerInfo

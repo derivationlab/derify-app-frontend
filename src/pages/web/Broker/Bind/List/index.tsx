@@ -7,8 +7,8 @@ import { useHistory, Link } from 'react-router-dom'
 
 import { bindingYourBroker, getBrokersList } from '@/api'
 import Select from '@/components/common/Form/Select'
-import Loading from '@/components/common/Loading'
 import Pagination from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
 import {
   SelectLangOptionsForFilter as SelectLangOptions,
   SelectCommunityOptionsForFilter as SelectCommunityOptions
@@ -127,7 +127,7 @@ const List: FC = () => {
         total={state.brokerDAT.totalItems}
         onChange={pageChange}
       />
-      <Loading type="fixed" show={state.brokerDAT.isLoaded} />
+      {state.brokerDAT.isLoaded && <Spinner fixed />}
       <BrokerDialog
         visible={state.showModal === 'broker'}
         data={state.toBindDAT}

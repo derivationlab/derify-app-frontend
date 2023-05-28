@@ -1,27 +1,25 @@
 import classNames from 'classnames'
 import { isEmpty } from 'lodash'
+import PubSub from 'pubsub-js'
 import Table from 'rc-table'
 import { useBlockNumber } from 'wagmi'
 
-import React, { FC, useMemo, useState, useContext, useEffect, useReducer, useCallback } from 'react'
+import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { getBuyBackPlans } from '@/api'
-// import { Input } from '@/components/common/Form'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useBuyBackPool } from '@/hooks/useDashboard'
+import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
-import { useMarginPriceStore, useMarginTokenListStore } from '@/store'
-import { MarginTokenKeys } from '@/typings'
-import { isGT, isGTET } from '@/utils/tools'
+import { MarginTokenKeys, PubSubEvents } from '@/typings'
+import { isGTET } from '@/utils/tools'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
-
-// import Button from '@/components/common/Button'
 
 const Plan: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -29,13 +27,8 @@ const Plan: FC = () => {
   const { data: blockNumber = 0 } = useBlockNumber()
   const { mobile } = useContext(MobileContext)
 
-  const marginPrice = useMarginPriceStore((state) => state.marginPrice)
-  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-
-  const { data: buyBackInfo } = useBuyBackPool(marginTokenList)
-
-  // const [keyword, setKeyword] = useState('')
-  const [keyword] = useState('')
+  const { data: tokenPrice } = usePlatformTokenPrice()
+  const { data: buyBackInfo } = useBuyBackPool(state.records.records)
 
   const mColumns = useMemo(() => {
     return [
@@ -50,8 +43,8 @@ const Plan: FC = () => {
         align: 'right',
         render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
           <>
-            <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} />
-            <div className={classNames(isGTET(data?.last_drf_price, marginPrice) ? 'fall' : 'rise')}>
+            {!buyBackInfo ? <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} /> : <Spinner text="loading" />}
+            <div className={classNames(isGTET(data?.last_drf_price, tokenPrice) ? 'rise' : 'fall')}>
               <BalanceShow value={data?.last_drf_price} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
           </>
@@ -72,7 +65,7 @@ const Plan: FC = () => {
         }
       }
     ]
-  }, [t, blockNumber, marginPrice, buyBackInfo])
+  }, [t, blockNumber, tokenPrice, buyBackInfo])
 
   const wColumns = useMemo(() => {
     return [
@@ -85,14 +78,17 @@ const Plan: FC = () => {
       {
         title: t('NewDashboard.BuybackPlan.BuybackPool', 'Buyback Pool'),
         dataIndex: 'symbol',
-        render: (symbol: MarginTokenKeys) => <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} />
+        render: (symbol: MarginTokenKeys) => {
+          if (!buyBackInfo) return <Spinner text="loading" />
+          return <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} />
+        }
       },
       {
         title: t('NewDashboard.BuybackPlan.DRFPriceLastCycle', 'DRF Price(Last Cycle)'),
         dataIndex: 'last_drf_price',
         render: (value: number) => {
           return (
-            <div className={classNames(isGTET(value, marginPrice) ? 'fall' : 'rise')}>
+            <div className={classNames(isGTET(value, tokenPrice) ? 'rise' : 'fall')}>
               <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
           )
@@ -114,7 +110,7 @@ const Plan: FC = () => {
         }
       }
     ]
-  }, [t, blockNumber, marginPrice, buyBackInfo])
+  }, [t, blockNumber, tokenPrice, buyBackInfo])
 
   const emptyText = useMemo(() => {
     if (state.records.loaded) return <Spinner small />
@@ -122,55 +118,30 @@ const Plan: FC = () => {
     return ''
   }, [t, state.records])
 
-  // const onSearch = () => {
-  //   if (keyword) {
-  //     console.log('Search keyword: ' + keyword)
-  //   }
-  // }
+  const _getBuyBackPlans = async (index = 0) => {
+    const { data } = await getBuyBackPlans(index, 10)
 
-  // todo search
-  // const debounceSearch = useCallback(
-  //   debounce(() => {
-  //     void fetchData(0)
-  //   }, 1000),
-  //   []
-  // )
-
-  const fetchData = useCallback(
-    async (index = 0) => {
-      // keyword
-      const { data } = await getBuyBackPlans(index, 10)
-
-      // console.info(data)
-
-      dispatch({
-        type: 'SET_RECORDS',
-        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-      })
-    },
-    [keyword]
-  )
+    dispatch({
+      type: 'SET_RECORDS',
+      payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+    })
+  }
 
   const pageChange = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
-    void fetchData(index)
+    void _getBuyBackPlans(index)
   }
 
-  // useEffect(() => {
-  //   if (keyword) {
-  //     dispatch({
-  //       type: 'SET_MARKET_DAT',
-  //       payload: { records: [], totalItems: 0, isLoaded: true }
-  //     })
-  //
-  //     void debounceSearch()
-  //   }
-  // }, [keyword])
+  useEffect(() => {
+    void _getBuyBackPlans()
+  }, [])
 
   useEffect(() => {
-    void fetchData()
-  }, [])
+    if (buyBackInfo) {
+      PubSub.publish(PubSubEvents.UPDATE_BUYBACK_VALUE, buyBackInfo)
+    }
+  }, [buyBackInfo])
 
   return (
     <div className="web-dashboard-plan-list">

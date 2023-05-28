@@ -1,35 +1,28 @@
+import PubSub from 'pubsub-js'
 import { useBlockNumber } from 'wagmi'
 
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getDRFPrice } from '@/api'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useAllCurrentIndex } from '@/hooks/useAllCurrentIndex'
-import { useMarginPriceStore, useMarginTokenListStore, useMarginTokenStore } from '@/store'
+import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
+import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+import { PubSubEvents } from '@/typings'
 import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 
 const Datas: FC = () => {
   const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
-
-  const [tokenPrice, setTokenPrice] = useState<number>(0)
+  const [buybackValue, setBuybackValue] = useState<string>('0')
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const marginPrice = useMarginPriceStore((state) => state.marginPrice)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
 
+  const { data: tokenPrice } = usePlatformTokenPrice()
   const { data: currentIndex } = useAllCurrentIndex(marginTokenList)
-
-  const totalBuyback = useMemo(() => {
-    if (currentIndex) {
-      const values = Object.values(currentIndex) as any[]
-      return values.reduce((p, n) => bnPlus(bnMul(n.drfBuyBack ?? 0, marginPrice), p), '0')
-    }
-    return 0
-  }, [currentIndex, marginPrice])
 
   const tokenDecimal = useMemo(() => {
     if (tokenPrice === 0) return 2
@@ -42,21 +35,21 @@ const Datas: FC = () => {
   }, [marginToken, currentIndex])
 
   useEffect(() => {
-    const func = async () => {
-      const { data } = await getDRFPrice()
-
-      setTokenPrice(data)
-    }
-
-    void func()
-  }, [blockNumber])
+    PubSub.subscribe(PubSubEvents.UPDATE_BUYBACK_VALUE, (topic: string, message: any) => {
+      const keys = Object.keys(message) as any[]
+      const _ = keys.reduce((p, n) => {
+        return bnPlus(bnMul(message[n], n === 'BUSD' ? 1 : tokenPrice), p)
+      }, '0')
+      setBuybackValue(_)
+    })
+  }, [tokenPrice])
 
   return (
     <div className="web-dashboard-plan-datas">
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.TotalBuybackValue')}</header>
         <section>
-          <BalanceShow value={totalBuyback} />
+          <BalanceShow value={buybackValue} />
           <u>{VALUATION_TOKEN_SYMBOL}</u>
         </section>
       </div>

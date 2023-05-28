@@ -9,6 +9,7 @@ import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import tokens from '@/config/tokens'
 import { marginTokenList } from '@/store'
+import { Rec } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import {
   getDerifyPmrContract,
@@ -95,7 +96,7 @@ export const useRankReward = (trader?: string, config?: string) => {
 
 let outputInit = Object.create(null)
 
-export const useBuyBackPool = (list?: (typeof marginTokenList)[]) => {
+export const useBuyBackPool = (list?: Rec[]) => {
   const { data, isLoading } = useQuery(
     ['useBuyBackPool'],
     async () => {

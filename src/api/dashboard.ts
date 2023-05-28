@@ -1,6 +1,6 @@
 import { get } from '@/utils/http'
 
-export const getDRFPrice = async () => {
+export const getPlatformTokenPrice = async () => {
   const response = await get('api/drf_price')
   return response
 }

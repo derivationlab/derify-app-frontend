@@ -47,19 +47,19 @@ const Options: FC<Props> = ({ onChange }) => {
               <>
                 <aside>
                   <h5>{item.name}</h5>
-                  <BalanceShow value={marginIndicators?.[item.token]?.apy} percent unit="APR" />
+                  <BalanceShow value={marginIndicators?.[item.token]?.apy ?? 0} percent unit="APR" />
                 </aside>
                 <aside>
                   <BalanceShow value={tokenSpotPrices?.[item.name] ?? 0} unit="" />
-                  <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate} />
+                  <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate ?? 0} />
                 </aside>
               </>
             ) : (
               <>
                 <h5>{item.name}</h5>
-                <BalanceShow value={keepDecimals(tokenSpotPrices?.[item.name], 2)} unit="" />
-                <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate} />
-                <BalanceShow value={marginIndicators?.[item.token]?.apy} percent unit="APR" />
+                <BalanceShow value={keepDecimals(tokenSpotPrices?.[item.name] ?? 0, 2)} unit="" />
+                <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate ?? 0} />
+                <BalanceShow value={marginIndicators?.[item.token]?.apy ?? 0} percent unit="APR" />
               </>
             )}
           </li>

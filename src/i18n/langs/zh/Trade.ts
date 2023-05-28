@@ -12,7 +12,8 @@ export default {
       PCFRateTip:
         '系统对扩大裸头寸的仓位变动（开仓/平仓）行为进行惩罚，对减少裸头寸的仓位变动行为进行奖励。该值为正，则代表开多/平空需要支付动仓费，开空/平多可以获得动仓费；该值为负，则代表开空/平多需要支付动仓费，开多/平空可以获得动仓费。',
       PositionMiningAPY: '持仓挖矿收益率',
-      PositionMiningAPYTip: '仓位杠杆越高，持仓挖矿的收益率越高。'
+      PositionMiningAPYTip: '仓位杠杆越高，持仓挖矿的收益率越高。',
+      NoKLineData: '没有K线交易数据'
     },
     MyPosition: {
       MyPosition: '我的持仓',

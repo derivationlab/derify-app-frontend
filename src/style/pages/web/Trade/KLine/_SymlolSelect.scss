@@ -4,7 +4,7 @@
     border: 2px solid $cff; background: $cff;width: 260px;
     display: flex;flex-flow: column;padding: 12px 36px;height: 72px;border-radius: 36px;
     @include ns();cursor: pointer;
-    &.s{align-items: center;justify-content: center;}
+    &.s{align-items: center;justify-content: center;font-size: 14px}
     h4 {
       font-size: 18px;font-weight: normal;height: 20px;display: flex;align-items: center;justify-content: space-between;width: 100%;
       &:after {
@@ -100,6 +100,7 @@
       width: 100%;
       flex-flow: row;align-items: center;
       padding: rem(16) rem(45) rem(16) rem(32);height: rem(56);border-radius: rem(28);
+      &.s{font-size: rem(14)}
       h4 {
         font-size: rem(14);height: rem(20);
         &:after {

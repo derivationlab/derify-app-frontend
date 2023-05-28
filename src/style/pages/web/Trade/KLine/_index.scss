@@ -40,6 +40,9 @@
       height: 500px;width: 100%;
     }
   }
+  &-placeholder{
+    min-height: 572px;background:$cff;border-radius:36px;margin-top:12px;display: flex;align-items: center;justify-content: center;font-size: 14px;
+  }
   .web-loading {
     border-radius: 36px;
   }
@@ -107,6 +110,9 @@
         border-radius: rem(28);
       }
     }
+    &-placeholder{
+      min-height: rem(400);background:$cff;border-radius:rem(28);margin-top:rem(8);font-size: rem(14);
+    }
   }
 }
 .dark {
@@ -127,6 +133,7 @@
         }
       }
     }
+    &-placeholder{background: $c22}
   }
 }
 .mobile-mode.dark {

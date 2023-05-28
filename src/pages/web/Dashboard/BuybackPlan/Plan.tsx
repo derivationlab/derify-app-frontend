@@ -15,7 +15,7 @@ import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useBuyBackPool } from '@/hooks/useDashboard'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
-import { useMarginPriceStore } from '@/store'
+import { useMarginPriceStore, useMarginTokenListStore } from '@/store'
 import { MarginTokenKeys } from '@/typings'
 import { isGT, isGTET } from '@/utils/tools'
 
@@ -24,17 +24,15 @@ import { TableMargin, TableCountDown } from '../c/TableCol'
 // import Button from '@/components/common/Button'
 
 const Plan: FC = () => {
-  const { t } = useTranslation()
-
   const [state, dispatch] = useReducer(reducer, stateInit)
-
+  const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber()
-
   const { mobile } = useContext(MobileContext)
 
-  const { data: buyBackInfo } = useBuyBackPool()
-
   const marginPrice = useMarginPriceStore((state) => state.marginPrice)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+
+  const { data: buyBackInfo } = useBuyBackPool(marginTokenList)
 
   // const [keyword, setKeyword] = useState('')
   const [keyword] = useState('')
@@ -53,7 +51,7 @@ const Plan: FC = () => {
         render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
           <>
             <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} />
-            <div className={classNames(isGTET(data?.last_drf_price, marginPrice) ? 'rise' : 'fall')}>
+            <div className={classNames(isGTET(data?.last_drf_price, marginPrice) ? 'fall' : 'rise')}>
               <BalanceShow value={data?.last_drf_price} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
           </>
@@ -74,7 +72,7 @@ const Plan: FC = () => {
         }
       }
     ]
-  }, [t, blockNumber, marginPrice])
+  }, [t, blockNumber, marginPrice, buyBackInfo])
 
   const wColumns = useMemo(() => {
     return [
@@ -94,7 +92,7 @@ const Plan: FC = () => {
         dataIndex: 'last_drf_price',
         render: (value: number) => {
           return (
-            <div className={classNames(isGT(value, marginPrice) ? 'rise' : 'fall')}>
+            <div className={classNames(isGTET(value, marginPrice) ? 'fall' : 'rise')}>
               <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
           )
@@ -116,7 +114,7 @@ const Plan: FC = () => {
         }
       }
     ]
-  }, [t, blockNumber, marginPrice])
+  }, [t, blockNumber, marginPrice, buyBackInfo])
 
   const emptyText = useMemo(() => {
     if (state.records.loaded) return <Spinner small />

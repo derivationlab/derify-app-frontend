@@ -149,6 +149,7 @@ const MySpace: FC = () => {
         return {
           apy: token.max_pm_apy,
           open: token.open,
+          logo: token.logo,
           symbol: token.symbol,
           marginBalance
         }

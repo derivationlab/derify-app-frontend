@@ -34,8 +34,6 @@ const MarketInfo: FC = () => {
   const { data: indicators } = useAllMarginIndicators(marginTokenList)
   // const { data: positionInfo, refetch: positionInfoRefetch } = usePositionInfo(marginTokenList)
 
-  // const [keyword, setKeyword] = useState('')
-
   const mColumns = useMemo(() => {
     return [
       {
@@ -117,20 +115,6 @@ const MarketInfo: FC = () => {
     if (isEmpty(marginTokenList)) return t('NewDashboard.Overview.NoResultsFound')
     return ''
   }, [t, marginTokenListLoaded])
-
-  // const onSearch = () => {
-  //   if (keyword) {
-  //     console.log('Search keyword: ' + keyword)
-  //   }
-  // }
-
-  // todo search
-  // const debounceSearch = useCallback(
-  //   debounce((keyword: string) => {
-  //     void fetchData(0)
-  //   }, 1000),
-  //   []
-  // )
 
   return (
     <div className="web-dashboard-overview-market">

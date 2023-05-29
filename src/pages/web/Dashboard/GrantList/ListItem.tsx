@@ -50,7 +50,7 @@ const ListItem: FC<Props> = ({ data }) => {
       <dl>
         <dt>{t('NewDashboard.GrantList.Margin', 'Margin')}</dt>
         <dd>
-          <Image src={`${STATIC_RESOURCES_URL}market/${marginToken?.symbol.toLowerCase()}.svg`} />
+          <Image src={marginToken?.logo} />
           {marginToken?.symbol}
         </dd>
       </dl>

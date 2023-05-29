@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next'
 
 import { LANG_CACHE_KEY } from '@/config'
 import { Rec } from '@/typings'
+import Cache from '@/utils/cache'
 
 type Lang = 'en' | 'zh-CN'
 export const languageDesc: { [key in Lang]: Rec } = {
@@ -29,7 +30,7 @@ const resources = filesKeys.reduce((init: Rec, path) => {
   init[lng] = { translation: output }
   return init
 }, {})
-const fallbackLng = localStorage.getItem(LANG_CACHE_KEY) ?? 'en'
+const fallbackLng = Cache.get(LANG_CACHE_KEY) ?? 'en'
 
 i18n.use(initReactI18next).init({
   resources,

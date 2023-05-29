@@ -143,7 +143,7 @@ const DerifyTokenPool: FC = () => {
               <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit={PLATFORM_TOKEN.symbol} />
               <div className="block" />
               <p>
-                {t('Earn.DerifyTokenPool.CurrentPoolSize', 'Current pool size')} :{' '}
+                {t('Earn.DerifyTokenPool.CurrentPoolSize', 'Current pool size')}{' '}
                 <strong>{keepDecimals(drfBalance, tokens.drf.decimals)}</strong> {PLATFORM_TOKEN.symbol}
               </p>
             </main>

@@ -7,7 +7,7 @@ export default {
       OpenPositionTitle: '开仓赚取持仓挖矿收益',
       TotalPositions: '系统总持仓',
       Claimable: '可提现',
-      TotalEarned: '共赚取：',
+      TotalEarned: '共赚取',
       And: '和',
       ClaimAll: '全部提现',
       Positions: '我的持仓',

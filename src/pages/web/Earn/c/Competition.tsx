@@ -86,7 +86,7 @@ const Competition: FC = () => {
             />
             <div className="block" />
             <p>
-              {t('Earn.PositionMining.TotalEarned')} :{' '}
+              {t('Earn.PositionMining.TotalEarned')}{' '}
               <strong>{keepDecimals(rankReward?.drfAccumulatedBalance ?? 0, PLATFORM_TOKEN.decimals)}</strong>{' '}
               {PLATFORM_TOKEN.symbol}
             </p>
@@ -108,7 +108,7 @@ const Competition: FC = () => {
             <BalanceShow value={grantAmount.totalAmount} unit={PLATFORM_TOKEN.symbol} />
             <div className="block" />
             <p>
-              {t('Earn.Trading.ActiveGrants')} : <strong>{activeGrant.count}</strong>
+              {t('Earn.Trading.ActiveGrants')} <strong>{activeGrant.count}</strong>
             </p>
           </main>
           <aside>

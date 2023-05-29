@@ -169,7 +169,7 @@ const MarginTokenPool: FC = () => {
               />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')} :{' '}
+                {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')}{' '}
                 <strong>{keepDecimals(rewardsInfo?.exchangeable ?? 0, 2)}</strong> {`b${marginToken.symbol}`}
               </p>
             </main>
@@ -188,7 +188,7 @@ const MarginTokenPool: FC = () => {
               <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken.symbol}`} />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} : <strong>{keepDecimals(bankBalance, 2)}</strong>{' '}
+                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} <strong>{keepDecimals(bankBalance, 2)}</strong>{' '}
                 {`b${marginToken.symbol}`}
               </p>
             </main>

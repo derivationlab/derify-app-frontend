@@ -114,7 +114,7 @@ const PositionMining: FC = () => {
               }
             />
             <p>
-              {t('Earn.PositionMining.TotalEarned', 'Total earned :')}{' '}
+              {t('Earn.PositionMining.TotalEarned')}{' '}
               <strong>{keepDecimals(rewardsInfo?.marginTokenAccumulatedBalance ?? 0, 2)}</strong> {marginToken.symbol}{' '}
               {t('Earn.PositionMining.And', 'and')}{' '}
               <strong>{keepDecimals(rewardsInfo?.drfAccumulatedBalance ?? 0, tokens.drf.decimals)}</strong> DRF
@@ -129,15 +129,15 @@ const PositionMining: FC = () => {
         </div>
         <div className="web-eran-item-card">
           <main>
-            <h4>{t('Earn.PositionMining.Positions', 'Positions')}</h4>
+            <h4>{t('Earn.PositionMining.Positions')}</h4>
             <BalanceShow
               value={nonBigNumberInterception(variables?.totalPositionAmount ?? 0)}
               unit={marginToken.symbol}
             />
             <div className="block" />
             <p>
-              {t('Earn.PositionMining.TotalPositions', 'Total positions')} :{' '}
-              <strong>{keepDecimals(memoPositionsAm, 2)}</strong> {marginToken.symbol}
+              {t('Earn.PositionMining.TotalPositions')} <strong>{keepDecimals(memoPositionsAm, 2)}</strong>{' '}
+              {marginToken.symbol}
             </p>
           </main>
           <aside>

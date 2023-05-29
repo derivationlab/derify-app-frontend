@@ -7,7 +7,7 @@ export default {
       OpenPositionTitle: 'Open position to earn position mining rewards.',
       TotalPositions: 'Total positions',
       Claimable: 'Claimable',
-      TotalEarned: 'Total earned: ',
+      TotalEarned: 'Total earned',
       And: 'and',
       ClaimAll: 'Claim All',
       Positions: 'Positions',

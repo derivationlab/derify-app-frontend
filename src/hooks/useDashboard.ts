@@ -8,7 +8,6 @@ import { useCallback } from 'react'
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import tokens from '@/config/tokens'
-import { marginTokenList } from '@/store'
 import { Rec } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import {

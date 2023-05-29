@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import utc from 'dayjs/plugin/utc'
 import { ethers } from 'ethers'
+import numeral from 'numeral'
 
 dayjs.extend(utc)
 dayjs.extend(duration)
@@ -92,6 +93,13 @@ export const keepDecimals = (value: string | number, decimal = 2, format = false
   const padEnd = decimal > b.length ? b.padEnd(decimal, '0') : b
   const substr = `${a}.${padEnd.substring(0, decimal)}`
   return format ? thousandthsDivision(substr) : substr
+}
+
+export const numeralNumber = (value: string | number, decimal = 2): string => {
+  const padEnd = '0'.padEnd(decimal, '0')
+  const isMillion = Number(value) >= 1000000
+  const formatRule = isMillion ? `0,0.${padEnd} a` : `0.${padEnd}`
+  return numeral(value).format(formatRule).toUpperCase()
 }
 
 export const thousandthsDivision = (n: string | number) => {

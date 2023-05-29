@@ -16,7 +16,7 @@ import { useWithdrawPositionReward } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useTraderVariablesStore, useMarginIndicatorsStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { bnPlus, isGT, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { bnPlus, isGT, isLT, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
@@ -84,7 +84,7 @@ const PositionMining: FC = () => {
       </header>
       <section className="web-eran-item-main">
         <div className="web-eran-item-dashboard">
-          <DecimalShow value={keepDecimals(memoPositionApy, 2)} percent suffix="(max)" />
+          <DecimalShow value={numeralNumber(memoPositionApy, 2)} percent suffix="(max)" />
           <u>APR.</u>
         </div>
         <div className="web-eran-item-claim">

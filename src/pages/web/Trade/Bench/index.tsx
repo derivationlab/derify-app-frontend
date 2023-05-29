@@ -23,7 +23,7 @@ import {
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
 import { PubSubEvents, PositionSideTypes, PositionOrderTypes } from '@/typings'
-import { bnDiv, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
+import { bnDiv, numeralNumber, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
 
 import Col from './c/Col'
 import Info from './c/Info'
@@ -224,7 +224,7 @@ const Bench: FC = () => {
               >
                 <strong>{t('Trade.Bench.Long', 'Long')}</strong>
                 <em>
-                  {keepDecimals(memoLongPosApy, 2)}%<u>APR</u>
+                  {numeralNumber(memoLongPosApy, 2)}%<u>APR</u>
                 </em>
               </Button>
             </Col>
@@ -238,7 +238,7 @@ const Bench: FC = () => {
               >
                 <strong>{t('Trade.Bench.Short', 'Short')}</strong>
                 <em>
-                  {keepDecimals(memoShortPosApy, 2)}%<u>APR</u>
+                  {numeralNumber(memoShortPosApy, 2)}%<u>APR</u>
                 </em>
               </Button>
             </Col>
@@ -257,7 +257,7 @@ const Bench: FC = () => {
                 >
                   <strong>{t('Trade.Bench.TowWay', '2-Way')}</strong>
                   <em>
-                    {keepDecimals(memo2WayPosApy, 2)}%<u>APR</u>
+                    {numeralNumber(memo2WayPosApy, 2)}%<u>APR</u>
                   </em>
                 </Button>
               </Col>

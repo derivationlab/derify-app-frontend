@@ -12,6 +12,7 @@ import Spinner from '@/components/common/Spinner'
 // import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
+import { useAllMarginPositions } from '@/hooks/useAllMarginPositions'
 import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
 import { MobileContext } from '@/providers/Mobile'
@@ -27,12 +28,13 @@ const MarketInfo: FC = () => {
   const { mobile } = useContext(MobileContext)
 
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginAddressList = useMarginTokenListStore((state) => state.marginAddressList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const { data: boundPools } = useBoundPools(marginTokenList)
-  const { data: tradingVol } = useAllCurrentTrading(marginTokenList)
-  const { data: indicators } = useAllMarginIndicators(marginTokenList)
-  // const { data: positionInfo, refetch: positionInfoRefetch } = usePositionInfo(marginTokenList)
+  const { data: boundPools } = useBoundPools(marginAddressList)
+  const { data: tradingVol } = useAllCurrentTrading(marginAddressList)
+  const { data: indicators } = useAllMarginIndicators(marginAddressList)
+  const { data: allPositions } = useAllMarginPositions()
 
   const mColumns = useMemo(() => {
     return [
@@ -44,19 +46,19 @@ const MarketInfo: FC = () => {
       {
         title: 'Trading/Position',
         dataIndex: 'symbol',
-        render: (symbol: string) => (
+        render: (symbol: string, data: Record<string, any>) => (
           <>
-            <BalanceShow value={boundPools?.[symbol] ?? 0} unit={symbol} />
-            {/*<BalanceShow value={positionInfo[symbol as MarginTokenKeys]} unit={symbol} />*/}
+            <BalanceShow value={boundPools?.[data.margin_token] ?? 0} unit={symbol} />
+            <BalanceShow value={allPositions?.[data.margin_token] ?? 0} unit={symbol} />
           </>
         )
       },
       {
         title: 'Max APR',
         dataIndex: 'symbol',
-        render: (symbol: string) => {
-          if (indicators?.[symbol]) {
-            const apy = Math.max.apply(null, Object.values(indicators[symbol]))
+        render: (symbol: string, data: Record<string, any>) => {
+          if (indicators?.[data.margin_token]) {
+            const apy = Math.max.apply(null, Object.values(indicators[data.margin_token]))
             const per = keepDecimals(bnMul(apy, 100), 2)
             return <DecimalShow value={per} percent black />
           }
@@ -64,7 +66,7 @@ const MarketInfo: FC = () => {
         }
       }
     ]
-  }, [t, indicators, boundPools])
+  }, [t, indicators, boundPools, allPositions])
 
   const wColumns = useMemo(() => {
     return [
@@ -72,9 +74,9 @@ const MarketInfo: FC = () => {
       {
         title: t('NewDashboard.Overview.MaxPositionMiningAPY'),
         dataIndex: 'symbol',
-        render: (symbol: string) => {
-          if (indicators?.[symbol]) {
-            const apy = Math.max.apply(null, Object.values(indicators[symbol]))
+        render: (symbol: string, data: Record<string, any>) => {
+          if (indicators?.[data.margin_token]) {
+            const apy = Math.max.apply(null, Object.values(indicators[data.margin_token]))
             return <BalanceShow value={apy} percent />
           }
           return <BalanceShow value={0} percent />
@@ -83,32 +85,36 @@ const MarketInfo: FC = () => {
       {
         title: t('NewDashboard.Overview.TradingVolume'),
         dataIndex: 'symbol',
-        render: (symbol: string) => {
-          return <BalanceShow value={tradingVol?.[symbol] ?? 0} unit={symbol} />
+        render: (symbol: string, data: Record<string, any>) => {
+          return <BalanceShow value={tradingVol?.[data.margin_token] ?? 0} unit={symbol} />
         }
       },
       {
         title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
-        render: (symbol: string) => <BalanceShow value={0} unit={symbol} />
+        render: (symbol: string, data: Record<string, any>) => (
+          <BalanceShow value={allPositions?.[data.margin_token] ?? 0} unit={symbol} />
+        )
       },
       {
         title: t('NewDashboard.Overview.BuybackPool'),
         dataIndex: 'symbol',
-        render: (symbol: string) => <BalanceShow value={boundPools?.[symbol] ?? 0} unit={symbol} />
+        render: (symbol: string, data: Record<string, any>) => (
+          <BalanceShow value={boundPools?.[data.margin_token] ?? 0} unit={symbol} />
+        )
       },
       {
         title: t('NewDashboard.Overview.DetailInfo'),
         dataIndex: 'Margin',
         align: 'right',
         render: (_: string, data: Record<string, any>) => (
-          <Button size="medium" disabled={!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
+          <Button size="medium" onClick={() => history.push(`/${data.symbol}/trade`)}>
             GO
           </Button>
         )
       }
     ]
-  }, [t, tradingVol, indicators, boundPools])
+  }, [t, tradingVol, indicators, boundPools, allPositions])
 
   const emptyText = useMemo(() => {
     if (!marginTokenListLoaded) return <Spinner small />

@@ -38,11 +38,11 @@ const Datas: FC = () => {
     PubSub.subscribe(PubSubEvents.UPDATE_BUYBACK_VALUE, (topic: string, message: any) => {
       const keys = Object.keys(message) as any[]
       const _ = keys.reduce((p, n) => {
-        return bnPlus(bnMul(message[n], n === 'BUSD' ? 1 : tokenPrice), p)
+        return bnPlus(bnMul(message[n], n === marginToken.address ? 1 : tokenPrice), p)
       }, '0')
       setBuybackValue(_)
     })
-  }, [tokenPrice])
+  }, [tokenPrice, marginToken])
 
   return (
     <div className="web-dashboard-plan-datas">

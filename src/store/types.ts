@@ -96,8 +96,10 @@ export interface MarginTokenState {
 export interface MarginTokenListState {
   marginTokenList: (typeof marginTokenList)[]
   marginTokenSymbol: string[]
+  marginAddressList: string[]
   marginTokenListLoaded: boolean
   getMarginTokenList: (index?: number) => Promise<void>
+  getMarginAddressList: () => Promise<void>
 }
 
 export interface DerivativeListState {

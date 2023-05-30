@@ -12,6 +12,7 @@ export const useMarginLoading = () => {
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
   const getMarginTokenList = useMarginTokenListStore((state) => state.getMarginTokenList)
+  const getMarginAddressList = useMarginTokenListStore((state) => state.getMarginAddressList)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const getDerivativeList = useDerivativeListStore((state) => state.getDerivativeList)
   const getDerAddressList = useDerivativeListStore((state) => state.getDerAddressList)
@@ -20,6 +21,7 @@ export const useMarginLoading = () => {
 
   useEffectOnce(() => {
     void getMarginTokenList()
+    void getMarginAddressList()
   })
 
   useEffect(() => {

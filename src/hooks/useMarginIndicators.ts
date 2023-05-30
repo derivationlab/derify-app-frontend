@@ -62,15 +62,15 @@ export const useMarginIndicators = (marginTokenAddress: string) => {
   return { data }
 }
 
-export const useAllMarginIndicators = (list: (typeof marginTokenList)[]) => {
+export const useAllMarginIndicators = (list: string[]) => {
   const output = Object.create(null)
 
   const { data } = useQuery(
     ['useAllMarginIndicators'],
     async () => {
       if (list.length) {
-        const promises = list.map(async (token) => {
-          return [await getPairIndicator(token.margin_token).then(({ data }) => data)]
+        const promises = list.map(async (address) => {
+          return [await getPairIndicator(address).then(({ data }) => data)]
         })
 
         const response = await Promise.all(promises)
@@ -89,8 +89,8 @@ export const useAllMarginIndicators = (list: (typeof marginTokenList)[]) => {
                 const short = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
                 const apyMax = isGTET(long, short) ? long : short
 
-                output[list[index].symbol] = {
-                  ...output[list[index].symbol],
+                output[list[index]] = {
+                  ...output[list[index]],
                   [token]: Number(apyMax)
                 }
               }

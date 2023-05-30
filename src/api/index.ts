@@ -1,6 +1,7 @@
 export * from './data'
 export * from './earn'
 export * from './trade'
+export * from './margin'
 export * from './broker'
 export * from './others'
 export * from './dashboard'

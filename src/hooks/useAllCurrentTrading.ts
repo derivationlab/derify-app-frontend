@@ -3,15 +3,15 @@ import { useQuery } from '@tanstack/react-query'
 import { getCurrentTradingAmount } from '@/api'
 import { marginTokenList } from '@/store'
 
-export const useAllCurrentTrading = (list: (typeof marginTokenList)[]) => {
+export const useAllCurrentTrading = (list: string[]) => {
   let output = Object.create(null)
 
   const { data, refetch } = useQuery(
     ['useCurrentTrading'],
     async () => {
       if (list.length) {
-        const promises = list.map(async (token) => {
-          return [await getCurrentTradingAmount('all', token.margin_token).then(({ data }) => data)]
+        const promises = list.map(async (address) => {
+          return [await getCurrentTradingAmount('all', address).then(({ data }) => data)]
         })
 
         const response = await Promise.all(promises)
@@ -20,7 +20,7 @@ export const useAllCurrentTrading = (list: (typeof marginTokenList)[]) => {
           response.forEach(([margin], index) => {
             output = {
               ...output,
-              [list[index].symbol]: margin[0]?.trading_amount ?? 0
+              [list[index]]: margin[0]?.trading_amount ?? 0
             }
           })
           // console.info(output)

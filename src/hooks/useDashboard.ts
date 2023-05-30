@@ -95,16 +95,16 @@ export const useRankReward = (trader?: string, config?: string) => {
 
 let outputInit = Object.create(null)
 
-export const useBuyBackPool = (list?: Rec[]) => {
+export const useBuyBackPool = (list?: string[]) => {
   const { data, isLoading } = useQuery(
     ['useBuyBackPool'],
     async () => {
       if (list && list.length) {
-        const calls = list.map((token) => ({
+        const calls = list.map((address) => ({
           name: 'getAllSysExchangeBondSizeUpperBounds',
-          params: [[token.margin_token]],
+          params: [[address]],
           address: contracts.derifyProtocol.contractAddress,
-          marginToken: token.symbol
+          marginToken: address
         }))
 
         const response = await multicall(derifyProtocolAbi, calls)

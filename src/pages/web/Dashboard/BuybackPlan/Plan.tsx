@@ -16,6 +16,7 @@ import { useBuyBackPool } from '@/hooks/useDashboard'
 import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
+import { useMarginTokenListStore } from '@/store'
 import { MarginTokenKeys, PubSubEvents } from '@/typings'
 import { isGTET } from '@/utils/tools'
 
@@ -27,8 +28,10 @@ const Plan: FC = () => {
   const { data: blockNumber = 0 } = useBlockNumber()
   const { mobile } = useContext(MobileContext)
 
+  const marginAddressList = useMarginTokenListStore((state) => state.marginAddressList)
+
   const { data: tokenPrice } = usePlatformTokenPrice()
-  const { data: buyBackInfo } = useBuyBackPool(state.records.records)
+  const { data: buyBackInfo } = useBuyBackPool(marginAddressList)
 
   const mColumns = useMemo(() => {
     return [
@@ -43,7 +46,11 @@ const Plan: FC = () => {
         align: 'right',
         render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
           <>
-            {!buyBackInfo ? <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} /> : <Spinner text="loading" />}
+            {!buyBackInfo ? (
+              <BalanceShow value={buyBackInfo?.[data.margin_token]} unit={symbol} />
+            ) : (
+              <Spinner text="loading" />
+            )}
             <div className={classNames(isGTET(data?.last_drf_price, tokenPrice) ? 'rise' : 'fall')}>
               <BalanceShow value={data?.last_drf_price} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
             </div>
@@ -78,9 +85,9 @@ const Plan: FC = () => {
       {
         title: t('NewDashboard.BuybackPlan.BuybackPool', 'Buyback Pool'),
         dataIndex: 'symbol',
-        render: (symbol: MarginTokenKeys) => {
+        render: (symbol: MarginTokenKeys, data: Record<string, any>) => {
           if (!buyBackInfo) return <Spinner text="loading" />
-          return <BalanceShow value={buyBackInfo?.[symbol]} unit={symbol} />
+          return <BalanceShow value={buyBackInfo?.[data.margin_token]} unit={symbol} />
         }
       },
       {

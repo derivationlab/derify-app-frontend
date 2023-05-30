@@ -7,16 +7,16 @@ import { marginTokenList } from '@/store'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
-export const useBoundPools = (list: (typeof marginTokenList)[]) => {
+export const useBoundPools = (list: string[]) => {
   let output = Object.create(null)
 
   const { data, isLoading } = useQuery(
     ['useBoundPools'],
     async () => {
       if (list.length) {
-        const calls = list.map((token) => ({
+        const calls = list.map((address) => ({
           name: 'getAllSysExchangeBondSizeUpperBounds',
-          params: [[token.margin_token]],
+          params: [[address]],
           address: contracts.derifyProtocol.contractAddress
         }))
 
@@ -26,7 +26,7 @@ export const useBoundPools = (list: (typeof marginTokenList)[]) => {
           response.forEach(([data]: any, index: number) => {
             output = {
               ...output,
-              [list[index].symbol]: formatUnits(String(data[0]), 8)
+              [list[index]]: formatUnits(String(data[0]), 8)
             }
           })
 

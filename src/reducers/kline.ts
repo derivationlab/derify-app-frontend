@@ -10,7 +10,7 @@ interface StateType {
 }
 
 const stateInit: StateType = {
-  kline: { data: [], loaded: false, timeLine: 60 * 60 * 1000 }
+  kline: { data: [], loaded: false, timeLine: 24 * 60 * 60 * 1000 }
 }
 
 function reducer(state: StateType, action: ActionType): StateType {

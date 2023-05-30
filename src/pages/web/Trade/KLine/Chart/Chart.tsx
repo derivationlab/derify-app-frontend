@@ -58,8 +58,8 @@ const Chart: FC = () => {
   }, [spotPrice, quoteToken, state.kline.timeLine])
 
   const getMoreData = useCallback(
-    async (lastTime: number) => {
-      if (quoteToken.address) return await getKLineDAT(quoteToken.address, state.kline.timeLine, lastTime, 50, false)
+    async (lastTime: number, timeLine: number) => {
+      if (quoteToken.address) return await getKLineDAT(quoteToken.address, timeLine, lastTime, 50, false)
     },
     [quoteToken]
   )
@@ -110,7 +110,7 @@ const Chart: FC = () => {
       />
       <div className="web-trade-kline-chart-layout">
         {/* @ts-ignore */}
-        <KLineChart cRef={kline} getMoreData={(timeLine: number) => getMoreData(timeLine)} />
+        <KLineChart cRef={kline} getMoreData={getMoreData} timeLine={state.kline.timeLine} />
       </div>
       {state.kline.loaded && <Spinner absolute />}
     </div>

@@ -24,10 +24,11 @@ interface KlineChartProps {
 
 interface Props {
   cRef: KlineChartProps | null
-  getMoreData: (time: number) => Promise<{ data: KLineDataProps[]; more: boolean }>
+  timeLine: number
+  getMoreData: (time: number, timeLine: number) => Promise<{ data: KLineDataProps[]; more: boolean }>
 }
 
-const KLine: FC<Props> = ({ cRef, getMoreData }) => {
+const KLine: FC<Props> = ({ cRef, timeLine, getMoreData }) => {
   const chartRef = useRef<HTMLDivElement>(null)
   const [chart, setChart] = useState<Chart | null>(null)
   const { theme } = useContext(ThemeContext)
@@ -52,11 +53,11 @@ const KLine: FC<Props> = ({ cRef, getMoreData }) => {
   useEffect(() => {
     if (chart) {
       chart.loadMore(async (time) => {
-        const { data, more } = await getMoreData(time)
+        const { data, more } = await getMoreData(time, timeLine)
         if (data) chart.applyMoreData(data, more)
       })
     }
-  }, [chart])
+  }, [chart, timeLine])
 
   useEffect(() => {
     if (chart) {

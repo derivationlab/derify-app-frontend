@@ -2,7 +2,7 @@ import { KLineTimes } from '@/data'
 import { get, post } from '@/utils/http'
 
 export const getKLineDAT = async (token: string, time: number, endTime: number, limit: number) => {
-  const interval = (KLineTimes.find((item) => item.value === time) ?? {}).label ?? '5m'
+  const interval = (KLineTimes.find((item) => item.value === time) ?? {}).label ?? '1D'
   const startTime = endTime - time * limit
   const { data } = await get(`api/klines/${token}/${interval}/${~~(startTime / 1000)}/${~~(endTime / 1000)}/${limit}`)
   return data

@@ -160,10 +160,10 @@ const Bench: FC = () => {
 
       if (openingType === PositionOrderTypes.Limit) {
         if (side === PositionSideTypes.long) {
-          if (isGT(openingPrice, spotPrice)) _openType = 0
+          if (isGT(openingPrice, spotPrice)) _openType = 1
         }
         if (side === PositionSideTypes.short) {
-          if (isLT(openingPrice, spotPrice)) _openType = 0
+          if (isLT(openingPrice, spotPrice)) _openType = 1
         }
       }
 

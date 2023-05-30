@@ -77,7 +77,7 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
         <div className="web-trade-bench-pane-volume-max">
           <span>Max: </span>
           {loaded ? (
-            'calculating ...'
+            'loading ...'
           ) : (
             <>
               <em>{keepDecimals(disposableAm?.[type] ?? 0, 2)}</em>

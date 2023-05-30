@@ -6,7 +6,6 @@ import { ZERO } from '@/config'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import { MarginTokenListState } from '@/store/types'
-import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 
 const _getMarginTokenList = async (): Promise<(typeof marginTokenList)[]> => {
@@ -28,6 +27,26 @@ const getMarginDeployStatus = async (marginList: (typeof marginTokenList)[]) => 
     marginDeployStatus = {
       ...marginDeployStatus,
       [marginList[index].symbol]: data[0] === ZERO ? 0 : 1
+    }
+  })
+
+  return marginDeployStatus
+}
+
+const getMarginDeployStatus1 = async (marginList: string[]) => {
+  let marginDeployStatus = Object.create(null)
+  const calls = marginList.map((address) => ({
+    address: contracts.derifyProtocol.contractAddress,
+    name: 'getMarginTokenContractCollections',
+    params: [address]
+  }))
+
+  const response = await multicall(DerifyProtocolAbi, calls)
+
+  response.forEach(([data]: string[], index: number) => {
+    marginDeployStatus = {
+      ...marginDeployStatus,
+      [marginList[index]]: data[0] === ZERO ? 0 : 1
     }
   })
 
@@ -67,9 +86,9 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
     const { data } = await getMarginAddressList()
 
     if (data.length) {
-      const deployStatus = await getMarginDeployStatus(data)
+      const deployStatus = await getMarginDeployStatus1(data)
 
-      const filter = data.filter((f: Rec) => deployStatus[f.symbol])
+      const filter = data.filter((address: string) => deployStatus[address])
       set({
         marginAddressList: filter
       })

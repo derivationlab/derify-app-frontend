@@ -2,8 +2,10 @@ import { BigNumberish } from 'ethers'
 import { create } from 'zustand'
 
 import { getDerivativeList } from '@/api'
+import { ZERO } from '@/config'
 import derivativeAbi from '@/config/abi/DerifyDerivative.json'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
+import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import { DerivativeListState } from '@/store/types'
 import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
@@ -44,6 +46,25 @@ export const getDerAddressList = async (factory: string, list: (typeof derivativ
   } catch (e) {
     return null
   }
+}
+
+const getTradingPairDeployStatus = async (list: (typeof derivativeList)[], factory: string) => {
+  let output = Object.create(null)
+  const calls = list.map((derivative) => ({
+    name: 'getDerivative',
+    params: [derivative.token],
+    address: factory
+  }))
+
+  const response = await multicall(DerifyFactoryAbi, calls)
+
+  response.forEach(([data]: string[], index: number) => {
+    output = {
+      ...output,
+      [list[index].name]: data === ZERO ? 0 : 1
+    }
+  })
+  return output
 }
 
 export const getPosMaxLeverage = async (list: any) => {

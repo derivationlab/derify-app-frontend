@@ -4,9 +4,7 @@ import { marginTokenList } from '@/store/useMarginTokenList'
 import { quoteToken } from '@/store/useQuoteToken'
 import { SharingEvents } from '@/store/useSharing'
 import { InitialTraderVariablesType } from '@/store/useTraderVariables'
-import { ChainId, ProtocolConfig, PositionOrderTypes } from '@/typings'
-
-export type Rec = Record<string, any>
+import { ChainId, ProtocolConfig, PositionOrderTypes, Rec } from '@/typings'
 
 export interface WalletState {
   loaded: boolean

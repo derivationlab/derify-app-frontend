@@ -20,11 +20,7 @@ export type TSigner = Signer | null | undefined
 
 export type ChainIdRec = { [key in GlobalType.Chain]: string }
 
-export type QuoteTokenKeys = 'BTC' | 'ETH'
-
-export type MarginTokenKeys = 'DRF' | 'BUSD'
-
-export type AllTokenKeys = 'busd' | 'drf' | 'edrf'
+export type AllTokenKeys = 'drf' | 'edrf'
 
 export type ContractKeys = 'multicall' | 'derifyProtocol'
 
@@ -42,23 +38,15 @@ export const protocolConfig = {
 
 export type ProtocolConfig = typeof protocolConfig
 
-export type QuoteToken = { [key in QuoteTokenKeys]: any }
-
-export type MarginToken = { [key in MarginTokenKeys]: any }
-
-export type MarginTokenWithQuote = { [key in MarginTokenKeys]: { [key in QuoteTokenKeys]: any } }
-
-export type MarginTokenWithContract = { [key in MarginTokenKeys]: typeof protocolConfig }
-
-export enum PositionOrderTypes {
-  Market,
-  Limit
-}
-
 export enum PositionSideTypes {
   long,
   short,
   twoWay
+}
+
+export enum PositionOrderTypes {
+  Market,
+  Limit
 }
 
 export enum PositionTriggerTypes {

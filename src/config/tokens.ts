@@ -21,16 +21,6 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
     },
     18,
     2
-  ),
-  busd: new Token(
-    'Binance USD',
-    'BUSD',
-    {
-      [ChainId.MAINNET]: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-      [ChainId.TESTNET]: '0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba'
-    },
-    18,
-    2
   )
 }
 

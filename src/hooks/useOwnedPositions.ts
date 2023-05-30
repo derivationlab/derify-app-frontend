@@ -4,8 +4,7 @@ import { isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
-import { Rec } from '@/store/types'
-import { PositionSideTypes, PositionTriggerTypes } from '@/typings'
+import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 import { bnMul, formatUnits } from '@/utils/tools'
 

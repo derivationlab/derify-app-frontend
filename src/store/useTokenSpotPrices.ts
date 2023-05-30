@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 
-import { TokenSpotPricesState, Rec } from '@/store/types'
+import { TokenSpotPricesState } from '@/store/types'
+import { Rec } from '@/typings'
 
 const useTokenSpotPricesStore = create<TokenSpotPricesState>((set) => ({
   tokenSpotPrices: null,

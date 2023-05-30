@@ -43,8 +43,7 @@ const AddTokenTool: FC = () => {
 
   const pancakeSwap = useMemo(() => {
     const { symbol, tokenAddress: address } = tokens.drf
-    const { tokenAddress: busd } = tokens.busd
-    const swap = `swap?inputCurrency=${busd}&outputCurrency=${address}`
+    const swap = `swap?outputCurrency=${address}`
     return [
       {
         swap,

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { Rec } from '@/store/types'
-import { PositionOrderTypes } from '@/typings'
+import { PositionOrderTypes, Rec } from '@/typings'
 import { getDerifyExchangeContract } from '@/utils/contractHelpers'
 import { formatUnits, inputParameterConversion } from '@/utils/tools'
 

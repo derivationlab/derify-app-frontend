@@ -17,7 +17,7 @@ import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenListStore } from '@/store'
-import { MarginTokenKeys, PubSubEvents } from '@/typings'
+import { PubSubEvents } from '@/typings'
 import { isGTET } from '@/utils/tools'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
@@ -44,9 +44,9 @@ const Plan: FC = () => {
         title: 'Pool/DRF Price',
         dataIndex: 'symbol',
         align: 'right',
-        render: (symbol: MarginTokenKeys, data: Record<string, any>) => (
+        render: (symbol: string, data: Record<string, any>) => (
           <>
-            {!buyBackInfo ? (
+            {buyBackInfo ? (
               <BalanceShow value={buyBackInfo?.[data.margin_token]} unit={symbol} />
             ) : (
               <Spinner text="loading" />
@@ -85,7 +85,7 @@ const Plan: FC = () => {
       {
         title: t('NewDashboard.BuybackPlan.BuybackPool', 'Buyback Pool'),
         dataIndex: 'symbol',
-        render: (symbol: MarginTokenKeys, data: Record<string, any>) => {
+        render: (symbol: string, data: Record<string, any>) => {
           if (!buyBackInfo) return <Spinner text="loading" />
           return <BalanceShow value={buyBackInfo?.[data.margin_token]} unit={symbol} />
         }

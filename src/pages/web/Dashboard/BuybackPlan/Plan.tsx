@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import { isEmpty } from 'lodash'
-import PubSub from 'pubsub-js'
 import Table from 'rc-table'
 import { useBlockNumber } from 'wagmi'
 
@@ -12,26 +11,21 @@ import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useBuyBackPool } from '@/hooks/useDashboard'
 import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
-import { useMarginTokenListStore } from '@/store'
-import { PubSubEvents } from '@/typings'
-import { isGTET } from '@/utils/tools'
+import { Rec } from '@/typings'
+import { isGT, isGTET, isLT } from '@/utils/tools'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
 
-const Plan: FC = () => {
+const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
   const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber()
   const { mobile } = useContext(MobileContext)
 
-  const marginAddressList = useMarginTokenListStore((state) => state.marginAddressList)
-
   const { data: tokenPrice } = usePlatformTokenPrice()
-  const { data: buyBackInfo } = useBuyBackPool(marginAddressList)
 
   const mColumns = useMemo(() => {
     return [
@@ -44,18 +38,27 @@ const Plan: FC = () => {
         title: 'Pool/DRF Price',
         dataIndex: 'symbol',
         align: 'right',
-        render: (symbol: string, data: Record<string, any>) => (
-          <>
-            {buyBackInfo ? (
-              <BalanceShow value={buyBackInfo?.[data.margin_token]} unit={symbol} />
-            ) : (
-              <Spinner text="loading" />
-            )}
-            <div className={classNames(isGTET(data?.last_drf_price, tokenPrice) ? 'rise' : 'fall')}>
-              <BalanceShow value={data?.last_drf_price} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
-            </div>
-          </>
-        )
+        render: (symbol: string, data: Record<string, any>) => {
+          let cls = ''
+          if (isGTET(data?.last_drf_price, tokenPrice)) cls = 'rise'
+          if (isLT(data?.last_drf_price, tokenPrice) && isGT(data?.last_drf_price, 0)) cls = 'rise'
+          return (
+            <>
+              {buyBackInfo ? (
+                <BalanceShow value={buyBackInfo?.[data.margin_token]} unit={symbol} />
+              ) : (
+                <Spinner text="loading" />
+              )}
+              <div className={cls}>
+                <BalanceShow
+                  value={data?.last_drf_price}
+                  unit={VALUATION_TOKEN_SYMBOL}
+                  decimal={Number(data?.last_drf_price) > 0 ? 4 : 2}
+                />
+              </div>
+            </>
+          )
+        }
       },
       {
         title: 'Blocks/Time',
@@ -96,9 +99,12 @@ const Plan: FC = () => {
         title: t('NewDashboard.BuybackPlan.DRFPriceLastCycle', 'DRF Price(Last Cycle)'),
         dataIndex: 'last_drf_price',
         render: (value: number) => {
+          let cls = ''
+          if (isGTET(value, tokenPrice)) cls = 'rise'
+          if (isLT(value, tokenPrice) && isGT(value, 0)) cls = 'rise'
           return (
-            <div className={classNames(isGTET(value, tokenPrice) ? 'rise' : 'fall')}>
-              <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={4} />
+            <div className={cls}>
+              <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={Number(value) > 0 ? 4 : 2} />
             </div>
           )
         }
@@ -147,12 +153,6 @@ const Plan: FC = () => {
   useEffect(() => {
     void _getBuyBackPlans()
   }, [])
-
-  useEffect(() => {
-    if (buyBackInfo) {
-      PubSub.publish(PubSubEvents.UPDATE_BUYBACK_VALUE, buyBackInfo)
-    }
-  }, [buyBackInfo])
 
   return (
     <div className="web-dashboard-plan-list">

@@ -9,10 +9,8 @@ import {
   useBalancesStore,
   useBrokerInfoStore,
   useDerivativeListStore,
-  useMarginPriceStore,
   useMarginTokenListStore,
   useMarginTokenStore,
-  useProtocolConfigStore,
   useTokenSpotPricesStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -25,8 +23,6 @@ export default function GlobalUpdater(): null {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const fetchBalances = useBalancesStore((state) => state.getTokenBalances)
   const resetBalances = useBalancesStore((state) => state.reset)
-  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const getMarginPrice = useMarginPriceStore((state) => state.getMarginPrice)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
@@ -48,17 +44,9 @@ export default function GlobalUpdater(): null {
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
-      console.info('UPDATE_BALANCE')
       if (address && marginTokenList.length) void fetchBalances(address, marginTokenList)
     })
   }, [address, marginTokenList])
-
-  // Margin price
-  useEffect(() => {
-    if (protocolConfig) {
-      void getMarginPrice(protocolConfig.priceFeed)
-    }
-  }, [protocolConfig])
 
   // Spot price
   useEffect(() => {

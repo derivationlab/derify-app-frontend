@@ -7,6 +7,7 @@ import Button from '@/components/common/Button'
 import LeverageSelect from '@/components/common/Form/LeverageSelect'
 import NotConnect from '@/components/web/NotConnect'
 import { isOpeningMinLimit } from '@/funcs/helper'
+import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { usePositionOperation } from '@/hooks/useTrading'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
 import { reducer, stateInit } from '@/reducers/opening'
@@ -17,8 +18,7 @@ import {
   useMarginTokenStore,
   useTokenSpotPricesStore,
   useMarginIndicatorsStore,
-  useProtocolConfigStore,
-  useMarginPriceStore
+  useProtocolConfigStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
@@ -47,11 +47,12 @@ const Bench: FC = () => {
   const updateLeverageNow = usePositionOperationStore((state) => state.updateLeverageNow)
   const updateOpeningType = usePositionOperationStore((state) => state.updateOpeningType)
   const updateOpeningPrice = usePositionOperationStore((state) => state.updateOpeningPrice)
-  const marginPrice = useMarginPriceStore((state) => state.marginPrice)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const openingMinLimit = useOpeningMinLimitStore((state) => state.openingMinLimit)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+
+  const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[quoteToken.symbol] ?? '0'

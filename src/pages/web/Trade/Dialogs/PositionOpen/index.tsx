@@ -222,7 +222,10 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             </dl>
           </div>
         </div>
-        <Button onClick={() => onClick(state.validOpeningVol.value)} disabled={state.validOpeningVol.maximum === 0}>
+        <Button
+          onClick={() => onClick(state.validOpeningVol.value)}
+          disabled={state.validOpeningVol.maximum === 0 && state.validOpeningVol.isGreater}
+        >
           {t('Trade.COP.Confirm', 'Confirm')}
         </Button>
       </div>

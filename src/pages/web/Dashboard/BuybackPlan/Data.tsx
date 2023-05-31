@@ -1,27 +1,27 @@
-import PubSub from 'pubsub-js'
 import { useBlockNumber } from 'wagmi'
 
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useAllCurrentIndex } from '@/hooks/useAllCurrentIndex'
+import { useAllMarginPrice } from '@/hooks/useAllMarginPrice'
 import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { PubSubEvents } from '@/typings'
+import { Rec } from '@/typings'
 import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
 
-const Datas: FC = () => {
+const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo }) => {
   const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
-  const [buybackValue, setBuybackValue] = useState<string>('0')
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
 
   const { data: tokenPrice } = usePlatformTokenPrice()
+  const { data: marginPrice } = useAllMarginPrice(priceFeed)
   const { data: currentIndex } = useAllCurrentIndex(marginTokenList)
 
   const tokenDecimal = useMemo(() => {
@@ -34,15 +34,16 @@ const Datas: FC = () => {
     return currentIndex?.[marginToken.symbol]?.drfBurnt ?? 0
   }, [marginToken, currentIndex])
 
-  useEffect(() => {
-    PubSub.subscribe(PubSubEvents.UPDATE_BUYBACK_VALUE, (topic: string, message: any) => {
-      const keys = Object.keys(message) as any[]
-      const _ = keys.reduce((p, n) => {
-        return bnPlus(bnMul(message[n], n === marginToken.address ? 1 : tokenPrice), p)
+  const buybackValue = useMemo(() => {
+    if (marginPrice) {
+      const keys = Object.keys(buyBackInfo) as any[]
+      return keys.reduce((p, n: string) => {
+        const price = marginPrice[n]
+        return bnPlus(bnMul(buyBackInfo[n], price), p)
       }, '0')
-      setBuybackValue(_)
-    })
-  }, [tokenPrice, marginToken])
+    }
+    return '0'
+  }, [buyBackInfo, marginPrice])
 
   return (
     <div className="web-dashboard-plan-datas">
@@ -78,4 +79,4 @@ const Datas: FC = () => {
   )
 }
 
-export default Datas
+export default Data

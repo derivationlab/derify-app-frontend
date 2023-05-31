@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
 import multicall from '@/utils/multicall'
-import { bnMul, formatUnits } from '@/utils/tools'
+import { bnMul, formatUnits, keepDecimals } from '@/utils/tools'
 
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
-  isUsed ? formatUnits(stopPrice, 8) : '--'
+  isUsed ? keepDecimals(formatUnits(stopPrice, 8), 2) : '--'
 
 const getOwnedPositions = async (trader: string, derAddressList: any): Promise<Rec[][]> => {
   const positionOrd: Rec[] = []

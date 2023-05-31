@@ -178,7 +178,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.TakeProfitTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        {keepDecimals(data?.takeProfitPrice, 2)} <EditButton onClick={() => onEdit(data)} />
+        {data?.takeProfitPrice} <EditButton onClick={() => onEdit(data)} />
       </DataAtom>
     ),
     [data, onEdit, t]
@@ -190,7 +190,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.StopLossTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        {keepDecimals(data?.stopLossPrice, 2)} <EditButton onClick={() => onEdit(data)} />
+        {data?.stopLossPrice} <EditButton onClick={() => onEdit(data)} />
       </DataAtom>
     ),
     [data, onEdit, t]

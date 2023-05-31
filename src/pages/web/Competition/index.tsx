@@ -100,6 +100,8 @@ const CompetitionRank: FC = () => {
     if (data) {
       const _ = data.map((d: Record<string, any>, index: number) => ({ ...d, rank: `#${++index}` }))
       dispatch({ type: 'SET_RECORDS', payload: { records: _, loaded: false } })
+    } else {
+      dispatch({ type: 'SET_RECORDS', payload: { records: [], loaded: false } })
     }
   }, [marginToken, state.filterCondition])
 

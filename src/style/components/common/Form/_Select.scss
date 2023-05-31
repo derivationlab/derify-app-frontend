@@ -66,7 +66,7 @@
       span, em, u, i, div {
         display: flex;align-items: center;
       }
-      &.close{color: $c88;img{opacity: 0.5}}
+      &.close{opacity: 0.4;*{opacity: 0.4}}
     }
   }
 

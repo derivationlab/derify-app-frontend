@@ -1,8 +1,10 @@
+import { isEmpty } from 'lodash'
 import { useBlockNumber } from 'wagmi'
 
 import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useAllCurrentIndex } from '@/hooks/useAllCurrentIndex'
@@ -11,7 +13,7 @@ import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-import { bnMul, bnPlus, isGT, isLT } from '@/utils/tools'
+import { bnMul, bnPlus } from '@/utils/tools'
 
 const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo }) => {
   const { t } = useTranslation()
@@ -26,7 +28,7 @@ const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo
 
   const tokenDecimal = useMemo(() => {
     if (tokenPrice === 0) return 2
-    if (isLT(tokenPrice, 1) && isGT(tokenPrice, 0)) return 4
+    if (Number(tokenPrice) < 1 && Number(tokenPrice) > 0) return 4
     return 2
   }, [tokenPrice])
 
@@ -35,11 +37,12 @@ const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo
   }, [marginToken, currentIndex])
 
   const buybackValue = useMemo(() => {
-    if (marginPrice) {
+    if (marginPrice && !isEmpty(buyBackInfo)) {
       const keys = Object.keys(buyBackInfo) as any[]
       return keys.reduce((p, n: string) => {
-        const price = marginPrice[n]
-        return bnPlus(bnMul(buyBackInfo[n], price), p)
+        const price = marginPrice[n] ?? 0
+        const amount = buyBackInfo[n] ?? 0
+        return bnPlus(bnMul(amount, price), p)
       }, '0')
     }
     return '0'
@@ -50,8 +53,10 @@ const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.TotalBuybackValue')}</header>
         <section>
-          <BalanceShow value={buybackValue} />
-          <u>{VALUATION_TOKEN_SYMBOL}</u>
+          <Skeleton rowsProps={{ rows: 1 }} animation loading={Number(buybackValue) === 0}>
+            <BalanceShow value={buybackValue} />
+            <u>{VALUATION_TOKEN_SYMBOL}</u>
+          </Skeleton>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">

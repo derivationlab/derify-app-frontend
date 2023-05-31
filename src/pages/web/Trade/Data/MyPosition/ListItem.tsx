@@ -57,7 +57,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       return bnMul(p2, p3)
     }
     return '0'
-  }, [spotPrice])
+  }, [data, spotPrice])
 
   const memoRate = useMemo(() => {
     return isGT(memoMargin, 0) ? bnDiv(memoPnL, memoMargin) : '0'
@@ -72,8 +72,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       >
         <span className={classNames(`${riseOrFall(memoPnL) ? 'up' : 'down'}`)}>
           {riseOrFall(memoPnL)}
-          {keepDecimals(memoPnL, 2)} ( {riseOrFall(memoRate)}
-          {keepDecimals(bnMul(memoRate, 100), 2)}% )
+          {keepDecimals(memoPnL, 2)} ({riseOrFall(memoRate)}
+          {keepDecimals(bnMul(memoRate, 100), 2)}%)
         </span>
       </DataAtom>
     ),
@@ -109,7 +109,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   )
 
   const atom4Tsx = useMemo(() => {
-    let lp
+    let liqPrice
     if (variablesLoaded) {
       const { marginBalance = 0, totalPositionAmount = 0 } = variables
       const mul = data.side === PositionSideTypes.short ? -1 : 1
@@ -119,9 +119,9 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       const p3 = bnDiv(p2, data.size)
       const p4 = bnMul(p3, mul)
       const p5 = bnMinus(spotPrice, p4)
-      lp = isLTET(p5, 0) ? '--' : keepDecimals(p5, 2)
+      liqPrice = isLTET(p5, 0) ? '--' : keepDecimals(p5, 2)
     } else {
-      lp = '--'
+      liqPrice = '--'
     }
 
     return (
@@ -130,7 +130,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.LiqPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>{lp}</span>
+        <span>{liqPrice}</span>
       </DataAtom>
     )
   }, [t, data, clearingParams, variables, spotPrice, variablesLoaded])
@@ -178,7 +178,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.TakeProfitTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        {data?.takeProfitPrice} <EditButton onClick={() => onEdit(data)} />
+        {keepDecimals(data?.takeProfitPrice, 2)} <EditButton onClick={() => onEdit(data)} />
       </DataAtom>
     ),
     [data, onEdit, t]
@@ -190,7 +190,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.StopLossTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        {data?.stopLossPrice} <EditButton onClick={() => onEdit(data)} />
+        {keepDecimals(data?.stopLossPrice, 2)} <EditButton onClick={() => onEdit(data)} />
       </DataAtom>
     ),
     [data, onEdit, t]

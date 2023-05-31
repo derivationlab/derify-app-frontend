@@ -139,6 +139,8 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
 
       if (status) {
         window.toast.success(t('common.success', 'success'))
+
+        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
       } else {
         window.toast.error(t('common.failed', 'failed'))
       }

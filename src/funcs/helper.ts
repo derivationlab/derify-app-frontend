@@ -138,8 +138,11 @@ export const checkOpeningVol = (
   openingType: PositionOrderTypes,
   tokenSelect: string,
   openingMaxLimit: string
-) => {
-  if (positionSide === PositionSideTypes.twoWay || openingType !== PositionOrderTypes.Market) return openingSize
-  const mul = Number(spotPrice) * Number(openingMaxLimit)
-  return isGT(openingSize, mul) ? mul : openingSize
+): any[] => {
+  if (openingType === PositionOrderTypes.Limit) return [0, false, openingSize]
+  if (positionSide === PositionSideTypes.twoWay) return [0, false, openingSize]
+  const maximum = Number(spotPrice) * Number(openingMaxLimit)
+  const isGreater = isGT(openingSize, maximum)
+  const effective = isGreater ? maximum : openingSize
+  return [maximum, isGreater, effective]
 }

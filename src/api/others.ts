@@ -23,13 +23,13 @@ export const getPairIndicator = async (token: string) => {
   return response
 }
 
-export const getDerivativeList = async (marginToken: string, page = 0, size = 30) => {
+export const getDerivativeList = async (marginToken: string, page = 0, size = 5) => {
   const response = await get(`api/derivative_list/${marginToken}/${page}/${size}`)
   return response
 }
 
-export const getTradersRankList = async (marginToken: string, page: number, offset: number) => {
-  const response = await get(`api/traders_rank_list/${marginToken}/${page}/${offset}`)
+export const getTradersRankList = async (marginToken: string, page: number, size: number) => {
+  const response = await get(`api/traders_rank_list/${marginToken}/${page}/${size}`)
   return response
 }
 

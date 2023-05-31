@@ -8,13 +8,14 @@ import { getMaxZIndex } from '@/utils/tools'
 
 interface Props {
   text: string
+  icon?: string
   size?: string
   hover?: boolean
 }
 
 const element = () => <Image src="icon/question.svg" />
 
-const QuestionPopover: FC<Props> = ({ text, size, hover = false, children }) => {
+const QuestionPopover: FC<Props> = ({ text, icon = 'icon/question.svg', size, hover = false, children }) => {
   const ref = useRef(null)
   const [show, setShow] = useState<boolean>(false)
 
@@ -36,7 +37,7 @@ const QuestionPopover: FC<Props> = ({ text, size, hover = false, children }) => 
       ) : hover ? (
         hoverable
       ) : (
-        <Image src="icon/question.svg" onClick={() => setShow(!show)} />
+        <Image src={icon} onClick={() => setShow(!show)} />
       )}
       {(show || hovered) && (
         <div className="web-question-popover-text" style={zIndexStyle}>

@@ -97,8 +97,8 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
   derAddressListLoaded: false,
   derivativeListLoaded: false,
   posMaxLeverageLoaded: false,
-  getDerivativeList: async (marginTokenAddress: string) => {
-    const { data } = await getDerivativeList(marginTokenAddress)
+  getDerivativeList: async (marginTokenAddress: string, page = 0, size = 5) => {
+    const { data } = await getDerivativeList(marginTokenAddress, page, size)
 
     const records = data?.records ?? []
     const filter = records.filter((r: Rec) => r.open)

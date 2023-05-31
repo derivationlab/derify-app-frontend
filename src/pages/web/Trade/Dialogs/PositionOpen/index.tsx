@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { isEmpty, debounce } from 'lodash'
 
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
@@ -46,16 +47,16 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [quoteToken, tokenSpotPrices])
 
   const _checkOpeningVol = async (openingMaxLimit: Rec) => {
-    const volume = checkOpeningVol(
+    const [maximum, isGreater, effective] = checkOpeningVol(
       spotPrice,
       data.volume,
       data.side,
       data.openType,
       data.symbol,
-      openingMaxLimit[data.side]
+      openingMaxLimit[quoteToken.address][PositionSideTypes[data.side]]
     )
 
-    dispatch({ type: 'SET_VALID_OPENING_VOLUME', payload: { loaded: true, value: volume } })
+    dispatch({ type: 'SET_VALID_OPENING_VOLUME', payload: { loaded: true, value: effective, maximum, isGreater } })
   }
 
   const calcTFeeFunc = useCallback(
@@ -142,7 +143,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               {data?.side === PositionSideTypes.twoWay ? (
                 <dd>
                   {!state.validOpeningVol.loaded ? (
-                    <small>calculating...</small>
+                    <small>loading...</small>
                   ) : (
                     <section>
                       <aside>
@@ -161,15 +162,28 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               ) : (
                 <dd>
                   {!state.validOpeningVol.loaded ? (
-                    <small>calculating...</small>
+                    <small>loading...</small>
                   ) : (
-                    <span>
+                    <span className={classNames({ error: state.validOpeningVol.isGreater })}>
                       <em>{keepDecimals(state.validOpeningVol.value, 2)}</em>
                       <u>{data?.symbol}</u>
                     </span>
                   )}
+                  {state.validOpeningVol.isGreater && (
+                    <QuestionPopover
+                      size="mini"
+                      icon="icon/warning.svg"
+                      text={t('Trade.Bench.TheMaximumPositionValue', {
+                        Amount: `${keepDecimals(state.validOpeningVol.maximum, 2)} ${marginToken.symbol}`
+                      })}
+                    />
+                  )}
                 </dd>
               )}
+              {/*{state.validOpeningVol.isGreater && (<small className='error'>*/}
+              {/*  <Trans>{t('Trade.Bench.TheMaximumPositionValue',*/}
+              {/*    { Amount: `${keepDecimals(state.validOpeningVol.maximum, 2)} ${marginToken.symbol}` })*/}
+              {/*  }</Trans></small>)}*/}
             </dl>
             <dl>
               <dt>
@@ -178,7 +192,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               </dt>
               <dd>
                 {!state.posChangeFee.loaded ? (
-                  <small>calculating...</small>
+                  <small>loading...</small>
                 ) : (
                   <div>
                     <em>{keepDecimals(state.posChangeFee.value, 2)}</em>
@@ -197,7 +211,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               </dt>
               <dd>
                 {!state.tradingFeeInfo.loaded ? (
-                  <small>calculating...</small>
+                  <small>loading...</small>
                 ) : (
                   <div>
                     <em>-{keepDecimals(state.tradingFeeInfo.value, 2)}</em>
@@ -208,7 +222,9 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             </dl>
           </div>
         </div>
-        <Button onClick={() => onClick(state.validOpeningVol.value)}>{t('Trade.COP.Confirm', 'Confirm')}</Button>
+        <Button onClick={() => onClick(state.validOpeningVol.value)} disabled={state.validOpeningVol.maximum === 0}>
+          {t('Trade.COP.Confirm', 'Confirm')}
+        </Button>
       </div>
     </Dialog>
   )

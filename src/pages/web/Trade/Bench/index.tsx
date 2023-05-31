@@ -142,7 +142,6 @@ const Bench: FC = () => {
 
   const openPositionDialog = async (side: PositionSideTypes) => {
     if (protocolConfig) {
-      let _openType = openingType
       const _realPrice = openingType === PositionOrderTypes.Market ? spotPrice : openingPrice
 
       const isLimit = isOpeningMinLimit(marginPrice, openingMinLimit, state.openingAmount)
@@ -158,22 +157,13 @@ const Bench: FC = () => {
         return
       }
 
-      if (openingType === PositionOrderTypes.Limit) {
-        if (side === PositionSideTypes.long) {
-          if (isGT(openingPrice, spotPrice)) _openType = 1
-        }
-        if (side === PositionSideTypes.short) {
-          if (isLT(openingPrice, spotPrice)) _openType = 1
-        }
-      }
-
       const openPosParams = {
         side,
         price: _realPrice,
         symbol: marginToken.symbol,
         volume: state.openingAmount,
         leverage: leverageNow,
-        openType: _openType
+        openType: openingType
       }
       dispatch({ type: 'SET_MODAL_STATUS', payload: true })
       dispatch({ type: 'SET_OPENING_PARAMS', payload: openPosParams })

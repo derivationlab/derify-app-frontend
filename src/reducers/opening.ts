@@ -19,7 +19,7 @@ interface StateType {
   posChangeFee: typeof R
   openingParams: Record<string, any>
   tradingFeeInfo: typeof R
-  validOpeningVol: typeof R
+  validOpeningVol: typeof R & { maximum: number; isGreater: boolean }
 }
 
 const stateInit: StateType = {
@@ -29,7 +29,7 @@ const stateInit: StateType = {
   openingParams: {},
   posChangeFee: R,
   tradingFeeInfo: R,
-  validOpeningVol: R
+  validOpeningVol: { ...R, maximum: 0, isGreater: false }
 }
 
 function reducer(state: StateType, action: ActionType): StateType {

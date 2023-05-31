@@ -115,7 +115,8 @@ export default {
       TowWay: '2-Way',
       SerchTip: 'serch name or contract address..',
       NoResultsFound: 'No results found.',
-      TheMinimumPositionValue: 'The minimum position value is {{USD}} USD({{Margin}} {{Token}})'
+      TheMinimumPositionValue: 'The minimum position value is {{USD}} USD({{Margin}} {{Token}})',
+      TheMaximumPositionValue: 'the maximum position is {{Amount}}'
     },
     COP: {
       OpenPosition: 'Open Position',

@@ -1,4 +1,5 @@
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import ChangePercent from '@/components/common/ChangePercent'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -16,6 +17,7 @@ interface Props {
  * 2. Trading pair search
  */
 const Options: FC<Props> = ({ onChange }) => {
+  const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
@@ -37,7 +39,7 @@ const Options: FC<Props> = ({ onChange }) => {
   return (
     <div className="web-trade-symbol-select-options">
       <div className="web-trade-symbol-select-search">
-        <input type="text" placeholder="Search derivatives" onChange={_onChange} />
+        <input type="text" placeholder={t('Trade.kline.SearchTip')} onChange={_onChange} />
         <i />
       </div>
       <ul>

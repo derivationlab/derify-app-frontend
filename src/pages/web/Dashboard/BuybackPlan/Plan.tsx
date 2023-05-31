@@ -62,7 +62,9 @@ const Plan: FC = () => {
         dataIndex: 'RemainingBlock',
         align: 'right',
         render: (value: number, data: Record<string, any>) => {
-          const block = data.open ? Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber : 0
+          const p1 = Number(data?.buyback_period) + Number(data?.last_buy_back_block)
+          const p2 = p1 - blockNumber
+          const block = p2 <= 0 ? 0 : p2
           return (
             <>
               <BalanceShow value={block} rule="0,0" unit="Block" />
@@ -102,10 +104,12 @@ const Plan: FC = () => {
         }
       },
       {
-        title: t('NewDashboard.BuybackPlan.RemainingBlock', 'Remaining block'),
+        title: t('NewDashboard.BuybackPlan.RemainingBlock'),
         dataIndex: 'last_buy_back_block',
         render: (value: number, data: Record<any, any>) => {
-          const block = Number(data?.buyback_period) + Number(data?.last_buy_back_block) - blockNumber
+          const p1 = Number(data?.buyback_period) + Number(data?.last_buy_back_block)
+          const p2 = p1 - blockNumber
+          const block = p2 <= 0 ? 0 : p2
           return <BalanceShow value={block} rule="0,0" unit="Block" />
         }
       },

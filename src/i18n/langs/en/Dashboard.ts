@@ -24,7 +24,7 @@ export default {
       BuybackCycle: 'Buyback Cycle',
       BuybackPool: 'Buyback Pool',
       DRFPriceLastCycle: 'DRF Price(Last Cycle)',
-      RemainingBlock: 'Remaining block',
+      RemainingBlock: 'Remaining Block',
       EstimatedTime: 'Estimated Time',
       SerchTip: 'serch name or contract address..',
       NoResultsFound: 'No results found.'

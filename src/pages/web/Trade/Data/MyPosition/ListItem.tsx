@@ -157,7 +157,11 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     else alertLevel = 5
 
     return (
-      <DataAtom hover label={t('Trade.MyPosition.MarginRate', 'Margin Rate')} tip={t('Trade.MyPosition.MarginRateTip')}>
+      <DataAtom
+        hover
+        label={t('Trade.MyPosition.MarginRate', 'Margin Rate')}
+        tip={t('Trade.MyPosition.MarginRateTip', { Ratio: bnMul(clearingParams.marginMaintenanceRatio, 100) })}
+      >
         <span className={classNames('reminder', `${Number(variables.marginRate) >= 0 ? 'up' : 'down'}`)}>
           {riseOrFall(variables.marginRate as any)}
           {keepDecimals(Number(variables.marginRate) * 100, 2)}%

@@ -25,12 +25,12 @@ export default function GlobalUpdater(): null {
   const resetBalances = useBalancesStore((state) => state.reset)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
   const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
   const fetchBrokerInfo = useBrokerInfoStore((state) => state.fetchBrokerInfo)
   const resetBrokerInfo = useBrokerInfoStore((state) => state.resetBrokerInfo)
   const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
   const resetBrokerBound = useBrokerInfoStore((state) => state.resetBrokerBound)
+  const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
 
   const { data: tokenSpotPrices } = useTokenSpotPrices(derAddressList)
   const { data: marginIndicators } = useMarginIndicators(marginToken.address)
@@ -65,8 +65,8 @@ export default function GlobalUpdater(): null {
   // User broker info
   useEffect(() => {
     if (address) {
-      void fetchBrokerInfo(address, marginToken.address)
-      void fetchBrokerBound(address)
+      void fetchBrokerInfo('0x02d33286fe1d09e12443f9B9336e5Bc8Ce836f9F', marginToken.address)
+      void fetchBrokerBound('0x02d33286fe1d09e12443f9B9336e5Bc8Ce836f9F')
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {

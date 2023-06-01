@@ -31,7 +31,6 @@ export default function GlobalUpdater(): null {
   const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
   const resetBrokerBound = useBrokerInfoStore((state) => state.resetBrokerBound)
   const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
-
   const { data: tokenSpotPrices } = useTokenSpotPrices(derAddressList)
   const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
@@ -65,8 +64,8 @@ export default function GlobalUpdater(): null {
   // User broker info
   useEffect(() => {
     if (address) {
-      void fetchBrokerInfo('0x02d33286fe1d09e12443f9B9336e5Bc8Ce836f9F', marginToken.address)
-      void fetchBrokerBound('0x02d33286fe1d09e12443f9B9336e5Bc8Ce836f9F')
+      void fetchBrokerInfo(address, marginToken.address)
+      void fetchBrokerBound(address)
     }
 
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {

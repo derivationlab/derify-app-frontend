@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { PositionOrderTypes, Rec } from '@/typings'
 import { getDerifyExchangeContract } from '@/utils/contractHelpers'
@@ -15,7 +15,7 @@ export const useDisposableAm = (
 ) => {
   const [disposableAm, setDisposableAm] = useState<Rec | null>(null)
 
-  const func = useCallback(async () => {
+  const func = async () => {
     const contract = getDerifyExchangeContract(exchange)
     const _price = inputParameterConversion(price, 8)
     const _leverageNow = inputParameterConversion(leverageNow, 8)
@@ -35,7 +35,7 @@ export const useDisposableAm = (
         [marginToken.symbol]: '0'
       })
     }
-  }, [price, quoteToken])
+  }
 
   useEffect(() => {
     if (trader && exchange && Number(leverageNow) > 0) {

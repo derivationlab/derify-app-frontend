@@ -15,8 +15,8 @@ export const useCurrentOpenInterest = (quoteTokenAddress: string, marginTokenAdd
     ['useCurrentOpenInterest'],
     async () => {
       if (quoteTokenAddress) {
-        const data = await getCurrentPositionsAmount(quoteTokenAddress, marginTokenAddress)
-        return data?.data
+        const { data } = await getCurrentPositionsAmount(quoteTokenAddress, marginTokenAddress)
+        return data ?? null
       }
       return null
     },

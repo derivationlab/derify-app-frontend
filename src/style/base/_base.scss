@@ -111,5 +111,19 @@ body {
   }
 }
 
+.dark {
+  ::-webkit-scrollbar {
+     background: $c33;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: $c33;
+    border-radius: 5px;
+    border: 2px solid rgba($c22, .25);
+  }
+  ::-webkit-scrollbar-track-piece {
+    background: $c22;
+  }
+}
+
 $header-height: 114px;
 $header-bottom: 4px;

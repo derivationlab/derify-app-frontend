@@ -35,7 +35,8 @@ import {
   RBrokerWorkbench,
   RBrokerSignUpStep3,
   RBrokerSignUpStep1,
-  RBrokerSignUpStep2, routingWithMarginInfo
+  RBrokerSignUpStep2,
+  routingWithMarginInfo
 } from '@/pages/web/Route'
 import Trade from '@/pages/web/Trade'
 import { useMarginTokenStore } from '@/store'
@@ -45,7 +46,7 @@ import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 const Web: FC = () => {
   const { pathname } = useLocation()
   const { warning } = useRegionalJudgment()
-  console.info(useLocation())
+
   const { symbol } = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
@@ -56,8 +57,7 @@ const Web: FC = () => {
       const path = pathname.split('/')
       const find = marginTokenList.find((margin) => margin.symbol === path[1])
       const margin = find || marginTokenList[0]
-      console.info(margin)
-      // updateMarginToken({ logo: margin.logo, address: margin.margin_token, symbol: margin.symbol })
+      updateMarginToken({ logo: margin.logo, address: margin.margin_token, symbol: margin.symbol })
     }
   }, [pathname, marginTokenList])
 

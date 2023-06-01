@@ -219,5 +219,5 @@ export const routingWithMarginInfo = [
   '/mining/rank',
   '/competition/rank',
   '/competition/rank',
-  '/system/parameters',
+  '/system/parameters'
 ]

@@ -158,10 +158,10 @@ const MySpace: FC = () => {
           open: token.open,
           logo: token.logo,
           symbol: token.symbol,
-          marginBalance
+          marginBalance: Number(marginBalance)
         }
       })
-      return orderBy(_, ['apy', 'marginBalance'], 'desc')
+      return orderBy(_, ['marginBalance'], 'desc')
     }
     return []
   }, [marginBalances, pagination.data])

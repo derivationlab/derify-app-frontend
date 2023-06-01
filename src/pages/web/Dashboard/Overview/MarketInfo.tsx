@@ -132,7 +132,6 @@ const MarketInfo: FC = () => {
     setPagination((val) => ({ ...val, index }))
 
     const data = await getMarginTokenList(index)
-
     setPagination((val) => ({ ...val, data: data?.records ?? [] }))
   }
 

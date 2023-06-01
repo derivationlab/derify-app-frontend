@@ -85,7 +85,7 @@ const Select: FC<SelectProps> = ({
               ? options.map((item, index) => (
                   <li
                     key={index}
-                    className={classNames({ active: item === value })}
+                    className={classNames('web-select-options-li', { active: item === value })}
                     onClick={() => onValueChange(item)}
                   >
                     {item}
@@ -96,7 +96,7 @@ const Select: FC<SelectProps> = ({
               ? objOptionsFilter.map((item, index) => (
                   <li
                     key={index}
-                    className={classNames({ active: item.value === value })}
+                    className={classNames('web-select-options-li', { active: item.value === value })}
                     onClick={() => onValueChange(item.value)}
                   >
                     {renderer ? renderer(item) : item.label}

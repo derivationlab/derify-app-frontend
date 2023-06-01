@@ -2,11 +2,12 @@ import { isEmpty, orderBy } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useMemo, useContext } from 'react'
+import React, { FC, useMemo, useContext, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
 import Button from '@/components/common/Button'
+import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN } from '@/config/tokens'
@@ -17,20 +18,27 @@ import { usePositionRewards } from '@/hooks/usePositionRewards'
 import { useTraderVariables } from '@/hooks/useTraderVariables'
 import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenListStore } from '@/store'
+import { getMarginTokenList, useMarginTokenListStore } from '@/store'
 import { bnDiv } from '@/utils/tools'
+
+interface IPagination {
+  data: any[]
+  index: number
+}
 
 const MySpace: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
+  const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
 
+  const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const { marginProtocol } = useAllMarginProtocol(marginTokenList)
-  const { data: marginBalances } = useMarginBalances(address, marginTokenList)
+  const { marginProtocol } = useAllMarginProtocol(pagination.data)
+  const { data: marginBalances } = useMarginBalances(address, pagination.data)
   const { data: traderVariables } = useTraderVariables(address, marginProtocol)
   const { data: positionRewards } = usePositionRewards(address, marginProtocol)
   const { data: allBrokerRewards } = useBrokerRewards(address, marginProtocol)
@@ -130,7 +138,6 @@ const MySpace: FC = () => {
         title: t('Nav.MySpace.DetailInfo'),
         dataIndex: 'open',
         width: 150,
-        align: 'right',
         render: (_: string, record: Record<string, any>) => {
           return (
             <Button size="medium" disabled={!_} onClick={() => history.push(`/${record.symbol}/trade`)}>
@@ -142,9 +149,9 @@ const MySpace: FC = () => {
     ]
   }, [t, traderVariables, allBrokerRewards])
 
-  const initData = useMemo(() => {
-    if (marginTokenListLoaded && marginBalances) {
-      const _ = marginTokenList.map((token) => {
+  const sorting = useMemo(() => {
+    if (pagination.data.length && marginBalances) {
+      const _ = pagination.data.map((token) => {
         const marginBalance = marginBalances[token.symbol]
         return {
           apy: token.max_pm_apy,
@@ -154,16 +161,28 @@ const MySpace: FC = () => {
           marginBalance
         }
       })
-      return orderBy(_, ['marginBalance', 'apy'], 'desc')
+      return orderBy(_, ['apy', 'marginBalance'], 'desc')
     }
     return []
-  }, [marginBalances, marginTokenListLoaded])
+  }, [marginBalances, pagination.data])
 
   const emptyText = useMemo(() => {
     if (!marginTokenListLoaded || !marginBalances) return <Spinner small />
     if (isEmpty(marginTokenList)) return t('common.NoRecord')
     return ''
   }, [t, marginBalances, marginTokenListLoaded])
+
+  const onPagination = async (index: number) => {
+    setPagination((val) => ({ ...val, index }))
+
+    const data = await getMarginTokenList(index)
+
+    setPagination((val) => ({ ...val, data: data?.records ?? [] }))
+  }
+
+  useEffect(() => {
+    if (marginTokenList.length) setPagination((val) => ({ ...val, data: marginTokenList }))
+  }, [marginTokenList])
 
   return (
     <div className="web-table-page">
@@ -172,14 +191,15 @@ const MySpace: FC = () => {
       </header>
       <Table
         rowKey="symbol"
-        data={initData}
-        // @ts-ignore
+        data={sorting}
         columns={mobile ? mColumns : wColumns}
         className="web-broker-table web-space-table"
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
-      {/*<Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />*/}
+      {pagingParams.totalItems > 0 && (
+        <Pagination page={pagination.index} total={pagingParams.totalItems} onChange={onPagination} />
+      )}
     </div>
   )
 }

@@ -1,16 +1,17 @@
 import { orderBy } from 'lodash'
 import { create } from 'zustand'
 
-import { getMarginAddressList, getMarginTokenList } from '@/api'
+import { getMarginAddressList, getMarginTokenList as _getMarginTokenList } from '@/api'
 import { ZERO } from '@/config'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import { MarginTokenListState } from '@/store/types'
+import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 
-const _getMarginTokenList = async (): Promise<(typeof marginTokenList)[]> => {
-  const { data } = await getMarginTokenList()
-  return data ? data?.records : []
+export const getMarginTokenList = async (page = 0) => {
+  const { data } = await _getMarginTokenList(page)
+  return data
 }
 
 const getMarginDeployStatus = async (marginList: (typeof marginTokenList)[]) => {
@@ -62,20 +63,29 @@ export const marginTokenList = {
   margin_token: ''
 }
 
+export const pagingParams = {
+  totalPages: 0,
+  totalItems: 0,
+  currentPage: 0
+}
+
 const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
+  pagingParams: pagingParams,
   marginTokenList: [],
   marginAddressList: [],
   marginTokenSymbol: [],
   marginTokenListLoaded: false,
   getMarginTokenList: async () => {
-    const data = await _getMarginTokenList()
+    const data = await getMarginTokenList()
 
-    if (data.length) {
-      const deployStatus = await getMarginDeployStatus(data)
+    if (data && data.records.length) {
+      const _data = data.records
+      const deployStatus = await getMarginDeployStatus(_data)
 
-      const filter = data.filter((f) => deployStatus[f.symbol])
+      const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
       const toSort = orderBy(filter, ['max_pm_apy', 'open'], 'desc')
       set({
+        pagingParams: { currentPage: data.currentPage, totalItems: data.totalItems, totalPages: data.totalPages },
         marginTokenList: toSort,
         marginTokenSymbol: toSort.map((margin) => margin.symbol),
         marginTokenListLoaded: true

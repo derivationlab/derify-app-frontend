@@ -2,31 +2,37 @@ import classNames from 'classnames'
 import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 
-import React, { FC, useMemo, useContext } from 'react'
+import React, { FC, useMemo, useContext, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
 import Button from '@/components/common/Button'
 import DecimalShow from '@/components/common/DecimalShow'
+import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
-// import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
 import { useAllMarginPositions } from '@/hooks/useAllMarginPositions'
 import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenListStore } from '@/store'
+import { getMarginTokenList, useMarginTokenListStore } from '@/store'
 import { bnMul, keepDecimals } from '@/utils/tools'
 
 import { TableMargin } from '../c/TableCol'
 
+interface IPagination {
+  data: any[]
+  index: number
+}
+
 const MarketInfo: FC = () => {
   const history = useHistory()
-
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
+  const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
 
+  const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const marginAddressList = useMarginTokenListStore((state) => state.marginAddressList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
@@ -108,7 +114,7 @@ const MarketInfo: FC = () => {
         dataIndex: 'Margin',
         align: 'right',
         render: (_: string, data: Record<string, any>) => (
-          <Button size="medium" onClick={() => history.push(`/${data.symbol}/trade`)}>
+          <Button size="medium" disabled={!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
             GO
           </Button>
         )
@@ -121,6 +127,18 @@ const MarketInfo: FC = () => {
     if (isEmpty(marginTokenList)) return t('NewDashboard.Overview.NoResultsFound')
     return ''
   }, [t, marginTokenListLoaded])
+
+  const onPagination = async (index: number) => {
+    setPagination((val) => ({ ...val, index }))
+
+    const data = await getMarginTokenList(index)
+
+    setPagination((val) => ({ ...val, data: data?.records ?? [] }))
+  }
+
+  useEffect(() => {
+    if (marginTokenList.length) setPagination((val) => ({ ...val, data: marginTokenList }))
+  }, [marginTokenList])
 
   return (
     <div className="web-dashboard-overview-market">
@@ -135,14 +153,15 @@ const MarketInfo: FC = () => {
       </header>
       <Table
         rowKey="symbol"
-        data={marginTokenList}
-        // @ts-ignore
+        data={pagination.data}
         columns={mobile ? mColumns : wColumns}
         className={classNames('web-broker-table', { 'web-space-table': mobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
-      {/*<Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />*/}
+      {pagingParams.totalItems > 0 && (
+        <Pagination page={pagination.index} total={pagingParams.totalItems} onChange={onPagination} />
+      )}
     </div>
   )
 }

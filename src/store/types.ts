@@ -1,6 +1,6 @@
 import { DerAddressList, derivativeList } from '@/store/useDerivativeList'
 import { marginToken } from '@/store/useMarginToken'
-import { marginTokenList } from '@/store/useMarginTokenList'
+import { marginTokenList, pagingParams } from '@/store/useMarginTokenList'
 import { quoteToken } from '@/store/useQuoteToken'
 import { SharingEvents } from '@/store/useSharing'
 import { InitialTraderVariablesType } from '@/store/useTraderVariables'
@@ -52,11 +52,6 @@ export interface PositionState {
   reset: (data: { positionOrd?: Rec[]; profitLossOrd?: Rec[]; loaded?: boolean }) => void
 }
 
-export interface PoolsInfoState {
-  bondPoolBalance: string
-  updateBondPoolBalance: (p: string) => void
-}
-
 export interface BrokerInfoState {
   brokerInfo: Rec
   brokerBound: Rec
@@ -66,13 +61,6 @@ export interface BrokerInfoState {
   fetchBrokerBound: (account: string) => Promise<void>
   resetBrokerInfo: () => void
   resetBrokerBound: () => void
-}
-
-export interface TraderEarningState {
-  rewardsInfo: Rec
-  stakingInfo: Rec
-  updateStakingInfo: (p: Rec) => void
-  updateRewardsInfo: (p: Rec) => void
 }
 
 export interface ProtocolConfigState {
@@ -92,6 +80,7 @@ export interface MarginTokenState {
 }
 
 export interface MarginTokenListState {
+  pagingParams: typeof pagingParams
   marginTokenList: (typeof marginTokenList)[]
   marginTokenSymbol: string[]
   marginAddressList: string[]
@@ -128,12 +117,6 @@ export interface OpeningMinLimitState {
   openingMinLimit: string
   openingMinLimitLoaded: boolean
   getOpeningMinLimit: (address: string) => Promise<void>
-}
-
-export interface MarginPriceState {
-  marginPrice: string
-  marginPriceLoaded: boolean
-  getMarginPrice: (address: string) => Promise<void>
 }
 
 export interface TraderVariablesState {

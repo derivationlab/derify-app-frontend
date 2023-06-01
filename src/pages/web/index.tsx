@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { getIpLocation } from '@/api'
 import { Redirect, Switch, Route } from '@/components/common/Route'
 import Toast from '@/components/common/Toast'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 import Header from '@/components/web/Header'
+import { useRegionalJudgment } from '@/hooks/useRegionalJudgment'
 import BrokerBind from '@/pages/web/Broker/Bind'
 import BrokerBindList from '@/pages/web/Broker/Bind/List'
 import BrokerBound from '@/pages/web/Broker/MyBroker'
@@ -35,7 +35,7 @@ import {
   RBrokerWorkbench,
   RBrokerSignUpStep3,
   RBrokerSignUpStep1,
-  RBrokerSignUpStep2
+  RBrokerSignUpStep2, routingWithMarginInfo
 } from '@/pages/web/Route'
 import Trade from '@/pages/web/Trade'
 import { useMarginTokenStore } from '@/store'
@@ -44,27 +44,21 @@ import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 
 const Web: FC = () => {
   const { pathname } = useLocation()
-
-  const [visible, setVisible] = useState<boolean>(false)
-
+  const { warning } = useRegionalJudgment()
+  console.info(useLocation())
   const { symbol } = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
 
   useEffect(() => {
-    const func = async () => {
-      const data = await getIpLocation()
-      setVisible(!data)
+    const includes = routingWithMarginInfo.find((r) => pathname.includes(r))
+    if (includes) {
+      const path = pathname.split('/')
+      const find = marginTokenList.find((margin) => margin.symbol === path[1])
+      const margin = find || marginTokenList[0]
+      console.info(margin)
+      // updateMarginToken({ logo: margin.logo, address: margin.margin_token, symbol: margin.symbol })
     }
-
-    void func()
-  }, [])
-
-  useEffect(() => {
-    const path = pathname.split('/')
-    const find = marginTokenList.find((margin) => margin.symbol === path[1])
-    const margin = find || marginTokenList[0]
-    updateMarginToken({ logo: margin.logo, address: margin.margin_token, symbol: margin.symbol })
   }, [pathname, marginTokenList])
 
   return (
@@ -215,7 +209,7 @@ const Web: FC = () => {
         <Route path="*" render={() => <Redirect to={`/${symbol}/trade`} />} />
       </Switch>
       <Toast />
-      <AccessDeniedDialog visible={visible} />
+      <AccessDeniedDialog visible={warning} />
     </>
   )
 }

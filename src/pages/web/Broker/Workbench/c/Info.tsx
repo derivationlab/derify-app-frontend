@@ -12,7 +12,7 @@ import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import ExtendDialog from '@/components/common/Wallet/Extend'
 import { API_PREFIX_URL } from '@/config'
-import { useExtendPeriod } from '@/hooks/useBroker'
+import { useBrokerOperation } from '@/hooks/useBrokerOperation'
 import { useBrokerInfoStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 import { copyText } from '@/utils/tools'
@@ -23,7 +23,7 @@ const Info: FC = () => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
 
-  const { extend } = useExtendPeriod()
+  const { burnEdrfExtendValidPeriod } = useBrokerOperation()
 
   const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
 
@@ -40,7 +40,7 @@ const Info: FC = () => {
       setVisibleStatus('')
 
       if (signer) {
-        const status = await extend(amount, signer)
+        const status = await burnEdrfExtendValidPeriod(amount, signer)
 
         if (status) {
           // succeed

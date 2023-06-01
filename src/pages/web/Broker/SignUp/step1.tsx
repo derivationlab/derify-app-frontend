@@ -8,8 +8,8 @@ import { useHistory } from 'react-router-dom'
 import Button from '@/components/common/Button'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import tokens from '@/config/tokens'
-import { useApplyBroker } from '@/hooks/useBroker'
 import { useBrokerExtend } from '@/hooks/useBrokerExtend'
+import { useBrokerOperation } from '@/hooks/useBrokerOperation'
 import { useBalancesStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 import { isET, isLT, keepDecimals, nonBigNumberInterception, thousandthsDivision } from '@/utils/tools'
@@ -21,7 +21,7 @@ const BrokerSignUpStep1: FC = () => {
   const { data: signer } = useSigner()
   const { address } = useAccount()
 
-  const { applyBroker } = useApplyBroker()
+  const { applyBroker } = useBrokerOperation()
   const { brokerExtend } = useBrokerExtend()
 
   const balances = useBalancesStore((state) => state.balances)

@@ -9,8 +9,8 @@ import { Link } from 'react-router-dom'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
-import { useBrokerInfo } from '@/hooks/useBroker'
-import { useWithdrawReward } from '@/hooks/useBroker'
+import { useBrokerAssets } from '@/hooks/useBrokerAssets'
+import { useBrokerOperation } from '@/hooks/useBrokerOperation'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useBrokerInfoStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
@@ -22,19 +22,19 @@ const Dashboard: FC = () => {
   const { data: signer } = useSigner()
 
   const { mobile } = useContext(MobileContext)
-  const { withdraw } = useWithdrawReward()
+  const { withdrawBrokerReward } = useBrokerOperation()
 
   const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
-  const { data: brokerAssets } = useBrokerInfo(address, protocolConfig?.rewards)
+  const { data: brokerAssets } = useBrokerAssets(address, protocolConfig?.rewards)
 
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     if (signer && protocolConfig) {
-      const status = await withdraw(signer, protocolConfig.rewards)
+      const status = await withdrawBrokerReward(signer, protocolConfig.rewards)
 
       if (status) {
         // succeed

@@ -209,3 +209,15 @@ export const RBrokerSignUpStep3 = (props: PropsWithChildren<any>) => {
     return <Spinner fixed />
   }, [address, brokerInfo, brokerInfoLoaded])
 }
+
+export const routingWithMarginInfo = [
+  '/data',
+  '/earn',
+  '/trade',
+  '/broker/rank',
+  '/broker/workbench',
+  '/mining/rank',
+  '/competition/rank',
+  '/competition/rank',
+  '/system/parameters',
+]

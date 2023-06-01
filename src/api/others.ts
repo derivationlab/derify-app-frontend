@@ -1,4 +1,5 @@
 import { KLineTimes } from '@/data'
+import { useRegionalJudgment } from '@/hooks/useRegionalJudgment'
 import { get, post } from '@/utils/http'
 
 export const getKLineDAT = async (token: string, time: number, endTime: number, limit: number) => {
@@ -8,7 +9,7 @@ export const getKLineDAT = async (token: string, time: number, endTime: number, 
   return data
 }
 
-export const getIpLocation = async () => {
+export const getRegionalJudgment = async () => {
   const response = await get('https://bnb.openleverage.finance/api/ip/disable')
   return response
 }

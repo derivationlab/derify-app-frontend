@@ -33,8 +33,8 @@ export const getBrokerRanking = async (trader: string, marginToken: string) => {
   return response
 }
 
-export const getBrokersRankList = async (page: number, offset: number, marginToken: string) => {
-  const response = await get(`api/brokers_rank_list/${marginToken}/${page}/${offset}`)
+export const getBrokersRankList = async (marginToken: string, page = 0, size = 10) => {
+  const response = await get(`api/brokers_rank_list/${marginToken}/${page}/${size}`)
   return response
 }
 

@@ -46,8 +46,8 @@ const Rank: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const fetchData = useCallback(async (index = 0) => {
-    const { data } = await getBrokersRankList(index, 10, marginToken.address)
-
+    const { data } = await getBrokersRankList(marginToken.address, index)
+    console.info((data?.records ?? []).find((l: any) => l.borker === '0xfAaf5D88609fd5Ef171671da0189019e7d4D4943'))
     dispatch({
       type: 'SET_RECORDS',
       payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }

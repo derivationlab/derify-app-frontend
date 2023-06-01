@@ -42,31 +42,33 @@ const Options: FC<Props> = ({ onChange }) => {
         <input type="text" placeholder={t('Trade.kline.SearchTip')} onChange={_onChange} />
         <i />
       </div>
-      <ul>
-        {options.map((item, index) => (
-          <li key={index} onClick={() => onChange(item, index)}>
-            {mobile ? (
-              <>
-                <aside>
+      <div className="web-trade-symbol-select-container">
+        <ul>
+          {options.map((item, index) => (
+            <li key={index} onClick={() => onChange(item, index)}>
+              {mobile ? (
+                <>
+                  <aside>
+                    <h5>{item.name}</h5>
+                    <BalanceShow value={marginIndicators?.[item.token]?.apy ?? 0} percent unit="APR" />
+                  </aside>
+                  <aside>
+                    <BalanceShow value={tokenSpotPrices?.[item.name] ?? 0} unit="" />
+                    <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate ?? 0} />
+                  </aside>
+                </>
+              ) : (
+                <>
                   <h5>{item.name}</h5>
-                  <BalanceShow value={marginIndicators?.[item.token]?.apy ?? 0} percent unit="APR" />
-                </aside>
-                <aside>
-                  <BalanceShow value={tokenSpotPrices?.[item.name] ?? 0} unit="" />
+                  <BalanceShow value={keepDecimals(tokenSpotPrices?.[item.name] ?? 0, 2)} unit="" />
                   <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate ?? 0} />
-                </aside>
-              </>
-            ) : (
-              <>
-                <h5>{item.name}</h5>
-                <BalanceShow value={keepDecimals(tokenSpotPrices?.[item.name] ?? 0, 2)} unit="" />
-                <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate ?? 0} />
-                <BalanceShow value={marginIndicators?.[item.token]?.apy ?? 0} percent unit="APR" />
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+                  <BalanceShow value={marginIndicators?.[item.token]?.apy ?? 0} percent unit="APR" />
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }

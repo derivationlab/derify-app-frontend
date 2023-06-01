@@ -110,7 +110,7 @@ const CompetitionRank: FC = () => {
 
     if (data) {
       const _ = data.map((d: Record<string, any>) => ({
-        label: `${upperFirst(d.status)} | ${dayjs(d.start_time).utc().format('MM/DD/YYYY HH:mm:ss')} UTC`,
+        label: `${upperFirst(d.status)} | ${dayjs(d.start_time).format('MM/DD/YYYY HH:mm:ss')}`,
         value: `${d.id}#${d.status}`
       }))
 

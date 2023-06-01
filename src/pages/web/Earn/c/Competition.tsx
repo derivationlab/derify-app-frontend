@@ -15,7 +15,7 @@ import { useRankReward } from '@/hooks/useDashboard'
 import { useGrantRatios } from '@/hooks/useGrantRatios'
 import { useGrantTotalAmount } from '@/hooks/useGrantTotalAmount'
 import { useGrantTotalCount } from '@/hooks/useGrantTotalCount'
-import { useWithdrawRankReward } from '@/hooks/useTrading'
+import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -31,7 +31,7 @@ const Competition: FC = () => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
-  const { withdraw } = useWithdrawRankReward()
+  const { withdrawRankReward } = useMiningOperation()
   const { data: grantRatio } = useGrantRatios(marginToken.address, address)
   const { data: grantAmount } = useGrantTotalAmount(marginToken.address)
   const { data: activeGrant } = useGrantTotalCount(marginToken.address)
@@ -41,7 +41,7 @@ const Competition: FC = () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     if (protocolConfig) {
-      const status = await withdraw(protocolConfig.rewards, signer)
+      const status = await withdrawRankReward(protocolConfig.rewards, signer)
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))

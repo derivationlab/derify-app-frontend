@@ -8,7 +8,7 @@ import LeverageSelect from '@/components/common/Form/LeverageSelect'
 import NotConnect from '@/components/web/NotConnect'
 import { isOpeningMinLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
-import { usePositionOperation } from '@/hooks/useTrading'
+import { usePositionOperation } from '@/hooks/usePositionOperation'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
 import { reducer, stateInit } from '@/reducers/opening'
 import {

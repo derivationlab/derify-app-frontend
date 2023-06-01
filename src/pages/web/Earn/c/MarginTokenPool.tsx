@@ -10,9 +10,9 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
 import { useBankBond } from '@/hooks/useBankBond'
+import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { usePoolEarning } from '@/hooks/usePoolEarning'
 import { useTraderBondBalance } from '@/hooks/useTraderBondBalance'
-import { useDepositBondToBank, useExchangeBond, useRedeemBondFromBank, useWithdrawAllBond } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
@@ -31,10 +31,7 @@ const MarginTokenPool: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
-  const { redeem } = useRedeemBondFromBank()
-  const { deposit } = useDepositBondToBank()
-  const { exchange } = useExchangeBond()
-  const { withdraw } = useWithdrawAllBond()
+  const { redeemBondFromBank, depositBondToBank, withdrawAllBond, exchangeBond } = useMiningOperation()
   const { data: bankBalance } = useBankBond(protocolConfig?.rewards)
   const { data: rewardsInfo } = usePoolEarning(address, protocolConfig?.rewards)
   const { data: bondBalance, isLoading } = useTraderBondBalance(address, marginToken.address)
@@ -50,7 +47,7 @@ const MarginTokenPool: FC = () => {
       closeDialog()
 
       if (protocolConfig) {
-        const status = await deposit(protocolConfig.rewards, protocolConfig.bMarginToken, amount, signer)
+        const status = await depositBondToBank(protocolConfig.rewards, protocolConfig.bMarginToken, amount, signer)
 
         if (status) {
           // succeed
@@ -75,7 +72,7 @@ const MarginTokenPool: FC = () => {
       closeDialog()
 
       if (protocolConfig) {
-        const status = await redeem(protocolConfig.rewards, amount, signer)
+        const status = await redeemBondFromBank(protocolConfig.rewards, amount, signer)
         if (status) {
           // succeed
           window.toast.success(t('common.success', 'success'))
@@ -107,7 +104,7 @@ const MarginTokenPool: FC = () => {
       closeDialog()
 
       if (protocolConfig) {
-        const status = await exchange(protocolConfig.rewards, protocolConfig.bMarginToken, amount, signer)
+        const status = await exchangeBond(protocolConfig.rewards, protocolConfig.bMarginToken, amount, signer)
 
         if (status) {
           // succeed
@@ -129,7 +126,7 @@ const MarginTokenPool: FC = () => {
     closeDialog()
 
     if (protocolConfig) {
-      const status = await withdraw(protocolConfig.rewards, signer)
+      const status = await withdrawAllBond(protocolConfig.rewards, signer)
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))

@@ -11,8 +11,8 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
 import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
 import { useCurrentOpenInterest } from '@/hooks/useCurrentOpenInterest'
+import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { usePoolEarning } from '@/hooks/usePoolEarning'
-import { useWithdrawPositionReward } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useTraderVariablesStore, useMarginIndicatorsStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -30,7 +30,7 @@ const PositionMining: FC = () => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
 
-  const { withdraw } = useWithdrawPositionReward()
+  const { withdrawPositionReward } = useMiningOperation()
   const { data: rewardsInfo } = usePoolEarning(address, protocolConfig?.rewards)
   const { data: currentOpenInterest } = useCurrentOpenInterest('all', marginToken.address)
 
@@ -58,7 +58,7 @@ const PositionMining: FC = () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     if (protocolConfig) {
-      const status = await withdraw(protocolConfig.rewards, signer)
+      const status = await withdrawPositionReward(protocolConfig.rewards, signer)
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))

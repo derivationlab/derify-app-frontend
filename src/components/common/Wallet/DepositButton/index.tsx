@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
-import { useMarginOperation } from '@/hooks/useTrading'
+import { useMarginOperation } from '@/hooks/useMarginOperation'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 import { PubSubEvents } from '@/typings'

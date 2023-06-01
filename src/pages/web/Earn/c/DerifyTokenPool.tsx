@@ -11,10 +11,10 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
 import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
 import { useCurrentIndex } from '@/hooks/useCurrentIndex'
+import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { usePoolStaking } from '@/hooks/usePoolStaking'
 import { useStakingDRF } from '@/hooks/useStakingDRF'
 import { useTraderEDRFBalance } from '@/hooks/useTraderEDRFBalance'
-import { useRedeemDrf, useStakingDrf, useWithdrawAllEdrf } from '@/hooks/useTrading'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -32,9 +32,7 @@ const DerifyTokenPool: FC = () => {
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
-  const { redeem } = useRedeemDrf()
-  const { staking } = useStakingDrf()
-  const { withdraw } = useWithdrawAllEdrf()
+  const { redeemDrf, stakingDrf, withdrawAllEdrf } = useMiningOperation()
   const { data: drfBalance } = useStakingDRF()
   const { data: stakingInfo } = usePoolStaking(address)
   const { data: dashboardDAT } = useCurrentIndex(marginToken.address)
@@ -50,7 +48,7 @@ const DerifyTokenPool: FC = () => {
 
       closeDialog()
 
-      const status = await staking(amount, signer)
+      const status = await stakingDrf(amount, signer)
 
       if (status) {
         // succeed
@@ -73,7 +71,7 @@ const DerifyTokenPool: FC = () => {
 
       closeDialog()
 
-      const status = await redeem(amount, signer)
+      const status = await redeemDrf(amount, signer)
       if (status) {
         // succeed
         window.toast.success(t('common.success', 'success'))
@@ -90,7 +88,7 @@ const DerifyTokenPool: FC = () => {
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
-    const status = await withdraw(signer)
+    const status = await withdrawAllEdrf(signer)
     if (status) {
       // succeed
       window.toast.success(t('common.success', 'success'))

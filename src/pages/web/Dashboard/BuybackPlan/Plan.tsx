@@ -15,7 +15,7 @@ import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { Rec } from '@/typings'
-import { isGT, isGTET, isLT } from '@/utils/tools'
+import { isGT, isGTET, isLT, nonBigNumberInterception } from '@/utils/tools'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
 
@@ -40,8 +40,9 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         align: 'right',
         render: (symbol: string, data: Record<string, any>) => {
           let cls = ''
-          if (isGTET(data?.last_drf_price, tokenPrice)) cls = 'rise'
-          if (isLT(data?.last_drf_price, tokenPrice) && isGT(data?.last_drf_price, 0)) cls = 'rise'
+          const price = nonBigNumberInterception(data?.last_drf_price ?? 0, 4)
+          if (isGTET(price, tokenPrice)) cls = 'rise'
+          if (isLT(price, tokenPrice) && isGT(price, 0)) cls = 'fall'
           return (
             <>
               {buyBackInfo ? (
@@ -50,11 +51,7 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
                 <Spinner text="loading" />
               )}
               <div className={cls}>
-                <BalanceShow
-                  value={data?.last_drf_price}
-                  unit={VALUATION_TOKEN_SYMBOL}
-                  decimal={Number(data?.last_drf_price) > 0 ? 4 : 2}
-                />
+                <BalanceShow value={price} unit={VALUATION_TOKEN_SYMBOL} decimal={Number(price) > 0 ? 4 : 2} />
               </div>
             </>
           )
@@ -100,11 +97,12 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         dataIndex: 'last_drf_price',
         render: (value: number) => {
           let cls = ''
-          if (isGTET(value, tokenPrice)) cls = 'rise'
-          if (isLT(value, tokenPrice) && isGT(value, 0)) cls = 'rise'
+          const price = nonBigNumberInterception(value, 4)
+          if (isGTET(price, tokenPrice)) cls = 'rise'
+          if (isLT(price, tokenPrice) && isGT(price, 0)) cls = 'fall'
           return (
             <div className={cls}>
-              <BalanceShow value={value} unit={VALUATION_TOKEN_SYMBOL} decimal={Number(value) > 0 ? 4 : 2} />
+              <BalanceShow value={price} unit={VALUATION_TOKEN_SYMBOL} decimal={Number(price) > 0 ? 4 : 2} />
             </div>
           )
         }

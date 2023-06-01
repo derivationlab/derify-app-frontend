@@ -27,7 +27,7 @@ const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo
   const { data: currentIndex } = useAllCurrentIndex(marginTokenList)
 
   const tokenDecimal = useMemo(() => {
-    if (tokenPrice === 0) return 2
+    if (Number(tokenPrice) === 0) return 2
     if (Number(tokenPrice) < 1 && Number(tokenPrice) > 0) return 4
     return 2
   }, [tokenPrice])
@@ -62,15 +62,19 @@ const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.CurrentDRFPrice', '', { Coin: PLATFORM_TOKEN.symbol })} </header>
         <section>
-          <BalanceShow value={tokenPrice} decimal={tokenDecimal} />
-          <u>{VALUATION_TOKEN_SYMBOL}</u>
+          <Skeleton rowsProps={{ rows: 1 }} animation loading={Number(tokenPrice) === 0}>
+            <BalanceShow value={tokenPrice} decimal={tokenDecimal} />
+            <u>{VALUATION_TOKEN_SYMBOL}</u>
+          </Skeleton>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.TotalDestroyed', 'Total Destroyed')}</header>
         <section>
-          <BalanceShow value={totalDestroyed} />
-          <u>{PLATFORM_TOKEN.symbol}</u>
+          <Skeleton rowsProps={{ rows: 1 }} animation loading={Number(totalDestroyed) === 0}>
+            <BalanceShow value={totalDestroyed} />
+            <u>{PLATFORM_TOKEN.symbol}</u>
+          </Skeleton>
         </section>
       </div>
       <div className="web-dashboard-plan-datas-item">

@@ -50,7 +50,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             side: PositionSideTypes.long,
             token: calls[i].token,
             leverage: formatUnits(long.leverage, 8),
-            contract: calls[i].address,
+
             derivative: calls[i].derivative,
             averagePrice: formatUnits(long.price, 8),
             stopLossPrice: priceFormat(longOrderStopLossPosition),
@@ -67,7 +67,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             side: PositionSideTypes.short,
             token: calls[i].token,
             leverage: formatUnits(short.leverage, 8),
-            contract: calls[i].address,
+
             derivative: calls[i].derivative,
             averagePrice: formatUnits(short.price, 8),
             stopLossPrice: priceFormat(shortOrderStopLossPosition),
@@ -88,7 +88,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
               token: calls[i].token,
               price,
               volume,
-              contract: calls[i].address,
+
               leverage: formatUnits(order.leverage),
               timestamp: String(order.timestamp),
               orderType: PositionTriggerTypes.Limit,
@@ -110,7 +110,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
               token: calls[i].token,
               price,
               volume,
-              contract: calls[i].address,
+
               leverage: formatUnits(order.leverage),
               timestamp: String(order.timestamp),
               orderType: PositionTriggerTypes.Limit,
@@ -131,7 +131,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             token: calls[i].token,
             price,
             volume,
-            contract: calls[i].address,
+
             leverage: formatUnits(long.leverage),
             orderType: PositionTriggerTypes.StopProfit,
             timestamp: String(longOrderStopProfitPosition.timestamp),
@@ -151,7 +151,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             token: calls[i].token,
             price,
             volume,
-            contract: calls[i].address,
+
             leverage: formatUnits(long.leverage),
             orderType: PositionTriggerTypes.StopLoss,
             timestamp: String(longOrderStopLossPosition.timestamp),
@@ -171,7 +171,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             token: calls[i].token,
             price,
             volume,
-            contract: calls[i].address,
+
             leverage: formatUnits(short.leverage),
             orderType: PositionTriggerTypes.StopLoss,
             timestamp: String(shortOrderStopLossPosition.timestamp),
@@ -191,7 +191,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             token: calls[i].token,
             price,
             volume,
-            contract: calls[i].address,
+
             leverage: formatUnits(short.leverage),
             orderType: PositionTriggerTypes.StopProfit,
             timestamp: String(shortOrderStopProfitPosition.timestamp),

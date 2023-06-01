@@ -45,7 +45,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [data, spotPrice])
 
   const memoChangeRate = useMemo(() => {
-    const base = marginIndicators?.[data?.contract]?.price_change_rate ?? 0
+    const base = marginIndicators?.[data?.token]?.price_change_rate ?? 0
     return bnMul(base, 100)
   }, [marginIndicators])
 

@@ -47,7 +47,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   }, [data])
 
   const memoChangeRate = useMemo(() => {
-    return bnMul(marginIndicators?.[data?.contract]?.price_change_rate ?? 0, 100)
+    return bnMul(marginIndicators?.[data?.token]?.price_change_rate ?? 0, 100)
   }, [marginIndicators])
 
   const memoTakeProfit = useMemo(() => {

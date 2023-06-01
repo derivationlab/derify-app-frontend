@@ -13,6 +13,7 @@ import { PLATFORM_TOKEN } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { keepDecimals } from '@/utils/tools'
 
 import { RowTime, calcShortHash, calcTimeStr } from './common'
@@ -80,7 +81,7 @@ const History: FC = () => {
   const { mobile } = useContext(MobileContext)
   const { address } = useAccount()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const fetchData = async (index = 0) => {
     if (address) {
@@ -126,8 +127,8 @@ const History: FC = () => {
 
         return (
           <>
-            <RowAmount text={usd_amount} coin={marginToken} />
-            <RowAmount text={drf_amount} coin="DRF" />
+            <RowAmount text={usd_amount} coin={marginToken.symbol} />
+            <RowAmount text={drf_amount} coin={PLATFORM_TOKEN.symbol} />
           </>
         )
       }
@@ -141,8 +142,8 @@ const History: FC = () => {
         const drf_balance = keepDecimals(data?.drf_balance ?? 0, PLATFORM_TOKEN.decimals)
         return (
           <>
-            <RowBalance text={usd_balance} coin={marginToken} />
-            <RowBalance text={drf_balance} coin="DRF" />
+            <RowBalance text={usd_balance} coin={marginToken.symbol} />
+            <RowBalance text={drf_balance} coin={PLATFORM_TOKEN.symbol} />
           </>
         )
       }

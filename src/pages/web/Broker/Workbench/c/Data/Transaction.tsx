@@ -95,7 +95,7 @@ const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
       <strong className={classNames({ up }, { down })}>
         {Math.abs(data.pnl_margin_token) === 0 ? '-' : `${judgeUpsAndDowns(data.pnl_margin_token)}${pnl_margin_token}`}
       </strong>
-      <em>{marginToken}</em>
+      <em>{marginToken.symbol}</em>
     </div>
   )
 }
@@ -107,7 +107,7 @@ const Transaction: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const fetchData = async (index = 0) => {
     if (address) {

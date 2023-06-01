@@ -13,6 +13,7 @@ import { EXPLORER_SCAN_URL } from '@/config'
 import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 
 import { RowTime, calcShortHash } from './common'
 
@@ -57,7 +58,7 @@ const Trader: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const fetchData = async (index = 0) => {
     if (address) {
@@ -126,7 +127,7 @@ const Trader: FC = () => {
         emptyText={memoEmptyText}
         columns={mobile ? mobileColumns : webColumns}
         data={state.records.records}
-        rowKey="update_time"
+        rowKey="trader"
       />
       <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
     </>

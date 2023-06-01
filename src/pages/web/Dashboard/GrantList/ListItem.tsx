@@ -5,7 +5,6 @@ import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Image from '@/components/common/Image'
-import { STATIC_RESOURCES_URL } from '@/config'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { grantTargetOptions, grantStateOptions } from '@/reducers/addGrant'
 import { useMarginTokenListStore } from '@/store'
@@ -66,11 +65,11 @@ const ListItem: FC<Props> = ({ data }) => {
       </dl>
       <dl>
         <dt>{t('NewDashboard.GrantList.Start', 'Start')}</dt>
-        <dd>{dayjs(data.start_time).utc().format('MM/DD/YYYY HH:mm:ss')} UTC</dd>
+        <dd>{dayjs(data.start_time).format('MM/DD/YYYY HH:mm:ss')}</dd>
       </dl>
       <dl>
         <dt>{t('NewDashboard.GrantList.End', 'End')}</dt>
-        <dd>{dayjs(data.end_time).utc().format('MM/DD/YYYY HH:mm:ss')} UTC</dd>
+        <dd>{dayjs(data.end_time).format('MM/DD/YYYY HH:mm:ss')}</dd>
       </dl>
     </div>
   )

@@ -47,7 +47,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     const format = 'MM/DD/YYYY HH:mm:ss'
     const start = state.cliffDays * 86400000
     const end = (Number(state.grantDays) + Number(state.cliffDays)) * 86400000
-    return [dayjs().add(start).utc().format(format), dayjs().add(end).utc().format(format)]
+    return [dayjs().add(start).format(format), dayjs().add(end).format(format)]
   }, [state.grantDays, state.cliffDays])
 
   const marginOptions = useMemo(() => {
@@ -156,7 +156,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             </div>
             <div className="web-dashboard-add-grant-dialog-volume">
               <p>
-                Max: <em>{keepDecimals(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2, true)}</em> {PLATFORM_TOKEN.symbol}
+                Max: <em>{keepDecimals(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2)}</em> {PLATFORM_TOKEN.symbol}
               </p>
               <AmountInput
                 max={nonBigNumberInterception(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2)}
@@ -223,11 +223,11 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             </dl>
             <dl>
               <dt>{t('NewDashboard.GrantList.Start', 'Start')}</dt>
-              <dd>{periodDate[0]} UTC</dd>
+              <dd>{periodDate[0]}</dd>
             </dl>
             <dl>
               <dt>{t('NewDashboard.GrantList.End', 'End')}</dt>
-              <dd>{periodDate[1]} UTC</dd>
+              <dd>{periodDate[1]}</dd>
             </dl>
           </div>
           <Button

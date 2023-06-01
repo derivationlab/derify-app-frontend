@@ -56,7 +56,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
         .map((token) => {
           if (token.open > 0)
             return {
-              value: token.symbol,
+              value: token.margin_token,
               label: token.symbol,
               icon: token.logo
             }
@@ -93,8 +93,8 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     dispatch({ type: 'SET_AMOUNT_INP', payload: '' })
     dispatch({ type: 'SET_GRANT_DAYS', payload: 1 })
     dispatch({ type: 'SET_CLIFF_DAYS', payload: 0 })
-    dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].symbol })
     dispatch({ type: 'SET_GRANT_TARGET', payload: grantTarget[0].value })
+    dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].margin_token })
   }
 
   const addGrantConfirm = () => {
@@ -103,7 +103,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
 
   useEffect(() => {
     if (marginTokenList.length) {
-      dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].symbol })
+      dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].margin_token })
     }
   }, [marginTokenList])
 

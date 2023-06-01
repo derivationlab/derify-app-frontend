@@ -4,7 +4,7 @@ import React, { FC, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useAddGrant } from '@/hooks/useDashboard'
-import { useProtocolConfigStore } from '@/store'
+import { getProtocolConfig } from '@/store'
 import { PubSubEvents } from '@/typings'
 
 import AddGrantDialog from './AddGrantDialog'
@@ -14,12 +14,12 @@ const AddGrant: FC = () => {
   const [visible, setVisible] = useState(false)
   const { addGrantPlan } = useAddGrant()
 
-  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-
   const _addGrantPlan = async (token: string, type: string, amount: string, days1: number, days2: number) => {
     setVisible(false)
 
     const toast = window.toast.loading(t('common.pending', 'pending...'))
+
+    const protocolConfig = await getProtocolConfig(token)
 
     if (protocolConfig) {
       const config = protocolConfig[type as 'mining' | 'awards' | 'rank']

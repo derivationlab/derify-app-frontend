@@ -37,7 +37,7 @@ const MarginToken: FC = () => {
           marginBalance
         }
       })
-      return orderBy(_, ['marginBalance', 'apy'], 'desc')
+      return orderBy(_, ['apy', 'marginBalance'], 'desc')
     }
     return []
   }, [marginBalances, marginTokenList])

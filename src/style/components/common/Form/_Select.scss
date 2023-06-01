@@ -24,7 +24,7 @@
     position: absolute;left: 0;top: 56px;padding: 12px;background: $cff;border-radius: 24px;
     box-shadow: 0px 0px 8px rgba($c00, 0.2);display: none;min-width: 170px;z-index: 10;
     ul {
-      max-height: 480px;overflow-y: auto;padding: 12px;
+      max-height: 280px;overflow-y: auto;padding: 12px;
       li {
         height: 48px;border-radius: 24px;display: flex;align-items: center;justify-content: center;
         padding: 0 24px;white-space: nowrap;cursor: pointer;

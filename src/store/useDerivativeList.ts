@@ -94,6 +94,7 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
   derivativeList: [],
   derAddressList: null,
   posMaxLeverage: null,
+  derivativeListOrigin: [],
   derAddressListLoaded: false,
   derivativeListLoaded: false,
   posMaxLeverageLoaded: false,
@@ -102,10 +103,14 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
 
     const records = data?.records ?? []
     const filter = records.filter((r: Rec) => r.open)
-    set({ derivativeList: filter.length ? filter : [], derivativeListLoaded: true })
+    set({
+      derivativeList: filter.length ? filter : [],
+      derivativeListOrigin: records,
+      derivativeListLoaded: true
+    })
   },
   getDerAddressList: async (factory: string) => {
-    const derAddressList = await getDerAddressList(factory, get().derivativeList)
+    const derAddressList = await getDerAddressList(factory, get().derivativeListOrigin)
     set({ derAddressList, derAddressListLoaded: true })
   },
   getPosMaxLeverage: async () => {

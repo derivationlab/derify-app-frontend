@@ -93,6 +93,7 @@ export interface DerivativeListState {
   derAddressList: DerAddressList | null
   posMaxLeverage: { [key: string]: string } | null
   derivativeList: (typeof derivativeList)[]
+  derivativeListOrigin: (typeof derivativeList)[]
   derivativeListLoaded: boolean
   posMaxLeverageLoaded: boolean
   derAddressListLoaded: boolean

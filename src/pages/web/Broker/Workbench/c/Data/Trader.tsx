@@ -71,7 +71,7 @@ const Trader: FC = () => {
     }
   }
 
-  const pageChange = (index: number) => {
+  const onPagination = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
     void fetchData(index)
@@ -129,7 +129,7 @@ const Trader: FC = () => {
         data={state.records.records}
         rowKey="trader"
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
     </>
   )
 }

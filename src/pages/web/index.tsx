@@ -51,6 +51,7 @@ const Web: FC = () => {
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
 
+  // todo 需要一个根据名称来快速查询是否是保证金的接口
   useEffect(() => {
     const includes = routingWithMarginInfo.find((r) => pathname.includes(r))
     if (includes) {

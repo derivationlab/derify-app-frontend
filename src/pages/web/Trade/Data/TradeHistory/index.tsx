@@ -30,7 +30,7 @@ const TradeHistory: FC = () => {
     }
   }
 
-  const pageChange = (index: number) => {
+  const onPagination = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
     void fetchData(index)
@@ -55,7 +55,7 @@ const TradeHistory: FC = () => {
     <div className="web-trade-data-wrap">
       <div className="web-trade-data-list">{memoTradeHistory}</div>
       {state.records.totalItems > 0 && (
-        <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
+        <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
       )}
     </div>
   )

@@ -142,7 +142,7 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
     })
   }
 
-  const pageChange = (index: number) => {
+  const onPagination = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
     void _getBuyBackPlans(index)
@@ -173,7 +173,7 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
     </div>
   )
 }

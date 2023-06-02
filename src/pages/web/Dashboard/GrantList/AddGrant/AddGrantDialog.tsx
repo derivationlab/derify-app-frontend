@@ -13,9 +13,9 @@ import AmountInput from '@/components/common/Wallet/AmountInput'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
-import { useBalancesStore, useProtocolConfigStore } from '@/store'
+import { getMarginDeployStatus, getMarginTokenList, useBalancesStore, useProtocolConfigStore } from '@/store'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
-import { GrantKeys } from '@/typings'
+import { GrantKeys, Rec } from '@/typings'
 import { isET, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
@@ -30,16 +30,19 @@ const limitDays = {
 }
 
 const grantTarget = grantTargetOptions()
-
+interface IPagination {
+  data: any[]
+  index: number
+}
 const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
   const [toggle, setToggle] = useState<boolean>(false)
+  const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
 
   const balances = useBalancesStore((state) => state.balances)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
   const { minimumGrant } = useMinimumGrant(protocolConfig)
 
@@ -50,9 +53,9 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     return [dayjs().add(start).format(format), dayjs().add(end).format(format)]
   }, [state.grantDays, state.cliffDays])
 
-  const marginOptions = useMemo(() => {
-    if (marginTokenListLoaded) {
-      return marginTokenList
+  const options = useMemo(() => {
+    if (pagination.data.length) {
+      return pagination.data
         .map((token) => {
           if (token.open > 0)
             return {
@@ -65,22 +68,22 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     }
 
     return []
-  }, [marginTokenListLoaded])
+  }, [pagination.data])
 
   const disabled = useMemo(() => {
     const amount = minimumGrant[state.grantTarget as GrantKeys]
     const balance = balances?.[PLATFORM_TOKEN.symbol] ?? 0
-    if (marginOptions.length === 0) return true
+    if (options.length === 0) return true
     if (isET(balance, 0) || isET(amount, 0)) return true
     if (isLT(balance, amount)) return true
     if (isLT(state.amountInp || 0, amount)) return true
     if (state.grantDays < limitDays.grantDays[0] || state.grantDays > limitDays.grantDays[1]) return true
     if (state.cliffDays < limitDays.cliffDays[0] || state.cliffDays > limitDays.cliffDays[1]) return true
-  }, [marginOptions, balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
+  }, [options, balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
 
   const currentMargin = useMemo(
-    () => marginOptions.find((item: any) => item.value === state.marginToken) ?? marginOptions[0],
-    [state.marginToken, marginOptions]
+    () => options.find((item: any) => item.value === state.marginToken) ?? options[0],
+    [state.marginToken, options]
   )
 
   const currentTarget = useMemo(
@@ -101,11 +104,48 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     onConfirm(state.marginToken, currentTarget?.value, state.amountInp, state.grantDays, state.cliffDays)
   }
 
+  const _getMarginTokenList = async () => {
+    const data = await getMarginTokenList(pagination.index)
+    if (data && data.records.length) {
+      const _data = data.records
+      const deployStatus = await getMarginDeployStatus(_data)
+      const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
+      setPagination((val) => {
+        return { ...val, data: [...val.data, ...filter] }
+      })
+    }
+  }
+
   useEffect(() => {
     if (marginTokenList.length) {
       dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].margin_token })
     }
   }, [marginTokenList])
+
+  useEffect(() => {
+    if (marginTokenList.length) setPagination((val) => ({ ...val, data: marginTokenList }))
+  }, [marginTokenList])
+
+  useEffect(() => {
+    const intersectionObserver = new IntersectionObserver(
+      function (entries) {
+        if (entries[0].intersectionRatio <= 0) return
+        setPagination((val) => ({ ...val, index: ++pagination.index }))
+      },
+      { threshold: 0 }
+    )
+
+    const parent = document.querySelector('.web-dashboard-add-grant-dialog-label')
+    const children = parent?.querySelectorAll('.web-select-options-li')
+    const target = children?.[children.length - 1]
+    if (target) intersectionObserver.observe(target)
+  }, [options])
+
+  useEffect(() => {
+    if (pagination.index > 0) {
+      void _getMarginTokenList()
+    }
+  }, [pagination.index])
 
   return (
     <Dialog
@@ -123,7 +163,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             <div className="web-dashboard-add-grant-dialog-selects">
               <div className="web-dashboard-add-grant-dialog-label">
                 <label>{t('NewDashboard.GrantList.Margin')}</label>
-                <Skeleton rowsProps={{ rows: 1 }} animation loading={marginOptions.length === 0}>
+                <Skeleton rowsProps={{ rows: 1 }} animation loading={options.length === 0}>
                   <Select
                     filter
                     value={state.marginToken}
@@ -134,7 +174,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
                         {item.label}
                       </div>
                     )}
-                    objOptions={marginOptions as any}
+                    objOptions={options as any}
                     labelRenderer={(item) => (
                       <div className="web-dashboard-add-grant-margin-label">
                         <Image src={item.icon} />

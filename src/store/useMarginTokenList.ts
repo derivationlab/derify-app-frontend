@@ -14,7 +14,7 @@ export const getMarginTokenList = async (page = 0) => {
   return data
 }
 
-const getMarginDeployStatus = async (marginList: (typeof marginTokenList)[]) => {
+export const getMarginDeployStatus = async (marginList: (typeof marginTokenList)[]) => {
   let marginDeployStatus = Object.create(null)
   const calls = marginList.map((margin) => ({
     address: contracts.derifyProtocol.contractAddress,

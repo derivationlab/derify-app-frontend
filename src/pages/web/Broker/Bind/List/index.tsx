@@ -32,7 +32,7 @@ const List: FC = () => {
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  const pageChange = async (index: number) => {
+  const onPagination = async (index: number) => {
     dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: true, pageIndex: index } })
 
     await getBrokersListCb(index)
@@ -111,7 +111,7 @@ const List: FC = () => {
             page={state.brokerDAT.pageIndex}
             pageSize={pageSize}
             total={state.brokerDAT.totalItems}
-            onChange={pageChange}
+            onChange={onPagination}
           />
         )}
       </section>
@@ -125,7 +125,7 @@ const List: FC = () => {
         full={!mobile}
         page={state.brokerDAT.pageIndex}
         total={state.brokerDAT.totalItems}
-        onChange={pageChange}
+        onChange={onPagination}
       />
       {state.brokerDAT.isLoaded && <Spinner fixed />}
       <BrokerDialog

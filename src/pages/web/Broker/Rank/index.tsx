@@ -54,7 +54,7 @@ const Rank: FC = () => {
     })
   }, [])
 
-  const pageChange = (index: number) => {
+  const onPagination = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
     void fetchData(index)
@@ -135,7 +135,7 @@ const Rank: FC = () => {
         rowKey="id"
         rowClassName={(record) => (address === record.broker ? 'active' : '')}
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
     </div>
   )
 }

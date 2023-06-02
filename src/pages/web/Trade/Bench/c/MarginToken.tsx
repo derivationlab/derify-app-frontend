@@ -10,8 +10,9 @@ import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
 import { useMarginBalances } from '@/hooks/useMarginBalances'
-import { getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
+import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+import { Rec } from '@/typings'
 
 interface IPagination {
   data: any[]
@@ -50,9 +51,14 @@ const MarginToken: FC = () => {
 
   const _getMarginTokenList = async () => {
     const data = await getMarginTokenList(pagination.index)
-    setPagination((val) => {
-      return { ...val, data: [...val.data, ...(data?.records ?? [])] }
-    })
+    if (data && data.records.length) {
+      const _data = data.records
+      const deployStatus = await getMarginDeployStatus(_data)
+      const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
+      setPagination((val) => {
+        return { ...val, data: [...val.data, ...filter] }
+      })
+    }
   }
 
   useEffect(() => {
@@ -68,9 +74,9 @@ const MarginToken: FC = () => {
       { threshold: 0 }
     )
 
-    const parent = document.querySelector('.web-trade-bench-margin')!
-    const children = parent.querySelectorAll('.web-select-options-li')
-    const target = children[children.length - 1]
+    const parent = document.querySelector('.web-trade-bench-margin')
+    const children = parent?.querySelectorAll('.web-select-options-li')
+    const target = children?.[children.length - 1]
     if (target) intersectionObserver.observe(target)
   }, [options])
 

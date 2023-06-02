@@ -65,7 +65,7 @@ const Rank: FC = () => {
     [marginToken]
   )
 
-  const pageChange = (index: number) => {
+  const onPagination = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
     void fetchData(index)
@@ -125,7 +125,7 @@ const Rank: FC = () => {
         className="web-broker-table"
         rowClassName={(record) => (address === record.user ? 'active' : '')}
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
     </div>
   )
 }

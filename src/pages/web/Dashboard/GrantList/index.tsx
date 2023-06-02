@@ -51,7 +51,7 @@ const GrantList: FC = () => {
     })
   }, [])
 
-  const pageChange = useCallback(
+  const onPagination = useCallback(
     (index: number) => {
       dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
@@ -137,7 +137,7 @@ const GrantList: FC = () => {
           state.grantData.records.map((item, index) => <ListItem key={index} data={item} />)
         )}
       </div>
-      <Pagination page={state.pageIndex} pageSize={8} total={state.grantData.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} pageSize={8} total={state.grantData.totalItems} onChange={onPagination} />
     </div>
   )
 }

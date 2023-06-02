@@ -94,7 +94,7 @@ const History: FC = () => {
     }
   }
 
-  const pageChange = (index: number) => {
+  const onPagination = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
 
     void fetchData(index)
@@ -168,7 +168,7 @@ const History: FC = () => {
         data={state.records.records}
         rowKey="id"
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={pageChange} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
     </>
   )
 }

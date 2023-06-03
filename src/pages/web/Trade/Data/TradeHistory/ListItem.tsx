@@ -133,7 +133,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
       <DataAtom
         label={t('Trade.TradeHistory.VolumeBase', 'Volume (Base)')}
         tip={t('Trade.TradeHistory.VolumeBaseTip')}
-        footer={memoQuoteToken.replace(VALUATION_TOKEN_SYMBOL, '')}
+        footer={memoQuoteToken.split('/')[0]}
       >
         {keepDecimals(data?.size, 2)}
       </DataAtom>

@@ -50,14 +50,14 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   }, [data, spotPrice])
 
   const memoPnL = useMemo(() => {
-    if (isGT(spotPrice, 0)) {
+    if (isGT(spotPrice, 0) && Number(data.size) > 0 && Number(data.averagePrice) > 0) {
       const p1 = bnMinus(spotPrice, data.averagePrice)
       const p2 = bnMul(p1, data.size)
       const p3 = data.side === PositionSideTypes.long ? 1 : -1
       return bnMul(p2, p3)
     }
     return '0'
-  }, [data, spotPrice])
+  }, [data.side, data.size, data.averagePrice, spotPrice])
 
   const memoRate = useMemo(() => {
     return isGT(memoMargin, 0) ? bnDiv(memoPnL, memoMargin) : '0'
@@ -85,7 +85,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.Volume', 'Volume')}
         tip={t('Trade.MyPosition.VolumeTip')}
-        footer={`${data.derivative.replace(VALUATION_TOKEN_SYMBOL, '')} / ${marginToken.symbol}`}
+        footer={`${data.derivative.split('/')[0]} / ${marginToken.symbol}`}
       >
         <span>
           {keepDecimals(data?.size ?? 0, 2)} / {keepDecimals(memoVolume, 2)}

@@ -87,7 +87,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 </p>
                 <p>
                   {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} :{' '}
-                  <em>{keepDecimals(data?.size ?? 0, 2)}</em> {data?.derivative?.replace(VALUATION_TOKEN_SYMBOL, '')} /{' '}
+                  <em>{keepDecimals(data?.size ?? 0, 2)}</em> {data?.derivative?.split('/')[0]} /{' '}
                   <em>{keepDecimals(memoVolume, 2)}</em> {marginToken.symbol}
                 </p>
               </section>

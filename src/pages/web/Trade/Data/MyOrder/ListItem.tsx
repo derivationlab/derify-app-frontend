@@ -54,7 +54,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
       <DataAtom
         label={t('Trade.MyOrder.Volume', 'Volume')}
         tip={t('Trade.MyOrder.VolumeTip')}
-        footer={`${data?.derivative?.replace(VALUATION_TOKEN_SYMBOL, '')} / ${marginToken.symbol}`}
+        footer={`${data?.derivative?.split('/')[0]} / ${marginToken.symbol}`}
       >
         <span>
           {data?.size} / {keepDecimals(data?.volume, 2)}

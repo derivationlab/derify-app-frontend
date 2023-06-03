@@ -39,7 +39,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
       setDialogStatus('')
 
       if (protocolConfig && signer) {
-        const status = await deposit(protocolConfig.exchange, amount, marginToken.address, signer)
+        const status = await deposit(protocolConfig.exchange, amount, marginToken, signer)
 
         if (status) {
           // succeed

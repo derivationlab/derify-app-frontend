@@ -1,3 +1,4 @@
+import { marginToken } from '@/store'
 import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getDerifyExchangeContract } from '@/utils/contractHelpers'
@@ -5,15 +6,20 @@ import { estimateGas } from '@/utils/estimateGas'
 import { inputParameterConversion } from '@/utils/tools'
 
 export const useMarginOperation = () => {
-  const deposit = async (exchange: string, amount: string, marginToken: string, signer?: TSigner): Promise<boolean> => {
+  const deposit = async (
+    exchange: string,
+    amount: string,
+    margin: typeof marginToken,
+    signer?: TSigner
+  ): Promise<boolean> => {
     if (!signer) return false
 
     const c = getDerifyExchangeContract(exchange, signer)
-    const _amount1 = inputParameterConversion(amount, 8)
+    const _amount1 = inputParameterConversion(amount, margin.symbol === 'BNB' ? 18 : 8)
     const _amount2 = inputParameterConversion(amount, 18)
 
     try {
-      const approve = await allowanceApprove(signer, exchange, marginToken, _amount2)
+      const approve = await allowanceApprove(signer, exchange, margin.address, _amount2)
 
       if (!approve) return false
 

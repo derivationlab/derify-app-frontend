@@ -1,4 +1,4 @@
-import { orderBy } from 'lodash'
+import { sortBy } from 'lodash'
 import { create } from 'zustand'
 
 import { getMarginAddressList, getMarginTokenList as _getMarginTokenList } from '@/api'
@@ -83,7 +83,7 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
       const deployStatus = await getMarginDeployStatus(_data)
 
       const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
-      const toSort = orderBy(filter, ['max_pm_apy', 'open'], 'desc')
+      const toSort = sortBy(filter, ['max_pm_apy', 'open'], 'desc')
 
       set({
         pagingParams: { currentPage: data.currentPage, totalItems: data.totalItems, totalPages: data.totalPages },

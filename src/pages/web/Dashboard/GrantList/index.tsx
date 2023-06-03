@@ -1,4 +1,4 @@
-import { debounce, orderBy } from 'lodash'
+import { debounce, sortBy } from 'lodash'
 import PubSub from 'pubsub-js'
 
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
@@ -43,7 +43,7 @@ const GrantList: FC = () => {
   const _getGrantPlanList = useCallback(async (index = 0, marginToken, grantStatus, grantTarget) => {
     const { data } = await getGrantPlanList(marginToken, grantTarget, grantStatus, index, 8)
 
-    const sort = orderBy(data?.records ?? [], ['open'], 'desc')
+    const sort = sortBy(data?.records ?? [], ['open'], 'desc')
 
     dispatch({
       type: 'SET_GRANT_DAT',

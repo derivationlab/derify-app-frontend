@@ -44,7 +44,7 @@ const MarginToken: FC = () => {
           marginBalance: Number(marginBalance)
         }
       })
-      return orderBy(_, ['marginBalance'], 'desc')
+      return orderBy(_, (r) => r.marginBalance, 'desc')
     }
     return []
   }, [marginBalances, pagination.data])

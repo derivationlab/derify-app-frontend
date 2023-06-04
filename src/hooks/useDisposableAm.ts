@@ -21,7 +21,7 @@ export const useDisposableAm = (
     const _leverageNow = inputParameterConversion(leverageNow, 8)
 
     try {
-      const data = await contract.getTraderOpenUpperBound(quoteToken.address, trader, openingType, _price, _leverageNow)
+      const data = await contract.getTraderOpenUpperBound(quoteToken.token, trader, openingType, _price, _leverageNow)
 
       const { size, amount } = data
 

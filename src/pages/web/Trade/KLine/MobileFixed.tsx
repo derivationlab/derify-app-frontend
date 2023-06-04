@@ -19,7 +19,7 @@ const MobileFixed: FC<Props> = ({ address, isKline, goBench }) => {
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
 
   const memoLongPosApy = useMemo(() => {
-    const p = Number(marginIndicators?.[quoteToken.address]?.longPmrRate ?? 0)
+    const p = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)
     if (p >= 0) {
       const apy = p * 100
       return isLTET(apy, 0) ? 0 : apy
@@ -28,7 +28,7 @@ const MobileFixed: FC<Props> = ({ address, isKline, goBench }) => {
   }, [quoteToken, marginIndicators])
 
   const memoShortPosApy = useMemo(() => {
-    const p = Number(marginIndicators?.[quoteToken.address]?.shortPmrRate)
+    const p = Number(marginIndicators?.[quoteToken.token]?.shortPmrRate)
     if (p >= 0) {
       const apy = p * 100
       return isLTET(apy, 0) ? 0 : apy

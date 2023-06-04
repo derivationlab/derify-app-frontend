@@ -59,7 +59,7 @@ const Bench: FC = () => {
   }, [quoteToken, tokenSpotPrices])
 
   const memoLongPosApy = useMemo(() => {
-    const p = Number(marginIndicators?.[quoteToken.address]?.longPmrRate ?? 0)
+    const p = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)
     if (p >= 0) {
       const apy = p * 100
       return isLTET(apy, 0) ? 0 : apy
@@ -68,8 +68,8 @@ const Bench: FC = () => {
   }, [quoteToken, marginIndicators])
 
   const memo2WayPosApy = useMemo(() => {
-    const p1 = Number(marginIndicators?.[quoteToken.address]?.shortPmrRate ?? 0)
-    const p2 = Number(marginIndicators?.[quoteToken.address]?.longPmrRate ?? 0)
+    const p1 = Number(marginIndicators?.[quoteToken.token]?.shortPmrRate ?? 0)
+    const p2 = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)
     if (p1 >= 0 && p2 >= 0) {
       const apy = ((p1 + p2) / 2) * 100
       return isLTET(apy, 0) ? 0 : apy
@@ -78,7 +78,7 @@ const Bench: FC = () => {
   }, [quoteToken, marginIndicators])
 
   const memoShortPosApy = useMemo(() => {
-    const p = Number(marginIndicators?.[quoteToken.address]?.shortPmrRate ?? 0)
+    const p = Number(marginIndicators?.[quoteToken.token]?.shortPmrRate ?? 0)
     if (p >= 0) {
       const apy = p * 100
       return isLTET(apy, 0) ? 0 : apy
@@ -106,13 +106,13 @@ const Bench: FC = () => {
     if (brokerBound?.broker && protocolConfig) {
       const conversion = isOrderConversion(openingType, state.openingParams?.price)
       const { broker } = brokerBound
-      const { address } = quoteToken
+      const { token } = quoteToken
       const { exchange } = protocolConfig
       const { side, price, symbol } = state.openingParams
       const status = await increasePosition(
         exchange,
         broker,
-        address,
+        token,
         side,
         openingType,
         symbol,
@@ -207,7 +207,7 @@ const Bench: FC = () => {
           <Row>
             <Col>
               <Button
-                disabled={memoDisabled1 || memoDisabled2 || !quoteToken.address}
+                disabled={memoDisabled1 || memoDisabled2 || !quoteToken.token}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSideTypes.long)}
@@ -221,7 +221,7 @@ const Bench: FC = () => {
             </Col>
             <Col>
               <Button
-                disabled={memoDisabled1 || memoDisabled2 || !quoteToken.address}
+                disabled={memoDisabled1 || memoDisabled2 || !quoteToken.token}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSideTypes.short)}
@@ -238,7 +238,7 @@ const Bench: FC = () => {
             <Row>
               <Col>
                 <Button
-                  disabled={memoDisabled1 || memoDisabled2 || !quoteToken.address}
+                  disabled={memoDisabled1 || memoDisabled2 || !quoteToken.token}
                   noDisabledStyle
                   className="web-trade-bench-button-full"
                   onClick={() => openPositionDialog(PositionSideTypes.twoWay)}

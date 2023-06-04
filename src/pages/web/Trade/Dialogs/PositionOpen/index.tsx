@@ -53,7 +53,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
       data.side,
       data.openType,
       data.symbol,
-      openingMaxLimit[quoteToken.address][PositionSideTypes[data.side]]
+      openingMaxLimit[quoteToken.token][PositionSideTypes[data.side]]
     )
 
     dispatch({ type: 'SET_VALID_OPENING_VOLUME', payload: { loaded: true, value: effective, maximum, isGreater } })

@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 
 import { QuoteTokenState } from '@/store/types'
 
-export const quoteToken = { symbol: '', address: '' }
+export const quoteToken = { symbol: '', token: '' }
 
 const useQuoteTokenStore = create(
   persist<QuoteTokenState>(

@@ -22,7 +22,7 @@ const HeaderData: FC = () => {
 
   const { data: pcfRatios } = usePositionChangeFeeRatios(derAddressList)
   const { data: currentOpenInterest, refetch: refetchCurrentOpenInterest } = useCurrentOpenInterest(
-    quoteToken.address,
+    quoteToken.token,
     marginToken.address
   )
 
@@ -33,7 +33,7 @@ const HeaderData: FC = () => {
 
   const pmrRate = useMemo(() => {
     if (marginIndicators) {
-      const match = marginIndicators[quoteToken.address]
+      const match = marginIndicators[quoteToken.token]
       const longPmrRate = match?.longPmrRate ?? 0
       const shortPmrRate = match?.shortPmrRate ?? 0
       return [
@@ -57,7 +57,7 @@ const HeaderData: FC = () => {
 
   useEffect(() => {
     void refetchCurrentOpenInterest()
-  }, [quoteToken.address, marginToken.address])
+  }, [quoteToken.token, marginToken.address])
 
   return (
     <div className="web-trade-kline-header-data">

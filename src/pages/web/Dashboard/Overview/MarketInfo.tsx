@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { isEmpty } from 'lodash'
+import { isEmpty, flatten, uniq } from 'lodash'
 import Table from 'rc-table'
 
 import React, { FC, useMemo, useContext, useState, useEffect } from 'react'
@@ -41,6 +41,15 @@ const MarketInfo: FC = () => {
   const { data: tradingVol } = useAllCurrentTrading(marginAddressList)
   const { data: indicators } = useAllMarginIndicators(marginAddressList)
   const { data: allPositions } = useAllMarginPositions()
+
+  const addresses = useMemo(() => {
+    if (allPositions) {
+      const keysA = Object.keys(allPositions)
+      const keysB = keysA.map((k) => Object.keys(allPositions[k]))
+      return uniq(flatten(keysB))
+    }
+    return []
+  }, [allPositions])
 
   const mColumns = useMemo(() => {
     return [

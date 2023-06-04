@@ -12,14 +12,14 @@ const getOpeningMaxLimit = async (address: string, quote: typeof quoteToken) => 
   const calls = [
     {
       name: 'getSysOpenUpperBound',
-      token: quote.address,
-      params: [quote.address, 0],
+      token: quote.token,
+      params: [quote.token, 0],
       address
     },
     {
       name: 'getSysOpenUpperBound',
-      token: quote.address,
-      params: [quote.address, 1],
+      token: quote.token,
+      params: [quote.token, 1],
       address
     }
   ]

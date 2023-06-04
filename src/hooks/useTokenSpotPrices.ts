@@ -25,12 +25,12 @@ export const useTokenSpotPrices = (list?: DerAddressList | null) => {
       if (list) {
         const calls: Rec[] = []
         const keys = Object.keys(list)
-        keys.forEach((token) => {
-          if (list[token].derivative !== ZERO) {
+        keys.forEach((symbol) => {
+          if (list[symbol].derivative !== ZERO) {
             calls.push({
               name: 'getSpotPrice',
-              token,
-              address: list[token].derivative
+              symbol,
+              address: list[symbol].derivative
             })
           }
         })
@@ -39,13 +39,49 @@ export const useTokenSpotPrices = (list?: DerAddressList | null) => {
 
         if (response.length) {
           response.forEach(([spotPrice]: BigNumberish[], index: number) => {
+            const _ = formatUnits(spotPrice, 8)
             output = {
               ...output,
-              [calls[index].token]: formatUnits(spotPrice, 8)
+              [calls[index].symbol]: _,
+              [calls[index].address]: _
             }
           })
         }
+        // console.info(output)
+        return output
+      }
+      return null
+    },
+    {
+      retry: false,
+      initialData: null,
+      refetchInterval: 3000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
 
+  return { data, refetch, isLoading }
+}
+
+export const useTokenSpotPricesSupport = (list?: string[] | null) => {
+  const { data, refetch, isLoading } = useQuery(
+    ['useTokenSpotPricesSupport'],
+    async () => {
+      if (list) {
+        const calls = list.map((address) => ({ name: 'getSpotPrice', address }))
+
+        const response = await multicall(derifyDerivativeAbi, calls)
+
+        if (response.length) {
+          response.forEach(([spotPrice]: BigNumberish[], index: number) => {
+            output = {
+              ...output,
+              [list[index]]: formatUnits(spotPrice, 8)
+            }
+          })
+        }
+        console.info(output)
         return output
       }
       return null

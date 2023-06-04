@@ -39,8 +39,8 @@ const Chart: FC = () => {
     if (kline.current) {
       // kline.current.reset()
 
-      if (quoteToken.address) {
-        const { data, more } = await getKLineDAT(quoteToken.address, state.kline.timeLine, getKlineEndTime(), 130, true)
+      if (quoteToken.token) {
+        const { data, more } = await getKLineDAT(quoteToken.token, state.kline.timeLine, getKlineEndTime(), 130, true)
 
         store.current = data[data.length - 1] // keep original data
 
@@ -59,15 +59,15 @@ const Chart: FC = () => {
 
   const getMoreData = useCallback(
     async (lastTime: number, timeLine: number) => {
-      if (quoteToken.address) return await getKLineDAT(quoteToken.address, timeLine, lastTime, 50, false)
+      if (quoteToken.token) return await getKLineDAT(quoteToken.token, timeLine, lastTime, 50, false)
     },
     [quoteToken]
   )
 
   useInterval(() => {
     const func = async () => {
-      if (kline.current && quoteToken.address) {
-        const { data } = await getKLineDAT(quoteToken.address, state.kline.timeLine, getKlineEndTime(), 1, false)
+      if (kline.current && quoteToken.token) {
+        const { data } = await getKLineDAT(quoteToken.token, state.kline.timeLine, getKlineEndTime(), 1, false)
         // console.info(timestamp, data[0]?.timestamp)
         if (store.current?.timestamp !== data[0]?.timestamp) {
           kline.current.update(store.current)

@@ -35,9 +35,9 @@ export const useMarginLoading = () => {
   useEffect(() => {
     if (derivativeList.length) {
       const { name, token } = derivativeList[0]
-      updateQuoteToken({ symbol: name, address: token })
+      updateQuoteToken({ symbol: name, token })
     } else {
-      updateQuoteToken({ symbol: '', address: '' })
+      updateQuoteToken({ symbol: '', token: '' })
     }
   }, [derivativeList])
 

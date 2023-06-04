@@ -1,5 +1,10 @@
 import { get } from '@/utils/http'
 
+export const searchMarginToken = async (key: string) => {
+  const response = await get(`api/search_margin_token/${key}`)
+  return response
+}
+
 export const getMarginIndicators = async (token: string) => {
   const response = await get(`api/app_data/${token}`)
   return response

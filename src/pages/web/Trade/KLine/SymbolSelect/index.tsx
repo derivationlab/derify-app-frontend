@@ -34,13 +34,13 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
   }, [quoteToken, tokenSpotPrices])
 
   const indicator = useMemo(() => {
-    return marginIndicators?.[quoteToken.address]?.price_change_rate ?? 0
+    return marginIndicators?.[quoteToken.token]?.price_change_rate ?? 0
   }, [quoteToken, marginIndicators])
 
   const change = (pair: Record<string, any>) => {
     setShowOptions(false)
     const { name, token } = pair
-    updateQuoteToken({ symbol: name, address: token })
+    updateQuoteToken({ symbol: name, token })
   }
 
   const toggle = () => {

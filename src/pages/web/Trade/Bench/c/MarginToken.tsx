@@ -1,11 +1,12 @@
 import classNames from 'classnames'
-import { orderBy } from 'lodash'
+import { orderBy, debounce } from 'lodash'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
+import { searchMarginToken } from '@/api'
 import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
@@ -24,12 +25,21 @@ const MarginToken: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
+  const [searchKeyword, setSearchKeyword] = useState<string>('')
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
   const { data: marginBalances } = useMarginBalances(address, marginTokenList)
+
+  const _searchMarginToken = useCallback(
+    debounce(async (searchKeyword: string) => {
+      const data = await searchMarginToken(searchKeyword)
+      console.info(data)
+    }, 1000),
+    []
+  )
 
   const options = useMemo(() => {
     if (pagination.data.length && marginBalances) {
@@ -60,6 +70,12 @@ const MarginToken: FC = () => {
       })
     }
   }
+
+  useEffect(() => {
+    if (searchKeyword.trim()) {
+      void _searchMarginToken(searchKeyword)
+    }
+  }, [searchKeyword])
 
   useEffect(() => {
     if (marginTokenList.length) setPagination((val) => ({ ...val, data: marginTokenList }))

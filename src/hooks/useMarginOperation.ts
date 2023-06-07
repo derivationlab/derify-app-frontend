@@ -9,10 +9,11 @@ import { estimateGas } from '@/utils/estimateGas'
 import { inputParameterConversion } from '@/utils/tools'
 
 const depositMarginForWBNB = async (contract: Contract, amount: string): Promise<boolean> => {
-  const _amount = inputParameterConversion(amount, 18)
-  const gasLimit = await estimateGas(contract, 'deposit', [_amount, { value: _amount }])
-  const res = await contract.deposit(_amount, { gasLimit, value: _amount })
-  const receipt = await res.wait()
+  const _amount1 = inputParameterConversion(amount, 8)
+  const _amount2 = inputParameterConversion(amount, 18)
+  const gasLimit = await estimateGas(contract, 'deposit', [_amount1, { value: _amount2 }])
+  const response = await contract.deposit(_amount1, { gasLimit, value: _amount2 })
+  const receipt = await response.wait()
   return receipt.status
 }
 
@@ -28,8 +29,8 @@ const depositMarginForNormal = async (
   const approve = await allowanceApprove(signer, exchange, margin, _amount2)
   if (!approve) return false
   const gasLimit = await estimateGas(contract, 'deposit', [_amount1])
-  const res = await contract.deposit(_amount1, { gasLimit })
-  const receipt = await res.wait()
+  const response = await contract.deposit(_amount1, { gasLimit })
+  const receipt = await response.wait()
   return receipt.status
 }
 

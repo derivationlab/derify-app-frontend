@@ -7,14 +7,14 @@ interface StateType {
   records: { records: any[]; totalItems: number; loaded: boolean }
   pageIndex: number
   filterCondition: string
-  filterConditions: Record<string, any>[]
+  filterConditions: Record<string, any>[] | null
 }
 
 const stateInit: StateType = {
-  records: { records: [], totalItems: 0, loaded: true },
+  records: { records: [], totalItems: 0, loaded: false },
   pageIndex: 0,
   filterCondition: '',
-  filterConditions: []
+  filterConditions: null
 }
 
 function reducer(state: StateType, action: ActionType): StateType {

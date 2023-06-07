@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { upperFirst, isEmpty } from 'lodash'
+import { upperFirst, isEmpty, isArray } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
@@ -9,9 +9,9 @@ import { useTranslation } from 'react-i18next'
 import { getCompetitionList, getCompetitionRank } from '@/api'
 import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
+import Pagination from '@/components/common/Pagination'
 import Skeleton from '@/components/common/Skeleton'
 import Spinner from '@/components/common/Spinner'
-// import Pagination from '@/components/common/Pagination'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
@@ -113,11 +113,17 @@ const CompetitionRank: FC = () => {
         label: `${upperFirst(d.status)} | ${dayjs(d.start_time).format('MM/DD/YYYY HH:mm:ss')}`,
         value: `${d.id}#${d.status}`
       }))
-
-      dispatch({ type: 'SET_FILTER_CONDITION', payload: _[0].value })
+      console.info(_)
+      dispatch({ type: 'SET_FILTER_CONDITION', payload: _[0]?.value ?? '' })
       dispatch({ type: 'SET_FILTER_CONDITIONS', payload: _ })
     }
   }, [marginToken])
+
+  const onPagination = (index: number) => {
+    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
+    //
+    // void fetchData(index)
+  }
 
   useEffect(() => {
     void _getCompetitionList()
@@ -134,12 +140,17 @@ const CompetitionRank: FC = () => {
     <div className="web-competition-rank">
       <h2>{t('Earn.Trading.TradingCompetitionRank')}</h2>
       <aside>
-        <Skeleton rowsProps={{ rows: 1 }} animation loading={state.filterConditions.length === 0}>
-          <Select
-            value={state.filterCondition}
-            onChange={(v) => dispatch({ type: 'SET_FILTER_CONDITION', payload: v })}
-            objOptions={state.filterConditions as any}
-          />
+        <Skeleton rowsProps={{ rows: 1 }} animation loading={!state.filterConditions}>
+          {isArray(state.filterConditions) && state.filterConditions.length === 0 && (
+            <section className="web-competition-rank-null">{t('common.NoRecord')}</section>
+          )}
+          {isArray(state.filterConditions) && state.filterConditions.length > 0 && (
+            <Select
+              value={state.filterCondition}
+              onChange={(v) => dispatch({ type: 'SET_FILTER_CONDITION', payload: v })}
+              objOptions={state.filterConditions as any}
+            />
+          )}
         </Skeleton>
       </aside>
       <Table
@@ -149,6 +160,7 @@ const CompetitionRank: FC = () => {
         emptyText={emptyText}
         rowClassName={(record) => (address === record.user ? 'active' : '')}
       />
+      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
     </div>
   )
 }

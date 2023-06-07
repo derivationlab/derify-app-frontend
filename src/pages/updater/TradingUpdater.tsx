@@ -50,7 +50,7 @@ export default function TradingUpdater(): null {
 
   // Trading pairs opening max leverage
   useEffect(() => {
-    if (derAddressList) void getPosMaxLeverage()
+    void getPosMaxLeverage()
   }, [derAddressList])
 
   return null

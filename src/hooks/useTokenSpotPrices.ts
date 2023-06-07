@@ -8,8 +8,6 @@ import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
-let output = Object.create(null)
-
 /**
  {
     "BTCUSD": "0.00126258",
@@ -19,6 +17,7 @@ let output = Object.create(null)
  * @param list
  */
 export const useTokenSpotPrices = (list?: DerAddressList | null) => {
+  let output = Object.create(null)
   const { data, refetch, isLoading } = useQuery(
     ['useTokenSpotPrices'],
     async () => {
@@ -64,21 +63,23 @@ export const useTokenSpotPrices = (list?: DerAddressList | null) => {
   return { data, refetch, isLoading }
 }
 
-export const useTokenSpotPricesSupport = (list?: string[] | null) => {
+export const useTokenSpotPricesSupport = (list?: Rec[] | null) => {
+  let output: Rec[] = []
   const { data, refetch, isLoading } = useQuery(
     ['useTokenSpotPricesSupport'],
     async () => {
       if (list) {
-        const calls = list.map((address) => ({ name: 'getSpotPrice', address }))
+        const calls = list.map((l) => ({
+          name: 'getSpotPrice',
+          address: l.derivative
+        }))
 
         const response = await multicall(derifyDerivativeAbi, calls)
 
         if (response.length) {
           response.forEach(([spotPrice]: BigNumberish[], index: number) => {
-            output = {
-              ...output,
-              [list[index]]: formatUnits(spotPrice, 8)
-            }
+            const x = { ...list[index], price: formatUnits(spotPrice, 8) }
+            output = [...output, x]
           })
         }
         console.info(output)

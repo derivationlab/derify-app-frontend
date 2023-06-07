@@ -11,15 +11,13 @@ import DecimalShow from '@/components/common/DecimalShow'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
-import { useAllMarginPositions, useFactoryConfig, usePairAddrConfig } from '@/hooks/useAllMarginPositions'
 import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
-import { useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
+import PositionVolume from '@/pages/web/Dashboard/c/PositionVolume'
 import { MobileContext } from '@/providers/Mobile'
 import { getMarginTokenList, useMarginTokenListStore } from '@/store'
-import { bnMul, bnPlus, keepDecimals } from '@/utils/tools'
+import { bnMul, keepDecimals } from '@/utils/tools'
 
 import { TableMargin } from '../c/TableCol'
 
@@ -42,10 +40,6 @@ const MarketInfo: FC = () => {
   const { data: boundPools } = useBoundPools(marginAddressList)
   const { data: tradingVol } = useAllCurrentTrading(marginAddressList)
   const { data: indicators } = useAllMarginIndicators(marginAddressList)
-  const { data: allPositions } = useAllMarginPositions()
-  const { factoryConfig } = useFactoryConfig(allPositions)
-  const { pairAddrConfig } = usePairAddrConfig(factoryConfig, allPositions)
-  const { data: spotPrices } = useTokenSpotPricesSupport(pairAddrConfig)
 
   const mColumns = useMemo(() => {
     return [
@@ -58,19 +52,10 @@ const MarketInfo: FC = () => {
         title: 'Trading/Position',
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
-          let total = '0'
-          if (allPositions && data.margin_token in allPositions && spotPrices) {
-            const p1 = allPositions[data.margin_token]
-            const p2 = Object.keys(p1)
-            total = p2.reduce((p, n: string) => {
-              const price = spotPrices.find((f) => f.margin === data.margin_token && f.token === n)?.price ?? 0
-              return bnPlus(bnMul(p1[n], price), p)
-            }, '0')
-          }
           return (
             <>
               <BalanceShow value={boundPools?.[data.margin_token] ?? 0} unit={symbol} />
-              <BalanceShow value={keepDecimals(total, 2)} unit={symbol} />
+              <PositionVolume data={data} />
             </>
           )
         }
@@ -88,7 +73,7 @@ const MarketInfo: FC = () => {
         }
       }
     ]
-  }, [t, indicators, boundPools, allPositions, spotPrices])
+  }, [t, indicators, boundPools])
 
   const wColumns = useMemo(() => {
     return [
@@ -115,16 +100,7 @@ const MarketInfo: FC = () => {
         title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
-          if (allPositions && data.margin_token in allPositions && spotPrices) {
-            const p1 = allPositions[data.margin_token]
-            const p2 = Object.keys(p1)
-            const total = p2.reduce((p, n: string) => {
-              const price = spotPrices.find((f) => f.margin === data.margin_token && f.token === n)?.price ?? 0
-              return bnPlus(bnMul(p1[n], price), p)
-            }, '0')
-            return <BalanceShow value={keepDecimals(total, 2)} unit={symbol} />
-          }
-          return <BalanceShow value={keepDecimals(0, 2)} unit={symbol} />
+          return <PositionVolume data={data} />
         }
       },
       {
@@ -145,7 +121,7 @@ const MarketInfo: FC = () => {
         )
       }
     ]
-  }, [t, tradingVol, indicators, boundPools, allPositions, spotPrices])
+  }, [t, tradingVol, indicators, boundPools])
 
   const emptyText = useMemo(() => {
     if (!marginTokenListLoaded) return <Spinner small />

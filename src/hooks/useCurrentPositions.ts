@@ -5,7 +5,7 @@ import { getCurrentPositionsAmount } from '@/api'
 
 export const useCurrentPositions = (quoteToken: string, marginToken: string) => {
   const { data, refetch } = useQuery(
-    ['useCurrentPositionsAmount'],
+    [`useCurrentPositionsAmount-${marginToken}`],
     async (): Promise<Record<string, any>> => {
       if (quoteToken && marginToken) {
         const data = await getCurrentPositionsAmount(quoteToken, marginToken)

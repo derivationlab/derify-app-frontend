@@ -13,13 +13,16 @@ export const useMarginOperation = () => {
     signer?: TSigner
   ): Promise<boolean> => {
     if (!signer) return false
-
+    let approve = false
     const c = getDerifyExchangeContract(exchange, signer)
     const _amount1 = inputParameterConversion(amount, margin.symbol === 'BNB' ? 18 : 8)
     const _amount2 = inputParameterConversion(amount, 18)
 
     try {
-      const approve = await allowanceApprove(signer, exchange, margin.address, _amount2)
+      if (margin.symbol === 'BNB') approve = true
+      else {
+        approve = await allowanceApprove(signer, exchange, margin.address, _amount2)
+      }
 
       if (!approve) return false
 

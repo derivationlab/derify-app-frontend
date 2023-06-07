@@ -8,7 +8,7 @@ import factoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import { DerivativeListState } from '@/store/types'
 import { Rec } from '@/typings'
-import multicall from '@/utils/multicall'
+import multicall, { Call } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
 export type DerAddressList = { [key: string]: { token: string; derivative: string } }
@@ -68,13 +68,17 @@ const getTradingPairDeployStatus = async (list: (typeof derivativeList)[], facto
 }
 
 export const getPosMaxLeverage = async (list: any) => {
+  const calls: Call[] = []
   let output = Object.create(null)
   try {
     const keys = Object.keys(list)
-    const calls = keys.map((l) => ({
-      name: 'maxLeverage',
-      address: list[l].derivative
-    }))
+    keys.forEach((l) => {
+      if (list[l].derivative !== ZERO)
+        calls.push({
+          name: 'maxLeverage',
+          address: list[l].derivative
+        })
+    })
     const response = await multicall(derivativeAbi, calls)
 
     response.forEach((leverage: BigNumberish, index: number) => {
@@ -86,6 +90,7 @@ export const getPosMaxLeverage = async (list: any) => {
 
     return output
   } catch (e) {
+    console.info(e)
     return null
   }
 }

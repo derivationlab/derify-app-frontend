@@ -7,14 +7,14 @@ import { getAllMarginPositions } from '@/api'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
 import protocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
-import { derivativeList } from '@/store'
-import { ProtocolConfig, Rec } from '@/typings'
+import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 
 const output = Object.create(null)
-export const useAllMarginPositions = () => {
+
+export const useMarginPosVolume = () => {
   const { data, refetch } = useQuery(
-    ['useAllMarginPositions'],
+    ['useMarginPosVolume'],
     async () => {
       const { data } = await getAllMarginPositions()
 

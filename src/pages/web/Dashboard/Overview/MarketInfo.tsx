@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { isEmpty, flatten, uniq } from 'lodash'
+import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 
 import React, { FC, useMemo, useContext, useState, useEffect } from 'react'
@@ -11,11 +11,10 @@ import DecimalShow from '@/components/common/DecimalShow'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
-import { useAllMarginPositions, useFactoryConfig, usePairAddrConfig } from '@/hooks/useAllMarginPositions'
 import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
+import { useMarginPosVolume, useFactoryConfig, usePairAddrConfig } from '@/hooks/useMarginPosVolume'
 import { useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
 import { MobileContext } from '@/providers/Mobile'
 import { getMarginTokenList, useMarginTokenListStore } from '@/store'
@@ -42,7 +41,7 @@ const MarketInfo: FC = () => {
   const { data: boundPools } = useBoundPools(marginAddressList)
   const { data: tradingVol } = useAllCurrentTrading(marginAddressList)
   const { data: indicators } = useAllMarginIndicators(marginAddressList)
-  const { data: allPositions } = useAllMarginPositions()
+  const { data: allPositions } = useMarginPosVolume()
   const { factoryConfig } = useFactoryConfig(allPositions)
   const { pairAddrConfig } = usePairAddrConfig(factoryConfig, allPositions)
   const { data: spotPrices } = useTokenSpotPricesSupport(pairAddrConfig)

@@ -18,7 +18,7 @@ interface Props {
   className?: string
 }
 
-const calcLeverageMarks = (max: number, limit = 7): number[] => {
+const calcLeverageMarks = (max: number, limit = 6): number[] => {
   const need = limit - 1
 
   invariant(

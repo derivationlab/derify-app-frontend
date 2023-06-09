@@ -1,3 +1,4 @@
+import { getAddress } from '@ethersproject/address'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 
@@ -26,7 +27,8 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
 
   const memoQuoteToken = useMemo(() => {
-    if (derivativeList.length) return derivativeList.find((d) => d.token === data?.token)?.name ?? ''
+    if (derivativeList.length)
+      return derivativeList.find((d) => getAddress(d.token) === getAddress(data?.token))?.name ?? ''
     return ''
   }, [data?.token])
 

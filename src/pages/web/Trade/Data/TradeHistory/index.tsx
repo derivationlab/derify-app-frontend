@@ -8,6 +8,7 @@ import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 
 import NoRecord from '../c/NoRecord'
 import ListItem from './ListItem'
@@ -17,7 +18,7 @@ const TradeHistory: FC = () => {
 
   const { address } = useAccount()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const fetchData = async (index = 0) => {
     if (address) {

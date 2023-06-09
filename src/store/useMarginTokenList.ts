@@ -83,8 +83,6 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
       const deployStatus = await getMarginDeployStatus(_data)
 
       const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
-      const toSort = sortBy(filter, ['max_pm_apy', 'open'], 'desc')
-
       set({
         pagingParams: { currentPage: data.currentPage, totalItems: data.totalItems, totalPages: data.totalPages },
         marginTokenList: filter,

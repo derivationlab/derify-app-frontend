@@ -27,7 +27,7 @@ interface IPagination {
   index: number
 }
 
-const resort = (data: any[]) => {
+export const resortMargin = (data: any[]) => {
   return orderBy(data, [
     ['open', 'desc'],
     ['max_pm_apy', 'desc']
@@ -163,12 +163,12 @@ const MarketInfo: FC = () => {
     setPagination((val) => ({ ...val, index }))
 
     const data = await getMarginTokenList(index)
-    setPagination((val) => ({ ...val, data: resort(data?.records ?? []) }))
+    setPagination((val) => ({ ...val, data: resortMargin(data?.records ?? []) }))
   }
 
   useEffect(() => {
     if (marginTokenList.length) {
-      setPagination((val) => ({ ...val, data: resort(marginTokenList) }))
+      setPagination((val) => ({ ...val, data: resortMargin(marginTokenList) }))
     }
   }, [marginTokenList])
 

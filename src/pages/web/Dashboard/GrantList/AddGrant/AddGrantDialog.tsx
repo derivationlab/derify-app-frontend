@@ -12,6 +12,7 @@ import Skeleton from '@/components/common/Skeleton'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useMinimumGrant } from '@/hooks/useMinimumGrant'
+import { resortMargin } from '@/pages/web/Dashboard/Overview/MarketInfo'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { getMarginDeployStatus, getMarginTokenList, useBalancesStore, useProtocolConfigStore } from '@/store'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
@@ -30,10 +31,12 @@ const limitDays = {
 }
 
 const grantTarget = grantTargetOptions()
+
 interface IPagination {
   data: any[]
   index: number
 }
+
 const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
@@ -111,7 +114,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
       const deployStatus = await getMarginDeployStatus(_data)
       const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
       setPagination((val) => {
-        return { ...val, data: [...val.data, ...filter] }
+        return { ...val, data: resortMargin([...val.data, ...filter]) }
       })
     }
   }
@@ -123,7 +126,9 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   }, [marginTokenList])
 
   useEffect(() => {
-    if (marginTokenList.length) setPagination((val) => ({ ...val, data: marginTokenList }))
+    if (marginTokenList.length) {
+      setPagination((val) => ({ ...val, data: resortMargin(marginTokenList) }))
+    }
   }, [marginTokenList])
 
   useEffect(() => {

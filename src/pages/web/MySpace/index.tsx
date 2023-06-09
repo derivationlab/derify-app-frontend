@@ -154,7 +154,7 @@ const MySpace: FC = () => {
   }, [t, traderVariables, allBrokerRewards])
 
   const sorting = useMemo(() => {
-    if (pagination.data.length && marginBalances) {
+    if (marginBalances && pagination.data.length) {
       const _ = pagination.data.map((token) => {
         const marginBalance = marginBalances[token.symbol]
         return {

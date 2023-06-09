@@ -1,4 +1,3 @@
-import { sortBy } from 'lodash'
 import { create } from 'zustand'
 
 import { getMarginAddressList, getMarginTokenList as _getMarginTokenList } from '@/api'

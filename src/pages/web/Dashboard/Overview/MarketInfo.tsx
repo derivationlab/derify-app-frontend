@@ -28,10 +28,7 @@ interface IPagination {
 }
 
 export const resortMargin = (data: any[]) => {
-  return orderBy(data, [
-    ['open', 'desc'],
-    ['max_pm_apy', 'desc']
-  ])
+  return orderBy(data, ['open', 'max_pm_apy'], ['desc', 'desc'])
 }
 
 const MarketInfo: FC = () => {

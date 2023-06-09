@@ -3,28 +3,33 @@ import { isEmpty } from 'lodash'
 
 import { useEffect, useState } from 'react'
 
+import { ZERO } from '@/config'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
-import multicall from '@/utils/multicall'
+import multicall, { Call } from '@/utils/multicall'
 import { bnMul, formatUnits, keepDecimals } from '@/utils/tools'
 
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
   isUsed ? keepDecimals(formatUnits(stopPrice, 8), 2) : '--'
 
 const getOwnedPositions = async (trader: string, derAddressList: any): Promise<Rec[][]> => {
+  const calls: Rec[] = []
   const positionOrd: Rec[] = []
   const profitLossOrd: Rec[] = []
 
   try {
-    const calls = Object.keys(derAddressList).map((key) => ({
-      name: 'getTraderDerivativePositions',
-      token: derAddressList[key].token,
-      params: [trader],
-      address: derAddressList[key].derivative,
-      derivative: key
-    }))
+    Object.keys(derAddressList).forEach((key) => {
+      if (derAddressList[key].derivative !== ZERO)
+        calls.push({
+          name: 'getTraderDerivativePositions',
+          token: derAddressList[key].token,
+          params: [trader],
+          address: derAddressList[key].derivative,
+          derivative: key
+        })
+    })
 
-    const response = await multicall(DerifyDerivativAbi, calls)
+    const response = await multicall(DerifyDerivativAbi, calls as Call[])
 
     if (!isEmpty(response)) {
       for (let i = 0; i < response.length; i++) {
@@ -199,11 +204,9 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
           })
         }
       }
-
-      return [positionOrd, profitLossOrd]
     }
 
-    return []
+    return [positionOrd, profitLossOrd]
   } catch (e) {
     return []
   }

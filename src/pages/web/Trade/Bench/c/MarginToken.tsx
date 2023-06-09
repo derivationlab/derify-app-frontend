@@ -14,6 +14,7 @@ import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
+import { resortMargin } from '@/pages/web/MySpace'
 
 interface IPagination {
   data: any[]
@@ -78,7 +79,9 @@ const MarginToken: FC = () => {
   }, [searchKeyword])
 
   useEffect(() => {
-    if (marginTokenList.length) setPagination((val) => ({ ...val, data: marginTokenList }))
+    if (marginTokenList.length) {
+      setPagination((val) => ({ ...val, data: resortMargin(marginTokenList) }))
+    }
   }, [marginTokenList])
 
   useEffect(() => {

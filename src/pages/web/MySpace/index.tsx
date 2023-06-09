@@ -26,6 +26,10 @@ interface IPagination {
   index: number
 }
 
+export const resortMargin = (data: any[]) => {
+  return orderBy(data, ['marginBalance', 'max_pm_apy'], ['desc', 'desc'])
+}
+
 const MySpace: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
@@ -161,7 +165,7 @@ const MySpace: FC = () => {
           marginBalance: Number(marginBalance)
         }
       })
-      return orderBy(_, ['marginBalance'], 'desc')
+      return resortMargin(_)
     }
     return []
   }, [marginBalances, pagination.data])
@@ -181,7 +185,9 @@ const MySpace: FC = () => {
   }
 
   useEffect(() => {
-    if (marginTokenList.length) setPagination((val) => ({ ...val, data: marginTokenList }))
+    if (marginTokenList.length) {
+      setPagination((val) => ({ ...val, data: resortMargin(marginTokenList) }))
+    }
   }, [marginTokenList])
 
   return (

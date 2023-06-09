@@ -11,10 +11,10 @@ import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
 import { useMarginBalances } from '@/hooks/useMarginBalances'
+import { resortMargin } from '@/pages/web/MySpace'
 import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-import { resortMargin } from '@/pages/web/MySpace'
 
 interface IPagination {
   data: any[]

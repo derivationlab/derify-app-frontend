@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { isEmpty } from 'lodash'
+import { isEmpty, orderBy } from 'lodash'
 import Table from 'rc-table'
 
 import React, { FC, useMemo, useContext, useState, useEffect } from 'react'
@@ -25,6 +25,13 @@ import { TableMargin } from '../c/TableCol'
 interface IPagination {
   data: any[]
   index: number
+}
+
+const resort = (data: any[]) => {
+  return orderBy(data, [
+    ['open', 'desc'],
+    ['max_pm_apy', 'desc']
+  ])
 }
 
 const MarketInfo: FC = () => {
@@ -156,11 +163,13 @@ const MarketInfo: FC = () => {
     setPagination((val) => ({ ...val, index }))
 
     const data = await getMarginTokenList(index)
-    setPagination((val) => ({ ...val, data: data?.records ?? [] }))
+    setPagination((val) => ({ ...val, data: resort(data?.records ?? []) }))
   }
 
   useEffect(() => {
-    if (marginTokenList.length) setPagination((val) => ({ ...val, data: marginTokenList }))
+    if (marginTokenList.length) {
+      setPagination((val) => ({ ...val, data: resort(marginTokenList) }))
+    }
   }, [marginTokenList])
 
   return (

@@ -87,8 +87,8 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
 
       set({
         pagingParams: { currentPage: data.currentPage, totalItems: data.totalItems, totalPages: data.totalPages },
-        marginTokenList: toSort,
-        marginTokenSymbol: toSort.map((margin) => margin.symbol),
+        marginTokenList: filter,
+        marginTokenSymbol: filter.map((margin: Rec) => margin.symbol),
         marginTokenListLoaded: true
       })
     }

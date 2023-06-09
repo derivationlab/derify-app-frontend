@@ -7,6 +7,7 @@ import { useDerivativeListStore } from '@/store/useDerivativeList'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 
 export const useMarginLoading = () => {
+  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
@@ -33,19 +34,19 @@ export const useMarginLoading = () => {
   }, [marginToken])
 
   useEffect(() => {
-    if (derivativeList.length) {
+    const len = derivativeList.length
+    const { token } = quoteToken
+    if (len && !token) {
       const { name, token } = derivativeList[0]
       updateQuoteToken({ symbol: name, token })
-    } else {
-      updateQuoteToken({ symbol: '', token: '' })
     }
-  }, [derivativeList])
+  }, [quoteToken, derivativeList])
 
   // Initialize margin default information
   useEffect(() => {
     const len = marginTokenList.length
     const { address } = marginToken
-    if (len > 0 && !address) {
+    if (len && !address) {
       const { logo, symbol, margin_token } = marginTokenList[0]
       updateMarginToken({ logo, symbol, address: margin_token })
     }

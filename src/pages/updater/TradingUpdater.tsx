@@ -31,6 +31,7 @@ export default function TradingUpdater(): null {
       void getTraderVariables(address, protocolConfig.exchange)
     }
 
+    PubSub.unsubscribe(PubSubEvents.UPDATE_TRADER_VARIABLES)
     PubSub.subscribe(PubSubEvents.UPDATE_TRADER_VARIABLES, () => {
       if (address && protocolConfig) {
         void getTraderVariables(address, protocolConfig.exchange)

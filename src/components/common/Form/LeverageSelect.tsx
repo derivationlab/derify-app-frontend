@@ -3,7 +3,7 @@ import { times } from 'lodash'
 import invariant from 'tiny-invariant'
 
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { useClickAway } from 'react-use'
+import { useClickAway, useToggle } from 'react-use'
 
 import Button from '@/components/common/Button'
 import Slider from '@/components/common/Slider'
@@ -38,8 +38,8 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const posMaxLeverage = useDerivativeListStore((state) => state.posMaxLeverage)
 
-  const [multiple, setMultiple] = useState(0)
-  const [showOptions, setShowOptions] = useState(false)
+  const [multiple, setMultiple] = useState<number>(0)
+  const [isVisible, toggleVisible] = useToggle(false)
 
   const maxLeverage = useMemo(() => {
     return posMaxLeverage ? Number(posMaxLeverage[quoteToken.symbol] ?? 0) : 0
@@ -52,26 +52,22 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
 
   const onConfirm = () => {
     onChange(multiple)
-    setShowOptions(false)
+    toggleVisible(false)
   }
 
   useEffect(() => {
     if (maxLeverage === 0) {
       setMultiple(0)
-      return
+    } else {
+      setMultiple(maxLeverage)
     }
-    if (maxLeverage >= 30) {
-      setMultiple(30)
-      return
-    }
-    setMultiple(maxLeverage)
   }, [maxLeverage])
 
-  useClickAway(ref, () => setShowOptions(false))
+  useClickAway(ref, () => toggleVisible(false))
 
   return (
-    <div className={classNames('web-leverage-select', { show: showOptions }, className)} ref={ref}>
-      <div className="web-leverage-select-curr" onClick={() => setShowOptions(!showOptions)}>
+    <div className={classNames('web-leverage-select', { show: isVisible }, className)} ref={ref}>
+      <div className="web-leverage-select-curr" onClick={() => toggleVisible()}>
         {multiple}x
       </div>
       <div className="web-leverage-select-stepper">

@@ -1,3 +1,4 @@
+import { debounce } from 'lodash'
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
@@ -53,13 +54,23 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
     return openingType === PositionOrderTypes.Market ? spotPrice : openingPrice
   }, [spotPrice, openingPrice, openingType])
 
-  const getDisposableAm = useCallback(async () => {
-    setDisposable(initDisposableAm)
-    const trader = address ?? ''
-    const exchange = protocolConfig?.exchange ?? ''
-    const amount = await calcDisposableAmount(realPrice, trader, exchange, quoteToken.token, leverageNow, openingType)
-    setDisposable({ amount, loaded: false })
-  }, [realPrice, address, protocolConfig, quoteToken.token, leverageNow, openingType])
+  const getDisposable = useCallback(
+    debounce(
+      async (
+        realPrice: string,
+        trader: string,
+        exchange: string,
+        quoteToken: string,
+        leverageNow: number,
+        openingType: PositionOrderTypes
+      ) => {
+        const amount = await calcDisposableAmount(realPrice, trader, exchange, quoteToken, leverageNow, openingType)
+        setDisposable({ amount, loaded: false })
+      },
+      1000
+    ),
+    []
+  )
 
   const maximum = useMemo(() => {
     return nonBigNumberInterception(disposable.amount[1], 2)
@@ -70,10 +81,18 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
   }, [value, maximum])
 
   useEffect(() => {
-    if (address && protocolConfig && Number(leverageNow) > 0 && Number(realPrice) > 0) void getDisposableAm()
+    const trader = address ?? ''
+    const exchange = protocolConfig?.exchange ?? ''
+    setDisposable((val) => ({ ...val, loaded: true }))
+    if (trader && quoteToken && exchange && Number(leverageNow) > 0 && Number(realPrice) > 0) {
+      void getDisposable(realPrice, trader, exchange, quoteToken.token, leverageNow, openingType)
+    }
+
+    PubSub.subscribe(PubSubEvents.UPDATE_POSITION_VOLUME)
     PubSub.subscribe(PubSubEvents.UPDATE_POSITION_VOLUME, () => {
-      console.info('PubSubEvents.UPDATE_POSITION_VOLUME')
-      if (address && protocolConfig && Number(leverageNow) > 0 && Number(realPrice) > 0) void getDisposableAm()
+      if (trader && quoteToken && exchange && Number(leverageNow) > 0 && Number(realPrice) > 0) {
+        void getDisposable(realPrice, trader, exchange, quoteToken.token, leverageNow, openingType)
+      }
     })
   }, [address, realPrice, quoteToken, leverageNow, protocolConfig])
 

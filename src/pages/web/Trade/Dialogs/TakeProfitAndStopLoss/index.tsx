@@ -180,15 +180,9 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     if (val === '') {
       setPnLParams((v) => ({ ...v, SLPrice: '' }))
       calcLossAmount(0)
-    } else {
-      if (val >= 0) {
-        setPnLParams((v) => ({ ...v, SLPrice: val }))
-        calcLossAmount(val)
-
-        if (Number(val) === 0) {
-          window.toast.error(t('Trade.TPSL.Tip'))
-        }
-      }
+    } else if (val >= 0){
+      setPnLParams((v) => ({ ...v, SLPrice: val }))
+      calcLossAmount(val)
     }
   }
 
@@ -196,15 +190,9 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     if (val === '') {
       setPnLParams((v) => ({ ...v, TPPrice: '' }))
       calcProfitAmount(0)
-    } else {
-      if (val >= 0) {
-        setPnLParams((v) => ({ ...v, TPPrice: val }))
-        calcProfitAmount(val)
-
-        if (Number(val) === 0) {
-          window.toast.error(t('Trade.TPSL.Tip'))
-        }
-      }
+    } else if (val >= 0){
+      setPnLParams((v) => ({ ...v, TPPrice: val }))
+      calcProfitAmount(val)
     }
   }
 

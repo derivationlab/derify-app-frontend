@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { debounce, sortBy } from 'lodash'
 import PubSub from 'pubsub-js'
 
@@ -36,13 +37,12 @@ const GrantList: FC = () => {
     if (pagination.data.length) {
       const output: any[] = []
       pagination.data.forEach((token) => {
-        if (token.open > 0) {
-          output.push({
-            value: token.margin_token,
-            label: token.symbol,
-            icon: token.logo
-          })
-        }
+        output.push({
+          value: token.margin_token,
+          label: token.symbol,
+          icon: token.logo,
+          open: token.open
+        })
       })
       return [all, ...output]
     }
@@ -105,6 +105,7 @@ const GrantList: FC = () => {
       void debounceSearch(state.marginToken1, state.grantStatus, state.grantTarget1)
     }
 
+    PubSub.unsubscribe(PubSubEvents.UPDATE_GRANT_LIST)
     PubSub.subscribe(PubSubEvents.UPDATE_GRANT_LIST, () => {
       console.info(`UPDATE_GRANT_LIST`)
 
@@ -132,7 +133,7 @@ const GrantList: FC = () => {
             value={state.marginToken1}
             onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN1', payload: v })}
             renderer={(props) => (
-              <div className="web-select-options-item">
+              <div className={classNames('web-select-options-item', { close: props.open === 0 })}>
                 {props.icon && <Image src={props.icon} />}
                 {props.label}
               </div>

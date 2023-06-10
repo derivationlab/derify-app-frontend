@@ -33,8 +33,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   const { t } = useTranslation()
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const closingType = usePositionOperationStore((state) => state.closingType)
-  const closingAmount = usePositionOperationStore((state) => state.closingAmount)
+  const openingParams = usePositionOperationStore((state) => state.openingParams)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
@@ -46,7 +45,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const calcTFeeFunc = async () => {
     const derivative = derAddressList?.[data?.derivative]?.derivative ?? ''
-    const fee = await calcTradingFee(derivative, closingType, closingAmount)
+    const fee = await calcTradingFee(derivative, openingParams.closingAmount)
     dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
   }
 
@@ -56,8 +55,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
     const fee = await calcChangeFee(
       data?.side,
-      closingType,
-      closingAmount,
+      openingParams.closingAmount,
       spotPrice,
       marginPrice,
       exchange,
@@ -75,11 +73,18 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   }, [visible])
 
   useEffect(() => {
-    if (visible && spotPrice && isGT(marginPrice, 0) && isGT(closingAmount, 0) && derAddressList && protocolConfig) {
+    if (
+      visible &&
+      spotPrice &&
+      isGT(marginPrice, 0) &&
+      isGT(openingParams.closingAmount, 0) &&
+      derAddressList &&
+      protocolConfig
+    ) {
       void calcTFeeFunc()
       void calcCFeeFunc()
     }
-  }, [visible, spotPrice, marginPrice, closingAmount, derAddressList])
+  }, [visible, spotPrice, marginPrice, openingParams.closingAmount, derAddressList])
 
   return (
     <Dialog
@@ -105,8 +110,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
             <dl>
               <dt>{t('Trade.ClosePosition.Volume', 'Volume')}</dt>
               <dd>
-                <em>{keepDecimals(closingAmount, 2)}</em>
-                <u>{closingType}</u>
+                <em>{keepDecimals(openingParams.closingAmount, 2)}</em>
+                <u>{marginToken.symbol}</u>
               </dd>
             </dl>
             <dl>

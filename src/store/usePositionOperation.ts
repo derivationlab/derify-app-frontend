@@ -1,39 +1,21 @@
 import { create } from 'zustand'
 
 import { PositionOperationState } from '@/store/types'
-import { PositionOrderTypes } from '@/typings'
+import { PositionOrderTypes, Rec } from '@/typings'
 
-const usePositionOperationStore = create<PositionOperationState>((set) => ({
+export const initOpeningParams = {
   openingType: PositionOrderTypes.Market,
-  leverageNow: 30,
+  leverageNow: 0,
   closingType: '',
   openingPrice: '0',
   closingAmount: '0',
-  openingAmount: '0',
-  updateOpeningType: (data: PositionOrderTypes) =>
-    set(() => {
-      return { openingType: data }
-    }),
-  updateClosingType: (data: string) =>
-    set(() => {
-      return { closingType: data }
-    }),
-  updateLeverageNow: (data: PositionOrderTypes) =>
-    set(() => {
-      return { leverageNow: data }
-    }),
-  updateOpeningPrice: (data: string) =>
-    set(() => {
-      return { openingPrice: data }
-    }),
-  updateOpeningAmount: (data: string) =>
-    set(() => {
-      return { openingAmount: data }
-    }),
-  updateClosingAmount: (data: string) =>
-    set(() => {
-      return { closingAmount: data }
-    })
+  openingAmount: '0'
+}
+
+const usePositionOperationStore = create<PositionOperationState>((set) => ({
+  openingParams: initOpeningParams,
+  updateOpeningParams: (data: Partial<typeof initOpeningParams>) =>
+    set((state) => ({ openingParams: { ...state.openingParams, ...data } }))
 }))
 
 export { usePositionOperationStore }

@@ -72,7 +72,6 @@ export const usePositionOperation = () => {
       brokerId: string,
       spotPrice: string,
       quoteToken: string,
-      marginToken: string,
       closeAmount: string,
       positionSize: string,
       positionSide: PositionSideTypes,

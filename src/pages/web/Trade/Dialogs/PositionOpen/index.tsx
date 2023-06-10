@@ -63,7 +63,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const calcTFeeFunc = useCallback(
     debounce(async (value: number, symbol: string, spotPrice: string, factoryConfig: string) => {
-      const fee = await calcTradingFee(factoryConfig, symbol, value)
+      const fee = await calcTradingFee(factoryConfig, value)
 
       dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
     }, 1000),
@@ -81,16 +81,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
         factoryConfig: string,
         protocolConfig: string
       ) => {
-        const fee = await calcChangeFee(
-          side,
-          symbol,
-          value,
-          spotPrice,
-          marginPrice,
-          protocolConfig,
-          factoryConfig,
-          true
-        )
+        const fee = await calcChangeFee(side, value, spotPrice, marginPrice, protocolConfig, factoryConfig, true)
 
         dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
       },

@@ -30,11 +30,10 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const closingAmount = usePositionOperationStore((state) => state.closingAmount)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-  const updateClosingType = usePositionOperationStore((state) => state.updateClosingType)
-  const updateClosingAmount = usePositionOperationStore((state) => state.updateClosingAmount)
+  const openingParams = usePositionOperationStore((state) => state.openingParams)
+  const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[data?.derivative] ?? '0'
@@ -50,14 +49,9 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [marginIndicators])
 
   useEffect(() => {
-    if (!visible) updateClosingAmount('0')
-
-    updateClosingAmount(memoVolume)
+    if (!visible) updateOpeningParams({ closingAmount: '0' })
+    updateOpeningParams({ closingAmount: memoVolume })
   }, [visible, memoVolume])
-
-  useEffect(() => {
-    updateClosingType(marginToken.symbol)
-  }, [marginToken])
 
   return (
     <>
@@ -93,13 +87,13 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
               </section>
             </div>
             <QuantityInput
-              value={closingAmount}
+              value={openingParams.closingAmount}
               maxSwap={memoVolume}
               marginToken={marginToken.symbol}
-              onChange={(v) => updateClosingAmount(v as any)}
+              onChange={(v) => updateOpeningParams({ closingAmount: v as any })}
             />
           </div>
-          <Button disabled={!isGT(closingAmount, 0)} onClick={onClick}>
+          <Button disabled={!isGT(openingParams.closingAmount, 0)} onClick={onClick}>
             {t('Trade.ClosePosition.Confirm', 'Confirm')}
           </Button>
         </div>

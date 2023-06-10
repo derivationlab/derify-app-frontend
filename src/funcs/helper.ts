@@ -17,11 +17,7 @@ import {
   isET
 } from '@/utils/tools'
 
-export const calcTradingFee = async (
-  pairAddress: string,
-  tokenSelect: string,
-  openingAmount: string | number
-): Promise<number> => {
+export const calcTradingFee = async (pairAddress: string, openingAmount: string | number): Promise<number> => {
   const c = getDerifyDerivativeContract(pairAddress)
 
   const response = await c.tradingFeeRatio()
@@ -33,7 +29,6 @@ export const calcTradingFee = async (
 
 export const calcChangeFee = async (
   side: PositionSideTypes,
-  symbol: string,
   amount: string | number,
   spotPrice: string,
   marginPrice: string,

@@ -40,16 +40,12 @@ const Bench: FC = () => {
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const openingType = usePositionOperationStore((state) => state.openingType)
-  const leverageNow = usePositionOperationStore((state) => state.leverageNow)
-  const openingPrice = usePositionOperationStore((state) => state.openingPrice)
-  const updateLeverageNow = usePositionOperationStore((state) => state.updateLeverageNow)
-  const updateOpeningType = usePositionOperationStore((state) => state.updateOpeningType)
-  const updateOpeningPrice = usePositionOperationStore((state) => state.updateOpeningPrice)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const openingMinLimit = useOpeningMinLimitStore((state) => state.openingMinLimit)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+  const openingParams = usePositionOperationStore((state) => state.openingParams)
+  const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
   const spotPrice = useMemo(() => {
@@ -89,8 +85,8 @@ const Bench: FC = () => {
   }, [state.openingAmount])
 
   const memoDisabled2 = useMemo(() => {
-    return isLTET(openingPrice, 0)
-  }, [openingPrice])
+    return isLTET(openingParams.openingPrice, 0)
+  }, [openingParams.openingPrice])
 
   const isOrderConversion = (openType: PositionOrderTypes, price: string): boolean => {
     return openType === PositionOrderTypes.Limit ? isET(spotPrice, price) : false
@@ -102,7 +98,7 @@ const Bench: FC = () => {
     dispatch({ type: 'SET_MODAL_STATUS', payload: false })
 
     if (brokerBound?.broker && protocolConfig) {
-      const conversion = isOrderConversion(openingType, state.openingParams?.price)
+      const conversion = isOrderConversion(openingParams.openingType, state.openingParams?.price)
       const { broker } = brokerBound
       const { token } = quoteToken
       const { exchange } = protocolConfig
@@ -112,10 +108,10 @@ const Bench: FC = () => {
         broker,
         token,
         side,
-        openingType,
+        openingParams.openingType,
         symbol,
         price,
-        leverageNow,
+        openingParams.leverageNow,
         amount,
         conversion
       )
@@ -141,7 +137,8 @@ const Bench: FC = () => {
 
   const openPositionDialog = async (side: PositionSideTypes) => {
     if (protocolConfig) {
-      const _realPrice = openingType === PositionOrderTypes.Market ? spotPrice : openingPrice
+      const _realPrice =
+        openingParams.openingType === PositionOrderTypes.Market ? spotPrice : openingParams.openingPrice
 
       const isLimit = isOpeningMinLimit(marginPrice, openingMinLimit, state.openingAmount)
 
@@ -161,8 +158,8 @@ const Bench: FC = () => {
         price: _realPrice,
         symbol: marginToken.symbol,
         volume: state.openingAmount,
-        leverage: leverageNow,
-        openType: openingType
+        leverage: openingParams.leverageNow,
+        openType: openingParams.openingType
       }
       dispatch({ type: 'SET_MODAL_STATUS', payload: true })
       dispatch({ type: 'SET_OPENING_PARAMS', payload: openPosParams })
@@ -171,7 +168,7 @@ const Bench: FC = () => {
 
   useEffect(() => {
     if (isGT(spotPrice, 0)) {
-      updateOpeningPrice(spotPrice)
+      updateOpeningParams({ openingPrice: spotPrice })
     }
   }, [spotPrice])
 
@@ -182,18 +179,25 @@ const Bench: FC = () => {
         <div className="web-trade-bench-pane">
           <Row>
             <Col label={t('Trade.Bench.PriceType', 'Price Type')}>
-              <OpenTypeSelect value={openingType} onChange={updateOpeningType} />
+              <OpenTypeSelect
+                value={openingParams.openingType}
+                onChange={(val) => updateOpeningParams({ openingType: val })}
+              />
             </Col>
             <Col label={t('Trade.Bench.Leverage', 'Leverage')}>
-              <LeverageSelect className="web-trade-bench-leverage" value={leverageNow} onChange={updateLeverageNow} />
+              <LeverageSelect
+                className="web-trade-bench-leverage"
+                value={openingParams.leverageNow}
+                onChange={(val) => updateOpeningParams({ leverageNow: val })}
+              />
             </Col>
           </Row>
           <Row>
             <Col label={t('Trade.Bench.Price', 'Price')}>
               <PriceInput
-                value={openingPrice}
-                onChange={(v) => updateOpeningPrice(v as any)}
-                disabled={openingType === PositionOrderTypes.Market}
+                value={openingParams.openingPrice}
+                onChange={(v) => updateOpeningParams({ openingPrice: v as any })}
+                disabled={openingParams.openingType === PositionOrderTypes.Market}
               />
             </Col>
           </Row>
@@ -232,7 +236,7 @@ const Bench: FC = () => {
               </Button>
             </Col>
           </Row>
-          {openingType === PositionOrderTypes.Market && (
+          {openingParams.openingType === PositionOrderTypes.Market && (
             <Row>
               <Col>
                 <Button

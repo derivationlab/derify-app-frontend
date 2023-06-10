@@ -1,6 +1,7 @@
 import { DerAddressList, derivativeList } from '@/store/useDerivativeList'
 import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList, pagingParams } from '@/store/useMarginTokenList'
+import { initOpeningParams } from '@/store/usePositionOperation'
 import { quoteToken } from '@/store/useQuoteToken'
 import { SharingEvents } from '@/store/useSharing'
 import { InitialTraderVariablesType } from '@/store/useTraderVariables'
@@ -18,18 +19,8 @@ export interface RpcNodeState {
 }
 
 export interface PositionOperationState {
-  closingType: string
-  closingAmount: string
-  openingPrice: string
-  openingAmount: string
-  leverageNow: number
-  openingType: PositionOrderTypes
-  updateClosingType: (p: string) => void
-  updateOpeningType: (p: PositionOrderTypes) => void
-  updateLeverageNow: (p: number) => void
-  updateOpeningPrice: (p: string) => void
-  updateOpeningAmount: (p: string) => void
-  updateClosingAmount: (p: string) => void
+  openingParams: typeof initOpeningParams
+  updateOpeningParams: (p: Partial<typeof initOpeningParams>) => void
 }
 
 export interface SharingState {

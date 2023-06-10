@@ -22,6 +22,7 @@ import {
   useDerivativeListStore,
   usePositionOperationStore
 } from '@/store'
+import { QuoteTokenState } from '@/store/types'
 import { PubSubEvents, Rec } from '@/typings'
 import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
@@ -35,10 +36,9 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const { theme } = useContext(ThemeContext)
   const { closePosition, closeAllPositions, takeProfitOrStopLoss } = usePositionOperation()
 
-  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
+  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
-  const closingType = usePositionOperationStore((state) => state.closingType)
-  const closingAmount = usePositionOperationStore((state) => state.closingAmount)
+  const openingParams = usePositionOperationStore((state) => state.openingParams)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
@@ -85,11 +85,10 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         broker,
         spotPrice,
         token,
-        closingType,
-        closingAmount,
+        openingParams.closingAmount,
         size,
         side,
-        isFullSize(targetPosOrd, closingAmount)
+        isFullSize(targetPosOrd, openingParams.closingAmount)
       )
 
       if (status) {

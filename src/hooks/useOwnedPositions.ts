@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers'
-import { isEmpty } from 'lodash'
+import { isEmpty, debounce } from 'lodash'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { ZERO } from '@/config'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
@@ -225,19 +225,20 @@ export const useOwnedPositions = (trader: string | undefined, derAddressList: an
   const [positionLoaded, setPositionLoaded] = useState<boolean>(true)
   const [ownedPositions, setOwnedPositions] = useState<Rec | undefined>(undefined)
 
-  const func = async (trader: string, derAddressList: any) => {
-    const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, derAddressList)
+  const func = useCallback(
+    debounce(async (trader: string, derAddressList: any) => {
+      const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, derAddressList)
 
-    setOwnedPositions({
-      positionOrd,
-      profitLossOrd
-    })
-    setPositionLoaded(false)
-  }
+      setOwnedPositions({
+        positionOrd,
+        profitLossOrd
+      })
+      setPositionLoaded(false)
+    }, 1000),
+    []
+  )
 
   useEffect(() => {
-    setPositionLoaded(true)
-
     if (trader) {
       void func(trader, derAddressList)
     }

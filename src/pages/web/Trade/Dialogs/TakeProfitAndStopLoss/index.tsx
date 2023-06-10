@@ -1,3 +1,5 @@
+import { debounce } from 'lodash'
+
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -8,28 +10,43 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginIndicatorsStore, useMarginTokenStore, useTokenSpotPricesStore } from '@/store'
-import { PositionSideTypes } from '@/typings'
-import { bnMinus, bnMul, isET, isGT, keepDecimals, safeInterceptionValues } from '@/utils/tools'
+import { PositionSideTypes, Rec } from '@/typings'
+import {
+  bnMinus,
+  bnMul,
+  isET,
+  isGT,
+  keepDecimals,
+  nonBigNumberInterception,
+  safeInterceptionValues
+} from '@/utils/tools'
 
 interface Props {
-  data?: Record<string, any>
+  data?: Rec
   loading?: boolean
   visible: boolean
   onClose: () => void
-  onClick: (params: Record<string, any>) => void
+  onClick: (params: Rec) => void
+}
+
+const initPnLParams = {
+  SLPrice: '',
+  SLAmount: '',
+  TPPrice: '',
+  TPAmount: ''
+}
+
+const showPrice = (price: string | number) => {
+  return isGT(price, 0) ? price : '--'
 }
 
 const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
+  const [pnlParams, setPnLParams] = useState<typeof initPnLParams>(initPnLParams)
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-
-  const [stopLossPrice, setStopLossPrice] = useState<any>('')
-  const [stopLossAmount, setStopLossAmount] = useState<any>()
-  const [takeProfitPrice, setTakeProfitPrice] = useState<any>('')
-  const [takeProfitAmount, setTakeProfitAmount] = useState<any>()
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[data?.derivative] ?? '0'
@@ -61,103 +78,112 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     )
   }, [data])
 
-  const calcProfitAmountCb = useCallback(
-    (v) => {
-      if (v && data) {
-        const p1 = bnMinus(v, data?.averagePrice)
-        const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data?.size)
-        const amount = bnMul(p1, p2)
-        setTakeProfitAmount(keepDecimals(amount, 2))
-      } else {
-        setTakeProfitAmount(0)
-      }
-    },
-    [data]
-  )
-
-  const calcLossAmountCb = useCallback(
-    (v) => {
+  const calcLossAmount = useCallback(
+    debounce((v) => {
       if (v && data) {
         const p1 = bnMinus(v, data?.averagePrice)
         const p2 = bnMul(p1, data?.size)
         const p3 = bnMul(p2, data?.side === PositionSideTypes.long ? 1 : -1)
-        setStopLossAmount(p3)
+        setPnLParams((v) => ({ ...v, SLAmount: p3 }))
       } else {
-        setStopLossAmount(0)
+        setPnLParams((v) => ({ ...v, SLAmount: '0' }))
       }
-    },
+    }, 1000),
     [data]
   )
 
-  const calcPriceShowFunc = (price: string | number) => {
-    return isGT(price, 0) ? price : '--'
-  }
+  const calcProfitAmount = useCallback(
+    debounce((v) => {
+      if (v && data) {
+        const p1 = bnMinus(v, data?.averagePrice)
+        const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data?.size)
+        const amount = bnMul(p1, p2)
+        setPnLParams((v) => ({ ...v, TPAmount: amount }))
+      } else {
+        setPnLParams((v) => ({ ...v, TPAmount: '0' }))
+      }
+    }, 1000),
+    []
+  )
 
-  const calcAmountShowFunc = (price: string | number, amount: string | number) => {
-    if (isGT(price, 0)) return Number(amount) !== 0 ? `${amount > 0 ? '+' : ''}${keepDecimals(amount, 2)}` : '--'
+  const stopLossGain = useMemo(() => {
+    if (isGT(pnlParams.SLPrice, 0))
+      return Number(pnlParams.SLAmount) !== 0
+        ? `${Number(pnlParams.SLAmount) > 0 ? '+' : ''}${nonBigNumberInterception(pnlParams.SLAmount || 0, 8)}`
+        : '--'
     return '--'
-  }
+  }, [pnlParams.SLPrice, pnlParams.SLAmount])
 
-  const onConfirmEditPosFunc = async () => {
-    let SL = 0
-    let TP = 0
+  const takeProfitGain = useMemo(() => {
+    if (isGT(pnlParams.TPPrice, 0))
+      return Number(pnlParams.TPAmount) !== 0
+        ? `${Number(pnlParams.TPAmount) > 0 ? '+' : ''}${nonBigNumberInterception(pnlParams.TPAmount || 0, 8)}`
+        : '--'
+    return '--'
+  }, [pnlParams.TPPrice, pnlParams.TPAmount])
 
-    if (stopLossPrice !== '' && Number(stopLossPrice) === 0) {
+  const onConfirm = () => {
+    let SL: any = 0
+    let TP: any = 0
+
+    if (pnlParams.SLPrice !== '' && Number(pnlParams.SLPrice) === 0) {
       window.toast.error(t('Trade.TPSL.Tip'))
       return
     }
 
-    if (takeProfitPrice !== '' && Number(takeProfitPrice) === 0) {
+    if (pnlParams.TPPrice !== '' && Number(pnlParams.TPPrice) === 0) {
       window.toast.error(t('Trade.TPSL.Tip'))
       return
     }
 
-    if (stopLossPrice > 0 && Number(stopLossAmount) > 0) {
+    if (Number(pnlParams.SLPrice) > 0 && Number(pnlParams.SLAmount) > 0) {
       window.toast.error(t('Trade.TPSL.Tip'))
       return
     }
 
-    if (takeProfitPrice > 0 && Number(takeProfitAmount) <= 0) {
+    if (Number(pnlParams.TPPrice) > 0 && Number(pnlParams.TPAmount) <= 0) {
       window.toast.error(t('Trade.TPSL.Tip'))
       return
     }
 
-    // todo need to be optimized!!!
-    if (isET(stopLossPrice, data?.stopLossPrice) || (stopLossPrice === '' && data?.stopLossPrice === '--')) {
+    if (isET(pnlParams.SLPrice, data?.stopLossPrice) || (pnlParams.SLPrice === '' && data?.stopLossPrice === '--')) {
       SL = 0
-    } else if (stopLossPrice === '') {
+    } else if (pnlParams.SLPrice === '') {
       SL = -1
     } else {
-      SL = stopLossPrice
+      SL = pnlParams.SLPrice
     }
 
-    // todo need to be optimized!!!
-    if (isET(takeProfitPrice, data?.takeProfitPrice) || (takeProfitPrice === '' && data?.takeProfitPrice === '--')) {
+    if (
+      isET(pnlParams.TPPrice, data?.takeProfitPrice) ||
+      (pnlParams.TPPrice === '' && data?.takeProfitPrice === '--')
+    ) {
       TP = 0
-    } else if (takeProfitPrice === '') {
+    } else if (pnlParams.TPPrice === '') {
       TP = -1
     } else {
-      TP = takeProfitPrice
+      TP = pnlParams.TPPrice
     }
 
     const params = {
       TP,
       SL,
       side: data?.side,
-      token: data?.quoteToken
+      token: data?.quoteToken,
+      derivative: data?.derivative
     }
 
     onClick(params)
   }
 
-  const onChangeStopLossPriceEv = (val: any) => {
+  const onChangeSLPrice = (val: any) => {
     if (val === '') {
-      setStopLossPrice('')
-      calcLossAmountCb(0)
+      setPnLParams((v) => ({ ...v, SLPrice: '' }))
+      calcLossAmount(0)
     } else {
       if (val >= 0) {
-        setStopLossPrice(val)
-        calcLossAmountCb(val)
+        setPnLParams((v) => ({ ...v, SLPrice: val }))
+        calcLossAmount(val)
 
         if (Number(val) === 0) {
           window.toast.error(t('Trade.TPSL.Tip'))
@@ -166,14 +192,14 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     }
   }
 
-  const onChangeTakeProfitPriceEv = (val: any) => {
+  const onChangeTPPrice = (val: any) => {
     if (val === '') {
-      setTakeProfitPrice('')
-      calcProfitAmountCb(0)
+      setPnLParams((v) => ({ ...v, TPPrice: '' }))
+      calcProfitAmount(0)
     } else {
       if (val >= 0) {
-        setTakeProfitPrice(val)
-        calcProfitAmountCb(val)
+        setPnLParams((v) => ({ ...v, TPPrice: val }))
+        calcProfitAmount(val)
 
         if (Number(val) === 0) {
           window.toast.error(t('Trade.TPSL.Tip'))
@@ -187,22 +213,19 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
       const { takeProfitPrice, stopLossPrice } = data // '--'
 
       if (takeProfitPrice > 0) {
-        calcProfitAmountCb(takeProfitPrice)
-        setTakeProfitPrice(takeProfitPrice)
+        calcProfitAmount(takeProfitPrice)
+        setPnLParams((v) => ({ ...v, TPPrice: takeProfitPrice }))
       }
       if (stopLossPrice > 0) {
-        calcLossAmountCb(stopLossPrice)
-        setStopLossPrice(stopLossPrice)
+        calcLossAmount(stopLossPrice)
+        setPnLParams((v) => ({ ...v, SLPrice: stopLossPrice }))
       }
     }
   }, [visible])
 
   useEffect(() => {
     if (!visible) {
-      setStopLossAmount('')
-      setTakeProfitAmount('')
-      setTakeProfitPrice('')
-      setStopLossPrice('')
+      setPnLParams(initPnLParams)
     }
   }, [visible])
 
@@ -242,21 +265,19 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
             </header>
             <section>
               <Input
-                value={takeProfitPrice}
-                onChange={onChangeTakeProfitPriceEv}
+                value={pnlParams.TPPrice}
+                onChange={onChangeTPPrice}
                 suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
               />
               <p>
                 {t('Trade.TPSL.TakeProfitTip1', 'When market price reaches')}{' '}
-                <strong>{calcPriceShowFunc(takeProfitPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
+                <strong>{showPrice(pnlParams.TPPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.TakeProfitTip2',
                   'it will trigger Take Profit order to close this position. Estimated profit will be'
                 )}{' '}
-                <em className={Number(takeProfitAmount) > 0 ? 'buy' : 'sell'}>
-                  {calcAmountShowFunc(takeProfitPrice, takeProfitAmount)}
-                </em>{' '}
+                <em className={Number(pnlParams.TPAmount) > 0 ? 'buy' : 'sell'}>{takeProfitGain}</em>{' '}
                 {marginToken.symbol}.
               </p>
             </section>
@@ -266,27 +287,25 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
             </header>
             <section>
               <Input
-                value={stopLossPrice}
-                onChange={onChangeStopLossPriceEv}
+                value={pnlParams.SLPrice}
+                onChange={onChangeSLPrice}
                 suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
               />
               <p>
                 {t('Trade.TPSL.StopLossTip1', 'When market price reaches')}{' '}
-                <strong>{calcPriceShowFunc(stopLossPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
+                <strong>{showPrice(pnlParams.SLPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.StopLossTip2',
                   'it will trigger Stop Loss order to close this position. Estimated loss will be'
                 )}{' '}
-                <em className={Number(stopLossAmount) > 0 ? 'buy' : 'sell'}>
-                  {calcAmountShowFunc(stopLossPrice, stopLossAmount)}
-                </em>{' '}
-                {marginToken.symbol}.
+                <em className={Number(pnlParams.SLAmount) > 0 ? 'buy' : 'sell'}>{stopLossGain}</em> {marginToken.symbol}
+                .
               </p>
             </section>
           </div>
         </div>
-        <Button onClick={onConfirmEditPosFunc}>{t('Trade.ClosePosition.Confirm', 'Confirm')}</Button>
+        <Button onClick={onConfirm}>{t('Trade.ClosePosition.Confirm', 'Confirm')}</Button>
       </div>
     </Dialog>
   )

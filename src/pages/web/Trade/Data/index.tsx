@@ -22,6 +22,7 @@ const Data: FC = () => {
   const { loaded, ownedPositions, getOwnedPositions } = useOwnedPositions(address, derAddressList)
 
   useEffect(() => {
+    PubSub.unsubscribe(PubSubEvents.UPDATE_OPENED_POSITION)
     PubSub.subscribe(PubSubEvents.UPDATE_OPENED_POSITION, () => {
       if (address) void getOwnedPositions(address, derAddressList)
     })

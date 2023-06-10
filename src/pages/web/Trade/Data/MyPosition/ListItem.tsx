@@ -9,7 +9,7 @@ import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore, useTraderVariablesStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
-import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals } from '@/utils/tools'
+import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals, numeralNumber } from '@/utils/tools'
 
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
@@ -50,14 +50,14 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   }, [data, spotPrice])
 
   const memoPnL = useMemo(() => {
-    if (isGT(spotPrice, 0) && Number(data.size) > 0 && Number(data.averagePrice) > 0) {
+    if (isGT(spotPrice, 0) && isGT(data.size, 0) && isGT(data.averagePrice, 0)) {
       const p1 = bnMinus(spotPrice, data.averagePrice)
       const p2 = bnMul(p1, data.size)
       const p3 = data.side === PositionSideTypes.long ? 1 : -1
       return bnMul(p2, p3)
     }
     return '0'
-  }, [data.side, data.size, data.averagePrice, spotPrice])
+  }, [data, spotPrice])
 
   const memoRate = useMemo(() => {
     return isGT(memoMargin, 0) ? bnDiv(memoPnL, memoMargin) : '0'
@@ -72,8 +72,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       >
         <span className={classNames(`${riseOrFall(memoPnL) ? 'up' : 'down'}`)}>
           {riseOrFall(memoPnL)}
-          {keepDecimals(memoPnL, 2)} ({riseOrFall(memoRate)}
-          {keepDecimals(bnMul(memoRate, 100), 2)}%)
+          {numeralNumber(memoPnL, 2)} ({riseOrFall(memoRate)}
+          {numeralNumber(bnMul(memoRate, 100), 2)}%)
         </span>
       </DataAtom>
     ),
@@ -88,7 +88,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         footer={`${data.quoteToken} / ${marginToken.symbol}`}
       >
         <span>
-          {keepDecimals(data?.size ?? 0, 2)} / {keepDecimals(memoVolume, 2)}
+          {numeralNumber(data?.size ?? 0, 2)} / {numeralNumber(memoVolume, 2)}
         </span>
       </DataAtom>
     ),
@@ -142,7 +142,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.MarginTip')}
         footer={marginToken.symbol}
       >
-        <span>{keepDecimals(memoMargin, 2)}</span>
+        <span>{numeralNumber(memoMargin, 2)}</span>
       </DataAtom>
     )
   }, [memoMargin, t])

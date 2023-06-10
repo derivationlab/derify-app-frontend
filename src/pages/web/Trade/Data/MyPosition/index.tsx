@@ -132,9 +132,9 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
     clearing()
 
     if (signer && derAddressList) {
-      const { side, TP, SL } = params
+      const { derivative, side, TP, SL } = params
 
-      const status = await takeProfitOrStopLoss(derAddressList[quoteToken.symbol].derivative, side, TP, SL)
+      const status = await takeProfitOrStopLoss(derAddressList[derivative].derivative, side, TP, SL)
 
       if (status) {
         window.toast.success(t('common.success', 'success'))

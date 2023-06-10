@@ -106,7 +106,7 @@ const MarginToken: FC = () => {
   }, [pagination.index])
 
   return (
-    <div className="web-trade-bench-margin" id='MARGIN'>
+    <div className="web-trade-bench-margin" id="MARGIN">
       <label>{t('Trade.Bench.Margin')}</label>
       <Skeleton rowsProps={{ rows: 1 }} animation loading={!marginTokenListLoaded}>
         <Select

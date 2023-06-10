@@ -1,7 +1,7 @@
 import { debounce, sortBy } from 'lodash'
 import PubSub from 'pubsub-js'
 
-import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { getGrantPlanList } from '@/api'
@@ -9,6 +9,7 @@ import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
+import { resortMargin } from '@/pages/web/Dashboard/Overview/MarketInfo'
 import { all, grantTargetOptions } from '@/reducers/addGrant'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
@@ -19,26 +20,35 @@ import ListItem from './ListItem'
 
 const grantTarget = grantTargetOptions(true)
 
+interface IPagination {
+  data: any[]
+  index: number
+}
+
 const GrantList: FC = () => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
+  const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
 
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const marginOptions = useMemo(() => {
-    if (marginTokenListLoaded) {
-      const _ = marginTokenList.map((token) => ({
-        value: token.margin_token,
-        label: token.symbol,
-        icon: token.logo
-      }))
-
-      return [all, ..._]
+  const options = useMemo(() => {
+    if (pagination.data.length) {
+      const output: any[] = []
+      pagination.data.forEach((token) => {
+        if (token.open > 0) {
+          output.push({
+            value: token.margin_token,
+            label: token.symbol,
+            icon: token.logo
+          })
+        }
+      })
+      return [all, ...output]
     }
 
     return [all]
-  }, [marginTokenListLoaded])
+  }, [pagination.data])
 
   const _getGrantPlanList = useCallback(async (index = 0, marginToken, grantStatus, grantTarget) => {
     const { data } = await getGrantPlanList(marginToken, grantTarget, grantStatus, index, 8)
@@ -68,6 +78,27 @@ const GrantList: FC = () => {
   )
 
   useEffect(() => {
+    const intersectionObserver = new IntersectionObserver(
+      function (entries) {
+        if (entries[0].intersectionRatio <= 0) return
+        setPagination((val) => ({ ...val, index: ++pagination.index }))
+      },
+      { threshold: 0 }
+    )
+
+    const parent = document.getElementById('MARGIN')
+    const children = parent?.querySelectorAll('.web-select-options-li')
+    const target = children?.[children.length - 1]
+    if (target) intersectionObserver.observe(target)
+  }, [options])
+
+  useEffect(() => {
+    if (marginTokenList.length) {
+      setPagination((val) => ({ ...val, data: resortMargin(marginTokenList) }))
+    }
+  }, [marginTokenList])
+
+  useEffect(() => {
     if (state.marginToken1 || state.grantStatus || state.grantTarget1) {
       dispatch({ type: 'SET_GRANT_DAT', payload: { isLoaded: true } })
 
@@ -93,27 +124,29 @@ const GrantList: FC = () => {
   return (
     <div className="web-dashboard">
       <header className="web-dashboard-grant-header">
-        <Select
-          large
-          filter
-          label={t('NewDashboard.GrantList.Margin', 'Margin')}
-          value={state.marginToken1}
-          onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN1', payload: v })}
-          renderer={(props) => (
-            <div className="web-select-options-item">
-              {props.icon && <Image src={props.icon} />}
-              {props.label}
-            </div>
-          )}
-          objOptions={marginOptions as any}
-          labelRenderer={(props) => (
-            <div className="web-dashboard-add-grant-margin-label">
-              {props.icon && <Image src={props.icon} />}
-              <span>{props.label}</span>
-            </div>
-          )}
-          filterPlaceholder="Search name or contract address..."
-        />
+        <div id="MARGIN">
+          <Select
+            large
+            filter
+            label={t('NewDashboard.GrantList.Margin', 'Margin')}
+            value={state.marginToken1}
+            onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN1', payload: v })}
+            renderer={(props) => (
+              <div className="web-select-options-item">
+                {props.icon && <Image src={props.icon} />}
+                {props.label}
+              </div>
+            )}
+            objOptions={options as any}
+            labelRenderer={(props) => (
+              <div className="web-dashboard-add-grant-margin-label">
+                {props.icon && <Image src={props.icon} />}
+                <span>{props.label}</span>
+              </div>
+            )}
+            filterPlaceholder="Search name or contract address..."
+          />
+        </div>
         <Select
           large
           label={t('NewDashboard.GrantList.Target', 'Target')}

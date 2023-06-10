@@ -122,11 +122,6 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   useEffect(() => {
     if (marginTokenList.length) {
       dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].margin_token })
-    }
-  }, [marginTokenList])
-
-  useEffect(() => {
-    if (marginTokenList.length) {
       setPagination((val) => ({ ...val, data: resortMargin(marginTokenList) }))
     }
   }, [marginTokenList])
@@ -140,7 +135,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
       { threshold: 0 }
     )
 
-    const parent = document.querySelector('.web-dashboard-add-grant-dialog-label')
+    const parent = document.getElementById('MARGIN')
     const children = parent?.querySelectorAll('.web-select-options-li')
     const target = children?.[children.length - 1]
     if (target) intersectionObserver.observe(target)
@@ -166,7 +161,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
         <>
           <div className="web-dashboard-add-grant-dialog">
             <div className="web-dashboard-add-grant-dialog-selects">
-              <div className="web-dashboard-add-grant-dialog-label">
+              <div id="MARGIN" className="web-dashboard-add-grant-dialog-label">
                 <label>{t('NewDashboard.GrantList.Margin')}</label>
                 <Skeleton rowsProps={{ rows: 1 }} animation loading={options.length === 0}>
                   <Select

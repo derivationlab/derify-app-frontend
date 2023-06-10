@@ -93,7 +93,7 @@ const MarginToken: FC = () => {
       { threshold: 0 }
     )
 
-    const parent = document.querySelector('.web-trade-bench-margin')
+    const parent = document.getElementById('MARGIN')
     const children = parent?.querySelectorAll('.web-select-options-li')
     const target = children?.[children.length - 1]
     if (target) intersectionObserver.observe(target)
@@ -106,7 +106,7 @@ const MarginToken: FC = () => {
   }, [pagination.index])
 
   return (
-    <div className="web-trade-bench-margin">
+    <div className="web-trade-bench-margin" id='MARGIN'>
       <label>{t('Trade.Bench.Margin')}</label>
       <Skeleton rowsProps={{ rows: 1 }} animation loading={!marginTokenListLoaded}>
         <Select

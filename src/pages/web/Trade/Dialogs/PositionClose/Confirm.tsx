@@ -6,6 +6,7 @@ import Dialog from '@/components/common/Dialog'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { calcChangeFee, calcTradingFee } from '@/funcs/helper'
+import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
   useMarginTokenStore,
@@ -37,6 +38,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[data?.derivative] ?? '0'
@@ -52,7 +54,15 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     const exchange = protocolConfig?.exchange ?? ''
     const derivative = derAddressList?.[data?.derivative]?.derivative ?? ''
 
-    const fee = await calcChangeFee(data?.side, closingType, closingAmount, spotPrice, exchange, derivative)
+    const fee = await calcChangeFee(
+      data?.side,
+      closingType,
+      closingAmount,
+      spotPrice,
+      marginPrice,
+      exchange,
+      derivative
+    )
 
     dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
   }
@@ -65,11 +75,11 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   }, [visible])
 
   useEffect(() => {
-    if (visible && spotPrice && isGT(closingAmount, 0) && derAddressList && protocolConfig) {
+    if (visible && spotPrice && isGT(marginPrice, 0) && isGT(closingAmount, 0) && derAddressList && protocolConfig) {
       void calcTFeeFunc()
       void calcCFeeFunc()
     }
-  }, [visible, spotPrice, closingAmount, derAddressList])
+  }, [visible, spotPrice, marginPrice, closingAmount, derAddressList])
 
   return (
     <Dialog

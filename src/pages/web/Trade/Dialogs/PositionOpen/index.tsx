@@ -10,6 +10,7 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/funcs/helper'
+import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
   useDerivativeListStore,
@@ -41,6 +42,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const openingMaxLimit = useOpeningMaxLimitStore((state) => state.openingMaxLimit)
+  const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
@@ -75,10 +77,20 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
         value: number,
         symbol: string,
         spotPrice: string,
+        marginPrice: string,
         factoryConfig: string,
         protocolConfig: string
       ) => {
-        const fee = await calcChangeFee(side, symbol, value, spotPrice, protocolConfig, factoryConfig, true)
+        const fee = await calcChangeFee(
+          side,
+          symbol,
+          value,
+          spotPrice,
+          marginPrice,
+          protocolConfig,
+          factoryConfig,
+          true
+        )
 
         dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
       },
@@ -109,11 +121,12 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
         state.validOpeningVol.value,
         data?.symbol,
         spotPrice,
+        marginPrice,
         derivative,
         protocolConfig.exchange
       )
     }
-  }, [visible, derAddressList, protocolConfig, state.validOpeningVol, spotPrice])
+  }, [visible, derAddressList, protocolConfig, state.validOpeningVol, spotPrice, marginPrice])
 
   return (
     <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>

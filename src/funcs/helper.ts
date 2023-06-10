@@ -9,7 +9,12 @@ import {
   safeInterceptionValues,
   inputParameterConversion,
   nonBigNumberInterception,
-  bnMul
+  bnMul,
+  formatUnits,
+  bnMinus,
+  bnPlus,
+  bnAbs,
+  isET
 } from '@/utils/tools'
 
 export const calcTradingFee = async (
@@ -31,15 +36,15 @@ export const calcChangeFee = async (
   symbol: string,
   amount: string | number,
   spotPrice: string,
+  marginPrice: string,
   exchange: string,
   derivative: string,
   isOpen = false
 ): Promise<string> => {
-  let nakedPositionTradingPairAfterClosing_BN: BN = new BN(0)
+  let nakedPositionTradingPairAfterClosing = '0'
 
   if (side === PositionSideTypes.twoWay) return '0'
 
-  const size = inputParameterConversion(bnDiv(amount, spotPrice), 8)
   const exchangeContract = getDerifyExchangeContract(exchange)
   const derivativeContract = getDerifyDerivativeContract(derivative)
 
@@ -51,49 +56,37 @@ export const calcChangeFee = async (
   const roRatio = await derivativeContract.roRatio()
   const beforeRatio = await derivativeContract.getPositionChangeFeeRatio()
 
-  const longTotalSize_BN = new BN(longTotalSize._hex)
-  const shortTotalSize_BN = new BN(shortTotalSize._hex)
+  const _size = bnDiv(amount, spotPrice)
+  const _liquidityPool = formatUnits(liquidityPool, 8)
+  const _longTotalSize = formatUnits(longTotalSize, 8)
+  const _shortTotalSize = formatUnits(shortTotalSize, 8)
+  const _kRatio = formatUnits(kRatio, 8)
 
-  const nakedPositionTradingPairBeforeClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN)
+  const _gRatio = formatUnits(gRatio, 8)
+  const _roRatio = formatUnits(roRatio, 8)
+  const _beforeRatio = formatUnits(beforeRatio, 8)
+  const nakedPositionTradingPairBeforeClosing = bnMinus(_longTotalSize, _shortTotalSize)
 
   if (side === PositionSideTypes.long) {
-    if (!isOpen) nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(size).minus(shortTotalSize_BN)
-    else nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.plus(size).minus(shortTotalSize_BN)
+    if (!isOpen) nakedPositionTradingPairAfterClosing = bnMinus(nakedPositionTradingPairBeforeClosing, _size)
+    else nakedPositionTradingPairAfterClosing = bnPlus(nakedPositionTradingPairBeforeClosing, _size)
   }
 
   if (side === PositionSideTypes.short) {
-    if (!isOpen) nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.minus(size))
+    if (!isOpen) nakedPositionTradingPairAfterClosing = bnMinus(_longTotalSize, bnMinus(_shortTotalSize, _size))
     else {
-      nakedPositionTradingPairAfterClosing_BN = longTotalSize_BN.minus(shortTotalSize_BN.plus(size))
+      nakedPositionTradingPairAfterClosing = bnMinus(_longTotalSize, bnPlus(_shortTotalSize, _size))
     }
   }
 
-  const raw_data_naked_after = safeInterceptionValues(
-    String(new BN(safeInterceptionValues(String(nakedPositionTradingPairAfterClosing_BN), 8)).times(spotPrice)),
-    8
-  )
-  const raw_data_naked_before = safeInterceptionValues(
-    String(new BN(safeInterceptionValues(String(nakedPositionTradingPairBeforeClosing_BN), 8)).times(spotPrice)),
-    8
-  )
-  const nakedPositionDiff_BN = new BN(raw_data_naked_after).abs().minus(new BN(raw_data_naked_before).abs())
-
-  const raw_data_kRatio = safeInterceptionValues(String(kRatio), 8)
-  const minimum = BN.minimum(new BN(liquidityPool._hex).times(raw_data_kRatio), new BN(gRatio._hex))
-
-  const row_data_minimum = safeInterceptionValues(String(minimum), 8)
-  const tradingFeeAfterClosing_BN = minimum.isEqualTo(0)
-    ? new BN(0)
-    : new BN(raw_data_naked_after).div(row_data_minimum)
-
-  const row_data_beforeRatio = safeInterceptionValues(beforeRatio._hex, 8)
-  const radioSum = new BN(row_data_beforeRatio).abs().plus(tradingFeeAfterClosing_BN.abs())
-
-  const row_data_roRatio = safeInterceptionValues(roRatio._hex, 8)
-  const row_data_naked_final = safeInterceptionValues(String(nakedPositionDiff_BN), 8)
-  const fee = new BN(row_data_naked_final).times(radioSum.div(2).plus(row_data_roRatio)).times(-1)
-
-  return nonBigNumberInterception(fee.toFixed(10), 8)
+  const raw_data_naked_after = bnMul(nakedPositionTradingPairAfterClosing, spotPrice)
+  const raw_data_naked_before = bnMul(nakedPositionTradingPairBeforeClosing, spotPrice)
+  const nakedPositionDiff = bnMinus(bnAbs(raw_data_naked_after), bnAbs(raw_data_naked_before))
+  const minimum = BN.minimum(bnMul(_liquidityPool, _kRatio), bnDiv(_gRatio, marginPrice)).toString()
+  const tradingFeeAfterClosing = isET(minimum, 0) ? '0' : bnDiv(raw_data_naked_after, minimum)
+  const radioSum = bnPlus(bnAbs(_beforeRatio), bnAbs(tradingFeeAfterClosing))
+  const fee = bnMul(bnMul(nakedPositionDiff, bnPlus(bnDiv(radioSum, 2), _roRatio)), -1)
+  return nonBigNumberInterception(fee, 8)
 }
 
 export const calcProfitOrLoss = (TP: number, SL: number): Record<string, any> => {

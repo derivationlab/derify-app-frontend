@@ -23,7 +23,7 @@ import {
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
 import { PubSubEvents, PositionSideTypes, PositionOrderTypes } from '@/typings'
-import { bnDiv, numeralNumber, isET, isGT, isLT, isLTET, keepDecimals } from '@/utils/tools'
+import { bnDiv, numeralNumber, isET, isGT, isLTET, keepDecimals } from '@/utils/tools'
 
 import Col from './c/Col'
 import Info from './c/Info'
@@ -34,7 +34,6 @@ import Row from './c/Row'
 
 const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
-
   const { t } = useTranslation()
   const { increasePosition } = usePositionOperation()
 
@@ -51,7 +50,6 @@ const Bench: FC = () => {
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const openingMinLimit = useOpeningMinLimitStore((state) => state.openingMinLimit)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
   const spotPrice = useMemo(() => {

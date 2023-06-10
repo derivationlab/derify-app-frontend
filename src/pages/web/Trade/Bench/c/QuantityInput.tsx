@@ -1,12 +1,12 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useEffect, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Input from '@/components/common/Form/Input'
 import PercentButton from '@/components/common/Form/PercentButton'
-import { useDisposableAm } from '@/hooks/useDisposableAm'
+import { calcDisposableAmount } from '@/funcs/helper'
 import {
   usePositionOperationStore,
   useMarginTokenStore,
@@ -26,10 +26,17 @@ interface Props {
   onChange: (value: number | string) => void
 }
 
+interface DisposableAm {
+  loaded: boolean
+  amount: string[]
+}
+
+const initDisposableAm: DisposableAm = { loaded: true, amount: ['0', '0'] }
+
 const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
-
+  const [disposable, setDisposable] = useState<DisposableAm>(initDisposableAm)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const openingType = usePositionOperationStore((state) => state.openingType)
@@ -42,33 +49,33 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
     return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
   }, [quoteToken, tokenSpotPrices])
 
-  const priceParam = useMemo(() => {
+  const realPrice = useMemo(() => {
     return openingType === PositionOrderTypes.Market ? spotPrice : openingPrice
   }, [spotPrice, openingPrice, openingType])
 
-  const { loaded, disposableAm, getDisposableAm } = useDisposableAm(
-    priceParam,
-    address ?? '',
-    protocolConfig?.exchange ?? '',
-    quoteToken,
-    marginToken,
-    leverageNow,
-    openingType
-  )
+  const getDisposableAm = useCallback(async () => {
+    setDisposable(initDisposableAm)
+    const trader = address ?? ''
+    const exchange = protocolConfig?.exchange ?? ''
+    const amount = await calcDisposableAmount(realPrice, trader, exchange, quoteToken.token, leverageNow, openingType)
+    setDisposable({ amount, loaded: false })
+  }, [realPrice, address, protocolConfig, quoteToken.token, leverageNow, openingType])
 
   const maximum = useMemo(() => {
-    return nonBigNumberInterception(disposableAm?.[type] ?? 0, 2)
-  }, [disposableAm, type])
+    return nonBigNumberInterception(disposable.amount[1], 2)
+  }, [disposable, type])
 
   useEffect(() => {
     if (value > maximum) onChange(maximum)
   }, [value, maximum])
 
   useEffect(() => {
+    if (address && protocolConfig && Number(leverageNow) > 0 && Number(realPrice) > 0) void getDisposableAm()
     PubSub.subscribe(PubSubEvents.UPDATE_POSITION_VOLUME, () => {
-      void getDisposableAm()
+      console.info('PubSubEvents.UPDATE_POSITION_VOLUME')
+      if (address && protocolConfig && Number(leverageNow) > 0 && Number(realPrice) > 0) void getDisposableAm()
     })
-  }, [])
+  }, [address, realPrice, quoteToken, leverageNow, protocolConfig])
 
   return (
     <>
@@ -76,11 +83,11 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
         <header className="web-trade-bench-pane-volume-header">{t('Trade.Bench.Volume', 'Volume')}</header>
         <div className="web-trade-bench-pane-volume-max">
           <span>Max: </span>
-          {loaded ? (
+          {disposable.loaded ? (
             'loading ...'
           ) : (
             <>
-              <em>{keepDecimals(disposableAm?.[type] ?? 0, 2)}</em>
+              <em>{keepDecimals(disposable.amount[1], 2)}</em>
               <u> {type}</u>
             </>
           )}

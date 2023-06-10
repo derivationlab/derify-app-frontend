@@ -139,3 +139,25 @@ export const checkOpeningVol = (
   const effective = isGreater ? maximum : openingSize
   return [maximum, isGreater, effective]
 }
+
+export const calcDisposableAmount = async (
+  price: string,
+  trader: string,
+  exchange: string,
+  quoteToken: string,
+  leverageNow: number,
+  openingType: PositionOrderTypes
+) => {
+  const contract = getDerifyExchangeContract(exchange)
+  const _price = inputParameterConversion(price, 8)
+  const _leverageNow = inputParameterConversion(leverageNow, 8)
+
+  try {
+    const data = await contract.getTraderOpenUpperBound(quoteToken, trader, openingType, _price, _leverageNow)
+    const { size, amount } = data
+    return [formatUnits(String(size), 8), formatUnits(String(amount), 8)]
+  } catch (e) {
+    console.info(e)
+    return ['0', '0']
+  }
+}

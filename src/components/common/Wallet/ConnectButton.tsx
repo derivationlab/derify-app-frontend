@@ -1,3 +1,4 @@
+import PubSub from 'pubsub-js'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
 import React, { FC, useEffect, useState } from 'react'
@@ -8,7 +9,8 @@ import Button from '@/components/common/Button'
 import WalletDialog from '@/components/common/Wallet'
 import { Wallet } from '@/components/common/Wallet/wallets'
 import useConnecting from '@/hooks/useConnecting'
-import { SharingEvents, useSharingStore, useWalletStore } from '@/store'
+import { useWalletStore } from '@/store'
+import { PubSubEvents } from '@/typings'
 
 interface Props {
   size?: 'mini' | 'default'
@@ -25,8 +27,6 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
 
   const { connectWallet } = useConnecting()
 
-  const sharing = useSharingStore((state) => state.sharing)
-  const updateSharing = useSharingStore((state) => state.updateSharing)
   const updateAccount = useWalletStore((state) => state.updateAccount)
 
   const connectWalletFunc = async (wallet: Wallet) => {
@@ -46,12 +46,10 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   }, [chain, needSwitchNet, switchNetwork, chains])
 
   useEffect(() => {
-    if (sharing === SharingEvents.connectWallet) {
+    PubSub.subscribe(PubSubEvents.CONNECT_WALLET, () => {
       setModalStatus(true)
-
-      updateSharing(undefined)
-    }
-  }, [sharing])
+    })
+  }, [])
 
   useEffect(() => {
     if (isConnected && address) {

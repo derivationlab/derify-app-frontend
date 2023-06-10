@@ -24,10 +24,12 @@ export default function TradingUpdater(): null {
   const getOpeningMinLimit = useOpeningMinLimitStore((state) => state.getOpeningMinLimit)
   const getOpeningMaxLimit = useOpeningMaxLimitStore((state) => state.getOpeningMaxLimit)
   const getTraderVariables = useTraderVariablesStore((state) => state.getTraderVariables)
+  const resetTraderVariables = useTraderVariablesStore((state) => state.reset)
 
   // User Margin Data
   useEffect(() => {
     if (address && protocolConfig) {
+      void resetTraderVariables()
       void getTraderVariables(address, protocolConfig.exchange)
     }
 

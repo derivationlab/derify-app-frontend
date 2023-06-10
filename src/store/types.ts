@@ -3,9 +3,8 @@ import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList, pagingParams } from '@/store/useMarginTokenList'
 import { initOpeningParams } from '@/store/usePositionOperation'
 import { quoteToken } from '@/store/useQuoteToken'
-import { SharingEvents } from '@/store/useSharing'
 import { InitialTraderVariablesType } from '@/store/useTraderVariables'
-import { ChainId, ProtocolConfig, PositionOrderTypes, Rec } from '@/typings'
+import { ChainId, ProtocolConfig, Rec } from '@/typings'
 
 export interface WalletState {
   loaded: boolean
@@ -21,11 +20,6 @@ export interface RpcNodeState {
 export interface PositionOperationState {
   openingParams: typeof initOpeningParams
   updateOpeningParams: (p: Partial<typeof initOpeningParams>) => void
-}
-
-export interface SharingState {
-  sharing: SharingEvents | undefined
-  updateSharing: (data: SharingEvents | undefined) => void
 }
 
 export interface BalancesState {

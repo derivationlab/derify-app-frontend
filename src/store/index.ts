@@ -1,5 +1,4 @@
 export * from './useRpcNode'
-export * from './useSharing'
 export * from './usePositionOperation'
 export * from './useBalances'
 export * from './useBrokerInfo'

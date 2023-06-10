@@ -21,7 +21,7 @@ export default function GlobalUpdater(): null {
   const { address } = useAccount()
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const fetchBalances = useBalancesStore((state) => state.getTokenBalances)
+  const getTokenBalances = useBalancesStore((state) => state.getTokenBalances)
   const resetBalances = useBalancesStore((state) => state.reset)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
@@ -36,14 +36,14 @@ export default function GlobalUpdater(): null {
 
   // Token balances
   useEffect(() => {
-    if (!address) {
+    if (address) {
       void resetBalances()
-    } else {
-      if (marginTokenList.length) void fetchBalances(address, marginTokenList)
+      if (marginTokenList.length) void getTokenBalances(address, marginTokenList)
     }
 
+    PubSub.unsubscribe(PubSubEvents.UPDATE_BALANCE)
     PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
-      if (address && marginTokenList.length) void fetchBalances(address, marginTokenList)
+      if (address && marginTokenList.length) void getTokenBalances(address, marginTokenList)
     })
   }, [address, marginTokenList])
 
@@ -64,17 +64,18 @@ export default function GlobalUpdater(): null {
   // User broker info
   useEffect(() => {
     if (address) {
+      resetBrokerInfo()
+      resetBrokerBound()
       void fetchBrokerInfo(address, marginToken.address)
       void fetchBrokerBound(address)
     }
 
+    PubSub.unsubscribe(PubSubEvents.UPDATE_BROKER_DAT)
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {
-      resetBrokerInfo()
       if (address) void fetchBrokerInfo(address, marginToken.address)
     })
-
+    PubSub.unsubscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT)
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT, () => {
-      resetBrokerBound()
       if (address) void fetchBrokerBound(address)
     })
   }, [address, marginToken])

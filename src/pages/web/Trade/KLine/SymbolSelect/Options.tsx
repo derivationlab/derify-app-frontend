@@ -1,3 +1,5 @@
+import { getAddress } from '@ethersproject/address'
+
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -44,29 +46,34 @@ const Options: FC<Props> = ({ onChange }) => {
       </div>
       <div className="web-trade-symbol-select-container">
         <ul>
-          {options.map((item, index) => (
-            <li key={index} onClick={() => onChange(item, index)}>
-              {mobile ? (
-                <>
-                  <aside>
+          {options.map((item, index) => {
+            const keys = Object.keys(marginIndicators ?? [])
+            const findKey = keys.find((key) => getAddress(key) === getAddress(item.token))
+            const values = marginIndicators?.[findKey ?? ''] ?? {}
+            return (
+              <li key={index} onClick={() => onChange(item, index)}>
+                {mobile ? (
+                  <>
+                    <aside>
+                      <h5>{item.name}</h5>
+                      <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
+                    </aside>
+                    <aside>
+                      <BalanceShow value={tokenSpotPrices?.[item.name] ?? 0} unit="" />
+                      <ChangePercent value={values?.price_change_rate ?? 0} />
+                    </aside>
+                  </>
+                ) : (
+                  <>
                     <h5>{item.name}</h5>
-                    <BalanceShow value={marginIndicators?.[item.token]?.apy ?? 0} percent unit="APR" />
-                  </aside>
-                  <aside>
-                    <BalanceShow value={tokenSpotPrices?.[item.name] ?? 0} unit="" />
-                    <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate ?? 0} />
-                  </aside>
-                </>
-              ) : (
-                <>
-                  <h5>{item.name}</h5>
-                  <BalanceShow value={keepDecimals(tokenSpotPrices?.[item.name] ?? 0, 2)} unit="" />
-                  <ChangePercent value={marginIndicators?.[item.token]?.price_change_rate ?? 0} />
-                  <BalanceShow value={marginIndicators?.[item.token]?.apy ?? 0} percent unit="APR" />
-                </>
-              )}
-            </li>
-          ))}
+                    <BalanceShow value={keepDecimals(tokenSpotPrices?.[item.name] ?? 0, 2)} unit="" />
+                    <ChangePercent value={values?.price_change_rate ?? 0} />
+                    <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
+                  </>
+                )}
+              </li>
+            )
+          })}
         </ul>
       </div>
     </div>

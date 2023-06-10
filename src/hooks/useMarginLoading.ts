@@ -36,6 +36,15 @@ export const useMarginLoading = () => {
   useEffect(() => {
     const len = derivativeList.length
     const { token } = quoteToken
+    if (len && token) {
+      const find = derivativeList.find((d) => d.name === quoteToken.symbol)
+      if (!find) updateQuoteToken({ symbol: derivativeList[0].name, token: derivativeList[0].token })
+    }
+  }, [derivativeList])
+
+  useEffect(() => {
+    const len = derivativeList.length
+    const { token } = quoteToken
     if (len && !token) {
       const { name, token } = derivativeList[0]
       updateQuoteToken({ symbol: name, token })

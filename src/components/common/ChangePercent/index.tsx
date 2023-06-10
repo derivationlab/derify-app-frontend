@@ -12,7 +12,7 @@ interface Props {
 const ChangePercent: FC<Props> = ({ value, size }) => {
   const [valStr, isUp] = useMemo(() => {
     const isUp = value >= 0
-    const valStr = `${isUp ? '+' : ''}${keepDecimals(bnMul(value, 100), 2)}%`
+    const valStr = `${isUp ? '+' : ''}${keepDecimals(bnMul(value, 100), 4)}%`
     return [valStr, isUp]
   }, [value])
   return (

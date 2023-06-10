@@ -34,18 +34,17 @@ const calcLeverageMarks = (max: number, limit = 6): number[] => {
 
 const LeverageSelect: FC<Props> = ({ onChange, className }) => {
   const ref = useRef(null)
+  const [multiple, setMultiple] = useState<number>(0)
+  const [isVisible, toggleVisible] = useToggle(false)
 
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const posMaxLeverage = useDerivativeListStore((state) => state.posMaxLeverage)
-
-  const [multiple, setMultiple] = useState<number>(0)
-  const [isVisible, toggleVisible] = useToggle(false)
 
   const maxLeverage = useMemo(() => {
     return posMaxLeverage ? Number(posMaxLeverage[quoteToken.symbol] ?? 0) : 0
   }, [quoteToken, posMaxLeverage])
 
-  const leverageMarks = useMemo(() => {
+  const sliderMarks = useMemo(() => {
     if (maxLeverage > 0) return calcLeverageMarks(maxLeverage)
     return []
   }, [maxLeverage])
@@ -59,6 +58,7 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
     if (maxLeverage === 0) {
       setMultiple(0)
     } else {
+      onChange(maxLeverage)
       setMultiple(maxLeverage)
     }
   }, [maxLeverage])
@@ -72,7 +72,7 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
       </div>
       <div className="web-leverage-select-stepper">
         <Stepper value={multiple} min={1} onChange={setMultiple} suffix="X" max={maxLeverage} input />
-        <Slider value={multiple} onChange={setMultiple} suffix="X" marks={leverageMarks} />
+        <Slider value={multiple} onChange={setMultiple} suffix="X" marks={sliderMarks} />
         <Button full size="medium" onClick={onConfirm}>
           Confirm
         </Button>

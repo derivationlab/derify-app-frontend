@@ -85,7 +85,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       <DataAtom
         label={t('Trade.MyPosition.Volume', 'Volume')}
         tip={t('Trade.MyPosition.VolumeTip')}
-        footer={`${data.derivative.split('/')[0]} / ${marginToken.symbol}`}
+        footer={`${data.quoteToken} / ${marginToken.symbol}`}
       >
         <span>
           {keepDecimals(data?.size ?? 0, 2)} / {keepDecimals(memoVolume, 2)}

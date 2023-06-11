@@ -112,8 +112,7 @@ export interface TraderVariablesState {
   reset: () => void
 }
 
-export interface OpeningMaxLimitState {
-  openingMaxLimit: Rec | null
-  openingMaxLimitLoaded: boolean
-  getOpeningMaxLimit: (address: string, list: typeof quoteToken) => Promise<void>
+export interface PositionLimitState {
+  positionLimit: Rec | null
+  getPositionLimit: (address: string, list: typeof quoteToken) => Promise<void>
 }

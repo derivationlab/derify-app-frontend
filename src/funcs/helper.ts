@@ -119,17 +119,23 @@ export const isOpeningMinLimit = (mPrice: string, openingMinLimit: string, openi
   return isLT(bnMul(openingAmount, mPrice), openingMinLimit)
 }
 
-export const checkOpeningVol = (
+export const checkClosingLimit = (spotPrice: string, closingSize: string, closingMaxLimit: string): any[] => {
+  const maximum = bnMul(spotPrice, closingMaxLimit)
+  const isGreater = isGT(closingSize, maximum)
+  const effective = isGreater ? maximum : closingSize
+  return [maximum, isGreater, effective]
+}
+
+export const checkOpeningLimit = (
   spotPrice: string,
   openingSize: string,
   positionSide: PositionSideTypes,
   openingType: PositionOrderTypes,
-  tokenSelect: string,
   openingMaxLimit: string
 ): any[] => {
   if (openingType === PositionOrderTypes.Limit) return [0, false, openingSize]
   if (positionSide === PositionSideTypes.twoWay) return [0, false, openingSize]
-  const maximum = Number(spotPrice) * Number(openingMaxLimit)
+  const maximum = bnMul(spotPrice, openingMaxLimit)
   const isGreater = isGT(openingSize, maximum)
   const effective = isGreater ? maximum : openingSize
   return [maximum, isGreater, effective]

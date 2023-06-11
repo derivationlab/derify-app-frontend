@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 
 import {
   useDerivativeListStore,
-  useOpeningMaxLimitStore,
+  usePositionLimitStore,
   useProtocolConfigStore,
   useQuoteTokenStore,
   useTraderVariablesStore
@@ -22,7 +22,7 @@ export default function TradingUpdater(): null {
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const getPosMaxLeverage = useDerivativeListStore((state) => state.getPosMaxLeverage)
   const getOpeningMinLimit = useOpeningMinLimitStore((state) => state.getOpeningMinLimit)
-  const getOpeningMaxLimit = useOpeningMaxLimitStore((state) => state.getOpeningMaxLimit)
+  const getPositionLimit = usePositionLimitStore((state) => state.getPositionLimit)
   const getTraderVariables = useTraderVariablesStore((state) => state.getTraderVariables)
   const resetTraderVariables = useTraderVariablesStore((state) => state.reset)
 
@@ -48,7 +48,7 @@ export default function TradingUpdater(): null {
 
   // Minimum open position amount
   useEffect(() => {
-    if (protocolConfig) void getOpeningMaxLimit(protocolConfig.exchange, quoteToken)
+    if (protocolConfig) void getPositionLimit(protocolConfig.exchange, quoteToken)
   }, [quoteToken, protocolConfig])
 
   // Trading pairs opening max leverage

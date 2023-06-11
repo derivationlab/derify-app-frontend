@@ -21,7 +21,7 @@ export const usePositionOperation = () => {
     pricingType: string,
     openingPrice: string,
     posLeverage: number,
-    openingSize: number,
+    openingSize: string,
     conversion?: boolean
   ): Promise<boolean> => {
     if (!signer) return false

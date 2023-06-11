@@ -19,7 +19,7 @@ import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/u
 import QuantityInput from './QuantityInput'
 
 interface Props {
-  data?: Record<string, any>
+  data: Record<string, any>
   loading?: boolean
   visible: boolean
   onClose: () => void
@@ -28,7 +28,6 @@ interface Props {
 
 const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
-
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
@@ -46,7 +45,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const memoChangeRate = useMemo(() => {
     const base = marginIndicators?.[data?.token]?.price_change_rate ?? 0
     return bnMul(base, 100)
-  }, [marginIndicators])
+  }, [data, marginIndicators])
 
   useEffect(() => {
     if (!visible) updateOpeningParams({ closingAmount: '0' })
@@ -101,7 +100,5 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
     </>
   )
 }
-
-PositionClose.defaultProps = {}
 
 export default PositionClose

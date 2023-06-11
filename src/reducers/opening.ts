@@ -6,11 +6,11 @@ interface ActionType {
     | 'SET_OPENING_PARAMS'
     | 'SET_CHANGE_FEE_INFO'
     | 'SET_TRADING_FEE_INFO'
-    | 'SET_VALID_OPENING_VOLUME'
+    | 'SET_POSITION_LIMITS'
   payload: any
 }
 
-const R = { loaded: false, value: 0 }
+const R = { loaded: false, value: '0' }
 
 interface StateType {
   tokenSelect: string
@@ -19,7 +19,7 @@ interface StateType {
   posChangeFee: typeof R
   openingParams: Record<string, any>
   tradingFeeInfo: typeof R
-  validOpeningVol: typeof R & { maximum: number; isGreater: boolean }
+  positionLimits: typeof R & { maximum: string; isGreater: boolean }
 }
 
 const stateInit: StateType = {
@@ -29,7 +29,7 @@ const stateInit: StateType = {
   openingParams: {},
   posChangeFee: R,
   tradingFeeInfo: R,
-  validOpeningVol: { ...R, maximum: 0, isGreater: false }
+  positionLimits: { ...R, maximum: '0', isGreater: false }
 }
 
 function reducer(state: StateType, action: ActionType): StateType {
@@ -46,8 +46,8 @@ function reducer(state: StateType, action: ActionType): StateType {
       return { ...state, posChangeFee: action.payload }
     case 'SET_TRADING_FEE_INFO':
       return { ...state, tradingFeeInfo: action.payload }
-    case 'SET_VALID_OPENING_VOLUME':
-      return { ...state, validOpeningVol: action.payload }
+    case 'SET_POSITION_LIMITS':
+      return { ...state, positionLimits: action.payload }
     default:
       return state
   }

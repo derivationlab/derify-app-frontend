@@ -92,7 +92,7 @@ const Bench: FC = () => {
     return openType === PositionOrderTypes.Limit ? isET(spotPrice, price) : false
   }
 
-  const openPositionFunc = async (amount: number) => {
+  const openPositionFunc = async (amount: string) => {
     const toast = window.toast.loading(t('common.pending', 'pending...'))
 
     dispatch({ type: 'SET_MODAL_STATUS', payload: false })

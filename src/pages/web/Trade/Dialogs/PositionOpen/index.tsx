@@ -9,26 +9,26 @@ import Dialog from '@/components/common/Dialog'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
-import { calcChangeFee, calcTradingFee, checkOpeningVol } from '@/funcs/helper'
+import { calcChangeFee, calcTradingFee, checkOpeningLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
   useDerivativeListStore,
   useMarginTokenStore,
-  useOpeningMaxLimitStore,
+  usePositionLimitStore,
   useProtocolConfigStore,
   useQuoteTokenStore,
   useTokenSpotPricesStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import { keepDecimals } from '@/utils/tools'
+import { bnDiv, keepDecimals } from '@/utils/tools'
 
 interface Props {
   data: Record<string, any>
   visible: boolean
   onClose: () => void
-  onClick: (amount: number) => void
+  onClick: (amount: string) => void
 }
 
 const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
@@ -41,29 +41,28 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
-  const openingMaxLimit = useOpeningMaxLimitStore((state) => state.openingMaxLimit)
+  const positionLimit = usePositionLimitStore((state) => state.positionLimit)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
   }, [quoteToken, tokenSpotPrices])
 
-  const _checkOpeningVol = async (openingMaxLimit: Rec) => {
-    const [maximum, isGreater, effective] = checkOpeningVol(
+  const _checkOpeningLimit = async (positionLimit: Rec) => {
+    const [maximum, isGreater, effective] = checkOpeningLimit(
       spotPrice,
       data.volume,
       data.side,
       data.openType,
-      data.symbol,
-      openingMaxLimit[quoteToken.token][PositionSideTypes[data.side]]
+      positionLimit[quoteToken.token][PositionSideTypes[data.side]]
     )
 
-    dispatch({ type: 'SET_VALID_OPENING_VOLUME', payload: { loaded: true, value: effective, maximum, isGreater } })
+    dispatch({ type: 'SET_POSITION_LIMITS', payload: { loaded: true, value: effective, maximum, isGreater } })
   }
 
   const calcTFeeFunc = useCallback(
-    debounce(async (value: number, symbol: string, spotPrice: string, factoryConfig: string) => {
-      const fee = await calcTradingFee(factoryConfig, value)
+    debounce(async (value: string, symbol: string, spotPrice: string, derivative: string) => {
+      const fee = await calcTradingFee(derivative, value)
 
       dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
     }, 1000),
@@ -74,7 +73,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
     debounce(
       async (
         side: PositionSideTypes,
-        value: number,
+        value: string,
         symbol: string,
         spotPrice: string,
         marginPrice: string,
@@ -91,10 +90,10 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   )
 
   useEffect(() => {
-    if (!isEmpty(data) && visible && openingMaxLimit) {
-      void _checkOpeningVol(openingMaxLimit)
+    if (!isEmpty(data) && visible && positionLimit && Number(spotPrice) > 0) {
+      void _checkOpeningLimit(positionLimit)
     }
-  }, [data, visible])
+  }, [data, visible, spotPrice, positionLimit])
 
   useEffect(() => {
     if (!visible) {
@@ -104,12 +103,12 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible])
 
   useEffect(() => {
-    if (visible && state.validOpeningVol && protocolConfig && derAddressList && spotPrice) {
+    if (visible && state.positionLimits && protocolConfig && derAddressList && spotPrice) {
       const derivative = derAddressList[quoteToken.symbol].derivative
-      void calcTFeeFunc(state.validOpeningVol.value, data.symbol, spotPrice, derivative)
+      void calcTFeeFunc(state.positionLimits.value, data.symbol, spotPrice, derivative)
       void calcCFeeFunc(
         data?.side,
-        state.validOpeningVol.value,
+        state.positionLimits.value,
         data?.symbol,
         spotPrice,
         marginPrice,
@@ -117,7 +116,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
         protocolConfig.exchange
       )
     }
-  }, [visible, derAddressList, protocolConfig, state.validOpeningVol, spotPrice, marginPrice])
+  }, [visible, derAddressList, protocolConfig, state.positionLimits, spotPrice, marginPrice])
 
   return (
     <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
@@ -146,18 +145,18 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               <dt>{t('Trade.COP.Volume', 'Volume')}</dt>
               {data?.side === PositionSideTypes.twoWay ? (
                 <dd>
-                  {!state.validOpeningVol.loaded ? (
+                  {!state.positionLimits.loaded ? (
                     <small>loading...</small>
                   ) : (
                     <section>
                       <aside>
                         <MultipleStatus direction="Long" />
-                        <em>{keepDecimals(state.validOpeningVol.value / 2, 2)}</em>
+                        <em>{keepDecimals(bnDiv(state.positionLimits.value, 2), 2)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                       <aside>
                         <MultipleStatus direction="Short" />
-                        <em>{keepDecimals(state.validOpeningVol.value / 2, 2)}</em>
+                        <em>{keepDecimals(bnDiv(state.positionLimits.value, 2), 2)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                     </section>
@@ -165,28 +164,28 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 </dd>
               ) : (
                 <dd>
-                  {!state.validOpeningVol.loaded ? (
+                  {!state.positionLimits.loaded ? (
                     <small>loading...</small>
                   ) : (
-                    <span className={classNames({ error: state.validOpeningVol.isGreater })}>
-                      <em>{keepDecimals(state.validOpeningVol.value, 2)}</em>
+                    <span className={classNames({ error: state.positionLimits.isGreater })}>
+                      <em>{keepDecimals(state.positionLimits.value, 2)}</em>
                       <u>{data?.symbol}</u>
                     </span>
                   )}
-                  {state.validOpeningVol.isGreater && (
+                  {state.positionLimits.isGreater && (
                     <QuestionPopover
                       size="mini"
                       icon="icon/warning.svg"
                       text={t('Trade.Bench.TheMaximumPositionValue', {
-                        Amount: `${keepDecimals(state.validOpeningVol.maximum, 2)} ${marginToken.symbol}`
+                        Amount: `${keepDecimals(state.positionLimits.maximum, 2)} ${marginToken.symbol}`
                       })}
                     />
                   )}
                 </dd>
               )}
-              {/*{state.validOpeningVol.isGreater && (<small className='error'>*/}
+              {/*{state.positionLimits.isGreater && (<small className='error'>*/}
               {/*  <Trans>{t('Trade.Bench.TheMaximumPositionValue',*/}
-              {/*    { Amount: `${keepDecimals(state.validOpeningVol.maximum, 2)} ${marginToken.symbol}` })*/}
+              {/*    { Amount: `${keepDecimals(state.positionLimits.maximum, 2)} ${marginToken.symbol}` })*/}
               {/*  }</Trans></small>)}*/}
             </dl>
             <dl>
@@ -227,8 +226,8 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
           </div>
         </div>
         <Button
-          onClick={() => onClick(state.validOpeningVol.value)}
-          disabled={state.validOpeningVol.maximum === 0 && state.validOpeningVol.isGreater}
+          onClick={() => onClick(state.positionLimits.value)}
+          disabled={Number(state.positionLimits.maximum) === 0 && state.positionLimits.isGreater}
         >
           {t('Trade.COP.Confirm', 'Confirm')}
         </Button>
@@ -236,7 +235,5 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
     </Dialog>
   )
 }
-
-PositionOpen.defaultProps = {}
 
 export default PositionOpen

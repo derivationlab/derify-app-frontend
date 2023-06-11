@@ -1,12 +1,16 @@
-import React, { FC, useEffect, useMemo, useReducer } from 'react'
+import classNames from 'classnames'
+import { isEmpty, debounce } from 'lodash'
+
+import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import MultipleStatus from '@/components/web/MultipleStatus'
-import { calcChangeFee, calcTradingFee } from '@/funcs/helper'
+import { calcChangeFee, calcTradingFee, checkClosingLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
+import { usePositionLimit } from '@/hooks/usePositionLimit'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
   useMarginTokenStore,
@@ -16,11 +20,11 @@ import {
   usePositionOperationStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { PositionSideTypes } from '@/typings'
+import { PositionSideTypes, Rec } from '@/typings'
 import { isGT, keepDecimals } from '@/utils/tools'
 
 interface Props {
-  data?: Record<string, any>
+  data: Record<string, any>
   loading?: boolean
   visible: boolean
   onClose: () => void
@@ -28,42 +32,49 @@ interface Props {
 }
 
 const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
-  const [state, dispatch] = useReducer(reducer, stateInit)
-
   const { t } = useTranslation()
-
+  const [state, dispatch] = useReducer(reducer, stateInit)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const { positionLimit } = usePositionLimit(protocolConfig?.exchange, data.token)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[data?.derivative] ?? '0'
   }, [tokenSpotPrices])
 
-  const calcTFeeFunc = async () => {
-    const derivative = derAddressList?.[data?.derivative]?.derivative ?? ''
-    const fee = await calcTradingFee(derivative, openingParams.closingAmount)
-    dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
-  }
-
-  const calcCFeeFunc = async () => {
-    const exchange = protocolConfig?.exchange ?? ''
-    const derivative = derAddressList?.[data?.derivative]?.derivative ?? ''
-
-    const fee = await calcChangeFee(
-      data?.side,
-      openingParams.closingAmount,
+  const _checkClosingLimit = async (positionLimit: Rec) => {
+    // console.info(positionLimit, spotPrice)
+    const [maximum, isGreater, effective] = checkClosingLimit(
       spotPrice,
-      marginPrice,
-      exchange,
-      derivative
+      openingParams.closingAmount,
+      positionLimit[data.token][PositionSideTypes[data.side]]
     )
 
-    dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
+    dispatch({ type: 'SET_POSITION_LIMITS', payload: { loaded: true, value: effective, maximum, isGreater } })
   }
+
+  const calcTFeeFunc = useCallback(
+    debounce(async (derivative: string, closingAmount: string) => {
+      const fee = await calcTradingFee(derivative, closingAmount)
+      dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
+    }),
+    []
+  )
+
+  const calcCFeeFunc = useCallback(
+    debounce(
+      async (derivative: string, exchange: string, spotPrice: string, marginPrice: string, closingAmount: string) => {
+        const fee = await calcChangeFee(data?.side, closingAmount, spotPrice, marginPrice, exchange, derivative)
+
+        dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
+      }
+    ),
+    []
+  )
 
   useEffect(() => {
     if (!visible) {
@@ -74,6 +85,18 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   useEffect(() => {
     if (
+      !isEmpty(data) &&
+      visible &&
+      positionLimit &&
+      Number(openingParams.closingAmount) > 0 &&
+      Number(spotPrice) > 0
+    ) {
+      void _checkClosingLimit(positionLimit)
+    }
+  }, [data, visible, spotPrice, positionLimit, openingParams.closingAmount])
+
+  useEffect(() => {
+    if (
       visible &&
       spotPrice &&
       isGT(marginPrice, 0) &&
@@ -81,10 +104,12 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
       derAddressList &&
       protocolConfig
     ) {
-      void calcTFeeFunc()
-      void calcCFeeFunc()
+      const exchange = protocolConfig.exchange
+      const derivative = derAddressList[data.derivative]?.derivative ?? ''
+      void calcTFeeFunc(derivative, state.positionLimits.value)
+      void calcCFeeFunc(derivative, exchange, spotPrice, marginPrice, state.positionLimits.value)
     }
-  }, [visible, spotPrice, marginPrice, openingParams.closingAmount, derAddressList])
+  }, [visible, spotPrice, marginPrice, derAddressList, state.positionLimits])
 
   return (
     <Dialog
@@ -110,8 +135,23 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
             <dl>
               <dt>{t('Trade.ClosePosition.Volume', 'Volume')}</dt>
               <dd>
-                <em>{keepDecimals(openingParams.closingAmount, 2)}</em>
-                <u>{marginToken.symbol}</u>
+                {!state.positionLimits.loaded ? (
+                  <small>loading...</small>
+                ) : (
+                  <span className={classNames({ error: state.positionLimits.isGreater })}>
+                    <em>{keepDecimals(state.positionLimits.value, 2)}</em>
+                    <u>{marginToken.symbol}</u>
+                  </span>
+                )}
+                {state.positionLimits.isGreater && (
+                  <QuestionPopover
+                    size="mini"
+                    icon="icon/warning.svg"
+                    text={t('Trade.Bench.TheMaximumPositionValue', {
+                      Amount: `${keepDecimals(state.positionLimits.maximum, 2)} ${marginToken.symbol}`
+                    })}
+                  />
+                )}
               </dd>
             </dl>
             <dl>
@@ -121,7 +161,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               </dt>
               <dd>
                 {!state.posChangeFee.loaded ? (
-                  <small>calculating...</small>
+                  <small>loading...</small>
                 ) : (
                   <>
                     <em>{keepDecimals(state.posChangeFee.value, 2)}</em>
@@ -140,7 +180,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
               </dt>
               <dd>
                 {!state.tradingFeeInfo.loaded ? (
-                  <small>calculating...</small>
+                  <small>loading...</small>
                 ) : (
                   <>
                     <em>-{keepDecimals(state.tradingFeeInfo.value, 2)}</em>

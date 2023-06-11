@@ -33,11 +33,11 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
-
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
 
   const spotPrice = useMemo(() => {
-    return tokenSpotPrices?.[data.derivative] ?? '0'
+    if (!tokenSpotPrices) return '0'
+    return tokenSpotPrices[data.derivative] ?? '0'
   }, [data, tokenSpotPrices])
 
   const memoMargin = useMemo(() => {

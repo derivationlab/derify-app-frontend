@@ -28,7 +28,6 @@ const riseOrFall = (data: string): string => (isGT(data, 0) ? '+' : '')
 const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-
   const variables = useTraderVariablesStore((state) => state.variables)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
@@ -39,7 +38,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[data.derivative] ?? '0'
-  }, [tokenSpotPrices])
+  }, [data, tokenSpotPrices])
 
   const memoMargin = useMemo(() => {
     return bnDiv(bnMul(data.size, spotPrice), data.leverage)

@@ -26,7 +26,7 @@ const getPositionLimit = async (address: string, quote: typeof quoteToken) => {
         long: formatUnits(String(long), 8),
         short: formatUnits(String(short), 8)
       }
-      console.info(output)
+      // console.info(output)
       return output
     }
 

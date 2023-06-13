@@ -3,6 +3,7 @@ import { BigNumberish, Contract, BigNumber } from 'ethers'
 
 import { getBep20Contract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
+import { formatUnits } from '@/utils/tools'
 
 const getAllowance = async (c: Contract, signer: Signer, spender: string): Promise<BigNumberish> => {
   if (!c) {
@@ -25,9 +26,13 @@ export const allowanceApprove = async (
 
   try {
     const allowance = await getAllowance(c, signer, spender)
-
+    console.info(`
+    allowance=${formatUnits(allowance, 18)}
+    token=${token}
+    amount=${amount}
+    `)
     if (BigNumber.from(allowance).lte(amount)) {
-      const gasLimit = await estimateGas(c, 'approve', [spender, amount], 3000)
+      const gasLimit = await estimateGas(c, 'approve', [spender, amount])
       const tx = await c.approve(spender, amount, { gasLimit })
       const receipt = await tx.wait()
 

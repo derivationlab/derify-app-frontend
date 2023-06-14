@@ -1,10 +1,10 @@
-import React, { FC, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import React, { FC } from 'react'
 
 import { Redirect, Switch, Route } from '@/components/common/Route'
 import Toast from '@/components/common/Toast'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 import Header from '@/components/web/Header'
+import { useCheckMarginToken } from '@/hooks/useCheckMarginToken'
 import { useRegionalJudgment } from '@/hooks/useRegionalJudgment'
 import BrokerBind from '@/pages/web/Broker/Bind'
 import BrokerBindList from '@/pages/web/Broker/Bind/List'
@@ -41,26 +41,11 @@ import {
 import Trade from '@/pages/web/Trade'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 
 const Web: FC = () => {
-  const { pathname } = useLocation()
+  useCheckMarginToken()
   const { warning } = useRegionalJudgment()
-
   const { symbol } = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
-
-  // todo 需要一个根据名称来快速查询是否是保证金的接口
-  useEffect(() => {
-    const includes = routingWithMarginInfo.find((r) => pathname.includes(r))
-    if (includes) {
-      const path = pathname.split('/')
-      const find = marginTokenList.find((margin) => margin.symbol === path[1])
-      const margin = find || marginTokenList[0]
-      updateMarginToken({ logo: margin.logo, address: margin.margin_token, symbol: margin.symbol })
-    }
-  }, [pathname, marginTokenList])
 
   return (
     <>

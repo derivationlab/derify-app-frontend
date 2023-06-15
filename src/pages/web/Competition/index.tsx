@@ -93,11 +93,14 @@ const CompetitionRank: FC = () => {
   ]
 
   const _getCompetitionRank = useCallback(
-    async (index = 0) => {
+    async (pageIndex = 0) => {
       const [id, status] = state.filterCondition.split('#')
-      const { data } = await getCompetitionRank(status, id, index)
+      const { data } = await getCompetitionRank(status, id, pageIndex)
       if (data) {
-        const _ = data.records.map((d: Record<string, any>, index: number) => ({ ...d, rank: `#${++index}` }))
+        const _ = data.records.map((d: Record<string, any>, index: number) => {
+          const _index = 11 * pageIndex + 1 + index
+          return { ...d, rank: `#${_index}` }
+        })
         dispatch({ type: 'SET_RECORDS', payload: { records: _, loaded: false } })
         dispatch({
           type: 'SET_RECORDS',

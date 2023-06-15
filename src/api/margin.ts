@@ -26,7 +26,6 @@ export const getAllMarginPositions = async () => {
 }
 
 export const checkMarginToken = async (symbol: string) => {
-  // const response = await get(`api/check_margin_token/${symbol}`)
-  const response = await get(`api/search_margin_token/${symbol}`)
+  const response = await get(`api/check_margin_token/${symbol}`)
   return response
 }

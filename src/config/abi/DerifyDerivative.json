@@ -15,6 +15,11 @@
         "internalType": "address",
         "name": "_protocol",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_derivativeModule",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -226,6 +231,19 @@
       }
     ],
     "name": "CloseStop",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "priceFeed",
+        "type": "address"
+      }
+    ],
+    "name": "DerivativeInitialized",
     "type": "event"
   },
   {
@@ -459,6 +477,55 @@
       }
     ],
     "name": "OpenStop",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "trader",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "marginToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum IDerifyDerivative.Side",
+        "name": "side",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "size",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "PositionUpdate",
     "type": "event"
   },
   {

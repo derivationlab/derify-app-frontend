@@ -15,6 +15,11 @@
         "internalType": "address",
         "name": "_protocol",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_derivativeModule",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -43,9 +48,21 @@
       },
       {
         "indexed": false,
-        "internalType": "bytes32",
-        "name": "salt",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "priceFeed",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "aggregator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "spotPriceDecimals",
+        "type": "uint8"
       }
     ],
     "name": "DerivativeCreated",
@@ -183,6 +200,19 @@
   {
     "inputs": [],
     "name": "derifyDerivativeDeployer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "derivativeModule",
     "outputs": [
       {
         "internalType": "address",

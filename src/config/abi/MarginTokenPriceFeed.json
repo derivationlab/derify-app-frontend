@@ -14,6 +14,11 @@
             "type": "address"
           },
           {
+            "internalType": "address",
+            "name": "template",
+            "type": "address"
+          },
+          {
             "internalType": "address[]",
             "name": "routers",
             "type": "address[]"
@@ -24,6 +29,11 @@
             "type": "address[]"
           },
           {
+            "internalType": "uint8[]",
+            "name": "poolTypes",
+            "type": "uint8[]"
+          },
+          {
             "internalType": "address[]",
             "name": "gasRouters",
             "type": "address[]"
@@ -32,6 +42,11 @@
             "internalType": "address[]",
             "name": "gasPath",
             "type": "address[]"
+          },
+          {
+            "internalType": "uint8[]",
+            "name": "gasPoolTypes",
+            "type": "uint8[]"
           }
         ],
         "internalType": "struct IMarginTokenPriceFeed.InitParams",
@@ -62,6 +77,12 @@
         "internalType": "address[]",
         "name": "pools",
         "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8[]",
+        "name": "poolTypes",
+        "type": "uint8[]"
       }
     ],
     "name": "GasPoolsUpdated",
@@ -106,6 +127,12 @@
         "internalType": "address[]",
         "name": "pools",
         "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8[]",
+        "name": "poolTypes",
+        "type": "uint8[]"
       }
     ],
     "name": "PoolsUpdated",
@@ -125,6 +152,25 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "gasPoolTypes",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -250,6 +296,19 @@
   },
   {
     "inputs": [],
+    "name": "getGasPoolTypes",
+    "outputs": [
+      {
+        "internalType": "uint8[]",
+        "name": "",
+        "type": "uint8[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getGasPools",
     "outputs": [
       {
@@ -353,6 +412,19 @@
   },
   {
     "inputs": [],
+    "name": "getPoolTypes",
+    "outputs": [
+      {
+        "internalType": "uint8[]",
+        "name": "",
+        "type": "uint8[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getPools",
     "outputs": [
       {
@@ -430,6 +502,25 @@
         "type": "uint256"
       }
     ],
+    "name": "poolTypes",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "pools",
     "outputs": [
       {
@@ -468,6 +559,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "template",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -483,6 +587,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_template",
+        "type": "address"
+      },
+      {
         "internalType": "address[]",
         "name": "_routers",
         "type": "address[]"
@@ -491,6 +600,49 @@
         "internalType": "address[]",
         "name": "_path",
         "type": "address[]"
+      },
+      {
+        "internalType": "uint8[]",
+        "name": "_poolTypes",
+        "type": "uint8[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_gasRouters",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_gasPath",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint8[]",
+        "name": "_gasPoolTypes",
+        "type": "uint8[]"
+      }
+    ],
+    "name": "update",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_routers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_path",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint8[]",
+        "name": "_poolTypes",
+        "type": "uint8[]"
       }
     ],
     "name": "updateGasPools",
@@ -509,6 +661,11 @@
         "internalType": "address[]",
         "name": "_path",
         "type": "address[]"
+      },
+      {
+        "internalType": "uint8[]",
+        "name": "_poolTypes",
+        "type": "uint8[]"
       }
     ],
     "name": "updatePools",

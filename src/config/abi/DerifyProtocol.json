@@ -92,6 +92,11 @@
             "internalType": "address",
             "name": "derifyExchangeModule",
             "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyDerivativeModule",
+            "type": "address"
           }
         ],
         "internalType": "struct IDerifyProtocol.DeployDerifyProtocolParam",
@@ -597,6 +602,11 @@
             "type": "address"
           },
           {
+            "internalType": "address",
+            "name": "marginTokenPriceFeedTemplate",
+            "type": "address"
+          },
+          {
             "internalType": "address[]",
             "name": "routers",
             "type": "address[]"
@@ -607,6 +617,11 @@
             "type": "address[]"
           },
           {
+            "internalType": "uint8[]",
+            "name": "poolTypes",
+            "type": "uint8[]"
+          },
+          {
             "internalType": "address[]",
             "name": "gasRouters",
             "type": "address[]"
@@ -615,6 +630,11 @@
             "internalType": "address[]",
             "name": "gasPath",
             "type": "address[]"
+          },
+          {
+            "internalType": "uint8[]",
+            "name": "gasPoolTypes",
+            "type": "uint8[]"
           },
           {
             "internalType": "uint256",
@@ -653,7 +673,22 @@
           },
           {
             "internalType": "address",
+            "name": "bMarginToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
             "name": "rewardsExecutor",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pmrRewardsExecutor",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "brokerRewardsExecutor",
             "type": "address"
           },
           {

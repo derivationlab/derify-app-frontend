@@ -92,18 +92,23 @@ const CompetitionRank: FC = () => {
     }
   ]
 
-  const _getCompetitionRank = useCallback(async () => {
-    const [id, status] = state.filterCondition.split('#')
-
-    const { data } = await getCompetitionRank(status, id)
-
-    if (data) {
-      const _ = data.map((d: Record<string, any>, index: number) => ({ ...d, rank: `#${++index}` }))
-      dispatch({ type: 'SET_RECORDS', payload: { records: _, loaded: false } })
-    } else {
-      dispatch({ type: 'SET_RECORDS', payload: { records: [], loaded: false } })
-    }
-  }, [marginToken, state.filterCondition])
+  const _getCompetitionRank = useCallback(
+    async (index = 0) => {
+      const [id, status] = state.filterCondition.split('#')
+      const { data } = await getCompetitionRank(status, id, index)
+      if (data) {
+        const _ = data.records.map((d: Record<string, any>, index: number) => ({ ...d, rank: `#${++index}` }))
+        dispatch({ type: 'SET_RECORDS', payload: { records: _, loaded: false } })
+        dispatch({
+          type: 'SET_RECORDS',
+          payload: { records: _, totalItems: data?.totalItems ?? 0, isLoaded: false }
+        })
+      } else {
+        dispatch({ type: 'SET_RECORDS', payload: { records: [], totalItems: 0, loaded: false } })
+      }
+    },
+    [marginToken, state.filterCondition]
+  )
 
   const _getCompetitionList = useCallback(async () => {
     const { data } = await getCompetitionList(marginToken.address)
@@ -113,7 +118,6 @@ const CompetitionRank: FC = () => {
         label: `${upperFirst(d.status)} | ${dayjs(d.start_time).format('MM/DD/YYYY HH:mm:ss')}`,
         value: `${d.id}#${d.status}`
       }))
-      console.info(_)
       dispatch({ type: 'SET_FILTER_CONDITION', payload: _[0]?.value ?? '' })
       dispatch({ type: 'SET_FILTER_CONDITIONS', payload: _ })
     }
@@ -121,8 +125,7 @@ const CompetitionRank: FC = () => {
 
   const onPagination = (index: number) => {
     dispatch({ type: 'SET_PAGE_INDEX', payload: index })
-    //
-    // void fetchData(index)
+    void _getCompetitionRank(index)
   }
 
   useEffect(() => {
@@ -160,7 +163,7 @@ const CompetitionRank: FC = () => {
         emptyText={emptyText}
         rowClassName={(record) => (address === record.user ? 'active' : '')}
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
+      <Pagination page={state.pageIndex} total={state.records.totalItems ?? 0} onChange={onPagination} />
     </div>
   )
 }

@@ -4,7 +4,7 @@ import type { Signer } from 'ethers'
 import { marginToken } from '@/store'
 import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
-import { getDerifyExchangeContract } from '@/utils/contractHelpers'
+import { getExchangeContract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 import { inputParameterConversion } from '@/utils/tools'
 
@@ -42,7 +42,7 @@ export const useMarginOperation = () => {
     signer?: TSigner
   ): Promise<boolean> => {
     if (!signer) return false
-    const contract = getDerifyExchangeContract(exchange, signer)
+    const contract = getExchangeContract(exchange, signer)
     try {
       if (margin.symbol === 'BNB') {
         const status = await depositMarginForWBNB(contract, amount)
@@ -60,7 +60,7 @@ export const useMarginOperation = () => {
   const withdraw = async (exchange: string, amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyExchangeContract(exchange, signer)
+    const c = getExchangeContract(exchange, signer)
 
     try {
       const _amount = inputParameterConversion(amount, 8)

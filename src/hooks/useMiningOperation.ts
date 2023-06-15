@@ -2,7 +2,7 @@ import contracts from '@/config/contracts'
 import tokens from '@/config/tokens'
 import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
-import { getDerifyRewardsContract, getDerifyProtocolContract } from '@/utils/contractHelpers'
+import { getRewardsContract, getProtocolContract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 import { inputParameterConversion } from '@/utils/tools'
 
@@ -10,7 +10,7 @@ export const useMiningOperation = () => {
   const redeemDrf = async (amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyProtocolContract(signer)
+    const c = getProtocolContract(signer)
     const _amount = inputParameterConversion(amount, 8)
 
     try {
@@ -27,7 +27,7 @@ export const useMiningOperation = () => {
   const stakingDrf = async (amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyProtocolContract(signer)
+    const c = getProtocolContract(signer)
     const _amount1 = inputParameterConversion(amount, 8)
     const _amount2 = inputParameterConversion(amount, 18)
 
@@ -59,7 +59,7 @@ export const useMiningOperation = () => {
   ): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyRewardsContract(rewards, signer)
+    const c = getRewardsContract(rewards, signer)
     const _amount1 = inputParameterConversion(amount, 8)
     const _amount2 = inputParameterConversion(amount, 18)
 
@@ -81,7 +81,7 @@ export const useMiningOperation = () => {
   const withdrawAllBond = async (rewards: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyRewardsContract(rewards, signer)
+    const c = getRewardsContract(rewards, signer)
 
     try {
       const res = await c.withdrawAllBond()
@@ -96,7 +96,7 @@ export const useMiningOperation = () => {
   const withdrawAllEdrf = async (signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyProtocolContract(signer)
+    const c = getProtocolContract(signer)
 
     try {
       const res = await c.withdrawAllEdrf()
@@ -111,7 +111,7 @@ export const useMiningOperation = () => {
   const redeemBondFromBank = async (rewards: string, amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyRewardsContract(rewards, signer)
+    const c = getRewardsContract(rewards, signer)
     const _amount = inputParameterConversion(amount, 8)
 
     try {
@@ -127,7 +127,7 @@ export const useMiningOperation = () => {
 
   const withdrawRankReward = async (rewards: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
-    const c = getDerifyRewardsContract(rewards, signer)
+    const c = getRewardsContract(rewards, signer)
 
     try {
       const res = await c.withdrawRankReward()
@@ -147,7 +147,7 @@ export const useMiningOperation = () => {
   ): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyRewardsContract(rewards, signer)
+    const c = getRewardsContract(rewards, signer)
     const _amount1 = inputParameterConversion(amount, 8)
     const _amount2 = inputParameterConversion(amount, 18)
 
@@ -168,7 +168,7 @@ export const useMiningOperation = () => {
 
   const withdrawPositionReward = async (rewards: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
-    const c = getDerifyRewardsContract(rewards, signer)
+    const c = getRewardsContract(rewards, signer)
 
     try {
       const res = await c.withdrawPositionReward()

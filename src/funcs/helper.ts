@@ -1,7 +1,7 @@
 import BN from 'bignumber.js'
 
 import { PositionOrderTypes, PositionSideTypes } from '@/typings'
-import { getDerifyExchangeContract, getDerifyDerivativeContract } from '@/utils/contractHelpers'
+import { getExchangeContract, getDerivativeContract } from '@/utils/contractHelpers'
 import {
   isGT,
   isLT,
@@ -18,7 +18,7 @@ import {
 } from '@/utils/tools'
 
 export const calcTradingFee = async (pairAddress: string, openingAmount: string | number): Promise<number> => {
-  const c = getDerifyDerivativeContract(pairAddress)
+  const c = getDerivativeContract(pairAddress)
 
   const response = await c.tradingFeeRatio()
 
@@ -40,8 +40,8 @@ export const calcChangeFee = async (
 
   if (side === PositionSideTypes.twoWay) return '0'
 
-  const exchangeContract = getDerifyExchangeContract(exchange)
-  const derivativeContract = getDerifyDerivativeContract(derivative)
+  const exchangeContract = getExchangeContract(exchange)
+  const derivativeContract = getDerivativeContract(derivative)
 
   const liquidityPool = await exchangeContract.liquidityPool()
   const longTotalSize = await derivativeContract.longTotalSize()
@@ -149,7 +149,7 @@ export const calcDisposableAmount = async (
   leverageNow: number,
   openingType: PositionOrderTypes
 ) => {
-  const contract = getDerifyExchangeContract(exchange)
+  const contract = getExchangeContract(exchange)
   const _price = inputParameterConversion(price, 8)
   const _leverageNow = inputParameterConversion(leverageNow, 8)
 

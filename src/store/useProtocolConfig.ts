@@ -2,9 +2,9 @@ import { create } from 'zustand'
 
 import { ProtocolConfigState } from '@/store/types'
 import { ProtocolConfig } from '@/typings'
-import { getDerifyProtocolContract } from '@/utils/contractHelpers'
+import { getProtocolContract } from '@/utils/contractHelpers'
 
-const protocolContract = getDerifyProtocolContract()
+const protocolContract = getProtocolContract()
 
 export const getProtocolConfig = async (marginTokenAddress: string): Promise<ProtocolConfig> => {
   const response = await protocolContract.marginTokenContractCollections(marginTokenAddress)

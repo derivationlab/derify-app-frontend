@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getDerifyRewardsContract } from '@/utils/contractHelpers'
+import { getRewardsContract } from '@/utils/contractHelpers'
 import { formatUnits } from '@/utils/tools'
 
 export const useBankBond = (rewards?: string) => {
@@ -8,7 +8,7 @@ export const useBankBond = (rewards?: string) => {
     ['useBankBond'],
     async (): Promise<string> => {
       if (rewards) {
-        const c = getDerifyRewardsContract(rewards)
+        const c = getRewardsContract(rewards)
         const d = await c.bankBondPool()
         return formatUnits(String(d), 8)
       }

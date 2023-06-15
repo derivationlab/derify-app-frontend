@@ -8,7 +8,7 @@ import derifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import contracts from '@/config/contracts'
 import { useQueryMulticall } from '@/hooks/useQueryContract'
 import { ProtocolConfig } from '@/typings'
-import { getDerifyBRewardsContract, getDerifyPmrContract, getDerifyRankContract } from '@/utils/contractHelpers'
+import { getBrokerContract, getMiningContract, getRankingContract } from '@/utils/contractHelpers'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
@@ -189,9 +189,9 @@ export const useGrantPlanParams = (config?: ProtocolConfig | null) => {
     ['useGrantPlanParams'],
     async (): Promise<typeof initGrantPlanParams> => {
       if (config) {
-        const pmrContract = getDerifyPmrContract(config.mining)
-        const rankContract = getDerifyRankContract(config.rank)
-        const bRewardsContract = getDerifyBRewardsContract(config.awards)
+        const pmrContract = getMiningContract(config.mining)
+        const rankContract = getRankingContract(config.rank)
+        const bRewardsContract = getBrokerContract(config.awards)
 
         const rank = await rankContract.minGrantAmount()
         const mining = await pmrContract.minGrantAmount()

@@ -8,14 +8,8 @@ import { useCallback } from 'react'
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import tokens from '@/config/tokens'
-import { Rec } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
-import {
-  getDerifyPmrContract,
-  getDerifyRankContract,
-  getDerifyRewardsContract,
-  getDerifyBRewardsContract
-} from '@/utils/contractHelpers'
+import { getMiningContract, getRankingContract, getRewardsContract, getBrokerContract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 import multicall from '@/utils/multicall'
 import { formatUnits, inputParameterConversion } from '@/utils/tools'
@@ -30,13 +24,13 @@ export const useAddGrant = () => {
       let c: unknown
 
       if (type === 'rank') {
-        c = getDerifyRankContract(address, signer)
+        c = getRankingContract(address, signer)
       }
       if (type === 'mining') {
-        c = getDerifyPmrContract(address, signer)
+        c = getMiningContract(address, signer)
       }
       if (type === 'awards') {
-        c = getDerifyBRewardsContract(address, signer)
+        c = getBrokerContract(address, signer)
       }
 
       const _amount = inputParameterConversion(amount, 18)
@@ -67,7 +61,7 @@ export const useRankReward = (trader?: string, config?: string) => {
     ['useRankReward'],
     async () => {
       if (trader && config) {
-        const c = getDerifyRewardsContract(config)
+        const c = getRewardsContract(config)
 
         const response = await c.getRankReward(trader)
 

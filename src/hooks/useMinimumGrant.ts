@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { GrantKeys, ProtocolConfig } from '@/typings'
-import { getDerifyPmrContract, getDerifyRankContract, getDerifyBRewardsContract } from '@/utils/contractHelpers'
+import { getMiningContract, getRankingContract, getBrokerContract } from '@/utils/contractHelpers'
 import { formatUnits } from '@/utils/tools'
 
 export const minimumGrantInit: { [key in GrantKeys]: string } = {
@@ -17,9 +17,9 @@ export const useMinimumGrant = (config: ProtocolConfig | null) => {
   const _getMinimumGrant = async (config: ProtocolConfig) => {
     try {
       const { rank, awards, mining } = config
-      const c1 = getDerifyPmrContract(mining)
-      const c2 = getDerifyRankContract(rank)
-      const c3 = getDerifyBRewardsContract(awards)
+      const c1 = getMiningContract(mining)
+      const c2 = getRankingContract(rank)
+      const c3 = getBrokerContract(awards)
 
       const res1 = await c1.minGrantAmount()
       const res2 = await c2.minGrantAmount()

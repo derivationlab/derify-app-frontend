@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getDerifyRewardsContract } from '@/utils/contractHelpers'
+import { getRewardsContract } from '@/utils/contractHelpers'
 import { formatUnits } from '@/utils/tools'
 
 const brokerInfoInit = {
@@ -15,7 +15,7 @@ export const useBrokerAssets = (trader = '', rewards = ''): { data: typeof broke
     ['useBrokerInfo'],
     async () => {
       if (trader && rewards) {
-        const c = getDerifyRewardsContract(rewards)
+        const c = getRewardsContract(rewards)
 
         const response = await c.getBrokerReward(trader)
 

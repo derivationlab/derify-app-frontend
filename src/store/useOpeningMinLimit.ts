@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 
 import { OpeningMinLimitState } from '@/store/types'
-import { getDerifyExchangeContract } from '@/utils/contractHelpers'
+import { getExchangeContract } from '@/utils/contractHelpers'
 import { formatUnits } from '@/utils/tools'
 
 const getOpeningMinLimit = async (address: string): Promise<string> => {
-  const contract = getDerifyExchangeContract(address)
+  const contract = getExchangeContract(address)
   const response = await contract.minOpenAmount()
   return formatUnits(response, 8)
 }

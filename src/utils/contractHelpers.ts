@@ -39,31 +39,31 @@ export const getMulticallContract = (signer?: Signer | Provider | null) => {
   return getContract(multiCallAbi, contracts.multicall.contractAddress, signer)
 }
 
-export const getDerifyPmrContract = (address: string, signer?: Signer | Provider | null) => {
+export const getMiningContract = (address: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyPmrAbi, address, signer)
 }
 
-export const getDerifyRankContract = (address: string, signer?: Signer | Provider | null) => {
+export const getRankingContract = (address: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyRankAbi, address, signer)
 }
 
-export const getDerifyRewardsContract = (address: string, signer?: Signer | Provider | null) => {
+export const getRewardsContract = (address: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyRewardsAbi, address, signer)
 }
 
-export const getDerifyBRewardsContract = (address: string, signer?: Signer | Provider | null) => {
+export const getBrokerContract = (address: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyBrokerRewardsAbi, address, signer)
 }
 
-export const getDerifyExchangeContract = (address: string, signer?: Signer | Provider | null) => {
+export const getExchangeContract = (address: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyExchangeAbi, address, signer)
 }
 
-export const getDerifyProtocolContract = (signer?: Signer | Provider | null) => {
+export const getProtocolContract = (signer?: Signer | Provider | null) => {
   return getContract(DerifyProtocolAbi, contracts.derifyProtocol.contractAddress, signer)
 }
 
-export const getDerifyDerivativeContract = (pairAddress: string, signer?: Signer | Provider | null) => {
+export const getDerivativeContract = (pairAddress: string, signer?: Signer | Provider | null) => {
   return getContract(DerifyDerivativeAbi, pairAddress, signer)
 }
 

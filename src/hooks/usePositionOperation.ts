@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 
 import { calcProfitOrLoss } from '@/funcs/helper'
 import { PositionOrderTypes, PositionSideTypes, PositionTriggerTypes } from '@/typings'
-import { getDerifyExchangeContract, getDerifyDerivativeContract } from '@/utils/contractHelpers'
+import { getExchangeContract, getDerivativeContract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 import { bnDiv, inputParameterConversion } from '@/utils/tools'
 
@@ -26,7 +26,7 @@ export const usePositionOperation = () => {
   ): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyExchangeContract(exchange, signer)
+    const c = getExchangeContract(exchange, signer)
 
     const _posLeverage = inputParameterConversion(posLeverage, 8)
     const _pricingType = 1
@@ -81,7 +81,7 @@ export const usePositionOperation = () => {
 
       if (!signer) return false
 
-      const c = getDerifyExchangeContract(exchange, signer)
+      const c = getExchangeContract(exchange, signer)
 
       if (whetherStud) {
         _positionSize = inputParameterConversion(positionSize, 8)
@@ -114,7 +114,7 @@ export const usePositionOperation = () => {
 
       if (!signer) return false
 
-      const c = getDerifyDerivativeContract(pairAddress, signer)
+      const c = getDerivativeContract(pairAddress, signer)
 
       try {
         if (orderType === PositionTriggerTypes.Limit) {
@@ -139,7 +139,7 @@ export const usePositionOperation = () => {
     async (exchange: string, brokerId: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract(exchange, signer)
+      const c = getExchangeContract(exchange, signer)
 
       try {
         const gasLimit = await estimateGas(c, 'closeAllPositions', [brokerId])
@@ -158,7 +158,7 @@ export const usePositionOperation = () => {
     async (exchange: string): Promise<boolean> => {
       if (!signer) return false
 
-      const c = getDerifyExchangeContract(exchange, signer)
+      const c = getExchangeContract(exchange, signer)
 
       try {
         const gasLimit = await estimateGas(c, 'cancelAllOrderedPositions', [])
@@ -181,7 +181,7 @@ export const usePositionOperation = () => {
   ): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyDerivativeContract(pairAddress, signer)
+    const c = getDerivativeContract(pairAddress, signer)
     const job = calcProfitOrLoss(takeProfitPrice, stopLossPrice)
 
     if (isEmpty(job)) return true

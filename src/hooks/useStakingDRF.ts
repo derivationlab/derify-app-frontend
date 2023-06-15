@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getDerifyProtocolContract } from '@/utils/contractHelpers'
+import { getProtocolContract } from '@/utils/contractHelpers'
 import { formatUnits } from '@/utils/tools'
 
 export const useStakingDRF = () => {
   const { data } = useQuery(
     ['useStakingDRF'],
     async (): Promise<string> => {
-      const c = getDerifyProtocolContract()
+      const c = getProtocolContract()
       const d = await c.stakingDrfPool()
       return formatUnits(String(d), 8)
     },

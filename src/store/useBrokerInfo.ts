@@ -9,10 +9,10 @@ import {
   getBrokerRegistrationTime
 } from '@/api'
 import { BrokerInfoState } from '@/store/types'
-import { getDerifyProtocolContract } from '@/utils/contractHelpers'
+import { getProtocolContract } from '@/utils/contractHelpers'
 
 const isIdentityValid = async (trader: string): Promise<boolean> => {
-  const c = getDerifyProtocolContract()
+  const c = getProtocolContract()
 
   try {
     await c.getBrokerInfo(trader)

@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { ProtocolConfig } from '@/typings'
-import { getDerifyExchangeContract } from '@/utils/contractHelpers'
+import { getExchangeContract } from '@/utils/contractHelpers'
 import { formatUnits } from '@/utils/tools'
 
 let output = Object.create(null)
 
 const innerFunc = async (address: string, trader: string) => {
-  const c = getDerifyExchangeContract(address)
+  const c = getExchangeContract(address)
   const response = await c.getTraderVariables(trader)
   return response
 }

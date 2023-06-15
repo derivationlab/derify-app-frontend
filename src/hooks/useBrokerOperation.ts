@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import contracts from '@/config/contracts'
 import tokens from '@/config/tokens'
 import { allowanceApprove } from '@/utils/allowanceApprove'
-import { getDerifyProtocolContract, getDerifyRewardsContract } from '@/utils/contractHelpers'
+import { getProtocolContract, getRewardsContract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 import { inputParameterConversion } from '@/utils/tools'
 
@@ -14,7 +14,7 @@ export const useBrokerOperation = () => {
     // console.info(s)
     if (!signer) return false
 
-    const c = getDerifyProtocolContract(signer)
+    const c = getProtocolContract(signer)
     const burnLimitAmountPrecision18 = inputParameterConversion(burnLimitAmount, 18)
 
     try {
@@ -40,7 +40,7 @@ export const useBrokerOperation = () => {
   const withdrawBrokerReward = useCallback(async (signer: Signer, address: string): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getDerifyRewardsContract(address, signer)
+    const c = getRewardsContract(address, signer)
 
     try {
       const response = await c.withdrawBrokerReward()
@@ -54,7 +54,7 @@ export const useBrokerOperation = () => {
   }, [])
 
   const burnEdrfExtendValidPeriod = async (amount: string, signer: Signer): Promise<boolean> => {
-    const c = getDerifyProtocolContract(signer)
+    const c = getProtocolContract(signer)
     const amountPrecision8 = inputParameterConversion(amount, 8)
     const amountPrecision18 = inputParameterConversion(amount, 18)
 

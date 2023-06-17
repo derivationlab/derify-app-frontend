@@ -12,12 +12,19 @@ export const useCheckMarginToken = () => {
   const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
 
   const func = async () => {
+    let margin = Object.create(null)
     const includes = routingWithMarginInfo.find((r) => pathname.includes(r))
     if (includes) {
       const path = pathname.split('/')
-      const { data } = await checkMarginToken(path[1])
-      const margin = data ? data[0] : marginTokenList[0]
-      updateMarginToken({ logo: margin.logo, address: margin.margin_token, symbol: margin.symbol })
+      const findMargin = marginTokenList.find((m) => m.symbol === path[1])
+      if (findMargin) {
+        margin = { logo: findMargin.logo, address: findMargin.margin_token, symbol: findMargin.symbol }
+      } else {
+        const { data } = await checkMarginToken(path[1])
+        const matchMargin = data ?? marginTokenList[0]
+        margin = { logo: matchMargin.logo, address: matchMargin.margin_token, symbol: matchMargin.symbol }
+      }
+      updateMarginToken(margin)
     }
   }
 

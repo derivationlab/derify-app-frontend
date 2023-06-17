@@ -118,7 +118,9 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
             'loading ...'
           ) : (
             <>
-              <em>{keepDecimals(disposable.amount[1], 2)}</em>
+              <em>
+                {keepDecimals(disposable.amount[1], Number(disposable.amount[1]) === 0 ? 2 : marginToken.decimals)}
+              </em>
               <u> {type}</u>
             </>
           )}

@@ -9,7 +9,8 @@ import Input from '@/components/common/Form/Input'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginIndicatorsStore, useMarginTokenStore, useTokenSpotPricesStore } from '@/store'
+import { useDerivativeListStore, useMarginIndicatorsStore, useMarginTokenStore, useTokenSpotPricesStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
 import {
   bnMinus,
@@ -22,7 +23,7 @@ import {
 } from '@/utils/tools'
 
 interface Props {
-  data?: Rec
+  data: Rec
   loading?: boolean
   visible: boolean
   onClose: () => void
@@ -44,19 +45,27 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   const { t } = useTranslation()
   const [pnlParams, setPnLParams] = useState<typeof initPnLParams>(initPnLParams)
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
+
+  const decimals = useMemo(() => {
+    const find = derivativeList.find((d) => d.name === data.derivative)
+    return find?.price_decimals ?? 2
+  }, [derivativeList])
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[data?.derivative] ?? '0'
   }, [data, tokenSpotPrices])
 
   const memoStopLoss = useMemo(() => {
+    const averagePrice = data?.averagePrice ?? 0
+    const price = keepDecimals(averagePrice, Number(averagePrice) === 0 ? 2 : decimals)
     return (
       <p>
         <em className="buy">
-          {data?.side === PositionSideTypes.short ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+          {data?.side === PositionSideTypes.short ? '>' : '<'} {price}
         </em>
         <u>{VALUATION_TOKEN_SYMBOL}</u>
       </p>
@@ -68,10 +77,12 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   }, [marginIndicators])
 
   const memoTakeProfit = useMemo(() => {
+    const averagePrice = data?.averagePrice ?? 0
+    const price = keepDecimals(averagePrice, Number(averagePrice) === 0 ? 2 : decimals)
     return (
       <p>
         <em className="buy">
-          {data?.side === PositionSideTypes.long ? '>' : '<'} {safeInterceptionValues(data?.averagePrice ?? 0)}
+          {data?.side === PositionSideTypes.long ? '>' : '<'} {price}
         </em>
         <u>{VALUATION_TOKEN_SYMBOL}</u>
       </p>
@@ -234,15 +245,14 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
-              <BalanceShow value={spotPrice} unit="" />
+              <BalanceShow value={spotPrice} unit="" decimal={Number(spotPrice) === 0 ? 2 : decimals} />
               <span className={Number(memoChangeRate) >= 0 ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
             </section>
             <section className="web-trade-dialog-position-info-count">
               <p>
                 {t('Trade.TPSL.PositionAveragePrice', 'Position Average Price')} :{' '}
-                <em>
-                  {safeInterceptionValues(data?.averagePrice ?? 0)} {VALUATION_TOKEN_SYMBOL}
-                </em>
+                <em>{keepDecimals(data?.averagePrice ?? 0, Number(data?.averagePrice ?? 0) === 0 ? 2 : decimals)}</em>{' '}
+                {VALUATION_TOKEN_SYMBOL}
               </p>
             </section>
           </div>

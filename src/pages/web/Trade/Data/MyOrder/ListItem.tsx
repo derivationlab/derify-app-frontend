@@ -6,16 +6,17 @@ import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore } from '@/store'
+import { useDerivativeListStore, useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
-import { keepDecimals } from '@/utils/tools'
+import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
 import ItemHeader from '../c/ItemHeader'
 
 interface Props {
-  data?: Record<string, any>
+  data: Record<string, any>
   onClick: () => void
 }
 
@@ -23,7 +24,13 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
+
+  const decimals = useMemo(() => {
+    const find = derivativeList.find((d) => d.name === data.derivative)
+    return find?.price_decimals ?? 2
+  }, [derivativeList])
 
   const memoTimestamp = useMemo(() => {
     return dayjs((data?.timestamp ?? 0) * 1000)
@@ -49,27 +56,28 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
     [data?.orderType, t, OrderDescLang]
   )
 
-  const atom2Tsx = useMemo(
-    () => (
+  const atom2Tsx = useMemo(() => {
+    const size = data?.size ?? 0
+    const output = Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)
+    return (
       <DataAtom
         label={t('Trade.MyOrder.Volume', 'Volume')}
         tip={t('Trade.MyOrder.VolumeTip')}
         footer={`${data?.quoteToken} / ${marginToken.symbol}`}
       >
         <span>
-          {data?.size} / {keepDecimals(data?.volume, 2)}
+          {output} / {numeralNumber(data?.volume, marginToken.decimals)}
         </span>
       </DataAtom>
-    ),
-    [data, marginToken, t]
-  )
+    )
+  }, [data, marginToken, t])
   const atom3Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.MyOrder.Price', 'Price')} footer={VALUATION_TOKEN_SYMBOL}>
-        <span>{data?.price}</span>
+        <span>{keepDecimals(data?.price, decimals)}</span>
       </DataAtom>
     ),
-    [data?.price, t]
+    [decimals, data?.price, t]
   )
   const atom4Tsx = useMemo(
     () => (

@@ -6,10 +6,25 @@ import { useTranslation } from 'react-i18next'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { MobileContext } from '@/providers/Mobile'
-import { useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore, useTraderVariablesStore } from '@/store'
+import {
+  useDerivativeListStore,
+  useMarginTokenStore,
+  useProtocolConfigStore,
+  useTokenSpotPricesStore,
+  useTraderVariablesStore
+} from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
-import { bnDiv, bnMinus, bnMul, isGT, isLTET, keepDecimals, numeralNumber } from '@/utils/tools'
+import {
+  bnDiv,
+  bnMinus,
+  bnMul,
+  isGT,
+  isLTET,
+  keepDecimals,
+  nonBigNumberInterception,
+  numeralNumber
+} from '@/utils/tools'
 
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
@@ -33,7 +48,13 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
+
+  const decimals = useMemo(() => {
+    const find = derivativeList.find((d) => d.name === data.derivative)
+    return find?.price_decimals ?? 2
+  }, [derivativeList])
 
   const spotPrice = useMemo(() => {
     if (!tokenSpotPrices) return '0'
@@ -79,20 +100,21 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     [memoRate, memoPnL, t]
   )
 
-  const atom2Tsx = useMemo(
-    () => (
+  const atom2Tsx = useMemo(() => {
+    const size = data?.size ?? 0
+    const output = Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)
+    return (
       <DataAtom
         label={t('Trade.MyPosition.Volume', 'Volume')}
         tip={t('Trade.MyPosition.VolumeTip')}
         footer={`${data.quoteToken} / ${marginToken.symbol}`}
       >
         <span>
-          {numeralNumber(data?.size ?? 0, 2)} / {numeralNumber(memoVolume, 2)}
+          {output} / {numeralNumber(memoVolume, marginToken.decimals)}
         </span>
       </DataAtom>
-    ),
-    [t, data, memoVolume]
-  )
+    )
+  }, [t, data, memoVolume, marginToken])
 
   const atom3Tsx = useMemo(
     () => (
@@ -101,10 +123,10 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.AvgPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>{keepDecimals(data?.averagePrice ?? 0, 2)}</span>
+        <span>{keepDecimals(data?.averagePrice ?? 0, decimals)}</span>
       </DataAtom>
     ),
-    [data?.averagePrice, t]
+    [t, data?.averagePrice, decimals]
   )
 
   const atom4Tsx = useMemo(() => {
@@ -118,7 +140,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       const p3 = bnDiv(p2, data.size)
       const p4 = bnMul(p3, mul)
       const p5 = bnMinus(spotPrice, p4)
-      liqPrice = isLTET(p5, 0) ? '--' : keepDecimals(p5, 2)
+      liqPrice = isLTET(p5, 0) ? '--' : keepDecimals(p5, decimals)
     } else {
       liqPrice = '--'
     }
@@ -132,7 +154,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         <span>{liqPrice}</span>
       </DataAtom>
     )
-  }, [t, data, clearingParams, variables, spotPrice, variablesLoaded])
+  }, [t, data, decimals, clearingParams, variables, spotPrice, variablesLoaded])
 
   const atom5Tsx = useMemo(() => {
     return (
@@ -141,10 +163,10 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         tip={t('Trade.MyPosition.MarginTip')}
         footer={marginToken.symbol}
       >
-        <span>{numeralNumber(memoMargin, 2)}</span>
+        <span>{numeralNumber(memoMargin, marginToken.decimals)}</span>
       </DataAtom>
     )
-  }, [memoMargin, t])
+  }, [marginToken, memoMargin, t])
 
   const atom6Tsx = useMemo(() => {
     let alertLevel = 0
@@ -170,30 +192,30 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     )
   }, [t, variables.marginRate, clearingParams.marginMaintenanceRatio])
 
-  const atom7Tsx = useMemo(
-    () => (
+  const atom7Tsx = useMemo(() => {
+    const price = data?.takeProfitPrice !== '--' ? keepDecimals(data.takeProfitPrice, decimals) : '--'
+    return (
       <DataAtom
         label={t('Trade.MyPosition.TakeProfit', 'Take Profit')}
         tip={t('Trade.MyPosition.TakeProfitTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        {data?.takeProfitPrice} <EditButton onClick={() => onEdit(data)} />
+        {price} <EditButton onClick={() => onEdit(data)} />
       </DataAtom>
-    ),
-    [data, onEdit, t]
-  )
-  const atom8Tsx = useMemo(
-    () => (
+    )
+  }, [t, data, onEdit, decimals])
+  const atom8Tsx = useMemo(() => {
+    const price = data?.stopLossPrice !== '--' ? keepDecimals(data.stopLossPrice, decimals) : '--'
+    return (
       <DataAtom
         label={t('Trade.MyPosition.StopLoss', 'Stop Loss')}
         tip={t('Trade.MyPosition.StopLossTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        {data?.stopLossPrice} <EditButton onClick={() => onEdit(data)} />
+        {price} <EditButton onClick={() => onEdit(data)} />
       </DataAtom>
-    ),
-    [data, onEdit, t]
-  )
+    )
+  }, [t, data, onEdit, decimals])
 
   return (
     <>

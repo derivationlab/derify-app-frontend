@@ -42,7 +42,13 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const positionLimit = usePositionLimitStore((state) => state.positionLimit)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
+
+  const decimals = useMemo(() => {
+    const find = derivativeList.find((d) => d.name === quoteToken.symbol)
+    return find?.price_decimals ?? 2
+  }, [derivativeList])
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
@@ -134,7 +140,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>
               ) : (
                 <p>
-                  <BalanceShow value={data?.price} unit="" />
+                  <BalanceShow value={data?.price} unit="" decimal={Number(data?.price) === 0 ? 2 : decimals} />
                   <em>{t('Trade.Bench.LimitPrice', 'Limit Price')}</em>
                 </p>
               )}

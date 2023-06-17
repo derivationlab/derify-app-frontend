@@ -10,7 +10,8 @@ import {
   usePositionOperationStore,
   useMarginTokenStore,
   useTokenSpotPricesStore,
-  useMarginIndicatorsStore
+  useMarginIndicatorsStore,
+  useDerivativeListStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
@@ -33,14 +34,20 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
+
+  const decimals = useMemo(() => {
+    const find = derivativeList.find((d) => d.name === data.derivative)
+    return find?.price_decimals ?? 2
+  }, [derivativeList])
 
   const spotPrice = useMemo(() => {
     return tokenSpotPrices?.[data?.derivative] ?? '0'
   }, [data, tokenSpotPrices])
 
   const memoVolume = useMemo(() => {
-    return nonBigNumberInterception(bnMul(spotPrice, data?.size), 2)
-  }, [data, spotPrice])
+    return nonBigNumberInterception(bnMul(spotPrice, data?.size), marginToken.decimals)
+  }, [data, spotPrice, marginToken])
 
   const memoChangeRate = useMemo(() => {
     const base = marginIndicators?.[data?.token]?.price_change_rate ?? 0
@@ -70,18 +77,19 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 </h4>
               </header>
               <section className="web-trade-dialog-position-info-data">
-                <BalanceShow value={spotPrice} unit="" />
+                <BalanceShow value={spotPrice} unit="" decimal={Number(spotPrice) === 0 ? 2 : decimals} />
                 <span className={isGTET(memoChangeRate, 0) ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
               </section>
               <section className="web-trade-dialog-position-info-count">
                 <p>
                   {t('Trade.ClosePosition.PositionAveragePrice', 'Position Average Price')} :{' '}
-                  <em>{keepDecimals(data?.averagePrice ?? 0, 2)}</em> {VALUATION_TOKEN_SYMBOL}
+                  <em>{keepDecimals(data?.averagePrice ?? 0, Number(data?.averagePrice ?? 0) === 0 ? 2 : decimals)}</em>{' '}
+                  {VALUATION_TOKEN_SYMBOL}
                 </p>
                 <p>
                   {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} :{' '}
                   <em>{keepDecimals(data?.size ?? 0, 2)}</em> {data?.quoteToken} /{' '}
-                  <em>{keepDecimals(memoVolume, 2)}</em> {marginToken.symbol}
+                  <em>{keepDecimals(memoVolume, marginToken.decimals)}</em> {marginToken.symbol}
                 </p>
               </section>
             </div>

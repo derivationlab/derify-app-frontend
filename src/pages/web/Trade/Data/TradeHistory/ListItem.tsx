@@ -7,16 +7,16 @@ import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
-import { useDerivativeListStore, useMarginTokenListStore } from '@/store'
+import { marginToken, useDerivativeListStore, useMarginTokenListStore } from '@/store'
 import { PositionSideTypes } from '@/typings'
-import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
 import ItemHeader from '../c/ItemHeader'
 
 interface Props {
-  data?: Record<string, any>
+  data: Record<string, any>
 }
 
 const TradeHistoryListItem: FC<Props> = ({ data }) => {
@@ -26,9 +26,14 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
 
+  const decimals = useMemo(() => {
+    const find = derivativeList.find((d) => getAddress(d.token) === getAddress(data.token))
+    return find?.price_decimals ?? 2
+  }, [derivativeList])
+
   const memoQuoteToken = useMemo(() => {
     if (derivativeList.length)
-      return derivativeList.find((d) => getAddress(d.token) === getAddress(data?.token))?.name ?? ''
+      return derivativeList.find((d) => getAddress(d.token) === getAddress(data.token))?.name ?? ''
     return ''
   }, [data?.token])
 
@@ -125,42 +130,44 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         tip={t('Trade.TradeHistory.PositionChangeFeeTip')}
         footer={memoMarginToken}
       >
-        <span className={classNames({ up: memoChangeFee > 0, down: memoChangeFee < 0 })}>{memoChangeFee}</span>
+        <span className={classNames({ up: memoChangeFee > 0, down: memoChangeFee < 0 })}>
+          {keepDecimals(memoChangeFee, 2)}
+        </span>
       </DataAtom>
     ),
     [memoChangeFee, memoMarginToken, t]
   )
-  const atom5Tsx = useMemo(
-    () => (
+  const atom5Tsx = useMemo(() => {
+    const size = data?.size ?? 0
+    const output = Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)
+    return (
       <DataAtom
         label={t('Trade.TradeHistory.VolumeBase', 'Volume (Base)')}
         tip={t('Trade.TradeHistory.VolumeBaseTip')}
         footer={memoQuoteToken.split('/')[0]}
       >
-        {keepDecimals(data?.size, 2)}
+        {output}
       </DataAtom>
-    ),
-    [data?.size, data?.token, t]
-  )
-  const atom6Tsx = useMemo(
-    () => (
+    )
+  }, [data?.size, data?.token, t])
+  const atom6Tsx = useMemo(() => {
+    return (
       <DataAtom
         label={t('Trade.TradeHistory.VolumeQuoted', 'Volume (Quoted)')}
         tip={t('Trade.TradeHistory.VolumeQuotedTip')}
         footer={memoMarginToken}
       >
-        {nonBigNumberInterception(data?.amount)}
+        {numeralNumber(data?.amount, marginToken.decimals)}
       </DataAtom>
-    ),
-    [data?.amount, memoMarginToken, t]
-  )
+    )
+  }, [data?.amount, marginToken, memoMarginToken, t])
   const atom7Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.TradeHistory.Price', 'Price')} footer={VALUATION_TOKEN_SYMBOL}>
-        {nonBigNumberInterception(data?.price)}
+        {keepDecimals(data?.price, decimals)}
       </DataAtom>
     ),
-    [data?.price, t]
+    [decimals, data?.price, t]
   )
   const atom8Tsx = useMemo(
     () => (

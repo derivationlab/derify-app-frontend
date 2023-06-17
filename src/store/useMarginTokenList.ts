@@ -59,7 +59,8 @@ export const marginTokenList = {
   name: '',
   symbol: '',
   max_pm_apy: 0,
-  margin_token: ''
+  margin_token: '',
+  amount_decimals: 2
 }
 
 export const pagingParams = {

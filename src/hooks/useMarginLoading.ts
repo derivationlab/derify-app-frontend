@@ -38,7 +38,12 @@ export const useMarginLoading = () => {
     const { token } = quoteToken
     if (len && token) {
       const find = derivativeList.find((d) => d.name === quoteToken.symbol)
-      if (!find) updateQuoteToken({ symbol: derivativeList[0].name, token: derivativeList[0].token })
+      if (!find)
+        updateQuoteToken({
+          symbol: derivativeList[0].name,
+          token: derivativeList[0].token,
+          decimals: derivativeList[0].price_decimals
+        })
     }
   }, [derivativeList])
 
@@ -46,8 +51,8 @@ export const useMarginLoading = () => {
     const len = derivativeList.length
     const { token } = quoteToken
     if (len && !token) {
-      const { name, token } = derivativeList[0]
-      updateQuoteToken({ symbol: name, token })
+      const { name, token, price_decimals } = derivativeList[0]
+      updateQuoteToken({ symbol: name, token, decimals: price_decimals })
     }
   }, [quoteToken, derivativeList])
 
@@ -56,8 +61,8 @@ export const useMarginLoading = () => {
     const len = marginTokenList.length
     const { address } = marginToken
     if (len && !address) {
-      const { logo, symbol, margin_token } = marginTokenList[0]
-      updateMarginToken({ logo, symbol, address: margin_token })
+      const { logo, symbol, margin_token, amount_decimals } = marginTokenList[0]
+      updateMarginToken({ logo, symbol, address: margin_token, decimals: amount_decimals })
     }
   }, [marginToken, marginTokenList])
 

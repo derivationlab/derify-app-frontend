@@ -18,11 +18,21 @@ export const useCheckMarginToken = () => {
       const path = pathname.split('/')
       const findMargin = marginTokenList.find((m) => m.symbol === path[1])
       if (findMargin) {
-        margin = { logo: findMargin.logo, address: findMargin.margin_token, symbol: findMargin.symbol }
+        margin = {
+          logo: findMargin.logo,
+          address: findMargin.margin_token,
+          symbol: findMargin.symbol,
+          decimals: findMargin.amount_decimals
+        }
       } else {
         const { data } = await checkMarginToken(path[1])
         const matchMargin = data ?? marginTokenList[0]
-        margin = { logo: matchMargin.logo, address: matchMargin.margin_token, symbol: matchMargin.symbol }
+        margin = {
+          logo: matchMargin.logo,
+          address: matchMargin.margin_token,
+          symbol: matchMargin.symbol,
+          decimals: matchMargin.amount_decimals
+        }
       }
       updateMarginToken(margin)
     }

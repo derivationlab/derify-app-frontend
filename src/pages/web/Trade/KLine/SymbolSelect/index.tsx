@@ -39,8 +39,8 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
 
   const change = (pair: Record<string, any>) => {
     setShowOptions(false)
-    const { name, token } = pair
-    updateQuoteToken({ symbol: name, token })
+    const { name, token, price_decimals } = pair
+    updateQuoteToken({ symbol: name, token, decimals: price_decimals })
   }
 
   const toggle = () => {
@@ -58,7 +58,7 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
           <h4>{quoteToken.symbol}</h4>
           <aside>
             <Skeleton rowsProps={{ rows: 1 }} animation loading={!tokenSpotPrices}>
-              <BalanceShow value={Number(spotPrice).toFixed(2)} />
+              <BalanceShow value={spotPrice} decimal={Number(spotPrice) === 0 ? 2 : quoteToken.decimals} />
             </Skeleton>
             <ChangePercent value={indicator} />
           </aside>

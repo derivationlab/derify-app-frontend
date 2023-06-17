@@ -17,7 +17,8 @@ export const derivativeList = {
   open: '',
   name: '',
   token: '',
-  margin_token: ''
+  margin_token: '',
+  price_decimals: 2
 }
 
 export const getDerAddressList = async (factory: string, list: (typeof derivativeList)[]) => {

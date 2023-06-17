@@ -49,7 +49,8 @@ const Options: FC<Props> = ({ onChange }) => {
           {options.map((item, index) => {
             const keys = Object.keys(marginIndicators ?? [])
             const findKey = keys.find((key) => getAddress(key) === getAddress(item.token))
-            const values = marginIndicators?.[findKey ?? ''] ?? {}
+            const values = marginIndicators?.[findKey ?? ''] ?? Object.create(null)
+            const decimals = Number(tokenSpotPrices?.[item.name] ?? 0) === 0 ? 2 : item.price_decimals
             return (
               <li key={index} onClick={() => onChange(item, index)}>
                 {mobile ? (
@@ -59,14 +60,14 @@ const Options: FC<Props> = ({ onChange }) => {
                       <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
                     </aside>
                     <aside>
-                      <BalanceShow value={tokenSpotPrices?.[item.name] ?? 0} unit="" />
+                      <BalanceShow value={tokenSpotPrices?.[item.name] ?? 0} decimal={decimals} />
                       <ChangePercent value={values?.price_change_rate ?? 0} />
                     </aside>
                   </>
                 ) : (
                   <>
                     <h5>{item.name}</h5>
-                    <BalanceShow value={keepDecimals(tokenSpotPrices?.[item.name] ?? 0, 2)} unit="" />
+                    <BalanceShow value={tokenSpotPrices?.[item.name] ?? 0} decimal={decimals} />
                     <ChangePercent value={values?.price_change_rate ?? 0} />
                     <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
                   </>

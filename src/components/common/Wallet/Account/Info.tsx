@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import Skeleton from '@/components/common/Skeleton'
 import { useMarginTokenStore, useTraderVariablesStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 
 import BalanceShow from '../BalanceShow'
 
@@ -15,8 +16,14 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
 
   const variables = useTraderVariablesStore((state) => state.variables)
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
+
+  const decimals = useMemo(() => {
+    const p1 = variables?.marginBalance ?? 0
+    if (Number(p1) === 0) return 2
+    return marginToken.decimals
+  }, [marginToken, variables])
 
   return (
     <>
@@ -27,7 +34,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
         </dt>
         <dd>
           <Skeleton rowsProps={{ rows: 1 }} animation loading={!variablesLoaded}>
-            <BalanceShow value={variables?.marginBalance ?? 0} unit={marginToken.symbol} />
+            <BalanceShow value={variables?.marginBalance ?? 0} unit={marginToken.symbol} decimal={decimals} />
           </Skeleton>
         </dd>
       </dl>
@@ -38,7 +45,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
         </dt>
         <dd>
           <Skeleton rowsProps={{ rows: 1 }} animation loading={!variablesLoaded}>
-            <BalanceShow value={variables?.availableMargin ?? 0} unit={marginToken.symbol} />
+            <BalanceShow value={variables?.availableMargin ?? 0} unit={marginToken.symbol} decimal={decimals} />
           </Skeleton>
         </dd>
       </dl>

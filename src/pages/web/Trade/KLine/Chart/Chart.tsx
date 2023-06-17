@@ -110,7 +110,12 @@ const Chart: FC = () => {
       />
       <div className="web-trade-kline-chart-layout">
         {/* @ts-ignore */}
-        <KLineChart cRef={kline} getMoreData={getMoreData} timeLine={state.kline.timeLine} />
+        <KLineChart
+          cRef={kline}
+          getMoreData={getMoreData}
+          timeLine={state.kline.timeLine}
+          pricePrecision={quoteToken.decimals}
+        />
       </div>
       {state.kline.loaded && <Spinner absolute />}
     </div>

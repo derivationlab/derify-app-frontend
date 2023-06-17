@@ -25,10 +25,11 @@ interface KlineChartProps {
 interface Props {
   cRef: KlineChartProps | null
   timeLine: number
+  pricePrecision: number
   getMoreData: (time: number, timeLine: number) => Promise<{ data: KLineDataProps[]; more: boolean }>
 }
 
-const KLine: FC<Props> = ({ cRef, timeLine, getMoreData }) => {
+const KLine: FC<Props> = ({ cRef, timeLine, getMoreData, pricePrecision }) => {
   const chartRef = useRef<HTMLDivElement>(null)
   const [chart, setChart] = useState<Chart | null>(null)
   const { theme } = useContext(ThemeContext)
@@ -60,10 +61,12 @@ const KLine: FC<Props> = ({ cRef, timeLine, getMoreData }) => {
   }, [chart, timeLine])
 
   useEffect(() => {
-    if (chart) {
-      chart.setStyleOptions(KLineConfig(theme))
-    }
-  }, [theme])
+    if (chart) chart.setStyleOptions(KLineConfig(theme))
+  }, [theme, chart])
+
+  useEffect(() => {
+    if (chart) chart.setPriceVolumePrecision(pricePrecision, pricePrecision)
+  }, [chart, pricePrecision])
 
   return <div id="web-kline-base" className="web-kline" ref={chartRef} />
 }

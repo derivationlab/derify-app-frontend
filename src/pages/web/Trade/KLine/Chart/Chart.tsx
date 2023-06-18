@@ -98,6 +98,7 @@ const Chart: FC = () => {
     kline.current && kline.current.reset()
   }, [quoteToken])
 
+  // @ts-ignore
   return (
     <div className="web-trade-kline-chart">
       <Select
@@ -109,8 +110,8 @@ const Chart: FC = () => {
         }}
       />
       <div className="web-trade-kline-chart-layout">
-        {/* @ts-ignore */}
         <KLineChart
+          // @ts-ignore
           cRef={kline}
           getMoreData={getMoreData}
           timeLine={state.kline.timeLine}

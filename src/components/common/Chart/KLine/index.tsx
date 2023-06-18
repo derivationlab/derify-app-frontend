@@ -26,7 +26,7 @@ interface Props {
   cRef: KlineChartProps | null
   timeLine: number
   pricePrecision: number
-  getMoreData: (time: number, timeLine: number) => Promise<{ data: KLineDataProps[]; more: boolean }>
+  getMoreData: (time: number, timeLine: number) => Promise<{ data: KLineDataProps[]; more: boolean } | undefined>
 }
 
 const KLine: FC<Props> = ({ cRef, timeLine, getMoreData, pricePrecision }) => {
@@ -54,8 +54,8 @@ const KLine: FC<Props> = ({ cRef, timeLine, getMoreData, pricePrecision }) => {
   useEffect(() => {
     if (chart) {
       chart.loadMore(async (time) => {
-        const { data, more } = await getMoreData(time, timeLine)
-        if (data) chart.applyMoreData(data, more)
+        const data = await getMoreData(time, timeLine)
+        if (data?.data) chart.applyMoreData(data?.data, data?.more)
       })
     }
   }, [chart, timeLine])

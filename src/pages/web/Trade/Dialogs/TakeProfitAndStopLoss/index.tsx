@@ -120,18 +120,18 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   const stopLossGain = useMemo(() => {
     if (isGT(pnlParams.SLPrice, 0))
       return Number(pnlParams.SLAmount) !== 0
-        ? `${Number(pnlParams.SLAmount) > 0 ? '+' : ''}${nonBigNumberInterception(pnlParams.SLAmount || 0, 8)}`
+        ? `${Number(pnlParams.SLAmount) > 0 ? '+' : ''}${keepDecimals(pnlParams.SLAmount || 0, marginToken.decimals)}`
         : '--'
     return '--'
-  }, [pnlParams.SLPrice, pnlParams.SLAmount])
+  }, [pnlParams.SLPrice, pnlParams.SLAmount, marginToken])
 
   const takeProfitGain = useMemo(() => {
     if (isGT(pnlParams.TPPrice, 0))
       return Number(pnlParams.TPAmount) !== 0
-        ? `${Number(pnlParams.TPAmount) > 0 ? '+' : ''}${nonBigNumberInterception(pnlParams.TPAmount || 0, 8)}`
+        ? `${Number(pnlParams.TPAmount) > 0 ? '+' : ''}${keepDecimals(pnlParams.TPAmount || 0, marginToken.decimals)}`
         : '--'
     return '--'
-  }, [pnlParams.TPPrice, pnlParams.TPAmount])
+  }, [pnlParams.TPPrice, pnlParams.TPAmount, marginToken])
 
   const onConfirm = () => {
     let SL: any = 0

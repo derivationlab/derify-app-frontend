@@ -7,10 +7,10 @@ import { ZERO } from '@/config'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
 import multicall, { Call } from '@/utils/multicall'
-import { bnMul, formatUnits, keepDecimals } from '@/utils/tools'
+import { bnMul, formatUnits } from '@/utils/tools'
 
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
-  isUsed ? keepDecimals(formatUnits(stopPrice, 8), 2) : '--'
+  isUsed ? formatUnits(stopPrice, 8) : '--'
 
 const getOwnedPositions = async (trader: string, derAddressList: any): Promise<Rec[][]> => {
   const calls: Rec[] = []

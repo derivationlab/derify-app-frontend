@@ -92,12 +92,12 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       >
         <span className={classNames(`${riseOrFall(memoPnL) ? 'up' : 'down'}`)}>
           {riseOrFall(memoPnL)}
-          {numeralNumber(memoPnL, 2)} ({riseOrFall(memoRate)}
+          {numeralNumber(memoPnL, marginToken.decimals)} ({riseOrFall(memoRate)}
           {numeralNumber(bnMul(memoRate, 100), 2)}%)
         </span>
       </DataAtom>
     ),
-    [memoRate, memoPnL, t]
+    [t, memoPnL, memoRate, marginToken]
   )
 
   const atom2Tsx = useMemo(() => {
@@ -185,7 +185,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       >
         <span className={classNames('reminder', `${Number(variables.marginRate) >= 0 ? 'up' : 'down'}`)}>
           {riseOrFall(variables.marginRate as any)}
-          {keepDecimals(Number(variables.marginRate) * 100, 2)}%
+          {numeralNumber(Number(variables.marginRate) * 100, 2)}%
         </span>
         <Reminder alertLevel={alertLevel} />
       </DataAtom>

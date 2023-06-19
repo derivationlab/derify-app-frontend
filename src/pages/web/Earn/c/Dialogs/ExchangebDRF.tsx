@@ -43,6 +43,10 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     }
   }
 
+  const decimals = useMemo(() => {
+    return Number(rewardsInfo?.exchangeable ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [marginToken, rewardsInfo])
+
   return (
     <Dialog
       width="540px"
@@ -59,6 +63,7 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
                 <BalanceShow
                   value={rewardsInfo?.exchangeable ?? 0}
                   unit={`b${marginToken.symbol}→${marginToken.symbol}`}
+                  decimal={decimals}
                 />
               </dd>
             </dl>
@@ -66,7 +71,7 @@ const ExchangebDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           </div>
           <div className="amount">
             <AmountInput
-              max={nonBigNumberInterception(rewardsInfo?.exchangeable ?? 0, 2)}
+              max={nonBigNumberInterception(rewardsInfo?.exchangeable ?? 0, 8)}
               title={t('Earn.bDRFPool.AmountToExchange', 'Amount to exchange')}
               unit={`b${marginToken.symbol}`}
               onChange={onChangeEv}

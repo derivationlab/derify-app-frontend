@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
-import { marginToken, useDerivativeListStore, useMarginTokenListStore } from '@/store'
+import { useDerivativeListStore, useMarginTokenListStore, useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
 import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
@@ -23,6 +24,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
 
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
 
@@ -47,16 +49,12 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   }, [data?.event_time])
 
   const memoTradingFee = useMemo(() => {
-    if (data?.trading_fee) {
-      return (nonBigNumberInterception(data?.trading_fee) as any) * -1
-    }
+    if (data?.trading_fee) return data.trading_fee * -1
     return '--'
   }, [data?.trading_fee])
 
   const memoChangeFee = useMemo(() => {
-    if (data?.position_change_fee) {
-      return (nonBigNumberInterception(data?.position_change_fee) as any) * -1
-    }
+    if (data?.position_change_fee) return data?.position_change_fee * -1
     return '--'
   }, [data?.position_change_fee])
 
@@ -105,11 +103,11 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         footer={memoMarginToken}
       >
         <span className={classNames({ up: data?.pnl_margin_token > 0, down: data?.pnl_margin_token < 0 })}>
-          {data?.pnl_margin_token ? nonBigNumberInterception(data?.pnl_margin_token) : '--'}
+          {data?.pnl_margin_token ? numeralNumber(data?.pnl_margin_token, marginToken.decimals) : '--'}
         </span>
       </DataAtom>
     ),
-    [memoMarginToken, data?.pnl_margin_token, t]
+    [t, marginToken, memoMarginToken, data?.pnl_margin_token]
   )
   const atom3Tsx = useMemo(
     () => (
@@ -118,10 +116,17 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         tip={t('Trade.TradeHistory.TradingFeeTip')}
         footer={memoMarginToken}
       >
-        <span className={classNames({ up: memoTradingFee > 0, down: memoTradingFee < 0 })}>{memoTradingFee}</span>
+        <span
+          className={classNames({
+            up: memoTradingFee > 0,
+            down: memoTradingFee < 0
+          })}
+        >
+          {keepDecimals(memoTradingFee, marginToken.decimals)}
+        </span>
       </DataAtom>
     ),
-    [memoMarginToken, memoTradingFee, t]
+    [t, marginToken, memoMarginToken, memoTradingFee]
   )
   const atom4Tsx = useMemo(
     () => (
@@ -131,11 +136,11 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         footer={memoMarginToken}
       >
         <span className={classNames({ up: memoChangeFee > 0, down: memoChangeFee < 0 })}>
-          {keepDecimals(memoChangeFee, 2)}
+          {keepDecimals(memoChangeFee, marginToken.decimals)}
         </span>
       </DataAtom>
     ),
-    [memoChangeFee, memoMarginToken, t]
+    [t, marginToken, memoChangeFee, memoMarginToken]
   )
   const atom5Tsx = useMemo(() => {
     const size = data?.size ?? 0
@@ -150,6 +155,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
       </DataAtom>
     )
   }, [data?.size, data?.token, t])
+
   const atom6Tsx = useMemo(() => {
     return (
       <DataAtom
@@ -160,7 +166,8 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         {numeralNumber(data?.amount, marginToken.decimals)}
       </DataAtom>
     )
-  }, [data?.amount, marginToken, memoMarginToken, t])
+  }, [t, data?.amount, marginToken, memoMarginToken])
+
   const atom7Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.TradeHistory.Price', 'Price')} footer={VALUATION_TOKEN_SYMBOL}>

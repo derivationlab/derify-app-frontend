@@ -43,6 +43,10 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     }
   }
 
+  const decimals = useMemo(() => {
+    return Number(rewardsInfo?.bondReturnBalance ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [marginToken, rewardsInfo])
+
   return (
     <Dialog
       width="540px"
@@ -56,14 +60,18 @@ const WithdrawbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.bDRFPool.Withdrawable', 'Withdrawable')}</dt>
               <dd>
-                <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken.symbol}`} />
+                <BalanceShow
+                  value={rewardsInfo?.bondReturnBalance ?? 0}
+                  unit={`b${marginToken.symbol}`}
+                  decimal={decimals}
+                />
               </dd>
             </dl>
             <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={nonBigNumberInterception(rewardsInfo?.bondReturnBalance ?? 0, 2)}
+              max={nonBigNumberInterception(rewardsInfo?.bondReturnBalance ?? 0, 8)}
               title={t('Earn.bDRFPool.AmountToWithdraw', 'Amount to withdraw')}
               unit={`b${marginToken.symbol}`}
               onChange={onChangeEv}

@@ -29,6 +29,10 @@ const InsurancePool: FC = () => {
 
   const { data: insuranceVolume } = useCurrentInsurance(marginToken.address)
 
+  const decimals = useMemo(() => {
+    return Number(insuranceVolume?.insurance_pool ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [insuranceVolume, marginToken])
+
   const combineDAT = useMemo(() => {
     if (insuranceVolume) {
       // console.info({ day_time: time, ...insuranceVolume })
@@ -56,7 +60,7 @@ const InsurancePool: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.InsurancePool', 'Insurance Pool')} :
-          <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={marginToken.symbol} />
+          <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={marginToken.symbol} decimal={decimals} />
         </h3>
         <aside>
           <Select

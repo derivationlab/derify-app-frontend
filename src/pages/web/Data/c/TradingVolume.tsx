@@ -50,6 +50,10 @@ const TradingVolume: FC = () => {
 
   const { data: tradingVolume } = useCurrentTrading(derAddress, marginToken.address)
 
+  const decimals = useMemo(() => {
+    return Number(tradingVolume?.[0]?.trading_amount ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [tradingVolume, marginToken])
+
   const combineDAT = useMemo(() => {
     if (tradingVolume) output = { day_time: time, ...tradingVolume[0] }
     return [...tradingData, output]
@@ -78,7 +82,7 @@ const TradingVolume: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.TradingVolume', 'Trading Volume')} :
-          <BalanceShow value={tradingVolume?.[0]?.trading_amount ?? 0} unit={marginToken.symbol} />
+          <BalanceShow value={tradingVolume?.[0]?.trading_amount ?? 0} unit={marginToken.symbol} decimal={decimals} />
         </h3>
         <aside>
           <Select

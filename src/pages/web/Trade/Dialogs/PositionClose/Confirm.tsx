@@ -61,7 +61,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
     debounce(async (derivative: string, closingAmount: string) => {
       const fee = await calcTradingFee(derivative, closingAmount)
       dispatch({ type: 'SET_TRADING_FEE_INFO', payload: { loaded: true, value: fee } })
-    }),
+    }, 1000),
     []
   )
 
@@ -71,7 +71,8 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
         const fee = await calcChangeFee(data?.side, closingAmount, spotPrice, marginPrice, exchange, derivative)
 
         dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
-      }
+      },
+      1000
     ),
     []
   )
@@ -139,7 +140,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                   <small>loading...</small>
                 ) : (
                   <span className={classNames({ error: state.positionLimits.isGreater })}>
-                    <em>{keepDecimals(state.positionLimits.value, 2)}</em>
+                    <em>{keepDecimals(state.positionLimits.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </span>
                 )}
@@ -148,7 +149,9 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                     size="mini"
                     icon="icon/warning.svg"
                     text={t('Trade.Bench.TheMaximumPositionValue', {
-                      Amount: `${keepDecimals(state.positionLimits.maximum, 2)} ${marginToken.symbol}`
+                      Amount: `${keepDecimals(state.positionLimits.maximum, marginToken.decimals)} ${
+                        marginToken.symbol
+                      }`
                     })}
                   />
                 )}
@@ -164,7 +167,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                   <small>loading...</small>
                 ) : (
                   <>
-                    <em>{keepDecimals(state.posChangeFee.value, 2)}</em>
+                    <em>{keepDecimals(state.posChangeFee.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </>
                 )}
@@ -183,7 +186,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
                   <small>loading...</small>
                 ) : (
                   <>
-                    <em>-{keepDecimals(state.tradingFeeInfo.value, 2)}</em>
+                    <em>-{keepDecimals(state.tradingFeeInfo.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </>
                 )}

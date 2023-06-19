@@ -124,6 +124,10 @@ const PositionVolume: FC = () => {
     return [...positionsData, totalAmount]
   }, [positionsData, totalAmount])
 
+  const decimals = useMemo(() => {
+    return Number(totalAmount.volume) === 0 ? 2 : marginToken.decimals
+  }, [totalAmount, marginToken])
+
   useEffect(() => {
     void historyDAT()
   }, [historyDAT, timeSelectVal, derivativeSel])
@@ -133,7 +137,7 @@ const PositionVolume: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.PositionVolume', 'Position Volume')} :
-          <BalanceShow value={totalAmount?.volume} unit={marginToken.symbol} />
+          <BalanceShow value={totalAmount?.volume} unit={marginToken.symbol} decimal={decimals} />
         </h3>
         <aside>
           <Select

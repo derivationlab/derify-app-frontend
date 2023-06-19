@@ -71,6 +71,14 @@ const PositionMining: FC = () => {
     window.toast.dismiss(toast)
   }, [signer])
 
+  const decimals1 = useMemo(() => {
+    return Number(rewardsInfo?.marginTokenBalance ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [rewardsInfo, marginToken])
+
+  const decimals2 = useMemo(() => {
+    return Number(variables?.totalPositionAmount ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [variables, marginToken])
+
   return (
     <div className="web-eran-item">
       <header className="web-eran-item-header">
@@ -90,18 +98,7 @@ const PositionMining: FC = () => {
         <div className="web-eran-item-claim">
           <main>
             <h4>{t('Earn.PositionMining.Claimable', 'Claimable')}</h4>
-            <BalanceShow
-              value={rewardsInfo?.marginTokenBalance ?? 0}
-              unit={marginToken.symbol}
-              decimal={
-                !variablesLoaded
-                  ? 2
-                  : isLT(rewardsInfo?.marginTokenBalance ?? 0 ?? 0, 1) &&
-                    isGT(rewardsInfo?.marginTokenBalance ?? 0 ?? 0, 0)
-                  ? 8
-                  : 2
-              }
-            />
+            <BalanceShow value={rewardsInfo?.marginTokenBalance ?? 0} unit={marginToken.symbol} decimal={decimals1} />
             <BalanceShow
               value={rewardsInfo?.drfBalance ?? 0}
               unit={PLATFORM_TOKEN.symbol}
@@ -133,6 +130,7 @@ const PositionMining: FC = () => {
             <BalanceShow
               value={numeralNumber(variables?.totalPositionAmount ?? 0, marginToken.decimals)}
               unit={marginToken.symbol}
+              decimal={decimals2}
             />
             <div className="block" />
             <p>

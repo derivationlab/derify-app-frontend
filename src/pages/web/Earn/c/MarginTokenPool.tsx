@@ -38,6 +38,19 @@ const MarginTokenPool: FC = () => {
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 
+  const decimals1 = useMemo(() => {
+    return Number(bondBalance ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [bondBalance, marginToken])
+  const decimals2 = useMemo(() => {
+    return Number(rewardsInfo?.exchangeable ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [rewardsInfo, marginToken])
+  const decimals3 = useMemo(() => {
+    return Number(rewardsInfo?.bondReturnBalance ?? 0) === 0 ? 2 : marginToken.decimals
+  }, [rewardsInfo, marginToken])
+  const decimals4 = useMemo(() => {
+    return Number(bankBalance) === 0 ? 2 : marginToken.decimals
+  }, [bankBalance, marginToken])
+
   const closeDialog = () => setVisibleStatus('')
 
   const depositFunc = useCallback(
@@ -159,15 +172,11 @@ const MarginTokenPool: FC = () => {
           <div className="web-eran-item-claim">
             <main>
               <h4>{t('Earn.bDRFPool.Interests', 'Interests')}</h4>
-              <BalanceShow
-                value={bondBalance ?? 0}
-                unit={`b${marginToken.symbol}`}
-                decimal={isLoading ? 2 : isLT(bondBalance ?? 0, 1) && isGT(bondBalance ?? 0, 0) ? 8 : 2}
-              />
+              <BalanceShow value={bondBalance ?? 0} unit={`b${marginToken.symbol}`} decimal={decimals1} />
               <div className="block" />
               <p>
                 {t('Earn.bDRFPool.Exchangeable', 'Exchangeable')}{' '}
-                <strong>{keepDecimals(rewardsInfo?.exchangeable ?? 0, 2)}</strong> {`b${marginToken.symbol}`}
+                <strong>{keepDecimals(rewardsInfo?.exchangeable ?? 0, decimals2)}</strong> {`b${marginToken.symbol}`}
               </p>
             </main>
             <aside>
@@ -182,11 +191,15 @@ const MarginTokenPool: FC = () => {
           <div className="web-eran-item-card">
             <main>
               <h4>{t('Earn.bDRFPool.Deposited', 'Deposited')}</h4>
-              <BalanceShow value={rewardsInfo?.bondReturnBalance ?? 0} unit={`b${marginToken.symbol}`} />
+              <BalanceShow
+                value={rewardsInfo?.bondReturnBalance ?? 0}
+                unit={`b${marginToken.symbol}`}
+                decimal={decimals3}
+              />
               <div className="block" />
               <p>
-                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')} <strong>{keepDecimals(bankBalance, 2)}</strong>{' '}
-                {`b${marginToken.symbol}`}
+                {t('Earn.bDRFPool.TotalDeposited', 'Total deposited')}{' '}
+                <strong>{keepDecimals(bankBalance, decimals4)}</strong> {`b${marginToken.symbol}`}
               </p>
             </main>
             <aside>

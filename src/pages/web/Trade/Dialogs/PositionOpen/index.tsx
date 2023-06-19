@@ -90,7 +90,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
         dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
       },
-      500
+      1000
     ),
     []
   )
@@ -157,12 +157,12 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <section>
                       <aside>
                         <MultipleStatus direction="Long" />
-                        <em>{keepDecimals(bnDiv(state.positionLimits.value, 2), 2)}</em>
+                        <em>{keepDecimals(bnDiv(state.positionLimits.value, 2), marginToken.decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                       <aside>
                         <MultipleStatus direction="Short" />
-                        <em>{keepDecimals(bnDiv(state.positionLimits.value, 2), 2)}</em>
+                        <em>{keepDecimals(bnDiv(state.positionLimits.value, 2), marginToken.decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                     </section>
@@ -174,7 +174,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <small>loading...</small>
                   ) : (
                     <span className={classNames({ error: state.positionLimits.isGreater })}>
-                      <em>{keepDecimals(state.positionLimits.value, 2)}</em>
+                      <em>{keepDecimals(state.positionLimits.value, marginToken.decimals)}</em>
                       <u>{data?.symbol}</u>
                     </span>
                   )}
@@ -183,7 +183,9 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                       size="mini"
                       icon="icon/warning.svg"
                       text={t('Trade.Bench.TheMaximumPositionValue', {
-                        Amount: `${keepDecimals(state.positionLimits.maximum, 2)} ${marginToken.symbol}`
+                        Amount: `${keepDecimals(state.positionLimits.maximum, marginToken.decimals)} ${
+                          marginToken.symbol
+                        }`
                       })}
                     />
                   )}
@@ -204,7 +206,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>loading...</small>
                 ) : (
                   <div>
-                    <em>{keepDecimals(state.posChangeFee.value, 2)}</em>
+                    <em>{keepDecimals(state.posChangeFee.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </div>
                 )}
@@ -223,7 +225,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>loading...</small>
                 ) : (
                   <div>
-                    <em>-{keepDecimals(state.tradingFeeInfo.value, 2)}</em>
+                    <em>-{keepDecimals(state.tradingFeeInfo.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </div>
                 )}

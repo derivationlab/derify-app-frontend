@@ -1,6 +1,6 @@
 import { useAccount } from 'wagmi'
 
-import React, { FC, useReducer, useEffect } from 'react'
+import React, { FC, useReducer, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
@@ -44,6 +44,10 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
     if (address && protocolConfig) void func(address, protocolConfig.bMarginToken)
   }, [address, protocolConfig])
 
+  const decimals = useMemo(() => {
+    return Number(state.depositDAT.balance) === 0 ? 2 : marginToken.decimals
+  }, [marginToken, state.depositDAT.balance])
+
   return (
     <Dialog
       width="540px"
@@ -57,14 +61,14 @@ const DepositbDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.bDRFPool.WalletBalance', 'Wallet Balance')}</dt>
               <dd>
-                <BalanceShow value={state.depositDAT.balance} unit={`b${marginToken.symbol}`} />
+                <BalanceShow value={state.depositDAT.balance} unit={`b${marginToken.symbol}`} decimal={decimals} />
               </dd>
             </dl>
             <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={nonBigNumberInterception(state.depositDAT.balance, 2)}
+              max={nonBigNumberInterception(state.depositDAT.balance, 8)}
               title={t('Earn.bDRFPool.AmountToDeposit', 'Amount to deposit')}
               unit={`b${marginToken.symbol}`}
               onChange={onChangeEv}

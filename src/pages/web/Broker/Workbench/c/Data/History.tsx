@@ -122,7 +122,7 @@ const History: FC = () => {
       dataIndex: 'amount',
       width: mobile ? '' : 268,
       render: (_: string, data: Record<string, any>) => {
-        const usd_amount = keepDecimals(data?.margin_token_amount ?? 0, 2)
+        const usd_amount = keepDecimals(data?.margin_token_amount ?? 0, marginToken.decimals)
         const drf_amount = keepDecimals(data?.drf_amount ?? 0, PLATFORM_TOKEN.decimals)
 
         return (
@@ -138,7 +138,7 @@ const History: FC = () => {
       dataIndex: 'balance',
       width: mobile ? '' : 268,
       render: (_: string, data: Record<string, any>) => {
-        const usd_balance = keepDecimals(data?.margin_token_balance ?? 0, 2)
+        const usd_balance = keepDecimals(data?.margin_token_balance ?? 0, marginToken.decimals)
         const drf_balance = keepDecimals(data?.drf_balance ?? 0, PLATFORM_TOKEN.decimals)
         return (
           <>

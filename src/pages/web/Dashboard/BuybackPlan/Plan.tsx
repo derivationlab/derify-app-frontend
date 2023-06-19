@@ -43,10 +43,11 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
           const price = nonBigNumberInterception(data?.last_drf_price ?? 0, 4)
           if (isGTET(price, tokenPrice)) cls = 'rise'
           if (isLT(price, tokenPrice) && isGT(price, 0)) cls = 'fall'
+          const p = buyBackInfo?.[data.margin_token] ?? 0
           return (
             <>
               {buyBackInfo ? (
-                <BalanceShow value={buyBackInfo?.[data.margin_token]} unit={symbol} />
+                <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
               ) : (
                 <Spinner text="loading" />
               )}
@@ -89,7 +90,8 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
           if (!buyBackInfo) return <Spinner text="loading" />
-          return <BalanceShow value={buyBackInfo?.[data.margin_token]} unit={symbol} />
+          const p = buyBackInfo?.[data.margin_token] ?? 0
+          return <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
         }
       },
       {
@@ -135,7 +137,6 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
 
   const _getBuyBackPlans = async (index = 0) => {
     const { data } = await getBuyBackPlans(index, 10)
-
     dispatch({
       type: 'SET_RECORDS',
       payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }

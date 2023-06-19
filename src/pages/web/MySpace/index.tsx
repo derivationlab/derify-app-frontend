@@ -59,10 +59,11 @@ const MySpace: FC = () => {
       {
         title: 'Position',
         dataIndex: 'symbol',
-        render: (symbol: string) => {
+        render: (symbol: string, record: Record<string, any>) => {
+          const p = traderVariables?.[symbol] ?? 0
           return (
             <>
-              <BalanceShow value={traderVariables?.[symbol] ?? 0} unit={symbol} />
+              <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : record.decimals} />
             </>
           )
         }
@@ -75,7 +76,7 @@ const MySpace: FC = () => {
           const percentage = Number(param) === 0 ? 0 : bnDiv(_, param)
           return (
             <>
-              <BalanceShow value={_} unit={record.symbol} />
+              <BalanceShow value={_} unit={record.symbol} decimal={Number(_) === 0 ? 2 : record.decimals} />
               <BalanceShow value={percentage} percent />
             </>
           )
@@ -96,7 +97,7 @@ const MySpace: FC = () => {
           const percentage = Number(param) === 0 ? 0 : bnDiv(_, param)
           return (
             <>
-              <BalanceShow value={_} unit={record.symbol} />
+              <BalanceShow value={_} unit={record.symbol} decimal={Number(_) === 0 ? 2 : record.decimals} />
               <BalanceShow value={percentage} percent />
             </>
           )
@@ -107,7 +108,8 @@ const MySpace: FC = () => {
         dataIndex: 'positionVolume',
         width: 250,
         render: (_: string, record: Record<string, any>) => {
-          return <BalanceShow value={traderVariables?.[record.symbol] ?? 0} unit={record.symbol} />
+          const p = traderVariables?.[record.symbol] ?? 0
+          return <BalanceShow value={p} unit={record.symbol} decimal={Number(p) === 0 ? 2 : record.decimals} />
         }
       },
       {
@@ -118,7 +120,11 @@ const MySpace: FC = () => {
           const rewards = positionRewards?.[record.symbol] ?? 0
           return (
             <>
-              <BalanceShow value={rewards[record.symbol]} rule="0.00" unit={record.symbol} />
+              <BalanceShow
+                value={rewards[record.symbol]}
+                unit={record.symbol}
+                decimal={Number(rewards[record.symbol]) === 0 ? 2 : record.decimals}
+              />
               <BalanceShow value={rewards.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
             </>
           )
@@ -132,7 +138,11 @@ const MySpace: FC = () => {
           const rewards = allBrokerRewards?.[record.symbol] ?? 0
           return (
             <>
-              <BalanceShow value={rewards[record.symbol]} rule="0.00" unit={record.symbol} />
+              <BalanceShow
+                value={rewards[record.symbol]}
+                unit={record.symbol}
+                decimal={Number(rewards[record.symbol]) === 0 ? 2 : record.decimals}
+              />
               <BalanceShow value={rewards.origin} rule="0.00" unit={PLATFORM_TOKEN.symbol} />
             </>
           )
@@ -162,6 +172,7 @@ const MySpace: FC = () => {
           open: token.open,
           logo: token.logo,
           symbol: token.symbol,
+          decimals: token.amount_decimals,
           marginBalance: Number(marginBalance)
         }
       })

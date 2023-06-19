@@ -14,7 +14,7 @@ import { useBrokerOperation } from '@/hooks/useBrokerOperation'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useBrokerInfoStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
-import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 const Dashboard: FC = () => {
   const { t } = useTranslation()
@@ -54,13 +54,13 @@ const Dashboard: FC = () => {
   const memoTotalBalance = useMemo(() => {
     const drf = String(brokerAssets?.drfRewardBalance ?? 0)
     const usd = String(brokerAssets?.marginTokenRewardBalance ?? 0)
-    return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]
+    return [usd, drf]
   }, [brokerAssets])
 
   const memoHistoryBalance = useMemo(() => {
     const drf = String(brokerAssets?.accumulatedDrfReward ?? 0)
     const usd = String(brokerAssets?.accumulatedMarginTokenReward ?? 0)
-    return [nonBigNumberInterception(usd), nonBigNumberInterception(drf)]
+    return [usd, drf]
   }, [brokerAssets])
 
   const memoDisabled = useMemo(() => {
@@ -73,12 +73,16 @@ const Dashboard: FC = () => {
       <div className="web-broker-dashboard-balance">
         <section>
           <h3>{t('Broker.BV.BrokerAccountBalance', 'Broker Account Balance')}</h3>
-          <BalanceShow value={memoTotalBalance[0]} unit={marginToken.symbol} />
+          <BalanceShow
+            value={memoTotalBalance[0]}
+            unit={marginToken.symbol}
+            decimal={Number(memoTotalBalance[0]) === 0 ? 2 : marginToken.decimals}
+          />
           <BalanceShow value={memoTotalBalance[1]} unit={PLATFORM_TOKEN.symbol} />
           <p
             dangerouslySetInnerHTML={{
               __html: t('Broker.BV.EarnedTip', '', {
-                Amount: keepDecimals(memoHistoryBalance[0], 2),
+                Amount: numeralNumber(memoHistoryBalance[0], marginToken.decimals),
                 Margin: marginToken.symbol,
                 DRF: keepDecimals(memoHistoryBalance[1], tokens.drf.decimals),
                 time: brokerInfo?.registerTime ? dayjs(brokerInfo?.registerTime).format('MMM DD, YYYY') : '--'
@@ -96,7 +100,11 @@ const Dashboard: FC = () => {
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>
               <section>
-                <BalanceShow value={brokerInfo?.margin_token_reward ?? 0} unit={marginToken.symbol} />
+                <BalanceShow
+                  value={brokerInfo?.margin_token_reward ?? 0}
+                  unit={marginToken.symbol}
+                  decimal={Number(brokerInfo?.margin_token_reward ?? 0) === 0 ? 2 : marginToken.decimals}
+                />
                 <BalanceShow value={brokerInfo?.drf_reward ?? 0} unit={PLATFORM_TOKEN.symbol} />
               </section>
               <footer>
@@ -123,7 +131,11 @@ const Dashboard: FC = () => {
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>
               <section>
-                <BalanceShow value={brokerInfo?.margin_token_reward ?? 0} unit={marginToken.symbol} />
+                <BalanceShow
+                  value={brokerInfo?.margin_token_reward ?? 0}
+                  unit={marginToken.symbol}
+                  decimal={Number(brokerInfo?.margin_token_reward ?? 0) === 0 ? 2 : marginToken.decimals}
+                />
                 <BalanceShow value={brokerInfo?.drf_reward ?? 0} unit={PLATFORM_TOKEN.symbol} />
               </section>
               <footer

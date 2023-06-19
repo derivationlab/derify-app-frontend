@@ -9,7 +9,7 @@ import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useQuoteTokenStore, useMarginIndicatorsStore } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useDerivativeListStore } from '@/store/useDerivativeList'
-import { isLTET, keepDecimals } from '@/utils/tools'
+import { isLTET, keepDecimals, numeralNumber } from '@/utils/tools'
 
 const HeaderData: FC = () => {
   const { t } = useTranslation()
@@ -69,13 +69,19 @@ const HeaderData: FC = () => {
         {!mobile ? (
           <strong>
             <BalanceShow value={interest[1]} percent />
-            (<BalanceShow value={interest[0]} unit={marginToken.symbol} />)
+            (
+            <BalanceShow
+              value={interest[0]}
+              unit={marginToken.symbol}
+              decimal={Number(interest[0]) === 0 ? 2 : marginToken.decimals}
+            />
+            )
           </strong>
         ) : (
           <>
             <BalanceShow value={interest[1]} percent />
             <small>
-              ({keepDecimals(interest[0], 2)} {marginToken.symbol})
+              ({numeralNumber(interest[0], marginToken.decimals)} {marginToken.symbol})
             </small>
           </>
         )}

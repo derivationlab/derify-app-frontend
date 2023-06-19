@@ -62,9 +62,10 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
         .map((token) => {
           if (token.open > 0)
             return {
-              value: token.margin_token,
+              icon: token.logo,
               label: token.symbol,
-              icon: token.logo
+              value: token.margin_token,
+              decimals: token.amount_decimals
             }
         })
         .filter((token) => token)
@@ -199,7 +200,10 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
                 Max: <em>{keepDecimals(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2)}</em> {PLATFORM_TOKEN.symbol}
               </p>
               <AmountInput
-                max={nonBigNumberInterception(balances?.[PLATFORM_TOKEN.symbol] ?? 0, 2)}
+                max={keepDecimals(
+                  balances?.[PLATFORM_TOKEN.symbol] ?? 0,
+                  Number(balances?.[PLATFORM_TOKEN.symbol] ?? 0) === 0 ? 2 : 2
+                )}
                 unit={PLATFORM_TOKEN.symbol}
                 title={t('NewDashboard.GrantList.Volume', 'Volume')}
                 initial={nonBigNumberInterception(minimumGrant[state.grantTarget as GrantKeys])}

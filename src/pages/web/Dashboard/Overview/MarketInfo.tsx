@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { isEmpty, orderBy } from 'lodash'
 import Table from 'rc-table'
 
-import React, { FC, useMemo, useContext, useState, useEffect } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
@@ -14,7 +14,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
 import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
-import { useMarginPosVolume, useFactoryConfig, usePairAddrConfig } from '@/hooks/useMarginPosVolume'
+import { useFactoryConfig, useMarginPosVolume, usePairAddrConfig } from '@/hooks/useMarginPosVolume'
 import { useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
 import { MobileContext } from '@/providers/Mobile'
 import { getMarginTokenList, useMarginTokenListStore } from '@/store'
@@ -62,6 +62,7 @@ const MarketInfo: FC = () => {
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
           let total = '0'
+          const p = tradingVol?.[data.margin_token] ?? 0
           if (allPositions && data.margin_token in allPositions && spotPrices) {
             const p1 = allPositions[data.margin_token]
             const p2 = Object.keys(p1)
@@ -72,8 +73,8 @@ const MarketInfo: FC = () => {
           }
           return (
             <>
-              <BalanceShow value={boundPools?.[data.margin_token] ?? 0} unit={symbol} />
-              <BalanceShow value={keepDecimals(total, 2)} unit={symbol} />
+              <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
+              <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
             </>
           )
         }
@@ -111,31 +112,33 @@ const MarketInfo: FC = () => {
         title: t('NewDashboard.Overview.TradingVolume'),
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
-          return <BalanceShow value={tradingVol?.[data.margin_token] ?? 0} unit={symbol} />
+          const p = tradingVol?.[data.margin_token] ?? 0
+          return <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
         }
       },
       {
         title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
+          let total = '0'
           if (allPositions && data.margin_token in allPositions && spotPrices) {
             const p1 = allPositions[data.margin_token]
             const p2 = Object.keys(p1)
-            const total = p2.reduce((p, n: string) => {
+            total = p2.reduce((p, n: string) => {
               const price = spotPrices.find((f) => f.margin === data.margin_token && f.token === n)?.price ?? 0
               return bnPlus(bnMul(p1[n], price), p)
             }, '0')
-            return <BalanceShow value={keepDecimals(total, 2)} unit={symbol} />
           }
-          return <BalanceShow value={keepDecimals(0, 2)} unit={symbol} />
+          return <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
         }
       },
       {
         title: t('NewDashboard.Overview.BuybackPool'),
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => (
-          <BalanceShow value={boundPools?.[data.margin_token] ?? 0} unit={symbol} />
-        )
+        render: (symbol: string, data: Record<string, any>) => {
+          const p = boundPools?.[data.margin_token] ?? 0
+          return <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
+        }
       },
       {
         title: t('NewDashboard.Overview.DetailInfo'),
@@ -158,7 +161,6 @@ const MarketInfo: FC = () => {
 
   const onPagination = async (index: number) => {
     setPagination((val) => ({ ...val, index }))
-
     const data = await getMarginTokenList(index)
     setPagination((val) => ({ ...val, data: resortMargin(data?.records ?? []) }))
   }

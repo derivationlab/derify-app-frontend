@@ -88,7 +88,7 @@ const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
   // const { mobile } = useContext(MobileContext)
   const up = useMemo(() => Number(data.pnl_margin_token) > 0, [data.pnl_margin_token])
   const down = useMemo(() => Number(data.pnl_margin_token) < 0, [data.pnl_margin_token])
-  const pnl_margin_token = keepDecimals(data.pnl_margin_token, 2)
+  const pnl_margin_token = keepDecimals(data.pnl_margin_token, marginToken.decimals)
 
   return (
     <div className="web-broker-table-transaction-pnl">

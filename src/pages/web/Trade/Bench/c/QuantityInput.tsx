@@ -71,8 +71,8 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
   )
 
   const maximum = useMemo(() => {
-    return nonBigNumberInterception(disposable.amount[1], 2)
-  }, [disposable, type])
+    return nonBigNumberInterception(disposable.amount[1], marginToken.decimals)
+  }, [type, marginToken, disposable])
 
   useEffect(() => {
     if (value > maximum) onChange(maximum)
@@ -127,12 +127,7 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
         </div>
       </Row>
       <Row mb="16">
-        <Input
-          className="web-trade-bench-pane-volume-input"
-          value={value}
-          onChange={(val) => onChange(Number(val))}
-          type="number"
-        />
+        <Input className="web-trade-bench-pane-volume-input" value={value} onChange={onChange} />
         <div className="web-trade-bench-pane-volume-type">
           <div className="web-select-show-button">
             <label>{marginToken.symbol}</label>
@@ -140,7 +135,7 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
         </div>
       </Row>
       <Row mb="36">
-        <PercentButton currValue={value} value={maximum} onChange={(val) => onChange(val)} />
+        <PercentButton currValue={value} value={maximum} onChange={onChange} />
       </Row>
     </>
   )

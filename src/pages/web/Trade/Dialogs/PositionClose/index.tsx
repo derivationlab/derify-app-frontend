@@ -15,7 +15,7 @@ import {
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
-import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 import QuantityInput from './QuantityInput'
 
@@ -59,6 +59,11 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
     updateOpeningParams({ closingAmount: memoVolume })
   }, [visible, memoVolume])
 
+  const closeableAmount = useMemo(() => {
+    const size = data?.size ?? 0
+    return Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)
+  }, [data?.size])
+
   return (
     <>
       <Dialog
@@ -87,9 +92,9 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   {VALUATION_TOKEN_SYMBOL}
                 </p>
                 <p>
-                  {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} :{' '}
-                  <em>{keepDecimals(data?.size ?? 0, 2)}</em> {data?.quoteToken} /{' '}
-                  <em>{keepDecimals(memoVolume, marginToken.decimals)}</em> {marginToken.symbol}
+                  {/*const output = Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)*/}
+                  {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} : <em>{closeableAmount}</em>{' '}
+                  {data?.quoteToken} / <em>{numeralNumber(memoVolume, marginToken.decimals)}</em> {marginToken.symbol}
                 </p>
               </section>
             </div>

@@ -20,9 +20,10 @@ import {
   useTokenSpotPricesStore,
   useProtocolConfigStore,
   useDerivativeListStore,
-  usePositionOperationStore
+  usePositionOperationStore,
+  useMarginTokenStore
 } from '@/store'
-import { QuoteTokenState } from '@/store/types'
+import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { PubSubEvents, Rec } from '@/typings'
 import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
@@ -35,14 +36,13 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const { data: signer } = useSigner()
   const { theme } = useContext(ThemeContext)
   const { closePosition, closeAllPositions, takeProfitOrStopLoss } = usePositionOperation()
-
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
-
   const [targetPosOrd, setTargetPosOrd] = useState<Rec>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -52,10 +52,11 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
 
   const isFullSize = useCallback(
     ({ size = 0 }, amount: string): boolean => {
-      const _ = nonBigNumberInterception(bnMul(spotPrice, size))
+      const _ = nonBigNumberInterception(bnMul(spotPrice, size), marginToken.decimals)
+      console.info(amount, _)
       return isGTET(amount, _)
     },
-    [spotPrice]
+    [spotPrice, marginToken]
   )
 
   const clearing = () => setDialogStatus('')
@@ -79,6 +80,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       const { side, size, token } = targetPosOrd
       const { broker } = brokerBound
       const { exchange } = protocolConfig
+      // console.info(targetPosOrd, openingParams.closingAmount)
 
       const status = await closePosition(
         exchange,

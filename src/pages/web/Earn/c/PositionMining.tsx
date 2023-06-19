@@ -131,13 +131,13 @@ const PositionMining: FC = () => {
           <main>
             <h4>{t('Earn.PositionMining.Positions')}</h4>
             <BalanceShow
-              value={nonBigNumberInterception(variables?.totalPositionAmount ?? 0)}
+              value={numeralNumber(variables?.totalPositionAmount ?? 0, marginToken.decimals)}
               unit={marginToken.symbol}
             />
             <div className="block" />
             <p>
-              {t('Earn.PositionMining.TotalPositions')} <strong>{keepDecimals(memoPositionsAm, 2)}</strong>{' '}
-              {marginToken.symbol}
+              {t('Earn.PositionMining.TotalPositions')}{' '}
+              <strong>{numeralNumber(memoPositionsAm, marginToken.decimals)}</strong> {marginToken.symbol}
             </p>
           </main>
           <aside>

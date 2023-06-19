@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { getAddress } from 'ethers/lib/utils'
 
 import React, { FC, useState, useRef, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -34,7 +35,12 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
   }, [quoteToken, tokenSpotPrices])
 
   const indicator = useMemo(() => {
-    return marginIndicators?.[quoteToken.token]?.price_change_rate ?? 0
+    if (marginIndicators) {
+      const keys = Object.keys(marginIndicators)
+      const find = keys.find((key) => getAddress(key) === getAddress(quoteToken.token))
+      return find ? marginIndicators[find]?.price_change_rate ?? 0 : 0
+    }
+    return 0
   }, [quoteToken, marginIndicators])
 
   const change = (pair: Record<string, any>) => {

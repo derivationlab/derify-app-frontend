@@ -9,7 +9,7 @@ import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useQuoteTokenStore, useMarginIndicatorsStore } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useDerivativeListStore } from '@/store/useDerivativeList'
-import { isLTET, keepDecimals, numeralNumber } from '@/utils/tools'
+import { bnDiv, bnMinus, bnPlus, isLTET, keepDecimals, numeralNumber } from '@/utils/tools'
 
 const HeaderData: FC = () => {
   const { t } = useTranslation()
@@ -47,10 +47,10 @@ const HeaderData: FC = () => {
   const interest = useMemo(() => {
     if (currentOpenInterest) {
       const { long_position_amount = 0, short_position_amount = 0 } = currentOpenInterest
-      const m = long_position_amount - short_position_amount
-      const n = long_position_amount + short_position_amount
-      const x = (m / n).toFixed(4)
-      return [m, n === 0 || m === 0 ? 0 : x]
+      const m = bnMinus(long_position_amount, short_position_amount)
+      const n = bnPlus(long_position_amount, short_position_amount)
+      const x = keepDecimals(bnDiv(m, n), 4)
+      return [m, Number(n) === 0 || Number(m) === 0 ? 0 : x]
     }
     return [0, 0]
   }, [currentOpenInterest])

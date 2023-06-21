@@ -1,3 +1,5 @@
+import { getAddress } from 'ethers/lib/utils'
+
 import React, { FC, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -50,8 +52,12 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [data, spotPrice, marginToken])
 
   const memoChangeRate = useMemo(() => {
-    const base = marginIndicators?.[data?.token]?.price_change_rate ?? 0
-    return bnMul(base, 100)
+    if (marginIndicators) {
+      const findKey = Object.keys(marginIndicators).find((m) => getAddress(m) === getAddress(data?.token))
+      const value = findKey ? marginIndicators[findKey]?.price_change_rate ?? 0 : 0
+      return bnMul(value, 100)
+    }
+    return '0'
   }, [data, marginIndicators])
 
   useEffect(() => {

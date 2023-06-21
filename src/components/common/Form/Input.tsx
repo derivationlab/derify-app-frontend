@@ -1,6 +1,4 @@
 import classNames from 'classnames'
-import { isNaN } from 'lodash'
-
 import React, { FC, ChangeEvent, ReactNode } from 'react'
 
 interface InputProps {

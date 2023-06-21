@@ -29,12 +29,7 @@ const Input: FC<InputProps> = ({
   children
 }) => {
   const changeFunc = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const v = e.target.value
-    if (type === 'number') {
-      !isNaN(v) && onChange(v)
-    } else {
-      onChange(v)
-    }
+    onChange(e.target.value)
   }
   return (
     <div className={classNames('web-form-input', className, { disabled })}>

@@ -17,7 +17,7 @@ import {
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { PositionOrderTypes, PubSubEvents } from '@/typings'
-import { keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { isGT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Row from './Row'
 
@@ -75,7 +75,7 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
   }, [type, marginToken, disposable])
 
   useEffect(() => {
-    if (value > maximum) onChange(maximum)
+    if (isGT(value, maximum)) onChange(maximum)
   }, [value, maximum])
 
   useEffect(() => {
@@ -127,7 +127,7 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
         </div>
       </Row>
       <Row mb="16">
-        <Input className="web-trade-bench-pane-volume-input" value={value} onChange={onChange} />
+        <Input className="web-trade-bench-pane-volume-input" type="number" value={value} onChange={onChange} />
         <div className="web-trade-bench-pane-volume-type">
           <div className="web-select-show-button">
             <label>{marginToken.symbol}</label>

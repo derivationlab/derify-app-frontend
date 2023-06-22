@@ -3,7 +3,7 @@ import { create } from 'zustand'
 
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import { TraderVariablesState } from '@/store/types'
-import multicall from '@/utils/multicall'
+import multicall, { multicallV2 } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
 const initialTraderVariables = {
@@ -32,12 +32,24 @@ const getTraderVariables = async (trader: string, exchange: string): Promise<Ini
   ]
 
   try {
-    const response = await multicall(DerifyExchangeAbi, calls)
+    const response = await multicallV2(DerifyExchangeAbi, calls)
 
     if (!isEmpty(response)) {
       const [getTraderAccount, getTraderVariables] = response
-      const { balance, totalMargin, availableMargin } = getTraderAccount
-      const { marginRate, marginBalance, totalPositionAmount } = getTraderVariables
+      const {
+        balance,
+        totalMargin,
+        availableMargin = 0
+      } = getTraderAccount ?? {
+        balance: 0,
+        totalMargin: 0,
+        availableMargin: 0
+      }
+      const { marginRate, marginBalance, totalPositionAmount } = getTraderVariables ?? {
+        marginRate: 0,
+        marginBalance: 0,
+        totalPositionAmount: 0
+      }
 
       return {
         balance: formatUnits(balance, 8),

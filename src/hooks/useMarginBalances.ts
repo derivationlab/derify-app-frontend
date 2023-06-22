@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import { marginTokenList } from '@/store'
-import multicall from '@/utils/multicall'
+import multicall, { multicallV2 } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
 export const useMarginBalances = (trader?: string, list?: (typeof marginTokenList)[]) => {
@@ -26,14 +26,16 @@ export const useMarginBalances = (trader?: string, list?: (typeof marginTokenLis
           ]
         }))
 
-        const res = await multicall(derifyProtocolAbi, calls)
+        const response = await multicallV2(derifyProtocolAbi, calls)
 
-        if (res.length > 0) {
-          res.forEach(([margin]: any[], index: number) => {
-            const [{ balances }] = margin
-            output = {
-              ...output,
-              [list[index].symbol]: formatUnits(String(balances), 8)
+        if (response.length > 0) {
+          response.forEach((data, index: number) => {
+            if (data) {
+              const [{ balances }] = data[0]
+              output = {
+                ...output,
+                [list[index].symbol]: formatUnits(String(balances), 8)
+              }
             }
           })
         }

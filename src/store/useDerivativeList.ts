@@ -45,6 +45,7 @@ export const getDerAddressList = async (factory: string, list: (typeof derivativ
 
     return null
   } catch (e) {
+    console.info(e)
     return null
   }
 }
@@ -71,24 +72,23 @@ const getTradingPairDeployStatus = async (list: (typeof derivativeList)[], facto
 export const getPosMaxLeverage = async (list: any) => {
   const calls: Call[] = []
   let output = Object.create(null)
+  let _list = Object.create(null)
   try {
-    const keys = Object.keys(list)
+    const keys = Object.keys(_list)
     keys.forEach((l) => {
-      if (list[l].derivative !== ZERO)
+      if (_list[l].derivative !== ZERO)
         calls.push({
           name: 'maxLeverage',
-          address: list[l].derivative
+          address: _list[l].derivative
         })
     })
     const response = await multicall(derivativeAbi, calls)
-
     response.forEach((leverage: BigNumberish, index: number) => {
       output = {
         ...output,
         [keys[index]]: formatUnits(String(leverage), 8)
       }
     })
-
     return output
   } catch (e) {
     console.info(e)

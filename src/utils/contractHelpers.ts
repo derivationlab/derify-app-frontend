@@ -1,11 +1,9 @@
-import type { Signer } from '@ethersproject/abstract-signer'
 import type { Contract } from '@ethersproject/contracts'
 import type { ContractInterface } from '@ethersproject/contracts'
-import type { Provider } from '@ethersproject/providers'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 
-import { CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
+import { BEST_RPC_KEY, CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
 import DerifyBrokerRewardsAbi from '@/config/abi/DerifyBrokerRewards.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
@@ -18,59 +16,60 @@ import multiCallAbi from '@/config/abi/MM.json'
 import priceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 import bep20Abi from '@/config/abi/erc20.json'
 import contracts from '@/config/contracts'
+import { TSigner } from '@/typings'
 
 export const getJsonRpcProvider = (): StaticJsonRpcProvider => {
-  const local = localStorage.getItem('best-rpc')
+  const local = localStorage.getItem(BEST_RPC_KEY)
   const rpc = local ? JSON.parse(local)?.state.rpc : DEFAULT_PRC_URLS[CHAIN_ID]
   // console.info(rpc)
   return new StaticJsonRpcProvider(rpc)
 }
 
-export const getContract = (abi: ContractInterface, address: string, signer?: Signer | Provider | null): Contract => {
+export const getContract = (abi: ContractInterface, address: string, signer?: TSigner): Contract => {
   const signerOrProvider = signer ?? getJsonRpcProvider()
   return new ethers.Contract(address, abi, signerOrProvider)
 }
 
-export const getBep20Contract = (address: string, signer?: Signer | Provider | null) => {
+export const getBep20Contract = (address: string, signer?: TSigner) => {
   return getContract(bep20Abi, address, signer)
 }
 
-export const getMulticallContract = (signer?: Signer | Provider | null) => {
+export const getMulticallContract = (signer?: TSigner) => {
   return getContract(multiCallAbi, contracts.multicall.contractAddress, signer)
 }
 
-export const getMiningContract = (address: string, signer?: Signer | Provider | null) => {
+export const getMiningContract = (address: string, signer?: TSigner) => {
   return getContract(DerifyPmrAbi, address, signer)
 }
 
-export const getRankingContract = (address: string, signer?: Signer | Provider | null) => {
+export const getRankingContract = (address: string, signer?: TSigner) => {
   return getContract(DerifyRankAbi, address, signer)
 }
 
-export const getRewardsContract = (address: string, signer?: Signer | Provider | null) => {
+export const getRewardsContract = (address: string, signer?: TSigner) => {
   return getContract(DerifyRewardsAbi, address, signer)
 }
 
-export const getBrokerContract = (address: string, signer?: Signer | Provider | null) => {
+export const getBrokerContract = (address: string, signer?: TSigner) => {
   return getContract(DerifyBrokerRewardsAbi, address, signer)
 }
 
-export const getExchangeContract = (address: string, signer?: Signer | Provider | null) => {
+export const getExchangeContract = (address: string, signer?: TSigner) => {
   return getContract(DerifyExchangeAbi, address, signer)
 }
 
-export const getProtocolContract = (signer?: Signer | Provider | null) => {
+export const getProtocolContract = (signer?: TSigner) => {
   return getContract(DerifyProtocolAbi, contracts.derifyProtocol.contractAddress, signer)
 }
 
-export const getDerivativeContract = (pairAddress: string, signer?: Signer | Provider | null) => {
+export const getDerivativeContract = (pairAddress: string, signer?: TSigner) => {
   return getContract(DerifyDerivativeAbi, pairAddress, signer)
 }
 
-export const getFactoryContract = (address: string, signer?: Signer | Provider | null) => {
+export const getFactoryContract = (address: string, signer?: TSigner) => {
   return getContract(factoryAbi, address, signer)
 }
 
-export const getPriceFeedContract = (address: string, signer?: Signer | Provider | null) => {
+export const getPriceFeedContract = (address: string, signer?: TSigner) => {
   return getContract(priceFeedAbi, address, signer)
 }

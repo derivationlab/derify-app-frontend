@@ -4,34 +4,22 @@ import { useAccount } from 'wagmi'
 import { useEffect } from 'react'
 
 import { useMarginIndicators } from '@/hooks/useMarginIndicators'
-import { useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
-import {
-  useBalancesStore,
-  useBrokerInfoStore,
-  useDerivativeListStore,
-  useMarginTokenListStore,
-  useMarginTokenStore,
-  useTokenSpotPricesStore
-} from '@/store'
+import { useBalancesStore, useBrokerInfoStore, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { useMarginIndicatorsStore } from '@/store/useMarginIndicators'
 import { PubSubEvents } from '@/typings'
 
 export default function GlobalUpdater(): null {
   const { address } = useAccount()
-
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const getTokenBalances = useBalancesStore((state) => state.getTokenBalances)
   const resetBalances = useBalancesStore((state) => state.reset)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
+  const getTokenBalances = useBalancesStore((state) => state.getTokenBalances)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
   const fetchBrokerInfo = useBrokerInfoStore((state) => state.fetchBrokerInfo)
   const resetBrokerInfo = useBrokerInfoStore((state) => state.resetBrokerInfo)
   const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
   const resetBrokerBound = useBrokerInfoStore((state) => state.resetBrokerBound)
-  const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
-  const { data: tokenSpotPrices } = useTokenSpotPrices(derAddressList)
+  const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
   const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
   // Token balances
@@ -46,13 +34,6 @@ export default function GlobalUpdater(): null {
       if (address && marginTokenList.length) void getTokenBalances(address, marginTokenList)
     })
   }, [address, marginTokenList])
-
-  // Spot price
-  useEffect(() => {
-    if (tokenSpotPrices) {
-      updateTokenSpotPrices(tokenSpotPrices)
-    }
-  }, [tokenSpotPrices])
 
   // Margin indicators
   useEffect(() => {

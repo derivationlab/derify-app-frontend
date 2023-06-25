@@ -3,11 +3,13 @@ import { useAccount } from 'wagmi'
 
 import { useEffect } from 'react'
 
+import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import {
   useDerivativeListStore,
   usePositionLimitStore,
   useProtocolConfigStore,
   useQuoteTokenStore,
+  useTokenSpotPricesStore,
   useTraderVariablesStore
 } from '@/store'
 import { QuoteTokenState } from '@/store/types'
@@ -16,7 +18,6 @@ import { PubSubEvents } from '@/typings'
 
 export default function TradingUpdater(): null {
   const { address } = useAccount()
-
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derAddressList = useDerivativeListStore((state) => state.derAddressList)
@@ -25,6 +26,16 @@ export default function TradingUpdater(): null {
   const getPositionLimit = usePositionLimitStore((state) => state.getPositionLimit)
   const getTraderVariables = useTraderVariablesStore((state) => state.getTraderVariables)
   const resetTraderVariables = useTraderVariablesStore((state) => state.reset)
+  const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
+  const { priceDecimals } = usePriceDecimals(derAddressList)
+  const { data: tokenSpotPrices } = useTokenSpotPrices(derAddressList, priceDecimals)
+
+  // Spot price
+  useEffect(() => {
+    if (tokenSpotPrices) {
+      updateTokenSpotPrices(tokenSpotPrices)
+    }
+  }, [tokenSpotPrices])
 
   // User Margin Data
   useEffect(() => {

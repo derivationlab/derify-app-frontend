@@ -15,7 +15,7 @@ import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
 import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
 import { useFactoryConfig, useMarginPosVolume, usePairAddrConfig } from '@/hooks/useMarginPosVolume'
-import { useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
+import { usePriceDecimals, usePriceDecimalsSupport, useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
 import { MobileContext } from '@/providers/Mobile'
 import { getMarginTokenList, useMarginTokenListStore } from '@/store'
 import { bnMul, bnPlus, keepDecimals } from '@/utils/tools'
@@ -48,7 +48,8 @@ const MarketInfo: FC = () => {
   const { data: allPositions } = useMarginPosVolume()
   const { factoryConfig } = useFactoryConfig(allPositions)
   const { pairAddrConfig } = usePairAddrConfig(factoryConfig, allPositions)
-  const { data: spotPrices } = useTokenSpotPricesSupport(pairAddrConfig)
+  const { priceDecimals } = usePriceDecimalsSupport(pairAddrConfig)
+  const { data: spotPrices } = useTokenSpotPricesSupport(pairAddrConfig, priceDecimals)
 
   const mColumns = useMemo(() => {
     return [

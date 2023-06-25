@@ -47,12 +47,12 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yKey, yLabel, timeFormatStr }) 
             </defs>
             <CartesianGrid strokeDasharray="3 0" vertical={false} />
             <XAxis
-              fontSize={14}
+              fontSize={12}
               dataKey={xKey}
               interval={data.length > 20 ? Math.ceil(data.length / 20) : 0}
               tickFormatter={(value) => dayjs(value).format('DD')}
             />
-            <YAxis fontSize={14} orientation="right" tickFormatter={formatValue} />
+            <YAxis fontSize={12} orientation="right" tickFormatter={formatValue} />
             <Tooltip formatter={formatTip} labelFormatter={formatTime} contentStyle={toolTipStyle} />
             <Area type="monotone" dataKey={yKey} stroke="#E7446B" fillOpacity={1} fill={`url(#${chartId})`} />
           </AreaChart>

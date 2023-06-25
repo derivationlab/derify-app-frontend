@@ -64,12 +64,12 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yFormat, timeFormatStr, enableL
             </defs>
             <CartesianGrid strokeDasharray="3 0" vertical={false} />
             <XAxis
-              fontSize={14}
+              fontSize={12}
               dataKey={xKey}
               interval={data.length > 20 ? Math.ceil(data.length / 20) : 0}
               tickFormatter={(value) => dayjs(value).format('DD')}
             />
-            <YAxis fontSize={14} orientation="right" tickFormatter={formatValue} />
+            <YAxis fontSize={12} orientation="right" tickFormatter={formatValue} />
             {enableLegend && <Legend formatter={formatLegend} />}
             <Tooltip
               formatter={formatTip}

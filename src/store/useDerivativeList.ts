@@ -72,7 +72,7 @@ const getTradingPairDeployStatus = async (list: (typeof derivativeList)[], facto
 export const getPosMaxLeverage = async (list: any) => {
   const calls: Call[] = []
   let output = Object.create(null)
-  let _list = Object.create(null)
+  const _list = Object.create(null)
   try {
     const keys = Object.keys(_list)
     keys.forEach((l) => {

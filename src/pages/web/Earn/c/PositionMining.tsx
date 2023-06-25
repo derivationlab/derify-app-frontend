@@ -127,11 +127,7 @@ const PositionMining: FC = () => {
         <div className="web-eran-item-card">
           <main>
             <h4>{t('Earn.PositionMining.Positions')}</h4>
-            <BalanceShow
-              value={numeralNumber(variables?.totalPositionAmount ?? 0, marginToken.decimals)}
-              unit={marginToken.symbol}
-              decimal={decimals2}
-            />
+            <BalanceShow value={variables?.totalPositionAmount ?? 0} unit={marginToken.symbol} decimal={decimals2} />
             <div className="block" />
             <p>
               {t('Earn.PositionMining.TotalPositions')}{' '}

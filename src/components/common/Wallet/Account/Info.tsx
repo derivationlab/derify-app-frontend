@@ -19,8 +19,14 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
 
-  const decimals = useMemo(() => {
+  const decimals1 = useMemo(() => {
     const p1 = variables?.marginBalance ?? 0
+    if (Number(p1) === 0) return 2
+    return marginToken.decimals
+  }, [marginToken, variables])
+
+  const decimals2 = useMemo(() => {
+    const p1 = variables?.availableMargin ?? 0
     if (Number(p1) === 0) return 2
     return marginToken.decimals
   }, [marginToken, variables])
@@ -34,7 +40,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
         </dt>
         <dd>
           <Skeleton rowsProps={{ rows: 1 }} animation loading={!variablesLoaded}>
-            <BalanceShow value={variables?.marginBalance ?? 0} unit={marginToken.symbol} decimal={decimals} />
+            <BalanceShow value={variables?.marginBalance ?? 0} unit={marginToken.symbol} decimal={decimals1} />
           </Skeleton>
         </dd>
       </dl>
@@ -45,7 +51,7 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
         </dt>
         <dd>
           <Skeleton rowsProps={{ rows: 1 }} animation loading={!variablesLoaded}>
-            <BalanceShow value={variables?.availableMargin ?? 0} unit={marginToken.symbol} decimal={decimals} />
+            <BalanceShow value={variables?.availableMargin ?? 0} unit={marginToken.symbol} decimal={decimals2} />
           </Skeleton>
         </dd>
       </dl>

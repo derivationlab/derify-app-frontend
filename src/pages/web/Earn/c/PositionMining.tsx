@@ -16,7 +16,7 @@ import { usePoolEarning } from '@/hooks/usePoolEarning'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useTraderVariablesStore, useMarginIndicatorsStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { bnPlus, isGT, isLT, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
+import { bnPlus, isGT, isLT, keepDecimals, numeralNumber } from '@/utils/tools'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()

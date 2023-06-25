@@ -5,7 +5,6 @@ import { getDerivativeList } from '@/api'
 import { ZERO } from '@/config'
 import derivativeAbi from '@/config/abi/DerifyDerivative.json'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
-import DerifyFactoryAbi from '@/config/abi/DerifyFactory.json'
 import { DerivativeListState } from '@/store/types'
 import { Rec } from '@/typings'
 import multicall, { Call } from '@/utils/multicall'
@@ -50,29 +49,29 @@ export const getDerAddressList = async (factory: string, list: (typeof derivativ
   }
 }
 
-const getTradingPairDeployStatus = async (list: (typeof derivativeList)[], factory: string) => {
-  let output = Object.create(null)
-  const calls = list.map((derivative) => ({
-    name: 'getDerivative',
-    params: [derivative.token],
-    address: factory
-  }))
-
-  const response = await multicall(DerifyFactoryAbi, calls)
-
-  response.forEach(([data]: string[], index: number) => {
-    output = {
-      ...output,
-      [list[index].name]: data === ZERO ? 0 : 1
-    }
-  })
-  return output
-}
+// const getTradingPairDeployStatus = async (list: (typeof derivativeList)[], factory: string) => {
+//   let output = Object.create(null)
+//   const calls = list.map((derivative) => ({
+//     name: 'getDerivative',
+//     params: [derivative.token],
+//     address: factory
+//   }))
+//
+//   const response = await multicall(DerifyFactoryAbi, calls)
+//
+//   response.forEach(([data]: string[], index: number) => {
+//     output = {
+//       ...output,
+//       [list[index].name]: data === ZERO ? 0 : 1
+//     }
+//   })
+//   return output
+// }
 
 export const getPosMaxLeverage = async (list: any) => {
   const calls: Call[] = []
   let output = Object.create(null)
-  const _list = Object.create(null)
+  const _list = list ?? Object.create(null)
   try {
     const keys = Object.keys(_list)
     keys.forEach((l) => {

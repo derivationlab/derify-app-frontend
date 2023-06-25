@@ -3,7 +3,7 @@ import { create } from 'zustand'
 
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import { TraderVariablesState } from '@/store/types'
-import multicall, { multicallV2 } from '@/utils/multicall'
+import { multicallV2 } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
 const initialTraderVariables = {

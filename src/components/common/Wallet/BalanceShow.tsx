@@ -18,7 +18,7 @@ const BalanceShow: FC<Props> = ({ unit, rule, value, percent = false, decimal = 
   const [isMillion, int, dec] = useMemo(() => {
     const padEnd = '0'.padEnd(decimal, '0')
     const output = percent ? bnMul(value, 100) : value
-    const isMillion = output >= 1000000
+    const isMillion = Math.abs(Number(output)) >= 1000000
     const formatRule = rule || (isMillion ? `0,0.${padEnd} a` : `0,0.${padEnd}`)
     return [isMillion, ...numeral(output).format(formatRule).split('.')]
   }, [value, percent])

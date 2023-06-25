@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import { marginTokenList } from '@/store'
-import multicall, { multicallV2 } from '@/utils/multicall'
+import { multicallV2 } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
 export const useMarginBalances = (trader?: string, list?: (typeof marginTokenList)[]) => {

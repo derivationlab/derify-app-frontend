@@ -1,0 +1,14 @@
+.web-c-drop-down-list {
+  position: relative;
+  .wrapper{
+    background: red;
+    padding: 20px;
+    border-radius: 20px;
+    box-sizing: content-box;
+  }
+  .content {
+    max-height: 100px;
+    background: green;
+    overflow: hidden auto;
+  }
+}

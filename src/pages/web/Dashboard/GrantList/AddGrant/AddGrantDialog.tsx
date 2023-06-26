@@ -1,34 +1,22 @@
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 import { debounce, uniqBy } from 'lodash'
-import { useAccount } from 'wagmi'
 
 import React, { FC, useState, useMemo, useReducer, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
 
 import { searchMarginToken } from '@/api'
 import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Input from '@/components/common/Form/Input'
-import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
-import Skeleton from '@/components/common/Skeleton'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import { PLATFORM_TOKEN } from '@/config/tokens'
-import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { resortMargin } from '@/pages/web/Dashboard/Overview/MarketInfo'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
-import {
-  getMarginDeployStatus,
-  getMarginTokenList,
-  useBalancesStore,
-  useMarginTokenStore,
-  useProtocolConfigStore
-} from '@/store'
-import { MarginTokenState } from '@/store/types'
+import { getMarginDeployStatus, getMarginTokenList, useBalancesStore, useProtocolConfigStore } from '@/store'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 import { GrantKeys, Rec } from '@/typings'
 import { isET, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'

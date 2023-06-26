@@ -1,5 +1,4 @@
 import { KLineTimes } from '@/data'
-import { useRegionalJudgment } from '@/hooks/useRegionalJudgment'
 import { get, post } from '@/utils/http'
 
 export const getKLineDAT = async (token: string, time: number, endTime: number, limit: number) => {

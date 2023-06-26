@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { isEmpty } from 'lodash'
 
 import { getCurrentPositionsAmount } from '@/api'
 

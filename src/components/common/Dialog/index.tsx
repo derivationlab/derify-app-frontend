@@ -2,7 +2,6 @@ import Dialog from 'rc-dialog'
 
 import React, { FC, useContext } from 'react'
 
-import Image from '@/components/common/Image'
 import { MobileContext } from '@/providers/Mobile'
 import { px2rem } from '@/utils/tools'
 

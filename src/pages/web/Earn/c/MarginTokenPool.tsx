@@ -16,7 +16,7 @@ import { useTraderBondBalance } from '@/hooks/useTraderBondBalance'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
-import { isGT, isLT, keepDecimals } from '@/utils/tools'
+import { isGT, keepDecimals } from '@/utils/tools'
 
 import DepositbDRFDialog from './Dialogs/DepositbDRF'
 import ExchangebDRFDialog from './Dialogs/ExchangebDRF'
@@ -34,7 +34,7 @@ const MarginTokenPool: FC = () => {
   const { redeemBondFromBank, depositBondToBank, withdrawAllBond, exchangeBond } = useMiningOperation()
   const { data: bankBalance } = useBankBond(protocolConfig?.rewards)
   const { data: rewardsInfo } = usePoolEarning(address, protocolConfig?.rewards)
-  const { data: bondBalance, isLoading } = useTraderBondBalance(address, marginToken.address)
+  const { data: bondBalance } = useTraderBondBalance(address, marginToken.address)
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 

@@ -12,15 +12,7 @@ import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useDerivativeListStore, useMarginIndicatorsStore, useMarginTokenStore, useTokenSpotPricesStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import {
-  bnMinus,
-  bnMul,
-  isET,
-  isGT,
-  keepDecimals,
-  nonBigNumberInterception,
-  safeInterceptionValues
-} from '@/utils/tools'
+import { bnMinus, bnMul, isET, isGT, keepDecimals } from '@/utils/tools'
 
 interface Props {
   data: Rec

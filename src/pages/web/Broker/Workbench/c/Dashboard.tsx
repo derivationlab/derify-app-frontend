@@ -14,7 +14,7 @@ import { useBrokerOperation } from '@/hooks/useBrokerOperation'
 import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useBrokerInfoStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
-import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
+import { keepDecimals, numeralNumber } from '@/utils/tools'
 
 const Dashboard: FC = () => {
   const { t } = useTranslation()

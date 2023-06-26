@@ -3,7 +3,6 @@ import { isEmpty } from 'lodash'
 
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
-import { marginTokenList } from '@/store'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 

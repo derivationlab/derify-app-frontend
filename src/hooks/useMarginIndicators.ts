@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { getMarginIndicators, getPairIndicator } from '@/api'
-import { marginTokenList } from '@/store'
 import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'
 
 /**

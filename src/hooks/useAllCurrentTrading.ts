@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { getCurrentTradingAmount } from '@/api'
-import { marginTokenList } from '@/store'
 
 export const useAllCurrentTrading = (list: string[]) => {
   let output = Object.create(null)

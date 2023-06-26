@@ -7,7 +7,6 @@ import ChangePercent from '@/components/common/ChangePercent'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { MobileContext } from '@/providers/Mobile'
 import { useDerivativeListStore, useMarginIndicatorsStore, useTokenSpotPricesStore } from '@/store'
-import { keepDecimals } from '@/utils/tools'
 
 interface Props {
   onChange: (item: Record<string, any>, index: number) => void

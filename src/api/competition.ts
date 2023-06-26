@@ -36,7 +36,7 @@ export const getGrantPlanRatios = async (marginToken: string, trader: string) =>
   return response
 }
 
-export const getCompetitionList = async (marginToken: string, page?: number, offset?: number) => {
+export const getCompetitionList = async (marginToken: string) => {
   const response = await get(`api/trading_competition_list/${marginToken}`)
   return response
 }

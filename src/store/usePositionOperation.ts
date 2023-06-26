@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 import { PositionOperationState } from '@/store/types'
-import { PositionOrderTypes, Rec } from '@/typings'
+import { PositionOrderTypes } from '@/typings'
 
 export const initOpeningParams = {
   openingType: PositionOrderTypes.Market,

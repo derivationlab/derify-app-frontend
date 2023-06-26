@@ -16,7 +16,7 @@
       }
       span:after {
         content: '';width: 12px;height: 12px;display: block;margin-left: 8px;
-        background: url($res + 'icon/arrow-down.svg') center/contain no-repeat;
+        background: url($res + 'icon/arrow-down-light-theme-1.svg') center/contain no-repeat;
       }
     }
   }
@@ -49,7 +49,7 @@
     span {
       color: $red;
       &:after {
-        background-image: url($res + 'icon/arrow-up.svg');
+        background-image: url($res + 'icon/arrow-down-light-theme-2.svg');
       }
     }
   }
@@ -141,7 +141,7 @@
       &-button {
         border-color: $c44;
         span:after {
-          background-image: url($res + 'icon/arrow-down-dark.svg');
+          background-image: url($res + 'icon/arrow-down-dark-theme-1.svg');
         }
       }
     }
@@ -164,7 +164,7 @@
       span {
         color: $yellow;
         &:after {
-          background-image: url($res + 'icon/arrow-up-dark.svg');
+          background-image: url($res + 'icon/arrow-down-dark-theme-2.svg');
         }
       }
     }

@@ -1,20 +1,34 @@
+import classNames from 'classnames'
 import dayjs from 'dayjs'
+import { debounce, uniqBy } from 'lodash'
+import { useAccount } from 'wagmi'
 
-import React, { FC, useState, useMemo, useReducer, useEffect } from 'react'
+import React, { FC, useState, useMemo, useReducer, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useHistory } from 'react-router-dom'
 
+import { searchMarginToken } from '@/api'
 import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
+import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Input from '@/components/common/Form/Input'
 import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Skeleton from '@/components/common/Skeleton'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import { PLATFORM_TOKEN } from '@/config/tokens'
+import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { useMinimumGrant } from '@/hooks/useMinimumGrant'
 import { resortMargin } from '@/pages/web/Dashboard/Overview/MarketInfo'
 import { grantTargetOptions, reducer, stateInit } from '@/reducers/addGrant'
-import { getMarginDeployStatus, getMarginTokenList, useBalancesStore, useProtocolConfigStore } from '@/store'
+import {
+  getMarginDeployStatus,
+  getMarginTokenList,
+  useBalancesStore,
+  useMarginTokenStore,
+  useProtocolConfigStore
+} from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 import { GrantKeys, Rec } from '@/typings'
 import { isET, isLT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
@@ -32,21 +46,22 @@ const limitDays = {
 
 const grantTarget = grantTargetOptions()
 
-interface IPagination {
-  data: any[]
-  index: number
-}
+let seqCount = 0
 
 const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
+  const bottomRef = useRef<any>()
+  const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
   const [toggle, setToggle] = useState<boolean>(false)
-  const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
-
+  const [marginOptions, setMarginOptions] = useState<{ data: Rec[]; loaded: boolean }>({
+    data: [],
+    loaded: false
+  })
+  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const balances = useBalancesStore((state) => state.balances)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-
   const { minimumGrant } = useMinimumGrant(protocolConfig)
 
   const periodDate = useMemo(() => {
@@ -56,38 +71,20 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     return [dayjs().add(start).format(format), dayjs().add(end).format(format)]
   }, [state.grantDays, state.cliffDays])
 
-  const options = useMemo(() => {
-    if (pagination.data.length) {
-      return pagination.data
-        .map((token) => {
-          if (token.open > 0)
-            return {
-              icon: token.logo,
-              label: token.symbol,
-              value: token.margin_token,
-              decimals: token.amount_decimals
-            }
-        })
-        .filter((token) => token)
-    }
-
-    return []
-  }, [pagination.data])
-
   const disabled = useMemo(() => {
     const amount = minimumGrant[state.grantTarget as GrantKeys]
     const balance = balances?.[PLATFORM_TOKEN.symbol] ?? 0
-    if (options.length === 0) return true
+    if (marginOptions.data.length === 0) return true
     if (isET(balance, 0) || isET(amount, 0)) return true
     if (isLT(balance, amount)) return true
     if (isLT(state.amountInp || 0, amount)) return true
     if (state.grantDays < limitDays.grantDays[0] || state.grantDays > limitDays.grantDays[1]) return true
     if (state.cliffDays < limitDays.cliffDays[0] || state.cliffDays > limitDays.cliffDays[1]) return true
-  }, [options, balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
+  }, [marginOptions.data, balances, minimumGrant, state.amountInp, state.grantDays, state.cliffDays, state.grantTarget])
 
   const currentMargin = useMemo(
-    () => options.find((item: any) => item.value === state.marginToken) ?? options[0],
-    [state.marginToken, options]
+    () => marginOptions.data.find((item: Rec) => item.margin_token === state.marginToken) ?? marginOptions.data[0],
+    [state.marginToken, marginOptions.data]
   )
 
   const currentTarget = useMemo(
@@ -108,45 +105,64 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     onConfirm(state.marginToken, currentTarget?.value, state.amountInp, state.grantDays, state.cliffDays)
   }
 
-  const _getMarginTokenList = async () => {
-    const data = await getMarginTokenList(pagination.index)
-    if (data && data.records.length) {
-      const _data = data.records
-      const deployStatus = await getMarginDeployStatus(_data)
-      const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
-      setPagination((val) => {
-        return { ...val, data: resortMargin([...val.data, ...filter]) }
-      })
-    }
-  }
+  const _searchMarginToken = useCallback(
+    debounce(async (searchKeyword: string) => {
+      const { data = [] } = await searchMarginToken(searchKeyword)
+      setMarginOptions({ data, loaded: false })
+    }, 1500),
+    []
+  )
+
+  const funcAsync = useCallback(async () => {
+    const { records = [] } = await getMarginTokenList(seqCount)
+    const deployStatus = await getMarginDeployStatus(records)
+    const filter = records.filter((f: Rec) => deployStatus[f.symbol] && f.open)
+    const combine = [...marginOptions.data, ...filter]
+    const deduplication = uniqBy(combine, 'margin_token')
+    setMarginOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
+    if (records.length === 0 || records.length < 30) seqCount = seqCount - 1
+  }, [marginOptions.data])
 
   useEffect(() => {
-    if (marginTokenList.length) {
-      dispatch({ type: 'SET_MARGIN_TOKEN', payload: marginTokenList[0].margin_token })
-      setPagination((val) => ({ ...val, data: resortMargin(marginTokenList) }))
+    if (searchKeyword.trim()) {
+      setMarginOptions({ data: [], loaded: true })
+      void _searchMarginToken(searchKeyword)
+    } else {
+      seqCount = 0
+      if (marginTokenList.length) {
+        const output: Rec[] = []
+        marginTokenList.forEach((margin) => {
+          if (margin.open > 0) output.push(margin)
+        })
+        dispatch({ type: 'SET_MARGIN_TOKEN', payload: output[0].margin_token })
+        setMarginOptions({ data: resortMargin(output), loaded: false })
+      }
     }
-  }, [marginTokenList])
+  }, [searchKeyword, marginTokenList])
 
   useEffect(() => {
-    const intersectionObserver = new IntersectionObserver(
-      function (entries) {
-        if (entries[0].intersectionRatio <= 0) return
-        setPagination((val) => ({ ...val, index: ++pagination.index }))
-      },
-      { threshold: 0 }
-    )
-
-    const parent = document.getElementById('MARGIN')
-    const children = parent?.querySelectorAll('.web-select-options-li')
-    const target = children?.[children.length - 1]
-    if (target) intersectionObserver.observe(target)
-  }, [options])
-
-  useEffect(() => {
-    if (pagination.index > 0) {
-      void _getMarginTokenList()
+    if (marginOptions.data.length) {
+      const intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && entry.target.id === 'bottom') {
+              seqCount += 1
+              console.info('intersectionObserver=', seqCount)
+              void funcAsync()
+            }
+          })
+        },
+        { threshold: 0.2 }
+      )
+      if (bottomRef.current) {
+        intersectionObserver.observe(bottomRef.current)
+        observerRef.current = intersectionObserver
+      }
     }
-  }, [pagination.index])
+    return () => {
+      observerRef.current && observerRef.current.disconnect()
+    }
+  }, [marginOptions.data.length])
 
   return (
     <Dialog
@@ -162,38 +178,70 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
         <>
           <div className="web-dashboard-add-grant-dialog">
             <div className="web-dashboard-add-grant-dialog-selects">
-              <div id="MARGIN" className="web-dashboard-add-grant-dialog-label">
-                <label>{t('NewDashboard.GrantList.Margin')}</label>
-                <Skeleton rowsProps={{ rows: 1 }} animation loading={options.length === 0}>
-                  <Select
-                    filter
-                    value={state.marginToken}
-                    onChange={(v) => dispatch({ type: 'SET_MARGIN_TOKEN', payload: v })}
-                    renderer={(item) => (
-                      <div className="web-select-options-item">
-                        <Image src={item.icon} />
-                        {item.label}
-                      </div>
-                    )}
-                    objOptions={options as any}
-                    labelRenderer={(item) => (
-                      <div className="web-dashboard-add-grant-margin-label">
-                        <Image src={item.icon} />
-                        <span>{item.label}</span>
-                      </div>
-                    )}
-                    filterPlaceholder="Search name or contract address..."
-                  />
-                </Skeleton>
-              </div>
-              <hr />
-              <Select
-                label={t('NewDashboard.GrantList.Target', 'Target')}
-                value={state.grantTarget}
-                onChange={(v) => dispatch({ type: 'SET_GRANT_TARGET', payload: v })}
-                objOptions={grantTarget as any}
-                className="relative"
-              />
+              <DropDownList
+                entry={
+                  <div className="web-dashboard-add-grant-select-entry">
+                    <label>{t('NewDashboard.GrantList.Margin')}</label>
+                    <section>
+                      <Image src={currentMargin?.logo} />
+                      <strong>{currentMargin?.symbol}</strong>
+                    </section>
+                  </div>
+                }
+                loading={marginOptions.loaded}
+                onSearch={setSearchKeyword}
+                placeholder="Search name or contract address..."
+              >
+                {marginOptions.data.map((o: any, index: number) => {
+                  const len = marginOptions.data.length
+                  const id = index === len - 1 ? 'bottom' : undefined
+                  const ref = index === len - 1 ? bottomRef : null
+                  const _id = searchKeyword.trim() ? undefined : id
+                  const _ref = searchKeyword.trim() ? null : ref
+                  return (
+                    <DropDownListItem
+                      key={o.margin_token}
+                      id={_id}
+                      ref={_ref}
+                      content={
+                        <>
+                          <Image src={o.logo} style={{ width: '24px' }} />
+                          {o.symbol}
+                        </>
+                      }
+                      onSelect={() => dispatch({ type: 'SET_MARGIN_TOKEN', payload: o.margin_token })}
+                      className={classNames('web-dashboard-add-grant-margin-item', {
+                        active: state.marginToken === o.margin_token,
+                        close: !o.open
+                      })}
+                    />
+                  )
+                })}
+              </DropDownList>
+              <DropDownList
+                entry={
+                  <div className="web-dashboard-add-grant-select-entry n">
+                    <label>{t('NewDashboard.GrantList.Target')}</label>
+                    <section>
+                      <strong>{currentTarget?.label}</strong>
+                    </section>
+                  </div>
+                }
+                showSearch={false}
+              >
+                {grantTarget.map((o: any) => {
+                  return (
+                    <DropDownListItem
+                      key={o.value}
+                      content={o.label}
+                      onSelect={() => dispatch({ type: 'SET_GRANT_TARGET', payload: o.value })}
+                      className={classNames('web-dashboard-add-grant-target-item', {
+                        active: state.grantTarget === o.value
+                      })}
+                    />
+                  )
+                })}
+              </DropDownList>
             </div>
             <div className="web-dashboard-add-grant-dialog-volume">
               <p>
@@ -251,8 +299,8 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
             <dl>
               <dt>{t('NewDashboard.GrantList.Margin', 'Margin')}</dt>
               <dd>
-                <Image src={currentMargin?.icon} />
-                {currentMargin?.label}
+                <Image src={currentMargin?.logo} />
+                {currentMargin?.symbol}
               </dd>
             </dl>
             <dl>

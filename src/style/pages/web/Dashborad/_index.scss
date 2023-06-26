@@ -397,10 +397,19 @@
         }
       }
 
-      &-label{
-        display: flex;align-items: center;justify-content: space-between;position: relative;
-        label{font-size: 18px}
-        .web-c-skeleton{padding: 11px 0}
+      &-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+
+        label {
+          font-size: 18px
+        }
+
+        .web-c-skeleton {
+          padding: 11px 0
+        }
       }
     }
 
@@ -669,7 +678,9 @@
               left: rem(-24);
             }
 
-            label{padding-left: 0}
+            label {
+              padding-left: 0
+            }
           }
 
           hr {
@@ -734,9 +745,14 @@
           }
         }
 
-        &-label{
-          label{font-size: rem(14)}
-          .web-c-skeleton{padding: rem(11) 0}
+        &-label {
+          label {
+            font-size: rem(14)
+          }
+
+          .web-c-skeleton {
+            padding: rem(11) 0
+          }
         }
       }
 
@@ -858,10 +874,11 @@
     }
   }
 
-  .closed{
+  .closed {
     color: $c44;
     background-color: $c88;
   }
+
   .active .web-dashboard-add-grant-margin-item .web-decimal-show.black {
     color: $cff;
   }
@@ -884,6 +901,275 @@
             background: $c22;
           }
         }
+      }
+    }
+  }
+}
+
+/******************************/
+.web-dashboard-add-grant-margin-item {
+  justify-content: space-between;
+
+  img {
+    width: 24px
+  }
+}
+
+.web-dashboard-add-grant-target-item {
+  justify-content: center;
+
+  img {
+    width: 24px
+  }
+}
+
+.web-dashboard-add-grant-select-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+  cursor: pointer;
+  padding-bottom: 20px;
+  @include ns();
+
+  &:not(.n) {
+    border-bottom: 2px solid $cf7;
+  }
+
+  img {
+    width: 24px;
+    border-radius: 100%;
+    margin-right: 8px;
+  }
+
+  strong::after {
+    background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-light-theme-1.svg) 50%/contain no-repeat;
+    content: "";
+    display: block;
+    height: 12px;
+    margin-left: 8px;
+    width: 12px;
+  }
+
+  strong {
+    display: flex;
+    align-items: center
+  }
+
+  section {
+    display: flex;
+    align-items: center
+  }
+}
+
+.web-dashboard-grant-header {
+  .web-c-drop-down-list {
+    padding: 0
+  }
+
+  .web-c-drop-down-list-motion-div {
+    left: -8px;
+    right: -8px;
+    top: 72px;
+  }
+}
+
+.web-dashboard-grant-select-entry {
+  min-width: 170px;
+  height: 80px;
+  border: 10px solid $ce7;
+  border-radius: 40px;
+  padding: 0 22px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @include ns();
+
+  img {
+    width: 24px;
+    border-radius: 100%;
+    margin-right: 8px;
+  }
+
+  label {
+    color: #aaa;
+  }
+
+  strong::after {
+    background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-light-theme-1.svg) 50%/contain no-repeat;
+    content: "";
+    display: block;
+    height: 12px;
+    margin-left: 8px;
+    width: 12px;
+  }
+
+  strong {
+    display: flex;
+    align-items: center
+  }
+
+  section {
+    display: flex;
+    align-items: center
+  }
+}
+
+.web-dashboard-grant-margin-item {
+  justify-content: space-between;
+
+  img {
+    width: 24px
+  }
+
+  &.active, &.active:hover {
+    color: $cff;
+    background: $red;
+  }
+}
+
+.web-dashboard-grant-target-item {
+  justify-content: center;
+}
+
+.web-dashboard-grant-status-item {
+  justify-content: center;
+}
+
+.web-dashboard-add-grant-dialog-selects {
+  .web-c-drop-down-list-content {
+    border-radius: 32px
+  }
+
+  .web-c-drop-down-list-motion-div {
+    left: -32px;
+    right: -32px;
+  }
+}
+
+.open {
+  .web-dashboard-add-grant-select-entry {
+    strong::after {
+      background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-light-theme-2.svg) 50%/contain no-repeat;
+    }
+  }
+
+  .web-dashboard-grant-select-entry {
+    strong::after {
+      background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-light-theme-2.svg) 50%/contain no-repeat;
+      content: "";
+      display: block;
+      height: 12px;
+      margin-left: 8px;
+      width: 12px;
+    }
+  }
+
+  .web-dashboard-add-grant-margin {
+    &-token {
+      strong::after {
+        background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-light-theme-2.svg) 50%/contain no-repeat;
+      }
+    }
+  }
+}
+
+.dark {
+  .open {
+    .web-dashboard-grant-select-entry {
+      border: 10px solid $yellow;
+
+      strong::after {
+        background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-dark-theme-2.svg) 50%/contain no-repeat;
+      }
+    }
+
+    .web-dashboard-add-grant-select-entry {
+      strong::after {
+        background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-dark-theme-2.svg) 50%/contain no-repeat;
+      }
+    }
+
+    .web-dashboard-add-grant-margin {
+      &-token {
+        strong::after {
+          background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-dark-theme-2.svg) 50%/contain no-repeat;
+        }
+      }
+    }
+  }
+
+  .web-dashboard-grant-select-entry {
+    border: 10px solid $c44;
+
+    strong::after {
+      background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-dark-theme-1.svg) 50%/contain no-repeat;
+    }
+  }
+
+  .web-dashboard-add-grant-select-entry {
+    &:not(.n) {
+      border-bottom: 2px solid $c44;
+    }
+
+    strong::after {
+      background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-dark-theme-1.svg) 50%/contain no-repeat;
+    }
+  }
+
+  .web-dashboard-add-grant-margin {
+    &-token {
+      border-bottom: 2px solid $c44;
+
+      strong::after {
+        background: url(//derify-app-resources.vercel.app/image/icon/arrow-down-dark-theme-1.svg) 50%/contain no-repeat;
+      }
+    }
+  }
+}
+
+.mobile-mode {
+  .web-dashboard-grant-header {
+    .web-c-drop-down-list-motion-div {
+      left: rem(-8);
+      right: rem(-8);
+      top: rem(36);
+    }
+
+    .web-c-drop-down-list-content-items {
+      height: rem(220);
+    }
+  }
+
+  .web-dashboard-grant-margin-item {
+    padding: 0 rem(20) !important;
+    height: rem(36) !important;
+    justify-content: space-between;
+
+    img {
+      width: 24px
+    }
+  }
+
+  .web-dashboard-grant-select-entry {
+    width: 100%;
+    height: rem(40);
+    border: 2px solid $ce7;
+    padding: 0 rem(16);
+    font-size: rem(14);
+  }
+
+  &.dark {
+    .web-dashboard-grant-select-entry {
+      border: 2px solid $c44;
+    }
+
+    .open {
+      .web-dashboard-grant-select-entry {
+        border: 2px solid $yellow;
       }
     }
   }

@@ -35,8 +35,7 @@ import {
   RBrokerWorkbench,
   RBrokerSignUpStep3,
   RBrokerSignUpStep1,
-  RBrokerSignUpStep2,
-  routingWithMarginInfo
+  RBrokerSignUpStep2
 } from '@/pages/web/Route'
 import Trade from '@/pages/web/Trade'
 import { useMarginTokenStore } from '@/store'

@@ -7,7 +7,7 @@ export default {
     long: '开多',
     short: '开空',
     twoway: '双向对冲',
-    Loading: '加载中',
+    Loading: '正在加载',
     NoRecord: '无数据'
   }
 }

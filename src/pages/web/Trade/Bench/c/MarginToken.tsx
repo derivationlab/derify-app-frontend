@@ -1,138 +1,133 @@
 import classNames from 'classnames'
-import { orderBy, debounce } from 'lodash'
+import { debounce, uniqBy } from 'lodash'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
 import { searchMarginToken } from '@/api'
-import Select from '@/components/common/Form/Select'
+import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Image from '@/components/common/Image'
-import Skeleton from '@/components/common/Skeleton'
 import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { resortMargin } from '@/pages/web/MySpace'
 import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 
-interface IPagination {
-  data: any[]
-  index: number
-}
+let seqCount = 0
 
 const MarginToken: FC = () => {
   const history = useHistory()
+  const bottomRef = useRef<any>()
+  const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
   const { address } = useAccount()
-  const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
-
   const { data: marginBalances } = useMarginBalances(address, marginTokenList)
+  const [marginOptions, setMarginOptions] = useState<{ data: Rec[]; loaded: boolean }>({
+    data: [],
+    loaded: false
+  })
+  const [searchKeyword, setSearchKeyword] = useState<string>('')
 
   const _searchMarginToken = useCallback(
     debounce(async (searchKeyword: string) => {
-      const data = await searchMarginToken(searchKeyword)
-      console.info(data)
-    }, 1000),
+      const { data = [] } = await searchMarginToken(searchKeyword)
+      setMarginOptions({ data, loaded: false })
+    }, 1500),
     []
   )
 
-  const options = useMemo(() => {
-    if (pagination.data.length && marginBalances) {
-      const _ = pagination.data.map((token) => {
-        const marginBalance = marginBalances?.[token.symbol] ?? 0
-        return {
-          apy: token.max_pm_apy,
-          open: token.open,
-          icon: token.logo,
-          value: token.symbol,
-          label: token.symbol,
-          marginBalance: Number(marginBalance)
-        }
-      })
-      return orderBy(_, (r) => r.marginBalance, 'desc')
-    }
-    return []
-  }, [marginBalances, pagination.data])
-
-  const _getMarginTokenList = async () => {
-    const data = await getMarginTokenList(pagination.index)
-    if (data && data.records.length) {
-      const _data = data.records
-      const deployStatus = await getMarginDeployStatus(_data)
-      const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
-      setPagination((val) => {
-        return { ...val, data: [...val.data, ...filter] }
-      })
-    }
-  }
+  const funcAsync = useCallback(async () => {
+    const { records = [] } = await getMarginTokenList(seqCount)
+    const deployStatus = await getMarginDeployStatus(records)
+    const filter = records.filter((f: Rec) => deployStatus[f.symbol])
+    const combine = [...marginOptions.data, ...filter]
+    const deduplication = uniqBy(combine, 'margin_token')
+    setMarginOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
+    if (records.length === 0 || records.length < 30) seqCount = seqCount - 1
+  }, [marginOptions.data])
 
   useEffect(() => {
     if (searchKeyword.trim()) {
+      setMarginOptions({ data: [], loaded: true })
       void _searchMarginToken(searchKeyword)
+    } else {
+      seqCount = 0
+      if (marginTokenList.length && marginBalances) {
+        const _ = marginTokenList.map((margin) => {
+          const marginBalance = marginBalances?.[margin.symbol] ?? 0
+          return { ...margin, marginBalance: Number(marginBalance) }
+        })
+        setMarginOptions({ data: resortMargin(_), loaded: false })
+      }
     }
-  }, [searchKeyword])
+  }, [searchKeyword, marginBalances, marginTokenList])
 
   useEffect(() => {
-    if (marginTokenList.length) {
-      setPagination((val) => ({ ...val, data: resortMargin(marginTokenList) }))
+    if (marginOptions.data.length) {
+      const intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && entry.target.id === 'bottom') {
+              seqCount += 1
+              console.info('intersectionObserver=', seqCount)
+              void funcAsync()
+            }
+          })
+        },
+        { threshold: 0.2 }
+      )
+      if (bottomRef.current) {
+        intersectionObserver.observe(bottomRef.current)
+        observerRef.current = intersectionObserver
+      }
     }
-  }, [marginTokenList])
-
-  useEffect(() => {
-    const intersectionObserver = new IntersectionObserver(
-      function (entries) {
-        if (entries[0].intersectionRatio <= 0) return
-        setPagination((val) => ({ ...val, index: ++pagination.index }))
-      },
-      { threshold: 0 }
-    )
-
-    const parent = document.getElementById('MARGIN')
-    const children = parent?.querySelectorAll('.web-select-options-li')
-    const target = children?.[children.length - 1]
-    if (target) intersectionObserver.observe(target)
-  }, [options])
-
-  useEffect(() => {
-    if (pagination.index > 0) {
-      void _getMarginTokenList()
+    return () => {
+      observerRef.current && observerRef.current.disconnect()
     }
-  }, [pagination.index])
+  }, [marginOptions.data.length])
 
   return (
-    <div className="web-trade-bench-margin" id="MARGIN">
-      <label>{t('Trade.Bench.Margin')}</label>
-      <Skeleton rowsProps={{ rows: 1 }} animation loading={!marginTokenListLoaded}>
-        <Select
-          filter
-          value={marginToken as any}
-          onChange={(v) => {
-            history.push(`/${v}/trade`)
-          }}
-          renderer={(props) => (
-            <div className={classNames('web-select-options-item', { close: !props.open })}>
-              <Image src={props?.icon} />
-              {props?.label}
-            </div>
-          )}
-          className="web-trade-bench-margin-select"
-          objOptions={options as any}
-          labelRenderer={() => (
-            <div className="web-dashboard-add-grant-margin-label">
-              <Image src={marginToken.logo} />
-              <span>{marginToken.symbol}</span>
-            </div>
-          )}
-          filterPlaceholder="Search name or contract address..."
-        />
-      </Skeleton>
-    </div>
+    <DropDownList
+      entry={
+        <div className="web-trade-bench-margin-token">
+          <label>{t('Trade.Bench.Margin')}</label>
+          <section>
+            <Image src={marginToken.logo} />
+            <strong>{marginToken.symbol}</strong>
+          </section>
+        </div>
+      }
+      loading={marginOptions.loaded}
+      onSearch={setSearchKeyword}
+      placeholder="Search name or contract address..."
+    >
+      {marginOptions.data.map((o: any, index: number) => {
+        const len = marginOptions.data.length
+        const id = index === len - 1 ? 'bottom' : undefined
+        const ref = index === len - 1 ? bottomRef : null
+        const _id = searchKeyword.trim() ? undefined : id
+        const _ref = searchKeyword.trim() ? null : ref
+        return (
+          <DropDownListItem
+            key={o.margin_token}
+            id={_id}
+            ref={_ref}
+            content={
+              <>
+                <Image src={o.logo} style={{ width: '24px' }} />
+                {o.symbol}
+              </>
+            }
+            onSelect={() => history.push(`/${o.symbol}/trade`)}
+            className={classNames('web-trade-bench-margin-item', { close: !o.open })}
+          />
+        )
+      })}
+    </DropDownList>
   )
 }
 

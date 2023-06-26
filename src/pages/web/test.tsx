@@ -3,7 +3,7 @@ import { orderBy, debounce } from 'lodash'
 import { uniqBy } from 'lodash'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { searchMarginToken } from '@/api'
 import Image from '@/components/common/Image'
@@ -13,23 +13,81 @@ import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore } fr
 import { Rec } from '@/typings'
 
 let seqCount = 0
-const MarginToken: FC = () => {
+
+interface DropDownListProps {
+  entry: React.ReactNode
+  loading?: boolean
+  onSearch?: (keywords: string) => void
+  showSearch?: boolean
+  placeholder?: string
+}
+
+export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
+  entry,
+  loading,
+  children,
+  onSearch,
+  showSearch = true,
+  placeholder
+}) => {
+  const [open, toggle] = useState<boolean>(false)
+  const [keyword, setKeyword] = useState<string>('')
+  return (
+    <div style={{ width: '300px' }} className="web-c-drop-down-list">
+      <div onClick={() => toggle(!open)}>{entry}</div>
+      <motion.div
+        style={{ overflow: 'hidden' }}
+        initial={{ height: 0 }}
+        animate={{ height: open ? 160 : 0 }}
+        transition={{ duration: 0.25 }}
+      >
+        <div className="wrapper">
+          {showSearch && (
+            <input
+              type="text"
+              value={keyword}
+              placeholder={placeholder}
+              onChange={(e) => {
+                onSearch?.(e.target.value)
+                setKeyword(e.target.value)
+              }}
+            />
+          )}
+          <div className="content">
+            {loading && <small>loading...</small>}
+            <ul>{children}</ul>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
+
+interface DropDownListItemProps {
+  id: string
+  content: React.ReactNode
+  className?: string
+
+  [key: string]: any
+}
+
+export const DropDownListItem = React.forwardRef<HTMLLIElement, DropDownListItemProps>((props, ref) => (
+  <li id={props.id} ref={ref} className={props.className}>
+    {props.content}
+  </li>
+))
+
+export const MarginToken1 = () => {
+  const bottomRef = useRef<any>()
+  const observerRef = useRef<IntersectionObserver | null>()
   const { address } = useAccount()
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const { data: marginBalances } = useMarginBalances(address, marginTokenList)
   const [tableDAT, setTableDAT] = useState<any>({
     data: [],
     loaded: true
   })
-  const { data: marginBalances } = useMarginBalances(address, marginTokenList)
-
-  const _searchMarginToken = useCallback(
-    debounce(async (searchKeyword: string) => {
-      const { data = [] } = await searchMarginToken(searchKeyword)
-      setTableDAT({ data, loaded: false })
-    }, 1500),
-    []
-  )
+  const [searchKeyword, setSearchKeyword] = useState<string>('')
 
   /**
    const options = useMemo(() => {
@@ -51,6 +109,14 @@ const MarginToken: FC = () => {
   }, [marginBalances, pagination.data])
    */
 
+  const _searchMarginToken = useCallback(
+    debounce(async (searchKeyword: string) => {
+      const { data = [] } = await searchMarginToken(searchKeyword)
+      setTableDAT({ data, loaded: false })
+    }, 1500),
+    []
+  )
+
   const funcAsync = useCallback(async () => {
     const { records = [] } = await getMarginTokenList(seqCount)
     const deployStatus = await getMarginDeployStatus(records)
@@ -60,7 +126,6 @@ const MarginToken: FC = () => {
     setTableDAT((val: any) => ({ ...val, data: deduplication, loaded: false }))
     if (records.length === 0 || records.length < 4) seqCount = seqCount - 1
   }, [tableDAT.data])
-
   useEffect(() => {
     if (searchKeyword.trim()) {
       setTableDAT({ data: [], loaded: true })
@@ -99,48 +164,32 @@ const MarginToken: FC = () => {
       observerRef.current && observerRef.current.disconnect()
     }
   }, [tableDAT.data.length])
-
-  const bottomRef = useRef<any>()
-  const observerRef = useRef<IntersectionObserver | null>()
-  const [open, toggle] = useState(false)
   return (
-    <div style={{ width: '300px' }} className='web-c-drop-down-list'>
-      <div onClick={() => toggle(!open)}>ABCDEF</div>
-      <motion.div
-        style={{ overflow: 'hidden' }}
-        initial={{ height: 0 }}
-        animate={{ height: open ? 160 : 0 }}
-        transition={{ duration: 0.25 }}
-      >
-        <div className='wrapper'>
-          <input
-            type='text'
-            value={searchKeyword}
-            placeholder='search...'
-            onChange={(e) => setSearchKeyword(e.target.value)}
-          />
-          <div className='content'>
-            {tableDAT.loaded && (<small>loading...</small>)}
-            <ul>
-              {tableDAT.data.map((o: any, index: number) => {
-                const len = tableDAT.data.length
-                const id = index === len - 1 ? 'bottom' : undefined
-                const ref = index === len - 1 ? bottomRef : null
-                const _id = searchKeyword.trim() ? undefined : id
-                const _ref = searchKeyword.trim() ? null : ref
-                return (
-                  <li key={o.margin_token} id={_id} ref={_ref}>
-                    <Image src={o.logo} style={{ width: '24px' }} />
-                    {o.name}
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        </div>
-      </motion.div>
-    </div>
+    <>
+      <DropDownList onSearch={setSearchKeyword} entry="MARGIN">
+        {tableDAT.data.map((o: any, index: number) => {
+          const len = tableDAT.data.length
+          const id = index === len - 1 ? 'bottom' : undefined
+          const ref = index === len - 1 ? bottomRef : null
+          const _id = searchKeyword.trim() ? undefined : id
+          const _ref = searchKeyword.trim() ? null : ref
+          return (
+            <DropDownListItem
+              key={o.margin_token}
+              id={_id}
+              ref={_ref}
+              content={
+                <>
+                  <Image src={o.logo} style={{ width: '24px' }} />
+                  {o.name}
+                </>
+              }
+            />
+          )
+        })}
+      </DropDownList>
+    </>
   )
 }
 
-export default MarginToken
+export default MarginToken1

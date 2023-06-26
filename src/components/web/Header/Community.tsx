@@ -4,7 +4,7 @@ import React, { FC, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useClickAway } from 'react-use'
 
-import { Communitys } from '@/data/links'
+import { Communities } from '@/config'
 
 const Community: FC = () => {
   const { t } = useTranslation()
@@ -14,7 +14,7 @@ const Community: FC = () => {
 
   const goLink = (name: string) => {
     // @ts-ignore
-    window.open(Communitys[name])
+    window.open(Communities[name])
     setMenuStatus(false)
   }
   return (
@@ -24,7 +24,7 @@ const Community: FC = () => {
         <span></span>
       </div>
       <ul className={classNames('web-header-select-lang-menu', { show: menuStatus })}>
-        {Object.keys(Communitys).map((name: string) => (
+        {Object.keys(Communities).map((name: string) => (
           <li key={name} onClick={() => goLink(name)}>
             {name}
           </li>

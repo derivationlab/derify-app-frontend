@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useClickAway } from 'react-use'
 
-import { WEBSITE_URL } from '@/config'
-import { Communitys } from '@/data/links'
+import { WEBSITE_URL, Communities } from '@/config'
 
 interface Props {
   show: boolean
@@ -33,7 +32,7 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
   }
   const goLink = (name: string) => {
     // @ts-ignore
-    window.open(Communitys[name])
+    window.open(Communities[name])
   }
 
   return (
@@ -81,7 +80,7 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
         <footer>
           <p>&copy; 2022 Derivation Lab</p>
           <p>
-            {Object.keys(Communitys).map((name: string) => (
+            {Object.keys(Communities).map((name: string) => (
               <span key={name} className={name.toLowerCase()} onClick={() => goLink(name)}>
                 {name}
               </span>

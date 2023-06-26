@@ -4,7 +4,7 @@ import React, { FC, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useClickAway } from 'react-use'
 
-import { Docs, Support, Tutorial } from '@/data/links'
+import { Docs, Support, Tutorial } from '@/config'
 import { useMarginTokenStore } from '@/store'
 
 import AddTokenTool from './AddTokenTool'

@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
-import { FaucetLinks } from '@/data/links'
+import { FaucetLinks } from '@/config'
 
 const Faucet: FC = () => {
   const { address } = useAccount()

@@ -1,5 +1,4 @@
-import { ChainId } from '@/config/types'
-import { ChainIdRec } from '@/typings'
+import { ChainId, ChainIdRec } from '@/typings'
 
 const API_PREFIX_URLS: ChainIdRec = {
   [ChainId.MAINNET]: 'https://api.derify.exchange/',
@@ -25,3 +24,22 @@ export const STATIC_RESOURCES_URL = 'https://derify-app-resources.vercel.app/ima
 export const LANG_CACHE_KEY = 'LANG'
 export const BEST_RPC_KEY = 'best-rpc'
 export const ZERO = '0x0000000000000000000000000000000000000000'
+export const Docs = 'https://docs.derify.finance/'
+export const Tutorial = 'https://docs.derify.finance/getting-started/tutorial'
+export const Support = 'https://discord.com/channels/822422051099902053/827112242449350686'
+export const Medium = 'https://derify.medium.com/'
+export const Github = 'https://github.com/derivationlab'
+export const Discord = 'https://discord.gg/kSR6tz2pdm'
+export const Twitter = 'https://twitter.com/DerifyProtocol'
+export const Telegram = 'https://t.me/DerifyProtocol_Official'
+export const Communities = {
+  Twitter,
+  Telegram,
+  Discord,
+  Medium,
+  Github
+}
+export const FaucetLinks = {
+  BNB: 'https://testnet.binance.org/faucet-smart',
+  tTOKEN: 'https://docs.google.com/forms/d/e/1FAIpQLSeLFM9daYrB1g_gYRHItQZdc2IUG5Ob5Jtb2vEEMbmMqQ-ACA/viewform'
+}

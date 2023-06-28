@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
 import Button from '@/components/common/Button'
-import DecimalShow from '@/components/common/DecimalShow'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -18,7 +17,7 @@ import { useFactoryConfig, useMarginPosVolume, usePairAddrConfig } from '@/hooks
 import { usePriceDecimalsSupport, useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
 import { MobileContext } from '@/providers/Mobile'
 import { getMarginTokenList, useMarginTokenListStore } from '@/store'
-import { bnMul, bnPlus, keepDecimals } from '@/utils/tools'
+import { bnMul, bnPlus } from '@/utils/tools'
 
 import { TableMargin } from '../c/TableCol'
 
@@ -86,10 +85,9 @@ const MarketInfo: FC = () => {
         render: (symbol: string, data: Record<string, any>) => {
           if (indicators?.[data.margin_token]) {
             const apy = Math.max.apply(null, Object.values(indicators[data.margin_token]))
-            const per = keepDecimals(bnMul(apy, 100), 2)
-            return <DecimalShow value={per} percent black />
+            return <BalanceShow value={apy} decimal={2} percent />
           }
-          return <DecimalShow value={0} percent black />
+          return <BalanceShow value={0} decimal={2} percent />
         }
       }
     ]

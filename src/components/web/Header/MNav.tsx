@@ -62,13 +62,19 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
               </span>
               <ul>
                 <li>
-                  <NavLink to="/dashboard/overview">{t('Nav.Nav.Overview', 'Overview')}</NavLink>
+                  <NavLink to="/dashboard/overview" onClick={handleNavLinkEv}>
+                    {t('Nav.Nav.Overview', 'Overview')}
+                  </NavLink>
                 </li>
                 <li>
-                  <NavLink to={`/dashboard/buyback`}>{t('Nav.Nav.BuybackPlan', 'Buyback Plan')}</NavLink>
+                  <NavLink to={`/dashboard/buyback`} onClick={handleNavLinkEv}>
+                    {t('Nav.Nav.BuybackPlan', 'Buyback Plan')}
+                  </NavLink>
                 </li>
                 <li>
-                  <NavLink to={`/dashboard/grant`}>{t('Nav.Nav.GrantList', 'Grant List')}</NavLink>
+                  <NavLink to={`/dashboard/grant`} onClick={handleNavLinkEv}>
+                    {t('Nav.Nav.GrantList', 'Grant List')}
+                  </NavLink>
                 </li>
               </ul>
             </nav>

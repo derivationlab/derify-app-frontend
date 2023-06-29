@@ -79,7 +79,7 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
               </ul>
             </nav>
             <li>
-              <NavLink to="/faucet">{t('Nav.Nav.Faucet')}</NavLink>
+              <NavLink to="/faucet" onClick={handleNavLinkEv}>{t('Nav.Nav.Faucet')}</NavLink>
             </li>
           </ul>
         </nav>

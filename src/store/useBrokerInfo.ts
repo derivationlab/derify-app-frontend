@@ -59,18 +59,6 @@ const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
     // console.info(data?.data)
 
     set({ brokerBound: data?.data, brokerBoundLoaded: true })
-  },
-  resetBrokerInfo: () => {
-    set({
-      brokerInfo: undefined,
-      brokerInfoLoaded: false
-    })
-  },
-  resetBrokerBound: () => {
-    set({
-      brokerBound: undefined,
-      brokerBoundLoaded: false
-    })
   }
 }))
 

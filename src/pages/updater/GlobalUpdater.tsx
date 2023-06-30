@@ -16,9 +16,7 @@ export default function GlobalUpdater(): null {
   const getTokenBalances = useBalancesStore((state) => state.getTokenBalances)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const fetchBrokerInfo = useBrokerInfoStore((state) => state.fetchBrokerInfo)
-  const resetBrokerInfo = useBrokerInfoStore((state) => state.resetBrokerInfo)
   const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
-  const resetBrokerBound = useBrokerInfoStore((state) => state.resetBrokerBound)
   const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
   const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
@@ -45,8 +43,6 @@ export default function GlobalUpdater(): null {
   // User broker info
   useEffect(() => {
     if (address) {
-      resetBrokerInfo()
-      resetBrokerBound()
       void fetchBrokerInfo(address, marginToken.address)
       void fetchBrokerBound(address)
     }

@@ -44,8 +44,6 @@ export interface BrokerInfoState {
   brokerInfoLoaded: boolean
   fetchBrokerInfo: (account: string, marginToken: string) => Promise<void>
   fetchBrokerBound: (account: string) => Promise<void>
-  resetBrokerInfo: () => void
-  resetBrokerBound: () => void
 }
 
 export interface ProtocolConfigState {

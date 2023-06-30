@@ -25,18 +25,7 @@ import Faucet from '@/pages/web/Faucet'
 import MiningRank from '@/pages/web/Mining'
 import MySpace from '@/pages/web/MySpace'
 import System from '@/pages/web/MySpace/System'
-import {
-  RBrokerList,
-  RBrokerBound,
-  RWithMarToken,
-  RBrokerToBind,
-  RBrokerProfile,
-  RConnectWallet,
-  RBrokerWorkbench,
-  RBrokerSignUpStep3,
-  RBrokerSignUpStep1,
-  RBrokerSignUpStep2
-} from '@/pages/web/Route'
+import { R2, R4, R5, R8, R6, R7, R1, R3 } from '@/pages/web/Route'
 import Trade from '@/pages/web/Trade'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -55,108 +44,108 @@ const Web: FC = () => {
           path="/:id/earn"
           exact
           render={() => (
-            <RWithMarToken pathKey="earn">
+            <R1 pathKey="earn">
               <Earn />
-            </RWithMarToken>
+            </R1>
           )}
         />
         <Route
           path="/:id/mining/rank"
           exact
           render={() => (
-            <RWithMarToken pathKey="mining/rank">
+            <R1 pathKey="mining/rank">
               <MiningRank />
-            </RWithMarToken>
+            </R1>
           )}
         />
         <Route
           path="/:id/competition/rank"
           exact
           render={() => (
-            <RWithMarToken pathKey="competition/rank">
+            <R1 pathKey="competition/rank">
               <CompetitionRank />
-            </RWithMarToken>
+            </R1>
           )}
         />
         <Route
           path="/:id/data"
           exact
           render={() => (
-            <RWithMarToken pathKey="data">
+            <R1 pathKey="data">
               <Data />
-            </RWithMarToken>
+            </R1>
           )}
         />
         <Route
           path="/:id/trade"
           exact
           render={() => (
-            <RWithMarToken pathKey="trade">
+            <R1 pathKey="trade">
               <Trade />
-            </RWithMarToken>
+            </R1>
           )}
         />
         <Route
           path="/broker"
           exact
           render={() => (
-            <RBrokerBound>
+            <R3>
               <BrokerBound />
-            </RBrokerBound>
+            </R3>
           )}
         />
         <Route
           path="/broker/bind"
           exact
           render={() => (
-            <RBrokerToBind>
+            <R4>
               <BrokerBind />
-            </RBrokerToBind>
+            </R4>
           )}
         />
         <Route
           path="/broker/list"
           exact
           render={() => (
-            <RBrokerList>
+            <R2>
               <BrokerBindList />
-            </RBrokerList>
+            </R2>
           )}
         />
         <Route
           path="/broker/edit"
           exact
           render={() => (
-            <RBrokerWorkbench>
+            <R5>
               <BrokerSignUpStep2 />
-            </RBrokerWorkbench>
+            </R5>
           )}
         />
         <Route
           path="/broker/sign-up/step1"
           exact
           render={() => (
-            <RBrokerSignUpStep1>
+            <R6>
               <BrokerSignUpStep1 />
-            </RBrokerSignUpStep1>
+            </R6>
           )}
         />
         <Route
           path="/broker/sign-up/step2"
           exact
           render={() => (
-            <RBrokerSignUpStep2>
+            <R7>
               <BrokerSignUpStep2 />
-            </RBrokerSignUpStep2>
+            </R7>
           )}
         />
         <Route
           path="/broker/sign-up/step3"
           exact
           render={() => (
-            <RBrokerSignUpStep3>
+            <R8>
               <BrokerSignUpStep3 />
-            </RBrokerSignUpStep3>
+            </R8>
           )}
         />
         <Route path="/:id/broker/rank" exact render={() => <BrokerRank />} />
@@ -164,30 +153,23 @@ const Web: FC = () => {
           path="/:id/broker/workbench"
           exact
           render={() => (
-            <RBrokerWorkbench pathKey="broker/workbench">
+            <R5 pathKey="broker/workbench">
               <BrokerWorkbench />
-            </RBrokerWorkbench>
+            </R5>
           )}
         />
         <Route
           path="/broker/profile/:id"
           exact
           render={() => (
-            <RBrokerProfile>
+            <R2>
               <BrokerInfo />
-            </RBrokerProfile>
+            </R2>
           )}
         />
         <Route path="/dashboard/overview" component={Overview} />
         <Route path="/dashboard/buyback" component={BuybackPlan} />
-        <Route
-          path="/dashboard/grant"
-          render={() => (
-            <RConnectWallet>
-              <GrantList />
-            </RConnectWallet>
-          )}
-        />
+        <Route path="/dashboard/grant" render={GrantList} />
         <Route path="/faucet" render={() => <Faucet />} />
         <Route path="/space" render={() => <MySpace />} />
         <Route path={`/${symbol}/system/parameters`} render={() => <System />} />

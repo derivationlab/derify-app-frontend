@@ -12,10 +12,9 @@ import { BrokerInfoState } from '@/store/types'
 import { getProtocolContract } from '@/utils/contractHelpers'
 
 const isIdentityValid = async (trader: string): Promise<boolean> => {
-  const c = getProtocolContract()
-
+  const contract = getProtocolContract()
   try {
-    await c.getBrokerInfo(trader)
+    await contract.getBrokerInfo(trader)
     return true
   } catch (e) {
     return false
@@ -23,21 +22,19 @@ const isIdentityValid = async (trader: string): Promise<boolean> => {
 }
 
 const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
-  brokerInfo: {},
-  brokerBound: {},
+  brokerInfo: undefined,
+  brokerBound: undefined,
   isBrokerLoaded: false,
   brokerInfoLoaded: false,
   brokerBoundLoaded: false,
   fetchBrokerInfo: async (trader: string, marginToken: string) => {
     const data = await isIdentityValid(trader)
-
     if (data) {
       const { data: time = 0 } = await getBrokerRegistrationTime(trader)
       const { data: info = {} } = await getBrokerInfoWithAddress(trader)
       const { data: period = 0 } = await getBrokerValidityPeriod(trader)
       const { data: rank = 0 } = await getBrokerRanking(trader, marginToken)
       const { data: rewards = {} } = await getBrokerRewardsToday(trader, marginToken)
-
       set({
         brokerInfo: {
           rank,
@@ -50,6 +47,7 @@ const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
       })
     } else {
       set({
+        brokerInfo: null,
         brokerInfoLoaded: true
       })
     }
@@ -64,13 +62,13 @@ const useBrokerInfoStore = create<BrokerInfoState>((set) => ({
   },
   resetBrokerInfo: () => {
     set({
-      brokerInfo: {},
+      brokerInfo: undefined,
       brokerInfoLoaded: false
     })
   },
   resetBrokerBound: () => {
     set({
-      brokerBound: {},
+      brokerBound: undefined,
       brokerBoundLoaded: false
     })
   }

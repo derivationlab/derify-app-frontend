@@ -12,6 +12,7 @@ import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { resortMargin } from '@/pages/web/Dashboard/Overview/MarketInfo'
+import IsItConnected from '@/pages/web/IsItConnected'
 import { grantTargetOptions } from '@/reducers/addGrant'
 import { grantStateOptions, reducer, stateInit } from '@/reducers/addGrant'
 import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore } from '@/store/useMarginTokenList'
@@ -24,7 +25,7 @@ const grantTarget = grantTargetOptions(true)
 
 let seqCount = 0
 
-const GrantList: FC = () => {
+const GrantListInner: FC = () => {
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
@@ -263,6 +264,14 @@ const GrantList: FC = () => {
       </div>
       <Pagination page={state.pageIndex} pageSize={8} total={state.grantData.totalItems} onChange={onPagination} />
     </div>
+  )
+}
+
+const GrantList = () => {
+  return (
+    <IsItConnected>
+      <GrantListInner />
+    </IsItConnected>
   )
 }
 

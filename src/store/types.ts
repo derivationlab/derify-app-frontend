@@ -38,8 +38,8 @@ export interface PositionState {
 }
 
 export interface BrokerInfoState {
-  brokerInfo: Rec
-  brokerBound: Rec
+  brokerInfo: Rec | null | undefined
+  brokerBound: Rec | null | undefined
   brokerBoundLoaded: boolean
   brokerInfoLoaded: boolean
   fetchBrokerInfo: (account: string, marginToken: string) => Promise<void>

@@ -141,7 +141,7 @@ const Dashboard: FC = () => {
               <footer
                 dangerouslySetInnerHTML={{
                   __html: t('Broker.BV.TotalRewards', '', {
-                    data: `${((brokerInfo.margin_token_reward_rate ?? 0) * 100).toFixed(2)}%`
+                    data: `${((brokerInfo?.margin_token_reward_rate ?? 0) * 100).toFixed(2)}%`
                   })
                 }}
               />

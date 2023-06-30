@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom'
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import { useMarginTokenStore } from '@/store'
+import { Rec } from '@/typings'
 
-const BrokerCard: FC<{ broker: Record<string, any> }> = ({ broker }) => {
+const BrokerCard: FC<{ broker: Rec }> = ({ broker }) => {
   const { t } = useTranslation()
   const { id, logo, name, introduction } = broker
 

@@ -7,7 +7,7 @@ import { ZERO } from '@/config'
 import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import { DerAddressList } from '@/store'
 import { Rec } from '@/typings'
-import multicall from '@/utils/multicall'
+import multicall, { multicallV2 } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
 export const usePriceDecimals = (list?: DerAddressList | null) => {
@@ -18,13 +18,14 @@ export const usePriceDecimals = (list?: DerAddressList | null) => {
     const calls: Rec[] = []
     const keys = Object.keys(list)
     keys.forEach((symbol) => {
-      calls.push({
-        name: 'getSpotPriceDecimals',
-        symbol,
-        address: list[symbol].derivative
-      })
+      if (list[symbol].derivative !== ZERO)
+        calls.push({
+          name: 'getSpotPriceDecimals',
+          symbol,
+          address: list[symbol].derivative
+        })
     })
-    const response = await multicall(derifyDerivativeAbi, calls as any)
+    const response = await multicallV2(derifyDerivativeAbi, calls as any)
     if (response.length) {
       response.forEach(([decimals]: BigNumberish[], index: number) => {
         const _ = Number(decimals)

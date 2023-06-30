@@ -7,7 +7,7 @@ import { Redirect, useParams } from 'react-router-dom'
 import { checkMarginToken } from '@/api'
 import Spinner from '@/components/common/Spinner'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
-import { useMarginTokenStore, useBrokerInfoStore, useMarginTokenListStore } from '@/store'
+import { useMarginTokenStore, useBrokerInfoStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 
 export const R1 = (props: PropsWithChildren<any>) => {

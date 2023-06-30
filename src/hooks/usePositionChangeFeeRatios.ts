@@ -26,13 +26,11 @@ export const usePositionChangeFeeRatios = (list?: DerAddressList | null) => {
         const calls: Rec[] = []
         const keys = Object.keys(list)
         keys.forEach((token) => {
-          if (list[token].derivative !== ZERO) {
-            calls.push({
-              name: 'getPositionChangeFeeRatio',
-              token,
-              address: list[token].derivative
-            })
-          }
+          calls.push({
+            name: 'getPositionChangeFeeRatio',
+            token,
+            address: list[token].derivative
+          })
         })
 
         const response = await multicall(derifyDerivativeAbi, calls as any)

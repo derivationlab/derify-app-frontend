@@ -75,11 +75,10 @@ export const getPosMaxLeverage = async (list: any) => {
   try {
     const keys = Object.keys(_list)
     keys.forEach((l) => {
-      if (_list[l].derivative !== ZERO)
-        calls.push({
-          name: 'maxLeverage',
-          address: _list[l].derivative
-        })
+      calls.push({
+        name: 'maxLeverage',
+        address: _list[l].derivative
+      })
     })
     const response = await multicall(derivativeAbi, calls)
     response.forEach((leverage: BigNumberish, index: number) => {
@@ -115,8 +114,9 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
     })
   },
   getDerAddressList: async (factory: string) => {
-    const derAddressList = await getDerAddressList(factory, get().derivativeListOrigin)
-    set({ derAddressList, derAddressListLoaded: true })
+    const records = await getDerAddressList(factory, get().derivativeListOrigin)
+    const filter = records.filter((r: Rec) => r.derivative !== ZERO)
+    set({ derAddressList: filter, derAddressListLoaded: true })
   },
   getPosMaxLeverage: async () => {
     const posMaxLeverage = await getPosMaxLeverage(get().derAddressList)

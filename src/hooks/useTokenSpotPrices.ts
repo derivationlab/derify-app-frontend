@@ -18,12 +18,11 @@ export const usePriceDecimals = (list?: DerAddressList | null) => {
     const calls: Rec[] = []
     const keys = Object.keys(list)
     keys.forEach((symbol) => {
-      if (list[symbol].derivative !== ZERO)
-        calls.push({
-          name: 'getSpotPriceDecimals',
-          symbol,
-          address: list[symbol].derivative
-        })
+      calls.push({
+        name: 'getSpotPriceDecimals',
+        symbol,
+        address: list[symbol].derivative
+      })
     })
     const response = await multicallV2(derifyDerivativeAbi, calls as any)
     if (response.length) {
@@ -52,9 +51,7 @@ export const useTokenSpotPrices = (list?: DerAddressList | null, decimals?: Rec 
         const calls: Rec[] = []
         const keys = Object.keys(list)
         keys.forEach((symbol) => {
-          if (list[symbol].derivative !== ZERO) {
-            calls.push({ name: 'getSpotPrice', symbol, address: list[symbol].derivative })
-          }
+          calls.push({ name: 'getSpotPrice', symbol, address: list[symbol].derivative })
         })
         const response = await multicall(derifyDerivativeAbi, calls as any)
         if (response.length) {

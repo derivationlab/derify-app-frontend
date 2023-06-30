@@ -19,15 +19,14 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
 
   try {
     Object.keys(derAddressList).forEach((key) => {
-      if (derAddressList[key].derivative !== ZERO)
-        calls.push({
-          name: 'getTraderDerivativePositions',
-          token: derAddressList[key].token,
-          params: [trader],
-          address: derAddressList[key].derivative,
-          quoteToken: key.split('/')[0],
-          derivative: key
-        })
+      calls.push({
+        name: 'getTraderDerivativePositions',
+        token: derAddressList[key].token,
+        params: [trader],
+        address: derAddressList[key].derivative,
+        quoteToken: key.split('/')[0],
+        derivative: key
+      })
     })
 
     const response = await multicall(DerifyDerivativAbi, calls as Call[])

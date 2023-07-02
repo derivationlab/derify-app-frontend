@@ -118,7 +118,8 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
     if (records) {
       const output = Object.create(null)
       for (const key in records) {
-        if (records.hasOwnProperty(key)) if (records[key].derivative !== ZERO) output[key] = records[key]
+        if (Object.prototype.hasOwnProperty.call(records, key))
+          if (records[key].derivative !== ZERO) output[key] = records[key]
       }
       set({ derAddressList: output, derAddressListLoaded: true })
     } else {

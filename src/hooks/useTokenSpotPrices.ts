@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useEffect, useState } from 'react'
 
-import { ZERO } from '@/config'
 import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import { DerAddressList } from '@/store'
 import { Rec } from '@/typings'

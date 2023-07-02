@@ -3,7 +3,6 @@ import { isEmpty, debounce } from 'lodash'
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { ZERO } from '@/config'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
 import multicall, { Call } from '@/utils/multicall'

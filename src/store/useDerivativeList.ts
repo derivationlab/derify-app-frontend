@@ -115,8 +115,15 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
   },
   getDerAddressList: async (factory: string) => {
     const records = await getDerAddressList(factory, get().derivativeListOrigin)
-    const filter = records.filter((r: Rec) => r.derivative !== ZERO)
-    set({ derAddressList: filter, derAddressListLoaded: true })
+    if (records) {
+      let output = Object.create(null)
+      for (const key in records) {
+        if (records.hasOwnProperty(key)) if (records[key].derivative !== ZERO) output[key] = records[key]
+      }
+      set({ derAddressList: output, derAddressListLoaded: true })
+    } else {
+      set({ derAddressList: null, derAddressListLoaded: true })
+    }
   },
   getPosMaxLeverage: async () => {
     const posMaxLeverage = await getPosMaxLeverage(get().derAddressList)

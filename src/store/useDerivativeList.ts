@@ -116,7 +116,7 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
   getDerAddressList: async (factory: string) => {
     const records = await getDerAddressList(factory, get().derivativeListOrigin)
     if (records) {
-      let output = Object.create(null)
+      const output = Object.create(null)
       for (const key in records) {
         if (records.hasOwnProperty(key)) if (records[key].derivative !== ZERO) output[key] = records[key]
       }

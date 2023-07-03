@@ -3,7 +3,10 @@ import { isEmpty, debounce } from 'lodash'
 
 import { useCallback, useEffect, useState } from 'react'
 
+import { getDerivativeList } from '@/api'
+import { ZERO } from '@/config'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
+import { getDerAddressList } from '@/store'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
 import multicall, { Call } from '@/utils/multicall'
 import { bnMul, formatUnits } from '@/utils/tools'
@@ -241,6 +244,47 @@ export const useOwnedPositions = (trader: string | undefined, derAddressList: an
       void func(trader, derAddressList)
     }
   }, [trader, derAddressList])
+
+  return {
+    loaded: positionLoaded,
+    ownedPositions,
+    getOwnedPositions: func
+  }
+}
+
+export const useOwnedPositionsBackUp = (trader?: string, factory?: string, marginToken?: string) => {
+  const [positionLoaded, setPositionLoaded] = useState<boolean>(true)
+  const [ownedPositions, setOwnedPositions] = useState<Rec | undefined>(undefined)
+
+  const func = useCallback(
+    debounce(async (trader: string, factory: string, marginToken: string) => {
+      const addressList = Object.create(null)
+      const { data } = await getDerivativeList(marginToken, 0, 100)
+      if (data?.records) {
+        const _addressList = await getDerAddressList(factory, data.records)
+        if (_addressList) {
+          for (const key in _addressList) {
+            if (Object.prototype.hasOwnProperty.call(_addressList, key))
+              if (_addressList[key].derivative !== ZERO) addressList[key] = _addressList[key]
+          }
+          const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, addressList)
+          setOwnedPositions({
+            positionOrd,
+            profitLossOrd
+          })
+          setPositionLoaded(false)
+        }
+      }
+    }, 1000),
+    []
+  )
+
+  useEffect(() => {
+    setPositionLoaded(true)
+    if (trader && factory && marginToken) {
+      void func(trader, factory, marginToken)
+    }
+  }, [trader, factory, marginToken])
 
   return {
     loaded: positionLoaded,

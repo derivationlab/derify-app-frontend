@@ -5,8 +5,9 @@ import React, { FC, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Tabs, { TabPane } from '@/components/common/Tabs'
-import { useOwnedPositions } from '@/hooks/useOwnedPositions'
-import { useDerivativeListStore } from '@/store'
+import { useOwnedPositionsBackUp } from '@/hooks/useOwnedPositions'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { PubSubEvents } from '@/typings'
 
 import MyOrder from './MyOrder'
@@ -16,17 +17,20 @@ import TradeHistory from './TradeHistory'
 const Data: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
-
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
-
-  const { loaded, ownedPositions, getOwnedPositions } = useOwnedPositions(address, derAddressList)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const { loaded, ownedPositions, getOwnedPositions } = useOwnedPositionsBackUp(
+    address,
+    protocolConfig?.factory,
+    marginToken.address
+  )
 
   useEffect(() => {
     PubSub.unsubscribe(PubSubEvents.UPDATE_OPENED_POSITION)
     PubSub.subscribe(PubSubEvents.UPDATE_OPENED_POSITION, () => {
-      if (address) void getOwnedPositions(address, derAddressList)
+      if (address && protocolConfig) void getOwnedPositions(address, protocolConfig.factory, marginToken.address)
     })
-  }, [address, derAddressList])
+  }, [address, marginToken, protocolConfig])
 
   return (
     <Tabs className="web-trade-data">

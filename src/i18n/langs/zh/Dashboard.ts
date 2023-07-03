@@ -11,7 +11,7 @@ export default {
       PositionVolume: '持仓量',
       BuybackPool: '回购池',
       DetailInfo: '详细信息',
-      SerchTip: '搜索名称或合约地址',
+      SearchTip: '搜索名称或合约地址',
       NoResultsFound: '无搜索结果'
     },
     BuybackPlan: {
@@ -26,7 +26,7 @@ export default {
       DRFPriceLastCycle: 'DRF价格（上个周期）',
       RemainingBlock: '剩余区块数',
       EstimatedTime: '预估时间',
-      SerchTip: '搜索名称或合约地址',
+      SearchTip: '搜索名称或合约地址',
       NoResultsFound: '无搜索结果'
     },
     GrantList: {

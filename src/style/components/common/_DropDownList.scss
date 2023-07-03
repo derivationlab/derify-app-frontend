@@ -1,150 +1,224 @@
-.web-c-drop-down-list {
-  padding: 10px 0;
-  position: relative;
-
-  &-wrapper {
-    padding: 8px;
-  }
-
-  &-content {
-    padding: 20px;
-    border-radius: 24px;
-    box-sizing: content-box;
-    background: $cff;
-    box-shadow: 0 0 8px rgba($c00, 0.2);
-
-    input {
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-  }
-
-  &-motion-div {
-    overflow: hidden;
-    position: absolute;
-    top: 36px;
-    left: -42px;
-    right: -42px;
-    z-index: 1;
-  }
-
-  &-content-items {
-    padding-right: 6px;
-    max-height: 230px;
-    overflow: hidden auto;
-
-    li {
-      height: 48px;
-      padding: 0 18px 0 12px;
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      @include dz();
-
-      img {
-        border-radius: 100%;
-      }
-
-      &:hover {
-        background: $cf7;
-        color: $red;
-      }
-
-      &.active, &.active:hover {
-        background: $red;
-        color: $cff;
-      }
-    }
-  }
-
-  .open {
-    section {
-      color: $red;
-    }
-  }
-
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: $c88;
-    padding: 10px;
-
-    &-inner {
-      width: 16px;
-      height: 16px;
-      margin-right: 8px;
-      border: 2px $yellow solid;
-      border-top: 2px $red solid;
-      border-radius: 100%;
-      animation: spin-circle .8s infinite linear;
-    }
-  }
-}
-
-.mobile-mode {
-  .web-c-drop-down-list {
-    padding: 0 0 rem(10) 0;
-
-    &-motion-div {
-      top: rem(30);
-      left: rem(-32);
-      right: rem(-32);
-    }
+.web-c-drop-down {
+  &-list {
+    padding: 10px 0;
+    position: relative;
 
     &-wrapper {
-      padding: rem(8);
+      padding: 8px;
     }
 
     &-content {
-      padding: rem(20);
-      border-radius: rem(24);
+      padding: 20px;
+      border-radius: 24px;
+      box-sizing: content-box;
+      background: $cff;
+      box-shadow: 0 0 8px rgba($c00, 0.2);
 
       input {
-        font-size: rem(14);
-        margin-bottom: rem(20);
+        font-size: 14px;
+        margin-bottom: 20px;
       }
     }
 
-    &-content-items {
-      max-height: rem(230);
-
-      li {
-        height: rem(48);
-        padding: 0 rem(20);
-        border-radius: rem(24);
-        font-size: rem(14);
-      }
-    }
-  }
-}
-
-.dark {
-  .web-c-drop-down-list {
-    &-content {
-      background: $c22;
-      box-shadow: 0 0 8px rgba($c00, 0.8);
+    &-motion-div {
+      overflow: hidden;
+      position: absolute;
+      top: 36px;
+      left: -42px;
+      right: -42px;
+      z-index: 3;
     }
 
     &-content-items {
+      padding-right: 6px;
+      max-height: 230px;
+      overflow: hidden auto;
+
       li {
+        height: 46px;
+        padding: 0 18px 0 12px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        @include dz();
+
+        img {
+          border-radius: 100%;
+        }
+
         &:hover {
-          background: $c33;
-          color: $yellow;
+          background: $cf7;
+          color: $red;
         }
 
         &.active, &.active:hover {
-          background: $yellow;
-          color: $c22;
+          background: $red;
+          color: $cff;
         }
       }
     }
 
     .open {
       section {
-        color: $yellow;
+        color: $red;
+      }
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: $c88;
+      padding: 10px;
+
+      &-inner {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        border: 2px $yellow solid;
+        border-top: 2px $red solid;
+        border-radius: 100%;
+        animation: spin-circle .8s infinite linear;
+      }
+    }
+  }
+
+  &-search-bar {
+    position: relative;
+
+    i {
+      position: absolute;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: block;
+      width: 18px;
+      height: 18px;
+      background: url($res + 'icon/search.svg') center/contain no-repeat;
+    }
+
+    .web-form-input:has(input:focus,input:hover) {
+      & + i {
+        background-image: url($res + 'icon/search-active.svg');
+      }
+    }
+
+    .web-form-input {
+      input {
+        padding: 0 24px 0 52px;
+      }
+
+      &:focus, &:hover {
+        input {
+          color: $red;
+          border-color: $red;
+        }
+      }
+    }
+  }
+}
+
+.mobile-mode {
+  .web-c-drop-down{
+    &-list {
+      padding: 0 0 rem(10) 0;
+
+      &-motion-div {
+        top: rem(30);
+        left: rem(-32);
+        right: rem(-32);
+      }
+
+      &-wrapper {
+        padding: rem(8);
+      }
+
+      &-content {
+        padding: rem(20);
+        border-radius: rem(24);
+
+        input {
+          font-size: rem(14);
+          margin-bottom: rem(10);
+        }
+      }
+
+      &-content-items {
+        max-height: rem(230);
+
+        li {
+          height: rem(48);
+          padding: 0 rem(20);
+          border-radius: rem(24);
+          font-size: rem(14);
+        }
+      }
+    }
+    &-search-bar {
+      i {
+        left: rem(14);
+        width: rem(16);
+        height: rem(16);
+      }
+
+      .web-form-input {
+        input {
+          padding: 0 rem(16) 0 rem(36);
+        }
+      }
+    }
+  }
+}
+
+.dark {
+  .web-c-drop-down {
+    &-list {
+      &-content {
+        background: $c22;
+        box-shadow: 0 0 8px rgba($c00, 0.8);
+      }
+
+      &-content-items {
+        li {
+          &:hover {
+            background: $c33;
+            color: $yellow;
+          }
+
+          &.active, &.active:hover {
+            background: $yellow;
+            color: $c22;
+          }
+        }
+      }
+
+      .open {
+        section {
+          color: $yellow;
+        }
+      }
+    }
+
+    &-search-bar {
+      i {
+        background: url($res + 'icon/search-dark.svg') center/contain no-repeat;
+      }
+
+      .web-form-input:has(input:focus,input:hover) {
+        & + i {
+          background-image: url($res + 'icon/search-active-dark.svg');
+        }
+      }
+
+      .web-form-input {
+        &:focus, &:hover {
+          input {
+            color: $yellow;
+            border-color: $yellow;
+          }
+        }
       }
     }
   }

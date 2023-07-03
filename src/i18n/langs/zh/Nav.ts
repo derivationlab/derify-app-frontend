@@ -54,7 +54,7 @@ export default {
       Title1: '使用产品前你需要绑定一个经纪商，请输入经纪商编码',
       Title2: '可以从你的经纪商处获取经纪商编码',
       Confirm: '确认',
-      NoCode: '我没有编码...',
+      NoCode: '我没有编码 ...',
       ErrorCode: '您输入的编码不存在或无效',
       BrokerConfirm: '经纪商信息确认',
       SelectBroker: '选择经纪商',

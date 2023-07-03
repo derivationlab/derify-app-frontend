@@ -102,25 +102,27 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
   derAddressListLoaded: false,
   derivativeListLoaded: false,
   posMaxLeverageLoaded: false,
-  getDerivativeList: async (marginTokenAddress: string, page = 0, size = 50) => {
-    const { data } = await getDerivativeList(marginTokenAddress, page, size)
+  getDerivativeList: async (marginTokenAddress: string, page = 0) => {
+    const { data } = await getDerivativeList(marginTokenAddress, page)
 
     const records = data?.records ?? []
     const filter = records.filter((r: Rec) => r.open)
+    // console.info(filter)
     set({
-      derivativeList: filter.length ? filter : [],
+      derivativeList: filter,
       derivativeListOrigin: records,
       derivativeListLoaded: true
     })
   },
   getDerAddressList: async (factory: string) => {
+    const output = Object.create(null)
     const records = await getDerAddressList(factory, get().derivativeListOrigin)
     if (records) {
-      const output = Object.create(null)
       for (const key in records) {
         if (Object.prototype.hasOwnProperty.call(records, key))
           if (records[key].derivative !== ZERO) output[key] = records[key]
       }
+      // console.info(output)
       set({ derAddressList: output, derAddressListLoaded: true })
     } else {
       set({ derAddressList: null, derAddressListLoaded: true })

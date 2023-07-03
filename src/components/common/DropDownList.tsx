@@ -9,6 +9,7 @@ import Input from '@/components/common/Form/Input'
 
 interface DropDownListProps {
   entry: React.ReactNode
+  height?: number
   loading?: boolean
   onSearch?: (keywords: string) => void
   showSearch?: boolean
@@ -17,6 +18,7 @@ interface DropDownListProps {
 
 export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
   entry,
+  height = 356,
   loading,
   children,
   onSearch,
@@ -36,21 +38,24 @@ export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
       <motion.div
         className="web-c-drop-down-list-motion-div"
         initial={{ height: 0 }}
-        animate={{ height: open ? 356 : 0 }}
+        animate={{ height: open ? height : 0 }}
         transition={{ duration: 0.2 }}
       >
         <div className="web-c-drop-down-list-wrapper">
           <div className="web-c-drop-down-list-content">
             {showSearch && (
-              <Input
-                type="text"
-                value={keyword}
-                placeholder={placeholder}
-                onChange={(v) => {
-                  onSearch?.(v)
-                  setKeyword(v)
-                }}
-              />
+              <div className="web-c-drop-down-search-bar">
+                <Input
+                  type="text"
+                  value={keyword}
+                  placeholder={placeholder}
+                  onChange={(v) => {
+                    onSearch?.(v)
+                    setKeyword(v)
+                  }}
+                />
+                <i />
+              </div>
             )}
             <div className="web-c-drop-down-list-content-items">
               {loading && (

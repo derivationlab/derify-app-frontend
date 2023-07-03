@@ -22,82 +22,25 @@
   }
 
   .spinner {
-    width: 46px;
-    height: 46px;
-    display: grid;
-    border: 3px solid;
-    border-radius: 50%;
-    border-color: $red transparent;
-    animation: spinner 1s infinite linear;
-  }
-
-  .spinner::before,
-  .spinner::after {
-    content: "";
-    grid-area: 1/1;
-    margin: 2px;
-    border: inherit;
-    border-radius: 50%;
-  }
-
-  .spinner::before {
-    border-color: $yellow transparent;
-    animation: inherit;
-    animation-duration: 0.5s;
-    animation-direction: reverse;
-  }
-
-  .spinner::after {
-    margin: 8px;
+    width: 36px;
+    height: 36px;
+    border: 4px $yellow solid;
+    border-top: 4px $red solid;
+    border-radius: 100%;
+    animation: spin-circle .8s infinite linear;
   }
 
   &.small{
     .spinner {
-      width: 30px;
-      height: 30px;
-      border: 2px solid;
-      border-radius: 50%;
-      border-color: $red transparent;
-      animation: spinner 1s infinite linear;
-    }
-
-    .spinner::before,
-    .spinner::after {
-      content: "";
-      grid-area: 1/1;
-      margin: 2px;
-      border: inherit;
-      border-radius: 50%;
-    }
-
-    .spinner::before {
-      border-color: $yellow transparent;
-      animation: inherit;
-      animation-duration: 0.5s;
-      animation-direction: reverse;
-    }
-
-    .spinner::after {
-      margin: 6px;
+      width: 18px;
+      height: 18px;
+      border: 2px $yellow solid;
+      border-top: 2px $red solid;
     }
   }
 }
 
 .web-text-spinner{color:inherit;opacity: 0.35}
-
-.dark {
-  .web-spinner {
-    .spinner {
-      border-color: $red transparent;
-      animation: spinner 1s infinite linear;
-    }
-
-    .spinner::before {
-      border-color: $yellow transparent;
-    }
-
-  }
-}
 
 @keyframes spinner {
   100% {

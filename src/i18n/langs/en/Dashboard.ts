@@ -11,7 +11,7 @@ export default {
       PositionVolume: 'Position Volume',
       BuybackPool: 'Buyback Pool',
       DetailInfo: 'Detail Info',
-      SerchTip: 'serch name or contract address..',
+      SearchTip: 'Search name or contract address ...',
       NoResultsFound: 'No results found.'
     },
     BuybackPlan: {
@@ -26,7 +26,7 @@ export default {
       DRFPriceLastCycle: 'DRF Price(Last Cycle)',
       RemainingBlock: 'Remaining Block',
       EstimatedTime: 'Estimated Time',
-      SerchTip: 'serch name or contract address..',
+      SearchTip: 'Search name or contract address ...',
       NoResultsFound: 'No results found.'
     },
     GrantList: {

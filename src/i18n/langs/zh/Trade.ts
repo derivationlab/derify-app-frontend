@@ -107,7 +107,7 @@ export default {
       Long: '开多',
       Short: '开空',
       TowWay: '双向对冲',
-      SerchTip: '搜索名称或合约地址',
+      SearchTip: '搜索名称或合约地址',
       NoResultsFound: '无搜索结果',
       TheMinimumPositionValue: '最小开仓净值为 {{USD}} USD({{Margin}} {{Token}})',
       TheMaximumPositionValue: '最大开仓净值为 {{Amount}}'

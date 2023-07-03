@@ -5,7 +5,7 @@ export default {
       NoTrading: 'No Trading Pairs'
     },
     kline: {
-      SearchTip: 'Search derivatives ..',
+      SearchTip: 'Search derivatives ...',
       NetPositionRate: 'Net Position Rate',
       NetPositionRateTip:
         'Net Position=Long positon-Short postion.\n Net Position Rate=Net Position/Total position*100%',
@@ -109,11 +109,11 @@ export default {
       Price: 'Price',
       Volume: 'Volume',
       Max: 'Max',
-      NumberError: 'Number error, please retry...',
+      NumberError: 'Number error, please retry ...',
       Long: 'Long',
       Short: 'Short',
       TowWay: '2-Way',
-      SerchTip: 'serch name or contract address..',
+      SearchTip: 'Search name or contract address ...',
       NoResultsFound: 'No results found.',
       TheMinimumPositionValue: 'The minimum position value is {{USD}} USD({{Margin}} {{Token}})',
       TheMaximumPositionValue: 'the maximum position is {{Amount}}'

@@ -103,9 +103,9 @@ const MarginToken: FC = () => {
       }
       loading={marginOptions.loaded}
       onSearch={setSearchKeyword}
-      placeholder="Search name or contract address..."
+      placeholder={t('Trade.Bench.SearchTip')}
     >
-      {marginOptions.data.map((o: any, index: number) => {
+      {marginOptions.data.map((o: Rec, index: number) => {
         const len = marginOptions.data.length
         const id = index === len - 1 ? 'bottom' : undefined
         const ref = index === len - 1 ? bottomRef : null

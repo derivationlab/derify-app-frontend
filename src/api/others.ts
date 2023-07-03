@@ -23,7 +23,7 @@ export const getPairIndicator = async (token: string) => {
   return response
 }
 
-export const getDerivativeList = async (marginToken: string, page = 0, size = 12) => {
+export const getDerivativeList = async (marginToken: string, page = 0, size = 100) => {
   const response = await get(`api/derivative_list/${marginToken}/${page}/${size}`)
   return response
 }

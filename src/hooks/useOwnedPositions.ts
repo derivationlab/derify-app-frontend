@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { getDerivativeList } from '@/api'
 import { ZERO } from '@/config'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
-import { getDerAddressList } from '@/store'
+import { getPairAddressList } from '@/store'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
 import multicall, { Call } from '@/utils/multicall'
 import { bnMul, formatUnits } from '@/utils/tools'
@@ -27,7 +27,8 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
         params: [trader],
         address: derAddressList[key].derivative,
         quoteToken: key.split('/')[0],
-        derivative: key
+        derivative: key,
+        decimals: derAddressList[key].price_decimals
       })
     })
 
@@ -56,6 +57,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             size,
             side: PositionSideTypes.long,
             token: calls[i].token,
+            decimals: calls[i].decimals,
             leverage: formatUnits(long.leverage, 8),
             pairAddress: calls[i].address,
             derivative: calls[i].derivative,
@@ -74,6 +76,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             size,
             side: PositionSideTypes.short,
             token: calls[i].token,
+            decimals: calls[i].decimals,
             leverage: formatUnits(short.leverage, 8),
             pairAddress: calls[i].address,
             derivative: calls[i].derivative,
@@ -97,6 +100,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
               token: calls[i].token,
               price,
               volume,
+              decimals: calls[i].decimals,
               pairAddress: calls[i].address,
               leverage: formatUnits(order.leverage),
               timestamp: String(order.timestamp),
@@ -120,6 +124,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
               token: calls[i].token,
               price,
               volume,
+              decimals: calls[i].decimals,
               pairAddress: calls[i].address,
               leverage: formatUnits(order.leverage),
               timestamp: String(order.timestamp),
@@ -142,6 +147,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             token: calls[i].token,
             price,
             volume,
+            decimals: calls[i].decimals,
             pairAddress: calls[i].address,
             leverage: formatUnits(long.leverage),
             orderType: PositionTriggerTypes.StopProfit,
@@ -163,6 +169,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             token: calls[i].token,
             price,
             volume,
+            decimals: calls[i].decimals,
             pairAddress: calls[i].address,
             leverage: formatUnits(long.leverage),
             orderType: PositionTriggerTypes.StopLoss,
@@ -184,6 +191,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             token: calls[i].token,
             price,
             volume,
+            decimals: calls[i].decimals,
             pairAddress: calls[i].address,
             leverage: formatUnits(short.leverage),
             orderType: PositionTriggerTypes.StopLoss,
@@ -205,6 +213,7 @@ const getOwnedPositions = async (trader: string, derAddressList: any): Promise<R
             token: calls[i].token,
             price,
             volume,
+            decimals: calls[i].decimals,
             pairAddress: calls[i].address,
             leverage: formatUnits(short.leverage),
             orderType: PositionTriggerTypes.StopProfit,
@@ -258,16 +267,17 @@ export const useOwnedPositionsBackUp = (trader?: string, factory?: string, margi
 
   const func = useCallback(
     debounce(async (trader: string, factory: string, marginToken: string) => {
-      const addressList = Object.create(null)
+      const pairList = Object.create(null)
       const { data } = await getDerivativeList(marginToken, 0, 100)
       if (data?.records) {
-        const _addressList = await getDerAddressList(factory, data.records)
-        if (_addressList) {
-          for (const key in _addressList) {
-            if (Object.prototype.hasOwnProperty.call(_addressList, key))
-              if (_addressList[key].derivative !== ZERO) addressList[key] = _addressList[key]
+        const _pairList = await getPairAddressList(factory, data.records)
+        if (_pairList) {
+          for (const key in _pairList) {
+            if (Object.prototype.hasOwnProperty.call(_pairList, key))
+              if (_pairList[key].derivative !== ZERO) pairList[key] = _pairList[key]
           }
-          const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, addressList)
+          console.info(pairList)
+          const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, pairList)
           setOwnedPositions({
             positionOrd,
             profitLossOrd

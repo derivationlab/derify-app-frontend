@@ -6,13 +6,13 @@ import Dialog from '@/components/common/Dialog'
 
 interface Props {
   data?: Record<string, any>
-  loading?: boolean
+  disabled?: boolean
   visible: boolean
   onClose: () => void
   onClick: () => void
 }
 
-const PositionCloseAll: FC<Props> = ({ loading, visible, onClose, onClick }) => {
+const PositionCloseAll: FC<Props> = ({ disabled, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   return (
     <Dialog
@@ -25,7 +25,7 @@ const PositionCloseAll: FC<Props> = ({ loading, visible, onClose, onClick }) => 
         <div className="web-trade-dialog-alert">
           {t('Trade.ClosePosition.CloseAllPositionsTip', 'Do you want to close all positions at Market Price?')}
         </div>
-        <Button loading={loading} onClick={onClick}>
+        <Button disabled={disabled} onClick={onClick}>
           {t('Trade.ClosePosition.Confirm', 'Confirm')}
         </Button>
       </div>

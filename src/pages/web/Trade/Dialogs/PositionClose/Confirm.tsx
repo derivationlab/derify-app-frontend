@@ -14,10 +14,9 @@ import { usePositionLimit } from '@/hooks/usePositionLimit'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
   useMarginTokenStore,
-  useTokenSpotPricesStore,
   useProtocolConfigStore,
-  useDerivativeListStore,
-  usePositionOperationStore
+  useTokenSpotPricesStore,
+  usePositionOperationStore,
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
@@ -26,30 +25,33 @@ import { isGT, keepDecimals } from '@/utils/tools'
 interface Props {
   data: Record<string, any>
   loading?: boolean
+  disabled?: boolean
   visible: boolean
   onClose: () => void
   onClick: () => void
 }
 
-const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) => {
+const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
   const { positionLimit } = usePositionLimit(protocolConfig?.exchange, data.token)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
-  const spotPrice = useMemo(() => {
-    return tokenSpotPrices?.[data?.derivative] ?? '0'
-  }, [tokenSpotPrices])
+  const tokenSpotPrice = useMemo(() => {
+    if (tokenSpotPrices) {
+      const find = tokenSpotPrices.find((t: Rec) => t.derivative === data.derivative)
+      return find?.price ?? '0'
+    }
+    return '0'
+  }, [data, tokenSpotPrices])
 
-  const _checkClosingLimit = async (positionLimit: Rec) => {
-    // console.info(positionLimit, spotPrice)
+  const closingLimit = async (positionLimit: Rec) => {
     const [maximum, isGreater, effective] = checkClosingLimit(
-      spotPrice,
+      tokenSpotPrice,
       openingParams.closingAmount,
       positionLimit[data.token][PositionSideTypes[data.side]]
     )
@@ -67,8 +69,14 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
 
   const calcCFeeFunc = useCallback(
     debounce(
-      async (derivative: string, exchange: string, spotPrice: string, marginPrice: string, closingAmount: string) => {
-        const fee = await calcChangeFee(data?.side, closingAmount, spotPrice, marginPrice, exchange, derivative)
+      async (
+        derivative: string,
+        exchange: string,
+        tokenSpotPrice: string,
+        marginPrice: string,
+        closingAmount: string
+      ) => {
+        const fee = await calcChangeFee(data?.side, closingAmount, tokenSpotPrice, marginPrice, exchange, derivative)
 
         dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
       },
@@ -85,32 +93,24 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
   }, [visible])
 
   useEffect(() => {
+    if (visible && tokenSpotPrice && isGT(marginPrice, 0) && isGT(openingParams.closingAmount, 0) && protocolConfig) {
+      const exchange = protocolConfig.exchange
+      void calcTFeeFunc(data.pairAddress, state.positionLimits.value)
+      void calcCFeeFunc(data.pairAddress, exchange, tokenSpotPrice, marginPrice, state.positionLimits.value)
+    }
+  }, [visible, marginPrice, tokenSpotPrice, state.positionLimits])
+
+  useEffect(() => {
     if (
       !isEmpty(data) &&
       visible &&
       positionLimit &&
       Number(openingParams.closingAmount) > 0 &&
-      Number(spotPrice) > 0
+      Number(tokenSpotPrice) > 0
     ) {
-      void _checkClosingLimit(positionLimit)
+      void closingLimit(positionLimit)
     }
-  }, [data, visible, spotPrice, positionLimit, openingParams.closingAmount])
-
-  useEffect(() => {
-    if (
-      visible &&
-      spotPrice &&
-      isGT(marginPrice, 0) &&
-      isGT(openingParams.closingAmount, 0) &&
-      derAddressList &&
-      protocolConfig
-    ) {
-      const exchange = protocolConfig.exchange
-      const derivative = derAddressList[data.derivative]?.derivative ?? ''
-      void calcTFeeFunc(derivative, state.positionLimits.value)
-      void calcCFeeFunc(derivative, exchange, spotPrice, marginPrice, state.positionLimits.value)
-    }
-  }, [visible, spotPrice, marginPrice, derAddressList, state.positionLimits])
+  }, [data, visible, tokenSpotPrice, positionLimit, openingParams.closingAmount])
 
   return (
     <Dialog
@@ -194,7 +194,7 @@ const PositionClose: FC<Props> = ({ data, loading, visible, onClose, onClick }) 
             </dl>
           </div>
         </div>
-        <Button onClick={onClick} loading={loading}>
+        <Button onClick={onClick} loading={loading} disabled={disabled}>
           {t('Trade.ClosePosition.Confirm', 'Confirm')}
         </Button>
       </div>

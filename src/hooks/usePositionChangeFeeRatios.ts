@@ -1,35 +1,25 @@
 import { BigNumberish } from '@ethersproject/bignumber'
 import { useQuery } from '@tanstack/react-query'
 
-import { ZERO } from '@/config'
 import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
-import { DerAddressList } from '@/store'
+import { derivativeList } from '@/store'
 import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
 let output = Object.create(null)
 
-/**
- {
-    "BTCUSD": "0.00126258",
-    "ETHUSD": "-0.00661609",
-    "BNBUSD": "0.0"
-}
- * @param list
- */
-export const usePositionChangeFeeRatios = (list?: DerAddressList | null) => {
+export const usePositionChangeFeeRatios = (list?: (typeof derivativeList)[] | null) => {
   const { data, refetch, isLoading } = useQuery(
     ['usePositionChangeFeeRatios'],
     async () => {
       if (list) {
         const calls: Rec[] = []
-        const keys = Object.keys(list)
-        keys.forEach((token) => {
+        list.forEach((l) => {
           calls.push({
             name: 'getPositionChangeFeeRatio',
-            token,
-            address: list[token].derivative
+            token: l.token,
+            address: l.derivative
           })
         })
 

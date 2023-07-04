@@ -2,9 +2,9 @@ import classNames from 'classnames'
 import { getAddress } from 'ethers/lib/utils'
 import { debounce, uniqBy } from 'lodash'
 
-import React, { FC, useState, useRef, useContext, useMemo, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useContext, useMemo, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useClickAway } from 'react-use'
+import { useClickAway, useToggle } from 'react-use'
 
 import { getDerivativeList, searchMarginToken } from '@/api'
 import ChangePercent from '@/components/common/ChangePercent'
@@ -14,51 +14,50 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { usePriceDecimalsSupport, useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
 import { MobileContext } from '@/providers/Mobile'
 import {
-  getDerAddressList,
+  getPairAddressList,
   useDerivativeListStore,
   useMarginIndicatorsStore,
   useMarginTokenStore,
   useProtocolConfigStore,
-  useQuoteTokenStore
+  useQuoteTokenStore, useTokenSpotPricesStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-
-interface Props {
-  onToggle?: () => void
-}
+import { ZERO } from '@/config'
 
 let seqCount = 0
 
-const SymbolSelect: FC<Props> = ({ onToggle }) => {
+interface PairOptionsInit {
+  data: Rec[];
+  loaded: boolean
+}
+
+const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const ref = useRef(null)
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-  const [showOptions, setShowOptions] = useState<boolean>(false)
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [pairOptions, setPairOptions] = useState<{ data: Rec[]; loaded: boolean }>({
-    data: [],
-    loaded: false
-  })
+  const [visible, toggleVisible] = useToggle(false)
+  const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
+  const [fuzzySearch, setFuzzySearch] = useState<string>('')
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+  const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
   const { priceDecimals } = usePriceDecimalsSupport(pairOptions.data)
-  const { data: tokenSpotPrices } = useTokenSpotPricesSupport(pairOptions.data, priceDecimals)
+  const { data: spotPrices } = useTokenSpotPricesSupport(pairOptions.data, priceDecimals)
 
   const spotPrice = useMemo(() => {
-    if (tokenSpotPrices) {
-      const find = tokenSpotPrices.find((t) => t.name === quoteToken.symbol)
+    if (spotPrices) {
+      const find = spotPrices.find((t) => t.name === quoteToken.symbol)
       return find?.price ?? '0'
     }
     return '0'
-  }, [quoteToken, tokenSpotPrices])
+  }, [quoteToken, spotPrices])
 
   const indicator = useMemo(() => {
     if (marginIndicators) {
@@ -69,20 +68,13 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
     return 0
   }, [quoteToken, marginIndicators])
 
-  const toggle = () => {
-    setShowOptions(false)
-    onToggle?.()
-  }
-
-  const funcAsync = useCallback(async () => {
+  const morePairs = useCallback(async () => {
     const { data } = await getDerivativeList(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
       const filterRecords = data.records.filter((r: Rec) => r.open)
-      const pairAddresses = await getDerAddressList(protocolConfig.factory, filterRecords)
-      const output: any[] = []
-      filterRecords.forEach((d: Rec) => {
-        if (pairAddresses[d.name]) output.push({ ...d, ...pairAddresses[d.name] })
-      })
+      const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)
+      const _pairAddresses = pairAddresses ?? []
+      const output = _pairAddresses.filter((l) => l.derivative !== ZERO)
       const combine = [...pairOptions.data, ...output]
       const deduplication = uniqBy(combine, 'token')
       setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
@@ -90,29 +82,28 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
     }
   }, [protocolConfig, pairOptions.data])
 
-  const _searchMarginToken = useCallback(
-    debounce(async (searchKeyword: string) => {
-      const { data = [] } = await searchMarginToken(searchKeyword)
+  // todo
+  const fuzzySearchFunc = useCallback(
+    debounce(async (fuzzySearch: string) => {
+      const { data = [] } = await searchMarginToken(fuzzySearch)
       setPairOptions({ data, loaded: false })
     }, 1500),
     []
   )
 
   useEffect(() => {
-    if (searchKeyword.trim()) {
+    if (spotPrices) updateSpotPrices(spotPrices)
+  }, [spotPrices])
+
+  useEffect(() => {
+    if (fuzzySearch.trim()) {
       setPairOptions({ data: [], loaded: true })
-      void _searchMarginToken(searchKeyword)
+      void fuzzySearchFunc(fuzzySearch)
     } else {
       seqCount = 0
-      if (derivativeList.length && derAddressList) {
-        const output: any[] = []
-        derivativeList.forEach((d) => {
-          if (derAddressList[d.name]) output.push({ ...d, ...derAddressList[d.name] })
-        })
-        setPairOptions({ data: output, loaded: false })
-      }
+      if (derivativeList.length) setPairOptions({ data: derivativeList, loaded: false })
     }
-  }, [searchKeyword, derAddressList, derivativeList])
+  }, [fuzzySearch, derivativeList])
 
   useEffect(() => {
     if (pairOptions.data.length) {
@@ -122,7 +113,7 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
               seqCount += 1
               console.info('intersectionObserver=', seqCount)
-              void funcAsync()
+              void morePairs()
             }
           })
         },
@@ -138,45 +129,48 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
     }
   }, [pairOptions.data.length])
 
-  useClickAway(ref, () => setShowOptions(false))
+  useClickAway(ref, () => toggleVisible(false))
 
   return (
-    <div className="web-trade-symbol-select">
-      <div className={classNames('web-trade-symbol-select', { show: showOptions })} ref={ref}>
-        {mobile && <div className="web-trade-symbol-select-toggle" onClick={toggle} />}
+    <div className='web-trade-symbol-select'>
+      <div className={classNames('web-trade-symbol-select', { show: visible })} ref={ref}>
+        {mobile && <div className='web-trade-symbol-select-toggle' onClick={() => {
+          onToggle?.()
+          toggleVisible(false)
+        }} />}
       </div>
 
       <DropDownList
         entry={
           quoteToken.symbol ? (
-            <div className="web-trade-symbol-select-curr" onClick={() => setShowOptions(!showOptions)}>
+            <div className='web-trade-symbol-select-curr' onClick={() => toggleVisible(!visible)}>
               <h4>{quoteToken.symbol}</h4>
               <aside>
-                <Skeleton rowsProps={{ rows: 1 }} animation loading={!tokenSpotPrices}>
+                <Skeleton rowsProps={{ rows: 1 }} animation loading={!spotPrices}>
                   <BalanceShow value={spotPrice} decimal={Number(spotPrice) === 0 ? 2 : quoteToken.decimals} />
                 </Skeleton>
                 <ChangePercent value={indicator} />
               </aside>
             </div>
           ) : (
-            <div className="web-trade-symbol-select-curr s">{t('Trade.Derivative.NoTrading')}</div>
+            <div className='web-trade-symbol-select-curr s'>{t('Trade.Derivative.NoTrading')}</div>
           )
         }
         height={588}
         loading={pairOptions.loaded}
-        onSearch={setSearchKeyword}
+        onSearch={setFuzzySearch}
         placeholder={t('Trade.kline.SearchTip')}
       >
         {pairOptions.data.map((o: Rec, index: number) => {
           const len = pairOptions.data.length
           const id = index === len - 1 ? 'bottom' : undefined
           const ref = index === len - 1 ? bottomRef : null
-          const _id = searchKeyword.trim() ? undefined : id
-          const _ref = searchKeyword.trim() ? null : ref
+          const _id = fuzzySearch.trim() ? undefined : id
+          const _ref = fuzzySearch.trim() ? null : ref
           const keys = Object.keys(marginIndicators ?? [])
           const findKey = keys.find((key) => getAddress(key) === getAddress(o.token))
           const values = marginIndicators?.[findKey ?? ''] ?? Object.create(null)
-          const findToken = (tokenSpotPrices ?? []).find((t) => t.name === o.name)
+          const findToken = (spotPrices ?? []).find((t) => t.name === o.name)
           const decimals = Number(findToken?.price_decimals) === 0 ? 2 : o.price_decimals
           return (
             <DropDownListItem
@@ -188,7 +182,7 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
                   <>
                     <aside>
                       <h5>{o.name}</h5>
-                      <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
+                      <BalanceShow value={values?.apy ?? 0} percent unit='APR' />
                     </aside>
                     <aside>
                       <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
@@ -200,13 +194,13 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
                     <h5>{o.name}</h5>
                     <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
                     <ChangePercent value={values?.price_change_rate ?? 0} />
-                    <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
+                    <BalanceShow value={values?.apy ?? 0} percent unit='APR' />
                   </>
                 )
               }
               onSelect={() => {
                 const { name, token, price_decimals } = o
-                updateQuoteToken({ symbol: name, token, decimals: price_decimals })
+                updateQuoteToken({ symbol: name, token, decimals: price_decimals, derivative: o.derivative })
               }}
             />
           )

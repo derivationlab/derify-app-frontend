@@ -16,12 +16,13 @@ export const derivativeList = {
   open: '',
   name: '',
   token: '',
+  derivative: '',
+  update_time: '',
   margin_token: '',
   price_decimals: 2
 }
 
-export const getDerAddressList = async (factory: string, list: (typeof derivativeList)[]) => {
-  const output = Object.create(null)
+export const getPairAddressList = async (factory: string, list: (typeof derivativeList)[]): Promise<typeof derivativeList[] | null> => {
   const calls = list.map((derivative) => ({
     name: 'getDerivative',
     params: [derivative.token],
@@ -32,13 +33,8 @@ export const getDerAddressList = async (factory: string, list: (typeof derivativ
     const response = await multicall(factoryAbi, calls)
 
     if (response.length) {
-      response.forEach(([address]: string[], index: number) => {
-        output[list[index].name] = {
-          ...output[list[index].name],
-          token: calls[index].params[0],
-          derivative: address
-        }
-      })
+      const output = response.map(([address]: string[], index: number) => ({ ...list[index], derivative: address }))
+      // console.info(output)
       return output
     }
 
@@ -102,31 +98,17 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
   derAddressListLoaded: false,
   derivativeListLoaded: false,
   posMaxLeverageLoaded: false,
-  getDerivativeList: async (marginTokenAddress: string, page = 0) => {
-    const { data } = await getDerivativeList(marginTokenAddress, page)
-
+  getDerivativeList: async (marginToken: string, factory: string, page = 0) => {
+    const { data } = await getDerivativeList(marginToken, page)
     const records = data?.records ?? []
-    const filter = records.filter((r: Rec) => r.open)
-    // console.info(filter)
-    set({
-      derivativeList: filter,
-      derivativeListOrigin: records,
-      derivativeListLoaded: true
-    })
-  },
-  getDerAddressList: async (factory: string) => {
-    const output = Object.create(null)
-    const records = await getDerAddressList(factory, get().derivativeListOrigin)
-    if (records) {
-      for (const key in records) {
-        if (Object.prototype.hasOwnProperty.call(records, key))
-          if (records[key].derivative !== ZERO) output[key] = records[key]
-      }
-      // console.info(output)
-      set({ derAddressList: output, derAddressListLoaded: true })
-    } else {
-      set({ derAddressList: null, derAddressListLoaded: true })
-    }
+    console.info(records)
+    // condition1: open
+    const list = await getPairAddressList(factory, records.filter((r: Rec) => r.open))
+    const _list = list ?? []
+    // condition2: not zero address
+    const output = _list.filter((l) => l.derivative !== ZERO)
+    console.info(output)
+    set({ derivativeList: output, derivativeListLoaded: true })
   },
   getPosMaxLeverage: async () => {
     const posMaxLeverage = await getPosMaxLeverage(get().derAddressList)

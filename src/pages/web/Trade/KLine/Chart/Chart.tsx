@@ -12,6 +12,7 @@ import { useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
 import { QuoteTokenState } from '@/store/types'
 
 import { getKLineDAT, getKlineEndTime, reorganizeLastPieceOfData } from './help'
+import { Rec } from '@/typings'
 
 interface KlineChartProps {
   reset: () => void
@@ -25,13 +26,16 @@ const Chart: FC = () => {
   const store = useRef<Record<string, any>>({})
   const kline = useRef<KlineChartProps>(null)
   const [state, dispatch] = useReducer(reducer, stateInit)
-
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const spotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForTrading)
 
   const spotPrice = useMemo(() => {
-    return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
-  }, [quoteToken, tokenSpotPrices])
+    if (spotPrices) {
+      const find = spotPrices.find((t: Rec) => t.name === quoteToken.symbol)
+      return find?.price ?? '0'
+    }
+    return '0'
+  }, [quoteToken, spotPrices])
 
   const getBaseData = useCallback(async () => {
     if (!onetime) dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })

@@ -147,3 +147,70 @@ export const useTokenSpotPricesSupport = (list?: Rec[] | null, decimals?: Rec | 
 
   return { data, refetch, isLoading }
 }
+
+export const usePriceDecimalsSupport1 = (list?: Rec[] | null) => {
+  const [priceDecimals, setPriceDecimals] = useState<Rec | null>(null)
+
+  const func = async (list: Rec[]) => {
+    let output = Object.create(null)
+    const calls: Rec[] = []
+    list.forEach((l) => {
+      calls.push({
+        name: 'getSpotPriceDecimals',
+        address: l.pairAddress
+      })
+    })
+    const response = await multicall(derifyDerivativeAbi, calls as any)
+    if (response.length) {
+      response.forEach(([decimals]: BigNumberish[], index: number) => {
+        const _ = Number(decimals)
+        output = { ...output, [calls[index].address]: _ }
+      })
+    }
+    setPriceDecimals(output)
+  }
+
+  useEffect(() => {
+    if (list) void func(list)
+  }, [list])
+
+  return { priceDecimals }
+}
+
+export const useTokenSpotPricesSupport1 = (list?: Rec[] | null, decimals?: Rec | null) => {
+  const enabled = !!(list && decimals)
+  const { data, refetch, isLoading } = useQuery(
+    ['useTokenSpotPricesSupport1'],
+    async () => {
+      let output: Rec[] = []
+      if (list && decimals) {
+        const calls = list.map((l) => ({
+          name: 'getSpotPrice',
+          address: l.pairAddress
+        }))
+
+        const response = await multicall(derifyDerivativeAbi, calls)
+
+        if (response.length) {
+          response.forEach(([spotPrice]: BigNumberish[], index: number) => {
+            const x = { ...list[index], price: formatUnits(spotPrice, decimals[calls[index].address]) }
+            output = [...output, x]
+          })
+        }
+        // console.info(output)
+        return output
+      }
+      return null
+    },
+    {
+      retry: false,
+      enabled,
+      initialData: null,
+      refetchInterval: 3000,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  return { data, refetch, isLoading }
+}

@@ -22,7 +22,7 @@ import {
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
-import { PubSubEvents, PositionSideTypes, PositionOrderTypes } from '@/typings'
+import { PubSubEvents, PositionSideTypes, PositionOrderTypes, Rec } from '@/typings'
 import { bnDiv, numeralNumber, isET, isGT, isLTET, keepDecimals } from '@/utils/tools'
 
 import Col from './c/Col'
@@ -36,12 +36,11 @@ const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
   const { t } = useTranslation()
   const { increasePosition } = usePositionOperation()
-
+  const spotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForTrading)
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const openingMinLimit = useOpeningMinLimitStore((state) => state.openingMinLimit)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
@@ -49,8 +48,12 @@ const Bench: FC = () => {
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
   const spotPrice = useMemo(() => {
-    return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
-  }, [quoteToken, tokenSpotPrices])
+    if (spotPrices) {
+      const find = spotPrices.find((t: Rec) => t.name === quoteToken.symbol)
+      return find?.price ?? '0'
+    }
+    return '0'
+  }, [quoteToken, spotPrices])
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)

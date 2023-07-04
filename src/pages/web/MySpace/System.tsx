@@ -1,36 +1,45 @@
 import Table from 'rc-table'
 
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getSystemParams } from '@/api'
-import Select from '@/components/common/Form/Select'
+import { getDerivativeList, getSystemParams } from '@/api'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { useDerivativeParams } from '@/hooks/useDerivativeParams'
 import { useRewardsParams, useProtocolParams, useExchangeParams, useGrantPlanParams } from '@/hooks/useSysParams'
-import { useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { getPairAddressList, useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { bnMul, nonBigNumberInterception } from '@/utils/tools'
+import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
+import { Rec } from '@/typings'
+import { ZERO } from '@/config'
+import { uniqBy } from 'lodash'
 
 const systemParamsInit = {
   buybackPeriod: 0,
   buybackSlippage: '0'
 }
 
-const System: FC = () => {
-  const { t } = useTranslation()
+interface PairOptionsInit {
+  data: Rec[];
+  loaded: boolean
+}
 
+let seqCount = 0
+
+const System: FC = () => {
+  const bottomRef = useRef<any>()
+  const observerRef = useRef<IntersectionObserver | null>()
+  const { t } = useTranslation()
+  const [parameters, setParameters] = useState<typeof systemParamsInit>(systemParamsInit)
+  const [derivative, setDerivative] = useState<Rec>()
+  const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
-
-  const [parameters, setParameters] = useState<typeof systemParamsInit>(systemParamsInit)
-  const [derivative, setDerivative] = useState<string>('')
-
   const { data: protocolParams } = useProtocolParams()
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
-  const { derivativeParams } = useDerivativeParams(derAddressList?.[derivative]?.derivative ?? '')
+  const { derivativeParams } = useDerivativeParams(derivative?.derivative ?? '')
   const { data: rewardsParams, refetch: refetchRewardsParams } = useRewardsParams(protocolConfig?.rewards)
   const { data: exchangeParams, refetch: refetchExchangeParams } = useExchangeParams(protocolConfig?.exchange)
   const { data: grantPlanParams, refetch: refetchGrantPlanParams } = useGrantPlanParams(protocolConfig)
@@ -136,15 +145,43 @@ const System: FC = () => {
     }
   ]
 
-  const derivativeOptions = useMemo(() => {
-    if (derivativeList.length) {
-      return derivativeList.map((derivative) => ({
-        label: derivative.name,
-        value: derivative.name
-      }))
+  const morePairs = useCallback(async () => {
+    const { data } = await getDerivativeList(marginToken.address, seqCount)
+    if (protocolConfig && data?.records) {
+      const filterRecords = data.records.filter((r: Rec) => r.open)
+      const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)
+      const _pairAddresses = pairAddresses ?? []
+      const output = _pairAddresses.filter((l) => l.derivative !== ZERO)
+      const combine = [...pairOptions.data, ...output]
+      const deduplication = uniqBy(combine, 'token')
+      setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
+      if (data.records.length === 0 || data.records.length < 12) seqCount = seqCount - 1
     }
-    return []
-  }, [derivativeList])
+  }, [protocolConfig, pairOptions.data])
+
+  useEffect(() => {
+    if (pairOptions.data.length) {
+      const intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && entry.target.id === 'bottom') {
+              seqCount += 1
+              console.info('intersectionObserver=', seqCount)
+              void morePairs()
+            }
+          })
+        },
+        { threshold: 0.2 }
+      )
+      if (bottomRef.current) {
+        intersectionObserver.observe(bottomRef.current)
+        observerRef.current = intersectionObserver
+      }
+    }
+    return () => {
+      observerRef.current && observerRef.current.disconnect()
+    }
+  }, [pairOptions.data.length])
 
   useEffect(() => {
     const func = async () => {
@@ -168,26 +205,53 @@ const System: FC = () => {
 
   useEffect(() => {
     if (derivativeList.length) {
-      setDerivative(derivativeList[0].name)
+      setDerivative(derivativeList[0])
+      setPairOptions({ data: derivativeList, loaded: false })
     }
   }, [derivativeList])
 
   return (
-    <div className="web-table-page">
-      <div className="web-system-title">
+    <div className='web-table-page'>
+      <div className='web-system-title'>
         {t('Nav.SystemParameters.SystemParameters')}-{marginToken.symbol}
       </div>
-      <header className="web-table-page-header">
+      <header className='web-table-page-header'>
         <h3>{t('Nav.SystemParameters.SystemRelevant')}</h3>
       </header>
-      <Table className="web-broker-table" columns={columns} data={system} rowKey="parameters" />
-      <header className="web-table-page-header">
+      <Table className='web-broker-table' columns={columns} data={system} rowKey='parameters' />
+      <header className='web-table-page-header'>
         <h3>{t('Nav.SystemParameters.TradingToken')}</h3>
-        <aside>
-          <Select value={derivative} objOptions={derivativeOptions} onChange={(v) => setDerivative(v as any)} />
+        <aside className='web-system-pair'>
+          <DropDownList
+            entry={
+              <div className='web-select-show-button'>
+                <span>{derivative?.name}</span>
+              </div>
+            }
+            height={284}
+            loading={pairOptions.loaded}
+            showSearch={false}
+          >
+            {pairOptions.data.map((o: Rec, index: number) => {
+              const len = pairOptions.data.length
+              const id = index === len - 1 ? 'bottom' : undefined
+              const ref = index === len - 1 ? bottomRef : null
+              return (
+                <DropDownListItem
+                  key={o.name}
+                  id={id}
+                  ref={ref}
+                  content={o.name}
+                  onSelect={() => {
+                    setDerivative(o)
+                  }}
+                />
+              )
+            })}
+          </DropDownList>
         </aside>
       </header>
-      <Table className="web-broker-table" columns={columns} data={trading} rowKey="parameters" />
+      <Table className='web-broker-table' columns={columns} data={trading} rowKey='parameters' />
     </div>
   )
 }

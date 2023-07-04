@@ -80,8 +80,7 @@ export interface DerivativeListState {
   derivativeListLoaded: boolean
   posMaxLeverageLoaded: boolean
   derAddressListLoaded: boolean
-  getDerivativeList: (marginTokenAddress: string, page?: number, size?: number) => Promise<void>
-  getDerAddressList: (address: string) => Promise<void>
+  getDerivativeList: (marginToken: string, factory: string, page?: number, size?: number) => Promise<void>
   getPosMaxLeverage: () => Promise<void>
 }
 
@@ -93,8 +92,12 @@ export interface MarginIndicatorsState {
 
 export interface TokenSpotPricesState {
   tokenSpotPrices: Rec | null
+  tokenSpotPricesForPosition: Rec | null
+  tokenSpotPricesForTrading: Rec | null
   tokenSpotPricesLoaded: boolean
   updateTokenSpotPrices: (data: Rec) => void
+  updateTokenSpotPricesForTrading: (data: Rec) => void
+  updateTokenSpotPricesForPosition: (data: Rec) => void
 }
 
 export interface OpeningMinLimitState {

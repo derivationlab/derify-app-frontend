@@ -62,17 +62,6 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
     return data?.type < 3 ? t('Trade.TradeHistory.Open', 'Open') : t('Trade.TradeHistory.Close', 'Close')
   }, [data?.type, t])
 
-  // todo make map better
-  // * 0-MarketPriceOpen
-  // * 1-HedgeMarketPriceOpen
-  // * 2-LimitPriceOpen
-  // * 3-StopProfitClose
-  // * 4-StopLossClose
-  // * 5-AutoDeleveragingClose
-  // * 6-MandatoryLiquidationClose
-  // * 7-SingleClose
-  // * 8-AllCloseHedgePart
-  // * 9-AllCloseLeftPart
   const tradeDesc = [
     { desc: t('Trade.TradeHistory.MarketPrice', 'Market Price') }, //MarketPriceOpen
     { desc: t('Trade.TradeHistory.MarketPrice', 'Market Price') }, //HedgeMarketPriceOpen

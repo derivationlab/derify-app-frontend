@@ -12,7 +12,7 @@ import { usePositionOperation } from '@/hooks/usePositionOperation'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import { ThemeContext } from '@/providers/Theme'
-import { useDerivativeListStore, useProtocolConfigStore } from '@/store'
+import { useProtocolConfigStore } from '@/store'
 import { PubSubEvents, Rec } from '@/typings'
 
 import NoRecord from '../c/NoRecord'
@@ -23,10 +23,7 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const { address } = useAccount()
   const { theme } = useContext(ThemeContext)
   const { cancelAllPositions, cancelPosition } = usePositionOperation()
-
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
-
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
 
@@ -42,21 +39,19 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
 
     clear()
 
-    if (derAddressList) {
-      const { side, orderType, timestamp, derivative } = targetPosOrd
+    const { side, orderType, timestamp, pairAddress } = targetPosOrd
 
-      const status = await cancelPosition(derAddressList[derivative].derivative, orderType, side, timestamp)
+    const status = await cancelPosition(pairAddress, orderType, side, timestamp)
 
-      if (status) {
-        // succeed
-        window.toast.success(t('common.success', 'success'))
+    if (status) {
+      // succeed
+      window.toast.success(t('common.success', 'success'))
 
-        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
-        PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
-      } else {
-        window.toast.error(t('common.failed', 'failed'))
-        // failed
-      }
+      PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+      PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
+    } else {
+      window.toast.error(t('common.failed', 'failed'))
+      // failed
     }
 
     window.toast.dismiss(toast)

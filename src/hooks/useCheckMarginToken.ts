@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-import { checkMarginToken } from '@/api'
+import { checkMarginToken } from '@/funcs/helper'
 import { routingWithMarginInfo } from '@/pages/web/Route'
 import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -25,9 +25,10 @@ export const useCheckMarginToken = () => {
           decimals: findMargin.amount_decimals
         }
       } else {
-        const { data } = await checkMarginToken(path[1])
-        const matchMargin = data ?? marginTokenList[0]
+        const _margin = await checkMarginToken(path[1])
+        const matchMargin = _margin ?? marginTokenList[0]
         margin = {
+          open: matchMargin.open,
           logo: matchMargin.logo,
           address: matchMargin.margin_token,
           symbol: matchMargin.symbol,

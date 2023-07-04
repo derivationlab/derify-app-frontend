@@ -17,6 +17,11 @@ import { Rec } from '@/typings'
 
 let seqCount = 0
 
+interface MarginOptions {
+  data: Rec[];
+  loaded: boolean
+}
+
 const MarginToken: FC = () => {
   const history = useHistory()
   const bottomRef = useRef<any>()
@@ -25,11 +30,8 @@ const MarginToken: FC = () => {
   const { address } = useAccount()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const { data: marginBalances } = useMarginBalances(address, marginTokenList)
-  const [marginOptions, setMarginOptions] = useState<{ data: Rec[]; loaded: boolean }>({
-    data: [],
-    loaded: false
-  })
+  const { data: marginBalances } = useMarginBalances(address, marginTokenList, marginToken)
+  const [marginOptions, setMarginOptions] = useState<MarginOptions>({ data: [], loaded: false })
   const [searchKeyword, setSearchKeyword] = useState<string>('')
 
   const _searchMarginToken = useCallback(
@@ -93,7 +95,7 @@ const MarginToken: FC = () => {
   return (
     <DropDownList
       entry={
-        <div className="web-trade-bench-margin-token">
+        <div className='web-trade-bench-margin-token'>
           <label>{t('Trade.Bench.Margin')}</label>
           <section>
             <Image src={marginToken.logo} />

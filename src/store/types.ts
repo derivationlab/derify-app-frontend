@@ -1,3 +1,4 @@
+import { getAllMarginTokenList } from '@/api'
 import { DerAddressList, derivativeList } from '@/store/useDerivativeList'
 import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList, pagingParams } from '@/store/useMarginTokenList'
@@ -66,22 +67,16 @@ export interface MarginTokenListState {
   pagingParams: typeof pagingParams
   marginTokenList: (typeof marginTokenList)[]
   marginTokenSymbol: string[]
-  marginAddressList: string[]
+  allMarginTokenList: string[]
   marginTokenListLoaded: boolean
   getMarginTokenList: (index?: number) => Promise<void>
-  getMarginAddressList: () => Promise<void>
+  getAllMarginTokenList: () => Promise<void>
 }
 
 export interface DerivativeListState {
-  derAddressList: DerAddressList | null
-  posMaxLeverage: { [key: string]: string } | null
   derivativeList: (typeof derivativeList)[]
-  derivativeListOrigin: (typeof derivativeList)[]
   derivativeListLoaded: boolean
-  posMaxLeverageLoaded: boolean
-  derAddressListLoaded: boolean
   getDerivativeList: (marginToken: string, factory: string, page?: number, size?: number) => Promise<void>
-  getPosMaxLeverage: () => Promise<void>
 }
 
 export interface MarginIndicatorsState {

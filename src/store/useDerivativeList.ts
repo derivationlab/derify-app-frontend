@@ -1,14 +1,11 @@
-import { BigNumberish } from 'ethers'
 import { create } from 'zustand'
 
 import { getDerivativeList } from '@/api'
 import { ZERO } from '@/config'
-import derivativeAbi from '@/config/abi/DerifyDerivative.json'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
 import { DerivativeListState } from '@/store/types'
 import { Rec } from '@/typings'
-import multicall, { Call } from '@/utils/multicall'
-import { formatUnits } from '@/utils/tools'
+import multicall from '@/utils/multicall'
 
 export type DerAddressList = { [key: string]: { token: string; derivative: string } }
 
@@ -48,63 +45,12 @@ export const getPairAddressList = async (
   }
 }
 
-// const getTradingPairDeployStatus = async (list: (typeof derivativeList)[], factory: string) => {
-//   let output = Object.create(null)
-//   const calls = list.map((derivative) => ({
-//     name: 'getDerivative',
-//     params: [derivative.token],
-//     address: factory
-//   }))
-//
-//   const response = await multicall(DerifyFactoryAbi, calls)
-//
-//   response.forEach(([data]: string[], index: number) => {
-//     output = {
-//       ...output,
-//       [list[index].name]: data === ZERO ? 0 : 1
-//     }
-//   })
-//   return output
-// }
-
-export const getPosMaxLeverage = async (list: any) => {
-  const calls: Call[] = []
-  let output = Object.create(null)
-  const _list = list ?? Object.create(null)
-  try {
-    const keys = Object.keys(_list)
-    keys.forEach((l) => {
-      calls.push({
-        name: 'maxLeverage',
-        address: _list[l].derivative
-      })
-    })
-    const response = await multicall(derivativeAbi, calls)
-    response.forEach((leverage: BigNumberish, index: number) => {
-      output = {
-        ...output,
-        [keys[index]]: formatUnits(String(leverage), 8)
-      }
-    })
-    return output
-  } catch (e) {
-    console.info(e)
-    return null
-  }
-}
-
 const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
   derivativeList: [],
-  derAddressList: null,
-  posMaxLeverage: null,
-  derivativeListOrigin: [],
-  derAddressListLoaded: false,
   derivativeListLoaded: false,
-  posMaxLeverageLoaded: false,
   getDerivativeList: async (marginToken: string, factory: string, page = 0) => {
     const { data } = await getDerivativeList(marginToken, page)
     const records = data?.records ?? []
-    console.info(records)
     // condition1: open
     const list = await getPairAddressList(
       factory,
@@ -113,12 +59,7 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
     const _list = list ?? []
     // condition2: not zero address
     const output = _list.filter((l) => l.derivative !== ZERO)
-    console.info(output)
     set({ derivativeList: output, derivativeListLoaded: true })
-  },
-  getPosMaxLeverage: async () => {
-    const posMaxLeverage = await getPosMaxLeverage(get().derAddressList)
-    set({ posMaxLeverage, posMaxLeverageLoaded: true })
   }
 }))
 

@@ -8,7 +8,6 @@ import Button from '@/components/common/Button'
 import DepositDialog from '@/components/common/Wallet/DepositButton/Deposit'
 import { useMarginOperation } from '@/hooks/useMarginOperation'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
-import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 import { PubSubEvents } from '@/typings'
 
 interface Props {
@@ -19,17 +18,9 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const { deposit } = useMarginOperation()
-
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-
   const [dialogStatus, setDialogStatus] = useState<string>('')
-
-  const isDisabled = useMemo(() => {
-    if (marginTokenList.length) return !marginTokenList.find((margin) => margin.symbol === marginToken.symbol)?.open
-    return true
-  }, [marginToken, marginTokenList])
 
   // deposit
   const onConfirmDepositEv = useCallback(
@@ -61,7 +52,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
   return (
     <>
-      <Button size={size} onClick={() => setDialogStatus('deposit')} disabled={isDisabled || !protocolConfig}>
+      <Button size={size} onClick={() => setDialogStatus('deposit')} disabled={!marginToken.open || !protocolConfig}>
         {t('Nav.Account.Deposit', 'Deposit')}
       </Button>
       <DepositDialog

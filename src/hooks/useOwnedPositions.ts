@@ -14,24 +14,33 @@ import { bnMul, formatUnits } from '@/utils/tools'
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
   isUsed ? formatUnits(stopPrice, 8) : '--'
 
-const getOwnedPositions = async (trader: string, derAddressList: any): Promise<Rec[][]> => {
+const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> => {
   const calls: Rec[] = []
   const positionOrd: Rec[] = []
   const profitLossOrd: Rec[] = []
-
+  /**
+   {
+    "margin_token": "0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba",
+    "token": "0x076C264Df30Ef6e24CB925617B1ad88Fc1F41000",
+    "name": "BUSD/USD",
+    "price_decimals": 2,
+    "open": 1,
+    "update_time": "2023-06-20T04:02:38.000Z",
+    "derivative": "0x79269146ab3d145ceFdD3B447C9C6D3a7541a8a1"
+}
+   */
   try {
-    Object.keys(derAddressList).forEach((key) => {
+    list.forEach((l) => {
       calls.push({
         name: 'getTraderDerivativePositions',
-        token: derAddressList[key].token,
+        token: l.token,
         params: [trader],
-        address: derAddressList[key].derivative,
-        quoteToken: key.split('/')[0],
-        derivative: key,
-        decimals: derAddressList[key].price_decimals
+        address: l.derivative,
+        quoteToken: l.name.split('/')[0],
+        derivative: l.name,
+        decimals: l.price_decimals
       })
     })
-
     const response = await multicall(DerifyDerivativAbi, calls as Call[])
 
     if (!isEmpty(response)) {
@@ -272,11 +281,7 @@ export const useOwnedPositionsBackUp = (trader?: string, factory?: string, margi
       if (data?.records) {
         const _pairList = await getPairAddressList(factory, data.records)
         if (_pairList) {
-          for (const key in _pairList) {
-            if (Object.prototype.hasOwnProperty.call(_pairList, key))
-              if (_pairList[key].derivative !== ZERO) pairList[key] = _pairList[key]
-          }
-          console.info(pairList)
+          const pairList = _pairList.filter((l) => l.derivative !== ZERO)
           const [positionOrd, profitLossOrd] = await getOwnedPositions(trader, pairList)
           setOwnedPositions({
             positionOrd,

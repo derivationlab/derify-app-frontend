@@ -1,7 +1,9 @@
 import BN from 'bignumber.js'
 
+import { checkMarginToken as _checkMarginToken } from '@/api'
+import { ZERO } from '@/config'
 import { PositionOrderTypes, PositionSideTypes } from '@/typings'
-import { getExchangeContract, getDerivativeContract } from '@/utils/contractHelpers'
+import { getExchangeContract, getDerivativeContract, getProtocolContract } from '@/utils/contractHelpers'
 import {
   isGT,
   isLT,
@@ -161,4 +163,21 @@ export const calcDisposableAmount = async (
     console.info(e)
     return ['0', '0']
   }
+}
+
+export const getPosMaxLeverage = async (address: string) => {
+  const contract = getDerivativeContract(address)
+  const response = await contract.maxLeverage()
+  return formatUnits(String(response), 8)
+}
+
+export const checkMarginToken = async (marginToken: string) => {
+  const { data } = await _checkMarginToken(marginToken)
+  if (data) {
+    const contract = getProtocolContract()
+    const response = await contract.getMarginTokenContractCollections(data.margin_token)
+    const [address] = response
+    return address !== ZERO ? data : null
+  }
+  return null
 }

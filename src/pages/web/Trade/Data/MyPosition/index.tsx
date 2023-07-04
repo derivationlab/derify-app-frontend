@@ -26,9 +26,9 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const [modalType, setModalType] = useState<string>()
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const updateTokenSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPrices)
+  const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForPosition)
   const { priceDecimals } = usePriceDecimalsSupport1(data)
-  const { data: tokenSpotPrices } = useTokenSpotPricesSupport1(data, priceDecimals)
+  const { data: spotPrices } = useTokenSpotPricesSupport1(data, priceDecimals)
 
   const closeAllFunc = async () => {
     setModalType('')
@@ -71,8 +71,8 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   }, [theme, address, loaded, data])
 
   useEffect(() => {
-    if (tokenSpotPrices) updateTokenSpotPrices(tokenSpotPrices)
-  }, [tokenSpotPrices])
+    if (spotPrices) updateSpotPrices(spotPrices)
+  }, [spotPrices])
 
   return (
     <>

@@ -11,7 +11,7 @@ export const useMarginLoading = () => {
   const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const getMarginTokenList = useMarginTokenListStore((state) => state.getMarginTokenList)
-  const getMarginAddressList = useMarginTokenListStore((state) => state.getMarginAddressList)
+  const getAllMarginTokenList = useMarginTokenListStore((state) => state.getAllMarginTokenList)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const getDerivativeList = useDerivativeListStore((state) => state.getDerivativeList)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
@@ -20,7 +20,7 @@ export const useMarginLoading = () => {
 
   useEffectOnce(() => {
     void getMarginTokenList()
-    void getMarginAddressList()
+    void getAllMarginTokenList()
   })
 
   // Initialize margin token default information
@@ -28,8 +28,8 @@ export const useMarginLoading = () => {
     const len = marginTokenList.length
     const { address } = marginToken
     if (len && !address) {
-      const { logo, symbol, margin_token, amount_decimals } = marginTokenList[0]
-      updateMarginToken({ logo, symbol, address: margin_token, decimals: amount_decimals })
+      const { open,logo, symbol, margin_token, amount_decimals } = marginTokenList[0]
+      updateMarginToken({ open,logo, symbol, address: margin_token, decimals: amount_decimals })
     }
   }, [marginToken, marginTokenList])
 

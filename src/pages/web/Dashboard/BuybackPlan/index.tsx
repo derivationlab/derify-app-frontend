@@ -8,10 +8,10 @@ import Data from './Data'
 import Plan from './Plan'
 
 const BuybackPlan: FC = () => {
-  const marginAddressList = useMarginTokenListStore((state) => state.marginAddressList)
+  const allMarginTokenList = useMarginTokenListStore((state) => state.allMarginTokenList)
 
-  const { priceFeed } = useMarginPriceFeed(marginAddressList)
-  const { data: buyBackInfo } = useBuyBackPool(marginAddressList)
+  const { priceFeed } = useMarginPriceFeed(allMarginTokenList)
+  const { data: buyBackInfo } = useBuyBackPool(allMarginTokenList)
 
   return (
     <div className="web-dashboard">

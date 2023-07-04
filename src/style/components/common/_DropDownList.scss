@@ -90,7 +90,7 @@
 
     i {
       position: absolute;
-      left: 24px;
+      left: 16px;
       top: 50%;
       transform: translateY(-50%);
       display: block;
@@ -107,7 +107,7 @@
 
     .web-form-input {
       input {
-        padding: 0 24px 0 52px;
+        padding: 0 24px 0 42px;
       }
 
       &:focus, &:hover {

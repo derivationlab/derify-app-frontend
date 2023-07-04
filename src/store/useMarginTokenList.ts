@@ -1,6 +1,7 @@
+import { isEmpty } from 'lodash'
 import { create } from 'zustand'
 
-import { getMarginAddressList, getMarginTokenList as _getMarginTokenList } from '@/api'
+import { getAllMarginTokenList, getMarginTokenList as _getMarginTokenList } from '@/api'
 import { ZERO } from '@/config'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
@@ -70,36 +71,35 @@ export const pagingParams = {
 }
 
 const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
+  // Margin pagination parameter support
   pagingParams: pagingParams,
+  // Margin pagination
   marginTokenList: [],
-  marginAddressList: [],
+  // All margin tokens
+  allMarginTokenList: [],
   marginTokenSymbol: [],
   marginTokenListLoaded: false,
   getMarginTokenList: async () => {
     const data = await getMarginTokenList()
-
-    if (data && data.records.length) {
+    if (!isEmpty(data.records)) {
       const _data = data.records
       const deployStatus = await getMarginDeployStatus(_data)
-
-      const filter = _data.filter((f: Rec) => deployStatus[f.symbol])
+      const filterData = _data.filter((f: Rec) => deployStatus[f.symbol])
       set({
         pagingParams: { currentPage: data.currentPage, totalItems: data.totalItems, totalPages: data.totalPages },
-        marginTokenList: filter,
-        marginTokenSymbol: filter.map((margin: Rec) => margin.symbol),
+        marginTokenList: filterData,
+        marginTokenSymbol: filterData.map((margin: Rec) => margin.symbol),
         marginTokenListLoaded: true
       })
     }
   },
-  getMarginAddressList: async () => {
-    const { data } = await getMarginAddressList()
-
+  getAllMarginTokenList: async () => {
+    const { data } = await getAllMarginTokenList()
     if (data.length) {
       const deployStatus = await getMarginDeployStatus1(data)
-
-      const filter = data.filter((address: string) => deployStatus[address])
+      const filterData = data.filter((address: string) => deployStatus[address])
       set({
-        marginAddressList: filter
+        allMarginTokenList: filterData
       })
     }
   }

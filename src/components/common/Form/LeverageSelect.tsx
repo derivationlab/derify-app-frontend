@@ -7,7 +7,8 @@ import { useClickAway, useToggle } from 'react-use'
 
 import Button from '@/components/common/Button'
 import Slider from '@/components/common/Slider'
-import { useDerivativeListStore, useQuoteTokenStore } from '@/store'
+import { getPosMaxLeverage } from '@/funcs/helper'
+import { useQuoteTokenStore } from '@/store'
 import { QuoteTokenState } from '@/store/types'
 
 import Stepper from './Stepper'
@@ -34,24 +35,21 @@ const calcLeverageMarks = (max: number, limit = 6): number[] => {
 
 const LeverageSelect: FC<Props> = ({ onChange, className }) => {
   const ref = useRef(null)
-  const [multiple, setMultiple] = useState<number>(0)
   const [isVisible, toggleVisible] = useToggle(false)
-
+  const [multiple, setMultiple] = useState<number>(0)
+  const [maxLeverage, setMaxLeverage] = useState<number>(0)
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
-  const posMaxLeverage = useDerivativeListStore((state) => state.posMaxLeverage)
 
-  const maxLeverage = useMemo(() => {
-    return posMaxLeverage ? Number(posMaxLeverage[quoteToken.symbol] ?? 0) : 0
-  }, [quoteToken, posMaxLeverage])
-
-  const sliderMarks = useMemo(() => {
-    if (maxLeverage > 0) return calcLeverageMarks(maxLeverage)
-    return []
-  }, [maxLeverage])
+  const sliderMarks = useMemo(() => (maxLeverage > 0 ? calcLeverageMarks(maxLeverage) : []), [maxLeverage])
 
   const onConfirm = () => {
     onChange(multiple)
     toggleVisible(false)
+  }
+
+  const getMaxLeverage = async () => {
+    const leverage = await getPosMaxLeverage(quoteToken.derivative)
+    setMaxLeverage(Number(leverage))
   }
 
   useEffect(() => {
@@ -62,6 +60,10 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
       setMultiple(maxLeverage)
     }
   }, [maxLeverage])
+
+  useEffect(() => {
+    void getMaxLeverage()
+  }, [quoteToken])
 
   useClickAway(ref, () => toggleVisible(false))
 

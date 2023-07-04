@@ -164,6 +164,7 @@ const SymbolSelect: FC<Props> = ({ onToggle }) => {
         }
         height={588}
         loading={pairOptions.loaded}
+        showSearch={false}
         onSearch={setSearchKeyword}
         placeholder={t('Trade.kline.SearchTip')}
       >

@@ -7,7 +7,7 @@ import { getHistoryInsuranceDAT } from '@/api'
 import { AreaChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { SelectTimesOptions, SelectTimesValues } from '@/data'
+import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentInsurance } from '@/hooks/useCurrentInsurance'
 import { useMarginTokenStore } from '@/store'
 import { dayjsStartOf } from '@/utils/tools'
@@ -42,7 +42,7 @@ const InsurancePool: FC = () => {
   }, [insuranceData, insuranceVolume])
 
   const historyDAT = useCallback(async () => {
-    const { data: history } = await getHistoryInsuranceDAT(SelectTimesValues[timeSelectVal], marginToken.address)
+    const { data: history } = await getHistoryInsuranceDAT(matchTimeLineOptions[timeSelectVal], marginToken.address)
 
     if (isArray(history)) {
       // Huge data will have hidden dangers todo
@@ -65,7 +65,7 @@ const InsurancePool: FC = () => {
         <aside>
           <Select
             value={timeSelectVal}
-            options={SelectTimesOptions}
+            options={timeLineOptions}
             onChange={(value) => setTimeSelectVal(String(value))}
           />
         </aside>

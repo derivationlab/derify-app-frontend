@@ -1,18 +1,23 @@
-import { isArray } from 'lodash'
+import { isArray, uniqBy } from 'lodash'
 
-import React, { FC, useCallback, useEffect, useState, useContext, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getHistoryPositionsDAT } from '@/api'
+import { getDerivativeList, getHistoryPositionsDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import Select from '@/components/common/Form/Select'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { SelectTimesOptions, SelectTimesValues } from '@/data'
+import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentPositions } from '@/hooks/useCurrentPositions'
 import { ThemeContext } from '@/providers/Theme'
-import { useDerivativeListStore, useMarginTokenStore } from '@/store'
+import { getPairAddressList, useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { bnDiv, bnMul, bnPlus, dayjsStartOf, isGT, keepDecimals } from '@/utils/tools'
+import { Rec } from '@/typings'
+import { MobileContext } from '@/providers/Mobile'
+import { ZERO } from '@/config'
+import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
+import classNames from 'classnames'
 
 const time = dayjsStartOf()
 let output: Record<string, any> = {
@@ -23,38 +28,30 @@ let output: Record<string, any> = {
   long_position_amount: 0,
   short_position_amount: 0
 }
+const all = {
+  name: 'All Derivatives',
+  derivative: 'all'
+}
+interface PairOptionsInit {
+  data: Rec[];
+  loaded: boolean
+}
 
+let seqCount = 0
 const PositionVolume: FC = () => {
+  const bottomRef = useRef<any>()
+  const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
+  const { mobile } = useContext(MobileContext)
   const { theme } = useContext(ThemeContext)
-
+  const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const [positionsData, setPositionsData] = useState<Record<string, any>[]>([])
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
-  const [derivativeSel, setDerivativeSel] = useState<string>('All Derivatives')
-
+  const [derivativeSel, setDerivativeSel] = useState<typeof all>(all)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
-
-  const derivative = useMemo(() => {
-    const base = {
-      key: 'All Derivatives',
-      val: 'all'
-    }
-    if (derivativeList.length) {
-      const _derivative = derivativeList.map((derivative) => ({
-        key: derivative.name,
-        val: derivative.token
-      }))
-      return [base, ..._derivative]
-    }
-    return [base]
-  }, [derivativeList])
-
-  const derAddress = useMemo(() => {
-    return derivative.find((d) => d.key === derivativeSel)?.val ?? ''
-  }, [derivative, derivativeSel])
-
-  const { data: positionsDAT } = useCurrentPositions(derAddress, marginToken.address)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const { data: positionsDAT } = useCurrentPositions(derivativeSel.derivative, marginToken.address)
 
   const barColor = useMemo(() => {
     let longColor = '#24ce7d'
@@ -79,8 +76,8 @@ const PositionVolume: FC = () => {
 
   const historyDAT = useCallback(async () => {
     const { data: history } = await getHistoryPositionsDAT(
-      derAddress,
-      SelectTimesValues[timeSelectVal],
+      derivativeSel.derivative,
+      matchTimeLineOptions[timeSelectVal],
       marginToken.address
     )
 
@@ -96,7 +93,21 @@ const PositionVolume: FC = () => {
 
       setPositionsData(convert)
     }
-  }, [timeSelectVal, derAddress])
+  }, [timeSelectVal, derivativeSel])
+
+  const morePairs = useCallback(async () => {
+    const { data } = await getDerivativeList(marginToken.address, seqCount)
+    if (protocolConfig && data?.records) {
+      const filterRecords = data.records.filter((r: Rec) => r.open)
+      const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)
+      const _pairAddresses = pairAddresses ?? []
+      const output = _pairAddresses.filter((l) => l.derivative !== ZERO)
+      const combine = [...pairOptions.data, ...output]
+      const deduplication = uniqBy(combine, 'token')
+      setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
+      if (data.records.length === 0 || data.records.length < 12) seqCount = seqCount - 1
+    }
+  }, [protocolConfig, pairOptions.data])
 
   const totalAmount = useMemo(() => {
     if (positionsDAT) {
@@ -128,9 +139,44 @@ const PositionVolume: FC = () => {
     return Number(totalAmount.volume) === 0 ? 2 : marginToken.decimals
   }, [totalAmount, marginToken])
 
+  const currentTimeLine = useMemo(
+    () => timeLineOptions.find((time) => time === timeSelectVal),
+    [timeSelectVal]
+  )
+
   useEffect(() => {
     void historyDAT()
   }, [historyDAT, timeSelectVal, derivativeSel])
+
+  useEffect(() => {
+    if (pairOptions.data.length) {
+      const intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && entry.target.id === 'bottom') {
+              seqCount += 1
+              console.info('intersectionObserver=', seqCount)
+              void morePairs()
+            }
+          })
+        },
+        { threshold: 0.2 }
+      )
+      if (bottomRef.current) {
+        intersectionObserver.observe(bottomRef.current)
+        observerRef.current = intersectionObserver
+      }
+    }
+    return () => {
+      observerRef.current && observerRef.current.disconnect()
+    }
+  }, [pairOptions.data.length])
+
+  useEffect(() => {
+    if (derivativeList.length) {
+      setPairOptions({ data: [all, ...derivativeList], loaded: false })
+    }
+  }, [derivativeList])
 
   return (
     <div className="web-data-chart">
@@ -140,16 +186,57 @@ const PositionVolume: FC = () => {
           <BalanceShow value={totalAmount?.volume} unit={marginToken.symbol} decimal={decimals} />
         </h3>
         <aside>
-          <Select
-            value={timeSelectVal}
-            options={SelectTimesOptions}
-            onChange={(value) => setTimeSelectVal(String(value))}
-          />
-          <Select
-            value={derivativeSel}
-            options={derivative.map((d) => d.key)}
-            onChange={(value) => setDerivativeSel(value as string)}
-          />
+          <DropDownList
+            entry={
+              <div className='web-select-show-button'>
+                <span>{currentTimeLine}</span>
+              </div>
+            }
+            showSearch={false}
+          >
+            {timeLineOptions.map((o) => {
+              return (
+                <DropDownListItem
+                  key={o}
+                  content={o}
+                  onSelect={() => setTimeSelectVal(o)}
+                  className={classNames({
+                    active: timeSelectVal === o
+                  })}
+                />
+              )
+            })}
+          </DropDownList>
+          <DropDownList
+            entry={
+              <div className='web-select-show-button'>
+                <span>{derivativeSel?.name}</span>
+              </div>
+            }
+            height={mobile ? 244 : 284}
+            loading={pairOptions.loaded}
+            showSearch={false}
+          >
+            {pairOptions.data.map((o: any, index: number) => {
+              const len = pairOptions.data.length
+              const id = index === len - 1 ? 'bottom' : undefined
+              const ref = index === len - 1 ? bottomRef : null
+              return (
+                <DropDownListItem
+                  key={o.name}
+                  id={id}
+                  ref={ref}
+                  content={o.name}
+                  onSelect={() => {
+                    setDerivativeSel(o)
+                  }}
+                  className={classNames({
+                    active: derivativeSel.name === o.name
+                  })}
+                />
+              )
+            })}
+          </DropDownList>
         </aside>
       </header>
       <main className="web-data-chart-main">

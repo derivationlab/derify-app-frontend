@@ -1,6 +1,6 @@
 import Table from 'rc-table'
 
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { getDerivativeList, getSystemParams } from '@/api'
@@ -14,6 +14,7 @@ import { DropDownList, DropDownListItem } from '@/components/common/DropDownList
 import { Rec } from '@/typings'
 import { ZERO } from '@/config'
 import { uniqBy } from 'lodash'
+import { MobileContext } from '@/providers/Mobile'
 
 const systemParamsInit = {
   buybackPeriod: 0,
@@ -31,6 +32,7 @@ const System: FC = () => {
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
+  const { mobile } = useContext(MobileContext)
   const [parameters, setParameters] = useState<typeof systemParamsInit>(systemParamsInit)
   const [derivative, setDerivative] = useState<Rec>()
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
@@ -228,7 +230,7 @@ const System: FC = () => {
                 <span>{derivative?.name}</span>
               </div>
             }
-            height={284}
+            height={mobile ? 244 : 284}
             loading={pairOptions.loaded}
             showSearch={false}
           >

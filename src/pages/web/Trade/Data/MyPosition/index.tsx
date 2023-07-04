@@ -12,11 +12,7 @@ import { usePositionOperation } from '@/hooks/usePositionOperation'
 import { usePriceDecimalsSupport1, useTokenSpotPricesSupport1 } from '@/hooks/useTokenSpotPrices'
 import CloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import { ThemeContext } from '@/providers/Theme'
-import {
-  useBrokerInfoStore,
-  useProtocolConfigStore,
-  useTokenSpotPricesStore
-} from '@/store'
+import { useBrokerInfoStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
 import { PubSubEvents, Rec } from '@/typings'
 
 import NoRecord from '../c/NoRecord'

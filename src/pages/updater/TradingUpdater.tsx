@@ -3,12 +3,7 @@ import { useAccount } from 'wagmi'
 
 import { useEffect } from 'react'
 
-import {
-  usePositionLimitStore,
-  useProtocolConfigStore,
-  useQuoteTokenStore,
-  useTraderVariablesStore
-} from '@/store'
+import { usePositionLimitStore, useProtocolConfigStore, useQuoteTokenStore, useTraderVariablesStore } from '@/store'
 import { QuoteTokenState } from '@/store/types'
 import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
 import { PubSubEvents } from '@/typings'

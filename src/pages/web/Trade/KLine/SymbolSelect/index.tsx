@@ -11,6 +11,7 @@ import ChangePercent from '@/components/common/ChangePercent'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { ZERO } from '@/config'
 import { usePriceDecimalsSupport, useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
 import { MobileContext } from '@/providers/Mobile'
 import {
@@ -19,16 +20,16 @@ import {
   useMarginIndicatorsStore,
   useMarginTokenStore,
   useProtocolConfigStore,
-  useQuoteTokenStore, useTokenSpotPricesStore
+  useQuoteTokenStore,
+  useTokenSpotPricesStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-import { ZERO } from '@/config'
 
 let seqCount = 0
 
 interface PairOptionsInit {
-  data: Rec[];
+  data: Rec[]
   loaded: boolean
 }
 
@@ -132,18 +133,23 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   useClickAway(ref, () => toggleVisible(false))
 
   return (
-    <div className='web-trade-symbol-select'>
+    <div className="web-trade-symbol-select">
       <div className={classNames('web-trade-symbol-select', { show: visible })} ref={ref}>
-        {mobile && <div className='web-trade-symbol-select-toggle' onClick={() => {
-          onToggle?.()
-          toggleVisible(false)
-        }} />}
+        {mobile && (
+          <div
+            className="web-trade-symbol-select-toggle"
+            onClick={() => {
+              onToggle?.()
+              toggleVisible(false)
+            }}
+          />
+        )}
       </div>
 
       <DropDownList
         entry={
           quoteToken.symbol ? (
-            <div className='web-trade-symbol-select-curr' onClick={() => toggleVisible(!visible)}>
+            <div className="web-trade-symbol-select-curr" onClick={() => toggleVisible(!visible)}>
               <h4>{quoteToken.symbol}</h4>
               <aside>
                 <Skeleton rowsProps={{ rows: 1 }} animation loading={!spotPrices}>
@@ -153,7 +159,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
               </aside>
             </div>
           ) : (
-            <div className='web-trade-symbol-select-curr s'>{t('Trade.Derivative.NoTrading')}</div>
+            <div className="web-trade-symbol-select-curr s">{t('Trade.Derivative.NoTrading')}</div>
           )
         }
         height={588}
@@ -182,7 +188,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
                   <>
                     <aside>
                       <h5>{o.name}</h5>
-                      <BalanceShow value={values?.apy ?? 0} percent unit='APR' />
+                      <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
                     </aside>
                     <aside>
                       <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
@@ -194,7 +200,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
                     <h5>{o.name}</h5>
                     <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
                     <ChangePercent value={values?.price_change_rate ?? 0} />
-                    <BalanceShow value={values?.apy ?? 0} percent unit='APR' />
+                    <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
                   </>
                 )
               }

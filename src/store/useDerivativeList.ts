@@ -22,7 +22,10 @@ export const derivativeList = {
   price_decimals: 2
 }
 
-export const getPairAddressList = async (factory: string, list: (typeof derivativeList)[]): Promise<typeof derivativeList[] | null> => {
+export const getPairAddressList = async (
+  factory: string,
+  list: (typeof derivativeList)[]
+): Promise<(typeof derivativeList)[] | null> => {
   const calls = list.map((derivative) => ({
     name: 'getDerivative',
     params: [derivative.token],
@@ -103,7 +106,10 @@ const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
     const records = data?.records ?? []
     console.info(records)
     // condition1: open
-    const list = await getPairAddressList(factory, records.filter((r: Rec) => r.open))
+    const list = await getPairAddressList(
+      factory,
+      records.filter((r: Rec) => r.open)
+    )
     const _list = list ?? []
     // condition2: not zero address
     const output = _list.filter((l) => l.derivative !== ZERO)

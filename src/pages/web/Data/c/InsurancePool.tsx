@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { isArray } from 'lodash'
 
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
@@ -5,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { getHistoryInsuranceDAT } from '@/api'
 import { AreaChart } from '@/components/common/Chart'
-import Select from '@/components/common/Form/Select'
+import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentInsurance } from '@/hooks/useCurrentInsurance'
@@ -21,12 +22,9 @@ let output: Record<string, any> = {
 
 const InsurancePool: FC = () => {
   const { t } = useTranslation()
-
   const [timeSelectVal, setTimeSelectVal] = useState<string>('3M')
   const [insuranceData, setInsuranceData] = useState<Record<string, any>[]>([])
-
   const marginToken = useMarginTokenStore((state) => state.marginToken)
-
   const { data: insuranceVolume } = useCurrentInsurance(marginToken.address)
 
   const decimals = useMemo(() => {
@@ -40,6 +38,8 @@ const InsurancePool: FC = () => {
     }
     return [...insuranceData, output]
   }, [insuranceData, insuranceVolume])
+
+  const currentTimeLine = useMemo(() => timeLineOptions.find((time) => time === timeSelectVal), [timeSelectVal])
 
   const historyDAT = useCallback(async () => {
     const { data: history } = await getHistoryInsuranceDAT(matchTimeLineOptions[timeSelectVal], marginToken.address)
@@ -63,11 +63,27 @@ const InsurancePool: FC = () => {
           <BalanceShow value={insuranceVolume?.insurance_pool ?? 0} unit={marginToken.symbol} decimal={decimals} />
         </h3>
         <aside>
-          <Select
-            value={timeSelectVal}
-            options={timeLineOptions}
-            onChange={(value) => setTimeSelectVal(String(value))}
-          />
+          <DropDownList
+            entry={
+              <div className="web-select-show-button">
+                <span>{currentTimeLine}</span>
+              </div>
+            }
+            showSearch={false}
+          >
+            {timeLineOptions.map((o) => {
+              return (
+                <DropDownListItem
+                  key={o}
+                  content={o}
+                  onSelect={() => setTimeSelectVal(o)}
+                  className={classNames({
+                    active: timeSelectVal === o
+                  })}
+                />
+              )
+            })}
+          </DropDownList>
         </aside>
       </header>
       <main className="web-data-chart-main">

@@ -1,20 +1,20 @@
+import { uniqBy } from 'lodash'
 import Table from 'rc-table'
 
 import React, { FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { getDerivativeList, getSystemParams } from '@/api'
+import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
+import { ZERO } from '@/config'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { useDerivativeParams } from '@/hooks/useDerivativeParams'
 import { useRewardsParams, useProtocolParams, useExchangeParams, useGrantPlanParams } from '@/hooks/useSysParams'
+import { MobileContext } from '@/providers/Mobile'
 import { getPairAddressList, useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { bnMul, nonBigNumberInterception } from '@/utils/tools'
-import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import { Rec } from '@/typings'
-import { ZERO } from '@/config'
-import { uniqBy } from 'lodash'
-import { MobileContext } from '@/providers/Mobile'
+import { bnMul, nonBigNumberInterception } from '@/utils/tools'
 
 const systemParamsInit = {
   buybackPeriod: 0,
@@ -22,7 +22,7 @@ const systemParamsInit = {
 }
 
 interface PairOptionsInit {
-  data: Rec[];
+  data: Rec[]
   loaded: boolean
 }
 
@@ -213,20 +213,20 @@ const System: FC = () => {
   }, [derivativeList])
 
   return (
-    <div className='web-table-page'>
-      <div className='web-system-title'>
+    <div className="web-table-page">
+      <div className="web-system-title">
         {t('Nav.SystemParameters.SystemParameters')}-{marginToken.symbol}
       </div>
-      <header className='web-table-page-header'>
+      <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.SystemRelevant')}</h3>
       </header>
-      <Table className='web-broker-table' columns={columns} data={system} rowKey='parameters' />
-      <header className='web-table-page-header'>
+      <Table className="web-broker-table" columns={columns} data={system} rowKey="parameters" />
+      <header className="web-table-page-header">
         <h3>{t('Nav.SystemParameters.TradingToken')}</h3>
-        <aside className='web-system-pair'>
+        <aside className="web-system-pair">
           <DropDownList
             entry={
-              <div className='web-select-show-button'>
+              <div className="web-select-show-button">
                 <span>{derivative?.name}</span>
               </div>
             }
@@ -253,7 +253,7 @@ const System: FC = () => {
           </DropDownList>
         </aside>
       </header>
-      <Table className='web-broker-table' columns={columns} data={trading} rowKey='parameters' />
+      <Table className="web-broker-table" columns={columns} data={trading} rowKey="parameters" />
     </div>
   )
 }

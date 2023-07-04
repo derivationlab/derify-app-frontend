@@ -136,7 +136,11 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>
               ) : (
                 <p>
-                  <BalanceShow value={data?.price} unit="" decimal={Number(data?.price) === 0 ? 2 : quoteToken.decimals} />
+                  <BalanceShow
+                    value={data?.price}
+                    unit=""
+                    decimal={Number(data?.price) === 0 ? 2 : quoteToken.decimals}
+                  />
                   <em>{t('Trade.Bench.LimitPrice', 'Limit Price')}</em>
                 </p>
               )}

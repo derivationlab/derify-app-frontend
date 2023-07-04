@@ -10,9 +10,9 @@ import { KLineTimes } from '@/data'
 import { reducer, stateInit } from '@/reducers/kline'
 import { useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
 import { QuoteTokenState } from '@/store/types'
+import { Rec } from '@/typings'
 
 import { getKLineDAT, getKlineEndTime, reorganizeLastPieceOfData } from './help'
-import { Rec } from '@/typings'
 
 interface KlineChartProps {
   reset: () => void

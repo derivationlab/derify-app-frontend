@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { isArray, uniqBy } from 'lodash'
 
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react'
@@ -5,22 +6,20 @@ import { useTranslation } from 'react-i18next'
 
 import { getDerivativeList, getHistoryPositionsDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
-import Select from '@/components/common/Form/Select'
+import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { ZERO } from '@/config'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentPositions } from '@/hooks/useCurrentPositions'
+import { MobileContext } from '@/providers/Mobile'
 import { ThemeContext } from '@/providers/Theme'
 import { getPairAddressList, useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { bnDiv, bnMul, bnPlus, dayjsStartOf, isGT, keepDecimals } from '@/utils/tools'
 import { Rec } from '@/typings'
-import { MobileContext } from '@/providers/Mobile'
-import { ZERO } from '@/config'
-import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
-import classNames from 'classnames'
+import { bnDiv, bnMul, bnPlus, dayjsStartOf, isGT, keepDecimals } from '@/utils/tools'
 
 const time = dayjsStartOf()
-let output: Record<string, any> = {
+let output = {
   long: '0%',
   short: '0%',
   volume: '0',
@@ -30,10 +29,10 @@ let output: Record<string, any> = {
 }
 const all = {
   name: 'All Derivatives',
-  derivative: 'all'
+  token: 'all'
 }
 interface PairOptionsInit {
-  data: Rec[];
+  data: Rec[]
   loaded: boolean
 }
 
@@ -51,7 +50,7 @@ const PositionVolume: FC = () => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const { data: positionsDAT } = useCurrentPositions(derivativeSel.derivative, marginToken.address)
+  const { data: positionsDAT } = useCurrentPositions(derivativeSel.token, marginToken.address)
 
   const barColor = useMemo(() => {
     let longColor = '#24ce7d'
@@ -76,7 +75,7 @@ const PositionVolume: FC = () => {
 
   const historyDAT = useCallback(async () => {
     const { data: history } = await getHistoryPositionsDAT(
-      derivativeSel.derivative,
+      derivativeSel.token,
       matchTimeLineOptions[timeSelectVal],
       marginToken.address
     )
@@ -139,10 +138,7 @@ const PositionVolume: FC = () => {
     return Number(totalAmount.volume) === 0 ? 2 : marginToken.decimals
   }, [totalAmount, marginToken])
 
-  const currentTimeLine = useMemo(
-    () => timeLineOptions.find((time) => time === timeSelectVal),
-    [timeSelectVal]
-  )
+  const currentTimeLine = useMemo(() => timeLineOptions.find((time) => time === timeSelectVal), [timeSelectVal])
 
   useEffect(() => {
     void historyDAT()
@@ -188,7 +184,7 @@ const PositionVolume: FC = () => {
         <aside>
           <DropDownList
             entry={
-              <div className='web-select-show-button'>
+              <div className="web-select-show-button">
                 <span>{currentTimeLine}</span>
               </div>
             }
@@ -209,7 +205,7 @@ const PositionVolume: FC = () => {
           </DropDownList>
           <DropDownList
             entry={
-              <div className='web-select-show-button'>
+              <div className="web-select-show-button">
                 <span>{derivativeSel?.name}</span>
               </div>
             }

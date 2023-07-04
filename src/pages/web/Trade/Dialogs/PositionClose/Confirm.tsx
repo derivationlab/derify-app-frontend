@@ -16,7 +16,7 @@ import {
   useMarginTokenStore,
   useProtocolConfigStore,
   useTokenSpotPricesStore,
-  usePositionOperationStore,
+  usePositionOperationStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'

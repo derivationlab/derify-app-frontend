@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { isArray, uniqBy } from 'lodash'
 
 import React, { FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -5,30 +6,29 @@ import { useTranslation } from 'react-i18next'
 
 import { getDerivativeList, getHistoryTradingDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
+import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { ZERO } from '@/config'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentTrading } from '@/hooks/useCurrentTrading'
+import { MobileContext } from '@/providers/Mobile'
 import { getPairAddressList, useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { dayjsStartOf } from '@/utils/tools'
 import { Rec } from '@/typings'
-import { ZERO } from '@/config'
-import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
-import classNames from 'classnames'
-import { MobileContext } from '@/providers/Mobile'
+import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
-let output: Record<string, any> = {
+let output = {
   day_time: time,
   trading_amount: 0
 }
 const all = {
   name: 'All Derivatives',
-  derivative: 'all'
+  token: 'all'
 }
 
 interface PairOptionsInit {
-  data: Rec[];
+  data: Rec[]
   loaded: boolean
 }
 
@@ -46,7 +46,7 @@ const TradingVolume: FC = () => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const { data: tradingVolume } = useCurrentTrading(derivativeSel.derivative, marginToken.address)
+  const { data: tradingVolume } = useCurrentTrading(derivativeSel.token, marginToken.address)
 
   const decimals = useMemo(() => {
     return Number(tradingVolume?.[0]?.trading_amount ?? 0) === 0 ? 2 : marginToken.decimals
@@ -57,14 +57,11 @@ const TradingVolume: FC = () => {
     return [...tradingData, output]
   }, [tradingData, tradingVolume])
 
-  const currentTimeLine = useMemo(
-    () => timeLineOptions.find((time) => time === timeSelectVal),
-    [timeSelectVal]
-  )
+  const currentTimeLine = useMemo(() => timeLineOptions.find((time) => time === timeSelectVal), [timeSelectVal])
 
   const historyDAT = useCallback(async () => {
     const { data: trading } = await getHistoryTradingDAT(
-      derivativeSel.derivative,
+      derivativeSel.token,
       matchTimeLineOptions[timeSelectVal],
       marginToken.address
     )
@@ -125,8 +122,8 @@ const TradingVolume: FC = () => {
   }, [derivativeList])
 
   return (
-    <div className='web-data-chart'>
-      <header className='web-data-chart-header'>
+    <div className="web-data-chart">
+      <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.TradingVolume', 'Trading Volume')} :
           <BalanceShow value={tradingVolume?.[0]?.trading_amount ?? 0} unit={marginToken.symbol} decimal={decimals} />
@@ -134,7 +131,7 @@ const TradingVolume: FC = () => {
         <aside>
           <DropDownList
             entry={
-              <div className='web-select-show-button'>
+              <div className="web-select-show-button">
                 <span>{currentTimeLine}</span>
               </div>
             }
@@ -155,7 +152,7 @@ const TradingVolume: FC = () => {
           </DropDownList>
           <DropDownList
             entry={
-              <div className='web-select-show-button'>
+              <div className="web-select-show-button">
                 <span>{derivativeSel?.name}</span>
               </div>
             }
@@ -185,7 +182,7 @@ const TradingVolume: FC = () => {
           </DropDownList>
         </aside>
       </header>
-      <main className='web-data-chart-main'>
+      <main className="web-data-chart-main">
         {/*<AreaChart*/}
         {/*  chartId="TradingVolume"*/}
         {/*  data={tradingData}*/}
@@ -196,8 +193,8 @@ const TradingVolume: FC = () => {
         {/*/>*/}
         <BarChart
           data={combineDAT}
-          xKey='day_time'
-          chartId='PositionVolume'
+          xKey="day_time"
+          chartId="PositionVolume"
           yFormat={[
             {
               label: 'Volume',

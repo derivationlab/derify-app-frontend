@@ -43,7 +43,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
 
   const tokenSpotPrice = useMemo(() => {
     if (tokenSpotPrices) {
-      const find = tokenSpotPrices.find((t: Rec) => t.derivative === data.derivative)
+      const find = tokenSpotPrices.find((t: Rec) => t.name === data.name)
       return find?.price ?? '0'
     }
     return '0'
@@ -230,7 +230,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{data?.derivative}</strong>
+                <strong>{data?.name}</strong>
                 <MultipleStatus direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>

@@ -63,7 +63,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
 
   const tokenSpotPrice = useMemo(() => {
     if (tokenSpotPrices) {
-      const find = tokenSpotPrices.find((t: Rec) => t.derivative === data.name)
+      const find = tokenSpotPrices.find((t: Rec) => t.name === data.name)
       return find?.price ?? '0'
     }
     return '0'

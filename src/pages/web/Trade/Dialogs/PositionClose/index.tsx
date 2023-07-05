@@ -64,8 +64,7 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   )
 
   useEffect(() => {
-    if (!visible) updateOpeningParams({ closingAmount: '0' })
-    updateOpeningParams({ closingAmount: positionVolume })
+    if (visible) updateOpeningParams({ closingAmount: positionVolume })
   }, [visible, positionVolume])
 
   return (

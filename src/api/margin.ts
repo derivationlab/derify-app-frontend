@@ -11,7 +11,7 @@ export const getMarginIndicators = async (token: string) => {
 }
 
 export const getMarginTokenList = async (page = 0, size = 10) => {
-  const response = await get(`api/margin_token_list_apy/${page}/10`)
+  const response = await get(`api/margin_token_list_apy/${page}/30`)
   return response
 }
 

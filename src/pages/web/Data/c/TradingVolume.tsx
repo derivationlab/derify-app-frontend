@@ -98,7 +98,6 @@ const TradingVolume: FC = () => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
               seqCount += 1
-              console.info('intersectionObserver=', seqCount)
               void morePairs()
             }
           })

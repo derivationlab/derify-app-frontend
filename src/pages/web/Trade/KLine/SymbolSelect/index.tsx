@@ -50,7 +50,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
   const { priceDecimals } = usePriceDecimalsSupport(pairOptions.data)
-  const { data: spotPrices } = useTokenSpotPricesSupport(pairOptions.data, priceDecimals)
+  const { data: spotPrices } = useTokenSpotPricesSupport(pairOptions.data, priceDecimals, quoteToken)
 
   const spotPrice = useMemo(() => {
     if (spotPrices) {
@@ -102,7 +102,9 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
       void fuzzySearchFunc(fuzzySearch)
     } else {
       seqCount = 0
-      if (derivativeList.length) setPairOptions({ data: derivativeList, loaded: false })
+      if (derivativeList.length) {
+        setPairOptions({ data: derivativeList, loaded: false })
+      }
     }
   }, [fuzzySearch, derivativeList])
 
@@ -113,7 +115,6 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
               seqCount += 1
-              console.info('intersectionObserver=', seqCount)
               void morePairs()
             }
           })
@@ -173,11 +174,11 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
           const ref = index === len - 1 ? bottomRef : null
           const _id = fuzzySearch.trim() ? undefined : id
           const _ref = fuzzySearch.trim() ? null : ref
-          const keys = Object.keys(marginIndicators ?? [])
+          const keys = Object.keys(marginIndicators ?? Object.create(null))
           const findKey = keys.find((key) => getAddress(key) === getAddress(o.token))
           const values = marginIndicators?.[findKey ?? ''] ?? Object.create(null)
           const findToken = (spotPrices ?? []).find((t) => t.name === o.name)
-          const decimals = Number(findToken?.price_decimals) === 0 ? 2 : o.price_decimals
+          const decimals = Number(findToken?.price ?? 0) === 0 ? 2 : o.price_decimals
           return (
             <DropDownListItem
               key={o.name}

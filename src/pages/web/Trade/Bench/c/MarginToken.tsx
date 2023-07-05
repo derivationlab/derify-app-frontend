@@ -18,7 +18,7 @@ import { Rec } from '@/typings'
 let seqCount = 0
 
 interface MarginOptions {
-  data: Rec[];
+  data: Rec[]
   loaded: boolean
 }
 
@@ -30,6 +30,7 @@ const MarginToken: FC = () => {
   const { address } = useAccount()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const updateMarginTokenListStore = useMarginTokenListStore((state) => state.updateMarginTokenListStore)
   const { data: marginBalances } = useMarginBalances(address, marginTokenList, marginToken)
   const [marginOptions, setMarginOptions] = useState<MarginOptions>({ data: [], loaded: false })
   const [searchKeyword, setSearchKeyword] = useState<string>('')
@@ -49,6 +50,7 @@ const MarginToken: FC = () => {
     const combine = [...marginOptions.data, ...filter]
     const deduplication = uniqBy(combine, 'margin_token')
     setMarginOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
+    updateMarginTokenListStore(deduplication)
     if (records.length === 0 || records.length < 30) seqCount = seqCount - 1
   }, [marginOptions.data])
 
@@ -64,6 +66,7 @@ const MarginToken: FC = () => {
           return { ...margin, marginBalance: Number(marginBalance) }
         })
         setMarginOptions({ data: resortMargin(_), loaded: false })
+        updateMarginTokenListStore(marginTokenList)
       }
     }
   }, [searchKeyword, marginBalances, marginTokenList])
@@ -75,7 +78,6 @@ const MarginToken: FC = () => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
               seqCount += 1
-              console.info('intersectionObserver=', seqCount)
               void funcAsync()
             }
           })
@@ -95,7 +97,7 @@ const MarginToken: FC = () => {
   return (
     <DropDownList
       entry={
-        <div className='web-trade-bench-margin-token'>
+        <div className="web-trade-bench-margin-token">
           <label>{t('Trade.Bench.Margin')}</label>
           <section>
             <Image src={marginToken.logo} />

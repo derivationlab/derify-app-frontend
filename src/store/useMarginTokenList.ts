@@ -34,7 +34,7 @@ export const getMarginDeployStatus = async (marginList: (typeof marginTokenList)
   return marginDeployStatus
 }
 
-const getMarginDeployStatus1 = async (marginList: string[]) => {
+const getMarginDeployStatusForAllMarginTokenList = async (marginList: string[]) => {
   let marginDeployStatus = Object.create(null)
   const calls = marginList.map((address) => ({
     address: contracts.derifyProtocol.contractAddress,
@@ -73,8 +73,8 @@ export const pagingParams = {
 const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
   // Margin pagination parameter support
   pagingParams: pagingParams,
-  // Margin pagination
   marginTokenList: [],
+  marginTokenListStore: [],
   // All margin tokens
   allMarginTokenList: [],
   marginTokenSymbol: [],
@@ -96,12 +96,17 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
   getAllMarginTokenList: async () => {
     const { data } = await getAllMarginTokenList()
     if (data.length) {
-      const deployStatus = await getMarginDeployStatus1(data)
+      const deployStatus = await getMarginDeployStatusForAllMarginTokenList(data)
       const filterData = data.filter((address: string) => deployStatus[address])
       set({
         allMarginTokenList: filterData
       })
     }
+  },
+  updateMarginTokenListStore: (data: (typeof marginTokenList)[]) => {
+    set({
+      marginTokenListStore: data
+    })
   }
 }))
 

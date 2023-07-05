@@ -8,7 +8,7 @@ import { MarginTokenState } from '@/store/types'
 
 export const useCheckMarginToken = () => {
   const { pathname } = useLocation()
-  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenListStore)
   const updateMarginToken = useMarginTokenStore((state: MarginTokenState) => state.updateMarginToken)
 
   const func = async () => {
@@ -19,6 +19,7 @@ export const useCheckMarginToken = () => {
       const findMargin = marginTokenList.find((m) => m.symbol === path[1])
       if (findMargin) {
         margin = {
+          open: findMargin.open,
           logo: findMargin.logo,
           address: findMargin.margin_token,
           symbol: findMargin.symbol,

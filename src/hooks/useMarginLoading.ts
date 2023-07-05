@@ -1,9 +1,8 @@
 import { useEffect, useMemo } from 'react'
 import { useEffectOnce } from 'react-use'
 
-import { useMarginTokenStore, useProtocolConfigStore, useQuoteTokenStore } from '@/store'
-import { MarginTokenState, QuoteTokenState } from '@/store/types'
-import { useDerivativeListStore } from '@/store/useDerivativeList'
+import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
 
 export const useMarginLoading = () => {
@@ -12,54 +11,25 @@ export const useMarginLoading = () => {
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const getMarginTokenList = useMarginTokenListStore((state) => state.getMarginTokenList)
   const getAllMarginTokenList = useMarginTokenListStore((state) => state.getAllMarginTokenList)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
-  const getDerivativeList = useDerivativeListStore((state) => state.getDerivativeList)
-  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const getProtocolConfig = useProtocolConfigStore((state) => state.getProtocolConfig)
-  const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
 
-  useEffectOnce(() => {
-    void getMarginTokenList()
-    void getAllMarginTokenList()
-  })
+  const isAccessible = useMemo(() => {
+    return marginTokenList.length > 0 && !!marginToken
+  }, [marginToken, marginTokenList])
 
   // Initialize margin token default information
   useEffect(() => {
     const len = marginTokenList.length
     const { address } = marginToken
     if (len && !address) {
-      const { open,logo, symbol, margin_token, amount_decimals } = marginTokenList[0]
-      updateMarginToken({ open,logo, symbol, address: margin_token, decimals: amount_decimals })
+      const { open, logo, symbol, margin_token, amount_decimals } = marginTokenList[0]
+      updateMarginToken({ open, logo, symbol, address: margin_token, decimals: amount_decimals })
     }
   }, [marginToken, marginTokenList])
 
-  // Initialize margin token with protocol config
-  useEffect(() => {
-    if (marginToken) void getProtocolConfig(marginToken.address)
-  }, [marginToken])
-
-  // Initialize quote token default information
-  useEffect(() => {
-    const len = derivativeList.length
-    if (len) {
-      const { name, token, price_decimals, derivative } = derivativeList[0]
-      updateQuoteToken({
-        token,
-        symbol: name,
-        decimals: price_decimals,
-        derivative
-      })
-    }
-  }, [derivativeList])
-
-  // Get trading pair data
-  useEffect(() => {
-    if (protocolConfig && marginToken) void getDerivativeList(marginToken.address, protocolConfig.factory)
-  }, [marginToken, protocolConfig])
-
-  const isAccessible = useMemo(() => {
-    return marginTokenList.length > 0 && !!marginToken
-  }, [marginToken, marginTokenList])
+  useEffectOnce(() => {
+    void getMarginTokenList()
+    void getAllMarginTokenList()
+  })
 
   return {
     isAccessible

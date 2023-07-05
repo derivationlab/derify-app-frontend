@@ -1,16 +1,27 @@
+import { isEmpty } from 'lodash'
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
 import { useEffect } from 'react'
 
 import { useMarginIndicators } from '@/hooks/useMarginIndicators'
-import { useBalancesStore, useBrokerInfoStore, useMarginTokenListStore, useMarginTokenStore } from '@/store'
-import { MarginTokenState } from '@/store/types'
+import {
+  useBalancesStore,
+  useBrokerInfoStore,
+  useDerivativeListStore,
+  useMarginTokenListStore,
+  useMarginTokenStore,
+  useProtocolConfigStore,
+  useQuoteTokenStore
+} from '@/store'
+import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useMarginIndicatorsStore } from '@/store/useMarginIndicators'
 import { PubSubEvents } from '@/typings'
-
+import { sleep } from '@/utils/tools'
+let executeOnce = false
 export default function GlobalUpdater(): null {
   const { address } = useAccount()
+  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const resetBalances = useBalancesStore((state) => state.reset)
   const getTokenBalances = useBalancesStore((state) => state.getTokenBalances)
@@ -18,9 +29,14 @@ export default function GlobalUpdater(): null {
   const fetchBrokerInfo = useBrokerInfoStore((state) => state.fetchBrokerInfo)
   const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
   const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
+  const getProtocolConfig = useProtocolConfigStore((state) => state.getProtocolConfig)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
+  const getDerivativeList = useDerivativeListStore((state) => state.getDerivativeList)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
   const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
-  // Token balances
+  // Margin token balances
   useEffect(() => {
     if (address) {
       void resetBalances()
@@ -33,7 +49,7 @@ export default function GlobalUpdater(): null {
     })
   }, [address, marginTokenList])
 
-  // Margin indicators
+  // Margin token indicators
   useEffect(() => {
     if (marginIndicators) {
       updateMarginIndicators(marginIndicators)
@@ -48,14 +64,46 @@ export default function GlobalUpdater(): null {
     }
 
     PubSub.unsubscribe(PubSubEvents.UPDATE_BROKER_DAT)
+    PubSub.unsubscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT)
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {
       if (address) void fetchBrokerInfo(address, marginToken.address)
     })
-    PubSub.unsubscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT)
     PubSub.subscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT, () => {
       if (address) void fetchBrokerBound(address)
     })
   }, [address, marginToken])
+
+  // Initialize margin token with protocol config
+  useEffect(() => {
+    executeOnce = false
+    if (marginToken) void getProtocolConfig(marginToken.address)
+  }, [marginToken])
+
+  // Initialize quote token default information
+  useEffect(() => {
+    const func = async () => {
+      await sleep(2000)
+      const tt = false
+      if (!tt) {
+        const { name: symbol, token, price_decimals: decimals, derivative } = derivativeList[0]
+        updateQuoteToken({ token, symbol, decimals, derivative })
+      }
+    }
+    if (!isEmpty(derivativeList) && !executeOnce) {
+      if (!quoteToken.token) {
+        const { name: symbol, token, price_decimals: decimals, derivative } = derivativeList[0]
+        updateQuoteToken({ token, symbol, decimals, derivative })
+      } else {
+        void func()
+      }
+      executeOnce = true
+    }
+  }, [quoteToken, derivativeList])
+
+  // Get trading pair data
+  useEffect(() => {
+    if (protocolConfig && marginToken) void getDerivativeList(marginToken.address, protocolConfig.factory)
+  }, [marginToken, protocolConfig])
 
   return null
 }

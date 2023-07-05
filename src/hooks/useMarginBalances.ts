@@ -1,17 +1,14 @@
-import { isArray } from 'lodash'
 import { useQuery } from '@tanstack/react-query'
+import { isArray } from 'lodash'
 
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import { marginTokenList } from '@/store'
+import { Rec } from '@/typings'
 import { multicallV2 } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
-import { Rec } from '@/typings'
 
-export const useMarginBalances = (
-  trader?: string,
-  list?: (typeof marginTokenList)[],
-  marginToken?: Rec) => {
+export const useMarginBalances = (trader?: string, list?: (typeof marginTokenList)[], marginToken?: Rec) => {
   let output = Object.create(null)
   const { data, refetch, isLoading } = useQuery(
     ['useMarginBalances'],
@@ -33,20 +30,23 @@ export const useMarginBalances = (
           ]
         }))
         if (marginToken && !find) {
-          calls = [...calls, {
-            name: 'getAllMarginBalances',
-            symbol: marginToken.symbol,
-            address: contracts.derifyProtocol.contractAddress,
-            params: [
-              [
-                {
-                  traders: [trader],
-                  balances: [],
-                  marginToken: marginToken.address
-                }
+          calls = [
+            ...calls,
+            {
+              name: 'getAllMarginBalances',
+              symbol: marginToken.symbol,
+              address: contracts.derifyProtocol.contractAddress,
+              params: [
+                [
+                  {
+                    traders: [trader],
+                    balances: [],
+                    marginToken: marginToken.address
+                  }
+                ]
               ]
-            ]
-          }]
+            }
+          ]
         }
 
         const response = await multicallV2(derifyProtocolAbi, calls)

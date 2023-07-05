@@ -66,11 +66,13 @@ export interface MarginTokenState {
 export interface MarginTokenListState {
   pagingParams: typeof pagingParams
   marginTokenList: (typeof marginTokenList)[]
+  marginTokenListStore: (typeof marginTokenList)[]
   marginTokenSymbol: string[]
   allMarginTokenList: string[]
   marginTokenListLoaded: boolean
   getMarginTokenList: (index?: number) => Promise<void>
   getAllMarginTokenList: () => Promise<void>
+  updateMarginTokenListStore: (data: (typeof marginTokenList)[]) => void
 }
 
 export interface DerivativeListState {

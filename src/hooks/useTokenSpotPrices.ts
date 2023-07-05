@@ -110,17 +110,27 @@ export const usePriceDecimalsSupport = (list?: Rec[] | null) => {
   return { priceDecimals }
 }
 
-export const useTokenSpotPricesSupport = (list?: Rec[] | null, decimals?: Rec | null) => {
+export const useTokenSpotPricesSupport = (list?: Rec[] | null, decimals?: Rec | null, quoteToken?: Rec) => {
   let output: Rec[] = []
   const enabled = !!(list && decimals)
   const { data, refetch, isLoading } = useQuery(
     ['useTokenSpotPricesSupport'],
     async () => {
       if (list && decimals) {
-        const calls = list.map((l) => ({
+        const find = list.find((l) => l.name === quoteToken?.symbol)
+        let calls = list.map((l) => ({
           name: 'getSpotPrice',
           address: l.derivative
         }))
+        if (quoteToken && !find) {
+          calls = [
+            ...calls,
+            {
+              name: 'getSpotPrice',
+              address: quoteToken.derivative
+            }
+          ]
+        }
 
         const response = await multicall(derifyDerivativeAbi, calls)
 

@@ -66,8 +66,8 @@ export const useMarginBalances = (trader?: string, list?: (typeof marginTokenLis
               }
             }
           })
+          return output
         }
-        return output
       }
 
       return null

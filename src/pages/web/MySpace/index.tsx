@@ -174,6 +174,7 @@ const MySpace: FC = () => {
           marginBalance: Number(marginBalance)
         }
       })
+      console.info(resortMargin(_))
       return resortMargin(_)
     }
     return []

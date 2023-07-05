@@ -1,7 +1,7 @@
 import PubSub from 'pubsub-js'
 import { useSigner } from 'wagmi'
 
-import React, { FC, useState, useCallback, useMemo } from 'react'
+import React, { FC, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'

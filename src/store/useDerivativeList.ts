@@ -45,7 +45,7 @@ export const getPairAddressList = async (
   }
 }
 
-const useDerivativeListStore = create<DerivativeListState>((set, get) => ({
+const useDerivativeListStore = create<DerivativeListState>((set) => ({
   derivativeList: [],
   derivativeListLoaded: false,
   getDerivativeList: async (marginToken: string, factory: string, page = 0) => {

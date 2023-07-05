@@ -14,7 +14,6 @@ import PnLDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
 import { MobileContext } from '@/providers/Mobile'
 import {
   useBrokerInfoStore,
-  useDerivativeListStore,
   useMarginTokenStore,
   usePositionOperationStore,
   useProtocolConfigStore,

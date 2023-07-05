@@ -16,7 +16,7 @@ const useMarginTokenStore = create(
       }
     }),
     {
-      name: 'marginToken'
+      name: 'M'
     }
   )
 )

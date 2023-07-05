@@ -49,7 +49,7 @@ const Bench: FC = () => {
 
   const spotPrice = useMemo(() => {
     if (spotPrices) {
-      const find = spotPrices.find((t: Rec) => t.name === quoteToken.symbol)
+      const find = spotPrices.find((t: Rec) => t.name === quoteToken.name)
       return find?.price ?? '0'
     }
     return '0'

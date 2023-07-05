@@ -36,9 +36,9 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
         token: l.token,
         params: [trader],
         address: l.derivative,
+        decimals: l.price_decimals,
         quoteToken: l.name.split('/')[0],
-        derivative: l.name,
-        decimals: l.price_decimals
+        derivative: l.name
       })
     })
     const response = await multicall(DerifyDerivativAbi, calls as Call[])
@@ -65,11 +65,11 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
           positionOrd.push({
             size,
             side: PositionSideTypes.long,
+            name: calls[i].derivative,
             token: calls[i].token,
             decimals: calls[i].decimals,
             leverage: formatUnits(long.leverage, 8),
-            pairAddress: calls[i].address,
-            derivative: calls[i].derivative,
+            derivative: calls[i].address,
             quoteToken: calls[i].quoteToken,
             averagePrice: formatUnits(long.price, 8),
             stopLossPrice: priceFormat(longOrderStopLossPosition),
@@ -83,12 +83,12 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
           positionOrd.push({
             size,
+            name: calls[i].derivative,
             side: PositionSideTypes.short,
             token: calls[i].token,
             decimals: calls[i].decimals,
             leverage: formatUnits(short.leverage, 8),
-            pairAddress: calls[i].address,
-            derivative: calls[i].derivative,
+            derivative: calls[i].address,
             quoteToken: calls[i].quoteToken,
             averagePrice: formatUnits(short.price, 8),
             stopLossPrice: priceFormat(shortOrderStopLossPosition),
@@ -105,16 +105,16 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
             profitLossOrd.push({
               size,
+              name: calls[i].derivative,
               side: PositionSideTypes.long,
               token: calls[i].token,
               price,
               volume,
               decimals: calls[i].decimals,
-              pairAddress: calls[i].address,
+              derivative: calls[i].address,
               leverage: formatUnits(order.leverage),
               timestamp: String(order.timestamp),
               orderType: PositionTriggerTypes.Limit,
-              derivative: calls[i].derivative,
               quoteToken: calls[i].quoteToken
             })
           }
@@ -129,16 +129,16 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
             profitLossOrd.push({
               size,
+              name: calls[i].derivative,
               side: PositionSideTypes.short,
               token: calls[i].token,
               price,
               volume,
               decimals: calls[i].decimals,
-              pairAddress: calls[i].address,
+              derivative: calls[i].address,
               leverage: formatUnits(order.leverage),
               timestamp: String(order.timestamp),
               orderType: PositionTriggerTypes.Limit,
-              derivative: calls[i].derivative,
               quoteToken: calls[i].quoteToken
             })
           }
@@ -152,16 +152,16 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
           profitLossOrd.push({
             size,
+            name: calls[i].derivative,
             side: PositionSideTypes.long,
             token: calls[i].token,
             price,
             volume,
             decimals: calls[i].decimals,
-            pairAddress: calls[i].address,
+            derivative: calls[i].address,
             leverage: formatUnits(long.leverage),
             orderType: PositionTriggerTypes.StopProfit,
             timestamp: String(longOrderStopProfitPosition.timestamp),
-            derivative: calls[i].derivative,
             quoteToken: calls[i].quoteToken
           })
         }
@@ -174,16 +174,16 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
           profitLossOrd.push({
             size,
+            name: calls[i].derivative,
             side: PositionSideTypes.long,
             token: calls[i].token,
             price,
             volume,
             decimals: calls[i].decimals,
-            pairAddress: calls[i].address,
+            derivative: calls[i].address,
             leverage: formatUnits(long.leverage),
             orderType: PositionTriggerTypes.StopLoss,
             timestamp: String(longOrderStopLossPosition.timestamp),
-            derivative: calls[i].derivative,
             quoteToken: calls[i].quoteToken
           })
         }
@@ -196,16 +196,16 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
           profitLossOrd.push({
             size,
+            name: calls[i].derivative,
             side: PositionSideTypes.short,
             token: calls[i].token,
             price,
             volume,
             decimals: calls[i].decimals,
-            pairAddress: calls[i].address,
+            derivative: calls[i].address,
             leverage: formatUnits(short.leverage),
             orderType: PositionTriggerTypes.StopLoss,
             timestamp: String(shortOrderStopLossPosition.timestamp),
-            derivative: calls[i].derivative,
             quoteToken: calls[i].quoteToken
           })
         }
@@ -218,16 +218,16 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
           profitLossOrd.push({
             size,
+            name: calls[i].derivative,
             side: PositionSideTypes.short,
             token: calls[i].token,
             price,
             volume,
             decimals: calls[i].decimals,
-            pairAddress: calls[i].address,
+            derivative: calls[i].address,
             leverage: formatUnits(short.leverage),
             orderType: PositionTriggerTypes.StopProfit,
             timestamp: String(shortOrderStopProfitPosition.timestamp),
-            derivative: calls[i].derivative,
             quoteToken: calls[i].quoteToken
           })
         }
@@ -276,7 +276,6 @@ export const useOwnedPositionsBackUp = (trader?: string, factory?: string, margi
 
   const func = useCallback(
     debounce(async (trader: string, factory: string, marginToken: string) => {
-      const pairList = Object.create(null)
       const { data } = await getDerivativeList(marginToken, 0, 100)
       if (data?.records) {
         const _pairList = await getPairAddressList(factory, data.records)

@@ -44,7 +44,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const spotPrice = useMemo(() => {
     if (spotPrices) {
-      const find = spotPrices.find((t: Rec) => t.name === quoteToken.symbol)
+      const find = spotPrices.find((t: Rec) => t.name === quoteToken.name)
       return find?.price ?? '0'
     }
     return '0'
@@ -127,7 +127,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{quoteToken.symbol}</strong>
+                <strong>{quoteToken.name}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>

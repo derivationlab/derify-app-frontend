@@ -58,19 +58,13 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
   const { closePosition, takeProfitOrStopLoss } = usePositionOperation()
 
-  const decimals = useMemo(() => {
-    const find = derivativeList.find((d) => d.name === data.derivative)
-    return find?.price_decimals ?? 2
-  }, [derivativeList])
-
   const tokenSpotPrice = useMemo(() => {
     if (tokenSpotPrices) {
-      const find = tokenSpotPrices.find((t: Rec) => t.derivative === data.derivative)
+      const find = tokenSpotPrices.find((t: Rec) => t.derivative === data.name)
       return find?.price ?? '0'
     }
     return '0'
@@ -137,10 +131,10 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         tip={t('Trade.MyPosition.AvgPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>{keepDecimals(data?.averagePrice ?? 0, decimals)}</span>
+        <span>{keepDecimals(data?.averagePrice ?? 0, data.decimals)}</span>
       </DataAtom>
     )
-  }, [t, data?.averagePrice, decimals])
+  }, [t, data?.averagePrice, data.decimals])
 
   const atom4Tsx = useMemo(() => {
     let liqPrice
@@ -153,7 +147,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
       const p3 = bnDiv(p2, data.size)
       const p4 = bnMul(p3, mul)
       const p5 = bnMinus(tokenSpotPrice, p4)
-      liqPrice = isLTET(p5, 0) ? '--' : keepDecimals(p5, decimals)
+      liqPrice = isLTET(p5, 0) ? '--' : keepDecimals(p5, data.decimals)
     } else {
       liqPrice = '--'
     }
@@ -167,7 +161,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         <span>{liqPrice}</span>
       </DataAtom>
     )
-  }, [t, data, decimals, clearingParams, variables, tokenSpotPrice, variablesLoaded])
+  }, [t, data, data.decimals, clearingParams, variables, tokenSpotPrice, variablesLoaded])
 
   const atom5Tsx = useMemo(() => {
     return (
@@ -206,7 +200,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   }, [t, variables.marginRate, clearingParams.marginMaintenanceRatio])
 
   const atom7Tsx = useMemo(() => {
-    const price = data?.takeProfitPrice !== '--' ? keepDecimals(data.takeProfitPrice, decimals) : '--'
+    const price = data?.takeProfitPrice !== '--' ? keepDecimals(data.takeProfitPrice, data.decimals) : '--'
     return (
       <DataAtom
         label={t('Trade.MyPosition.TakeProfit', 'Take Profit')}
@@ -216,10 +210,10 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         {price} <EditButton onClick={() => setModalType('PNL_POSITION')} />
       </DataAtom>
     )
-  }, [t, data, decimals])
+  }, [t, data, data.decimals])
 
   const atom8Tsx = useMemo(() => {
-    const price = data?.stopLossPrice !== '--' ? keepDecimals(data.stopLossPrice, decimals) : '--'
+    const price = data?.stopLossPrice !== '--' ? keepDecimals(data.stopLossPrice, data.decimals) : '--'
     return (
       <DataAtom
         label={t('Trade.MyPosition.StopLoss', 'Stop Loss')}
@@ -229,7 +223,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         {price} <EditButton onClick={() => setModalType('PNL_POSITION')} />
       </DataAtom>
     )
-  }, [t, data, decimals])
+  }, [t, data, data.decimals])
 
   const disabled = useMemo(
     () => !signer || !brokerBound?.broker || !protocolConfig,
@@ -277,7 +271,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
     const toast = window.toast.loading(t('common.pending'))
     if (!signer) return window.toast.error(t('common.failed'))
     const { side, TP, SL } = params
-    const status = await takeProfitOrStopLoss(data.pairAddress, side, TP, SL)
+    const status = await takeProfitOrStopLoss(data.derivative, side, TP, SL)
     if (status) {
       window.toast.success(t('common.success'))
       PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
@@ -291,7 +285,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
     <>
       <div className="web-trade-data-item">
         <ItemHeader
-          symbol={data?.derivative}
+          symbol={data?.name}
           multiple={data?.leverage}
           direction={PositionSideTypes[data?.side] as any}
           buttonText={t('Trade.MyPosition.Close', 'Close')}

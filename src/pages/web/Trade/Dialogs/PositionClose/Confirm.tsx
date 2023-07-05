@@ -95,8 +95,8 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
   useEffect(() => {
     if (visible && tokenSpotPrice && isGT(marginPrice, 0) && isGT(openingParams.closingAmount, 0) && protocolConfig) {
       const exchange = protocolConfig.exchange
-      void calcTFeeFunc(data.pairAddress, state.positionLimits.value)
-      void calcCFeeFunc(data.pairAddress, exchange, tokenSpotPrice, marginPrice, state.positionLimits.value)
+      void calcTFeeFunc(data.derivative, state.positionLimits.value)
+      void calcCFeeFunc(data.derivative, exchange, tokenSpotPrice, marginPrice, state.positionLimits.value)
     }
   }, [visible, marginPrice, tokenSpotPrice, state.positionLimits])
 

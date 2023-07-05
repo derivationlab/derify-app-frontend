@@ -12,7 +12,7 @@ import { DropDownList, DropDownListItem } from '@/components/common/DropDownList
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { ZERO } from '@/config'
-import { usePriceDecimalsSupport, useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
+import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import { MobileContext } from '@/providers/Mobile'
 import {
   getPairAddressList,
@@ -46,15 +46,16 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
+  const derivativeListLoaded = useDerivativeListStore((state) => state.derivativeListLoaded)
   const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
-  const { priceDecimals } = usePriceDecimalsSupport(pairOptions.data)
-  const { data: spotPrices } = useTokenSpotPricesSupport(pairOptions.data, priceDecimals, quoteToken)
+  const { priceDecimals } = usePriceDecimals(pairOptions.data)
+  const { data: spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, quoteToken)
 
   const spotPrice = useMemo(() => {
     if (spotPrices) {
-      const find = spotPrices.find((t) => t.name === quoteToken.symbol)
+      const find = spotPrices.find((t) => t.name === quoteToken.name)
       return find?.price ?? '0'
     }
     return '0'
@@ -68,6 +69,23 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
     }
     return 0
   }, [quoteToken, marginIndicators])
+
+  const currentTK = useMemo(() => {
+    if (!derivativeListLoaded) return <div className="web-trade-symbol-select-curr s">{t('common.Loading')} ...</div>
+    if (derivativeList.length)
+      return (
+        <div className="web-trade-symbol-select-curr" onClick={() => toggleVisible(!visible)}>
+          <h4>{quoteToken.name}</h4>
+          <aside>
+            <Skeleton rowsProps={{ rows: 1 }} animation loading={!spotPrices}>
+              <BalanceShow value={spotPrice} decimal={Number(spotPrice) === 0 ? 2 : quoteToken.decimals} />
+            </Skeleton>
+            <ChangePercent value={indicator} />
+          </aside>
+        </div>
+      )
+    return <div className="web-trade-symbol-select-curr s">{t('Trade.Derivative.NoTrading')}</div>
+  }, [spotPrice, quoteToken, derivativeListLoaded])
 
   const morePairs = useCallback(async () => {
     const { data } = await getDerivativeList(marginToken.address, seqCount)
@@ -148,21 +166,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
       </div>
 
       <DropDownList
-        entry={
-          quoteToken.symbol ? (
-            <div className="web-trade-symbol-select-curr" onClick={() => toggleVisible(!visible)}>
-              <h4>{quoteToken.symbol}</h4>
-              <aside>
-                <Skeleton rowsProps={{ rows: 1 }} animation loading={!spotPrices}>
-                  <BalanceShow value={spotPrice} decimal={Number(spotPrice) === 0 ? 2 : quoteToken.decimals} />
-                </Skeleton>
-                <ChangePercent value={indicator} />
-              </aside>
-            </div>
-          ) : (
-            <div className="web-trade-symbol-select-curr s">{t('Trade.Derivative.NoTrading')}</div>
-          )
-        }
+        entry={currentTK}
         height={588}
         loading={pairOptions.loaded}
         onSearch={setFuzzySearch}
@@ -206,8 +210,8 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
                 )
               }
               onSelect={() => {
-                const { name, token, price_decimals } = o
-                updateQuoteToken({ symbol: name, token, decimals: price_decimals, derivative: o.derivative })
+                const { name, token, derivative, price_decimals: decimals } = o
+                updateQuoteToken({ name, token, decimals, derivative, margin: marginToken.symbol })
               }}
             />
           )

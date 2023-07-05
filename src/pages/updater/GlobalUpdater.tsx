@@ -17,8 +17,7 @@ import {
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useMarginIndicatorsStore } from '@/store/useMarginIndicators'
 import { PubSubEvents } from '@/typings'
-import { sleep } from '@/utils/tools'
-let executeOnce = false
+
 export default function GlobalUpdater(): null {
   const { address } = useAccount()
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
@@ -75,35 +74,25 @@ export default function GlobalUpdater(): null {
 
   // Initialize margin token with protocol config
   useEffect(() => {
-    executeOnce = false
     if (marginToken) void getProtocolConfig(marginToken.address)
   }, [marginToken])
 
-  // Initialize quote token default information
-  useEffect(() => {
-    const func = async () => {
-      await sleep(2000)
-      const tt = false
-      if (!tt) {
-        const { name: symbol, token, price_decimals: decimals, derivative } = derivativeList[0]
-        updateQuoteToken({ token, symbol, decimals, derivative })
-      }
-    }
-    if (!isEmpty(derivativeList) && !executeOnce) {
-      if (!quoteToken.token) {
-        const { name: symbol, token, price_decimals: decimals, derivative } = derivativeList[0]
-        updateQuoteToken({ token, symbol, decimals, derivative })
-      } else {
-        void func()
-      }
-      executeOnce = true
-    }
-  }, [quoteToken, derivativeList])
-
   // Get trading pair data
   useEffect(() => {
-    if (protocolConfig && marginToken) void getDerivativeList(marginToken.address, protocolConfig.factory)
-  }, [marginToken, protocolConfig])
+    if (protocolConfig) void getDerivativeList(marginToken.address, protocolConfig.factory)
+  }, [protocolConfig])
+
+  // Initialize quote token default information
+  useEffect(() => {
+    if (!isEmpty(derivativeList)) {
+      if (quoteToken.margin !== marginToken.symbol) {
+        console.info(quoteToken.margin, marginToken.symbol)
+        console.info(derivativeList[0])
+        const { name, token, price_decimals: decimals, derivative } = derivativeList[0]
+        updateQuoteToken({ name, token, decimals, derivative, margin: marginToken.symbol })
+      }
+    }
+  }, [derivativeList])
 
   return null
 }

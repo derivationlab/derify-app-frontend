@@ -25,7 +25,7 @@ const HeaderData: FC = () => {
   )
 
   const ratio = useMemo(() => {
-    const _ = pcfRatios?.[quoteToken.symbol] ?? 0
+    const _ = pcfRatios?.[quoteToken.name] ?? 0
     return [_, Number(_) === 0 ? 2 : 4]
   }, [pcfRatios, quoteToken])
 

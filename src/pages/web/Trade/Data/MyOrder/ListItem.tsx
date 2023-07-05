@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { MobileContext } from '@/providers/Mobile'
-import { useDerivativeListStore, useMarginTokenStore } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
 import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
@@ -23,14 +23,7 @@ interface Props {
 const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
-
-  const decimals = useMemo(() => {
-    const find = derivativeList.find((d) => d.name === data.derivative)
-    return find?.price_decimals ?? 2
-  }, [derivativeList])
 
   const memoTimestamp = useMemo(() => {
     return dayjs((data?.timestamp ?? 0) * 1000)
@@ -74,10 +67,10 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   const atom3Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.MyOrder.Price', 'Price')} footer={VALUATION_TOKEN_SYMBOL}>
-        <span>{keepDecimals(data?.price, decimals)}</span>
+        <span>{keepDecimals(data?.price, data.decimals)}</span>
       </DataAtom>
     ),
-    [decimals, data?.price, t]
+    [data.decimals, data?.price, t]
   )
   const atom4Tsx = useMemo(
     () => (
@@ -92,7 +85,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
     <>
       <div className="web-trade-data-item">
         <ItemHeader
-          symbol={data?.derivative}
+          symbol={data?.name}
           multiple={data?.leverage}
           direction={PositionSideTypes[data?.side] as any}
           buttonText={t('Trade.MyOrder.Cancel', 'Cancel')}

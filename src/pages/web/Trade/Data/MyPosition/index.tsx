@@ -9,7 +9,7 @@ import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
-import { usePriceDecimalsSupport1, useTokenSpotPricesSupport1 } from '@/hooks/useTokenSpotPrices'
+import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import CloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import { ThemeContext } from '@/providers/Theme'
 import { useBrokerInfoStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
@@ -27,8 +27,8 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForPosition)
-  const { priceDecimals } = usePriceDecimalsSupport1(data)
-  const { data: spotPrices } = useTokenSpotPricesSupport1(data, priceDecimals)
+  const { priceDecimals } = usePriceDecimals(data)
+  const { data: spotPrices } = useTokenSpotPrices(data, priceDecimals)
 
   const closeAllFunc = async () => {
     setModalType('')

@@ -1,3 +1,6 @@
+/**
+ @Deprecated
+ */
 import { getAddress } from '@ethersproject/address'
 
 import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
@@ -12,11 +15,6 @@ interface Props {
   onChange: (item: Record<string, any>, index: number) => void
 }
 
-/**
- * todo:
- * 1. Bottom loading
- * 2. Trading pair search
- */
 const Options: FC<Props> = ({ onChange }) => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)

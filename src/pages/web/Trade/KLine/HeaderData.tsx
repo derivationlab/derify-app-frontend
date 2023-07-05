@@ -14,20 +14,18 @@ import { bnDiv, bnMinus, bnPlus, isLTET, keepDecimals, numeralNumber } from '@/u
 const HeaderData: FC = () => {
   const { t } = useTranslation()
   const { mobile } = useContext(MobileContext)
-
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-
-  const { data: pcfRatios } = usePositionChangeFeeRatios(derAddressList)
+  const { data: pcfRatios } = usePositionChangeFeeRatios(derivativeList)
   const { data: currentOpenInterest, refetch: refetchCurrentOpenInterest } = useCurrentOpenInterest(
     quoteToken.token,
     marginToken.address
   )
 
   const ratio = useMemo(() => {
-    const _ = pcfRatios?.[quoteToken.symbol] ?? 0
+    const _ = pcfRatios?.[quoteToken.name] ?? 0
     return [_, Number(_) === 0 ? 2 : 4]
   }, [pcfRatios, quoteToken])
 

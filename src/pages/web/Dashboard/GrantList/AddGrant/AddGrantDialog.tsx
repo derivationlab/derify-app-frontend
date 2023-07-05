@@ -93,7 +93,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
     onConfirm(state.marginToken, currentTarget?.value, state.amountInp, state.grantDays, state.cliffDays)
   }
 
-  const _searchMarginToken = useCallback(
+  const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
       const { data = [] } = await searchMarginToken(searchKeyword)
       setMarginOptions({ data, loaded: false })
@@ -114,7 +114,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
   useEffect(() => {
     if (searchKeyword.trim()) {
       setMarginOptions({ data: [], loaded: true })
-      void _searchMarginToken(searchKeyword)
+      void fuzzySearchFunc(searchKeyword)
     } else {
       seqCount = 0
       if (marginTokenList.length) {
@@ -135,7 +135,6 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
               seqCount += 1
-              console.info('intersectionObserver=', seqCount)
               void funcAsync()
             }
           })

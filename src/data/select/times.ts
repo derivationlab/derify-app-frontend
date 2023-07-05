@@ -1,5 +1,5 @@
-export const SelectTimesOptions = ['7D', '1M', '3M', '1Y', 'ALL']
-export const SelectTimesValues: Record<string, any> = {
+export const timeLineOptions = ['7D', '1M', '3M', '1Y', 'ALL']
+export const matchTimeLineOptions: Record<string, any> = {
   '7D': 7,
   '1M': 30,
   '3M': 90,

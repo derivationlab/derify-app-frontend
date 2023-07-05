@@ -36,11 +36,9 @@ const MySpace: FC = () => {
   const { address } = useAccount()
   const { mobile } = useContext(MobileContext)
   const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
-
   const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
-
   const { marginProtocol } = useAllMarginProtocol(pagination.data)
   const { data: marginBalances } = useMarginBalances(address, pagination.data)
   const { data: traderVariables } = useTraderVariables(address, marginProtocol)
@@ -93,8 +91,8 @@ const MySpace: FC = () => {
         dataIndex: 'marginBalance',
         width: 250,
         render: (_: string, record: Record<string, any>) => {
-          const param = traderVariables?.[record.symbol] ?? 0
-          const percentage = Number(param) === 0 ? 0 : bnDiv(_, param)
+          const params = traderVariables?.[record.symbol] ?? 0
+          const percentage = Number(params) === 0 ? 0 : bnDiv(_, params)
           return (
             <>
               <BalanceShow value={_} unit={record.symbol} decimal={Number(_) === 0 ? 2 : record.decimals} />

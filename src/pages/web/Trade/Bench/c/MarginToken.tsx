@@ -17,6 +17,11 @@ import { Rec } from '@/typings'
 
 let seqCount = 0
 
+interface MarginOptions {
+  data: Rec[]
+  loaded: boolean
+}
+
 const MarginToken: FC = () => {
   const history = useHistory()
   const bottomRef = useRef<any>()
@@ -25,14 +30,12 @@ const MarginToken: FC = () => {
   const { address } = useAccount()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const { data: marginBalances } = useMarginBalances(address, marginTokenList)
-  const [marginOptions, setMarginOptions] = useState<{ data: Rec[]; loaded: boolean }>({
-    data: [],
-    loaded: false
-  })
+  const updateMarginTokenListStore = useMarginTokenListStore((state) => state.updateMarginTokenListStore)
+  const { data: marginBalances } = useMarginBalances(address, marginTokenList, marginToken)
+  const [marginOptions, setMarginOptions] = useState<MarginOptions>({ data: [], loaded: false })
   const [searchKeyword, setSearchKeyword] = useState<string>('')
 
-  const _searchMarginToken = useCallback(
+  const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
       const { data = [] } = await searchMarginToken(searchKeyword)
       setMarginOptions({ data, loaded: false })
@@ -47,13 +50,14 @@ const MarginToken: FC = () => {
     const combine = [...marginOptions.data, ...filter]
     const deduplication = uniqBy(combine, 'margin_token')
     setMarginOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
+    updateMarginTokenListStore(deduplication)
     if (records.length === 0 || records.length < 30) seqCount = seqCount - 1
   }, [marginOptions.data])
 
   useEffect(() => {
     if (searchKeyword.trim()) {
       setMarginOptions({ data: [], loaded: true })
-      void _searchMarginToken(searchKeyword)
+      void fuzzySearchFunc(searchKeyword)
     } else {
       seqCount = 0
       if (marginTokenList.length && marginBalances) {
@@ -62,6 +66,7 @@ const MarginToken: FC = () => {
           return { ...margin, marginBalance: Number(marginBalance) }
         })
         setMarginOptions({ data: resortMargin(_), loaded: false })
+        updateMarginTokenListStore(marginTokenList)
       }
     }
   }, [searchKeyword, marginBalances, marginTokenList])
@@ -73,7 +78,6 @@ const MarginToken: FC = () => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
               seqCount += 1
-              console.info('intersectionObserver=', seqCount)
               void funcAsync()
             }
           })

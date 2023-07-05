@@ -1,9 +1,54 @@
 .web-system-title {
-  font-size: 32px;font-weight: bold;text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.web-system-pair {
+  .web-select-show-button {
+    min-width: 240px;
+  }
+
+  .web-c-drop-down-list-motion-div {
+    left: -8px;
+    right: -8px;
+    top: 56px;
+  }
+
+  .web-c-drop-down-list-content {
+    li {
+      padding: 0;
+      justify-content: center;
+    }
+  }
 }
 
 .mobile-mode {
   .web-system-title {
     font-size: rem(24);
+  }
+
+  .web-select-show-button {
+    min-width: rem(150);
+  }
+
+  .web-c-drop-down-list {
+    padding-bottom: 0
+  }
+
+  .web-c-drop-down-list-content {
+    li {
+      height: rem(36);
+    }
+  }
+
+  .web-c-drop-down-list-motion-div {
+    left: rem(-8);
+    right: rem(-8);
+    top: rem(30);
+  }
+
+  .web-c-drop-down-list-content-items {
+    height: rem(180);
   }
 }

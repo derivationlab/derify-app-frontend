@@ -13,7 +13,6 @@ import { calcChangeFee, calcTradingFee, checkOpeningLimit } from '@/funcs/helper
 import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
-  useDerivativeListStore,
   useMarginTokenStore,
   usePositionLimitStore,
   useProtocolConfigStore,
@@ -36,23 +35,20 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
 
   const { t } = useTranslation()
 
+  const spotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForTrading)
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
   const positionLimit = usePositionLimitStore((state) => state.positionLimit)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
-  const decimals = useMemo(() => {
-    const find = derivativeList.find((d) => d.name === quoteToken.symbol)
-    return find?.price_decimals ?? 2
-  }, [derivativeList])
-
   const spotPrice = useMemo(() => {
-    return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
-  }, [quoteToken, tokenSpotPrices])
+    if (spotPrices) {
+      const find = spotPrices.find((t: Rec) => t.name === quoteToken.name)
+      return find?.price ?? '0'
+    }
+    return '0'
+  }, [quoteToken, spotPrices])
 
   const _checkOpeningLimit = async (positionLimit: Rec) => {
     const [maximum, isGreater, effective] = checkOpeningLimit(
@@ -109,8 +105,8 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   }, [visible])
 
   useEffect(() => {
-    if (visible && state.positionLimits && protocolConfig && derAddressList && spotPrice) {
-      const derivative = derAddressList[quoteToken.symbol].derivative
+    if (visible && state.positionLimits && protocolConfig && spotPrice) {
+      const derivative = quoteToken.derivative
       void calcTFeeFunc(state.positionLimits.value, data.symbol, spotPrice, derivative)
       void calcCFeeFunc(
         data?.side,
@@ -122,7 +118,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
         protocolConfig.exchange
       )
     }
-  }, [visible, derAddressList, protocolConfig, state.positionLimits, spotPrice, marginPrice])
+  }, [visible, protocolConfig, state.positionLimits, spotPrice, marginPrice])
 
   return (
     <Dialog width="540px" visible={visible} title={t('Trade.COP.OpenPosition', 'Open Position')} onClose={onClose}>
@@ -131,7 +127,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
           <div className="web-trade-dialog-position-info">
             <header className="web-trade-dialog-position-info-header">
               <h4>
-                <strong>{quoteToken.symbol}</strong>
+                <strong>{quoteToken.name}</strong>
                 <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
               </h4>
             </header>
@@ -140,7 +136,11 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 <strong>{t('Trade.COP.MarketPrice', 'Market Price')}</strong>
               ) : (
                 <p>
-                  <BalanceShow value={data?.price} unit="" decimal={Number(data?.price) === 0 ? 2 : decimals} />
+                  <BalanceShow
+                    value={data?.price}
+                    unit=""
+                    decimal={Number(data?.price) === 0 ? 2 : quoteToken.decimals}
+                  />
                   <em>{t('Trade.Bench.LimitPrice', 'Limit Price')}</em>
                 </p>
               )}

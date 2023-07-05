@@ -1,25 +1,34 @@
 import classNames from 'classnames'
+import PubSub from 'pubsub-js'
+import { useSigner } from 'wagmi'
 
-import React, { FC, useMemo, useContext } from 'react'
+import React, { FC, useMemo, useContext, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useClearingParams } from '@/hooks/useClearingParams'
+import { usePositionOperation } from '@/hooks/usePositionOperation'
+import PreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
+import ConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
+import PnLDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
 import { MobileContext } from '@/providers/Mobile'
 import {
+  useBrokerInfoStore,
   useDerivativeListStore,
   useMarginTokenStore,
+  usePositionOperationStore,
   useProtocolConfigStore,
   useTokenSpotPricesStore,
   useTraderVariablesStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { PositionSideTypes } from '@/typings'
+import { PositionSideTypes, PubSubEvents, Rec } from '@/typings'
 import {
   bnDiv,
   bnMinus,
   bnMul,
   isGT,
+  isGTET,
   isLTET,
   keepDecimals,
   nonBigNumberInterception,
@@ -34,57 +43,57 @@ import Reminder from '../c/Reminder'
 
 interface Props {
   data: Record<string, any>
-  onEdit: (data: Record<string, any>) => void
-  onClick: (data: Record<string, any>) => void
 }
 
 const riseOrFall = (data: string): string => (isGT(data, 0) ? '+' : '')
 
-const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
+const MyPositionListItem: FC<Props> = ({ data }) => {
   const { t } = useTranslation()
+  const { data: signer } = useSigner()
   const { mobile } = useContext(MobileContext)
+  const [modalType, setModalType] = useState<string>()
   const variables = useTraderVariablesStore((state) => state.variables)
+  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
+  const openingParams = usePositionOperationStore((state) => state.openingParams)
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
+  const { closePosition, takeProfitOrStopLoss } = usePositionOperation()
 
-  const decimals = useMemo(() => {
-    const find = derivativeList.find((d) => d.name === data.derivative)
-    return find?.price_decimals ?? 2
-  }, [derivativeList])
-
-  const spotPrice = useMemo(() => {
-    if (!tokenSpotPrices) return '0'
-    return tokenSpotPrices[data.derivative] ?? '0'
+  const tokenSpotPrice = useMemo(() => {
+    if (tokenSpotPrices) {
+      const find = tokenSpotPrices.find((t: Rec) => t.derivative === data.name)
+      return find?.price ?? '0'
+    }
+    return '0'
   }, [data, tokenSpotPrices])
 
   const memoMargin = useMemo(() => {
-    return bnDiv(bnMul(data.size, spotPrice), data.leverage)
-  }, [data, spotPrice])
+    return bnDiv(bnMul(data.size, tokenSpotPrice), data.leverage)
+  }, [data, tokenSpotPrice])
 
   const memoVolume = useMemo(() => {
-    return bnMul(data.size, spotPrice)
-  }, [data, spotPrice])
+    return bnMul(data.size, tokenSpotPrice)
+  }, [data, tokenSpotPrice])
 
   const memoPnL = useMemo(() => {
-    if (isGT(spotPrice, 0) && isGT(data.size, 0) && isGT(data.averagePrice, 0)) {
-      const p1 = bnMinus(spotPrice, data.averagePrice)
+    if (isGT(tokenSpotPrice, 0) && isGT(data.size, 0) && isGT(data.averagePrice, 0)) {
+      const p1 = bnMinus(tokenSpotPrice, data.averagePrice)
       const p2 = bnMul(p1, data.size)
       const p3 = data.side === PositionSideTypes.long ? 1 : -1
       return bnMul(p2, p3)
     }
     return '0'
-  }, [data, spotPrice])
+  }, [data, tokenSpotPrice])
 
   const memoRate = useMemo(() => {
     return isGT(memoMargin, 0) ? bnDiv(memoPnL, memoMargin) : '0'
   }, [memoPnL, memoMargin])
 
-  const atom1Tsx = useMemo(
-    () => (
+  const atom1Tsx = useMemo(() => {
+    return (
       <DataAtom
         label={t('Trade.MyPosition.UnrealizedPnL', 'Unrealized PnL')}
         tip={t('Trade.MyPosition.UnrealizedPnLTip')}
@@ -96,9 +105,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
           {numeralNumber(bnMul(memoRate, 100), 2)}%)
         </span>
       </DataAtom>
-    ),
-    [t, memoPnL, memoRate, marginToken]
-  )
+    )
+  }, [t, memoPnL, memoRate, marginToken])
 
   const atom2Tsx = useMemo(() => {
     const size = data?.size ?? 0
@@ -116,18 +124,17 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
     )
   }, [t, data, memoVolume, marginToken])
 
-  const atom3Tsx = useMemo(
-    () => (
+  const atom3Tsx = useMemo(() => {
+    return (
       <DataAtom
         label={t('Trade.MyPosition.AvgPrice', 'Avg. Price')}
         tip={t('Trade.MyPosition.AvgPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>{keepDecimals(data?.averagePrice ?? 0, decimals)}</span>
+        <span>{keepDecimals(data?.averagePrice ?? 0, data.decimals)}</span>
       </DataAtom>
-    ),
-    [t, data?.averagePrice, decimals]
-  )
+    )
+  }, [t, data?.averagePrice, data.decimals])
 
   const atom4Tsx = useMemo(() => {
     let liqPrice
@@ -139,8 +146,8 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
       const p2 = bnMinus(marginBalance, p1)
       const p3 = bnDiv(p2, data.size)
       const p4 = bnMul(p3, mul)
-      const p5 = bnMinus(spotPrice, p4)
-      liqPrice = isLTET(p5, 0) ? '--' : keepDecimals(p5, decimals)
+      const p5 = bnMinus(tokenSpotPrice, p4)
+      liqPrice = isLTET(p5, 0) ? '--' : keepDecimals(p5, data.decimals)
     } else {
       liqPrice = '--'
     }
@@ -154,7 +161,7 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
         <span>{liqPrice}</span>
       </DataAtom>
     )
-  }, [t, data, decimals, clearingParams, variables, spotPrice, variablesLoaded])
+  }, [t, data, data.decimals, clearingParams, variables, tokenSpotPrice, variablesLoaded])
 
   const atom5Tsx = useMemo(() => {
     return (
@@ -193,39 +200,96 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
   }, [t, variables.marginRate, clearingParams.marginMaintenanceRatio])
 
   const atom7Tsx = useMemo(() => {
-    const price = data?.takeProfitPrice !== '--' ? keepDecimals(data.takeProfitPrice, decimals) : '--'
+    const price = data?.takeProfitPrice !== '--' ? keepDecimals(data.takeProfitPrice, data.decimals) : '--'
     return (
       <DataAtom
         label={t('Trade.MyPosition.TakeProfit', 'Take Profit')}
         tip={t('Trade.MyPosition.TakeProfitTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        {price} <EditButton onClick={() => onEdit(data)} />
+        {price} <EditButton onClick={() => setModalType('PNL_POSITION')} />
       </DataAtom>
     )
-  }, [t, data, onEdit, decimals])
+  }, [t, data, data.decimals])
+
   const atom8Tsx = useMemo(() => {
-    const price = data?.stopLossPrice !== '--' ? keepDecimals(data.stopLossPrice, decimals) : '--'
+    const price = data?.stopLossPrice !== '--' ? keepDecimals(data.stopLossPrice, data.decimals) : '--'
     return (
       <DataAtom
         label={t('Trade.MyPosition.StopLoss', 'Stop Loss')}
         tip={t('Trade.MyPosition.StopLossTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        {price} <EditButton onClick={() => onEdit(data)} />
+        {price} <EditButton onClick={() => setModalType('PNL_POSITION')} />
       </DataAtom>
     )
-  }, [t, data, onEdit, decimals])
+  }, [t, data, data.decimals])
+
+  const disabled = useMemo(
+    () => !signer || !brokerBound?.broker || !protocolConfig,
+    [signer, protocolConfig, brokerBound]
+  )
+
+  const isFullSize = useCallback(
+    ({ size = 0 }, amount: string): boolean => {
+      const _ = nonBigNumberInterception(bnMul(tokenSpotPrice, size), marginToken.decimals)
+      return isGTET(amount, _)
+    },
+    [tokenSpotPrice, marginToken]
+  )
+
+  const closePositionFunc = async () => {
+    setModalType('')
+    const toast = window.toast.loading(t('common.pending'))
+    if (!signer || !brokerBound?.broker || !protocolConfig) return window.toast.error(t('common.failed'))
+    const { side, size, token } = data
+    const { broker } = brokerBound
+    const { exchange } = protocolConfig
+    const status = await closePosition(
+      exchange,
+      broker,
+      tokenSpotPrice,
+      token,
+      openingParams.closingAmount,
+      size,
+      side,
+      isFullSize(data, openingParams.closingAmount)
+    )
+    if (status) {
+      window.toast.success(t('common.success'))
+      PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+      PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
+      PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
+    } else {
+      window.toast.error(t('common.failed'))
+    }
+    window.toast.dismiss(toast)
+  }
+
+  const pnlFunc = async (params: Record<string, any>) => {
+    setModalType('')
+    const toast = window.toast.loading(t('common.pending'))
+    if (!signer) return window.toast.error(t('common.failed'))
+    const { side, TP, SL } = params
+    const status = await takeProfitOrStopLoss(data.derivative, side, TP, SL)
+    if (status) {
+      window.toast.success(t('common.success'))
+      PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
+    } else {
+      window.toast.error(t('common.failed'))
+    }
+    window.toast.dismiss(toast)
+  }
 
   return (
     <>
       <div className="web-trade-data-item">
         <ItemHeader
-          symbol={data?.derivative}
+          symbol={data?.name}
           multiple={data?.leverage}
           direction={PositionSideTypes[data?.side] as any}
           buttonText={t('Trade.MyPosition.Close', 'Close')}
-          onButtonClick={() => onClick(data)}
+          onButtonClick={() => setModalType('PREVIEW_POSITION')}
         />
         {mobile ? (
           <>
@@ -267,6 +331,25 @@ const MyPositionListItem: FC<Props> = ({ data, onEdit, onClick }) => {
           </>
         )}
       </div>
+      <PreviewDialog
+        data={data}
+        visible={modalType === 'PREVIEW_POSITION'}
+        onClose={() => setModalType('')}
+        onClick={() => setModalType('CONFIRM_POSITION')}
+      />
+      <ConfirmDialog
+        data={data}
+        visible={modalType === 'CONFIRM_POSITION'}
+        onClose={() => setModalType('')}
+        onClick={closePositionFunc}
+        disabled={disabled}
+      />
+      <PnLDialog
+        data={data}
+        visible={modalType === 'PNL_POSITION'}
+        onClose={() => setModalType('')}
+        onClick={pnlFunc}
+      />
     </>
   )
 }

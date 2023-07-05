@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 
 import { QuoteTokenState } from '@/store/types'
 
-export const quoteToken = { symbol: '', token: '', decimals: 2 }
+export const quoteToken = { name: '', token: '', margin: '', decimals: 2, derivative: '' }
 
 const useQuoteTokenStore = create(
   persist<QuoteTokenState>(
@@ -12,7 +12,7 @@ const useQuoteTokenStore = create(
       updateQuoteToken: (data: typeof quoteToken) => set({ quoteToken: data })
     }),
     {
-      name: 'quoteToken'
+      name: 'Q'
     }
   )
 )

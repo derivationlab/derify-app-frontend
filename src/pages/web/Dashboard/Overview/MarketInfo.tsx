@@ -14,7 +14,7 @@ import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
 import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
 import { useFactoryConfig, useMarginPosVolume, usePairAddrConfig } from '@/hooks/useMarginPosVolume'
-import { usePriceDecimalsSupport, useTokenSpotPricesSupport } from '@/hooks/useTokenSpotPrices'
+import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import { MobileContext } from '@/providers/Mobile'
 import { getMarginTokenList, useMarginTokenListStore } from '@/store'
 import { bnMul, bnPlus } from '@/utils/tools'
@@ -38,17 +38,17 @@ const MarketInfo: FC = () => {
 
   const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const marginAddressList = useMarginTokenListStore((state) => state.marginAddressList)
+  const allMarginTokenList = useMarginTokenListStore((state) => state.allMarginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const { data: boundPools } = useBoundPools(marginAddressList)
-  const { data: tradingVol } = useAllCurrentTrading(marginAddressList)
-  const { data: indicators } = useAllMarginIndicators(marginAddressList)
+  const { data: boundPools } = useBoundPools(allMarginTokenList)
+  const { data: tradingVol } = useAllCurrentTrading(allMarginTokenList)
+  const { data: indicators } = useAllMarginIndicators(allMarginTokenList)
   const { data: allPositions } = useMarginPosVolume()
   const { factoryConfig } = useFactoryConfig(allPositions)
   const { pairAddrConfig } = usePairAddrConfig(factoryConfig, allPositions)
-  const { priceDecimals } = usePriceDecimalsSupport(pairAddrConfig)
-  const { data: spotPrices } = useTokenSpotPricesSupport(pairAddrConfig, priceDecimals)
+  const { priceDecimals } = usePriceDecimals(pairAddrConfig)
+  const { data: spotPrices } = useTokenSpotPrices(pairAddrConfig, priceDecimals)
 
   const mColumns = useMemo(() => {
     return [

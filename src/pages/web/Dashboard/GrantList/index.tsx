@@ -64,7 +64,7 @@ const GrantListInner: FC = () => {
     })
   }, [])
 
-  const _searchMarginToken = useCallback(
+  const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
       const { data = [] } = await searchMarginToken(searchKeyword)
       setMarginOptions({ data, loaded: false })
@@ -125,7 +125,7 @@ const GrantListInner: FC = () => {
   useEffect(() => {
     if (searchKeyword.trim()) {
       setMarginOptions({ data: [], loaded: true })
-      void _searchMarginToken(searchKeyword)
+      void fuzzySearchFunc(searchKeyword)
     } else {
       seqCount = 0
       if (marginTokenList.length) {
@@ -145,7 +145,6 @@ const GrantListInner: FC = () => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
               seqCount += 1
-              console.info('intersectionObserver=', seqCount)
               void funcAsync()
             }
           })

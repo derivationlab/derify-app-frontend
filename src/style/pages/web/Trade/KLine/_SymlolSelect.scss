@@ -473,6 +473,10 @@
     li {
       padding: 0 16px;
 
+      &:hover {
+        color: inherit
+      }
+
       h5 {
         font-size: 16px;
         font-weight: normal;
@@ -558,6 +562,7 @@
     .web-c-drop-down-list-content {
       border-radius: rem(28);
     }
+
     .web-c-drop-down-list-motion-div {
       left: rem(-8);
       right: rem(-8);
@@ -615,6 +620,7 @@
         }
       }
     }
+
     .open {
       .web-trade-symbol-select-curr {
         h4 {

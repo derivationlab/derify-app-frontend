@@ -1,30 +1,53 @@
 import { useQuery } from '@tanstack/react-query'
+import { isArray } from 'lodash'
 
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import { marginTokenList } from '@/store'
+import { Rec } from '@/typings'
 import { multicallV2 } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
-export const useMarginBalances = (trader?: string, list?: (typeof marginTokenList)[]) => {
+export const useMarginBalances = (trader?: string, list?: (typeof marginTokenList)[], marginToken?: Rec) => {
   let output = Object.create(null)
   const { data, refetch, isLoading } = useQuery(
     ['useMarginBalances'],
     async () => {
-      if (trader && list && list.length) {
-        const calls = list.map((token) => ({
+      if (trader && isArray(list)) {
+        const find = list.find((l) => l.symbol === marginToken?.symbol)
+        let calls = list.map((l) => ({
           name: 'getAllMarginBalances',
+          symbol: l.symbol,
           address: contracts.derifyProtocol.contractAddress,
           params: [
             [
               {
                 traders: [trader],
                 balances: [],
-                marginToken: token.margin_token
+                marginToken: l.margin_token
               }
             ]
           ]
         }))
+        if (marginToken && !find) {
+          calls = [
+            ...calls,
+            {
+              name: 'getAllMarginBalances',
+              symbol: marginToken.symbol,
+              address: contracts.derifyProtocol.contractAddress,
+              params: [
+                [
+                  {
+                    traders: [trader],
+                    balances: [],
+                    marginToken: marginToken.address
+                  }
+                ]
+              ]
+            }
+          ]
+        }
 
         const response = await multicallV2(derifyProtocolAbi, calls)
 
@@ -34,7 +57,12 @@ export const useMarginBalances = (trader?: string, list?: (typeof marginTokenLis
               const [{ balances }] = data[0]
               output = {
                 ...output,
-                [list[index].symbol]: formatUnits(String(balances), 8)
+                [calls[index].symbol]: formatUnits(String(balances), 8)
+              }
+            } else {
+              output = {
+                ...output,
+                [calls[index].symbol]: '0'
               }
             }
           })

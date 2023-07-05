@@ -1,117 +1,38 @@
 import { isEmpty } from 'lodash'
 import PubSub from 'pubsub-js'
-import { useSigner, useAccount } from 'wagmi'
+import { useAccount } from 'wagmi'
 
-import React, { FC, useState, useMemo, useContext, useCallback } from 'react'
+import React, { FC, useState, useMemo, useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
-import PositionClosePreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
-import PositionCloseConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
-import PositionCloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
-import TakeProfitAndStopLossDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
+import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
+import CloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import { ThemeContext } from '@/providers/Theme'
-import {
-  useBrokerInfoStore,
-  useQuoteTokenStore,
-  useTokenSpotPricesStore,
-  useProtocolConfigStore,
-  useDerivativeListStore,
-  usePositionOperationStore,
-  useMarginTokenStore
-} from '@/store'
-import { MarginTokenState, QuoteTokenState } from '@/store/types'
+import { useBrokerInfoStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
 import { PubSubEvents, Rec } from '@/typings'
-import { bnMul, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
 import NoRecord from '../c/NoRecord'
 import ListItem from './ListItem'
 
 const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const { t } = useTranslation()
-  const { address } = useAccount()
-  const { data: signer } = useSigner()
   const { theme } = useContext(ThemeContext)
-  const { closePosition, closeAllPositions, takeProfitOrStopLoss } = usePositionOperation()
-  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
-  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const { address } = useAccount()
+  const { closeAllPositions } = usePositionOperation()
+  const [modalType, setModalType] = useState<string>()
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
-  const openingParams = usePositionOperationStore((state) => state.openingParams)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const derAddressList = useDerivativeListStore((state) => state.derAddressList)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
-  const [targetPosOrd, setTargetPosOrd] = useState<Rec>({})
-  const [dialogStatus, setDialogStatus] = useState<string>('')
+  const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForPosition)
+  const { priceDecimals } = usePriceDecimals(data)
+  const { data: spotPrices } = useTokenSpotPrices(data, priceDecimals)
 
-  const spotPrice = useMemo(() => {
-    return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
-  }, [quoteToken, tokenSpotPrices])
-
-  const isFullSize = useCallback(
-    ({ size = 0 }, amount: string): boolean => {
-      const _ = nonBigNumberInterception(bnMul(spotPrice, size), marginToken.decimals)
-      console.info(amount, _)
-      return isGTET(amount, _)
-    },
-    [spotPrice, marginToken]
-  )
-
-  const clearing = () => setDialogStatus('')
-
-  const changePosition = (pos: Record<string, any>) => {
-    setTargetPosOrd(pos)
-    setDialogStatus('edit-position')
-  }
-
-  const previewPosition = (pos: Record<string, any>) => {
-    setTargetPosOrd(pos)
-    setDialogStatus('previewPosition-close-position')
-  }
-
-  const _closePosition = async () => {
+  const closeAllFunc = async () => {
+    setModalType('')
     const toast = window.toast.loading(t('common.pending', 'pending...'))
-
-    clearing()
-
-    if (signer && brokerBound?.broker && protocolConfig) {
-      const { side, size, token } = targetPosOrd
-      const { broker } = brokerBound
-      const { exchange } = protocolConfig
-      // console.info(targetPosOrd, openingParams.closingAmount)
-
-      const status = await closePosition(
-        exchange,
-        broker,
-        spotPrice,
-        token,
-        openingParams.closingAmount,
-        size,
-        side,
-        isFullSize(targetPosOrd, openingParams.closingAmount)
-      )
-
-      if (status) {
-        window.toast.success(t('common.success', 'success'))
-
-        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
-        PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
-        PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
-      } else {
-        window.toast.error(t('common.failed', 'failed'))
-      }
-    }
-
-    window.toast.dismiss(toast)
-  }
-
-  const _closeAllPositions = async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
-
-    clearing()
-
     if (brokerBound?.broker && protocolConfig) {
       const status = await closeAllPositions(protocolConfig.exchange, brokerBound.broker)
 
@@ -128,28 +49,6 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
     window.toast.dismiss(toast)
   }
 
-  const _takeProfitOrStopLoss = async (params: Record<string, any>) => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
-
-    clearing()
-
-    if (signer && derAddressList) {
-      const { derivative, side, TP, SL } = params
-
-      const status = await takeProfitOrStopLoss(derAddressList[derivative].derivative, side, TP, SL)
-
-      if (status) {
-        window.toast.success(t('common.success', 'success'))
-
-        PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
-      } else {
-        window.toast.error(t('common.failed', 'failed'))
-      }
-    }
-
-    window.toast.dismiss(toast)
-  }
-
   const positions = useMemo(() => {
     if (!address) return <NoRecord show />
     if (loaded) return <Spinner absolute small />
@@ -158,10 +57,10 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         <>
           <div className="web-trade-data-list">
             {data.map((d: Rec, i: number) => (
-              <ListItem key={`my-positions-${i}`} data={d} onEdit={changePosition} onClick={previewPosition} />
+              <ListItem key={`my-positions-${i}`} data={d} />
             ))}
           </div>
-          <Button onClick={() => setDialogStatus('close-all-position')}>
+          <Button onClick={() => setModalType('CLOSE_ALL_POSITIONS')}>
             {t('Trade.MyPosition.CloseAll', 'CLOSE ALL')}
             <Image src={`icon/close-white${theme === 'Dark' ? '-dark' : ''}.svg`} />
           </Button>
@@ -171,42 +70,19 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
     return <NoRecord show />
   }, [theme, address, loaded, data])
 
+  useEffect(() => {
+    if (spotPrices) updateSpotPrices(spotPrices)
+  }, [spotPrices])
+
   return (
     <>
       <div className="web-trade-data-wrap">{positions}</div>
-
-      {dialogStatus === 'previewPosition-close-position' && (
-        <PositionClosePreviewDialog
-          data={targetPosOrd}
-          visible={dialogStatus === 'previewPosition-close-position'}
-          onClose={clearing}
-          onClick={() => setDialogStatus('confirm-close-position')}
-        />
-      )}
-      {dialogStatus === 'confirm-close-position' && (
-        <PositionCloseConfirmDialog
-          data={targetPosOrd}
-          visible={dialogStatus === 'confirm-close-position'}
-          onClose={clearing}
-          onClick={_closePosition}
-        />
-      )}
-      {dialogStatus === 'edit-position' && (
-        <TakeProfitAndStopLossDialog
-          data={targetPosOrd}
-          visible={dialogStatus === 'edit-position'}
-          onClose={clearing}
-          onClick={_takeProfitOrStopLoss}
-        />
-      )}
-      {dialogStatus === 'close-all-position' && (
-        <PositionCloseAllDialog
-          visible={dialogStatus === 'close-all-position'}
-          onClose={clearing}
-          onClick={_closeAllPositions}
-          loading={!protocolConfig}
-        />
-      )}
+      <CloseAllDialog
+        visible={modalType === 'CLOSE_ALL_POSITIONS'}
+        onClose={() => setModalType('')}
+        onClick={closeAllFunc}
+        disabled={!protocolConfig || !brokerBound}
+      />
     </>
   )
 }

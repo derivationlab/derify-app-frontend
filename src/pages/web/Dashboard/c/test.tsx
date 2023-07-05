@@ -34,12 +34,12 @@ const MarketInfo: FC = () => {
 
   const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const marginAddressList = useMarginTokenListStore((state) => state.marginAddressList)
+  const allMarginTokenList = useMarginTokenListStore((state) => state.allMarginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
 
-  const { data: boundPools } = useBoundPools(marginAddressList)
-  const { data: tradingVol } = useAllCurrentTrading(marginAddressList)
-  const { data: indicators } = useAllMarginIndicators(marginAddressList)
+  const { data: boundPools } = useBoundPools(allMarginTokenList)
+  const { data: tradingVol } = useAllCurrentTrading(allMarginTokenList)
+  const { data: indicators } = useAllMarginIndicators(allMarginTokenList)
 
   const mColumns = useMemo(() => {
     return [

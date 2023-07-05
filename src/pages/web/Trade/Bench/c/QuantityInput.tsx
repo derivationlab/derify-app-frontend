@@ -16,7 +16,7 @@ import {
   useTokenSpotPricesStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
-import { PositionOrderTypes, PubSubEvents } from '@/typings'
+import { PositionOrderTypes, PubSubEvents, Rec } from '@/typings'
 import { isGT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 import Row from './Row'
@@ -38,15 +38,19 @@ const QuantityInput: FC<Props> = ({ type, value, onChange }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const [disposable, setDisposable] = useState<DisposableAm>(initDisposableAm)
+  const spotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForTrading)
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
 
   const spotPrice = useMemo(() => {
-    return tokenSpotPrices?.[quoteToken.symbol] ?? '0'
-  }, [quoteToken, tokenSpotPrices])
+    if (spotPrices) {
+      const find = spotPrices.find((t: Rec) => t.name === quoteToken.name)
+      return find?.price ?? '0'
+    }
+    return '0'
+  }, [quoteToken, spotPrices])
 
   const realPrice = useMemo(() => {
     return openingParams.openingType === PositionOrderTypes.Market ? spotPrice : openingParams.openingPrice

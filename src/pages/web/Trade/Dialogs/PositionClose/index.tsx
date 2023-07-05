@@ -11,12 +11,11 @@ import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import {
   usePositionOperationStore,
   useMarginTokenStore,
-  useTokenSpotPricesStore,
   useMarginIndicatorsStore,
-  useDerivativeListStore
+  useTokenSpotPricesStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { PositionSideTypes } from '@/typings'
+import { PositionSideTypes, Rec } from '@/typings'
 import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 import QuantityInput from './QuantityInput'
@@ -32,43 +31,42 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
 
-  const decimals = useMemo(() => {
-    const find = derivativeList.find((d) => d.name === data.derivative)
-    return find?.price_decimals ?? 2
-  }, [derivativeList])
-
-  const spotPrice = useMemo(() => {
-    return tokenSpotPrices?.[data?.derivative] ?? '0'
+  const tokenSpotPrice = useMemo(() => {
+    if (tokenSpotPrices) {
+      const find = tokenSpotPrices.find((t: Rec) => t.derivative === data.derivative)
+      return find?.price ?? '0'
+    }
+    return '0'
   }, [data, tokenSpotPrices])
 
-  const memoVolume = useMemo(() => {
-    return nonBigNumberInterception(bnMul(spotPrice, data?.size), marginToken.decimals)
-  }, [data, spotPrice, marginToken])
+  const positionVolume = useMemo(
+    () => nonBigNumberInterception(bnMul(tokenSpotPrice, data.size), data.decimals),
+    [data, tokenSpotPrice]
+  )
 
-  const memoChangeRate = useMemo(() => {
+  const priceChangeRate = useMemo(() => {
     if (marginIndicators) {
-      const findKey = Object.keys(marginIndicators).find((m) => getAddress(m) === getAddress(data?.token))
+      const findKey = Object.keys(marginIndicators).find((m) => getAddress(m) === getAddress(data.token))
       const value = findKey ? marginIndicators[findKey]?.price_change_rate ?? 0 : 0
       return bnMul(value, 100)
     }
     return '0'
   }, [data, marginIndicators])
 
+  const closeableAmount = useMemo(
+    () => (Number(data.size) < 1 ? nonBigNumberInterception(data.size, 8) : numeralNumber(data.size, 2)),
+    [data]
+  )
+
   useEffect(() => {
     if (!visible) updateOpeningParams({ closingAmount: '0' })
-    updateOpeningParams({ closingAmount: memoVolume })
-  }, [visible, memoVolume])
-
-  const closeableAmount = useMemo(() => {
-    const size = data?.size ?? 0
-    return Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)
-  }, [data?.size])
+    updateOpeningParams({ closingAmount: positionVolume })
+  }, [visible, positionVolume])
 
   return (
     <>
@@ -83,30 +81,37 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
             <div className="web-trade-dialog-position-info">
               <header className="web-trade-dialog-position-info-header">
                 <h4>
-                  <strong>{data?.derivative}</strong>
-                  <MultipleStatus multiple={data?.leverage} direction={PositionSideTypes[data?.side] as any} />
+                  <strong>{data.derivative}</strong>
+                  <MultipleStatus multiple={data.leverage} direction={PositionSideTypes[data.side] as any} />
                 </h4>
               </header>
               <section className="web-trade-dialog-position-info-data">
-                <BalanceShow value={spotPrice} unit="" decimal={Number(spotPrice) === 0 ? 2 : decimals} />
-                <span className={isGTET(memoChangeRate, 0) ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
+                <BalanceShow
+                  value={tokenSpotPrice}
+                  unit=""
+                  decimal={Number(tokenSpotPrice) === 0 ? 2 : data.decimals}
+                />
+                <span className={isGTET(priceChangeRate, 0) ? 'buy' : 'sell'}>{keepDecimals(priceChangeRate, 2)}%</span>
               </section>
               <section className="web-trade-dialog-position-info-count">
                 <p>
                   {t('Trade.ClosePosition.PositionAveragePrice', 'Position Average Price')} :{' '}
-                  <em>{keepDecimals(data?.averagePrice ?? 0, Number(data?.averagePrice ?? 0) === 0 ? 2 : decimals)}</em>{' '}
+                  <em>
+                    {keepDecimals(data.averagePrice ?? 0, Number(data.averagePrice ?? 0) === 0 ? 2 : data.decimals)}
+                  </em>{' '}
                   {VALUATION_TOKEN_SYMBOL}
                 </p>
                 <p>
                   {/*const output = Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)*/}
                   {t('Trade.ClosePosition.PositionCloseable', 'Position Closeable')} : <em>{closeableAmount}</em>{' '}
-                  {data?.quoteToken} / <em>{numeralNumber(memoVolume, marginToken.decimals)}</em> {marginToken.symbol}
+                  {data.quoteToken} / <em>{numeralNumber(positionVolume, marginToken.decimals)}</em>{' '}
+                  {marginToken.symbol}
                 </p>
               </section>
             </div>
             <QuantityInput
               value={openingParams.closingAmount}
-              maxSwap={memoVolume}
+              maxSwap={positionVolume}
               marginToken={marginToken.symbol}
               onChange={(v) => updateOpeningParams({ closingAmount: v as any })}
             />

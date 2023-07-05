@@ -86,8 +86,6 @@ export default function GlobalUpdater(): null {
   useEffect(() => {
     if (!isEmpty(derivativeList)) {
       if (quoteToken.margin !== marginToken.symbol) {
-        console.info(quoteToken.margin, marginToken.symbol)
-        console.info(derivativeList[0])
         const { name, token, price_decimals: decimals, derivative } = derivativeList[0]
         updateQuoteToken({ name, token, decimals, derivative, margin: marginToken.symbol })
       }

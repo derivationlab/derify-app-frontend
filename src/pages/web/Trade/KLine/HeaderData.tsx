@@ -1,11 +1,11 @@
-import React, { FC, useContext, useMemo, useEffect } from 'react'
+import React, { FC, useMemo, useEffect } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useCurrentOpenInterest } from '@/hooks/useCurrentOpenInterest'
 import { usePositionChangeFeeRatios } from '@/hooks/usePositionChangeFeeRatios'
-import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useQuoteTokenStore, useMarginIndicatorsStore } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useDerivativeListStore } from '@/store/useDerivativeList'
@@ -13,7 +13,7 @@ import { bnDiv, bnMinus, bnPlus, isLTET, keepDecimals, numeralNumber } from '@/u
 
 const HeaderData: FC = () => {
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
+
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
@@ -64,7 +64,7 @@ const HeaderData: FC = () => {
           {t('Trade.kline.NetPositionRate', 'Net Position Rate')}
           <QuestionPopover size="mini" text={t('Trade.kline.NetPositionRateTip')} />
         </h3>
-        {!mobile ? (
+        {!isMobile ? (
           <strong>
             <BalanceShow value={interest[1]} percent />
             (
@@ -84,7 +84,7 @@ const HeaderData: FC = () => {
           </>
         )}
       </section>
-      {!mobile && <hr />}
+      {!isMobile && <hr />}
       <section>
         <h3>
           {t('Trade.kline.PCFRate', 'PCF Rate')}
@@ -94,13 +94,13 @@ const HeaderData: FC = () => {
           <BalanceShow value={ratio[0]} decimal={ratio[1]} percent />
         </strong>
       </section>
-      {!mobile && <hr />}
+      {!isMobile && <hr />}
       <section>
         <h3>
           {t('Trade.kline.PositionMiningAPY', 'Position Mining APR.')}
           <QuestionPopover size="mini" text={t('Trade.kline.PositionMiningAPYTip')} />
         </h3>
-        {mobile ? (
+        {isMobile ? (
           <>
             <aside>
               <strong>

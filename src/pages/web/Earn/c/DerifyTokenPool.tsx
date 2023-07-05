@@ -1,7 +1,8 @@
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
 
-import React, { FC, useState, useContext, useCallback } from 'react'
+import React, { FC, useState, useCallback } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
@@ -15,7 +16,6 @@ import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { usePoolStaking } from '@/hooks/usePoolStaking'
 import { useStakingDRF } from '@/hooks/useStakingDRF'
 import { useTraderEDRFBalance } from '@/hooks/useTraderEDRFBalance'
-import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PubSubEvents } from '@/typings'
@@ -28,7 +28,6 @@ const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
@@ -130,7 +129,7 @@ const DerifyTokenPool: FC = () => {
               />
             </main>
             <aside>
-              <Button size={mobile ? 'mini' : 'default'} disabled={!isGT(edrfBalance ?? 0, 0)} onClick={withdrawFunc}>
+              <Button size={isMobile ? 'mini' : 'default'} disabled={!isGT(edrfBalance ?? 0, 0)} onClick={withdrawFunc}>
                 {t('Earn.DerifyTokenPool.ClaimAll', 'Claim All')}
               </Button>
             </aside>
@@ -146,10 +145,10 @@ const DerifyTokenPool: FC = () => {
               </p>
             </main>
             <aside>
-              <Button size={mobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('stake')}>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('stake')}>
                 {t('Earn.DerifyTokenPool.Stake', 'Stake')}
               </Button>
-              <Button size={mobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('redeem')} outline>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('redeem')} outline>
                 {t('Earn.DerifyTokenPool.Unstake', 'Unstake')}
               </Button>
             </aside>

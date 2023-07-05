@@ -1,8 +1,8 @@
 import Dialog from 'rc-dialog'
 
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
+import { isMobile } from 'react-device-detect'
 
-import { MobileContext } from '@/providers/Mobile'
 import { px2rem } from '@/utils/tools'
 
 interface Props {
@@ -15,13 +15,12 @@ interface Props {
 
 const DialogWrap: FC<Props> = ({ title, width, visible, closable, onClose, children }) => {
   const closeIcon = <span />
-  const { mobile } = useContext(MobileContext)
 
   return (
     <Dialog
       closable={closable}
       destroyOnClose={true}
-      width={mobile ? px2rem(343) : width}
+      width={isMobile ? px2rem(343) : width}
       closeIcon={closeIcon}
       animation="zoom"
       maskAnimation="fade"

@@ -3,7 +3,8 @@ import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useBlockNumber } from 'wagmi'
 
-import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
+import React, { FC, useMemo, useEffect, useReducer } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { getBuyBackPlans } from '@/api'
@@ -12,7 +13,6 @@ import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
-import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { Rec } from '@/typings'
 import { isGT, isGTET, isLT, nonBigNumberInterception } from '@/utils/tools'
@@ -23,7 +23,6 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
   const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber()
-  const { mobile } = useContext(MobileContext)
 
   const { data: tokenPrice } = usePlatformTokenPrice()
 
@@ -169,8 +168,8 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         rowKey="symbol"
         data={state.records.records}
         // @ts-ignore
-        columns={mobile ? mColumns : wColumns}
-        className={classNames('web-broker-table', { 'web-space-table': mobile })}
+        columns={isMobile ? mColumns : wColumns}
+        className={classNames('web-broker-table', { 'web-space-table': isMobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />

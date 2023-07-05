@@ -1,7 +1,8 @@
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
 
-import React, { FC, useMemo, useState, useContext, useCallback } from 'react'
+import React, { FC, useMemo, useState, useCallback } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
@@ -13,7 +14,6 @@ import { useBankBond } from '@/hooks/useBankBond'
 import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { usePoolEarning } from '@/hooks/usePoolEarning'
 import { useTraderBondBalance } from '@/hooks/useTraderBondBalance'
-import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 import { isGT, keepDecimals } from '@/utils/tools'
@@ -26,7 +26,6 @@ const MarginTokenPool: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
@@ -180,10 +179,10 @@ const MarginTokenPool: FC = () => {
               </p>
             </main>
             <aside>
-              <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
+              <Button size={isMobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
                 {t('Earn.bDRFPool.ClaimAll', 'Claim All')}
               </Button>
-              <Button size={mobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('exchange')} outline>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('exchange')} outline>
                 {t('Earn.bDRFPool.Exchange', 'Exchange')}
               </Button>
             </aside>
@@ -203,10 +202,10 @@ const MarginTokenPool: FC = () => {
               </p>
             </main>
             <aside>
-              <Button size={mobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('deposit')}>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('deposit')}>
                 {t('Earn.bDRFPool.Deposit', 'Deposit')}
               </Button>
-              <Button size={mobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('withdraw')} outline>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('withdraw')} outline>
                 {t('Earn.bDRFPool.Withdraw', 'Withdraw')}
               </Button>
             </aside>

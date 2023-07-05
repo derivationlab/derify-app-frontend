@@ -3,14 +3,14 @@ import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
+import React, { FC, useMemo, useEffect, useReducer } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { getBrokerTransactions } from '@/api'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { EXPLORER_SCAN_URL } from '@/config'
-import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -30,13 +30,12 @@ interface DataProps {
 }
 
 const RowTransaction: FC<{ data: Record<string, any> }> = ({ data }) => {
-  const { mobile } = useContext(MobileContext)
   return (
     <div className="web-broker-table-transaction-tx">
       <a href={`${EXPLORER_SCAN_URL}/tx/${data.tx}`} target="_blank" title={data.tx}>
-        {mobile ? calcShortHash(data.tx, 4, 4) : calcShortHash(data.tx)}
+        {isMobile ? calcShortHash(data.tx, 4, 4) : calcShortHash(data.tx)}
       </a>
-      {mobile ? (
+      {isMobile ? (
         <time>{calcTimeStr(data.event_time)}</time>
       ) : (
         <a href={`${EXPLORER_SCAN_URL}/address/${data.user}`} target="_blank" title={data.user}>
@@ -85,7 +84,7 @@ const judgeUpsAndDowns = (data: string): string => (Number(data) > 0 ? '+' : '')
 const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
-  // const { mobile } = useContext(MobileContext)
+  //
   const up = useMemo(() => Number(data.pnl_margin_token) > 0, [data.pnl_margin_token])
   const down = useMemo(() => Number(data.pnl_margin_token) < 0, [data.pnl_margin_token])
   const pnl_margin_token = keepDecimals(data.pnl_margin_token, marginToken.decimals)
@@ -105,7 +104,6 @@ const Transaction: FC = () => {
 
   const { t } = useTranslation()
   const { address } = useAccount()
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
@@ -136,19 +134,19 @@ const Transaction: FC = () => {
     {
       title: t('Broker.Transaction.Transaction', 'Transaction'),
       dataIndex: '',
-      width: mobile ? '' : 420,
+      width: isMobile ? '' : 420,
       render: (_: string, data: DataProps) => <RowTransaction data={data} />
     },
     {
       title: t('Broker.Transaction.Type', 'Type'),
       dataIndex: '',
-      width: mobile ? 90 : 268,
+      width: isMobile ? 90 : 268,
       render: (_: string, data: DataProps) => <RowType data={data} />
     },
     {
       title: t('Broker.Transaction.RealizedPnL', 'Realized PnL'),
       dataIndex: '',
-      width: mobile ? 110 : 268,
+      width: isMobile ? 110 : 268,
       render: (_: string, data: DataProps) => <RowRealizedPnl data={data} />
     }
   ]
@@ -170,7 +168,7 @@ const Transaction: FC = () => {
     <>
       <Table
         className="web-broker-table"
-        columns={mobile ? mobileColumns : webColumns}
+        columns={isMobile ? mobileColumns : webColumns}
         emptyText={memoEmptyText}
         data={state.records.records}
         rowKey="id"

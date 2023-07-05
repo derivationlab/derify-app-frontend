@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 
-import React, { FC, useMemo, useContext } from 'react'
+import React, { FC, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
@@ -22,7 +22,7 @@ interface Props {
 
 const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
+
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const memoTimestamp = useMemo(() => {
@@ -91,7 +91,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
           buttonText={t('Trade.MyOrder.Cancel', 'Cancel')}
           onButtonClick={onClick}
         />
-        {mobile ? (
+        {isMobile ? (
           <>
             <AtomWrap>
               {atom1Tsx}

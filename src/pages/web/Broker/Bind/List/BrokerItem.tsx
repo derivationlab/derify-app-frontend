@@ -1,10 +1,10 @@
-import React, { FC, useState, useRef, useMemo, useEffect, useContext, BaseSyntheticEvent } from 'react'
+import React, { FC, useState, useRef, useMemo, useEffect, BaseSyntheticEvent } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
-import { MobileContext } from '@/providers/Mobile'
 
 interface Props {
   data: Record<string, any>
@@ -16,9 +16,7 @@ const BrokerItem: FC<Props> = ({ data, operating, onClick }) => {
   const { t } = useTranslation()
   const ref = useRef<HTMLElement | null>(null)
 
-  const { mobile } = useContext(MobileContext)
-
-  const defaultHeight = mobile ? 96 : 108
+  const defaultHeight = isMobile ? 96 : 108
   const [articleHeight, setArticleHeight] = useState<number>(defaultHeight)
   const [realHeight, setRealHeight] = useState<number>(0)
 
@@ -39,7 +37,7 @@ const BrokerItem: FC<Props> = ({ data, operating, onClick }) => {
   }
 
   return (
-    <div className="web-broker-list-item" onClick={mobile ? () => onClick() : () => null}>
+    <div className="web-broker-list-item" onClick={isMobile ? () => onClick() : () => null}>
       <div className="web-broker-list-item-ico">
         <Image src={data?.logo || 'icon/normal-ico.svg'} cover />
       </div>
@@ -74,7 +72,7 @@ const BrokerItem: FC<Props> = ({ data, operating, onClick }) => {
             </aside>
           ))}
       </div>
-      {mobile ? (
+      {isMobile ? (
         <div className="web-broker-list-item-operate" />
       ) : (
         <div className="web-broker-list-item-operate">

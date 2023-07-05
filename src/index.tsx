@@ -4,24 +4,21 @@ import { BrowserRouter } from 'react-router-dom'
 
 import App from '@/App'
 import '@/i18n'
-import MobileProvider from '@/providers/Mobile'
 import QueryClientProvider from '@/providers/QueryClient'
 import ThemeProvider from '@/providers/Theme'
 import WagmiClientProvider from '@/providers/WagmiClient'
 
 ReactDOM.render(
   <React.StrictMode>
-    <MobileProvider>
-      <BrowserRouter>
-        <QueryClientProvider>
-          <ThemeProvider>
-            <WagmiClientProvider>
-              <App />
-            </WagmiClientProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </BrowserRouter>
-    </MobileProvider>
+    <BrowserRouter>
+      <QueryClientProvider>
+        <ThemeProvider>
+          <WagmiClientProvider>
+            <App />
+          </WagmiClientProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 )

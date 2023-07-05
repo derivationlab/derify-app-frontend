@@ -1,7 +1,8 @@
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
 
-import React, { FC, useContext, useEffect, useCallback } from 'react'
+import React, { FC, useEffect, useCallback } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -16,7 +17,6 @@ import { useGrantRatios } from '@/hooks/useGrantRatios'
 import { useGrantTotalAmount } from '@/hooks/useGrantTotalAmount'
 import { useGrantTotalCount } from '@/hooks/useGrantTotalCount'
 import { useMiningOperation } from '@/hooks/useMiningOperation'
-import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PubSubEvents } from '@/typings'
@@ -26,7 +26,6 @@ const Competition: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
@@ -93,7 +92,7 @@ const Competition: FC = () => {
           </main>
           <aside>
             <Button
-              size={mobile ? 'mini' : 'default'}
+              size={isMobile ? 'mini' : 'default'}
               disabled={isET(rankReward?.drfBalance ?? 0, 0)}
               onClick={withdrawFunc}
             >
@@ -112,7 +111,7 @@ const Competition: FC = () => {
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken.symbol}/trade`}>
+            <Button size={isMobile ? 'mini' : 'default'} to={`/${marginToken.symbol}/trade`}>
               {t('Earn.Trading.Trade')}
             </Button>
           </aside>

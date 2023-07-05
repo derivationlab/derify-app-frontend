@@ -1,13 +1,13 @@
 import classNames from 'classnames'
 
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useLocation } from 'react-router-dom'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 import { WEBSITE_URL } from '@/config'
-import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore } from '@/store'
 
 import MHeader from './MHeader'
@@ -17,11 +17,9 @@ const Header: FC = () => {
   const { t } = useTranslation()
   const { pathname } = useLocation()
 
-  const { mobile } = useContext(MobileContext)
-
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
-  if (mobile) return <MHeader />
+  if (isMobile) return <MHeader />
 
   return (
     <>

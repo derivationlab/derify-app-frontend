@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { isArray, uniqBy } from 'lodash'
 
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { getDerivativeList, getHistoryPositionsDAT } from '@/api'
@@ -11,7 +12,6 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { ZERO } from '@/config'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentPositions } from '@/hooks/useCurrentPositions'
-import { MobileContext } from '@/providers/Mobile'
 import { ThemeContext } from '@/providers/Theme'
 import { getPairAddressList, useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -41,7 +41,7 @@ const PositionVolume: FC = () => {
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
+
   const { theme } = useContext(ThemeContext)
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const [positionsData, setPositionsData] = useState<Record<string, any>[]>([])
@@ -208,7 +208,7 @@ const PositionVolume: FC = () => {
                 <span>{derivativeSel?.name}</span>
               </div>
             }
-            height={mobile ? 244 : 284}
+            height={isMobile ? 244 : 284}
             loading={pairOptions.loaded}
             showSearch={false}
           >

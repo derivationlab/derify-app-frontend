@@ -2,7 +2,8 @@ import classNames from 'classnames'
 import { getAddress } from 'ethers/lib/utils'
 import { debounce, uniqBy } from 'lodash'
 
-import React, { useState, useRef, useContext, useMemo, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useClickAway, useToggle } from 'react-use'
 
@@ -13,7 +14,6 @@ import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { ZERO } from '@/config'
 import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
-import { MobileContext } from '@/providers/Mobile'
 import {
   getPairAddressList,
   useDerivativeListStore,
@@ -38,7 +38,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
+
   const [visible, toggleVisible] = useToggle(false)
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const [fuzzySearch, setFuzzySearch] = useState<string>('')
@@ -154,7 +154,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   return (
     <div className="web-trade-symbol-select">
       <div className={classNames('web-trade-symbol-select', { show: visible })} ref={ref}>
-        {mobile && (
+        {isMobile && (
           <div
             className="web-trade-symbol-select-toggle"
             onClick={() => {
@@ -189,7 +189,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
               id={_id}
               ref={_ref}
               content={
-                mobile ? (
+                isMobile ? (
                   <>
                     <aside>
                       <h5>{o.name}</h5>

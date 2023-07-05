@@ -1,6 +1,7 @@
 import { useAccount, useSigner } from 'wagmi'
 
-import React, { FC, useCallback, useContext, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -13,7 +14,6 @@ import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
 import { useCurrentOpenInterest } from '@/hooks/useCurrentOpenInterest'
 import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { usePoolEarning } from '@/hooks/usePoolEarning'
-import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useTraderVariablesStore, useMarginIndicatorsStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { bnPlus, isGT, isLT, keepDecimals, numeralNumber } from '@/utils/tools'
@@ -22,7 +22,6 @@ const PositionMining: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
-  const { mobile } = useContext(MobileContext)
 
   const variables = useTraderVariablesStore((state) => state.variables)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
@@ -118,7 +117,7 @@ const PositionMining: FC = () => {
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
+            <Button size={isMobile ? 'mini' : 'default'} disabled={!memoDisabled} onClick={withdrawFunc}>
               {t('Earn.PositionMining.ClaimAll', 'Claim All')}
             </Button>
             <Link to={`/${marginToken.symbol}/mining/rank`}>{t('Broker.BV.RankList')}</Link>
@@ -135,7 +134,7 @@ const PositionMining: FC = () => {
             </p>
           </main>
           <aside>
-            <Button size={mobile ? 'mini' : 'default'} to={`/${marginToken.symbol}/trade`}>
+            <Button size={isMobile ? 'mini' : 'default'} to={`/${marginToken.symbol}/trade`}>
               {t('Earn.PositionMining.OpenPosition', 'Open Position')}
             </Button>
           </aside>

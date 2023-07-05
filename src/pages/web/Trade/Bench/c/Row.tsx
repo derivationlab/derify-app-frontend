@@ -1,6 +1,6 @@
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
+import { isMobile } from 'react-device-detect'
 
-import { MobileContext } from '@/providers/Mobile'
 import { num2size } from '@/utils/tools'
 
 interface Props {
@@ -8,10 +8,9 @@ interface Props {
 }
 
 const Row: FC<Props> = ({ children, mb }) => {
-  const { mobile } = useContext(MobileContext)
   mb = Number(mb ?? 24)
   return (
-    <div className="web-trade-bench-pane-row" style={{ marginBottom: num2size(mobile ? (mb / 3) * 2 : mb) }}>
+    <div className="web-trade-bench-pane-row" style={{ marginBottom: num2size(isMobile ? (mb / 3) * 2 : mb) }}>
       {children}
     </div>
   )

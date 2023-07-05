@@ -2,7 +2,8 @@ import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { getTradersRankList } from '@/api'
@@ -11,7 +12,6 @@ import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN } from '@/config/tokens'
-import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
@@ -22,13 +22,11 @@ interface RowTextProps {
 }
 
 const RowName: FC<{ data: Record<string, any> }> = ({ data }) => {
-  const { mobile } = useContext(MobileContext)
-
   return (
     <div className="web-broker-rank-table-row-name">
       <Image src={data?.logo ?? 'icon/normal-ico.svg'} cover />
       <main>
-        <strong>{mobile ? calcShortHash(data?.user, 5, 4) : data?.user}</strong>
+        <strong>{isMobile ? calcShortHash(data?.user, 5, 4) : data?.user}</strong>
       </main>
     </div>
   )
@@ -46,8 +44,6 @@ const Rank: FC = () => {
 
   const { t } = useTranslation()
   const { address } = useAccount()
-
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
@@ -81,7 +77,7 @@ const Rank: FC = () => {
     {
       title: t('Earn.MiningRank.Address'),
       dataIndex: 'user',
-      width: mobile ? '' : 600,
+      width: isMobile ? '' : 600,
       render: (user: string, data: Record<string, any>) => {
         return <RowName data={data} />
       }
@@ -89,7 +85,7 @@ const Rank: FC = () => {
     {
       title: t('Broker.RankList.TotalRewards', 'Total Rewards'),
       dataIndex: '',
-      width: mobile ? '' : 250,
+      width: isMobile ? '' : 250,
       render: (_: string, data: Record<string, any>) => {
         const { total_margin_token_reward = 0, total_drf_reward = 0 } = data ?? {}
         const margin = keepDecimals(total_margin_token_reward, 2)
@@ -105,7 +101,7 @@ const Rank: FC = () => {
     {
       title: t('Broker.RankList.Rank', 'Rank'),
       dataIndex: 'rank',
-      width: mobile ? '' : 200,
+      width: isMobile ? '' : 200,
       render: (text: string) => <RowText value={`#${text}`} />
     }
   ]

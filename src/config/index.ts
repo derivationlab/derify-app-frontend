@@ -5,12 +5,12 @@ const API_PREFIX_URLS: ChainIdRec = {
   [ChainId.TESTNET]: 'https://test-api-v2.derify.exchange/'
 }
 
-const EXPLORER_SCAN_URLS: Record<string, string> = {
+const EXPLORER_SCAN_URLS: ChainIdRec = {
   [ChainId.MAINNET]: 'https://bscscan.com',
   [ChainId.TESTNET]: 'https://testnet.bscscan.com'
 }
 
-export const DEFAULT_PRC_URLS = {
+export const DEFAULT_PRC_URLS: ChainIdRec = {
   [ChainId.MAINNET]: 'https://bsc-dataseed1.binance.org',
   [ChainId.TESTNET]: 'https://data-seed-prebsc-1-s1.binance.org:8545'
 }

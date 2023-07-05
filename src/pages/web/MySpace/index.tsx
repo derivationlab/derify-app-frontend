@@ -2,7 +2,8 @@ import { isEmpty, orderBy } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useMemo, useContext, useState, useEffect } from 'react'
+import React, { FC, useMemo, useState, useEffect } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
@@ -17,7 +18,6 @@ import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { usePositionRewards } from '@/hooks/usePositionRewards'
 import { useTraderVariables } from '@/hooks/useTraderVariables'
 import { TableMargin } from '@/pages/web/Dashboard/c/TableCol'
-import { MobileContext } from '@/providers/Mobile'
 import { getMarginTokenList, useMarginTokenListStore } from '@/store'
 import { bnDiv } from '@/utils/tools'
 
@@ -34,7 +34,7 @@ const MySpace: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
   const { address } = useAccount()
-  const { mobile } = useContext(MobileContext)
+
   const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
   const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
@@ -208,7 +208,7 @@ const MySpace: FC = () => {
       <Table
         rowKey="symbol"
         data={sorting}
-        columns={mobile ? mColumns : wColumns}
+        columns={isMobile ? mColumns : wColumns}
         className="web-broker-table web-space-table"
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}

@@ -2,11 +2,11 @@ import { getAddress } from '@ethersproject/address'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 
-import React, { FC, useMemo, useContext } from 'react'
+import React, { FC, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { MobileContext } from '@/providers/Mobile'
 import { useDerivativeListStore, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
@@ -22,7 +22,6 @@ interface Props {
 
 const TradeHistoryListItem: FC<Props> = ({ data }) => {
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
@@ -177,7 +176,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
   return (
     <div className="web-trade-data-item">
       <ItemHeader symbol={memoQuoteToken} direction={PositionSideTypes[data?.side] as any} />
-      {mobile ? (
+      {isMobile ? (
         <>
           <AtomWrap>
             {atom1Tsx}

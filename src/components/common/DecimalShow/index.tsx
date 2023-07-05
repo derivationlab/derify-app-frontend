@@ -1,9 +1,8 @@
 import classNames from 'classnames'
 import numeral from 'numeral'
 
-import React, { FC, useMemo, useContext } from 'react'
-
-import { MobileContext } from '@/providers/Mobile'
+import React, { FC, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 
 export interface DecimalShowProps {
   value: number | string
@@ -14,7 +13,6 @@ export interface DecimalShowProps {
 }
 
 const DecimalShow: FC<DecimalShowProps> = ({ value, percent, suffix = '', black, format }) => {
-  const { mobile } = useContext(MobileContext)
   const [int, dec] = useMemo(() => {
     const strVal = format ? numeral(value).format(format) : String(value)
     if (strVal.includes('.')) {
@@ -28,7 +26,7 @@ const DecimalShow: FC<DecimalShowProps> = ({ value, percent, suffix = '', black,
       <em>{int}</em>
       <small>
         {`.${dec}${percent ? '%' : ''}`}
-        {mobile && suffix && <br />}
+        {isMobile && suffix && <br />}
         {suffix && suffix}
       </small>
     </div>

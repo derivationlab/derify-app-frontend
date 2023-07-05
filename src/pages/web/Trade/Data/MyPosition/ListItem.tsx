@@ -2,7 +2,8 @@ import classNames from 'classnames'
 import PubSub from 'pubsub-js'
 import { useSigner } from 'wagmi'
 
-import React, { FC, useMemo, useContext, useState, useCallback } from 'react'
+import React, { FC, useMemo, useState, useCallback } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
@@ -11,7 +12,6 @@ import { usePositionOperation } from '@/hooks/usePositionOperation'
 import PreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
 import ConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
 import PnLDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
-import { MobileContext } from '@/providers/Mobile'
 import {
   useBrokerInfoStore,
   useMarginTokenStore,
@@ -49,7 +49,7 @@ const riseOrFall = (data: string): string => (isGT(data, 0) ? '+' : '')
 const MyPositionListItem: FC<Props> = ({ data }) => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
-  const { mobile } = useContext(MobileContext)
+
   const [modalType, setModalType] = useState<string>()
   const variables = useTraderVariablesStore((state) => state.variables)
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
@@ -290,7 +290,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
           buttonText={t('Trade.MyPosition.Close', 'Close')}
           onButtonClick={() => setModalType('PREVIEW_POSITION')}
         />
-        {mobile ? (
+        {isMobile ? (
           <>
             <AtomWrap>
               {atom1Tsx}

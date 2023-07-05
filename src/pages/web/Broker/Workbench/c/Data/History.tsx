@@ -2,7 +2,8 @@ import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useEffect, useMemo, useContext, useReducer } from 'react'
+import React, { FC, useEffect, useMemo, useReducer } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { getBrokerRevenueRecord } from '@/api'
@@ -10,7 +11,6 @@ import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { EXPLORER_SCAN_URL } from '@/config'
 import { PLATFORM_TOKEN } from '@/config/tokens'
-import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -32,7 +32,6 @@ interface DataProps {
 
 const RowType: FC<{ data: DataProps }> = ({ data }) => {
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
 
   const TypeEnum = [
     t('Broker.History.Type0', 'Income'),
@@ -48,7 +47,7 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
   return (
     <div className="web-broker-table-history-type">
       <strong>{type}</strong>
-      {mobile ? (
+      {isMobile ? (
         <time>{calcTimeStr(data.event_time)}</time>
       ) : (
         <a href={`${EXPLORER_SCAN_URL}/tx/${data.tx}`} target="_blank" title={data.tx}>
@@ -78,7 +77,7 @@ const History: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
+
   const { address } = useAccount()
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
@@ -114,13 +113,13 @@ const History: FC = () => {
     {
       title: t('Broker.History.Type', 'Type'),
       dataIndex: 'update_type',
-      width: mobile ? '' : 428,
+      width: isMobile ? '' : 428,
       render: (_: string, data: DataProps) => <RowType data={data} />
     },
     {
       title: t('Broker.History.Amount', 'Amount'),
       dataIndex: 'amount',
-      width: mobile ? '' : 268,
+      width: isMobile ? '' : 268,
       render: (_: string, data: Record<string, any>) => {
         const usd_amount = keepDecimals(data?.margin_token_amount ?? 0, marginToken.decimals)
         const drf_amount = keepDecimals(data?.drf_amount ?? 0, PLATFORM_TOKEN.decimals)
@@ -136,7 +135,7 @@ const History: FC = () => {
     {
       title: t('Broker.History.Balance', 'Balance'),
       dataIndex: 'balance',
-      width: mobile ? '' : 268,
+      width: isMobile ? '' : 268,
       render: (_: string, data: Record<string, any>) => {
         const usd_balance = keepDecimals(data?.margin_token_balance ?? 0, marginToken.decimals)
         const drf_balance = keepDecimals(data?.drf_balance ?? 0, PLATFORM_TOKEN.decimals)
@@ -163,7 +162,7 @@ const History: FC = () => {
     <>
       <Table
         className="web-broker-table"
-        columns={mobile ? mobileColums : webColumns}
+        columns={isMobile ? mobileColums : webColumns}
         emptyText={memoEmptyText}
         data={state.records.records}
         rowKey="id"

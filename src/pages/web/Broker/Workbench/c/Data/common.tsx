@@ -1,9 +1,9 @@
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
-import React, { FC, useContext } from 'react'
+import React, { FC } from 'react'
+import { isMobile } from 'react-device-detect'
 
-import { MobileContext } from '@/providers/Mobile'
 import { calcShortHash as _calcShortHash } from '@/utils/tools'
 
 dayjs.extend(relativeTime)
@@ -13,8 +13,7 @@ interface TimeProps {
 }
 
 export const RowTime: FC<TimeProps> = ({ time }) => {
-  const { mobile } = useContext(MobileContext)
-  const timeFormat = mobile ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss'
+  const timeFormat = isMobile ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss'
   return (
     <div className="web-broker-table-time">
       <time>{time ? dayjs(time).format(timeFormat) : 'No Tx.'}</time>

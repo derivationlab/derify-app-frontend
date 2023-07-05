@@ -2,7 +2,8 @@ import classNames from 'classnames'
 import { isEmpty, orderBy } from 'lodash'
 import Table from 'rc-table'
 
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
@@ -15,7 +16,6 @@ import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
 import { useFactoryConfig, useMarginPosVolume, usePairAddrConfig } from '@/hooks/useMarginPosVolume'
 import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
-import { MobileContext } from '@/providers/Mobile'
 import { getMarginTokenList, useMarginTokenListStore } from '@/store'
 import { bnMul, bnPlus } from '@/utils/tools'
 
@@ -33,7 +33,7 @@ export const resortMargin = (data: any[]) => {
 const MarketInfo: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
+
   const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
 
   const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
@@ -184,8 +184,8 @@ const MarketInfo: FC = () => {
       <Table
         rowKey="symbol"
         data={pagination.data}
-        columns={mobile ? mColumns : wColumns}
-        className={classNames('web-broker-table', { 'web-space-table': mobile })}
+        columns={isMobile ? mColumns : wColumns}
+        className={classNames('web-broker-table', { 'web-space-table': isMobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />

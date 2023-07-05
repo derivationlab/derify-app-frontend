@@ -3,12 +3,12 @@
  */
 import { getAddress } from '@ethersproject/address'
 
-import React, { FC, useState, useMemo, ChangeEvent, useContext } from 'react'
+import React, { FC, useState, useMemo, ChangeEvent } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import ChangePercent from '@/components/common/ChangePercent'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { MobileContext } from '@/providers/Mobile'
 import { useDerivativeListStore, useMarginIndicatorsStore, useTokenSpotPricesStore } from '@/store'
 
 interface Props {
@@ -17,7 +17,6 @@ interface Props {
 
 const Options: FC<Props> = ({ onChange }) => {
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
 
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPrices)
@@ -50,7 +49,7 @@ const Options: FC<Props> = ({ onChange }) => {
             const decimals = Number(tokenSpotPrices?.[item.name] ?? 0) === 0 ? 2 : item.price_decimals
             return (
               <li key={index} onClick={() => onChange(item, index)}>
-                {mobile ? (
+                {isMobile ? (
                   <>
                     <aside>
                       <h5>{item.name}</h5>

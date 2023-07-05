@@ -2,7 +2,8 @@ import dayjs from 'dayjs'
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'
 
-import React, { FC, useCallback, useContext, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -11,7 +12,6 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
 import { useBrokerAssets } from '@/hooks/useBrokerAssets'
 import { useBrokerOperation } from '@/hooks/useBrokerOperation'
-import { MobileContext } from '@/providers/Mobile'
 import { useMarginTokenStore, useBrokerInfoStore, useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 import { keepDecimals, numeralNumber } from '@/utils/tools'
@@ -21,7 +21,6 @@ const Dashboard: FC = () => {
   const { address } = useAccount()
   const { data: signer } = useSigner()
 
-  const { mobile } = useContext(MobileContext)
   const { withdrawBrokerReward } = useBrokerOperation()
 
   const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
@@ -90,12 +89,12 @@ const Dashboard: FC = () => {
             }}
           />
         </section>
-        <Button size={mobile ? 'mini' : 'default'} onClick={withdrawFunc} disabled={!memoDisabled}>
+        <Button size={isMobile ? 'mini' : 'default'} onClick={withdrawFunc} disabled={!memoDisabled}>
           {t('Broker.BV.ClaimAll', 'Claim All')}
         </Button>
       </div>
       <div className="web-broker-dashboard-data">
-        {mobile ? (
+        {isMobile ? (
           <>
             <main>
               <header>{t('Broker.BV.DailyRewards', 'Daily Rewards')}</header>

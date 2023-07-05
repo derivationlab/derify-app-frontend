@@ -1,13 +1,13 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
-import React, { ChangeEvent, FC, useState, useContext } from 'react'
+import React, { ChangeEvent, FC, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
 import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
 import Button from '@/components/common/Button'
-import { MobileContext } from '@/providers/Mobile'
 import { PubSubEvents } from '@/typings'
 
 import BrokerDialog from './BrokerDialog'
@@ -16,7 +16,7 @@ const Bind: FC = () => {
   const history = useHistory()
 
   const { t } = useTranslation()
-  const { mobile } = useContext(MobileContext)
+
   const { address } = useAccount()
 
   const [brokerId, setBrokerId] = useState<string>('')
@@ -71,10 +71,10 @@ const Bind: FC = () => {
       <input type="text" onChange={onChangeEv} value={brokerId} />
       {/*<div contentEditable></div>*/}
       <div className="buttons">
-        <Button full={mobile} disabled={!brokerId.trim()} loading={loading} onClick={onConfirmEv}>
+        <Button full={isMobile} disabled={!brokerId.trim()} loading={loading} onClick={onConfirmEv}>
           {t('Nav.BindBroker.Confirm', 'Confirm')}
         </Button>
-        <Button full={mobile} outline to="/broker/list">
+        <Button full={isMobile} outline to="/broker/list">
           {t('Nav.BindBroker.NoCode', "I don't have a code ...")}
         </Button>
       </div>

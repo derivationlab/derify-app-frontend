@@ -2,7 +2,8 @@ import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useCallback, useEffect, useMemo, useContext, useReducer } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { getBrokersRankList } from '@/api'
@@ -10,7 +11,6 @@ import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 
@@ -41,7 +41,6 @@ const Rank: FC = () => {
 
   const { t } = useTranslation()
   const { address } = useAccount()
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
@@ -69,13 +68,13 @@ const Rank: FC = () => {
     {
       title: t('Broker.RankList.Name', 'Name'),
       dataIndex: 'name',
-      width: mobile ? 275 : 250,
+      width: isMobile ? 275 : 250,
       render: (_: string, data: Record<string, any>) => <RowName data={data} />
     },
     {
       title: t('Broker.RankList.Rank', 'Rank'),
       dataIndex: 'rank',
-      width: mobile ? '' : 200,
+      width: isMobile ? '' : 200,
       render: (text: string) => <RowText value={`#${text}`} />
     }
   ]
@@ -129,7 +128,7 @@ const Rank: FC = () => {
       <Table
         className="web-broker-table"
         emptyText={emptyText}
-        columns={mobile ? mColumns : wColumns}
+        columns={isMobile ? mColumns : wColumns}
         data={state.records.records}
         rowKey="id"
         rowClassName={(record) => (address === record.broker ? 'active' : '')}

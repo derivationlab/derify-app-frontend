@@ -1,7 +1,8 @@
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useCallback, useEffect, useContext, useReducer } from 'react'
+import React, { FC, useCallback, useEffect, useReducer } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory, Link } from 'react-router-dom'
 
@@ -13,7 +14,6 @@ import {
   SelectLangOptionsForFilter as SelectLangOptions,
   SelectCommunityOptionsForFilter as SelectCommunityOptions
 } from '@/data'
-import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/brokerBind'
 import { useMarginTokenStore } from '@/store'
 import { PubSubEvents } from '@/typings'
@@ -28,7 +28,6 @@ const List: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
   const { address } = useAccount()
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
@@ -88,7 +87,7 @@ const List: FC = () => {
       <header className="web-broker-list-header">
         <h2>{t('Nav.BindBroker.SelectBroker', 'Select a broker')}</h2>
         <Link to="/broker/bind">
-          {!mobile ? t('Nav.BindBroker.InputCode', 'I want to input my broker code ...') : ''}
+          {!isMobile ? t('Nav.BindBroker.InputCode', 'I want to input my broker code ...') : ''}
         </Link>
       </header>
       <section className="web-broker-list-filter">
@@ -106,7 +105,7 @@ const List: FC = () => {
             onChange={(value) => dispatch({ type: 'SET_OPT_SELECT', payload: { c: value } })}
           />
         </main>
-        {!mobile && (
+        {!isMobile && (
           <Pagination
             page={state.brokerDAT.pageIndex}
             pageSize={pageSize}
@@ -122,7 +121,7 @@ const List: FC = () => {
       </main>
       <Pagination
         pageSize={pageSize}
-        full={!mobile}
+        full={!isMobile}
         page={state.brokerDAT.pageIndex}
         total={state.brokerDAT.totalItems}
         onChange={onPagination}

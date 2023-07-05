@@ -1,10 +1,10 @@
 import classNames from 'classnames'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useState, useContext } from 'react'
+import React, { FC, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 
 import TradingUpdater from '@/pages/updater/TradingUpdater'
-import { MobileContext } from '@/providers/Mobile'
 
 import Bench from './Bench'
 import Data from './Data'
@@ -15,11 +15,10 @@ import MobileFixed from './KLine/MobileFixed'
 import SymbolSelect from './KLine/SymbolSelect'
 
 const Trade: FC = () => {
-  const { mobile } = useContext(MobileContext)
   const { address } = useAccount()
   const [toggle, setToggle] = useState<boolean>(false)
 
-  if (mobile) {
+  if (isMobile) {
     return (
       <>
         <TradingUpdater />

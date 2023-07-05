@@ -2,7 +2,8 @@ import { isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useMemo, useContext, useEffect, useReducer } from 'react'
+import React, { FC, useMemo, useEffect, useReducer } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { getBrokerSubordinate } from '@/api'
@@ -10,7 +11,6 @@ import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { EXPLORER_SCAN_URL } from '@/config'
-import { MobileContext } from '@/providers/Mobile'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -28,12 +28,11 @@ interface RowProps {
 }
 
 const RowTrader: FC<{ data: Record<string, any> }> = ({ data }) => {
-  const { mobile } = useContext(MobileContext)
   return (
     <div className="web-broker-table-trader-tx">
       <Image src="icon/normal-ico.svg" cover />
       <a href={`${EXPLORER_SCAN_URL}/address/${data.trader}`} title={data.trader} target="_blank">
-        {mobile ? calcShortHash(data.trader, 4, 4) : calcShortHash(data.trader)}
+        {isMobile ? calcShortHash(data.trader, 4, 4) : calcShortHash(data.trader)}
       </a>
     </div>
   )
@@ -56,7 +55,6 @@ const Trader: FC = () => {
 
   const { t } = useTranslation()
   const { address } = useAccount()
-  const { mobile } = useContext(MobileContext)
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
@@ -92,19 +90,19 @@ const Trader: FC = () => {
     {
       title: t('Broker.Trader.Trader', 'Trader'),
       dataIndex: 'trader',
-      width: mobile ? '' : 420,
+      width: isMobile ? '' : 420,
       render: (_: string, data: Record<string, any>) => <RowTrader data={data} />
     },
     {
-      title: t(`Broker.Trader.LastTransactionTime${mobile ? 'M' : ''}`, 'Last Transaction Time'),
+      title: t(`Broker.Trader.LastTransactionTime${isMobile ? 'M' : ''}`, 'Last Transaction Time'),
       dataIndex: 'last_transaction_time',
-      width: mobile ? 95 : 268,
+      width: isMobile ? 95 : 268,
       render: (text: string) => <RowTime time={text} />
     },
     {
-      title: t(`Broker.Trader.${mobile ? '' : 'Registration'}Time`, 'Time'),
+      title: t(`Broker.Trader.${isMobile ? '' : 'Registration'}Time`, 'Time'),
       dataIndex: 'registration_time',
-      width: mobile ? 95 : 268,
+      width: isMobile ? 95 : 268,
       render: (text: string) => <RowTime time={text} />
     }
   ]
@@ -125,7 +123,7 @@ const Trader: FC = () => {
       <Table
         className="web-broker-table"
         emptyText={memoEmptyText}
-        columns={mobile ? mobileColumns : webColumns}
+        columns={isMobile ? mobileColumns : webColumns}
         data={state.records.records}
         rowKey="trader"
       />

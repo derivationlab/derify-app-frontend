@@ -7,7 +7,7 @@ import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useClickAway, useToggle } from 'react-use'
 
-import { getDerivativeList, searchDerivative, searchMarginToken } from '@/api'
+import { getDerivativeList, searchDerivative } from '@/api'
 import ChangePercent from '@/components/common/ChangePercent'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Skeleton from '@/components/common/Skeleton'

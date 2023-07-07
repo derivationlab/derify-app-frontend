@@ -97,6 +97,11 @@
             "internalType": "address",
             "name": "derifyDerivativeModule",
             "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "derifyClearingModule",
+            "type": "address"
           }
         ],
         "internalType": "struct IDerifyProtocol.DeployDerifyProtocolParam",
@@ -147,18 +152,6 @@
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newTokenDRF",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newTokenEDRF",
-        "type": "address"
-      },
       {
         "indexed": false,
         "internalType": "uint256",
@@ -870,7 +863,7 @@
         "type": "uint256[]"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1476,16 +1469,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_tokenDRF",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_tokenEDRF",
-        "type": "address"
-      },
       {
         "internalType": "uint256",
         "name": "_brokerApplyNumber",

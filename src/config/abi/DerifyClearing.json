@@ -52,6 +52,11 @@
             "internalType": "address",
             "name": "exchangeModule",
             "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "clearingModule",
+            "type": "address"
           }
         ],
         "internalType": "struct IDerifyClearing.ClearInitParams",
@@ -65,24 +70,6 @@
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newFactory",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newExchange",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newMarginToken",
-        "type": "address"
-      },
       {
         "indexed": false,
         "internalType": "uint256",
@@ -378,6 +365,19 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "clearingModule",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -962,21 +962,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_factory",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_exchange",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_marginToken",
-        "type": "address"
-      },
       {
         "internalType": "uint256",
         "name": "_marginMaintenanceRatio",

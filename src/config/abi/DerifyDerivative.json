@@ -37,6 +37,12 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "marginToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "token",
         "type": "address"
       },
@@ -243,7 +249,7 @@
         "type": "address"
       }
     ],
-    "name": "DerivativeInitialized",
+    "name": "DerivativeUpdated",
     "type": "event"
   },
   {
@@ -738,6 +744,16 @@
         "internalType": "enum IDerifyDerivative.Side",
         "name": "side",
         "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "spotPrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "SPOT_PRICE_DECIMAL",
+        "type": "uint256"
       }
     ],
     "name": "closePositionByLiquidation",
@@ -817,7 +833,13 @@
       }
     ],
     "name": "deleteOrderedLimitPositions",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "leftSize",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -905,6 +927,19 @@
         "internalType": "int256",
         "name": "ratio",
         "type": "int256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPriceFeed",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1619,7 +1654,18 @@
       }
     ],
     "name": "orderStopPosition",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "isTakeProfitOpen",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isStopLossOpen",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -1824,6 +1870,71 @@
   {
     "inputs": [],
     "name": "unlockPrice",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "aggregator",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tradingFeeRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tradingFeePmrRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tradingFeeInusranceRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tradingFeeBrokerRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "kRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "roRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxLeverage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxLimitOrderSize",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IDerifyDerivative.DerifyDerivativeUpdateParam",
+        "name": "derifyDerivativeUpdateParam",
+        "type": "tuple"
+      }
+    ],
+    "name": "updateParams",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

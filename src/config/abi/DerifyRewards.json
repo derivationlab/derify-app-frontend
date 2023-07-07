@@ -162,54 +162,6 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "newExchange",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newMarginToken",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newBMarginToken",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newTokenDRF",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newTokenEDRF",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newDerifyAwardsPmr",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newDerifyAwardsBroker",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newDerifyAwardsRank",
-        "type": "address"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
         "name": "newBlockTime",
         "type": "uint256"
@@ -1656,76 +1608,14 @@
   {
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "protocol",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "exchange",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "marginToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "bMarginToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenDRF",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenEDRF",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenWBNB",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyPmr",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyBrokerRewards",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "derifyRank",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "blockTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "bondAnnualInterestRate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "exchangeModule",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IDerifyRewards.ContractParam",
-        "name": "param",
-        "type": "tuple"
+        "internalType": "uint256",
+        "name": "_blockTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_bondAnnualInterestRate",
+        "type": "uint256"
       }
     ],
     "name": "updateParams",

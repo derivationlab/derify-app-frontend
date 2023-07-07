@@ -3,6 +3,14 @@
     padding: 10px 0;
     position: relative;
 
+    &-entry {
+      &.disabled {
+        * {
+          cursor: default
+        }
+      }
+    }
+
     &-wrapper {
       padding: 8px;
     }
@@ -121,7 +129,7 @@
 }
 
 .mobile-mode {
-  .web-c-drop-down{
+  .web-c-drop-down {
     &-list {
       padding: 0 0 rem(10) 0;
 
@@ -156,6 +164,7 @@
         }
       }
     }
+
     &-search-bar {
       i {
         left: rem(14);

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getMarginIndicators, getPairIndicator } from '@/api'
+import { getMarginIndicators, getDerivativeIndicator } from '@/api'
 import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'
 
 /**
@@ -69,7 +69,7 @@ export const useAllMarginIndicators = (list: string[]) => {
     async () => {
       if (list.length) {
         const promises = list.map(async (address) => {
-          return [await getPairIndicator(address).then(({ data }) => data)]
+          return [await getDerivativeIndicator(address).then(({ data }) => data)]
         })
 
         const response = await Promise.all(promises)

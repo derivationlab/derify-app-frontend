@@ -11,6 +11,7 @@ interface DropDownListProps {
   entry: React.ReactNode
   height?: number
   loading?: boolean
+  disabled?: boolean
   onSearch?: (keywords: string) => void
   showSearch?: boolean
   placeholder?: string
@@ -20,6 +21,7 @@ export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
   entry,
   height = 356,
   loading,
+  disabled,
   children,
   onSearch,
   showSearch = true,
@@ -27,18 +29,23 @@ export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
 }) => {
   const ref = useRef(null)
   const { t } = useTranslation()
-  const [open, toggle] = useState<boolean>(false)
+  const [toggle, setToggle] = useState<boolean>(false)
   const [keyword, setKeyword] = useState<string>('')
-  useClickAway(ref, () => toggle(false))
+  useClickAway(ref, () => setToggle(false))
   return (
     <div className="web-c-drop-down-list" ref={ref}>
-      <div onClick={() => toggle(!open)} className={classNames('web-c-drop-down-list-entry', { open: open })}>
+      <div
+        onClick={() => {
+          if (!disabled) setToggle(!toggle)
+        }}
+        className={classNames('web-c-drop-down-list-entry', { open: toggle, disabled: disabled })}
+      >
         {entry}
       </div>
       <motion.div
         className="web-c-drop-down-list-motion-div"
         initial={{ height: 0 }}
-        animate={{ height: open ? height : 0 }}
+        animate={{ height: toggle ? height : 0 }}
         transition={{ duration: 0.2 }}
       >
         <div className="web-c-drop-down-list-wrapper">
@@ -64,7 +71,7 @@ export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
                   {t('common.Loading')}
                 </div>
               )}
-              <ul onClick={() => toggle(false)}>{children}</ul>
+              <ul onClick={() => setToggle(false)}>{children}</ul>
             </div>
           </div>
         </div>

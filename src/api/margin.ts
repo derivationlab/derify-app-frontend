@@ -5,8 +5,8 @@ export const searchMarginToken = async (key: string) => {
   return response
 }
 
-export const getMarginIndicators = async (token: string) => {
-  const response = await get(`api/app_data/${token}`)
+export const getMarginIndicators = async (marginToken: string) => {
+  const response = await get(`api/app_data/${marginToken}`)
   return response
 }
 

@@ -169,15 +169,16 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
         entry={currentTK}
         height={588}
         loading={pairOptions.loaded}
+        disabled={derivativeList.length === 0}
         onSearch={setFuzzySearch}
         placeholder={t('Trade.kline.SearchTip')}
       >
         {pairOptions.data.map((o: Rec, index: number) => {
           const len = pairOptions.data.length
-          const id = index === len - 1 ? 'bottom' : undefined
-          const ref = index === len - 1 ? bottomRef : null
-          const _id = fuzzySearch.trim() ? undefined : id
-          const _ref = fuzzySearch.trim() ? null : ref
+          const idInit = index === len - 1 ? 'bottom' : undefined
+          const refInit = index === len - 1 ? bottomRef : null
+          const id = fuzzySearch.trim() ? undefined : idInit
+          const ref = fuzzySearch.trim() ? null : refInit
           const keys = Object.keys(marginIndicators ?? Object.create(null))
           const findKey = keys.find((key) => getAddress(key) === getAddress(o.token))
           const values = marginIndicators?.[findKey ?? ''] ?? Object.create(null)
@@ -186,8 +187,8 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
           return (
             <DropDownListItem
               key={o.name}
-              id={_id}
-              ref={_ref}
+              id={id}
+              ref={ref}
               content={
                 isMobile ? (
                   <>

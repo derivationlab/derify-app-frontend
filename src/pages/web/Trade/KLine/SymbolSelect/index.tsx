@@ -7,7 +7,7 @@ import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useClickAway, useToggle } from 'react-use'
 
-import { getDerivativeList, searchMarginToken } from '@/api'
+import { getDerivativeList, searchDerivative, searchMarginToken } from '@/api'
 import ChangePercent from '@/components/common/ChangePercent'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Skeleton from '@/components/common/Skeleton'
@@ -101,10 +101,9 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
     }
   }, [protocolConfig, pairOptions.data])
 
-  // todo
   const fuzzySearchFunc = useCallback(
-    debounce(async (fuzzySearch: string) => {
-      const { data = [] } = await searchMarginToken(fuzzySearch)
+    debounce(async (marginToken: string, fuzzySearch: string) => {
+      const { data = [] } = await searchDerivative(marginToken, fuzzySearch)
       setPairOptions({ data, loaded: false })
     }, 1500),
     []
@@ -117,14 +116,14 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   useEffect(() => {
     if (fuzzySearch.trim()) {
       setPairOptions({ data: [], loaded: true })
-      void fuzzySearchFunc(fuzzySearch)
+      void fuzzySearchFunc(marginToken.address, fuzzySearch)
     } else {
       seqCount = 0
       if (derivativeList.length) {
         setPairOptions({ data: derivativeList, loaded: false })
       }
     }
-  }, [fuzzySearch, derivativeList])
+  }, [marginToken, fuzzySearch, derivativeList])
 
   useEffect(() => {
     if (pairOptions.data.length) {

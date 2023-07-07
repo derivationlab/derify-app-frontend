@@ -1,16 +1,15 @@
 import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useQuoteTokenStore } from '@/store'
-import { QuoteTokenState } from '@/store/types'
+import { useDerivativeListStore } from '@/store'
 
 import Chart from './Chart'
 
 const Index: FC = () => {
   const { t } = useTranslation()
-  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
 
-  return quoteToken.token ? (
+  return derivativeList.length ? (
     <Chart />
   ) : (
     <div className="web-trade-kline-placeholder">{t('Trade.kline.NoKLineData')}</div>

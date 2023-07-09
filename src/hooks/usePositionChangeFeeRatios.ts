@@ -29,7 +29,7 @@ export const usePositionChangeFeeRatios = (list?: (typeof derivativeList)[] | nu
           response.forEach(([ratio]: BigNumberish[], index: number) => {
             output = {
               ...output,
-              [calls[index].token]: formatUnits(ratio, 8)
+              [calls[index].address]: formatUnits(ratio, 8)
             }
           })
         }

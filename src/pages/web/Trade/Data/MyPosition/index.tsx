@@ -9,10 +9,7 @@ import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
-import {
-  usePriceDecimalsForTrade,
-  useTokenSpotPricesForTrade
-} from '@/hooks/useTokenSpotPrices'
+import { usePriceDecimalsForTrade, useTokenSpotPricesForTrade } from '@/hooks/useTokenSpotPrices'
 import CloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import { ThemeContext } from '@/providers/Theme'
 import { useBrokerInfoStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
@@ -71,7 +68,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       )
     }
     return <NoRecord show />
-  }, [theme, address, loaded, data])
+  }, [data, theme, address, loaded, priceDecimals])
 
   useEffect(() => {
     if (spotPrices) updateSpotPrices(spotPrices)

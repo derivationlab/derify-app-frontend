@@ -108,7 +108,6 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
       Number(openingParams.closingAmount) > 0 &&
       Number(tokenSpotPrice) > 0
     ) {
-      console.info(openingParams.closingAmount)
       void closingLimit(positionLimit)
     }
   }, [data, visible, tokenSpotPrice, positionLimit, openingParams.closingAmount])

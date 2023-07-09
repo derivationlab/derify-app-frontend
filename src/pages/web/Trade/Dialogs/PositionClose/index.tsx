@@ -16,7 +16,7 @@ import {
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import { bnMul, isGT, isGTET, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
+import { bnMul, formatUnits, isGT, isGTET, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 import QuantityInput from './QuantityInput'
 
@@ -96,7 +96,10 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
                 <p>
                   {t('Trade.ClosePosition.PositionAveragePrice', 'Position Average Price')} :{' '}
                   <em>
-                    {keepDecimals(data.averagePrice ?? 0, Number(data.averagePrice ?? 0) === 0 ? 2 : data.decimals)}
+                    {keepDecimals(
+                      formatUnits(data.averagePrice, data.pricePrecision),
+                      Number(data.averagePrice) === 0 ? 2 : data.decimals
+                    )}
                   </em>{' '}
                   {VALUATION_TOKEN_SYMBOL}
                 </p>

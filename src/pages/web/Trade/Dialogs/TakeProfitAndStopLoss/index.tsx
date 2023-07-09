@@ -12,7 +12,7 @@ import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginTokenStore, useTokenSpotPricesStore, useMarginIndicatorsStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import { bnMinus, bnMul, isET, isGT, keepDecimals } from '@/utils/tools'
+import { bnMinus, bnMul, formatUnits, isET, isGT, keepDecimals } from '@/utils/tools'
 
 interface Props {
   data: Rec
@@ -50,7 +50,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   }, [data, tokenSpotPrices])
 
   const memoStopLoss = useMemo(() => {
-    const averagePrice = data?.averagePrice ?? 0
+    const averagePrice = formatUnits(data.averagePrice, data.pricePrecision)
     const price = keepDecimals(averagePrice, Number(averagePrice) === 0 ? 2 : data.decimals)
     return (
       <p>
@@ -67,7 +67,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   }, [marginIndicators])
 
   const memoTakeProfit = useMemo(() => {
-    const averagePrice = data?.averagePrice ?? 0
+    const averagePrice = formatUnits(data.averagePrice, data.pricePrecision)
     const price = keepDecimals(averagePrice, Number(averagePrice) === 0 ? 2 : data.decimals)
     return (
       <p>
@@ -82,7 +82,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   const calcLossAmount = useCallback(
     debounce((v) => {
       if (v && data) {
-        const p1 = bnMinus(v, data?.averagePrice)
+        const p1 = bnMinus(v, formatUnits(data.averagePrice, data.pricePrecision))
         const p2 = bnMul(p1, data?.size)
         const p3 = bnMul(p2, data?.side === PositionSideTypes.long ? 1 : -1)
         setPnLParams((v) => ({ ...v, SLAmount: p3 }))
@@ -96,7 +96,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   const calcProfitAmount = useCallback(
     debounce((v) => {
       if (v && data) {
-        const p1 = bnMinus(v, data?.averagePrice)
+        const p1 = bnMinus(v, formatUnits(data.averagePrice, data.pricePrecision))
         const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data?.size)
         const amount = bnMul(p1, p2)
         setPnLParams((v) => ({ ...v, TPAmount: amount }))
@@ -242,7 +242,10 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
               <p>
                 {t('Trade.TPSL.PositionAveragePrice', 'Position Average Price')} :{' '}
                 <em>
-                  {keepDecimals(data?.averagePrice ?? 0, Number(data?.averagePrice ?? 0) === 0 ? 2 : data.decimals)}
+                  {keepDecimals(
+                    formatUnits(data.averagePrice, data.pricePrecision),
+                    Number(data.averagePrice) === 0 ? 2 : data.decimals
+                  )}
                 </em>{' '}
                 {VALUATION_TOKEN_SYMBOL}
               </p>

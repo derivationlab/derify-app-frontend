@@ -71,7 +71,7 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
             leverage: formatUnits(long.leverage, 8),
             derivative: calls[i].address,
             quoteToken: calls[i].quoteToken,
-            averagePrice: formatUnits(long.price, 8),
+            averagePrice: String(long.price),
             stopLossPrice: priceFormat(longOrderStopLossPosition),
             takeProfitPrice: priceFormat(longOrderStopProfitPosition)
           })
@@ -90,7 +90,7 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
             leverage: formatUnits(short.leverage, 8),
             derivative: calls[i].address,
             quoteToken: calls[i].quoteToken,
-            averagePrice: formatUnits(short.price, 8),
+            averagePrice: String(short.price),
             stopLossPrice: priceFormat(shortOrderStopLossPosition),
             takeProfitPrice: priceFormat(shortOrderStopProfitPosition)
           })

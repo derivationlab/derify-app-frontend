@@ -26,6 +26,7 @@ import {
   bnDiv,
   bnMinus,
   bnMul,
+  formatUnits,
   isGT,
   isGTET,
   isLTET,
@@ -124,16 +125,17 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   }, [t, data, memoVolume, marginToken])
 
   const atom3Tsx = useMemo(() => {
+    const price = formatUnits(data.averagePrice, data.pricePrecision)
     return (
       <DataAtom
         label={t('Trade.MyPosition.AvgPrice', 'Avg. Price')}
         tip={t('Trade.MyPosition.AvgPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>{keepDecimals(data?.averagePrice ?? 0, data.decimals)}</span>
+        <span>{keepDecimals(price, data.decimals)}</span>
       </DataAtom>
     )
-  }, [t, data?.averagePrice, data.decimals])
+  }, [t, data])
 
   const atom4Tsx = useMemo(() => {
     let liqPrice

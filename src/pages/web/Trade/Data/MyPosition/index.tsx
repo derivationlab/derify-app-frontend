@@ -9,7 +9,10 @@ import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
-import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
+import {
+  usePriceDecimalsForTrade,
+  useTokenSpotPricesForTrade
+} from '@/hooks/useTokenSpotPrices'
 import CloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import { ThemeContext } from '@/providers/Theme'
 import { useBrokerInfoStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
@@ -27,8 +30,8 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForPosition)
-  const { priceDecimals } = usePriceDecimals(data)
-  const { data: spotPrices } = useTokenSpotPrices(data, priceDecimals)
+  const { priceDecimals } = usePriceDecimalsForTrade(data)
+  const { data: spotPrices } = useTokenSpotPricesForTrade(data, priceDecimals)
 
   const closeAllFunc = async () => {
     setModalType('')
@@ -57,7 +60,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         <>
           <div className="web-trade-data-list">
             {data.map((d: Rec, i: number) => (
-              <ListItem key={`my-positions-${i}`} data={d} />
+              <ListItem key={`my-positions-${i}`} data={{ ...d, pricePrecision: priceDecimals?.[d.derivative] }} />
             ))}
           </div>
           <Button onClick={() => setModalType('CLOSE_ALL_POSITIONS')}>

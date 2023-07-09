@@ -17,7 +17,6 @@ export const useMarginPosVolume = () => {
     ['useMarginPosVolume'],
     async () => {
       const { data } = await getAllMarginPositions()
-
       if (data) {
         data.forEach((d: Rec) => {
           output[d.margin_token] = {

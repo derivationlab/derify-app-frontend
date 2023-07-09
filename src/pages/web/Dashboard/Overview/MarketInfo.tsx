@@ -33,14 +33,11 @@ export const resortMargin = (data: any[]) => {
 const MarketInfo: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
-
   const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
-
   const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const allMarginTokenList = useMarginTokenListStore((state) => state.allMarginTokenList)
   const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
-
   const { data: boundPools } = useBoundPools(allMarginTokenList)
   const { data: tradingVol } = useAllCurrentTrading(allMarginTokenList)
   const { data: indicators } = useAllMarginIndicators(allMarginTokenList)
@@ -124,7 +121,7 @@ const MarketInfo: FC = () => {
             const p1 = allPositions[data.margin_token]
             const p2 = Object.keys(p1)
             total = p2.reduce((p, n: string) => {
-              const price = spotPrices.find((f) => f.margin === data.margin_token && f.token === n)?.price ?? 0
+              const price = spotPrices.find((f) => f.token === n)?.price ?? 0
               return bnPlus(bnMul(p1[n], price), p)
             }, '0')
           }

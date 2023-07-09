@@ -62,8 +62,10 @@ export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, q
         if (response.length) {
           response.forEach(([spotPrice]: BigNumberish[], index: number) => {
             const x = {
-              name: list[index]?.name || quoteToken?.name,
-              price: formatUnits(spotPrice, decimals[calls[index].address])
+              name: quoteToken?.name,
+              price: formatUnits(spotPrice, decimals[calls[index].address]),
+              token: list[index]?.token,
+              margin: list[index]?.margin
             }
             output = [...output, x]
           })

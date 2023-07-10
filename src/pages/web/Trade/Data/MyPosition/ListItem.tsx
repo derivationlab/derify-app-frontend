@@ -125,14 +125,15 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   }, [t, data, memoVolume, marginToken])
 
   const atom3Tsx = useMemo(() => {
-    const price = formatUnits(data.averagePrice, data.pricePrecision)
     return (
       <DataAtom
         label={t('Trade.MyPosition.AvgPrice', 'Avg. Price')}
         tip={t('Trade.MyPosition.AvgPriceTip')}
         footer={VALUATION_TOKEN_SYMBOL}
       >
-        <span>{keepDecimals(price, data.decimals)}</span>
+        <span>
+          {keepDecimals(data.pricePrecision ? formatUnits(data.averagePrice, data.pricePrecision) : 0, data.decimals)}
+        </span>
       </DataAtom>
     )
   }, [t, data])

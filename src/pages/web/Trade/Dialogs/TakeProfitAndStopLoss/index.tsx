@@ -80,9 +80,9 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   }, [data])
 
   const calcLossAmount = useCallback(
-    debounce((v) => {
-      if (v && data) {
-        const p1 = bnMinus(v, formatUnits(data.averagePrice, data.pricePrecision))
+    debounce((value: number, data: Rec) => {
+      if (value && data) {
+        const p1 = bnMinus(value, formatUnits(data.averagePrice, data.pricePrecision))
         const p2 = bnMul(p1, data?.size)
         const p3 = bnMul(p2, data?.side === PositionSideTypes.long ? 1 : -1)
         setPnLParams((v) => ({ ...v, SLAmount: p3 }))
@@ -90,13 +90,13 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
         setPnLParams((v) => ({ ...v, SLAmount: '0' }))
       }
     }, 1000),
-    [data]
+    []
   )
 
   const calcProfitAmount = useCallback(
-    debounce((v) => {
-      if (v && data) {
-        const p1 = bnMinus(v, formatUnits(data.averagePrice, data.pricePrecision))
+    debounce((value: number, data: Rec) => {
+      if (value && data) {
+        const p1 = bnMinus(value, formatUnits(data.averagePrice, data.pricePrecision))
         const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data?.size)
         const amount = bnMul(p1, p2)
         setPnLParams((v) => ({ ...v, TPAmount: amount }))
@@ -177,45 +177,49 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     onClick(params)
   }
 
-  const onChangeSLPrice = (val: any) => {
-    if (val === '') {
-      setPnLParams((v) => ({ ...v, SLPrice: '' }))
-      calcLossAmount(0)
-    } else if (val >= 0) {
-      setPnLParams((v) => ({ ...v, SLPrice: val }))
-      calcLossAmount(val)
-    }
-  }
+  const onChangeSLPrice = useCallback(
+    (val: any) => {
+      if (val === '') {
+        setPnLParams((v) => ({ ...v, SLPrice: '' }))
+        calcLossAmount(0, data)
+      } else if (val >= 0) {
+        setPnLParams((v) => ({ ...v, SLPrice: val }))
+        calcLossAmount(val, data)
+      }
+    },
+    [data]
+  )
 
-  const onChangeTPPrice = (val: any) => {
-    if (val === '') {
-      setPnLParams((v) => ({ ...v, TPPrice: '' }))
-      calcProfitAmount(0)
-    } else if (val >= 0) {
-      setPnLParams((v) => ({ ...v, TPPrice: val }))
-      calcProfitAmount(val)
-    }
-  }
+  const onChangeTPPrice = useCallback(
+    (val: any) => {
+      if (val === '') {
+        setPnLParams((v) => ({ ...v, TPPrice: '' }))
+        calcProfitAmount(0, data)
+      } else if (val >= 0) {
+        setPnLParams((v) => ({ ...v, TPPrice: val }))
+        calcProfitAmount(val, data)
+      }
+    },
+    [data]
+  )
 
   useEffect(() => {
-    if (data && visible) {
+    if (data.pricePrecision && visible) {
       const { takeProfitPrice, stopLossPrice } = data // '--'
 
       if (takeProfitPrice > 0) {
-        calcProfitAmount(takeProfitPrice)
+        calcProfitAmount(takeProfitPrice, data)
         setPnLParams((v) => ({ ...v, TPPrice: takeProfitPrice }))
       }
       if (stopLossPrice > 0) {
-        calcLossAmount(stopLossPrice)
+        calcLossAmount(stopLossPrice, data)
         setPnLParams((v) => ({ ...v, SLPrice: stopLossPrice }))
       }
     }
-  }, [visible])
+  }, [data, visible])
 
   useEffect(() => {
-    if (!visible) {
-      setPnLParams(initPnLParams)
-    }
+    if (!visible) setPnLParams(initPnLParams)
   }, [visible])
 
   return (

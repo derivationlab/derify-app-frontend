@@ -66,7 +66,7 @@ export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, q
               name: list[index]?.name || quoteToken?.name,
               price: formatUnits(spotPrice, decimals[calls[index].address]),
               token: list[index]?.token,
-              margin: list[index]?.margin_token
+              margin: list[index]?.margin_token || list[index]?.margin
             }
             output = [...output, x]
           })

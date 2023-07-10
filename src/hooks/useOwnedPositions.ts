@@ -60,8 +60,10 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
         // My Positions - long
         if (long.isUsed) {
+          const size = formatUnits(long.size, 8)
+
           positionOrd.push({
-            size: String(long.size),
+            size,
             side: PositionSideTypes.long,
             name: calls[i].derivative,
             token: calls[i].token,
@@ -77,8 +79,10 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
         // My Positions - short
         if (short.isUsed) {
+          const size = formatUnits(short.size, 8)
+
           positionOrd.push({
-            size: String(short.size),
+            size,
             name: calls[i].derivative,
             side: PositionSideTypes.short,
             token: calls[i].token,
@@ -100,11 +104,11 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
             const volume = bnMul(price, size)
 
             profitLossOrd.push({
-              size: String(order.size),
+              size,
               name: calls[i].derivative,
               side: PositionSideTypes.long,
               token: calls[i].token,
-              price: String(order.price),
+              price,
               volume,
               decimals: calls[i].decimals,
               derivative: calls[i].address,

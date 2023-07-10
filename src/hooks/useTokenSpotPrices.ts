@@ -126,7 +126,8 @@ export const useTokenSpotPricesForTrade = (list?: Rec[] | null, decimals?: Rec |
     async () => {
       let output: Rec[] = []
       if (list && decimals) {
-        let calls = uniqBy(list, 'name').map((l) => ({
+        const uniqList = uniqBy(list, 'name')
+        let calls = uniqList.map((l) => ({
           name: 'getSpotPrice',
           address: l.derivative
         }))
@@ -144,10 +145,10 @@ export const useTokenSpotPricesForTrade = (list?: Rec[] | null, decimals?: Rec |
         if (response.length) {
           response.forEach(([spotPrice]: BigNumberish[], index: number) => {
             const x = {
-              name: list[index]?.name,
+              name: uniqList[index]?.name,
               price: formatUnits(spotPrice, decimals[calls[index].address]),
-              token: list[index]?.token,
-              margin: list[index]?.margin
+              token: uniqList[index]?.token,
+              margin: uniqList[index]?.margin
             }
             output = [...output, x]
           })

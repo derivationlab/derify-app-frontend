@@ -51,6 +51,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
 
   const atom2Tsx = useMemo(() => {
     const size = data?.size ?? 0
+    console.info(size)
     const output = Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)
     return (
       <DataAtom

@@ -61,7 +61,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
   const { closePosition, takeProfitOrStopLoss } = usePositionOperation()
-
+  console.info(tokenSpotPrices)
   const tokenSpotPrice = useMemo(() => {
     if (tokenSpotPrices) {
       const find = tokenSpotPrices.find((t: Rec) => t.name === data.name)
@@ -75,6 +75,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   }, [data, tokenSpotPrice])
 
   const memoVolume = useMemo(() => {
+    console.info(data.name, data.size, tokenSpotPrice)
     return bnMul(data.size, tokenSpotPrice)
   }, [data, tokenSpotPrice])
 

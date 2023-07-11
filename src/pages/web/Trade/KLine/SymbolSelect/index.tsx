@@ -38,7 +38,6 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
-
   const [visible, toggleVisible] = useToggle(false)
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const [fuzzySearch, setFuzzySearch] = useState<string>('')

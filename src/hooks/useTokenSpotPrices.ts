@@ -32,7 +32,7 @@ export const usePriceDecimals = (list?: Rec[] | null) => {
   }
 
   useEffect(() => {
-    if (list) void func(list)
+    if (list && list.length) void func(list)
   }, [list])
 
   return { priceDecimals }

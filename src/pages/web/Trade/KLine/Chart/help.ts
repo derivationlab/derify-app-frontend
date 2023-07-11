@@ -33,11 +33,12 @@ let initToken = ''
 export const getKLineDAT = async (token: string, time: number, endTime: number, limit = 10, isInit: boolean) => {
   if (isInit) initToken = token
   if (token !== initToken) {
-    await sleep(3000)
+    await sleep(1000)
     return { data: [], more: true }
   }
   const data = await getKLineDataApi(token, time, endTime, limit)
-  const klineData = calcKlineData(data)
+  const filter = data.filter((d: number[]) => d.slice(1).some((l) => l > 0))
+  const klineData = calcKlineData(filter)
   const more = klineData.length === limit
   return {
     data: klineData,

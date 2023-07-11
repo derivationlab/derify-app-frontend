@@ -2,7 +2,7 @@ import BN from 'bignumber.js'
 
 import { checkMarginToken as _checkMarginToken } from '@/api'
 import { ZERO } from '@/config'
-import { PositionOrderTypes, PositionSideTypes, TSigner } from '@/typings'
+import { PositionOrderTypes, PositionSideTypes } from '@/typings'
 import { getExchangeContract, getDerivativeContract, getProtocolContract } from '@/utils/contractHelpers'
 import {
   isGT,

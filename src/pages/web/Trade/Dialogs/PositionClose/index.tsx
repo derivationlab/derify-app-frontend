@@ -10,7 +10,7 @@ import MultipleStatus from '@/components/web/MultipleStatus'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { usePositionOperationStore, useMarginTokenStore, useMarginIndicatorsStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { PositionSideTypes, Rec } from '@/typings'
+import { PositionSideTypes } from '@/typings'
 import { bnMul, formatUnits, isGT, isGTET, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 import QuantityInput from './QuantityInput'

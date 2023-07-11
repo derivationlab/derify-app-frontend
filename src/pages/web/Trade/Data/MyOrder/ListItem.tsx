@@ -25,22 +25,12 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
-  const positionSize = useMemo(() => {
-    console.info(data.size)
-    return data.size
-    if (data.pricePrecision) return formatUnits(data.size, data.pricePrecision)
-    return '0'
-  }, [data])
-
   const memoPrice = useMemo(() => {
-    console.info(data.price)
-    return data.price
-    // data.pricePrecision
-    if (data.pricePrecision) return formatUnits(data.price, 8)
+    if (data.pricePrecision) return formatUnits(data.price, data.pricePrecision)
     return '0'
   }, [data])
 
-  const memoVolume = useMemo(() => bnMul(positionSize, memoPrice), [memoPrice, positionSize])
+  const memoVolume = useMemo(() => bnMul(data.size, memoPrice), [memoPrice, data.size])
 
   const memoTimestamp = useMemo(() => {
     return dayjs((data?.timestamp ?? 0) * 1000)
@@ -66,7 +56,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
   )
 
   const atom2Tsx = useMemo(() => {
-    const output = Number(positionSize) < 1 ? nonBigNumberInterception(positionSize, 8) : numeralNumber(positionSize, 2)
+    const output = Number(data.size) < 1 ? nonBigNumberInterception(data.size, 8) : numeralNumber(data.size, 2)
     return (
       <DataAtom
         label={t('Trade.MyOrder.Volume', 'Volume')}
@@ -78,7 +68,7 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
         </span>
       </DataAtom>
     )
-  }, [t, data, memoVolume, marginToken, positionSize])
+  }, [t, data, memoVolume, marginToken, data.size])
 
   const atom3Tsx = useMemo(
     () => (

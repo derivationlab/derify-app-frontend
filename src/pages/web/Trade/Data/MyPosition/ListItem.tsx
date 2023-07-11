@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
+import { useTokenSpotPrice } from '@/hooks/useTokenSpotPrices'
 import PreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
 import ConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
 import PnLDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
@@ -21,7 +22,7 @@ import {
   useTraderVariablesStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { PositionSideTypes, PubSubEvents, Rec } from '@/typings'
+import { PositionSideTypes, PubSubEvents } from '@/typings'
 import {
   bnDiv,
   bnMinus,
@@ -60,14 +61,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
   const { closePosition, takeProfitOrStopLoss } = usePositionOperation()
-
-  const spotPrice = useMemo(() => {
-    if (tokenSpotPrices) {
-      const find = tokenSpotPrices.find((t: Rec) => t.name === data.name)
-      return find?.price ?? '0'
-    }
-    return '0'
-  }, [data, tokenSpotPrices])
+  const { spotPrice, precision } = useTokenSpotPrice(tokenSpotPrices, data.name)
 
   const collateral = useMemo(() => {
     return bnDiv(bnMul(data.size, spotPrice), data.leverage)
@@ -80,7 +74,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
 
   const volume = useMemo(() => {
     return bnMul(data.size, spotPrice)
-  }, [data.size, spotPrice])
+  }, [data, spotPrice])
 
   const pnl = useMemo(() => {
     if (isGT(spotPrice, 0) && isGT(data.size, 0) && isGT(averagePrice, 0)) {
@@ -164,7 +158,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         <span>{liqPrice}</span>
       </DataAtom>
     )
-  }, [t, data, data.size, clearingParams, variables, spotPrice, variablesLoaded])
+  }, [t, data, clearingParams, variables, spotPrice, variablesLoaded])
 
   const atom5Tsx = useMemo(() => {
     return (
@@ -203,7 +197,10 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   }, [t, variables.marginRate, clearingParams.marginMaintenanceRatio])
 
   const atom7Tsx = useMemo(() => {
-    const price = data?.takeProfitPrice !== '--' ? keepDecimals(data.takeProfitPrice, data.decimals) : '--'
+    const price =
+      data?.takeProfitPrice !== '--'
+        ? keepDecimals(formatUnits(data.takeProfitPrice, data.pricePrecision), data.decimals)
+        : '--'
     return (
       <DataAtom
         label={t('Trade.MyPosition.TakeProfit', 'Take Profit')}
@@ -213,10 +210,13 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         {price} <EditButton onClick={() => setModalType('PNL_POSITION')} />
       </DataAtom>
     )
-  }, [t, data, data.decimals])
+  }, [t, data])
 
   const atom8Tsx = useMemo(() => {
-    const price = data?.stopLossPrice !== '--' ? keepDecimals(data.stopLossPrice, data.decimals) : '--'
+    const price =
+      data?.stopLossPrice !== '--'
+        ? keepDecimals(formatUnits(data.stopLossPrice, data.pricePrecision), data.decimals)
+        : '--'
     return (
       <DataAtom
         label={t('Trade.MyPosition.StopLoss', 'Stop Loss')}
@@ -226,7 +226,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         {price} <EditButton onClick={() => setModalType('PNL_POSITION')} />
       </DataAtom>
     )
-  }, [t, data, data.decimals])
+  }, [t, data])
 
   const disabled = useMemo(
     () => !signer || !brokerBound?.broker || !protocolConfig,
@@ -269,12 +269,12 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
     window.toast.dismiss(toast)
   }
 
-  const pnlFunc = async (params: Record<string, any>) => {
+  const createPnLOrderFunc = async (params: Record<string, any>) => {
     setModalType('')
     const toast = window.toast.loading(t('common.pending'))
     if (!signer) return window.toast.error(t('common.failed'))
     const { side, TP, SL } = params
-    const status = await takeProfitOrStopLoss(data.pairAddress, side, TP, SL)
+    const status = await takeProfitOrStopLoss(data.pairAddress, side, TP, SL, precision)
     if (status) {
       window.toast.success(t('common.success'))
       PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
@@ -351,7 +351,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         data={{ ...data, spotPrice: spotPrice }}
         visible={modalType === 'PNL_POSITION'}
         onClose={() => setModalType('')}
-        onClick={pnlFunc}
+        onClick={createPnLOrderFunc}
       />
     </>
   )

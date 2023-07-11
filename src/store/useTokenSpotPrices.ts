@@ -17,15 +17,15 @@ const useTokenSpotPricesStore = create<TokenSpotPricesState>((set) => ({
    */
   tokenSpotPricesForTrading: null,
   tokenSpotPricesLoaded: false,
-  updateTokenSpotPrices: (data: Rec) =>
+  updateTokenSpotPrices: (data: Rec[]) =>
     set(() => {
       return { tokenSpotPrices: data, tokenSpotPricesLoaded: true }
     }),
-  updateTokenSpotPricesForTrading: (data: Rec) =>
+  updateTokenSpotPricesForTrading: (data: Rec[]) =>
     set(() => {
       return { tokenSpotPricesForTrading: data }
     }),
-  updateTokenSpotPricesForPosition: (data: Rec) =>
+  updateTokenSpotPricesForPosition: (data: Rec[]) =>
     set(() => {
       return { tokenSpotPricesForPosition: data }
     })

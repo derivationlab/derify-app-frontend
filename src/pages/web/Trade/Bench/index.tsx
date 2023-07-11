@@ -9,6 +9,7 @@ import NotConnect from '@/components/web/NotConnect'
 import { isOpeningMinLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
+import { useTokenSpotPrice } from '@/hooks/useTokenSpotPrices'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
@@ -22,7 +23,7 @@ import {
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
-import { PubSubEvents, PositionSideTypes, PositionOrderTypes, Rec } from '@/typings'
+import { PubSubEvents, PositionSideTypes, PositionOrderTypes } from '@/typings'
 import { bnDiv, numeralNumber, isET, isGT, isLTET, keepDecimals } from '@/utils/tools'
 
 import Col from './c/Col'
@@ -46,14 +47,7 @@ const Bench: FC = () => {
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
-
-  const spotPrice = useMemo(() => {
-    if (spotPrices) {
-      const find = spotPrices.find((t: Rec) => t.name === quoteToken.name)
-      return find?.price ?? '0'
-    }
-    return '0'
-  }, [quoteToken, spotPrices])
+  const { spotPrice, precision } = useTokenSpotPrice(spotPrices, quoteToken.name)
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)
@@ -101,21 +95,23 @@ const Bench: FC = () => {
     dispatch({ type: 'SET_MODAL_STATUS', payload: false })
 
     if (brokerBound?.broker && protocolConfig) {
-      const conversion = isOrderConversion(openingParams.openingType, state.openingParams?.price)
-      const { broker } = brokerBound
       const { token } = quoteToken
+      const { broker } = brokerBound
       const { exchange } = protocolConfig
       const { side, price, symbol } = state.openingParams
+      const { openingType, leverageNow } = openingParams
+      const conversion = isOrderConversion(openingType, price)
       const status = await increasePosition(
         exchange,
         broker,
         token,
         side,
-        openingParams.openingType,
+        openingType,
         symbol,
         price,
-        openingParams.leverageNow,
+        leverageNow,
         amount,
+        precision,
         conversion
       )
 

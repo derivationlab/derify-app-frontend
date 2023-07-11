@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { isEmpty, debounce } from 'lodash'
 
-import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import React, { FC, useCallback, useEffect, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
@@ -11,6 +11,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { calcChangeFee, calcTradingFee, checkOpeningLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
+import { useTokenSpotPrice } from '@/hooks/useTokenSpotPrices'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
   useMarginTokenStore,
@@ -41,14 +42,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const positionLimit = usePositionLimitStore((state) => state.positionLimit)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
-
-  const spotPrice = useMemo(() => {
-    if (spotPrices) {
-      const find = spotPrices.find((t: Rec) => t.name === quoteToken.name)
-      return find?.price ?? '0'
-    }
-    return '0'
-  }, [quoteToken, spotPrices])
+  const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
 
   const _checkOpeningLimit = async (positionLimit: Rec) => {
     const [maximum, isGreater, effective] = checkOpeningLimit(
@@ -137,8 +131,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
               ) : (
                 <p>
                   <BalanceShow
-                    value={data?.price}
-                    unit=""
+                    value={keepDecimals(data?.price, quoteToken.decimals)}
                     decimal={Number(data?.price) === 0 ? 2 : quoteToken.decimals}
                   />
                   <em>{t('Trade.Bench.LimitPrice', 'Limit Price')}</em>

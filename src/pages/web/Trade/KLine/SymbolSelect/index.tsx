@@ -13,7 +13,7 @@ import { DropDownList, DropDownListItem } from '@/components/common/DropDownList
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { ZERO } from '@/config'
-import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
+import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import {
   getPairAddressList,
   useDerivativeListStore,
@@ -52,14 +52,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
   const { priceDecimals } = usePriceDecimals(pairOptions.data)
   const { data: spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, quoteToken)
-
-  const spotPrice = useMemo(() => {
-    if (spotPrices) {
-      const find = spotPrices.find((t) => t.name === quoteToken.name)
-      return find?.price ?? '0'
-    }
-    return '0'
-  }, [quoteToken, spotPrices])
+  const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
 
   const indicator = useMemo(() => {
     if (marginIndicators) {

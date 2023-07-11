@@ -88,13 +88,13 @@ export interface MarginIndicatorsState {
 }
 
 export interface TokenSpotPricesState {
-  tokenSpotPrices: Rec | null
-  tokenSpotPricesForPosition: Rec | null
-  tokenSpotPricesForTrading: Rec | null
+  tokenSpotPrices: Rec[] | null
+  tokenSpotPricesForPosition: Rec[] | null
+  tokenSpotPricesForTrading: Rec[] | null
   tokenSpotPricesLoaded: boolean
-  updateTokenSpotPrices: (data: Rec) => void
-  updateTokenSpotPricesForTrading: (data: Rec) => void
-  updateTokenSpotPricesForPosition: (data: Rec) => void
+  updateTokenSpotPrices: (data: Rec[]) => void
+  updateTokenSpotPricesForTrading: (data: Rec[]) => void
+  updateTokenSpotPricesForPosition: (data: Rec[]) => void
 }
 
 export interface OpeningMinLimitState {

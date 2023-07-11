@@ -2,7 +2,7 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { useQuery } from '@tanstack/react-query'
 import { uniqBy } from 'lodash'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import derifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import { Rec } from '@/typings'
@@ -66,7 +66,8 @@ export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, q
               name: list[index]?.name || quoteToken?.name,
               price: formatUnits(spotPrice, decimals[calls[index].address]),
               token: list[index]?.token,
-              margin: list[index]?.margin_token || list[index]?.margin
+              margin: list[index]?.margin_token || list[index]?.margin,
+              precision: decimals[calls[index].address]
             }
             output = [...output, x]
           })
@@ -146,7 +147,8 @@ export const useTokenSpotPricesForTrade = (list?: Rec[] | null, decimals?: Rec |
               name: uniqList[index]?.name,
               price: formatUnits(spotPrice, decimals[calls[index].address]),
               token: uniqList[index]?.token,
-              margin: uniqList[index]?.margin
+              margin: uniqList[index]?.margin,
+              precision: decimals[calls[index].address]
             }
             output = [...output, x]
           })
@@ -166,4 +168,16 @@ export const useTokenSpotPricesForTrade = (list?: Rec[] | null, decimals?: Rec |
   )
 
   return { data, refetch, isLoading }
+}
+
+// [{a},{b},{c}] get {a}
+export const useTokenSpotPrice = (prices: Rec[] | null, tokeName: string) => {
+  const target = useMemo(() => {
+    if (prices) return prices.find((t) => t.name === tokeName)
+  }, [prices, tokeName])
+
+  return {
+    spotPrice: target?.price ?? 0,
+    precision: target?.precision ?? 8
+  }
 }

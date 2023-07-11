@@ -22,18 +22,17 @@ export const usePositionOperation = () => {
     openingPrice: string,
     posLeverage: number,
     openingSize: string,
+    precision: number,
     conversion?: boolean
   ): Promise<boolean> => {
     if (!signer) return false
-
     const c = getExchangeContract(exchange, signer)
-
     const _posLeverage = inputParameterConversion(posLeverage, 8)
     const _pricingType = 1
     const _openingType = conversion ? PositionOrderTypes.Market : openingType
     const _openingSize = inputParameterConversion(openingSize, 8)
-    const _openingPrice = inputParameterConversion(openingPrice, 8)
-
+    const _openingPrice =
+      openingType === PositionOrderTypes.Market ? 0 : inputParameterConversion(openingPrice, precision)
     try {
       const gasLimit = await estimateGas(c, 'openPosition', [
         brokerId,
@@ -177,7 +176,8 @@ export const usePositionOperation = () => {
     pairAddress: string,
     positionSide: PositionSideTypes,
     takeProfitPrice: number,
-    stopLossPrice: number
+    stopLossPrice: number,
+    precision: number
   ): Promise<boolean> => {
     if (!signer) return false
 
@@ -186,10 +186,12 @@ export const usePositionOperation = () => {
 
     if (isEmpty(job)) return true
 
-    const _stopLossPrice = inputParameterConversion(stopLossPrice, 8)
-    const _takeProfitPrice = inputParameterConversion(takeProfitPrice, 8)
+    const _stopLossPrice = inputParameterConversion(stopLossPrice, precision)
+    const _takeProfitPrice = inputParameterConversion(takeProfitPrice, precision)
     const { method, stopType, orderStopType, cancelStopType } = job
-
+    console.info('precision', precision)
+    console.info('_stopLossPrice', _stopLossPrice)
+    console.info('_takeProfitPrice', _takeProfitPrice)
     try {
       if (method === 'orderStopPosition') {
         const gasLimit = await estimateGas(c, 'orderStopPosition', [

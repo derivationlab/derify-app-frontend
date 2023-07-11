@@ -2,7 +2,7 @@ import BN from 'bignumber.js'
 
 import { checkMarginToken as _checkMarginToken } from '@/api'
 import { ZERO } from '@/config'
-import { PositionOrderTypes, PositionSideTypes } from '@/typings'
+import { PositionOrderTypes, PositionSideTypes, TSigner } from '@/typings'
 import { getExchangeContract, getDerivativeContract, getProtocolContract } from '@/utils/contractHelpers'
 import {
   isGT,
@@ -51,7 +51,7 @@ export const calcChangeFee = async (
   const kRatio = await derivativeContract.kRatio()
   const gRatio = await derivativeContract.gRatio()
   const roRatio = await derivativeContract.roRatio()
-  const beforeRatio = await derivativeContract.getPositionChangeFeeRatio()
+  const beforeRatio = await derivativeContract.callStatic.getPositionChangeFeeRatio()
 
   const _size = bnDiv(amount, spotPrice)
   const _liquidityPool = formatUnits(liquidityPool, 8)

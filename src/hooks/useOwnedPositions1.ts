@@ -18,7 +18,17 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
   const calls: Rec[] = []
   const positionOrd: Rec[] = []
   const profitLossOrd: Rec[] = []
-
+  /**
+   {
+    "margin_token": "0xD5eC82071D0c870BfBa60B58A0AA52E42A3BEFba",
+    "token": "0x076C264Df30Ef6e24CB925617B1ad88Fc1F41000",
+    "name": "BUSD/USD",
+    "price_decimals": 2,
+    "open": 1,
+    "update_time": "2023-06-20T04:02:38.000Z",
+    "derivative": "0x79269146ab3d145ceFdD3B447C9C6D3a7541a8a1"
+}
+   */
   try {
     list.forEach((l) => {
       calls.push({
@@ -50,9 +60,8 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
         // My Positions - long
         if (long.isUsed) {
-          const size = formatUnits(long.size, 8)
           positionOrd.push({
-            size,
+            size: String(long.size),
             side: PositionSideTypes.long,
             name: calls[i].derivative,
             token: calls[i].token,
@@ -68,9 +77,8 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
         // My Positions - short
         if (short.isUsed) {
-          const size = formatUnits(short.size, 8)
           positionOrd.push({
-            size,
+            size: String(short.size),
             name: calls[i].derivative,
             side: PositionSideTypes.short,
             token: calls[i].token,
@@ -87,17 +95,12 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
         // My Order - long
         longOrderOpenPosition.forEach((order: Rec) => {
           if (order.isUsed) {
-            const size = formatUnits(order.size, 8)
-            const price = formatUnits(order.price, 8)
-            const volume = bnMul(price, size)
-
             profitLossOrd.push({
-              size,
+              size: String(order.size),
               name: calls[i].derivative,
               side: PositionSideTypes.long,
               token: calls[i].token,
-              price,
-              volume,
+              price: String(order.price),
               decimals: calls[i].decimals,
               pairAddress: calls[i].address,
               leverage: formatUnits(order.leverage),
@@ -111,17 +114,12 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
         // My Order - short
         shortOrderOpenPosition.forEach((order: Rec) => {
           if (order.isUsed) {
-            const size = formatUnits(order.size, 8)
-            const price = formatUnits(order.price, 8)
-            const volume = bnMul(price, size)
-
             profitLossOrd.push({
-              size,
+              size: String(order.size),
               name: calls[i].derivative,
               side: PositionSideTypes.short,
               token: calls[i].token,
-              price,
-              volume,
+              price: String(order.price),
               decimals: calls[i].decimals,
               pairAddress: calls[i].address,
               leverage: formatUnits(order.leverage),
@@ -134,17 +132,12 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
         // My Order - long stop profit
         if (longOrderStopProfitPosition.isUsed) {
-          const size = formatUnits(long.size, 8)
-          const price = formatUnits(longOrderStopProfitPosition.stopPrice, 8)
-          const volume = bnMul(price, size)
-
           profitLossOrd.push({
-            size,
+            size: String(long.size),
             name: calls[i].derivative,
             side: PositionSideTypes.long,
             token: calls[i].token,
-            price,
-            volume,
+            price: String(longOrderStopProfitPosition.stopPrice),
             decimals: calls[i].decimals,
             pairAddress: calls[i].address,
             leverage: formatUnits(long.leverage),
@@ -156,17 +149,12 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
         // My Order - long stop loss
         if (longOrderStopLossPosition.isUsed) {
-          const size = formatUnits(long.size, 8)
-          const price = formatUnits(longOrderStopLossPosition.stopPrice, 8)
-          const volume = bnMul(price, size)
-
           profitLossOrd.push({
-            size,
+            size: String(long.size),
             name: calls[i].derivative,
             side: PositionSideTypes.long,
             token: calls[i].token,
-            price,
-            volume,
+            price: String(longOrderStopLossPosition.stopPrice),
             decimals: calls[i].decimals,
             pairAddress: calls[i].address,
             leverage: formatUnits(long.leverage),
@@ -178,17 +166,12 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
         // My Order - short stop loss
         if (shortOrderStopLossPosition.isUsed) {
-          const size = formatUnits(short.size, 8)
-          const price = formatUnits(shortOrderStopLossPosition.stopPrice, 8)
-          const volume = bnMul(price, size)
-
           profitLossOrd.push({
-            size,
+            size: String(short.size),
             name: calls[i].derivative,
             side: PositionSideTypes.short,
             token: calls[i].token,
-            price,
-            volume,
+            price: String(shortOrderStopLossPosition.stopPrice),
             decimals: calls[i].decimals,
             pairAddress: calls[i].address,
             leverage: formatUnits(short.leverage),
@@ -200,17 +183,12 @@ const getOwnedPositions = async (trader: string, list: Rec[]): Promise<Rec[][]> 
 
         // My Order - short stop profit
         if (shortOrderStopProfitPosition.isUsed) {
-          const size = formatUnits(short.size, 8)
-          const price = formatUnits(shortOrderStopProfitPosition.stopPrice, 8)
-          const volume = bnMul(price, size)
-
           profitLossOrd.push({
-            size,
+            size: String(short.size),
             name: calls[i].derivative,
             side: PositionSideTypes.short,
             token: calls[i].token,
-            price,
-            volume,
+            price: String(shortOrderStopProfitPosition.stopPrice),
             decimals: calls[i].decimals,
             pairAddress: calls[i].address,
             leverage: formatUnits(short.leverage),

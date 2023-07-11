@@ -8,12 +8,7 @@ import Dialog from '@/components/common/Dialog'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import {
-  usePositionOperationStore,
-  useMarginTokenStore,
-  useMarginIndicatorsStore,
-  useTokenSpotPricesStore
-} from '@/store'
+import { usePositionOperationStore, useMarginTokenStore, useMarginIndicatorsStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
 import { bnMul, formatUnits, isGT, isGTET, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
@@ -31,22 +26,13 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
 
-  const tokenSpotPrice = useMemo(() => {
-    if (tokenSpotPrices) {
-      const find = tokenSpotPrices.find((t: Rec) => t.name === data.name)
-      return find?.price ?? '0'
-    }
-    return '0'
-  }, [data, tokenSpotPrices])
-
   const positionVolume = useMemo(
-    () => nonBigNumberInterception(bnMul(tokenSpotPrice, data.size), data.decimals),
-    [data, tokenSpotPrice]
+    () => nonBigNumberInterception(bnMul(data.spotPrice, data.size), data.decimals),
+    [data]
   )
 
   const priceChangeRate = useMemo(() => {
@@ -86,9 +72,9 @@ const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
               </header>
               <section className="web-trade-dialog-position-info-data">
                 <BalanceShow
-                  value={tokenSpotPrice}
+                  value={data.spotPrice}
                   unit=""
-                  decimal={Number(tokenSpotPrice) === 0 ? 2 : data.decimals}
+                  decimal={Number(data.spotPrice) === 0 ? 2 : data.decimals}
                 />
                 <span className={isGTET(priceChangeRate, 0) ? 'buy' : 'sell'}>{keepDecimals(priceChangeRate, 2)}%</span>
               </section>

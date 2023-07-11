@@ -9,7 +9,7 @@ import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
-import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
+import { bnMul, formatUnits, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 import AtomWrap from '../c/AtomWrap'
 import DataAtom from '../c/DataAtom'
@@ -25,11 +25,27 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
+  const positionSize = useMemo(() => {
+    console.info(data.size)
+    return data.size
+    if (data.pricePrecision) return formatUnits(data.size, data.pricePrecision)
+    return '0'
+  }, [data])
+
+  const memoPrice = useMemo(() => {
+    console.info(data.price)
+    return data.price
+    // data.pricePrecision
+    if (data.pricePrecision) return formatUnits(data.price, 8)
+    return '0'
+  }, [data])
+
+  const memoVolume = useMemo(() => bnMul(positionSize, memoPrice), [memoPrice, positionSize])
+
   const memoTimestamp = useMemo(() => {
     return dayjs((data?.timestamp ?? 0) * 1000)
   }, [data?.timestamp])
 
-  // OrderDesc[data?.orderType][1]}
   const OrderDescLang = useMemo(() => {
     return [
       ['Open', t('Trade.MyOrder.LimitPrice', 'Limit Price')], // Limit
@@ -46,33 +62,33 @@ const MyOrderListItem: FC<Props> = ({ data, onClick }) => {
         </span>
       </DataAtom>
     ),
-    [data?.orderType, t, OrderDescLang]
+    [t, data, OrderDescLang]
   )
 
   const atom2Tsx = useMemo(() => {
-    const size = data?.size ?? 0
-    console.info(size)
-    const output = Number(size) < 1 ? nonBigNumberInterception(size, 8) : numeralNumber(size, 2)
+    const output = Number(positionSize) < 1 ? nonBigNumberInterception(positionSize, 8) : numeralNumber(positionSize, 2)
     return (
       <DataAtom
         label={t('Trade.MyOrder.Volume', 'Volume')}
         tip={t('Trade.MyOrder.VolumeTip')}
-        footer={`${data?.quoteToken} / ${marginToken.symbol}`}
+        footer={`${data.quoteToken} / ${marginToken.symbol}`}
       >
         <span>
-          {output} / {numeralNumber(data?.volume, marginToken.decimals)}
+          {output} / {numeralNumber(memoVolume, marginToken.decimals)}
         </span>
       </DataAtom>
     )
-  }, [data, marginToken, t])
+  }, [t, data, memoVolume, marginToken, positionSize])
+
   const atom3Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.MyOrder.Price', 'Price')} footer={VALUATION_TOKEN_SYMBOL}>
-        <span>{keepDecimals(data?.price, data.decimals)}</span>
+        <span>{keepDecimals(memoPrice, data.decimals)}</span>
       </DataAtom>
     ),
-    [data.decimals, data?.price, t]
+    [data, memoPrice, t]
   )
+
   const atom4Tsx = useMemo(
     () => (
       <DataAtom label={t('Trade.MyOrder.Time', 'Time')} footer={data?.timestamp ? memoTimestamp.fromNow() : '-'}>

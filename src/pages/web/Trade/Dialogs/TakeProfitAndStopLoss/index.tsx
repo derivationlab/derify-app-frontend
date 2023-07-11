@@ -9,10 +9,10 @@ import Input from '@/components/common/Form/Input'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginTokenStore, useTokenSpotPricesStore, useMarginIndicatorsStore } from '@/store'
+import { useMarginTokenStore, useMarginIndicatorsStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import { bnMinus, bnMul, formatUnits, isET, isGT, keepDecimals } from '@/utils/tools'
+import { bnMinus, bnMul, formatUnits, isET, isGT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {
   data: Rec
@@ -29,25 +29,15 @@ const initPnLParams = {
   TPAmount: ''
 }
 
-const showPrice = (price: string | number) => {
-  return isGT(price, 0) ? price : '--'
+const showPrice = (price: string | number, decimals: number) => {
+  return isGT(price, 0) ? keepDecimals(price, decimals) : '--'
 }
 
 const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const [pnlParams, setPnLParams] = useState<typeof initPnLParams>(initPnLParams)
-
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-
-  const tokenSpotPrice = useMemo(() => {
-    if (tokenSpotPrices) {
-      const find = tokenSpotPrices.find((t: Rec) => t.name === data.name)
-      return find?.price ?? '0'
-    }
-    return '0'
-  }, [data, tokenSpotPrices])
 
   const memoStopLoss = useMemo(() => {
     const averagePrice = formatUnits(data.averagePrice, data.pricePrecision)
@@ -81,28 +71,20 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
 
   const calcLossAmount = useCallback(
     debounce((value: number, data: Rec) => {
-      if (value && data) {
-        const p1 = bnMinus(value, formatUnits(data.averagePrice, data.pricePrecision))
-        const p2 = bnMul(p1, data?.size)
-        const p3 = bnMul(p2, data?.side === PositionSideTypes.long ? 1 : -1)
-        setPnLParams((v) => ({ ...v, SLAmount: p3 }))
-      } else {
-        setPnLParams((v) => ({ ...v, SLAmount: '0' }))
-      }
+      const p1 = bnMinus(value, formatUnits(data.averagePrice, data.pricePrecision))
+      const p2 = bnMul(p1, data.size)
+      const p3 = bnMul(p2, data?.side === PositionSideTypes.long ? 1 : -1)
+      setPnLParams((v) => ({ ...v, SLAmount: p3 }))
     }, 1000),
     []
   )
 
   const calcProfitAmount = useCallback(
     debounce((value: number, data: Rec) => {
-      if (value && data) {
-        const p1 = bnMinus(value, formatUnits(data.averagePrice, data.pricePrecision))
-        const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data?.size)
-        const amount = bnMul(p1, p2)
-        setPnLParams((v) => ({ ...v, TPAmount: amount }))
-      } else {
-        setPnLParams((v) => ({ ...v, TPAmount: '0' }))
-      }
+      const p1 = bnMinus(value, formatUnits(data.averagePrice, data.pricePrecision))
+      const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data.size)
+      const amount = bnMul(p1, p2)
+      setPnLParams((v) => ({ ...v, TPAmount: amount }))
     }, 1000),
     []
   )
@@ -239,7 +221,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
               </h4>
             </header>
             <section className="web-trade-dialog-position-info-data">
-              <BalanceShow value={tokenSpotPrice} unit="" decimal={Number(tokenSpotPrice) === 0 ? 2 : data.decimals} />
+              <BalanceShow value={data.spotPrice} unit="" decimal={Number(data.spotPrice) === 0 ? 2 : data.decimals} />
               <span className={Number(memoChangeRate) >= 0 ? 'buy' : 'sell'}>{keepDecimals(memoChangeRate, 2)}%</span>
             </section>
             <section className="web-trade-dialog-position-info-count">
@@ -262,14 +244,14 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
             </header>
             <section>
               <Input
-                value={pnlParams.TPPrice}
+                value={nonBigNumberInterception(pnlParams.TPPrice)}
                 onChange={onChangeTPPrice}
                 suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
               />
               <p>
                 {t('Trade.TPSL.TakeProfitTip1', 'When market price reaches')}{' '}
-                <strong>{showPrice(pnlParams.TPPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
+                <strong>{showPrice(pnlParams.TPPrice, data.decimals)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.TakeProfitTip2',
                   'it will trigger Take Profit order to close this position. Estimated profit will be'
@@ -284,14 +266,14 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
             </header>
             <section>
               <Input
-                value={pnlParams.SLPrice}
+                value={nonBigNumberInterception(pnlParams.SLPrice)}
                 onChange={onChangeSLPrice}
                 suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
               />
               <p>
                 {t('Trade.TPSL.StopLossTip1', 'When market price reaches')}{' '}
-                <strong>{showPrice(pnlParams.SLPrice)}</strong> {VALUATION_TOKEN_SYMBOL},
+                <strong>{showPrice(pnlParams.SLPrice, data.decimals)}</strong> {VALUATION_TOKEN_SYMBOL},
                 {t(
                   'Trade.TPSL.StopLossTip2',
                   'it will trigger Stop Loss order to close this position. Estimated loss will be'

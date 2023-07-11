@@ -22,30 +22,27 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
   const { address } = useAccount()
-  const { closeAllPositions } = usePositionOperation()
   const [modalType, setModalType] = useState<string>()
   const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForPosition)
   const { priceDecimals } = usePriceDecimalsForTrade(data)
   const { data: spotPrices } = useTokenSpotPricesForTrade(data, priceDecimals)
+  const { closeAllPositions } = usePositionOperation()
 
   const closeAllFunc = async () => {
     setModalType('')
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
     if (brokerBound?.broker && protocolConfig) {
       const status = await closeAllPositions(protocolConfig.exchange, brokerBound.broker)
-
       if (status) {
         window.toast.success(t('common.success', 'success'))
-
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
         window.toast.error(t('common.failed', 'failed'))
       }
     }
-
     window.toast.dismiss(toast)
   }
 
@@ -57,7 +54,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         <>
           <div className="web-trade-data-list">
             {data.map((d: Rec, i: number) => (
-              <ListItem key={`my-positions-${i}`} data={{ ...d, pricePrecision: priceDecimals?.[d.derivative] }} />
+              <ListItem key={`my-positions-${i}`} data={{ ...d, pricePrecision: priceDecimals?.[d.pairAddress] }} />
             ))}
           </div>
           <Button onClick={() => setModalType('CLOSE_ALL_POSITIONS')}>
@@ -68,7 +65,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       )
     }
     return <NoRecord show />
-  }, [data, theme, address, loaded, priceDecimals])
+  }, [data, theme, loaded, address, priceDecimals])
 
   useEffect(() => {
     if (spotPrices) updateSpotPrices(spotPrices)

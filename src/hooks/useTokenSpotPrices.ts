@@ -94,14 +94,12 @@ export const usePriceDecimalsForTrade = (list?: Rec[] | null) => {
 
   const func = async (list: Rec[]) => {
     let output = Object.create(null)
-    const calls: Rec[] = []
-    uniqBy(list, 'name').forEach((l) => {
-      calls.push({
-        name: 'getSpotPriceDecimals',
-        address: l.derivative
-      })
-    })
-    const response = await multicall(derifyDerivativeAbi, calls as any)
+    const uniqList = uniqBy(list, 'name')
+    const calls = uniqList.map((l) => ({
+      name: 'getSpotPriceDecimals',
+      address: l.pairAddress
+    }))
+    const response = await multicall(derifyDerivativeAbi, calls)
     if (response.length) {
       response.forEach(([decimals]: BigNumberish[], index: number) => {
         const _ = Number(decimals)
@@ -129,7 +127,7 @@ export const useTokenSpotPricesForTrade = (list?: Rec[] | null, decimals?: Rec |
         const uniqList = uniqBy(list, 'name')
         let calls = uniqList.map((l) => ({
           name: 'getSpotPrice',
-          address: l.derivative
+          address: l.pairAddress
         }))
         const find = list.find((l) => l.name === quoteToken?.name)
         if (quoteToken && !find) {

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { isEmpty, debounce } from 'lodash'
 
-import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
+import React, { FC, useCallback, useEffect, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
@@ -12,12 +12,7 @@ import { calcChangeFee, calcTradingFee, checkClosingLimit } from '@/funcs/helper
 import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { usePositionLimit } from '@/hooks/usePositionLimit'
 import { reducer, stateInit } from '@/reducers/opening'
-import {
-  useMarginTokenStore,
-  useProtocolConfigStore,
-  useTokenSpotPricesStore,
-  usePositionOperationStore
-} from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore, usePositionOperationStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
 import { isGT, keepDecimals } from '@/utils/tools'
@@ -37,21 +32,12 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
   const { positionLimit } = usePositionLimit(protocolConfig?.exchange, data.token)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
-  const tokenSpotPrice = useMemo(() => {
-    if (tokenSpotPrices) {
-      const find = tokenSpotPrices.find((t: Rec) => t.name === data.name)
-      return find?.price ?? '0'
-    }
-    return '0'
-  }, [data, tokenSpotPrices])
-
   const closingLimit = async (positionLimit: Rec) => {
     const [maximum, isGreater, effective] = checkClosingLimit(
-      tokenSpotPrice,
+      data.spotPrice,
       openingParams.closingAmount,
       positionLimit[data.token][PositionSideTypes[data.side]]
     )
@@ -70,13 +56,14 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
   const calcCFeeFunc = useCallback(
     debounce(
       async (
+        side: PositionSideTypes,
         derivative: string,
         exchange: string,
-        tokenSpotPrice: string,
+        spotPrice: string,
         marginPrice: string,
         closingAmount: string
       ) => {
-        const fee = await calcChangeFee(data?.side, closingAmount, tokenSpotPrice, marginPrice, exchange, derivative)
+        const fee = await calcChangeFee(side, closingAmount, spotPrice, marginPrice, exchange, derivative)
 
         dispatch({ type: 'SET_CHANGE_FEE_INFO', payload: { loaded: true, value: fee } })
       },
@@ -93,12 +80,12 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
   }, [visible])
 
   useEffect(() => {
-    if (visible && tokenSpotPrice && isGT(marginPrice, 0) && isGT(openingParams.closingAmount, 0) && protocolConfig) {
+    if (visible && data.spotPrice && isGT(marginPrice, 0) && isGT(openingParams.closingAmount, 0) && protocolConfig) {
       const exchange = protocolConfig.exchange
-      void calcTFeeFunc(data.derivative, state.positionLimits.value)
-      void calcCFeeFunc(data.derivative, exchange, tokenSpotPrice, marginPrice, state.positionLimits.value)
+      void calcTFeeFunc(data.pairAddress, state.positionLimits.value)
+      void calcCFeeFunc(data.side, data.pairAddress, exchange, data.spotPrice, marginPrice, state.positionLimits.value)
     }
-  }, [visible, marginPrice, tokenSpotPrice, state.positionLimits])
+  }, [data, visible, marginPrice, state.positionLimits])
 
   useEffect(() => {
     if (
@@ -106,11 +93,11 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
       visible &&
       positionLimit &&
       Number(openingParams.closingAmount) > 0 &&
-      Number(tokenSpotPrice) > 0
+      Number(data.spotPrice) > 0
     ) {
       void closingLimit(positionLimit)
     }
-  }, [data, visible, tokenSpotPrice, positionLimit, openingParams.closingAmount])
+  }, [data, visible, data.spotPrice, positionLimit, openingParams.closingAmount])
 
   return (
     <Dialog

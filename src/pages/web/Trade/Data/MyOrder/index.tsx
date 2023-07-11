@@ -9,6 +9,7 @@ import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
+import { usePriceDecimalsForTrade } from '@/hooks/useTokenSpotPrices'
 import CancelAllOrderDialog from '@/pages/web/Trade/Dialogs/CancelAllOrder'
 import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import { ThemeContext } from '@/providers/Theme'
@@ -26,6 +27,7 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const [targetPosOrd, setTargetPosOrd] = useState<Record<string, any>>({})
   const [dialogStatus, setDialogStatus] = useState<string>('')
+  const { priceDecimals } = usePriceDecimalsForTrade(data)
 
   const clear = () => setDialogStatus('')
 
@@ -40,7 +42,6 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
     clear()
 
     const { side, orderType, timestamp, pairAddress } = targetPosOrd
-
     const status = await cancelPosition(pairAddress, orderType, side, timestamp)
 
     if (status) {
@@ -86,7 +87,11 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         <>
           <div className="web-trade-data-list">
             {data.map((d: Rec, i: number) => (
-              <ListItem key={`my-orders-${i}`} data={d} onClick={() => cancel(d)} />
+              <ListItem
+                key={`my-orders-${i}`}
+                onClick={() => cancel(d)}
+                data={{ ...d, pricePrecision: priceDecimals?.[d.pairAddress] }}
+              />
             ))}
           </div>
           <Button onClick={() => setDialogStatus('cancel-all-position')}>
@@ -97,7 +102,7 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       )
     }
     return <NoRecord show />
-  }, [theme, address, loaded, data])
+  }, [data, theme, loaded, address, priceDecimals])
 
   return (
     <>

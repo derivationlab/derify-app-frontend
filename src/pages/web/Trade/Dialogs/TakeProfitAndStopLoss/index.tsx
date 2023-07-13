@@ -187,15 +187,15 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
 
   useEffect(() => {
     if (data.pricePrecision && visible) {
-      const { takeProfitPrice, stopLossPrice } = data // '--'
+      const { decimals, pricePrecision, takeProfitPrice, stopLossPrice } = data // '--'
 
       if (takeProfitPrice > 0) {
-        const TPPrice = keepDecimals(formatUnits(takeProfitPrice, data.pricePrecision), data.decimals)
+        const TPPrice = keepDecimals(formatUnits(takeProfitPrice, pricePrecision), decimals)
         calcProfitAmount(takeProfitPrice, data)
         setPnLParams((v) => ({ ...v, TPPrice }))
       }
       if (stopLossPrice > 0) {
-        const SLPrice = keepDecimals(formatUnits(stopLossPrice, data.pricePrecision), data.decimals)
+        const SLPrice = keepDecimals(formatUnits(stopLossPrice, pricePrecision), decimals)
         calcLossAmount(stopLossPrice, data)
         setPnLParams((v) => ({ ...v, SLPrice }))
       }

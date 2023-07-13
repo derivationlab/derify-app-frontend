@@ -189,9 +189,7 @@ export const usePositionOperation = () => {
     const _stopLossPrice = inputParameterConversion(stopLossPrice, precision)
     const _takeProfitPrice = inputParameterConversion(takeProfitPrice, precision)
     const { method, stopType, orderStopType, cancelStopType } = job
-    console.info('precision', precision)
-    console.info('_stopLossPrice', _stopLossPrice)
-    console.info('_takeProfitPrice', _takeProfitPrice)
+
     try {
       if (method === 'orderStopPosition') {
         const gasLimit = await estimateGas(c, 'orderStopPosition', [

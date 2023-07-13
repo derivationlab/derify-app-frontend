@@ -47,7 +47,7 @@ const HeaderData: FC = () => {
       const { long_position_amount = 0, short_position_amount = 0 } = currentOpenInterest
       const m = bnMinus(long_position_amount, short_position_amount)
       const n = bnPlus(long_position_amount, short_position_amount)
-      const x = Number(bnDiv(m, n)).toFixed(4)
+      const x = Number(bnDiv(m, n)).toFixed(18)
       return [m, Number(n) === 0 || Number(m) === 0 ? 0 : x]
     }
     return [0, 0]

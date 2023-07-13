@@ -24,6 +24,7 @@ export const STATIC_RESOURCES_URL = 'https://derify-app-resources.vercel.app/ima
 export const LANG_CACHE_KEY = 'LANG'
 export const BEST_RPC_KEY = 'best-rpc'
 export const ZERO = '0x0000000000000000000000000000000000000000'
+export const DerifyV1 = 'http://v1.derify.exchange/'
 export const Docs = 'https://docs.derify.finance/'
 export const Tutorial = 'https://docs.derify.finance/getting-started/tutorial'
 export const Support = 'https://discord.com/channels/822422051099902053/827112242449350686'

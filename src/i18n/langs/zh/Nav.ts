@@ -37,7 +37,8 @@ export default {
       Whitepaper: '白皮书',
       Community: '社区',
       SystemParameters: '系统参数',
-      Token: '通证'
+      Token: '通证',
+      OldVersions: '旧版本'
     },
     Account: {
       Account: '账户',

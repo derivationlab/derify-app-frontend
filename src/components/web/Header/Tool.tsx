@@ -4,6 +4,7 @@ import React, { FC, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useClickAway } from 'react-use'
 
+import Versions from '@/components/web/Header/Versions'
 import { Docs, Support, Tutorial } from '@/config'
 import { useMarginTokenStore } from '@/store'
 
@@ -56,6 +57,7 @@ const Tool: FC = () => {
           </li>
         </ul>
         <Community />
+        <Versions />
       </div>
     </div>
   )

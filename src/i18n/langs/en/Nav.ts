@@ -37,7 +37,8 @@ export default {
       Whitepaper: 'Whitepaper',
       Community: 'Community',
       SystemParameters: 'System Parameters',
-      Token: 'Token'
+      Token: 'Token',
+      OldVersions: 'Old Versions'
     },
     Account: {
       Account: 'Account',

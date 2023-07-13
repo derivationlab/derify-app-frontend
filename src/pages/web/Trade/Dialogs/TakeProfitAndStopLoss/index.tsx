@@ -12,7 +12,7 @@ import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useMarginTokenStore, useMarginIndicatorsStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import { bnMinus, bnMul, formatUnits, isET, isGT, keepDecimals, nonBigNumberInterception } from '@/utils/tools'
+import { bnMinus, bnMul, formatUnits, isET, isGT, keepDecimals } from '@/utils/tools'
 
 interface Props {
   data: Rec
@@ -190,12 +190,14 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
       const { takeProfitPrice, stopLossPrice } = data // '--'
 
       if (takeProfitPrice > 0) {
+        const TPPrice = keepDecimals(formatUnits(takeProfitPrice, data.pricePrecision), data.decimals)
         calcProfitAmount(takeProfitPrice, data)
-        setPnLParams((v) => ({ ...v, TPPrice: takeProfitPrice }))
+        setPnLParams((v) => ({ ...v, TPPrice }))
       }
       if (stopLossPrice > 0) {
+        const SLPrice = keepDecimals(formatUnits(stopLossPrice, data.pricePrecision), data.decimals)
         calcLossAmount(stopLossPrice, data)
-        setPnLParams((v) => ({ ...v, SLPrice: stopLossPrice }))
+        setPnLParams((v) => ({ ...v, SLPrice }))
       }
     }
   }, [data, visible])
@@ -244,7 +246,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
             </header>
             <section>
               <Input
-                value={nonBigNumberInterception(pnlParams.TPPrice)}
+                value={pnlParams.TPPrice}
                 onChange={onChangeTPPrice}
                 suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"
@@ -266,7 +268,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
             </header>
             <section>
               <Input
-                value={nonBigNumberInterception(pnlParams.SLPrice)}
+                value={pnlParams.SLPrice}
                 onChange={onChangeSLPrice}
                 suffix={VALUATION_TOKEN_SYMBOL}
                 type="number"

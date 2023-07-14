@@ -70,7 +70,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   }, [data])
 
   const calcLossAmount = useCallback(
-    debounce((value: number, data: Rec) => {
+    debounce((value: string, data: Rec) => {
       const p1 = bnMinus(value, formatUnits(data.averagePrice, data.pricePrecision))
       const p2 = bnMul(p1, data.size)
       const p3 = bnMul(p2, data?.side === PositionSideTypes.long ? 1 : -1)
@@ -80,7 +80,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   )
 
   const calcProfitAmount = useCallback(
-    debounce((value: number, data: Rec) => {
+    debounce((value: string, data: Rec) => {
       const p1 = bnMinus(value, formatUnits(data.averagePrice, data.pricePrecision))
       const p2 = bnMul(data?.side === PositionSideTypes.long ? 1 : -1, data.size)
       const amount = bnMul(p1, p2)
@@ -163,7 +163,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     (val: any) => {
       if (val === '') {
         setPnLParams((v) => ({ ...v, SLPrice: '' }))
-        calcLossAmount(0, data)
+        calcLossAmount('0', data)
       } else if (val >= 0) {
         setPnLParams((v) => ({ ...v, SLPrice: val }))
         calcLossAmount(val, data)
@@ -176,7 +176,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
     (val: any) => {
       if (val === '') {
         setPnLParams((v) => ({ ...v, TPPrice: '' }))
-        calcProfitAmount(0, data)
+        calcProfitAmount('0', data)
       } else if (val >= 0) {
         setPnLParams((v) => ({ ...v, TPPrice: val }))
         calcProfitAmount(val, data)
@@ -190,13 +190,15 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
       const { decimals, pricePrecision, takeProfitPrice, stopLossPrice } = data // '--'
 
       if (takeProfitPrice > 0) {
-        const TPPrice = keepDecimals(formatUnits(takeProfitPrice, pricePrecision), decimals)
-        calcProfitAmount(takeProfitPrice, data)
+        const price = formatUnits(takeProfitPrice, pricePrecision)
+        const TPPrice = keepDecimals(price, decimals)
+        calcProfitAmount(price, data)
         setPnLParams((v) => ({ ...v, TPPrice }))
       }
       if (stopLossPrice > 0) {
-        const SLPrice = keepDecimals(formatUnits(stopLossPrice, pricePrecision), decimals)
-        calcLossAmount(stopLossPrice, data)
+        const price = formatUnits(stopLossPrice, pricePrecision)
+        const SLPrice = keepDecimals(price, decimals)
+        calcLossAmount(price, data)
         setPnLParams((v) => ({ ...v, SLPrice }))
       }
     }

@@ -17,6 +17,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/competitionRank'
 import { useMarginTokenStore } from '@/store'
+import { dataRecordInit, Rec } from '@/typings'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
 
 interface RowTextProps {
@@ -51,10 +52,10 @@ const CompetitionRank: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const emptyText = useMemo(() => {
-    if (state.records.loaded) return <Spinner small />
-    if (isEmpty(state.records.records)) return t('common.NoRecord')
+    if (state.outputData.loaded) return <Spinner small />
+    if (isEmpty(state.outputData.records)) return t('common.NoRecord')
     return ''
-  }, [t, state.records])
+  }, [t, state.outputData])
 
   const mColumns = [
     {
@@ -91,22 +92,26 @@ const CompetitionRank: FC = () => {
   const _getCompetitionRank = useCallback(
     async (pageIndex = 0) => {
       const [id, status] = state.filterCondition.split('#')
-      const { data } = await getCompetitionRank(status, id, pageIndex)
-      if (data) {
-        const _ = data.records.map((d: Record<string, any>, index: number) => {
-          const _index = 10 * pageIndex + 1 + index
-          return { ...d, rank: `#${_index}` }
-        })
-        dispatch({ type: 'SET_RECORDS', payload: { records: _, loaded: false } })
-        dispatch({
-          type: 'SET_RECORDS',
-          payload: { records: _, totalItems: data?.totalItems ?? 0, isLoaded: false }
-        })
-      } else {
-        dispatch({ type: 'SET_RECORDS', payload: { records: [], totalItems: 0, loaded: false } })
+      try {
+        const { data } = await getCompetitionRank(status, id, pageIndex)
+        if (data) {
+          const totalItems = data.totalItems
+          const _records = data.records
+          const records = _records.map((d: Rec, index: number) => ({
+            ...d,
+            rank: `#${10 * pageIndex + 1 + index}`
+          }))
+          dispatch({ type: 'SET_OUTPUT_DATA', payload: { records, totalItems } })
+        } else {
+          dispatch({ type: 'SET_OUTPUT_DATA', payload: { ...dataRecordInit } })
+        }
+      } catch (e) {
+        dispatch({ type: 'SET_OUTPUT_DATA', payload: { ...dataRecordInit } })
+      } finally {
+        dispatch({ type: 'SET_OUTPUT_DATA', payload: { loaded: false } })
       }
     },
-    [marginToken, state.filterCondition]
+    [state.filterCondition]
   )
 
   const _getCompetitionList = useCallback(async () => {
@@ -123,7 +128,7 @@ const CompetitionRank: FC = () => {
   }, [marginToken])
 
   const onPagination = (index: number) => {
-    dispatch({ type: 'SET_PAGE_INDEX', payload: index })
+    dispatch({ type: 'SET_OUTPUT_DATA', payload: { pageIndex: index } })
     void _getCompetitionRank(index)
   }
 
@@ -133,7 +138,7 @@ const CompetitionRank: FC = () => {
 
   useEffect(() => {
     if (state.filterCondition) {
-      dispatch({ type: 'SET_RECORDS', payload: { loaded: true } })
+      dispatch({ type: 'SET_OUTPUT_DATA', payload: { loaded: true } })
       void _getCompetitionRank()
     }
   }, [marginToken, state.filterCondition])
@@ -156,13 +161,13 @@ const CompetitionRank: FC = () => {
         </Skeleton>
       </aside>
       <Table
-        data={state.records.records}
+        data={state.outputData.records}
         rowKey="user"
         columns={mColumns}
         emptyText={emptyText}
         rowClassName={(record) => (address === record.user ? 'active' : '')}
       />
-      <Pagination page={state.pageIndex} total={state.records.totalItems ?? 0} onChange={onPagination} />
+      <Pagination page={state.outputData.pageIndex} total={state.outputData.totalItems} onChange={onPagination} />
     </div>
   )
 }

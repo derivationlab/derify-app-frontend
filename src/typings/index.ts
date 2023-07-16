@@ -67,3 +67,14 @@ export enum PubSubEvents {
 }
 
 export type GrantKeys = 'rank' | 'mining' | 'awards'
+
+export const dataRecordInit = {
+  records: [],
+  pageIndex: 0,
+  totalItems: 0,
+  totalPages: 0,
+  currentPage: 0,
+  loaded: false
+}
+
+export type DataRecord = typeof dataRecordInit

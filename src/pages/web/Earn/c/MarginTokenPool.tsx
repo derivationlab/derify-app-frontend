@@ -54,7 +54,7 @@ const MarginTokenPool: FC = () => {
 
   const depositFunc = useCallback(
     async (amount: string) => {
-      const toast = window.toast.loading(t('common.pending', 'pending...'))
+      const toast = window.toast.loading(t('common.pending'))
 
       closeDialog()
 
@@ -63,12 +63,12 @@ const MarginTokenPool: FC = () => {
 
         if (status) {
           // succeed
-          window.toast.success(t('common.success', 'success'))
+          window.toast.success(t('common.success'))
 
           PubSub.publish(PubSubEvents.UPDATE_BALANCE)
         } else {
           // fail
-          window.toast.error(t('common.failed', 'failed'))
+          window.toast.error(t('common.failed'))
         }
       }
 
@@ -79,7 +79,7 @@ const MarginTokenPool: FC = () => {
 
   const redeemFunc = useCallback(
     async (amount: string) => {
-      const toast = window.toast.loading(t('common.pending', 'pending...'))
+      const toast = window.toast.loading(t('common.pending'))
 
       closeDialog()
 
@@ -87,12 +87,12 @@ const MarginTokenPool: FC = () => {
         const status = await redeemBondFromBank(protocolConfig.rewards, amount, signer)
         if (status) {
           // succeed
-          window.toast.success(t('common.success', 'success'))
+          window.toast.success(t('common.success'))
 
           PubSub.publish(PubSubEvents.UPDATE_BALANCE)
         } else {
           // fail
-          window.toast.error(t('common.failed', 'failed'))
+          window.toast.error(t('common.failed'))
         }
       }
 
@@ -111,7 +111,7 @@ const MarginTokenPool: FC = () => {
 
   const exchangeFunc = useCallback(
     async (amount: string) => {
-      const toast = window.toast.loading(t('common.pending', 'pending...'))
+      const toast = window.toast.loading(t('common.pending'))
 
       closeDialog()
 
@@ -120,10 +120,10 @@ const MarginTokenPool: FC = () => {
 
         if (status) {
           // succeed
-          window.toast.success(t('common.success', 'success'))
+          window.toast.success(t('common.success'))
         } else {
           // fail
-          window.toast.error(t('common.failed', 'failed'))
+          window.toast.error(t('common.failed'))
         }
       }
 
@@ -133,7 +133,7 @@ const MarginTokenPool: FC = () => {
   )
 
   const withdrawFunc = useCallback(async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     closeDialog()
 
@@ -141,12 +141,12 @@ const MarginTokenPool: FC = () => {
       const status = await withdrawAllBond(protocolConfig.rewards, signer)
       if (status) {
         // succeed
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
 
         PubSub.publish(PubSubEvents.UPDATE_BALANCE)
       } else {
         // fail
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
       }
     }
 

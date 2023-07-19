@@ -1,5 +1,5 @@
+import { useAtomValue, useSetAtom } from 'jotai'
 import { isEmpty } from 'lodash'
-import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useContext, useEffect } from 'react'
@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
+import { asyncBrokerInfoAtom, brokerInfoAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import Form from '@/components/common/Form/Form'
 import FormInput from '@/components/common/Form/FormInput'
@@ -17,8 +18,6 @@ import FormUploadImage from '@/components/common/Form/FormUploadImage'
 import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
 import { ThemeContext } from '@/providers/Theme'
-import { useBrokerInfoStore } from '@/store'
-import { PubSubEvents } from '@/typings'
 
 import { defaultValues, FormInputProps, patterns, rules } from '../config'
 
@@ -34,17 +33,14 @@ export const AccountTip: FC = () => {
 
 const BrokerSignUpStep2: FC = () => {
   const history = useHistory()
-
+  const formMode = useForm({ defaultValues })
   const { t } = useTranslation()
   const { theme } = useContext(ThemeContext)
-  const { pathname } = useLocation()
   const { address } = useAccount()
-
-  const formMode = useForm({ defaultValues })
-  const { handleSubmit, setValue } = formMode
-
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
-  const brokerInfoLoaded = useBrokerInfoStore((state) => state.brokerInfoLoaded)
+  const { pathname } = useLocation()
+  const { handleSubmit, setValue: setFormValue } = formMode
+  const brokerInfo = useAtomValue(brokerInfoAtom)
+  const asyncBrokerInfo = useSetAtom(asyncBrokerInfoAtom(address))
 
   const goSubmit: SubmitHandler<FormInputProps> = async (form: FormInputProps) => {
     // console.log(form)
@@ -110,15 +106,11 @@ const BrokerSignUpStep2: FC = () => {
       wechat: wechat ?? ''
     })
 
-    if (data.code === 0) {
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
-
-      history.push('/broker/sign-up/step3')
-    }
+    if (data.code === 0) history.push('/broker/sign-up/step3')
   }
 
   useEffect(() => {
-    if (pathname === '/broker/edit' && brokerInfoLoaded && !isEmpty(brokerInfo)) {
+    if (pathname === '/broker/edit' && brokerInfo) {
       const {
         id,
         logo,
@@ -135,26 +127,29 @@ const BrokerSignUpStep2: FC = () => {
 
       if (logo) {
         const index = logo.lastIndexOf('/')
-        setValue('logo', `${API_PREFIX_URL}${logo.substring(index + 1)}` as any)
+        setFormValue('logo', `${API_PREFIX_URL}${logo.substring(index + 1)}` as any)
       }
 
-      setValue('id', id)
-      setValue('name', name)
-      setValue('broker', _broker)
-      setValue('language', language || 'English')
-      setValue('telegram', telegram)
-      setValue('discord', discord)
-      setValue('twitter', twitter)
-      setValue('reddit', reddit)
-      setValue('wechat', wechat)
-      setValue('introduction', introduction)
+      setFormValue('id', id)
+      setFormValue('name', name)
+      setFormValue('broker', _broker)
+      setFormValue('language', language || 'English')
+      setFormValue('telegram', telegram)
+      setFormValue('discord', discord)
+      setFormValue('twitter', twitter)
+      setFormValue('reddit', reddit)
+      setFormValue('wechat', wechat)
+      setFormValue('introduction', introduction)
     } else {
-      setValue('language', 'English')
+      setFormValue('language', 'English')
     }
-  }, [pathname, brokerInfo, brokerInfoLoaded])
+  }, [pathname, brokerInfo])
 
   useEffect(() => {
-    if (address) setValue('broker', address)
+    if (address) {
+      setFormValue('broker', address)
+      void asyncBrokerInfo()
+    }
   }, [address])
 
   return (

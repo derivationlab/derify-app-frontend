@@ -1,4 +1,4 @@
-import PubSub from 'pubsub-js'
+import { useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useHistory, Link } from 'react-router-dom'
 
 import { bindingYourBroker, getBrokersList } from '@/api'
+import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Select from '@/components/common/Form/Select'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
@@ -16,7 +17,6 @@ import {
 } from '@/data'
 import { reducer, stateInit } from '@/reducers/brokerBind'
 import { useMarginTokenStore } from '@/store'
-import { PubSubEvents } from '@/typings'
 
 import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
@@ -28,7 +28,7 @@ const List: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
   const { address } = useAccount()
-
+  const asyncUserBrokerBound = useSetAtom(asyncUserBrokerBoundAtom(address))
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const onPagination = async (index: number) => {
@@ -43,7 +43,7 @@ const List: FC = () => {
   }
 
   const bindBrokerFunc = async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     dispatch({ type: 'SET_OPT_SELECT', payload: { i: state.toBindDAT.id } })
     dispatch({ type: 'SET_SHOW_MODAL', payload: '' })
@@ -52,10 +52,8 @@ const List: FC = () => {
 
     if (data.code === 0) {
       // succeed
-      window.toast.success(t('common.success', 'success'))
-
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_BOUND_DAT)
-
+      window.toast.success(t('common.success'))
+      void (await asyncUserBrokerBound())
       history.push('/broker')
     } else {
       // failed

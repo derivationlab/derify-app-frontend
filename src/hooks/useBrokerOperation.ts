@@ -1,16 +1,15 @@
-import { Signer } from 'ethers'
-
 import { useCallback } from 'react'
 
 import contracts from '@/config/contracts'
 import tokens from '@/config/tokens'
+import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getProtocolContract, getRewardsContract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 import { inputParameterConversion } from '@/utils/tools'
 
 export const useBrokerOperation = () => {
-  const applyBroker = async (burnLimitAmount: string, signer: Signer): Promise<boolean> => {
+  const applyBroker = async (burnLimitAmount: string, signer: TSigner): Promise<boolean> => {
     // console.info(s)
     if (!signer) return false
 
@@ -37,8 +36,8 @@ export const useBrokerOperation = () => {
     }
   }
 
-  const withdrawBrokerReward = useCallback(async (signer: Signer, address: string): Promise<boolean> => {
-    if (!signer) return false
+  const withdrawBrokerReward = useCallback(async (signer: TSigner, address: string | undefined): Promise<boolean> => {
+    if (!signer || !address) return false
 
     const c = getRewardsContract(address, signer)
 
@@ -53,7 +52,7 @@ export const useBrokerOperation = () => {
     }
   }, [])
 
-  const burnEdrfExtendValidPeriod = async (amount: string, signer: Signer): Promise<boolean> => {
+  const extendBrokerPrivilegesValidityPeriod = async (amount: string, signer: TSigner): Promise<boolean> => {
     const c = getProtocolContract(signer)
     const amountPrecision8 = inputParameterConversion(amount, 8)
     const amountPrecision18 = inputParameterConversion(amount, 18)
@@ -81,5 +80,5 @@ export const useBrokerOperation = () => {
     }
   }
 
-  return { applyBroker, withdrawBrokerReward, burnEdrfExtendValidPeriod }
+  return { applyBroker, withdrawBrokerReward, extendBrokerPrivilegesValidityPeriod }
 }

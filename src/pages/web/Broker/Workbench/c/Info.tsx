@@ -1,99 +1,97 @@
 import classNames from 'classnames'
 import dayjs from 'dayjs'
+import { useAtomValue, useSetAtom } from 'jotai'
 import PubSub from 'pubsub-js'
-import { useSigner } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 
-import React, { FC, useCallback, useState, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useMemo } from 'react'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
+import { useBoolean } from 'react-use'
 
+import {
+  asyncBrokerInfoAtom,
+  asyncBrokerPrivilegesValidityPeriodAtom,
+  brokerInfoAtom,
+  brokerPrivilegesValidityPeriodAtom
+} from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import ExtendDialog from '@/components/common/Wallet/Extend'
 import { API_PREFIX_URL } from '@/config'
 import { useBrokerOperation } from '@/hooks/useBrokerOperation'
-import { useBrokerInfoStore } from '@/store'
 import { PubSubEvents } from '@/typings'
-import { copyText } from '@/utils/tools'
+
+const addDay = (d: number) => dayjs().add(d, 'days').format('YYYY-MM-DD')
 
 const Info: FC = () => {
   const history = useHistory()
-
   const { t } = useTranslation()
+  const { address } = useAccount()
   const { data: signer } = useSigner()
-
-  const { burnEdrfExtendValidPeriod } = useBrokerOperation()
-
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
-
-  const [visibleStatus, setVisibleStatus] = useState<string>('')
-
-  const goEdit = () => {
-    history.push('/broker/edit')
-  }
+  const [visible, setVisible] = useBoolean(false)
+  const brokerInfo = useAtomValue(brokerInfoAtom)
+  const asyncBrokerInfo = useSetAtom(asyncBrokerInfoAtom(address))
+  const brokerPrivilegesValidityPeriod = useAtomValue(brokerPrivilegesValidityPeriodAtom)
+  const asyncBrokerPrivilegesValidityPeriod = useSetAtom(asyncBrokerPrivilegesValidityPeriodAtom(address))
+  const { extendBrokerPrivilegesValidityPeriod } = useBrokerOperation()
 
   const extendFunc = useCallback(
     async (amount: string) => {
-      const toast = window.toast.loading(t('common.pending', 'pending...'))
-
-      setVisibleStatus('')
-
-      if (signer) {
-        const status = await burnEdrfExtendValidPeriod(amount, signer)
-
-        if (status) {
-          // succeed
-          window.toast.success(t('common.success', 'success'))
-
-          PubSub.publish(PubSubEvents.UPDATE_BALANCE)
-          PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
-        } else {
-          // failed
-          window.toast.error(t('common.failed', 'failed'))
-        }
+      setVisible(false)
+      const toast = window.toast.loading(t('common.pending'))
+      const status = await extendBrokerPrivilegesValidityPeriod(amount, signer)
+      if (status) {
+        // succeed
+        window.toast.success(t('common.success'))
+        PubSub.publish(PubSubEvents.UPDATE_BALANCE)
+        void (await asyncBrokerPrivilegesValidityPeriod())
+      } else {
+        // failed
+        window.toast.error(t('common.failed'))
       }
-
       window.toast.dismiss(toast)
     },
     [signer]
   )
 
-  const copyTextEv = () => {
-    copyText(`${window.location.origin}/broker/profile/${brokerInfo?.id}`).then((res) => {
-      if (res) window.toast.success('Copy successfully')
-    })
-  }
+  const isExpired = useMemo(() => brokerPrivilegesValidityPeriod <= 0, [brokerPrivilegesValidityPeriod])
 
-  const memoIsExpired = useMemo(() => {
-    return brokerInfo?.period <= 0
-  }, [brokerInfo])
+  const expireDate = useMemo(
+    () => (brokerPrivilegesValidityPeriod >= 0 ? addDay(brokerPrivilegesValidityPeriod) : '0000-00-00'),
+    [brokerPrivilegesValidityPeriod]
+  )
 
-  const memoExpireDate = useMemo(() => {
-    const days = brokerInfo?.period
-    if (days && days >= 0) {
-      return dayjs().add(days, 'days').format('YYYY-MM-DD')
-    }
-    return '0000-00-00'
-  }, [brokerInfo])
-
-  const memoLogo = useMemo(() => {
+  const logoURI = useMemo(() => {
     if (brokerInfo?.logo) {
-      const index = brokerInfo.logo.lastIndexOf('/')
-      return `${API_PREFIX_URL}${brokerInfo.logo.substring(index + 1)}`
+      const logo = brokerInfo.logo
+      const index = logo.lastIndexOf('/')
+      return `${API_PREFIX_URL}${logo.substring(index + 1)}`
     }
     return 'icon/normal-ico.svg'
   }, [brokerInfo])
+
+  const referral = useMemo(() => `${window.location.origin}/broker/profile/${brokerInfo?.id}`, [brokerInfo])
+
+  useEffect(() => {
+    if (address) {
+      void asyncBrokerInfo()
+      void asyncBrokerPrivilegesValidityPeriod()
+    }
+  }, [address])
 
   return (
     <div className="web-broker-info">
       <header className="web-broker-info-header-layout">
         <div className="web-broker-info-header-ico">
-          <Image src={memoLogo} cover />
+          <Image src={logoURI} cover />
         </div>
         <div className="web-broker-info-header">
           <h3>
-            {brokerInfo?.name || '--'} <i className="web-broker-info-edit" onClick={goEdit} />
+            {brokerInfo?.name || '--'}{' '}
+            <i className="web-broker-info-edit" onClick={() => history.push('/broker/edit')} />
           </h3>
           {brokerInfo?.id && (
             <>
@@ -132,39 +130,41 @@ const Info: FC = () => {
                 )}
               />
             </dt>
-            {memoIsExpired ? (
+            {isExpired ? (
               <dd>
                 <del>{t('Broker.BV.Expired', 'Expired')}</del>
               </dd>
             ) : (
               <dd>
-                {brokerInfo?.period ?? 0}
+                {brokerPrivilegesValidityPeriod ?? 0}
                 <small>{t('Broker.BV.days', 'days')}</small>
               </dd>
             )}
           </dl>
-          <Button size="mini" onClick={() => setVisibleStatus('extend')}>
-            {memoIsExpired ? t('Broker.BV.Renew', 'Renew') : t('Broker.BV.Extend', 'Extend')}
+          <Button size="mini" onClick={() => setVisible(true)}>
+            {isExpired ? t('Broker.BV.Renew', 'Renew') : t('Broker.BV.Extend', 'Extend')}
           </Button>
         </main>
-        <footer className={classNames({ expired: memoIsExpired })}>
+        <footer className={classNames({ expired: isExpired })}>
           <p>
             {t('Broker.BV.ExpireAt', 'expire at')}
-            <time>{memoExpireDate}</time>
+            <time>{expireDate}</time>
           </p>
           <aside>
-            <a href={`${window.location.origin}/broker/profile/${brokerInfo?.id}`} target="_blank">
+            <a href={referral} target="_blank">
               {t('Broker.BV.MyPromotionLink', 'My promotion link')}
             </a>
-            <button onClick={copyTextEv} />
-            <a href={`${window.location.origin}/broker/profile/${brokerInfo?.id}`} target="_blank">
+            <CopyToClipboard text={referral} onCopy={() => window.toast.success('Copy successfully')}>
+              <button />
+            </CopyToClipboard>
+            <a href={referral} target="_blank">
               <i />
             </a>
           </aside>
         </footer>
       </section>
 
-      <ExtendDialog visible={visibleStatus === 'extend'} onClick={extendFunc} onClose={() => setVisibleStatus('')} />
+      <ExtendDialog visible={visible} onClick={extendFunc} onClose={() => setVisible(false)} />
     </div>
   )
 }

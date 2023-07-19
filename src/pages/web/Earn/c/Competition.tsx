@@ -37,18 +37,18 @@ const Competition: FC = () => {
   const { data: rankReward, refetch, isLoading } = useRankReward(address, protocolConfig?.rewards)
 
   const withdrawFunc = useCallback(async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     if (protocolConfig) {
       const status = await withdrawRankReward(protocolConfig.rewards, signer)
       if (status) {
         // succeed
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
 
         PubSub.publish(PubSubEvents.UPDATE_BALANCE)
       } else {
         // fail
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
       }
     }
 

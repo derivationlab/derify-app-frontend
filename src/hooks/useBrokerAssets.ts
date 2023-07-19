@@ -10,26 +10,24 @@ const brokerInfoInit = {
   accumulatedMarginTokenReward: '0'
 }
 
-export const useBrokerAssets = (trader = '', rewards = ''): { data: typeof brokerInfoInit; isLoading: boolean } => {
-  const { data, isLoading } = useQuery(
-    ['useBrokerInfo'],
+type Common = string | undefined
+
+export const useBrokerAssets = (trader: Common, rewards: Common) => {
+  const { data: brokerAssets, isLoading } = useQuery(
+    ['useBrokerAssets'],
     async () => {
-      if (trader && rewards) {
-        const c = getRewardsContract(rewards)
-
-        const response = await c.getBrokerReward(trader)
-
-        const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } =
-          response
-        return {
-          ...brokerInfoInit,
-          drfRewardBalance: formatUnits(drfRewardBalance),
-          accumulatedDrfReward: formatUnits(accumulatedDrfReward),
-          marginTokenRewardBalance: formatUnits(marginTokenRewardBalance),
-          accumulatedMarginTokenReward: formatUnits(accumulatedMarginTokenReward)
-        }
+      if (!trader || !rewards) return brokerInfoInit
+      const contract = getRewardsContract(rewards)
+      const response = await contract.getBrokerReward(trader)
+      const { marginTokenRewardBalance, drfRewardBalance, accumulatedDrfReward, accumulatedMarginTokenReward } =
+        response
+      return {
+        ...brokerInfoInit,
+        drfRewardBalance: formatUnits(drfRewardBalance),
+        accumulatedDrfReward: formatUnits(accumulatedDrfReward),
+        marginTokenRewardBalance: formatUnits(marginTokenRewardBalance),
+        accumulatedMarginTokenReward: formatUnits(accumulatedMarginTokenReward)
       }
-      return brokerInfoInit
     },
     {
       retry: false,
@@ -40,5 +38,5 @@ export const useBrokerAssets = (trader = '', rewards = ''): { data: typeof broke
     }
   )
 
-  return { data, isLoading }
+  return { brokerAssets, isLoading }
 }

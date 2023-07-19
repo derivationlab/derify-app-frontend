@@ -17,7 +17,7 @@ const AddGrant: FC = () => {
   const _addGrantPlan = async (token: string, type: string, amount: string, days1: number, days2: number) => {
     setVisible(false)
 
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     const protocolConfig = await getProtocolConfig(token)
 
@@ -27,13 +27,13 @@ const AddGrant: FC = () => {
 
       if (status) {
         // succeed
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
 
         PubSub.publish(PubSubEvents.UPDATE_BALANCE)
         PubSub.publish(PubSubEvents.UPDATE_GRANT_LIST)
       } else {
         // fail
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
       }
     }
 

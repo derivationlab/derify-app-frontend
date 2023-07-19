@@ -1,3 +1,4 @@
+import { useAtomValue } from 'jotai'
 import { isEmpty, isUndefined } from 'lodash'
 import { useAccount } from 'wagmi'
 
@@ -5,9 +6,10 @@ import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { Redirect, useParams } from 'react-router-dom'
 
 import { checkMarginToken } from '@/api'
+import { userBrokerBoundAtom, whetherUserIsBrokerAtom } from '@/atoms/useBrokerData'
 import Spinner from '@/components/common/Spinner'
 import BrokerConnect from '@/pages/web/Broker/c/Connect'
-import { useMarginTokenStore, useBrokerInfoStore } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 
 export const R1 = (props: PropsWithChildren<any>) => {
@@ -15,8 +17,8 @@ export const R1 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children, pathKey } = props
   const [testing, testResult] = useState<boolean | null>(null)
+  const userBrokerBound = useAtomValue(userBrokerBoundAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
 
   const _testing = async () => {
     const { data } = await checkMarginToken(params.id)
@@ -28,59 +30,59 @@ export const R1 = (props: PropsWithChildren<any>) => {
   }, [params.id])
 
   return useMemo(() => {
-    if (testing === null) return <Spinner fixed />
+    if (testing === null || userBrokerBound === undefined) return <Spinner fixed />
     const content = testing ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} />
     if (!address) return content
-    return brokerBound ? content : <Redirect to="/broker/bind" />
-  }, [testing, pathKey, address, marginToken, brokerBound])
+    return userBrokerBound ? content : <Redirect to="/broker/bind" />
+  }, [testing, pathKey, address, marginToken, userBrokerBound])
 }
 
 export const R2 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children } = props
-  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
+  const userBrokerBound = useAtomValue(userBrokerBoundAtom)
 
   return useMemo(() => {
     if (!address) return <BrokerConnect />
-    if (!isUndefined(brokerBound)) return brokerBound ? <Redirect to="/broker" /> : children
+    if (!isUndefined(userBrokerBound)) return userBrokerBound ? <Redirect to="/broker" /> : children
     return <Spinner fixed />
-  }, [address, brokerBound])
+  }, [address, userBrokerBound])
 }
 
 export const R3 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children } = props
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
-  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
+  const userBrokerBound = useAtomValue(userBrokerBoundAtom)
+  const whetherUserIsBroker = useAtomValue(whetherUserIsBrokerAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   return useMemo(() => {
     if (!address) return <BrokerConnect />
-    if (!isUndefined(brokerBound) && !isUndefined(brokerInfo)) {
-      if (brokerInfo) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
-      if (brokerBound) return children
+    if (!isUndefined(userBrokerBound) && !isUndefined(whetherUserIsBroker)) {
+      if (whetherUserIsBroker) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
+      if (!isEmpty(userBrokerBound)) return children
       return <Redirect to="/broker/bind" />
     }
     return <Spinner fixed />
-  }, [address, brokerInfo, brokerBound, marginToken])
+  }, [address, marginToken, userBrokerBound, whetherUserIsBroker])
 }
 
 export const R4 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children } = props
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
-  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
+  const userBrokerBound = useAtomValue(userBrokerBoundAtom)
+  const whetherUserIsBroker = useAtomValue(whetherUserIsBrokerAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   return useMemo(() => {
     if (!address) return <BrokerConnect />
-    if (!isUndefined(brokerBound) && !isUndefined(brokerInfo)) {
-      if (!isEmpty(brokerInfo)) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
-      if (!isEmpty(brokerBound)) return <Redirect to="/broker" />
+    if (!isUndefined(userBrokerBound) && !isUndefined(whetherUserIsBroker)) {
+      if (whetherUserIsBroker) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
+      if (!isEmpty(userBrokerBound)) return <Redirect to="/broker" />
       return children
     }
     return <Spinner fixed />
-  }, [address, brokerInfo, brokerBound, marginToken])
+  }, [address, marginToken, userBrokerBound, whetherUserIsBroker])
 }
 
 export const R5 = (props: PropsWithChildren<any>) => {
@@ -88,7 +90,7 @@ export const R5 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children, pathKey } = props
   const [testing, testResult] = useState<boolean | null>(null)
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
+  const whetherUserIsBroker = useAtomValue(whetherUserIsBrokerAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const _testing = async () => {
@@ -104,49 +106,51 @@ export const R5 = (props: PropsWithChildren<any>) => {
     if (testing === null) return <Spinner fixed />
     const content = testing ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} />
     if (!address) return <BrokerConnect />
-    if (!isUndefined(brokerInfo)) return brokerInfo ? content : <Redirect to="/broker" />
+    if (!isUndefined(whetherUserIsBroker)) return whetherUserIsBroker ? content : <Redirect to="/broker" />
     return <Spinner fixed />
-  }, [address, pathKey, testing, brokerInfo, marginToken])
+  }, [address, pathKey, testing, marginToken, whetherUserIsBroker])
 }
 
 export const R6 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children } = props
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
+  const whetherUserIsBroker = useAtomValue(whetherUserIsBrokerAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   return useMemo(() => {
     if (!address) return <BrokerConnect />
-    if (!isUndefined(brokerInfo))
-      return brokerInfo ? <Redirect to={`/${marginToken.symbol}/broker/workbench`} /> : children
+    if (!isUndefined(whetherUserIsBroker))
+      return whetherUserIsBroker ? <Redirect to={`/${marginToken.symbol}/broker/workbench`} /> : children
     return <Spinner fixed />
-  }, [address, brokerInfo, marginToken])
+  }, [address, marginToken, whetherUserIsBroker])
 }
 
 export const R7 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children } = props
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
+  const whetherUserIsBroker = useAtomValue(whetherUserIsBrokerAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-
+  /**
+   * todo: is_enable
+   */
   return useMemo(() => {
     if (!address) return <BrokerConnect />
-    if (!isUndefined(brokerInfo))
-      return brokerInfo?.is_enable ? <Redirect to={`/${marginToken.symbol}/broker/workbench`} /> : children
+    if (!isUndefined(whetherUserIsBroker))
+      return whetherUserIsBroker ? <Redirect to={`/${marginToken.symbol}/broker/workbench`} /> : children
     return <Spinner fixed />
-  }, [address, brokerInfo, marginToken])
+  }, [address, marginToken, whetherUserIsBroker])
 }
 
 export const R8 = (props: PropsWithChildren<any>) => {
   const { address } = useAccount()
   const { children } = props
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
+  const whetherUserIsBroker = useAtomValue(whetherUserIsBrokerAtom)
 
   return useMemo(() => {
     if (!address) return <BrokerConnect />
-    if (!isUndefined(brokerInfo)) return brokerInfo ? children : <Redirect to="/broker/bind" />
+    if (!isUndefined(whetherUserIsBroker)) return whetherUserIsBroker ? children : <Redirect to="/broker/bind" />
     return <Spinner fixed />
-  }, [address, brokerInfo])
+  }, [address, whetherUserIsBroker])
 }
 
 export const routingWithMarginInfo = [

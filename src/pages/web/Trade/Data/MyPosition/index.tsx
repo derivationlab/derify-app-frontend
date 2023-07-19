@@ -1,3 +1,4 @@
+import { useAtomValue } from 'jotai'
 import { isEmpty } from 'lodash'
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
@@ -5,6 +6,7 @@ import { useAccount } from 'wagmi'
 import React, { FC, useState, useMemo, useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
@@ -12,7 +14,7 @@ import { usePositionOperation } from '@/hooks/usePositionOperation'
 import { usePriceDecimalsForTrade, useTokenSpotPricesForTrade } from '@/hooks/useTokenSpotPrices'
 import CloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import { ThemeContext } from '@/providers/Theme'
-import { useBrokerInfoStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
+import { useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
 import { PubSubEvents, Rec } from '@/typings'
 
 import NoRecord from '../c/NoRecord'
@@ -23,7 +25,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const { theme } = useContext(ThemeContext)
   const { address } = useAccount()
   const [modalType, setModalType] = useState<string>()
-  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
+  const userBrokerBound = useAtomValue(userBrokerBoundAtom)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForPosition)
   const { priceDecimals } = usePriceDecimalsForTrade(data)
@@ -33,14 +35,14 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const closeAllFunc = async () => {
     setModalType('')
     const toast = window.toast.loading(t('common.pending'))
-    if (brokerBound?.broker && protocolConfig) {
-      const status = await closeAllPositions(protocolConfig.exchange, brokerBound.broker)
+    if (userBrokerBound?.broker && protocolConfig) {
+      const status = await closeAllPositions(protocolConfig.exchange, userBrokerBound.broker)
       if (status) {
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
       } else {
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
       }
     }
     window.toast.dismiss(toast)
@@ -78,7 +80,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         visible={modalType === 'CLOSE_ALL_POSITIONS'}
         onClose={() => setModalType('')}
         onClick={closeAllFunc}
-        disabled={!protocolConfig || !brokerBound}
+        disabled={!protocolConfig || !userBrokerBound}
       />
     </>
   )

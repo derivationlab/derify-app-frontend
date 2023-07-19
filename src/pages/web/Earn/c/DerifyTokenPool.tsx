@@ -43,7 +43,7 @@ const DerifyTokenPool: FC = () => {
 
   const stakeDrfFunc = useCallback(
     async (amount: string) => {
-      const toast = window.toast.loading(t('common.pending', 'pending...'))
+      const toast = window.toast.loading(t('common.pending'))
 
       closeDialog()
 
@@ -51,12 +51,12 @@ const DerifyTokenPool: FC = () => {
 
       if (status) {
         // succeed
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
 
         PubSub.publish(PubSubEvents.UPDATE_BALANCE)
       } else {
         // fail
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
       }
 
       window.toast.dismiss(toast)
@@ -66,17 +66,17 @@ const DerifyTokenPool: FC = () => {
 
   const redeemDrfFunc = useCallback(
     async (amount: string) => {
-      const toast = window.toast.loading(t('common.pending', 'pending...'))
+      const toast = window.toast.loading(t('common.pending'))
 
       closeDialog()
 
       const status = await redeemDrf(amount, signer)
       if (status) {
         // succeed
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
       } else {
         // fail
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
       }
 
       window.toast.dismiss(toast)
@@ -85,15 +85,15 @@ const DerifyTokenPool: FC = () => {
   )
 
   const withdrawFunc = useCallback(async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     const status = await withdrawAllEdrf(signer)
     if (status) {
       // succeed
-      window.toast.success(t('common.success', 'success'))
+      window.toast.success(t('common.success'))
     } else {
       // fail
-      window.toast.error(t('common.failed', 'failed'))
+      window.toast.error(t('common.failed'))
     }
 
     window.toast.dismiss(toast)

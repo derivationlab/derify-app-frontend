@@ -54,16 +54,16 @@ const PositionMining: FC = () => {
   }, [rewardsInfo])
 
   const withdrawFunc = useCallback(async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     if (protocolConfig) {
       const status = await withdrawPositionReward(protocolConfig.rewards, signer)
       if (status) {
         // succeed
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
       } else {
         // fail
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
       }
     }
 

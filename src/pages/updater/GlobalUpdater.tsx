@@ -1,13 +1,14 @@
+import { useSetAtom } from 'jotai'
 import { isEmpty } from 'lodash'
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
 import { useEffect } from 'react'
 
+import { asyncUserBrokerBoundAtom, asyncWhetherUserIsBrokerAtom } from '@/atoms/useBrokerData'
 import { useMarginIndicators } from '@/hooks/useMarginIndicators'
 import {
   useBalancesStore,
-  useBrokerInfoStore,
   useDerivativeListStore,
   useMarginTokenListStore,
   useMarginTokenStore,
@@ -25,14 +26,14 @@ export default function GlobalUpdater(): null {
   const resetBalances = useBalancesStore((state) => state.reset)
   const getTokenBalances = useBalancesStore((state) => state.getTokenBalances)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const fetchBrokerInfo = useBrokerInfoStore((state) => state.fetchBrokerInfo)
-  const fetchBrokerBound = useBrokerInfoStore((state) => state.fetchBrokerBound)
-  const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
-  const getProtocolConfig = useProtocolConfigStore((state) => state.getProtocolConfig)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
   const getDerivativeList = useDerivativeListStore((state) => state.getDerivativeList)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const getProtocolConfig = useProtocolConfigStore((state) => state.getProtocolConfig)
   const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
+  const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
+  const asyncUserBrokerBound = useSetAtom(asyncUserBrokerBoundAtom(address))
+  const asyncWhetherUserIsBroker = useSetAtom(asyncWhetherUserIsBrokerAtom(address))
   const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
   // Margin token balances
@@ -55,23 +56,6 @@ export default function GlobalUpdater(): null {
     }
   }, [marginIndicators])
 
-  // User broker info
-  useEffect(() => {
-    if (address) {
-      void fetchBrokerInfo(address, marginToken.address)
-      void fetchBrokerBound(address)
-    }
-
-    PubSub.unsubscribe(PubSubEvents.UPDATE_BROKER_DAT)
-    PubSub.unsubscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT)
-    PubSub.subscribe(PubSubEvents.UPDATE_BROKER_DAT, () => {
-      if (address) void fetchBrokerInfo(address, marginToken.address)
-    })
-    PubSub.subscribe(PubSubEvents.UPDATE_BROKER_BOUND_DAT, () => {
-      if (address) void fetchBrokerBound(address)
-    })
-  }, [address, marginToken])
-
   // Initialize margin token with protocol config
   useEffect(() => {
     if (marginToken) void getProtocolConfig(marginToken.address)
@@ -91,6 +75,17 @@ export default function GlobalUpdater(): null {
       }
     }
   }, [derivativeList])
+
+  /**
+   * 1. Whether the user is a broker
+   * 2. Broker bound
+   */
+  useEffect(() => {
+    if (address) {
+      void asyncUserBrokerBound()
+      void asyncWhetherUserIsBroker()
+    }
+  }, [address])
 
   return null
 }

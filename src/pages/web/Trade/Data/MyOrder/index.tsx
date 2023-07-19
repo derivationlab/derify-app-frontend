@@ -37,7 +37,7 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   }
 
   const _cancelPosition = async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     clear()
 
@@ -46,12 +46,12 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
 
     if (status) {
       // succeed
-      window.toast.success(t('common.success', 'success'))
+      window.toast.success(t('common.success'))
 
       PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
       PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
     } else {
-      window.toast.error(t('common.failed', 'failed'))
+      window.toast.error(t('common.failed'))
       // failed
     }
 
@@ -59,7 +59,7 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   }
 
   const _cancelAllPositions = async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     clear()
 
@@ -67,12 +67,12 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       const status = await cancelAllPositions(protocolConfig.exchange)
 
       if (status) {
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
 
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
       } else {
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
       }
     }
 

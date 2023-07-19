@@ -1,8 +1,10 @@
+import { useAtomValue } from 'jotai'
 import PubSub from 'pubsub-js'
 
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import LeverageSelect from '@/components/common/Form/LeverageSelect'
 import NotConnect from '@/components/web/NotConnect'
@@ -15,7 +17,6 @@ import { reducer, stateInit } from '@/reducers/opening'
 import {
   usePositionOperationStore,
   useQuoteTokenStore,
-  useBrokerInfoStore,
   useMarginTokenStore,
   useTokenSpotPricesStore,
   useMarginIndicatorsStore,
@@ -37,9 +38,9 @@ const Bench: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
   const { t } = useTranslation()
   const { increasePosition } = usePositionOperation()
+  const userBrokerBound = useAtomValue(userBrokerBoundAtom)
   const spotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForTrading)
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
-  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const openingMinLimit = useOpeningMinLimitStore((state) => state.openingMinLimit)
@@ -90,13 +91,13 @@ const Bench: FC = () => {
   }
 
   const openPositionFunc = async (amount: string) => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     dispatch({ type: 'SET_MODAL_STATUS', payload: false })
 
-    if (brokerBound?.broker && protocolConfig) {
+    if (userBrokerBound?.broker && protocolConfig) {
       const { token } = quoteToken
-      const { broker } = brokerBound
+      const { broker } = userBrokerBound
       const { exchange } = protocolConfig
       const { side, price, symbol } = state.openingParams
       const { openingType, leverageNow } = openingParams
@@ -117,17 +118,17 @@ const Bench: FC = () => {
 
       if (status) {
         // succeed
-        window.toast.success(t('common.success', 'success'))
+        window.toast.success(t('common.success'))
 
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
         PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
       } else {
-        window.toast.error(t('common.failed', 'failed'))
+        window.toast.error(t('common.failed'))
         // failed
       }
     } else {
-      window.toast.error(t('common.failed', 'failed'))
+      window.toast.error(t('common.failed'))
       // failed
     }
 

@@ -1,27 +1,23 @@
-import PubSub from 'pubsub-js'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
+import { asyncUserBrokerBoundAtom, userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Spinner from '@/components/common/Spinner'
-import { useBrokerInfoStore } from '@/store'
-import { PubSubEvents } from '@/typings'
 
 import BrokerCard from './c/BrokerCard'
 
 const BrokerInfo: FC = () => {
   const history = useHistory()
-
   const { address } = useAccount()
   const { id: brokerId } = useParams<{ id: string }>()
-
   const [brokerInfo, setBrokerInfo] = useState<Record<string, any>>({})
   const [infoLoaded, setInfoLoaded] = useState<boolean>(true)
-
-  const bound = useBrokerInfoStore((state) => state.brokerBound)
-  const loaded = useBrokerInfoStore((state) => state.brokerBoundLoaded)
+  const userBrokerBound = useAtomValue(userBrokerBoundAtom)
+  const asyncUserBrokerBound = useSetAtom(asyncUserBrokerBoundAtom(address))
 
   const bindBrokerFunc = async () => {
     const toast = window.toast.loading('binding...')
@@ -30,8 +26,7 @@ const BrokerInfo: FC = () => {
 
     if (data.code === 0) {
       // succeed
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_BOUND_DAT)
-
+      void (await asyncUserBrokerBound())
       history.push('/broker')
     } else {
       // failed
@@ -45,7 +40,7 @@ const BrokerInfo: FC = () => {
   const brokerInfoFunc = async () => {
     setInfoLoaded(true)
 
-    if (bound?.broker) {
+    if (userBrokerBound?.broker) {
       history.push('/broker')
     } else {
       const { data } = await getBrokerInfoWithBrokerId(brokerId)
@@ -67,8 +62,8 @@ const BrokerInfo: FC = () => {
   }
 
   useEffect(() => {
-    if (loaded) void brokerInfoFunc()
-  }, [loaded, address])
+    if (userBrokerBound !== undefined) void brokerInfoFunc()
+  }, [userBrokerBound])
 
   return infoLoaded ? <Spinner fixed /> : <BrokerCard broker={brokerInfo} />
 }

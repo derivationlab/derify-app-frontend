@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { useAtomValue } from 'jotai'
 import PubSub from 'pubsub-js'
 import { useSigner } from 'wagmi'
 
@@ -6,6 +7,7 @@ import React, { FC, useMemo, useState, useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
+import { userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
@@ -14,7 +16,6 @@ import PreviewDialog from '@/pages/web/Trade/Dialogs/PositionClose'
 import ConfirmDialog from '@/pages/web/Trade/Dialogs/PositionClose/Confirm'
 import PnLDialog from '@/pages/web/Trade/Dialogs/TakeProfitAndStopLoss'
 import {
-  useBrokerInfoStore,
   useMarginTokenStore,
   usePositionOperationStore,
   useProtocolConfigStore,
@@ -53,7 +54,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   const { data: signer } = useSigner()
   const [modalType, setModalType] = useState<string>()
   const variables = useTraderVariablesStore((state) => state.variables)
-  const brokerBound = useBrokerInfoStore((state) => state.brokerBound)
+  const userBrokerBound = useAtomValue(userBrokerBoundAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
@@ -229,8 +230,8 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   }, [t, data])
 
   const disabled = useMemo(
-    () => !signer || !brokerBound?.broker || !protocolConfig,
-    [signer, protocolConfig, brokerBound]
+    () => !signer || !userBrokerBound?.broker || !protocolConfig,
+    [signer, protocolConfig, userBrokerBound]
   )
 
   const isFullSize = useCallback(
@@ -244,9 +245,9 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
   const closePositionFunc = async () => {
     setModalType('')
     const toast = window.toast.loading(t('common.pending'))
-    if (!signer || !brokerBound?.broker || !protocolConfig) return window.toast.error(t('common.failed'))
+    if (!signer || !userBrokerBound?.broker || !protocolConfig) return window.toast.error(t('common.failed'))
     const { side, size, token } = data
-    const { broker } = brokerBound
+    const { broker } = userBrokerBound
     const { exchange } = protocolConfig
     const status = await closePosition(
       exchange,

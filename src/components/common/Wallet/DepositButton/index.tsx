@@ -25,7 +25,7 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
   // deposit
   const onConfirmDepositEv = useCallback(
     async (amount: string) => {
-      const toast = window.toast.loading(t('common.pending', 'pending...'))
+      const toast = window.toast.loading(t('common.pending'))
 
       setDialogStatus('')
 
@@ -34,14 +34,14 @@ const DepositButton: FC<Props> = ({ size = 'default' }) => {
 
         if (status) {
           // succeed
-          window.toast.success(t('common.success', 'success'))
+          window.toast.success(t('common.success'))
 
           PubSub.publish(PubSubEvents.UPDATE_BALANCE)
           PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
           PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
         } else {
           // fail
-          window.toast.error(t('common.failed', 'failed'))
+          window.toast.error(t('common.failed'))
         }
       }
 

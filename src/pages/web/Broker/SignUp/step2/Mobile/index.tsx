@@ -1,5 +1,5 @@
+import { useAtomValue, useSetAtom } from 'jotai'
 import { isEmpty } from 'lodash'
-import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useState, useEffect } from 'react'
@@ -7,11 +7,10 @@ import { useTranslation } from 'react-i18next'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
+import { asyncBrokerInfoAtom, brokerInfoAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
-import { useBrokerInfoStore } from '@/store'
-import { PubSubEvents } from '@/typings'
 import { calcShortHash } from '@/utils/tools'
 
 import { patterns, rules } from '../config'
@@ -19,11 +18,9 @@ import MFormItem from './c/FormItem'
 
 const BrokerSignUpStep2Mobile: FC = () => {
   const history = useHistory()
-
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const { address } = useAccount()
-
   const [brokerId, setBrokerId] = useState<string>('')
   const [brokerLang, setBrokerLang] = useState<string>(SelectLangOptions[0])
   const [brokerComm, setBrokerComm] = useState<string>('{}')
@@ -32,9 +29,8 @@ const BrokerSignUpStep2Mobile: FC = () => {
   const [fileObject, setFileObject] = useState<File>()
   const [brokerIntr, setBrokerIntr] = useState<string>('')
   const [brokerAcco, setBrokerAcco] = useState<string>('')
-
-  const brokerInfo = useBrokerInfoStore((state) => state.brokerInfo)
-  const brokerInfoLoaded = useBrokerInfoStore((state) => state.brokerInfoLoaded)
+  const brokerInfo = useAtomValue(brokerInfoAtom)
+  const asyncBrokerInfo = useSetAtom(asyncBrokerInfoAtom(address))
 
   const onSubmitFunc = async () => {
     const {
@@ -114,14 +110,12 @@ const BrokerSignUpStep2Mobile: FC = () => {
     })
 
     if (data.code === 0) {
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
-
       history.push('/broker/sign-up/step3')
     }
   }
 
   useEffect(() => {
-    if (pathname === '/broker/edit' && brokerInfoLoaded && !isEmpty(brokerInfo)) {
+    if (pathname === '/broker/edit' && brokerInfo) {
       const {
         introduction,
         language,
@@ -158,10 +152,13 @@ const BrokerSignUpStep2Mobile: FC = () => {
         })
       )
     }
-  }, [pathname, brokerInfo, brokerInfoLoaded])
+  }, [pathname, brokerInfo])
 
   useEffect(() => {
-    if (address) setBrokerAcco(address)
+    if (address) {
+      setBrokerAcco(address)
+      void asyncBrokerInfo()
+    }
   }, [address])
 
   return (

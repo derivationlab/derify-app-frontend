@@ -1,4 +1,3 @@
-import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 
 import React, { ChangeEvent, FC, useState } from 'react'
@@ -8,7 +7,6 @@ import { useHistory } from 'react-router-dom'
 
 import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
 import Button from '@/components/common/Button'
-import { PubSubEvents } from '@/typings'
 
 import BrokerDialog from './BrokerDialog'
 
@@ -30,15 +28,13 @@ const Bind: FC = () => {
   }
 
   const bindBrokerEv = async () => {
-    const toast = window.toast.loading(t('common.pending', 'pending...'))
+    const toast = window.toast.loading(t('common.pending'))
 
     setVisibleStatus('')
 
     const data = await bindingYourBroker({ trader: address, brokerId })
     if (data.code === 0) {
       // succeed
-      PubSub.publish(PubSubEvents.UPDATE_BROKER_DAT)
-
       history.push('/broker')
     } else {
       // failed

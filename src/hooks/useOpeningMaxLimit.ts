@@ -32,8 +32,9 @@ export const useOpeningMaxLimit = (exchange?: string, quote?: typeof quoteToken)
           }
           // console.info(output)
           setOpeningMaxLimit(output)
+        } else {
+          setOpeningMaxLimit(null)
         }
-        setOpeningMaxLimit(null)
       } catch (e) {
         setOpeningMaxLimit(null)
       }

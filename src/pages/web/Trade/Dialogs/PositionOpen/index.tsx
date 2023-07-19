@@ -45,7 +45,6 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
       data.openType,
       params[quoteToken.token][PositionSideTypes[data.side]]
     )
-
     dispatch({ type: 'SET_POSITION_LIMITS', payload: { loaded: true, value: effective, maximum, isGreater } })
   }
 

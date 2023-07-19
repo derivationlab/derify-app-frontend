@@ -1,23 +1,33 @@
+import { atom } from 'jotai'
+import { atomFamily } from 'jotai/utils'
 import { isEmpty } from 'lodash'
-import { create } from 'zustand'
 
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
-import { TraderVariablesState } from '@/store/types'
 import { multicallV2 } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
-const initialTraderVariables = {
-  balance: '0',
-  marginRate: '0',
-  totalMargin: '0',
-  marginBalance: '0',
-  availableMargin: '0',
-  totalPositionAmount: '0'
+type UserAccount = string | undefined
+
+interface TraderVariablesAtomParams {
+  exchange: string | undefined
+  userAccount: UserAccount
 }
 
-export type InitialTraderVariablesType = typeof initialTraderVariables
+const init = {
+  loaded: false,
+  data: {
+    balance: '0',
+    marginRate: '0',
+    totalMargin: '0',
+    marginBalance: '0',
+    availableMargin: '0',
+    totalPositionAmount: '0'
+  }
+}
 
-const getTraderVariables = async (trader: string, exchange: string): Promise<InitialTraderVariablesType> => {
+export const traderVariablesAtom = atom<typeof init>(init)
+
+const getTraderVariables = async (trader: string, exchange: string): Promise<typeof init.data> => {
   const calls = [
     {
       name: 'getTraderAccount',
@@ -61,26 +71,23 @@ const getTraderVariables = async (trader: string, exchange: string): Promise<Ini
       }
     }
 
-    return initialTraderVariables
+    return init.data
   } catch (e) {
     console.info(e)
-    return initialTraderVariables
+    return init.data
   }
 }
 
-const useTraderVariablesStore = create<TraderVariablesState>((set) => ({
-  variables: initialTraderVariables,
-  variablesLoaded: false,
-  getTraderVariables: async (address: string, exchange: string) => {
-    const data = await getTraderVariables(address, exchange)
-
-    set(() => {
-      return { variables: data, variablesLoaded: true }
-    })
-  },
-  reset: () => {
-    set({ variables: initialTraderVariables, variablesLoaded: false })
-  }
-}))
-
-export { useTraderVariablesStore }
+export const asyncTraderVariablesAtom = atomFamily((params: TraderVariablesAtomParams) =>
+  atom(init, async (get, set) => {
+    const { userAccount, exchange } = params
+    try {
+      if (userAccount && exchange) {
+        const data = await getTraderVariables(userAccount, exchange)
+        set(traderVariablesAtom, { loaded: true, data })
+      }
+    } catch (e) {
+      set(traderVariablesAtom, init)
+    }
+  })
+)

@@ -25,6 +25,7 @@ import {
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { PubSubEvents, PositionSideTypes, PositionOrderTypes } from '@/typings'
+import emitter, { EventTypes } from '@/utils/emitter'
 import { bnDiv, numeralNumber, isET, isGT, isLTET, keepDecimals } from '@/utils/tools'
 
 import Col from './c/Col'
@@ -122,7 +123,7 @@ const Bench: FC = () => {
 
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
-        PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
+        emitter.emit(EventTypes.updateTraderVariables)
       } else {
         window.toast.error(t('common.failed'))
         // failed

@@ -8,6 +8,7 @@ import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { userBrokerBoundAtom } from '@/atoms/useBrokerData'
+import { traderVariablesAtom } from '@/atoms/useTraderVariables'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
@@ -19,11 +20,11 @@ import {
   useMarginTokenStore,
   usePositionOperationStore,
   useProtocolConfigStore,
-  useTokenSpotPricesStore,
-  useTraderVariablesStore
+  useTokenSpotPricesStore
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { PositionSideTypes, PubSubEvents } from '@/typings'
+import { PositionSideTypes, PubSubEvents, Rec } from '@/typings'
+import emitter, { EventTypes } from '@/utils/emitter'
 import {
   bnDiv,
   bnMinus,
@@ -43,23 +44,18 @@ import EditButton from '../c/EditButton'
 import ItemHeader from '../c/ItemHeader'
 import Reminder from '../c/Reminder'
 
-interface Props {
-  data: Record<string, any>
-}
+const riseOrFall = (data: string): string => (isGTET(data, 0) ? '+' : '')
 
-const riseOrFall = (data: string): string => (isGT(data, 0) ? '+' : '')
-
-const MyPositionListItem: FC<Props> = ({ data }) => {
+const MyPositionListItem: FC<{ data: Rec }> = ({ data }) => {
   const { t } = useTranslation()
   const { data: signer } = useSigner()
   const [modalType, setModalType] = useState<string>()
-  const variables = useTraderVariablesStore((state) => state.variables)
+  const variables = useAtomValue(traderVariablesAtom)
   const userBrokerBound = useAtomValue(userBrokerBoundAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
-  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
+  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const tokenSpotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForPosition)
   const { clearingParams } = useClearingParams(protocolConfig?.clearing)
   const { closePosition, takeProfitOrStopLoss } = usePositionOperation()
   const { spotPrice, precision } = useTokenSpotPrice(tokenSpotPrices, data.name)
@@ -136,8 +132,8 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
 
   const atom4Tsx = useMemo(() => {
     let liqPrice
-    if (variablesLoaded) {
-      const { marginBalance = 0, totalPositionAmount = 0 } = variables
+    if (variables.loaded) {
+      const { marginBalance = 0, totalPositionAmount = 0 } = variables.data
       const mul = data.side === PositionSideTypes.short ? -1 : 1
 
       const p1 = bnMul(totalPositionAmount, clearingParams.marginMaintenanceRatio)
@@ -159,7 +155,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         <span>{liqPrice}</span>
       </DataAtom>
     )
-  }, [t, data, clearingParams, variables, spotPrice, variablesLoaded])
+  }, [t, data, clearingParams, variables, spotPrice])
 
   const atom5Tsx = useMemo(() => {
     return (
@@ -175,11 +171,11 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
 
   const atom6Tsx = useMemo(() => {
     let alertLevel = 0
-    if (isGT(variables.marginRate, bnMul(clearingParams.marginMaintenanceRatio, 5))) alertLevel = 0
-    else if (isGT(variables.marginRate, bnMul(clearingParams.marginMaintenanceRatio, 4))) alertLevel = 1
-    else if (isGT(variables.marginRate, bnMul(clearingParams.marginMaintenanceRatio, 3))) alertLevel = 2
-    else if (isGT(variables.marginRate, bnMul(clearingParams.marginMaintenanceRatio, 2))) alertLevel = 3
-    else if (isGT(variables.marginRate, clearingParams.marginMaintenanceRatio)) alertLevel = 4
+    if (isGT(variables.data.marginRate, bnMul(clearingParams.marginMaintenanceRatio, 5))) alertLevel = 0
+    else if (isGT(variables.data.marginRate, bnMul(clearingParams.marginMaintenanceRatio, 4))) alertLevel = 1
+    else if (isGT(variables.data.marginRate, bnMul(clearingParams.marginMaintenanceRatio, 3))) alertLevel = 2
+    else if (isGT(variables.data.marginRate, bnMul(clearingParams.marginMaintenanceRatio, 2))) alertLevel = 3
+    else if (isGT(variables.data.marginRate, clearingParams.marginMaintenanceRatio)) alertLevel = 4
     else alertLevel = 5
 
     return (
@@ -188,14 +184,14 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
         label={t('Trade.MyPosition.MarginRate', 'Margin Rate')}
         tip={t('Trade.MyPosition.MarginRateTip', { Ratio: bnMul(clearingParams.marginMaintenanceRatio, 100) })}
       >
-        <span className={classNames('reminder', `${Number(variables.marginRate) >= 0 ? 'up' : 'down'}`)}>
-          {riseOrFall(variables.marginRate as any)}
-          {numeralNumber(Number(variables.marginRate) * 100, 2)}%
+        <span className={classNames('reminder', `${Number(variables.data.marginRate) >= 0 ? 'up' : 'down'}`)}>
+          {riseOrFall(variables.data.marginRate)}
+          {numeralNumber(Number(variables.data.marginRate) * 100, 2)}%
         </span>
         <Reminder alertLevel={alertLevel} />
       </DataAtom>
     )
-  }, [t, variables.marginRate, clearingParams.marginMaintenanceRatio])
+  }, [t, variables, clearingParams.marginMaintenanceRatio])
 
   const atom7Tsx = useMemo(() => {
     const price =
@@ -263,7 +259,7 @@ const MyPositionListItem: FC<Props> = ({ data }) => {
       window.toast.success(t('common.success'))
       PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
       PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
-      PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
+      emitter.emit(EventTypes.updateTraderVariables)
     } else {
       window.toast.error(t('common.failed'))
     }

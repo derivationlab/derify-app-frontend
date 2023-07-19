@@ -1,29 +1,28 @@
-import PubSub from 'pubsub-js'
+import { useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 
 import { useEffect } from 'react'
 
-import { useProtocolConfigStore, useTraderVariablesStore } from '@/store'
-import { PubSubEvents } from '@/typings'
+import { asyncTraderVariablesAtom } from '@/atoms/useTraderVariables'
+import { useProtocolConfigStore } from '@/store'
+import emitter, { EventTypes } from '@/utils/emitter'
 
 export default function TradingUpdater(): null {
   const { address } = useAccount()
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const getTraderVariables = useTraderVariablesStore((state) => state.getTraderVariables)
-  const resetTraderVariables = useTraderVariablesStore((state) => state.reset)
+  const asyncTraderVariables = useSetAtom(
+    asyncTraderVariablesAtom({
+      userAccount: address,
+      exchange: protocolConfig?.exchange
+    })
+  )
 
   // User Margin Data
   useEffect(() => {
-    if (address && protocolConfig) {
-      void resetTraderVariables()
-      void getTraderVariables(address, protocolConfig.exchange)
-    }
-
-    PubSub.unsubscribe(PubSubEvents.UPDATE_TRADER_VARIABLES)
-    PubSub.subscribe(PubSubEvents.UPDATE_TRADER_VARIABLES, () => {
-      if (address && protocolConfig) {
-        void getTraderVariables(address, protocolConfig.exchange)
-      }
+    if (address && protocolConfig) void asyncTraderVariables()
+    emitter.removeAllListeners(EventTypes.updateTraderVariables)
+    emitter.addListener(EventTypes.updateTraderVariables, () => {
+      void asyncTraderVariables()
     })
   }, [address, protocolConfig])
 

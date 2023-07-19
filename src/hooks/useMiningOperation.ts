@@ -166,8 +166,8 @@ export const useMiningOperation = () => {
     }
   }
 
-  const withdrawPositionReward = async (rewards: string, signer?: TSigner): Promise<boolean> => {
-    if (!signer) return false
+  const withdrawPositionReward = async (rewards: string | undefined, signer?: TSigner): Promise<boolean> => {
+    if (!signer || !rewards) return false
     const c = getRewardsContract(rewards, signer)
 
     try {

@@ -9,6 +9,7 @@ import WithdrawDialog from '@/components/common/Wallet/WithdrawButton/Withdraw'
 import { useMarginOperation } from '@/hooks/useMarginOperation'
 import { useProtocolConfigStore } from '@/store'
 import { PubSubEvents } from '@/typings'
+import emitter, { EventTypes } from '@/utils/emitter'
 
 interface Props {
   size?: string
@@ -38,7 +39,7 @@ const WithdrawButton: FC<Props> = ({ size = 'default' }) => {
 
           PubSub.publish(PubSubEvents.UPDATE_BALANCE)
           PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
-          PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
+          emitter.emit(EventTypes.updateTraderVariables)
         } else {
           // fail
           window.toast.error(t('common.failed'))

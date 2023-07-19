@@ -10,9 +10,9 @@ import { getCurrentPositionsAmount } from '@/api'
  * @param quoteTokenAddress
  * @param marginTokenAddress
  */
-export const useCurrentOpenInterest = (quoteTokenAddress: string, marginTokenAddress: string) => {
+export const useCurrentPositionsTotalAmount = (quoteTokenAddress: string, marginTokenAddress: string) => {
   const { data, refetch } = useQuery(
-    ['useCurrentOpenInterest'],
+    ['useCurrentPositionsTotalAmount'],
     async () => {
       if (quoteTokenAddress) {
         const { data } = await getCurrentPositionsAmount(quoteTokenAddress, marginTokenAddress)

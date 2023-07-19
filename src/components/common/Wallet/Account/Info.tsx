@@ -1,9 +1,12 @@
+import { useAtomValue } from 'jotai'
+
 import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { traderVariablesAtom } from '@/atoms/useTraderVariables'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import Skeleton from '@/components/common/Skeleton'
-import { useMarginTokenStore, useTraderVariablesStore } from '@/store'
+import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 
 import BalanceShow from '../BalanceShow'
@@ -14,20 +17,16 @@ interface Props {
 
 const AccountInfo: FC<Props> = ({ size = 'default' }) => {
   const { t } = useTranslation()
-
-  const variables = useTraderVariablesStore((state) => state.variables)
+  const variables = useAtomValue(traderVariablesAtom)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
 
   const decimals1 = useMemo(() => {
-    const p1 = variables?.marginBalance ?? 0
-    if (Number(p1) === 0) return 2
+    if (Number(variables.data.marginBalance) === 0) return 2
     return marginToken.decimals
   }, [marginToken, variables])
 
   const decimals2 = useMemo(() => {
-    const p1 = variables?.availableMargin ?? 0
-    if (Number(p1) === 0) return 2
+    if (Number(variables.data.availableMargin) === 0) return 2
     return marginToken.decimals
   }, [marginToken, variables])
 
@@ -39,8 +38,8 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
           <QuestionPopover size={size} text={t('Nav.Account.MarginBalanceTip', 'Margin Balance')} />
         </dt>
         <dd>
-          <Skeleton rowsProps={{ rows: 1 }} animation loading={!variablesLoaded}>
-            <BalanceShow value={variables?.marginBalance ?? 0} unit={marginToken.symbol} decimal={decimals1} />
+          <Skeleton rowsProps={{ rows: 1 }} animation loading={!variables.loaded}>
+            <BalanceShow value={variables.data.marginBalance} unit={marginToken.symbol} decimal={decimals1} />
           </Skeleton>
         </dd>
       </dl>
@@ -50,8 +49,8 @@ const AccountInfo: FC<Props> = ({ size = 'default' }) => {
           <QuestionPopover size={size} text={t('Nav.Account.AvaliableMarginBalanceTip', 'Available Margin Balance')} />
         </dt>
         <dd>
-          <Skeleton rowsProps={{ rows: 1 }} animation loading={!variablesLoaded}>
-            <BalanceShow value={variables?.availableMargin ?? 0} unit={marginToken.symbol} decimal={decimals2} />
+          <Skeleton rowsProps={{ rows: 1 }} animation loading={!variables.loaded}>
+            <BalanceShow value={variables.data.availableMargin} unit={marginToken.symbol} decimal={decimals2} />
           </Skeleton>
         </dd>
       </dl>

@@ -3,7 +3,6 @@ import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList, pagingParams } from '@/store/useMarginTokenList'
 import { initOpeningParams } from '@/store/usePositionOperation'
 import { quoteToken } from '@/store/useQuoteToken'
-import { InitialTraderVariablesType } from '@/store/useTraderVariables'
 import { ChainId, ProtocolConfig, Rec } from '@/typings'
 
 export interface WalletState {
@@ -91,11 +90,4 @@ export interface OpeningMinLimitState {
   openingMinLimit: string
   openingMinLimitLoaded: boolean
   getOpeningMinLimit: (address: string) => Promise<void>
-}
-
-export interface TraderVariablesState {
-  variables: InitialTraderVariablesType
-  variablesLoaded: boolean
-  getTraderVariables: (address: string, exchange: string) => Promise<void>
-  reset: () => void
 }

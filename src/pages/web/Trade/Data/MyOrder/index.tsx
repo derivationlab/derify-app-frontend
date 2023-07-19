@@ -15,6 +15,7 @@ import CancelOrderDialog from '@/pages/web/Trade/Dialogs/CancelOrder'
 import { ThemeContext } from '@/providers/Theme'
 import { useProtocolConfigStore } from '@/store'
 import { PubSubEvents, Rec } from '@/typings'
+import emitter, { EventTypes } from '@/utils/emitter'
 
 import NoRecord from '../c/NoRecord'
 import ListItem from './ListItem'
@@ -49,7 +50,7 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
       window.toast.success(t('common.success'))
 
       PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
-      PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
+      emitter.emit(EventTypes.updateTraderVariables)
     } else {
       window.toast.error(t('common.failed'))
       // failed
@@ -70,7 +71,7 @@ const MyOrder: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         window.toast.success(t('common.success'))
 
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
-        PubSub.publish(PubSubEvents.UPDATE_TRADER_VARIABLES)
+        emitter.emit(EventTypes.updateTraderVariables)
       } else {
         window.toast.error(t('common.failed'))
       }

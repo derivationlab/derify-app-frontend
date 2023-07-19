@@ -23,7 +23,7 @@ export const getTradersRankList = async (marginToken: string, page: number, size
   return response
 }
 
-export const getTraderWithdrawAmount = async (trader: string, amount: number, marginToken: string) => {
+export const getTraderWithdrawAmount = async (trader: string, amount: string, marginToken: string) => {
   const response = await get(`api/trader_withdraw_amounts/${trader}/${amount}/${marginToken}`)
   return response
 }

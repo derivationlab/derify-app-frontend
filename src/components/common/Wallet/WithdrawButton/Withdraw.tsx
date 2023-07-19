@@ -1,15 +1,16 @@
+import { useAtomValue } from 'jotai'
 import { useAccount } from 'wagmi'
 
-import React, { FC, useEffect, useMemo, useReducer } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getTraderWithdrawAmount } from '@/api'
+import { traderVariablesAtom } from '@/atoms/useTraderVariables'
 import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { reducer, stateInit } from '@/reducers/withdraw'
-import { useMarginTokenStore, useTraderVariablesStore } from '@/store'
-import { bnDiv, bnMinus, bnMul, isET, isGT, isGTET, keepDecimals } from '@/utils/tools'
+import { useAmountCanWithdrawn } from '@/hooks/useAmountCanWithdrawn'
+import { useMarginTokenStore } from '@/store'
+import { bnDiv, bnMinus, bnMul, isET, isLT, isLTET, keepDecimals } from '@/utils/tools'
 
 import AmountInput from '../AmountInput'
 
@@ -22,48 +23,26 @@ interface Props {
 const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const { address } = useAccount()
-
-  const [state, dispatch] = useReducer(reducer, stateInit)
-
-  const variables = useTraderVariablesStore((state) => state.variables)
-  const variablesLoaded = useTraderVariablesStore((state) => state.variablesLoaded)
+  const [amountInp, setAmountInp] = useState<string>('')
+  const variables = useAtomValue(traderVariablesAtom)
   const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const { canWithdrawn } = useAmountCanWithdrawn(address, amountInp, marginToken.address)
 
-  const memoMargin = useMemo(() => {
-    if (variablesLoaded) {
-      const { marginBalance, availableMargin } = variables
+  const collateral = useMemo(() => {
+    if (variables.loaded) {
+      const { marginBalance, availableMargin } = variables.data
       const p1 = bnMinus(marginBalance, availableMargin)
       const p2 = isET(marginBalance, 0) ? 0 : bnMul(bnDiv(p1, marginBalance), 100)
       return [keepDecimals(p1, 2), keepDecimals(p2, 2)]
     }
     return [0, 0]
-  }, [variablesLoaded])
+  }, [variables])
 
-  const memoDisabled = useMemo(() => {
-    if (variablesLoaded) {
-      const { availableMargin } = variables
-      return isGT(availableMargin, 0)
-    }
-    return true
-  }, [variablesLoaded])
-
-  const onChange = (v: string) => {
-    if (isGTET(variables.availableMargin, v) && isGT(v, 0)) {
-      dispatch({ type: 'SET_MARGIN_DAT', payload: { disabled: false, amount: v } })
-    } else {
-      dispatch({ type: 'SET_MARGIN_DAT', payload: { disabled: true, amount: '0' } })
-    }
-  }
-
-  const funcAsync = async (account: string, amount: number) => {
-    const { data } = await getTraderWithdrawAmount(account, amount, marginToken.address)
-
-    dispatch({ type: 'SET_NECESSARY', payload: data })
-  }
-
-  useEffect(() => {
-    if (address && Number(state.marginDAT.amount) > 0) void funcAsync(address, Number(state.marginDAT.amount))
-  }, [address, state.marginDAT])
+  const disabled = useMemo(() => {
+    if (!variables.loaded) return true
+    const { availableMargin } = variables.data
+    return isLTET(availableMargin, 0) || isET(0, amountInp) || isLT(variables.data.availableMargin, amountInp)
+  }, [variables, amountInp])
 
   return (
     <Dialog
@@ -78,29 +57,29 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Trade.Withdraw.Withdrawable', 'Withdrawable')}</dt>
               <dd>
-                <BalanceShow value={variables.availableMargin} unit={marginToken.symbol} />
+                <BalanceShow value={variables.data.availableMargin} unit={marginToken.symbol} />
               </dd>
             </dl>
             <address>
-              {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{memoMargin[0]}</em> {marginToken.symbol}{' '}
-              <em>( {memoMargin[1]}%)</em>
+              {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{collateral[0]}</em> {marginToken.symbol}{' '}
+              <em>( {collateral[1]}%)</em>
             </address>
           </div>
           <div className="amount">
             <AmountInput
-              max={variables.availableMargin}
+              max={variables.data.availableMargin}
               unit={marginToken.symbol}
               title={t('Trade.Withdraw.AmountToWithdraw', 'Amount to withdraw')}
-              onChange={onChange}
+              onChange={setAmountInp}
             />
-            {state.necessary?.bMarginTokenAmount > 0 && (
+            {Number(canWithdrawn.bMarginTokenAmount) > 0 && (
               <p
                 className="tips"
                 dangerouslySetInnerHTML={{
                   __html: t('Trade.Withdraw.WithdrawTip', '', {
                     MarginToken: marginToken.symbol,
-                    MarginAmount: keepDecimals(state.necessary?.marginTokenAmount, 2),
-                    bMarginAmount: keepDecimals(state.necessary?.bMarginTokenAmount, 2),
+                    MarginAmount: keepDecimals(canWithdrawn.marginTokenAmount, 2),
+                    bMarginAmount: keepDecimals(canWithdrawn.bMarginTokenAmount, 2),
                     bMarginToken: `b${marginToken.symbol}`
                   })
                 }}
@@ -108,7 +87,7 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             )}
           </div>
         </div>
-        <Button onClick={() => onClick(state.marginDAT.amount)} disabled={!memoDisabled || state.marginDAT.disabled}>
+        <Button onClick={() => onClick(amountInp)} disabled={disabled}>
           {t('Trade.Withdraw.Confirm', 'Confirm')}
         </Button>
       </div>

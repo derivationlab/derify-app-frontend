@@ -10,6 +10,7 @@ import LeverageSelect from '@/components/common/Form/LeverageSelect'
 import NotConnect from '@/components/web/NotConnect'
 import { isOpeningMinLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
+import { useOpeningMinLimit } from '@/hooks/useOpeningMinLimit'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
 import { useTokenSpotPrice } from '@/hooks/useTokenSpotPrices'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
@@ -23,7 +24,6 @@ import {
   useProtocolConfigStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
-import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
 import { PubSubEvents, PositionSideTypes, PositionOrderTypes } from '@/typings'
 import { bnDiv, numeralNumber, isET, isGT, isLTET, keepDecimals } from '@/utils/tools'
 
@@ -43,14 +43,14 @@ const Bench: FC = () => {
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const openingMinLimit = useOpeningMinLimitStore((state) => state.openingMinLimit)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
+  const { openingMinLimit } = useOpeningMinLimit(protocolConfig?.exchange)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
   const { spotPrice, precision } = useTokenSpotPrice(spotPrices, quoteToken.name)
 
-  const memoLongPosApy = useMemo(() => {
+  const longPosApy = useMemo(() => {
     const p = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)
     if (p >= 0) {
       const apy = p * 100
@@ -59,7 +59,7 @@ const Bench: FC = () => {
     return '--'
   }, [quoteToken, marginIndicators])
 
-  const memo2WayPosApy = useMemo(() => {
+  const hedgePosApy = useMemo(() => {
     const p1 = Number(marginIndicators?.[quoteToken.token]?.shortPmrRate ?? 0)
     const p2 = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)
     if (p1 >= 0 && p2 >= 0) {
@@ -69,7 +69,7 @@ const Bench: FC = () => {
     return '--'
   }, [quoteToken, marginIndicators])
 
-  const memoShortPosApy = useMemo(() => {
+  const shortPosApy = useMemo(() => {
     const p = Number(marginIndicators?.[quoteToken.token]?.shortPmrRate ?? 0)
     if (p >= 0) {
       const apy = p * 100
@@ -78,11 +78,11 @@ const Bench: FC = () => {
     return '--'
   }, [quoteToken, marginIndicators])
 
-  const memoDisabled1 = useMemo(() => {
+  const disabled1 = useMemo(() => {
     return isLTET(Number(state.openingAmount), 0)
   }, [state.openingAmount])
 
-  const memoDisabled2 = useMemo(() => {
+  const disabled2 = useMemo(() => {
     return isLTET(openingParams.openingPrice, 0)
   }, [openingParams.openingPrice])
 
@@ -209,7 +209,7 @@ const Bench: FC = () => {
           <Row>
             <Col>
               <Button
-                disabled={memoDisabled1 || memoDisabled2 || !quoteToken.token}
+                disabled={disabled1 || disabled2 || !quoteToken.token}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSideTypes.long)}
@@ -217,13 +217,13 @@ const Bench: FC = () => {
               >
                 <strong>{t('Trade.Bench.Long', 'Long')}</strong>
                 <em>
-                  {numeralNumber(memoLongPosApy, 2)}%<u>APR</u>
+                  {numeralNumber(longPosApy, 2)}%<u>APR</u>
                 </em>
               </Button>
             </Col>
             <Col>
               <Button
-                disabled={memoDisabled1 || memoDisabled2 || !quoteToken.token}
+                disabled={disabled1 || disabled2 || !quoteToken.token}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSideTypes.short)}
@@ -231,7 +231,7 @@ const Bench: FC = () => {
               >
                 <strong>{t('Trade.Bench.Short', 'Short')}</strong>
                 <em>
-                  {numeralNumber(memoShortPosApy, 2)}%<u>APR</u>
+                  {numeralNumber(shortPosApy, 2)}%<u>APR</u>
                 </em>
               </Button>
             </Col>
@@ -240,7 +240,7 @@ const Bench: FC = () => {
             <Row>
               <Col>
                 <Button
-                  disabled={memoDisabled1 || memoDisabled2 || !quoteToken.token}
+                  disabled={disabled1 || disabled2 || !quoteToken.token}
                   noDisabledStyle
                   className="web-trade-bench-button-full"
                   onClick={() => openPositionDialog(PositionSideTypes.twoWay)}
@@ -250,7 +250,7 @@ const Bench: FC = () => {
                 >
                   <strong>{t('Trade.Bench.TowWay', '2-Way')}</strong>
                   <em>
-                    {numeralNumber(memo2WayPosApy, 2)}%<u>APR</u>
+                    {numeralNumber(hedgePosApy, 2)}%<u>APR</u>
                   </em>
                 </Button>
               </Col>

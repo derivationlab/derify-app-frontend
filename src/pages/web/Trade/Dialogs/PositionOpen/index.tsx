@@ -11,15 +11,10 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { calcChangeFee, calcTradingFee, checkOpeningLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
+import { useOpeningMaxLimit } from '@/hooks/useOpeningMaxLimit'
 import { useTokenSpotPrice } from '@/hooks/useTokenSpotPrices'
 import { reducer, stateInit } from '@/reducers/opening'
-import {
-  useMarginTokenStore,
-  usePositionLimitStore,
-  useProtocolConfigStore,
-  useQuoteTokenStore,
-  useTokenSpotPricesStore
-} from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore, useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
 import { bnDiv, keepDecimals } from '@/utils/tools'
@@ -33,24 +28,22 @@ interface Props {
 
 const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
-
   const { t } = useTranslation()
-
   const spotPrices = useTokenSpotPricesStore((state) => state.tokenSpotPricesForTrading)
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const positionLimit = usePositionLimitStore((state) => state.positionLimit)
-  const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
   const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
+  const { openingMaxLimit } = useOpeningMaxLimit(protocolConfig?.exchange, quoteToken)
+  const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
 
-  const _checkOpeningLimit = async (positionLimit: Rec) => {
+  const _checkOpeningLimit = async (params: Rec) => {
     const [maximum, isGreater, effective] = checkOpeningLimit(
       spotPrice,
       data.volume,
       data.side,
       data.openType,
-      positionLimit[quoteToken.token][PositionSideTypes[data.side]]
+      params[quoteToken.token][PositionSideTypes[data.side]]
     )
 
     dispatch({ type: 'SET_POSITION_LIMITS', payload: { loaded: true, value: effective, maximum, isGreater } })
@@ -86,10 +79,10 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   )
 
   useEffect(() => {
-    if (!isEmpty(data) && visible && positionLimit && Number(spotPrice) > 0) {
-      void _checkOpeningLimit(positionLimit)
+    if (!isEmpty(data) && visible && openingMaxLimit && Number(spotPrice) > 0) {
+      void _checkOpeningLimit(openingMaxLimit)
     }
-  }, [data, visible, spotPrice, positionLimit])
+  }, [data, visible, spotPrice, openingMaxLimit])
 
   useEffect(() => {
     if (!visible) {

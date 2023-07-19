@@ -3,17 +3,12 @@ import { useAccount } from 'wagmi'
 
 import { useEffect } from 'react'
 
-import { usePositionLimitStore, useProtocolConfigStore, useQuoteTokenStore, useTraderVariablesStore } from '@/store'
-import { QuoteTokenState } from '@/store/types'
-import { useOpeningMinLimitStore } from '@/store/useOpeningMinLimit'
+import { useProtocolConfigStore, useTraderVariablesStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 
 export default function TradingUpdater(): null {
   const { address } = useAccount()
-  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const getPositionLimit = usePositionLimitStore((state) => state.getPositionLimit)
-  const getOpeningMinLimit = useOpeningMinLimitStore((state) => state.getOpeningMinLimit)
   const getTraderVariables = useTraderVariablesStore((state) => state.getTraderVariables)
   const resetTraderVariables = useTraderVariablesStore((state) => state.reset)
 
@@ -31,16 +26,6 @@ export default function TradingUpdater(): null {
       }
     })
   }, [address, protocolConfig])
-
-  // Minimum open position amount
-  useEffect(() => {
-    if (protocolConfig) void getOpeningMinLimit(protocolConfig.exchange)
-  }, [protocolConfig])
-
-  // The system limits the opening amount
-  useEffect(() => {
-    if (protocolConfig) void getPositionLimit(protocolConfig.exchange, quoteToken)
-  }, [quoteToken, protocolConfig])
 
   return null
 }

@@ -1,5 +1,4 @@
-import { getAllMarginTokenList } from '@/api'
-import { DerAddressList, derivativeList } from '@/store/useDerivativeList'
+import { derivativeList } from '@/store/useDerivativeList'
 import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList, pagingParams } from '@/store/useMarginTokenList'
 import { initOpeningParams } from '@/store/usePositionOperation'
@@ -36,15 +35,6 @@ export interface PositionState {
   loaded: boolean
   fetch: (trader: string, factoryConfig: Rec) => Promise<void>
   reset: (data: { positionOrd?: Rec[]; profitLossOrd?: Rec[]; loaded?: boolean }) => void
-}
-
-export interface BrokerInfoState {
-  brokerInfo: Rec | null | undefined
-  brokerBound: Rec | null | undefined
-  brokerBoundLoaded: boolean
-  brokerInfoLoaded: boolean
-  fetchBrokerInfo: (account: string, marginToken: string) => Promise<void>
-  fetchBrokerBound: (account: string) => Promise<void>
 }
 
 export interface ProtocolConfigState {
@@ -108,9 +98,4 @@ export interface TraderVariablesState {
   variablesLoaded: boolean
   getTraderVariables: (address: string, exchange: string) => Promise<void>
   reset: () => void
-}
-
-export interface PositionLimitState {
-  positionLimit: Rec | null
-  getPositionLimit: (address: string, list: typeof quoteToken) => Promise<void>
 }

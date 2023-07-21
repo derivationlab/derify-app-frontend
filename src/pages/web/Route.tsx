@@ -30,6 +30,10 @@ export const R1 = (props: PropsWithChildren<any>) => {
   }, [params.id])
 
   return useMemo(() => {
+    if (!address) {
+      if (testing === null) return <Spinner fixed />
+      return testing ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} />
+    }
     if (testing === null || userBrokerBound === undefined) return <Spinner fixed />
     const content = testing ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} />
     if (!address) return content

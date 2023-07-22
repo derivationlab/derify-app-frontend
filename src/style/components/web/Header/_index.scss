@@ -10,8 +10,12 @@
   &-logo {
     width: 290px;height: 80px;display: flex;justify-content: center;align-items: center;
     a {
-      display: block;width: 243px;height: 40px;text-indent: -9999px;
+      display: block;width: 243px;height: 40px;position: relative;
       background: url($res + 'logo.png') center/contain no-repeat;font-weight: normal;
+    &:after{
+      content: 'beta';position: absolute;right: -46px;bottom: 0;
+      font-size: 16px;color:$c88;
+    }
     }
   }
   &-nav {

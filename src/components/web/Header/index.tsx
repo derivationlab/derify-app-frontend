@@ -25,7 +25,7 @@ const Header: FC = () => {
     <>
       <header className="web-header">
         <h1 className="web-header-logo">
-          <a href={WEBSITE_URL}>Derify protocol</a>
+          <a href={WEBSITE_URL} />
         </h1>
         <nav className="web-header-nav">
           <NavLink to={`/${marginToken.symbol}/trade`}>{t('Nav.Nav.Trade', 'Trade')}</NavLink>

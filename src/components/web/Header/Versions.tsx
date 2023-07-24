@@ -17,7 +17,7 @@ const Versions: FC = () => {
   return (
     <div className="web-header-select-lang" ref={ref}>
       <div className="web-header-select-lang-label" onClick={() => setMenuStatus(!menuStatus)}>
-        <label>{t('Nav.Tool.Token')}</label>
+        <label>{t('Nav.Tool.OldVersions')}</label>
         <span />
       </div>
       <ul className={classNames('web-header-select-lang-menu', { show: menuStatus })}>

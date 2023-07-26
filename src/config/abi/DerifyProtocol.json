@@ -630,6 +630,21 @@
             "type": "uint8[]"
           },
           {
+            "internalType": "address[]",
+            "name": "buyBackDrfRouters",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "buyBackDrfPath",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint8[]",
+            "name": "buyBackDrfPoolTypes",
+            "type": "uint8[]"
+          },
+          {
             "internalType": "uint256",
             "name": "minGrantAmount",
             "type": "uint256"
@@ -848,25 +863,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "marginTokens",
-        "type": "address[]"
-      }
-    ],
-    "name": "getAllMarginTokenPrices",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getAllMarginTokens",
     "outputs": [
@@ -1028,6 +1024,49 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRoleMember",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getRoleMemberCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

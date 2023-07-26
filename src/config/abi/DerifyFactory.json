@@ -90,25 +90,10 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
         "components": [
           {
             "internalType": "address",
             "name": "owner",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "exchange",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "clearing",
             "type": "address"
           },
           {

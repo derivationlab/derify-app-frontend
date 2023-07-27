@@ -61,7 +61,7 @@ const Dashboard: FC = () => {
   }, [signer, protocolConfig])
 
   const assetsLatest = useMemo(
-    () => [brokerAssets.drfRewardBalance, brokerAssets?.marginTokenRewardBalance],
+    () => [brokerAssets.drfRewardBalance, brokerAssets.marginTokenRewardBalance],
     [brokerAssets]
   )
 
@@ -72,7 +72,7 @@ const Dashboard: FC = () => {
 
   const disabled = useMemo(() => {
     const [drfRewardBalance, marginTokenRewardBalance] = assetsLatest
-    return Number(drfRewardBalance) === 0 || Number(marginTokenRewardBalance) === 0 || !signer || !protocolConfig
+    return (Number(drfRewardBalance) === 0 && Number(marginTokenRewardBalance) === 0) || !signer || !protocolConfig
   }, [signer, protocolConfig, assetsLatest])
 
   useEffect(() => {
@@ -87,20 +87,20 @@ const Dashboard: FC = () => {
     <div className="web-broker-dashboard">
       <div className="web-broker-dashboard-balance">
         <section>
-          <h3>{t('Broker.BV.BrokerAccountBalance', 'Broker Account Balance')}</h3>
+          <h3>{t('Broker.BV.BrokerAccountBalance')}</h3>
           <BalanceShow
             value={assetsLatest[0]}
             unit={marginToken.symbol}
             decimal={Number(assetsLatest[0]) === 0 ? 2 : marginToken.decimals}
           />
-          <BalanceShow value={assetsLatest[1]} unit={PLATFORM_TOKEN.symbol} />
+          <BalanceShow value={assetsLatest[1]} unit={marginToken.symbol} />
           <p
             dangerouslySetInnerHTML={{
               __html: t('Broker.BV.EarnedTip', '', {
-                Amount: numeralNumber(assetsHistory[0], marginToken.decimals),
+                Amount1: numeralNumber(assetsHistory[0], marginToken.decimals),
                 Margin: marginToken.symbol,
-                DRF: keepDecimals(assetsHistory[1], tokens.drf.decimals),
-                time: format(brokerSignUpTime)
+                Amount2: keepDecimals(assetsHistory[1], marginToken.decimals),
+                Time: format(brokerSignUpTime)
               })
             }}
           />

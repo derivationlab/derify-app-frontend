@@ -16,7 +16,7 @@ const useMarginTokenStore = create(
       }
     }),
     {
-      name: 'M'
+      name: 'MARGIN_TOKEN_v0.0.1'
     }
   )
 )

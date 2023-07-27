@@ -12,7 +12,7 @@ const useQuoteTokenStore = create(
       updateQuoteToken: (data: typeof quoteToken) => set({ quoteToken: data })
     }),
     {
-      name: 'Q'
+      name: 'QUOTE_TOKEN_v0.0.1'
     }
   )
 )

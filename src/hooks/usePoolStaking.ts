@@ -8,7 +8,7 @@ import multicall from '@/utils/multicall'
 import { safeInterceptionValues } from '@/utils/tools'
 
 export const getPoolStaking = async (trader: string): Promise<Rec> => {
-  let output = {}
+  let output = Object.create(null)
   const calls = [
     {
       name: 'getStakingInfo',

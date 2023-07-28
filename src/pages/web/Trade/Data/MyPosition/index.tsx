@@ -29,7 +29,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForPosition)
   const { priceDecimals } = usePriceDecimalsForTrade(data)
-  const { data: spotPrices } = useTokenSpotPricesForTrade(data, priceDecimals)
+  const { data: spotPrices, refetch: refetchSpotPrices } = useTokenSpotPricesForTrade(data, priceDecimals)
   const { closeAllPositions } = usePositionOperation()
 
   const closeAllFunc = async () => {
@@ -72,6 +72,10 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
   useEffect(() => {
     if (spotPrices) updateSpotPrices(spotPrices)
   }, [spotPrices])
+
+  useEffect(() => {
+    if (data && priceDecimals) void refetchSpotPrices()
+  }, [data, priceDecimals])
 
   return (
     <>

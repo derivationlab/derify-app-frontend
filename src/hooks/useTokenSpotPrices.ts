@@ -80,7 +80,7 @@ export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, q
       retry: false,
       enabled,
       initialData: null,
-      refetchInterval: 3000,
+      refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
@@ -161,7 +161,7 @@ export const useTokenSpotPricesForTrade = (list?: Rec[] | null, decimals?: Rec |
       retry: false,
       enabled,
       initialData: null,
-      refetchInterval: 3000,
+      refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }

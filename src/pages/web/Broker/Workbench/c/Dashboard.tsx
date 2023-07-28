@@ -23,7 +23,7 @@ import { useBrokerRewardsToday } from '@/hooks/useBrokerRewardsToday'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PubSubEvents } from '@/typings'
-import { keepDecimals, numeralNumber } from '@/utils/tools'
+import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
 
 const format = (d: string | null) => (d ? dayjs(d).format('MMM DD, YYYY') : '--')
 
@@ -89,17 +89,21 @@ const Dashboard: FC = () => {
         <section>
           <h3>{t('Broker.BV.BrokerAccountBalance')}</h3>
           <BalanceShow
-            value={assetsLatest[0]}
+            value={keepDecimals(assetsLatest[1], marginToken.decimals)}
             unit={marginToken.symbol}
-            decimal={Number(assetsLatest[0]) === 0 ? 2 : marginToken.decimals}
+            decimal={Number(assetsLatest[1]) === 0 ? 2 : marginToken.decimals}
           />
-          <BalanceShow value={assetsLatest[1]} unit={marginToken.symbol} />
+          <BalanceShow
+            value={keepDecimals(assetsLatest[0], PLATFORM_TOKEN.decimals)}
+            unit={PLATFORM_TOKEN.symbol}
+            decimal={Number(assetsLatest[0]) === 0 ? 2 : PLATFORM_TOKEN.decimals}
+          />
           <p
             dangerouslySetInnerHTML={{
               __html: t('Broker.BV.EarnedTip', '', {
-                Amount1: numeralNumber(assetsHistory[0], marginToken.decimals),
+                Amount1: numeralNumber(assetsHistory[1], marginToken.decimals),
                 Margin: marginToken.symbol,
-                Amount2: keepDecimals(assetsHistory[1], marginToken.decimals),
+                Amount2: keepDecimals(assetsHistory[0], PLATFORM_TOKEN.decimals),
                 Time: format(brokerSignUpTime)
               })
             }}

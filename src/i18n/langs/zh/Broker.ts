@@ -89,7 +89,7 @@ export default {
     BV: {
       BrokerAccountBalance: '经纪商账户余额',
       EarnedTip:
-        '从 <strong>{{Time}}</strong> 开始你共计赚了 <strong>{{Amount1}}</strong> {{ Margin }}和<strong>{{Amount2}}</strong> {{Margin}}',
+        '从 <strong>{{Time}}</strong> 开始你共计赚了 <strong>{{Amount1}}</strong> {{ Margin }}和<strong>{{Amount2}}</strong> DRF',
       ClaimAll: '全部提现',
       DailyRewards: '日收益',
       TotalRewards: '全网总收益占比 <em>{{data}}</em>',

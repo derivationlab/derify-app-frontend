@@ -59,11 +59,8 @@ export enum PubSubEvents {
   CONNECT_WALLET = 'CONNECT_WALLET',
   UPDATE_BALANCE = 'UPDATE_BALANCE',
   UPDATE_GRANT_LIST = 'UPDATE_GRANT_LIST',
-  UPDATE_BROKER_DAT = 'UPDATE_BROKER_DAT',
   UPDATE_OPENED_POSITION = 'UPDATE_OPENED_POSITION',
-  UPDATE_POSITION_VOLUME = 'UPDATE_POSITION_VOLUME',
-  UPDATE_TRADER_VARIABLES = 'UPDATE_TRADER_VARIABLES',
-  UPDATE_BROKER_BOUND_DAT = 'UPDATE_BROKER_BOUND_DAT'
+  UPDATE_POSITION_VOLUME = 'UPDATE_POSITION_VOLUME'
 }
 
 export type GrantKeys = 'rank' | 'mining' | 'awards'
@@ -74,7 +71,7 @@ export const dataRecordInit = {
   totalItems: 0,
   totalPages: 0,
   currentPage: 0,
-  loaded: false
+  loaded: true
 }
 
 export type DataRecord = typeof dataRecordInit

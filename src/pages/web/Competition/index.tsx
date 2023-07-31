@@ -17,6 +17,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/competitionRank'
 import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import { dataRecordInit, Rec } from '@/typings'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
 
@@ -49,7 +50,7 @@ const CompetitionRank: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const emptyText = useMemo(() => {
     if (state.outputData.loaded) return <Spinner small />
@@ -71,11 +72,12 @@ const CompetitionRank: FC = () => {
       dataIndex: 'amount',
       width: isMobile ? '' : 250,
       render: (_: string, data: Record<string, any>) => {
-        const amount = keepDecimals(data.amount, 2)
+        const mDec = marginToken.decimals
+        const amount = keepDecimals(data.amount, mDec)
         const platform = keepDecimals(data.awards, PLATFORM_TOKEN.decimals)
         return (
           <>
-            <BalanceShow value={amount} unit={marginToken.symbol} />
+            <BalanceShow value={amount} unit={marginToken.symbol} decimal={mDec} />
             <BalanceShow value={platform} unit={PLATFORM_TOKEN.symbol} />
           </>
         )
@@ -103,10 +105,10 @@ const CompetitionRank: FC = () => {
           }))
           dispatch({ type: 'SET_OUTPUT_DATA', payload: { records, totalItems } })
         } else {
-          dispatch({ type: 'SET_OUTPUT_DATA', payload: { ...dataRecordInit } })
+          dispatch({ type: 'SET_OUTPUT_DATA', payload: dataRecordInit })
         }
       } catch (e) {
-        dispatch({ type: 'SET_OUTPUT_DATA', payload: { ...dataRecordInit } })
+        dispatch({ type: 'SET_OUTPUT_DATA', payload: dataRecordInit })
       } finally {
         dispatch({ type: 'SET_OUTPUT_DATA', payload: { loaded: false } })
       }

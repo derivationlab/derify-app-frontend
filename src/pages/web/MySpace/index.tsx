@@ -162,9 +162,9 @@ const MySpace: FC = () => {
   }, [t, traderVariables, allBrokerRewards])
 
   const sorting = useMemo(() => {
-    if (marginBalances && pagination.data.length) {
-      const _ = pagination.data.map((token) => {
-        const marginBalance = marginBalances[token.symbol]
+    if (pagination.data.length) {
+      const recombine = pagination.data.map((token) => {
+        const marginBalance = marginBalances?.[token.symbol] ?? 0
         return {
           apy: token.max_pm_apy,
           open: token.open,
@@ -174,8 +174,7 @@ const MySpace: FC = () => {
           marginBalance: Number(marginBalance)
         }
       })
-      console.info(resortMargin(_))
-      return resortMargin(_)
+      return resortMargin(recombine)
     }
     return []
   }, [marginBalances, pagination.data])

@@ -14,6 +14,7 @@ import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { ZERO } from '@/config'
 import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
+import NoResults from '@/pages/web/Trade/c/NoResults'
 import {
   getPairAddressList,
   useDerivativeListStore,
@@ -97,7 +98,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
     debounce(async (marginToken: string, fuzzySearch: string) => {
       const { data = [] } = await searchDerivative(marginToken, fuzzySearch)
       setPairOptions({ data, loaded: false })
-    }, 1500),
+    }, 100),
     []
   )
 
@@ -164,50 +165,54 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
         onSearch={setFuzzySearch}
         placeholder={t('Trade.kline.SearchTip')}
       >
-        {pairOptions.data.map((o: Rec, index: number) => {
-          const len = pairOptions.data.length
-          const idInit = index === len - 1 ? 'bottom' : undefined
-          const refInit = index === len - 1 ? bottomRef : null
-          const id = fuzzySearch.trim() ? undefined : idInit
-          const ref = fuzzySearch.trim() ? null : refInit
-          const keys = Object.keys(marginIndicators ?? Object.create(null))
-          const findKey = keys.find((key) => getAddress(key) === getAddress(o.token))
-          const values = marginIndicators?.[findKey ?? ''] ?? Object.create(null)
-          const findToken = (spotPrices ?? []).find((t) => t.name === o.name)
-          const decimals = Number(findToken?.price ?? 0) === 0 ? 2 : o.price_decimals
-          return (
-            <DropDownListItem
-              key={o.name}
-              id={id}
-              ref={ref}
-              content={
-                isMobile ? (
-                  <>
-                    <aside>
+        {pairOptions.data.length ? (
+          pairOptions.data.map((o: Rec, index: number) => {
+            const len = pairOptions.data.length
+            const idInit = index === len - 1 ? 'bottom' : undefined
+            const refInit = index === len - 1 ? bottomRef : null
+            const id = fuzzySearch.trim() ? undefined : idInit
+            const ref = fuzzySearch.trim() ? null : refInit
+            const keys = Object.keys(marginIndicators ?? Object.create(null))
+            const findKey = keys.find((key) => getAddress(key) === getAddress(o.token))
+            const values = marginIndicators?.[findKey ?? ''] ?? Object.create(null)
+            const findToken = (spotPrices ?? []).find((t) => t.name === o.name)
+            const decimals = Number(findToken?.price ?? 0) === 0 ? 2 : o.price_decimals
+            return (
+              <DropDownListItem
+                key={o.name}
+                id={id}
+                ref={ref}
+                content={
+                  isMobile ? (
+                    <>
+                      <aside>
+                        <h5>{o.name}</h5>
+                        <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
+                      </aside>
+                      <aside>
+                        <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
+                        <ChangePercent value={values?.price_change_rate ?? 0} />
+                      </aside>
+                    </>
+                  ) : (
+                    <>
                       <h5>{o.name}</h5>
-                      <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
-                    </aside>
-                    <aside>
                       <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
                       <ChangePercent value={values?.price_change_rate ?? 0} />
-                    </aside>
-                  </>
-                ) : (
-                  <>
-                    <h5>{o.name}</h5>
-                    <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
-                    <ChangePercent value={values?.price_change_rate ?? 0} />
-                    <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
-                  </>
-                )
-              }
-              onSelect={() => {
-                const { name, token, derivative, price_decimals: decimals } = o
-                updateQuoteToken({ name, token, decimals, derivative, margin: marginToken.symbol })
-              }}
-            />
-          )
-        })}
+                      <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
+                    </>
+                  )
+                }
+                onSelect={() => {
+                  const { name, token, derivative, price_decimals: decimals } = o
+                  updateQuoteToken({ name, token, decimals, derivative, margin: marginToken.symbol })
+                }}
+              />
+            )
+          })
+        ) : pairOptions.loaded ? null : (
+          <NoResults />
+        )}
       </DropDownList>
     </div>
   )

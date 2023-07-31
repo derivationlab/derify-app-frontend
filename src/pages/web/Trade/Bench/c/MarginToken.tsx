@@ -11,6 +11,7 @@ import { DropDownList, DropDownListItem } from '@/components/common/DropDownList
 import Image from '@/components/common/Image'
 import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { resortMargin } from '@/pages/web/MySpace'
+import NoResults from '@/pages/web/Trade/c/NoResults'
 import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
@@ -39,7 +40,7 @@ const MarginToken: FC = () => {
     debounce(async (searchKeyword: string) => {
       const { data = [] } = await searchMarginToken(searchKeyword)
       setMarginOptions({ data, loaded: false })
-    }, 1500),
+    }, 100),
     []
   )
 
@@ -109,28 +110,32 @@ const MarginToken: FC = () => {
       onSearch={setSearchKeyword}
       placeholder={t('Trade.Bench.SearchTip')}
     >
-      {marginOptions.data.map((o: Rec, index: number) => {
-        const len = marginOptions.data.length
-        const id = index === len - 1 ? 'bottom' : undefined
-        const ref = index === len - 1 ? bottomRef : null
-        const _id = searchKeyword.trim() ? undefined : id
-        const _ref = searchKeyword.trim() ? null : ref
-        return (
-          <DropDownListItem
-            key={o.margin_token}
-            id={_id}
-            ref={_ref}
-            content={
-              <>
-                <Image src={o.logo} style={{ width: '24px' }} />
-                {o.symbol}
-              </>
-            }
-            onSelect={() => history.push(`/${o.symbol}/trade`)}
-            className={classNames('web-trade-bench-margin-item', { close: !o.open })}
-          />
-        )
-      })}
+      {marginOptions.data.length ? (
+        marginOptions.data.map((o: Rec, index: number) => {
+          const len = marginOptions.data.length
+          const id = index === len - 1 ? 'bottom' : undefined
+          const ref = index === len - 1 ? bottomRef : null
+          const _id = searchKeyword.trim() ? undefined : id
+          const _ref = searchKeyword.trim() ? null : ref
+          return (
+            <DropDownListItem
+              key={o.margin_token}
+              id={_id}
+              ref={_ref}
+              content={
+                <>
+                  <Image src={o.logo} style={{ width: '24px' }} />
+                  {o.symbol}
+                </>
+              }
+              onSelect={() => history.push(`/${o.symbol}/trade`)}
+              className={classNames('web-trade-bench-margin-item', { close: !o.open })}
+            />
+          )
+        })
+      ) : marginOptions.loaded ? null : (
+        <NoResults />
+      )}
     </DropDownList>
   )
 }

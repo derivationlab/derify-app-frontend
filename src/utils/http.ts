@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash'
 
 import { API_PREFIX_URL } from '@/config'
 
-const API_AUTH_KEY = 't3D3-L1GWNPwJQn1UbATcJ2Vrb--rMap'
+const API_AUTH_KEY = 'I.YlJgZt2WC5BoP5PW4sxDdVTWxP/h'
 
 interface HttpResponse extends Response {
   [key: string]: any

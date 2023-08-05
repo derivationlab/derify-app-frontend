@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import { Chain, useNetwork, useSwitchNetwork } from 'wagmi'
-import { bscTestnet } from 'wagmi/chains'
 
 import React, { FC, useState, useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,6 +8,7 @@ import { useClickAway } from 'react-use'
 import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import { useRpcNodeStore } from '@/store'
+import { RpcNodeState } from '@/store/types'
 import { ChainId } from '@/typings'
 
 const networks = {
@@ -24,12 +24,11 @@ const networks = {
 
 const SelectNetworkButton: FC = () => {
   const ref = useRef(null)
-
   const { t } = useTranslation()
   const { chain } = useNetwork()
   const { switchNetwork, isLoading } = useSwitchNetwork()
 
-  const fetchRpc = useRpcNodeStore((state) => state.fetch)
+  const fetchRpc = useRpcNodeStore((state: RpcNodeState) => state.fetch)
 
   const [visible, setVisible] = useState<boolean>(false)
 
@@ -64,16 +63,10 @@ const SelectNetworkButton: FC = () => {
       <div className={classNames('web-select-network-menu', { show: visible })}>
         <h3>{t('Nav.CW.SelectNetwork', 'Select a network')}</h3>
         <ul>
-          {[bscTestnet].map((c, index) => (
-            <li
-              key={index}
-              onClick={() => selectNetwork(c)}
-              className={classNames({ active: c.network === chain?.network })}
-            >
-              <Image src="icon/bnb.svg" />
-              {networks[c.id as ChainId]?.name}
-            </li>
-          ))}
+          <li onClick={() => window.open('https://bnbtest.derify.exchange/')}>
+            <Image src="icon/bnb.svg" />
+            {networks[ChainId.TESTNET].name}
+          </li>
         </ul>
       </div>
     </div>

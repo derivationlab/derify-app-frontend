@@ -170,7 +170,6 @@ const Web: FC = () => {
         <Route path="/dashboard/overview" component={Overview} />
         <Route path="/dashboard/buyback" component={BuybackPlan} />
         <Route path="/dashboard/grant" render={GrantList} />
-        <Route path="/faucet" render={() => <Faucet />} />
         <Route path="/space" render={() => <MySpace />} />
         <Route path={`/${symbol}/system/parameters`} render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${symbol}/trade`} />} />

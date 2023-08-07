@@ -38,6 +38,10 @@ const SelectNetworkButton: FC = () => {
       <div className={classNames('web-select-network-menu', { show: visible })}>
         <h3>{t('Nav.CW.SelectNetwork', 'Select a network')}</h3>
         <ul>
+          <li className='active'>
+            <Image src="icon/bnb.svg" />
+            {networks[ChainId.MAINNET].name}
+          </li>
           <li onClick={() => window.open('https://bnbtest.derify.exchange/')}>
             <Image src="icon/bnb.svg" />
             {networks[ChainId.TESTNET].name}

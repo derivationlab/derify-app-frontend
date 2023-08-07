@@ -39,13 +39,13 @@ const SelectNetworkButton: FC = () => {
       <div className={classNames('web-select-network-menu', { show: visible })}>
         <h3>{t('Nav.CW.SelectNetwork', 'Select a network')}</h3>
         <ul>
+          <li onClick={() => window.location.href = 'https://prebnb.derify.exchange/'}>
+            <Image src="icon/bnb.svg" />
+            {networks[ChainId.MAINNET].name}
+          </li>
           <li className='active'>
             <Image src="icon/bnb.svg" />
             {networks[ChainId.TESTNET].name}
-          </li>
-          <li onClick={() => window.open('https://prebnb.derify.exchange/')}>
-            <Image src="icon/bnb.svg" />
-            {networks[ChainId.MAINNET].name}
           </li>
         </ul>
       </div>

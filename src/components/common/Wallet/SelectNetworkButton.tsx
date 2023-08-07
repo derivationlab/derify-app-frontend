@@ -30,20 +30,20 @@ const SelectNetworkButton: FC = () => {
   })
 
   return (
-    <div className="web-select-network-button" ref={ref}>
-      <Button size="mini" outline onClick={() => setVisible(!visible)}>
-        <Image src="icon/bnb.svg" />
+    <div className='web-select-network-button' ref={ref}>
+      <Button size='mini' outline onClick={() => setVisible(!visible)}>
+        <Image src='icon/bnb.svg' />
         {networks[ChainId.MAINNET].name}
       </Button>
       <div className={classNames('web-select-network-menu', { show: visible })}>
         <h3>{t('Nav.CW.SelectNetwork', 'Select a network')}</h3>
         <ul>
           <li className='active'>
-            <Image src="icon/bnb.svg" />
+            <Image src='icon/bnb.svg' />
             {networks[ChainId.MAINNET].name}
           </li>
-          <li onClick={() => window.open('https://bnbtest.derify.exchange/')}>
-            <Image src="icon/bnb.svg" />
+          <li onClick={() => window.location.href = 'https://bnbtest.derify.exchange/'}>
+            <Image src='icon/bnb.svg' />
             {networks[ChainId.TESTNET].name}
           </li>
         </ul>

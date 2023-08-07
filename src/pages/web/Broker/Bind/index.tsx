@@ -9,13 +9,14 @@ import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
 import Button from '@/components/common/Button'
 
 import BrokerDialog from './BrokerDialog'
+import { useSetAtom } from 'jotai'
+import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 
 const Bind: FC = () => {
   const history = useHistory()
-
   const { t } = useTranslation()
-
   const { address } = useAccount()
+  const asyncUserBrokerBound = useSetAtom(asyncUserBrokerBoundAtom(address))
 
   const [brokerId, setBrokerId] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -35,6 +36,7 @@ const Bind: FC = () => {
     const data = await bindingYourBroker({ trader: address, brokerId })
     if (data.code === 0) {
       // succeed
+      void await asyncUserBrokerBound()
       history.push('/broker')
     } else {
       // failed

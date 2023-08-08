@@ -16,8 +16,6 @@ import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { usePoolStaking } from '@/hooks/usePoolStaking'
 import { useStakingDRF } from '@/hooks/useStakingDRF'
 import { useTraderEDRFBalance } from '@/hooks/useTraderEDRFBalance'
-import { useMarginTokenStore } from '@/store'
-import { MarginTokenState } from '@/store/types'
 import { PubSubEvents } from '@/typings'
 import { bnMul, isGT, isLT, keepDecimals } from '@/utils/tools'
 
@@ -30,12 +28,10 @@ const DerifyTokenPool: FC = () => {
   const { data: signer } = useSigner()
   const [modal, setModal] = useState<string>('')
 
-  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-
   const { redeemDrf, stakingDrf, withdrawAllEdrf } = useMiningOperation()
   const { data: drfBalance } = useStakingDRF()
   const { data: stakingInfo } = usePoolStaking(address)
-  const { data: dashboardDAT } = useCurrentIndex(marginToken.address)
+  const { data: dashboardDAT } = useCurrentIndex()
   const { data: edrfBalance, isLoading } = useTraderEDRFBalance(address)
 
   const stakeDrfFunc = useCallback(

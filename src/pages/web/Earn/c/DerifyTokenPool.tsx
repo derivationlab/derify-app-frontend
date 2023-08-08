@@ -44,15 +44,11 @@ const DerifyTokenPool: FC = () => {
       const toast = window.toast.loading(t('common.pending'))
       const status = await stakingDrf(amount, signer)
       if (status) {
-        // succeed
         window.toast.success(t('common.success'))
-
         PubSub.publish(PubSubEvents.UPDATE_BALANCE)
       } else {
-        // fail
         window.toast.error(t('common.failed'))
       }
-
       window.toast.dismiss(toast)
     },
     [signer]
@@ -64,13 +60,10 @@ const DerifyTokenPool: FC = () => {
       const toast = window.toast.loading(t('common.pending'))
       const status = await redeemDrf(amount, signer)
       if (status) {
-        // succeed
         window.toast.success(t('common.success'))
       } else {
-        // fail
         window.toast.error(t('common.failed'))
       }
-
       window.toast.dismiss(toast)
     },
     [signer]
@@ -78,16 +71,12 @@ const DerifyTokenPool: FC = () => {
 
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending'))
-
     const status = await withdrawAllEdrf(signer)
     if (status) {
-      // succeed
       window.toast.success(t('common.success'))
     } else {
-      // fail
       window.toast.error(t('common.failed'))
     }
-
     window.toast.dismiss(toast)
   }, [signer])
 
@@ -129,7 +118,7 @@ const DerifyTokenPool: FC = () => {
           <div className="web-eran-item-card">
             <main>
               <h4>{t('Earn.DerifyTokenPool.Staked', 'Staked')}</h4>
-              <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit={PLATFORM_TOKEN.symbol} />
+              <BalanceShow value={stakingInfo.drfBalance} unit={PLATFORM_TOKEN.symbol} />
               <div className="block" />
               <p>
                 {t('Earn.DerifyTokenPool.CurrentPoolSize', 'Current pool size')}{' '}

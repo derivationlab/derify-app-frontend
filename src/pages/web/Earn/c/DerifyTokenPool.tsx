@@ -28,6 +28,7 @@ const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
+  const [modal, setModal] = useState<string>('')
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
@@ -37,28 +38,17 @@ const DerifyTokenPool: FC = () => {
   const { data: dashboardDAT } = useCurrentIndex(marginToken.address)
   const { data: edrfBalance, isLoading } = useTraderEDRFBalance(address)
 
-  const [visibleStatus, setVisibleStatus] = useState<string>('')
-
-  const closeDialog = () => setVisibleStatus('')
-
   const stakeDrfFunc = useCallback(
     async (amount: string) => {
+      setModal('')
       const toast = window.toast.loading(t('common.pending'))
-
-      closeDialog()
-
       const status = await stakingDrf(amount, signer)
-
       if (status) {
-        // succeed
         window.toast.success(t('common.success'))
-
         PubSub.publish(PubSubEvents.UPDATE_BALANCE)
       } else {
-        // fail
         window.toast.error(t('common.failed'))
       }
-
       window.toast.dismiss(toast)
     },
     [signer]
@@ -66,19 +56,14 @@ const DerifyTokenPool: FC = () => {
 
   const redeemDrfFunc = useCallback(
     async (amount: string) => {
+      setModal('')
       const toast = window.toast.loading(t('common.pending'))
-
-      closeDialog()
-
       const status = await redeemDrf(amount, signer)
       if (status) {
-        // succeed
         window.toast.success(t('common.success'))
       } else {
-        // fail
         window.toast.error(t('common.failed'))
       }
-
       window.toast.dismiss(toast)
     },
     [signer]
@@ -86,16 +71,12 @@ const DerifyTokenPool: FC = () => {
 
   const withdrawFunc = useCallback(async () => {
     const toast = window.toast.loading(t('common.pending'))
-
     const status = await withdrawAllEdrf(signer)
     if (status) {
-      // succeed
       window.toast.success(t('common.success'))
     } else {
-      // fail
       window.toast.error(t('common.failed'))
     }
-
     window.toast.dismiss(toast)
   }, [signer])
 
@@ -137,7 +118,7 @@ const DerifyTokenPool: FC = () => {
           <div className="web-eran-item-card">
             <main>
               <h4>{t('Earn.DerifyTokenPool.Staked', 'Staked')}</h4>
-              <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit={PLATFORM_TOKEN.symbol} />
+              <BalanceShow value={stakingInfo.drfBalance} unit={PLATFORM_TOKEN.symbol} />
               <div className="block" />
               <p>
                 {t('Earn.DerifyTokenPool.CurrentPoolSize', 'Current pool size')}{' '}
@@ -145,10 +126,10 @@ const DerifyTokenPool: FC = () => {
               </p>
             </main>
             <aside>
-              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('stake')}>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setModal('stake')}>
                 {t('Earn.DerifyTokenPool.Stake', 'Stake')}
               </Button>
-              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('redeem')} outline>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setModal('redeem')} outline>
                 {t('Earn.DerifyTokenPool.Unstake', 'Unstake')}
               </Button>
             </aside>
@@ -156,8 +137,8 @@ const DerifyTokenPool: FC = () => {
           <NotConnect />
         </section>
       </div>
-      <StakeDRFDialog visible={visibleStatus === 'stake'} onClose={closeDialog} onClick={stakeDrfFunc} />
-      <UnstakeDRFDialog visible={visibleStatus === 'redeem'} onClose={closeDialog} onClick={redeemDrfFunc} />
+      <StakeDRFDialog visible={modal === 'stake'} onClose={() => setModal('')} onClick={stakeDrfFunc} />
+      <UnstakeDRFDialog visible={modal === 'redeem'} onClose={() => setModal('')} onClick={redeemDrfFunc} />
     </>
   )
 }

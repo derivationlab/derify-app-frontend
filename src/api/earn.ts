@@ -1,7 +1,7 @@
 import { get } from '@/utils/http'
 
 export const getTraderEDRFBalance = async (trader: string) => {
-  const response = await get(`api/trader_latest_edrf_balance/${trader}`)
+  const response = await get(`https://api.derify.exchange/api/trader_latest_edrf_balance/${trader}`)
   return response
 }
 

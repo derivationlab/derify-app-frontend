@@ -81,6 +81,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@craco/craco": "^7.0.0",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/fbemitter": "^2.0.32",

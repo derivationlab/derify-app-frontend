@@ -6,9 +6,9 @@ export const useCurrentIndex = (marginToken: string) => {
   const { data, refetch } = useQuery(
     ['useCurrentIndex'],
     async () => {
-      const data = await getCurrentIndexDAT(marginToken)
+      const { data } = await getCurrentIndexDAT(marginToken)
       // console.info(data)
-      return data?.data ?? {}
+      return data
     },
     {
       retry: 0,

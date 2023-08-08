@@ -11,7 +11,7 @@ export const getBuyBackPlans = async (page: number, offset: number) => {
 }
 
 export const getCurrentIndexDAT = async (address: string) => {
-  const response = await get(`api/current_index_data/${address}`)
+  const response = await get(`https://api.derify.exchange/api/current_index_data/${address}`)
   return response
 }
 

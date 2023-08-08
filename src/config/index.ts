@@ -40,7 +40,3 @@ export const Communities = {
   Medium,
   Github
 }
-export const FaucetLinks = {
-  BNB: 'https://testnet.binance.org/faucet-smart',
-  tTOKEN: 'https://docs.google.com/forms/d/e/1FAIpQLSeLFM9daYrB1g_gYRHItQZdc2IUG5Ob5Jtb2vEEMbmMqQ-ACA/viewform'
-}

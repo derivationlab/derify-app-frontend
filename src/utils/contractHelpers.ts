@@ -9,6 +9,7 @@ import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
 import DerifyPmrAbi from '@/config/abi/DerifyPmr.json'
+import derifyPoolAbi from '@/config/abi/DerifyPool.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import DerifyRankAbi from '@/config/abi/DerifyRank.json'
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
@@ -72,4 +73,8 @@ export const getFactoryContract = (address: string, signer?: TSigner) => {
 
 export const getPriceFeedContract = (address: string, signer?: TSigner) => {
   return getContract(priceFeedAbi, address, signer)
+}
+
+export const getDerifyPoolContract = (signer?: TSigner) => {
+  return getContract(derifyPoolAbi, contracts.derifyPool.contractAddress, signer)
 }

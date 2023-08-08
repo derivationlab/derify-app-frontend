@@ -2,7 +2,7 @@ import contracts from '@/config/contracts'
 import tokens from '@/config/tokens'
 import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
-import { getRewardsContract, getProtocolContract } from '@/utils/contractHelpers'
+import { getRewardsContract, getDerifyPoolContract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 import { inputParameterConversion } from '@/utils/tools'
 
@@ -10,7 +10,7 @@ export const useMiningOperation = () => {
   const redeemDrf = async (amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getProtocolContract(signer)
+    const c = getDerifyPoolContract(signer)
     const _amount = inputParameterConversion(amount, 8)
 
     try {
@@ -27,14 +27,14 @@ export const useMiningOperation = () => {
   const stakingDrf = async (amount: string, signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getProtocolContract(signer)
+    const c = getDerifyPoolContract(signer)
     const _amount1 = inputParameterConversion(amount, 8)
     const _amount2 = inputParameterConversion(amount, 18)
 
     try {
       const approve = await allowanceApprove(
         signer,
-        contracts.derifyProtocol.contractAddress,
+        contracts.derifyPool.contractAddress,
         tokens.drf.tokenAddress,
         _amount2
       )
@@ -96,7 +96,7 @@ export const useMiningOperation = () => {
   const withdrawAllEdrf = async (signer?: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getProtocolContract(signer)
+    const c = getDerifyPoolContract(signer)
 
     try {
       const res = await c.withdrawAllEdrf()

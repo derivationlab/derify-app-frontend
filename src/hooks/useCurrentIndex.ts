@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getCurrentIndexDAT } from '@/api'
+import { get } from '@/utils/http'
 
 export const useCurrentIndex = () => {
   const { data, refetch } = useQuery(
     ['useCurrentIndex'],
     async () => {
-      const { data } = await getCurrentIndexDAT()
+      const { data } = await get('https://api.derify.exchange/api/current_index_data')
       // console.info(data)
       return data
     },

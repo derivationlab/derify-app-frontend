@@ -28,6 +28,7 @@ const DerifyTokenPool: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
+  const [modal, setModal] = useState<string>('')
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
@@ -37,18 +38,11 @@ const DerifyTokenPool: FC = () => {
   const { data: dashboardDAT } = useCurrentIndex(marginToken.address)
   const { data: edrfBalance, isLoading } = useTraderEDRFBalance(address)
 
-  const [visibleStatus, setVisibleStatus] = useState<string>('')
-
-  const closeDialog = () => setVisibleStatus('')
-
   const stakeDrfFunc = useCallback(
     async (amount: string) => {
+      setModal('')
       const toast = window.toast.loading(t('common.pending'))
-
-      closeDialog()
-
       const status = await stakingDrf(amount, signer)
-
       if (status) {
         // succeed
         window.toast.success(t('common.success'))
@@ -66,10 +60,8 @@ const DerifyTokenPool: FC = () => {
 
   const redeemDrfFunc = useCallback(
     async (amount: string) => {
+      setModal('')
       const toast = window.toast.loading(t('common.pending'))
-
-      closeDialog()
-
       const status = await redeemDrf(amount, signer)
       if (status) {
         // succeed
@@ -145,10 +137,10 @@ const DerifyTokenPool: FC = () => {
               </p>
             </main>
             <aside>
-              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('stake')}>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setModal('stake')}>
                 {t('Earn.DerifyTokenPool.Stake', 'Stake')}
               </Button>
-              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setVisibleStatus('redeem')} outline>
+              <Button size={isMobile ? 'mini' : 'default'} onClick={() => setModal('redeem')} outline>
                 {t('Earn.DerifyTokenPool.Unstake', 'Unstake')}
               </Button>
             </aside>
@@ -156,8 +148,8 @@ const DerifyTokenPool: FC = () => {
           <NotConnect />
         </section>
       </div>
-      <StakeDRFDialog visible={visibleStatus === 'stake'} onClose={closeDialog} onClick={stakeDrfFunc} />
-      <UnstakeDRFDialog visible={visibleStatus === 'redeem'} onClose={closeDialog} onClick={redeemDrfFunc} />
+      <StakeDRFDialog visible={modal === 'stake'} onClose={() => setModal('')} onClick={stakeDrfFunc} />
+      <UnstakeDRFDialog visible={modal === 'redeem'} onClose={() => setModal('')} onClick={redeemDrfFunc} />
     </>
   )
 }

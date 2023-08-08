@@ -1,3 +1,4 @@
+import { useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 
 import React, { ChangeEvent, FC, useState } from 'react'
@@ -6,11 +7,10 @@ import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
 import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
+import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 
 import BrokerDialog from './BrokerDialog'
-import { useSetAtom } from 'jotai'
-import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 
 const Bind: FC = () => {
   const history = useHistory()
@@ -36,7 +36,7 @@ const Bind: FC = () => {
     const data = await bindingYourBroker({ trader: address, brokerId })
     if (data.code === 0) {
       // succeed
-      void await asyncUserBrokerBound()
+      void (await asyncUserBrokerBound())
       history.push('/broker')
     } else {
       // failed

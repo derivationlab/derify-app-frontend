@@ -1,25 +1,46 @@
 .web-wallet-dialog {
   font-size: 18px;
+
   &-tips {
-    background: $cf7;padding: 36px;margin:0 -36px 0;line-height: 1.2;
+    background: $cf7;
+    padding: 36px;
+    margin: 0 -36px 0;
+    line-height: 1.2;
+
     span {
-      color:$lRed;text-decoration: underline;
+      color: $lRed;
+      text-decoration: underline;
       cursor: pointer;
     }
   }
-  &-list{
-    margin: 36px 12px 12px;
+
+  &-list {
+    margin: 30px 12px 12px;
+
     &-item {
-      display: flex;align-items: center;border: 2px solid $ce7;box-sizing: border-box;
-      border-radius: 48px;height: 96px;margin-bottom: 12px;padding: 24px;
-      @include dz();cursor: pointer;
+      display: flex;
+      align-items: center;
+      border: 2px solid $ce7;
+      box-sizing: border-box;
+      border-radius: 48px;
+      margin-bottom: 12px;
+      padding: 12px;
+      @include dz();
+      cursor: pointer;
       @include jb($cff, $cff, -90);
+
       img {
-        width: 48px;height: 48px;display: block;margin-right: 24px;
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        display: block;
+        margin-right: 24px;
       }
-      &:hover{
+
+      &:hover {
         @include jb($lRed, $red, -90);
-        border-color: transparent;color:$cff;
+        border-color: transparent;
+        color: $cff;
       }
     }
   }
@@ -28,15 +49,25 @@
 .mobile-mode {
   .web-wallet-dialog {
     font-size: rem(14);
+
     &-tips {
-      padding: rem(24);margin:0 rem(-24) 0;
+      padding: rem(24);
+      margin: 0 rem(-24) 0;
     }
-    &-list{
+
+    &-list {
       margin: rem(24) rem(12) rem(12);
+
       &-item {
-        border-radius: rem(36);height: rem(68);margin-bottom: rem(8);padding: rem(16);
+        border-radius: rem(36);
+        height: rem(68);
+        margin-bottom: rem(8);
+        padding: rem(16);
+
         img {
-          width: rem(32);height: rem(32);margin-right: rem(16);
+          width: rem(32);
+          height: rem(32);
+          margin-right: rem(16);
         }
       }
     }
@@ -47,17 +78,20 @@
   .web-wallet-dialog {
     &-tips {
       background: $c44;
+
       span {
-        color:$yellow;
+        color: $yellow;
       }
     }
-    &-list{
+
+    &-list {
       &-item {
         border-color: $c44;
         @include jb($c22, $c22, -90);
-        &:hover{
+
+        &:hover {
           @include jb($lYellow, $yellow, -90);
-          color:$c22;
+          color: $c22;
         }
       }
     }

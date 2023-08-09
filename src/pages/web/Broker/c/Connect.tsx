@@ -1,11 +1,9 @@
-import ConnectButton from '@/components/common/Wallet/ConnectButton'
+import NotConnect from '@/components/web/NotConnect'
 
 function BrokerConnect({ br = 48 }) {
   return (
-    <div className="web-broker-not-connect">
-      <section className="web-not-connect" style={{ borderRadius: `${br}px` }}>
-        <ConnectButton />
-      </section>
+    <div className="web-not-connect-container">
+      <NotConnect />
     </div>
   )
 }

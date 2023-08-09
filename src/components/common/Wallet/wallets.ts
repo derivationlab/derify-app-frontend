@@ -33,8 +33,8 @@ const wallets: Wallet[] = [
     icon: `token-pocket.svg`,
     connectorId: ConnectorIds.Injected,
     get installed() {
-      return typeof window !== 'undefined' && !!(window.ethereum?.isTokenPocket)
-    },
+      return typeof window !== 'undefined' && !!window.ethereum?.isTokenPocket
+    }
   },
   {
     id: 'coinbaseWallet',

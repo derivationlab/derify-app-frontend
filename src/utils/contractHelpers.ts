@@ -75,6 +75,6 @@ export const getPriceFeedContract = (address: string, signer?: TSigner) => {
   return getContract(priceFeedAbi, address, signer)
 }
 
-export const getTokenMintContract = (signer?: TSigner) => {
-  return getContract(tokenMintAbi, contracts.derifyProtocol.contractAddress, signer)
+export const getTokenMintContract = (address: string, signer?: TSigner) => {
+  return getContract(tokenMintAbi, address, signer)
 }

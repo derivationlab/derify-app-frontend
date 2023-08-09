@@ -7,9 +7,9 @@ import { useBoolean } from 'react-use'
 
 import Button from '@/components/common/Button'
 import NotConnect from '@/components/web/NotConnect'
-import { FaucetLinks } from '@/config'
 import { useTokenMint } from '@/hooks/useTokenMint'
 import MarginToken from '@/pages/web/Faucet/MarginToken'
+import { useMarginTokenListStore } from '@/store'
 import { PubSubEvents, Rec } from '@/typings'
 
 const mintAmount: Rec = {
@@ -28,7 +28,8 @@ const Faucet: FC = () => {
   const { data: signer } = useSigner()
   const { mint } = useTokenMint()
   const [isLoading, setLoading] = useBoolean(false)
-  const [mintToken, setMintToken] = useState<Rec>({})
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const [mintToken, setMintToken] = useState<Rec>(marginTokenList[0])
 
   const _mint = useCallback(async () => {
     setLoading(true)
@@ -43,24 +44,20 @@ const Faucet: FC = () => {
     }
     setLoading(false)
     window.toast.dismiss(toast)
-  }, [signer])
+  }, [signer, mintToken])
 
-  if (!address) {
-    return (
-      <div className="web-broker-not-connect">
-        <NotConnect />
-      </div>
-    )
-  }
-
-  return (
+  return !address ? (
+    <div className="web-not-connect-container">
+      <NotConnect />
+    </div>
+  ) : (
     <div className="web-faucet">
       <section className="web-faucet-inner">
         <MarginToken onSelect={setMintToken} />
-        <Button full onClick={_mint} loading={isLoading}>
+        <Button full onClick={_mint} loading={isLoading} disabled={!signer}>
           Mint
         </Button>
-        <a href={FaucetLinks.BNB} target="_blank">
+        <a href="https://testnet.binance.org/faucet-smart" target="_blank">
           Get testnet tBNB from official faucet
         </a>
       </section>

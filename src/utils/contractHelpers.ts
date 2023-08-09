@@ -12,6 +12,7 @@ import DerifyPmrAbi from '@/config/abi/DerifyPmr.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import DerifyRankAbi from '@/config/abi/DerifyRank.json'
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
+import tokenMintAbi from '@/config/abi/DerifyTokenMint.json'
 import multiCallAbi from '@/config/abi/MM.json'
 import priceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 import bep20Abi from '@/config/abi/erc20.json'
@@ -72,4 +73,8 @@ export const getFactoryContract = (address: string, signer?: TSigner) => {
 
 export const getPriceFeedContract = (address: string, signer?: TSigner) => {
   return getContract(priceFeedAbi, address, signer)
+}
+
+export const getTokenMintContract = (signer?: TSigner) => {
+  return getContract(tokenMintAbi, contracts.derifyProtocol.contractAddress, signer)
 }

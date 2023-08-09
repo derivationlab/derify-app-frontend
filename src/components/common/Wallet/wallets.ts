@@ -35,6 +35,7 @@ const wallets: Wallet[] = [
     get installed() {
       return typeof window !== 'undefined' && !!(window.ethereum?.isTokenPocket)
     },
+    downloadLink: 'https://www.tokenpocket.pro/'
   },
   {
     id: 'coinbaseWallet',

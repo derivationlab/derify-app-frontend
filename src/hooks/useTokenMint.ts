@@ -8,7 +8,7 @@ export const useTokenMint = () => {
     if (!signer) return false
 
     const c = getTokenMintContract(token, signer)
-    const _amount = inputParameterConversion(amount, 8)
+    const _amount = inputParameterConversion(amount, 18)
 
     try {
       const account = await signer.getAddress()

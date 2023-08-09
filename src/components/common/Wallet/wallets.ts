@@ -10,7 +10,7 @@ export type Wallet<T = ConnectorIds> = {
   downloadLink?: string
 }
 
-const isMetamaskInstalled = () => {
+const isMetaMaskInstalled = () => {
   if (typeof window === 'undefined') return false
   if (window.ethereum?.isMetaMask) return true
   return !!window.ethereum?.providers?.some((p) => p.isMetaMask)
@@ -22,7 +22,7 @@ const wallets: Wallet[] = [
     icon: 'metamask.svg',
     title: 'MetaMask',
     get installed() {
-      return isMetamaskInstalled()
+      return isMetaMaskInstalled()
     },
     connectorId: ConnectorIds.MetaMask,
     downloadLink: 'https://metamask.io/download/'

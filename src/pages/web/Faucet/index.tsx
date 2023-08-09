@@ -24,7 +24,7 @@ const mintAmount: Rec = {
 
 const Faucet: FC = () => {
   const { t } = useTranslation()
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
   const { data: signer } = useSigner()
   const { mint } = useTokenMint()
   const [isLoading, setLoading] = useBoolean(false)
@@ -46,18 +46,26 @@ const Faucet: FC = () => {
     window.toast.dismiss(toast)
   }, [signer, mintToken])
 
+  const _register = useCallback(async () => {
+    if (connector) {
+      const { logo: image, symbol, margin_token: address } = mintToken
+      await connector.watchAsset?.({ address, symbol, image })
+    }
+  }, [mintToken, connector])
+
   return !address ? (
-    <div className="web-not-connect-container">
+    <div className='web-not-connect-container'>
       <NotConnect />
     </div>
   ) : (
-    <div className="web-faucet">
-      <section className="web-faucet-inner">
+    <div className='web-faucet'>
+      <section className='web-faucet-inner'>
         <MarginToken onSelect={setMintToken} />
-        <Button full onClick={_mint} loading={isLoading} disabled={!signer}>
+        <Button className='mint-btn' full onClick={_mint} loading={isLoading} disabled={!signer}>
           Mint
         </Button>
-        <a href="https://testnet.binance.org/faucet-smart" target="_blank">
+        <Button full onClick={_register}>{t('Nav.AddToken.Add', { token: mintToken?.symbol })}</Button>
+        <a href='https://testnet.binance.org/faucet-smart' target='_blank'>
           Get testnet tBNB from official faucet
         </a>
       </section>

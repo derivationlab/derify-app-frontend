@@ -8,8 +8,8 @@
   flex-flow: column;
   height: calc(100vh - 200px);
 
-  .web-button {
-    margin: 10px 0 16px;
+  .mint-btn {
+    margin: 20px 0 20px;
   }
 
   a {
@@ -17,6 +17,7 @@
     align-items: center;
     justify-content: center;
     font-size: 14px;
+    margin-top: 24px;
     color: $red;
 
     &:after {
@@ -31,6 +32,10 @@
 
   &-inner {
     width: 300px;
+
+    .web-c-drop-down-list {
+      padding: 0
+    }
 
     .web-c-drop-down-list-motion-div {
       left: -8px;
@@ -96,12 +101,13 @@
     border-radius: rem(36);
     height: calc(100vh - rem(100));
 
-    .web-button {
+    .mint-btn {
       margin: rem(16) 0 rem(16);
     }
 
     a {
       font-size: rem(10);
+      margin-top: rem(24);
 
       &:after {
         width: rem(16);
@@ -113,6 +119,7 @@
     &-inner {
       width: 100%;
       padding: 0 rem(24);
+
       .web-c-drop-down-list-motion-div {
         left: rem(-8);
         right: rem(-8);
@@ -124,6 +131,7 @@
       height: rem(36);
       padding: 0 rem(12);
       font-size: rem(14);
+
       section {
         img {
           width: rem(20);

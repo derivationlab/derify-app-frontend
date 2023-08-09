@@ -1,6 +1,6 @@
-import { Chain, createClient } from 'wagmi'
+import { createClient } from 'wagmi'
 import { configureChains } from 'wagmi'
-import { bsc, bscTestnet } from 'wagmi/chains'
+import { bsc } from 'wagmi/chains'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
@@ -9,12 +9,10 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
 
-const chain = getDefaultChainInfo()
-
 const rpcUrl = DEFAULT_PRC_URLS[CHAIN_ID]
 
 const { provider, chains } = configureChains(
-  [chain],
+  [bsc],
   [
     jsonRpcProvider({
       rpc: () => ({ http: rpcUrl })
@@ -23,7 +21,7 @@ const { provider, chains } = configureChains(
 )
 
 export const metaMaskConnector = new MetaMaskConnector({
-  chains: [chain],
+  chains,
   options: {
     shimDisconnect: false
   }
@@ -56,8 +54,3 @@ export const client = createClient({
   autoConnect: true,
   connectors: [metaMaskConnector, coinbaseWalletConnector, walletConnectLegacyConnector, injectedConnector]
 })
-
-function getDefaultChainInfo(): Chain {
-  const chain = [bscTestnet, bsc].find((chain: Chain) => chain.id === Number(CHAIN_ID))
-  return chain ?? bsc
-}

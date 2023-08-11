@@ -7,7 +7,7 @@ export const tokens: { [key in AllTokenKeys]: Token } = {
     'DRF',
     {
       [ChainId.MAINNET]: '0x89C1Af791d7B4cf046Dca8Fa10a41Dd2298A6a3F',
-      [ChainId.TESTNET]: '0x11B876d9D5d18d70664153C84fD3084c1E71E2ef'
+      [ChainId.TESTNET]: '0x63722c48A1e24301FF8A20D4c973f40BCFCfeCE8'
     },
     18,
     2

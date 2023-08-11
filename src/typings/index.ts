@@ -22,7 +22,7 @@ export type ChainIdRec = { [key in GlobalType.Chain]: string }
 
 export type AllTokenKeys = 'drf' | 'edrf'
 
-export type ContractKeys = 'multicall' | 'derifyProtocol' | 'derifyPool'
+export type ContractKeys = 'multicall' | 'derifyProtocol'
 
 export const protocolConfig = {
   rank: '',

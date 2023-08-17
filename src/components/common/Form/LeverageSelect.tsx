@@ -59,8 +59,9 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
       // onChange(maxLeverage)
       // setMultiple(maxLeverage)
 
-      onChange(30)
-      setMultiple(30)
+      const m = maxLeverage >= 30 ? 30 : maxLeverage
+      onChange(m)
+      setMultiple(m)
     }
   }, [quoteToken, maxLeverage])
 
@@ -72,13 +73,13 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
 
   return (
     <div className={classNames('web-leverage-select', { show: isVisible }, className)} ref={ref}>
-      <div className="web-leverage-select-curr" onClick={() => toggleVisible()}>
+      <div className='web-leverage-select-curr' onClick={() => toggleVisible()}>
         {multiple}x
       </div>
-      <div className="web-leverage-select-stepper">
-        <Stepper value={multiple} min={1} onChange={setMultiple} suffix="X" max={maxLeverage} input />
-        <Slider value={multiple} onChange={setMultiple} suffix="X" marks={sliderMarks} />
-        <Button full size="medium" onClick={onConfirm}>
+      <div className='web-leverage-select-stepper'>
+        <Stepper value={multiple} min={1} onChange={setMultiple} suffix='X' max={maxLeverage} input />
+        <Slider value={multiple} onChange={setMultiple} suffix='X' marks={sliderMarks} />
+        <Button full size='medium' onClick={onConfirm}>
           Confirm
         </Button>
       </div>

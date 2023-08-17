@@ -38,11 +38,10 @@ const Chart: FC = () => {
   }, [quoteToken, spotPrices])
 
   const getBaseData = useCallback(async () => {
-    if (!onetime) dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
+    dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
+    // if (!onetime) dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
 
     if (kline.current) {
-      // kline.current.reset()
-
       if (quoteToken.token) {
         const { data, more } = await getKLineDAT(quoteToken.token, state.kline.timeLine, getKlineEndTime(), 130, true)
 
@@ -87,7 +86,7 @@ const Chart: FC = () => {
   }, 60000)
 
   useEffect(() => {
-    dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
+    // dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
     void getBaseData()
   }, [quoteToken, state.kline.timeLine])
 

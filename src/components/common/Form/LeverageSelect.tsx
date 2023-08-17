@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { times } from 'lodash'
 import invariant from 'tiny-invariant'
 
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useClickAway, useToggle } from 'react-use'
 
 import Button from '@/components/common/Button'
@@ -47,19 +47,22 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
     toggleVisible(false)
   }
 
-  const getMaxLeverage = async () => {
+  const getMaxLeverage = useCallback(async () => {
     const leverage = await getPosMaxLeverage(quoteToken.derivative)
     setMaxLeverage(Number(leverage))
-  }
+  }, [quoteToken])
 
   useEffect(() => {
     if (maxLeverage === 0) {
       setMultiple(0)
     } else {
-      onChange(maxLeverage)
-      setMultiple(maxLeverage)
+      // onChange(maxLeverage)
+      // setMultiple(maxLeverage)
+
+      onChange(30)
+      setMultiple(30)
     }
-  }, [maxLeverage])
+  }, [quoteToken, maxLeverage])
 
   useEffect(() => {
     void getMaxLeverage()

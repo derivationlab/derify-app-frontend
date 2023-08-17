@@ -7,7 +7,7 @@ interface ActionType {
 
 interface StateType {
   outputData: DataRecord
-  filterCondition: { data: Record<string, any>[], loaded: boolean, current: string }
+  filterCondition: { data: Record<string, any>[]; loaded: boolean; current: string }
 }
 
 const stateInit: StateType = {

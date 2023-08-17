@@ -59,8 +59,9 @@ const LeverageSelect: FC<Props> = ({ onChange, className }) => {
       // onChange(maxLeverage)
       // setMultiple(maxLeverage)
 
-      onChange(30)
-      setMultiple(30)
+      const m = maxLeverage >= 30 ? 30 : maxLeverage
+      onChange(m)
+      setMultiple(m)
     }
   }, [quoteToken, maxLeverage])
 

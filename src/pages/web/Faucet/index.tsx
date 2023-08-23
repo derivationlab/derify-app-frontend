@@ -55,18 +55,20 @@ const Faucet: FC = () => {
   }, [mintToken, connector])
 
   return !address ? (
-    <div className='web-not-connect-container'>
+    <div className="web-not-connect-container">
       <NotConnect />
     </div>
   ) : (
-    <div className='web-faucet'>
-      <section className='web-faucet-inner'>
+    <div className="web-faucet">
+      <section className="web-faucet-inner">
         <MarginToken onSelect={setMintToken} />
-        <Button className='mint-btn' full onClick={_mint} loading={isLoading} disabled={!signer}>
+        <Button className="mint-btn" full onClick={_mint} loading={isLoading} disabled={!signer}>
           Mint
         </Button>
-        <Button full onClick={_register}>{t('Nav.AddToken.Add', { token: mintToken?.symbol })}</Button>
-        <a href='https://testnet.binance.org/faucet-smart' target='_blank'>
+        <Button full onClick={_register}>
+          {t('Nav.AddToken.Add', { token: mintToken?.symbol })}
+        </Button>
+        <a href="https://testnet.binance.org/faucet-smart" target="_blank">
           Get testnet tBNB from official faucet
         </a>
       </section>

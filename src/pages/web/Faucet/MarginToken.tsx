@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { debounce, uniqBy } from 'lodash'
 
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { searchMarginToken } from '@/api'
@@ -22,11 +22,13 @@ const MarginToken: FC<{ onSelect: (marginToken: Rec) => void }> = ({ onSelect })
   const { t } = useTranslation()
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
-  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokens = useMarginTokenListStore((state) => state.marginTokenList)
   const updateMarginTokenListStore = useMarginTokenListStore((state) => state.updateMarginTokenListStore)
-  const [selectedValue, setSelectedValue] = useState<Rec>(marginTokenList[0])
+  const [selectedValue, setSelectedValue] = useState<Rec>({})
   const [marginOptions, setMarginOptions] = useState<MarginOptions>({ data: [], loaded: false })
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+
+  const marginTokenList = useMemo(() => marginTokens.filter((l) => l.open), [marginTokens])
 
   const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
@@ -39,7 +41,7 @@ const MarginToken: FC<{ onSelect: (marginToken: Rec) => void }> = ({ onSelect })
   const funcAsync = useCallback(async () => {
     const { records = [] } = await getMarginTokenList(seqCount)
     const deployStatus = await getMarginDeployStatus(records)
-    const filter = records.filter((f: Rec) => deployStatus[f.symbol])
+    const filter = records.filter((f: Rec) => deployStatus[f.symbol] && f.open)
     const combine = [...marginOptions.data, ...filter]
     const deduplication = uniqBy(combine, 'margin_token')
     setMarginOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
@@ -82,6 +84,10 @@ const MarginToken: FC<{ onSelect: (marginToken: Rec) => void }> = ({ onSelect })
       observerRef.current && observerRef.current.disconnect()
     }
   }, [marginOptions.data.length])
+
+  useEffect(() => {
+    if (marginTokenList.length) setSelectedValue(marginTokenList[0])
+  }, [marginTokenList])
 
   return (
     <DropDownList

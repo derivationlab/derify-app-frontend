@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 
 import { MarginTokenState } from '@/store/types'
 
+export const marginTokenPersistKey = 'MARGIN_TOKEN_v0.0.1'
 export const marginToken = { open: 0, logo: '', symbol: '', address: '', decimals: 2 }
 
 const useMarginTokenStore = create(
@@ -16,7 +17,7 @@ const useMarginTokenStore = create(
       }
     }),
     {
-      name: 'MARGIN_TOKEN_v0.0.1'
+      name: marginTokenPersistKey
     }
   )
 )

@@ -9,7 +9,7 @@ import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 import { getPairAddressList } from '@/store'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
 import multicall, { Call } from '@/utils/multicall'
-import { bnMul, formatUnits } from '@/utils/tools'
+import { formatUnits } from '@/utils/tools'
 
 const priceFormat = ({ isUsed, stopPrice }: { isUsed: boolean; stopPrice: BigNumber }): string =>
   isUsed ? formatUnits(stopPrice, 8) : '--'

@@ -16,14 +16,14 @@ import {
 } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
+import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useBrokerAssets } from '@/hooks/useBrokerAssets'
 import { useBrokerOperation } from '@/hooks/useBrokerOperation'
 import { useBrokerRewardsToday } from '@/hooks/useBrokerRewardsToday'
 import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PubSubEvents } from '@/typings'
-import { keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
+import { keepDecimals, numeralNumber } from '@/utils/tools'
 
 const format = (d: string | null) => (d ? dayjs(d).format('MMM DD, YYYY') : '--')
 

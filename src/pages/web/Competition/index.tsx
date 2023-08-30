@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { upperFirst, isEmpty, isArray } from 'lodash'
+import { upperFirst, isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 

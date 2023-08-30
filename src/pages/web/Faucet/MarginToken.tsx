@@ -8,7 +8,7 @@ import { searchMarginToken } from '@/api'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Image from '@/components/common/Image'
 import NoResults from '@/pages/web/Trade/c/NoResults'
-import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
+import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore } from '@/store'
 import { Rec } from '@/typings'
 
 let seqCount = 0

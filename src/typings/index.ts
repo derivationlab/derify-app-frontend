@@ -20,7 +20,7 @@ export type TSigner = Signer | null | undefined
 
 export type ChainIdRec = { [key in GlobalType.Chain]: string }
 
-export type AllTokenKeys = 'drf' | 'edrf'
+export type TokenKeys = 'drf' | 'edrf'
 
 export type ContractKeys = 'multicall' | 'derifyProtocol'
 
@@ -73,5 +73,3 @@ export const dataRecordInit = {
   currentPage: 0,
   loaded: true
 }
-
-export type DataRecord = typeof dataRecordInit

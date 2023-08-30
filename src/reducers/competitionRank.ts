@@ -1,4 +1,4 @@
-import { DataRecord, dataRecordInit } from '@/typings'
+import { dataRecordInit } from '@/typings'
 
 interface ActionType {
   type: 'SET_FILTER_CONDITION' | 'SET_OUTPUT_DATA'
@@ -6,7 +6,7 @@ interface ActionType {
 }
 
 interface StateType {
-  outputData: DataRecord
+  outputData: typeof dataRecordInit
   filterCondition: { data: Record<string, any>[]; loaded: boolean; current: string }
 }
 

@@ -1,4 +1,5 @@
 import { KLineTimes } from '@/data'
+import { Rec } from '@/typings'
 import { get, post } from '@/utils/http'
 
 export const getKLineDAT = async (token: string, time: number, endTime: number, limit: number) => {
@@ -28,12 +29,12 @@ export const getTraderWithdrawAmount = async (trader: string, amount: string, ma
   return response
 }
 
-export const checkRpcHealthStatus = async (url: string, body: Record<string, any>) => {
+export const checkRpcHealthStatus = async (url: string, body: Rec) => {
   const response = await post(url, body, undefined, true)
   return response
 }
 
-export const traderInfoUpdates = async (body: Record<string, any>) => {
+export const traderInfoUpdates = async (body: Rec) => {
   const response = await post('api/trader_info_updates', body)
   return response
 }
@@ -45,4 +46,3 @@ export * from './margin'
 export * from './broker'
 export * from './dashboard'
 export * from './competition'
-export * from './tradingPair'

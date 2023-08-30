@@ -1,7 +1,7 @@
 import Token from '@/class/Token'
-import { ChainId, AllTokenKeys } from '@/typings'
+import { ChainId, TokenKeys } from '@/typings'
 
-export const tokens: { [key in AllTokenKeys]: Token } = {
+export const tokens: { [key in TokenKeys]: Token } = {
   drf: new Token(
     'Derify Protocol',
     'DRF',

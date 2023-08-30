@@ -1,13 +1,14 @@
 import dayjs from 'dayjs'
 
+import { Rec } from '@/typings'
 import { formDataPost, get, post } from '@/utils/http'
 
-export const updateBrokerInfo = async (body: Record<string, any>) => {
+export const updateBrokerInfo = async (body: Rec) => {
   const response = await formDataPost('api/broker_info_updates', body)
   return response
 }
 
-export const bindingYourBroker = async (body: Record<string, any>) => {
+export const bindingYourBroker = async (body: Rec) => {
   const response = await post('api/bind_broker', body)
   return response
 }

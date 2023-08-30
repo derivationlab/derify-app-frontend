@@ -8,7 +8,7 @@
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx}\"",
     "format:check:staged": "pretty-quick --staged",
-    "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
+    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
     "style": "node ./src/style/build.js"
   },
   "dependencies": {

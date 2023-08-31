@@ -28,6 +28,7 @@ import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 
 let seqCount = 0
+const visibleCount = 12
 
 interface PairOptionsInit {
   data: Rec[]
@@ -45,7 +46,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeList)
+  const derivativeList = useDerivativeListStore((state) => state.derivativeListOpen)
   const derivativeListLoaded = useDerivativeListStore((state) => state.derivativeListLoaded)
   const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
   const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
@@ -83,14 +84,13 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const morePairs = useCallback(async () => {
     const { data } = await getDerivativeList(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
-      const filterRecords = data.records.filter((r: Rec) => r.open)
+      const filterRecords = data.records.filter((r: Rec) => r.open) // opening
       const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)
-      const _pairAddresses = pairAddresses ?? []
-      const output = _pairAddresses.filter((l) => l.derivative !== ZERO)
+      const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed
       const combine = [...pairOptions.data, ...output]
       const deduplication = uniqBy(combine, 'token')
       setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
-      if (data.records.length === 0 || data.records.length < 12) seqCount = seqCount - 1
+      if (data.records.length === 0 || data.records.length < visibleCount) seqCount = seqCount - 1
     }
   }, [protocolConfig, pairOptions.data])
 

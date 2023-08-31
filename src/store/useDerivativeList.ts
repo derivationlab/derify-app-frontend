@@ -47,19 +47,19 @@ export const getPairAddressList = async (
 
 const useDerivativeListStore = create<DerivativeListState>((set) => ({
   derivativeList: [],
+  derivativeListOpen: [],
   derivativeListLoaded: false,
   getDerivativeList: async (marginToken: string, factory: string, page = 0) => {
     const { data } = await getDerivativeList(marginToken, page)
     const records = data?.records ?? []
-    // condition1: open
-    const list = await getPairAddressList(
-      factory,
-      records.filter((r: Rec) => r.open)
-    )
-    const _list = list ?? []
-    // condition2: not zero address
-    const output = _list.filter((l) => l.derivative !== ZERO)
-    set({ derivativeList: output, derivativeListLoaded: true })
+    const list = await getPairAddressList(factory, records)
+    const deployed = (list ?? []).filter((l) => l.derivative !== ZERO) // deployed
+    const inTrading = deployed.filter((r) => r.open) // opening
+    set({
+      derivativeList: deployed,
+      derivativeListOpen: inTrading,
+      derivativeListLoaded: true
+    })
   }
 }))
 

@@ -9,10 +9,10 @@ import { getDerivativeList, getHistoryTradingDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { ZERO } from '@/config'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentTrading } from '@/hooks/useCurrentTrading'
-import { getPairAddressList, useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { visibleCount } from '@/pages/web/Trade/KLine/SymbolSelect'
+import { useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 import { dayjsStartOf } from '@/utils/tools'
@@ -76,14 +76,11 @@ const TradingVolume: FC = () => {
   const morePairs = useCallback(async () => {
     const { data } = await getDerivativeList(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
-      const filterRecords = data.records.filter((r: Rec) => r.open)
-      const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)
-      const _pairAddresses = pairAddresses ?? []
-      const output = _pairAddresses.filter((l) => l.derivative !== ZERO)
-      const combine = [...pairOptions.data, ...output]
+      const filter = data.records.filter((r: Rec) => r.open)
+      const combine = [...pairOptions.data, ...filter]
       const deduplication = uniqBy(combine, 'token')
       setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
-      if (data.records.length === 0 || data.records.length < 12) seqCount = seqCount - 1
+      if (data.records.length === 0 || data.records.length < visibleCount) seqCount = seqCount - 1
     }
   }, [protocolConfig, pairOptions.data])
 

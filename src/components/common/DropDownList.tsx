@@ -46,7 +46,7 @@ export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
         className="web-c-drop-down-list-motion-div"
         initial={{ height: 0 }}
         animate={{ height: toggle ? height : 0 }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.1 }}
       >
         <div className="web-c-drop-down-list-wrapper">
           <div className="web-c-drop-down-list-content">

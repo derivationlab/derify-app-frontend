@@ -9,11 +9,10 @@ import { getDerivativeList, getHistoryPositionsDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { ZERO } from '@/config'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentPositions } from '@/hooks/useCurrentPositions'
 import { ThemeContext } from '@/providers/Theme'
-import { getPairAddressList, useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 import { bnDiv, bnMul, bnPlus, dayjsStartOf, isGT, keepDecimals } from '@/utils/tools'
@@ -97,11 +96,8 @@ const PositionVolume: FC = () => {
   const morePairs = useCallback(async () => {
     const { data } = await getDerivativeList(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
-      const filterRecords = data.records.filter((r: Rec) => r.open)
-      const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)
-      const _pairAddresses = pairAddresses ?? []
-      const output = _pairAddresses.filter((l) => l.derivative !== ZERO)
-      const combine = [...pairOptions.data, ...output]
+      const filter = data.records.filter((r: Rec) => r.open)
+      const combine = [...pairOptions.data, ...filter]
       const deduplication = uniqBy(combine, 'token')
       setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
       if (data.records.length === 0 || data.records.length < 12) seqCount = seqCount - 1

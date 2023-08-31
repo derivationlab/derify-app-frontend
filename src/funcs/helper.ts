@@ -2,8 +2,11 @@ import BN from 'bignumber.js'
 
 import { checkMarginToken as _checkMarginToken } from '@/api'
 import { QUOTE_TOKEN_KEY, ZERO } from '@/config'
+import factoryAbi from '@/config/abi/DerifyFactory.json'
+import { derivativeList } from '@/store'
 import { PositionOrderTypes, PositionSideTypes } from '@/typings'
 import { getExchangeContract, getDerivativeContract, getProtocolContract } from '@/utils/contractHelpers'
+import multicall from '@/utils/multicall'
 import {
   isGT,
   isLT,
@@ -162,6 +165,32 @@ export const calcDisposableAmount = async (
   } catch (e) {
     // console.info(e)
     return ['0', '0']
+  }
+}
+
+export const getPairAddressList = async (
+  factory: string,
+  list: (typeof derivativeList)[]
+): Promise<(typeof derivativeList)[] | null> => {
+  const calls = list.map((derivative) => ({
+    name: 'getDerivative',
+    params: [derivative.token],
+    address: factory
+  }))
+
+  try {
+    const response = await multicall(factoryAbi, calls)
+
+    if (response.length) {
+      const output = response.map(([address]: string[], index: number) => ({ ...list[index], derivative: address }))
+      // console.info(output)
+      return output
+    }
+
+    return null
+  } catch (e) {
+    console.info(e)
+    return null
   }
 }
 

@@ -13,21 +13,17 @@ import { DropDownList, DropDownListItem } from '@/components/common/DropDownList
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { ZERO } from '@/config'
+import { getPairAddressList } from '@/funcs/helper'
 import { useTokenProtect } from '@/hooks/useTokenProtect'
 import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import NoResults from '@/pages/web/Trade/c/NoResults'
-import {
-  getPairAddressList,
-  useMarginIndicatorsStore,
-  useMarginTokenStore,
-  useProtocolConfigStore,
-  useTokenSpotPricesStore
-} from '@/store'
+import { useMarginIndicatorsStore, useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 
 let seqCount = 0
-const visibleCount = 12
+let temporaryStorage: any[] = []
+export const visibleCount = 50 // important!!!
 
 interface PairOptionsInit {
   data: Rec[]
@@ -38,6 +34,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const ref = useRef(null)
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
+
   const { t } = useTranslation()
   const [visible, toggleVisible] = useToggle(false)
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
@@ -46,10 +43,10 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const { priceDecimals } = usePriceDecimals(pairOptions.data)
   const { spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, quoteToken)
   const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
+  const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
-  const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
 
   const indicator = useMemo(() => {
     if (indicators) {
@@ -85,17 +82,31 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
       const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed
       const combine = [...pairOptions.data, ...output]
       const deduplication = uniqBy(combine, 'token')
+      temporaryStorage = deduplication
       setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
       if (data.records.length === 0 || data.records.length < visibleCount) seqCount = seqCount - 1
     }
   }, [protocolConfig, pairOptions.data])
 
-  // xrp/usd - error
-  // 地址搜索 - 不支持
+  /**
+   * TODO:
+   * If the transaction pair cached by the browser is found to be off the shelf (open or not open),
+   * other transaction pair information will be displayed
+   *
+   * FIXME：
+   * xx/xx - api error
+   */
   const fuzzySearchFunc = useCallback(
-    debounce(async (marginToken: string, fuzzySearch: string) => {
-      const { data } = await searchDerivative(marginToken, fuzzySearch)
-      setPairOptions({ data, loaded: false })
+    debounce(async (marginToken: string, fuzzySearch: string, factory: string) => {
+      try {
+        const { data } = await searchDerivative(marginToken, fuzzySearch)
+        const filterRecords = (data as any[]).filter((d) => d.open) // opening
+        const pairAddresses = await getPairAddressList(factory, filterRecords)
+        const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed
+        setPairOptions({ data: output, loaded: false })
+      } catch (e) {
+        setPairOptions({ data: [], loaded: false })
+      }
     }, 100),
     []
   )
@@ -107,14 +118,12 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   useEffect(() => {
     if (fuzzySearch.trim()) {
       setPairOptions({ data: [], loaded: true })
-      void fuzzySearchFunc(marginToken.address, fuzzySearch)
+      if (protocolConfig) void fuzzySearchFunc(marginToken.address, fuzzySearch, protocolConfig.factory)
     } else {
-      seqCount = 0
-      if (derivativeList.length) {
-        setPairOptions({ data: derivativeList, loaded: false })
-      }
+      const data = temporaryStorage.length === 0 ? derivativeList : temporaryStorage
+      setPairOptions({ data, loaded: false })
     }
-  }, [marginToken, fuzzySearch, derivativeList])
+  }, [marginToken, fuzzySearch, derivativeList, protocolConfig])
 
   useEffect(() => {
     if (pairOptions.data.length) {

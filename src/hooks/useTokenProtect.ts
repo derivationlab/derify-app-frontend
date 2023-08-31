@@ -1,8 +1,9 @@
-import { useDerivativeListStore, useQuoteTokenStore } from '@/store'
-import { searchDerivative } from '@/api'
-import { QuoteTokenState } from '@/store/types'
 import { useEffect } from 'react'
 import { useBoolean } from 'react-use'
+
+import { searchDerivative } from '@/api'
+import { useDerivativeListStore, useQuoteTokenStore } from '@/store'
+import { QuoteTokenState } from '@/store/types'
 
 export const useTokenProtect = () => {
   const [checking, setChecking] = useBoolean(true)

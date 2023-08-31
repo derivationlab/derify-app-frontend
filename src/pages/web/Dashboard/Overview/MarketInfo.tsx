@@ -45,7 +45,7 @@ const MarketInfo: FC = () => {
   const { factoryConfig } = useFactoryConfig(allPositions)
   const { pairAddrConfig } = usePairAddrConfig(factoryConfig, allPositions)
   const { priceDecimals } = usePriceDecimals(pairAddrConfig)
-  const { data: spotPrices } = useTokenSpotPrices(pairAddrConfig, priceDecimals)
+  const { spotPrices } = useTokenSpotPrices(pairAddrConfig, priceDecimals)
 
   const mColumns = useMemo(() => {
     return [

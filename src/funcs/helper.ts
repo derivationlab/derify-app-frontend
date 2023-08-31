@@ -1,8 +1,7 @@
 import BN from 'bignumber.js'
 
 import { checkMarginToken as _checkMarginToken } from '@/api'
-import { ZERO } from '@/config'
-import { marginTokenPersistKey } from '@/store'
+import { QUOTE_TOKEN_KEY, ZERO } from '@/config'
 import { PositionOrderTypes, PositionSideTypes } from '@/typings'
 import { getExchangeContract, getDerivativeContract, getProtocolContract } from '@/utils/contractHelpers'
 import {
@@ -184,7 +183,7 @@ export const checkMarginToken = async (marginToken: string) => {
 }
 
 export const outputErrorLog = (contractAddress: string, contractName: string, functionName: string) => {
-  const marginTokenInfo = localStorage.getItem(marginTokenPersistKey)
+  const marginTokenInfo = localStorage.getItem(QUOTE_TOKEN_KEY)
   const parseMarginTokenInfo = JSON.parse(marginTokenInfo ?? '')
   console.info(`marginToken = ${parseMarginTokenInfo?.state?.marginToken?.symbol}(${parseMarginTokenInfo?.state?.marginToken?.address})\ncontractName = ${contractName}\nfunctionName = ${functionName}\ncontractAddress = ${contractAddress}
 `)

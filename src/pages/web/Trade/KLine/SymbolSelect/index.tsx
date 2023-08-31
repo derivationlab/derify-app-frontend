@@ -13,6 +13,7 @@ import { DropDownList, DropDownListItem } from '@/components/common/DropDownList
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { ZERO } from '@/config'
+import { useTokenProtect } from '@/hooks/useTokenProtect'
 import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import NoResults from '@/pages/web/Trade/c/NoResults'
 import {
@@ -24,7 +25,6 @@ import {
 } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-import { useTokenProtect } from '@/hooks/useTokenProtect'
 
 let seqCount = 0
 const visibleCount = 12
@@ -50,6 +50,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
   const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+
   const indicator = useMemo(() => {
     if (indicators) {
       const keys = Object.keys(indicators)

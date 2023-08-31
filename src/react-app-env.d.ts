@@ -2,7 +2,7 @@
 
 interface Window {
   toast: any
-  ethereum?: GlobalType.Ethereum
+  ethereum: GlobalType.Ethereum
 }
 
 namespace NodeJS {

@@ -1,7 +1,5 @@
 import { Signer } from 'ethers'
 
-import GlobalType from '@/typings/global'
-
 export type Rec = Record<string, any>
 
 export enum ChainId {
@@ -18,7 +16,9 @@ export enum ConnectorIds {
 
 export type TSigner = Signer | null | undefined
 
-export type ChainIdRec = { [key in GlobalType.Chain]: string }
+export type Chain = ChainId.MAINNET | ChainId.TESTNET
+
+export type ChainIdRec = { [key in Chain]: string }
 
 export type TokenKeys = 'drf' | 'edrf'
 

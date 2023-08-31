@@ -66,6 +66,7 @@ export interface MarginTokenListState {
 
 export interface DerivativeListState {
   derivativeList: (typeof derivativeList)[]
+  derivativeListOpen: (typeof derivativeList)[]
   derivativeListLoaded: boolean
   getDerivativeList: (marginToken: string, factory: string, page?: number, size?: number) => Promise<void>
 }

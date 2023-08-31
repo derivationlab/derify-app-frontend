@@ -17,15 +17,14 @@ import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks
 import NoResults from '@/pages/web/Trade/c/NoResults'
 import {
   getPairAddressList,
-  useDerivativeListStore,
   useMarginIndicatorsStore,
   useMarginTokenStore,
   useProtocolConfigStore,
-  useQuoteTokenStore,
   useTokenSpotPricesStore
 } from '@/store'
-import { MarginTokenState, QuoteTokenState } from '@/store/types'
+import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
+import { useTokenProtect } from '@/hooks/useTokenProtect'
 
 let seqCount = 0
 const visibleCount = 12
@@ -43,29 +42,25 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const [visible, toggleVisible] = useToggle(false)
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const [fuzzySearch, setFuzzySearch] = useState<string>('')
-  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
+  const { checking, quoteToken, derivativeList, updateQuoteToken } = useTokenProtect()
+  const { priceDecimals } = usePriceDecimals(pairOptions.data)
+  const { spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, quoteToken)
+  const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeListOpen)
-  const derivativeListLoaded = useDerivativeListStore((state) => state.derivativeListLoaded)
-  const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
-  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
-  const { priceDecimals } = usePriceDecimals(pairOptions.data)
-  const { data: spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, quoteToken)
-  const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
-
+  const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const indicator = useMemo(() => {
-    if (marginIndicators) {
-      const keys = Object.keys(marginIndicators)
+    if (indicators) {
+      const keys = Object.keys(indicators)
       const find = keys.find((key) => getAddress(key) === getAddress(quoteToken.token))
-      return find ? marginIndicators[find]?.price_change_rate ?? 0 : 0
+      return find ? indicators[find]?.price_change_rate ?? 0 : 0
     }
     return 0
-  }, [quoteToken, marginIndicators])
+  }, [quoteToken, indicators])
 
-  const currentTK = useMemo(() => {
-    if (!derivativeListLoaded) return <div className="web-trade-symbol-select-curr s">{t('common.Loading')} ...</div>
+  const currentTk = useMemo(() => {
+    if (checking) return <div className="web-trade-symbol-select-curr s">{t('common.Loading')} ...</div>
     if (derivativeList.length)
       return (
         <div className="web-trade-symbol-select-curr" onClick={() => toggleVisible(!visible)}>
@@ -79,7 +74,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
         </div>
       )
     return <div className="web-trade-symbol-select-curr s">{t('Trade.Derivative.NoTrading')}</div>
-  }, [spotPrice, quoteToken, derivativeListLoaded])
+  }, [spotPrice, quoteToken, checking])
 
   const morePairs = useCallback(async () => {
     const { data } = await getDerivativeList(marginToken.address, seqCount)
@@ -94,9 +89,11 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
     }
   }, [protocolConfig, pairOptions.data])
 
+  // xrp/usd - error
+  // 地址搜索 - 不支持
   const fuzzySearchFunc = useCallback(
     debounce(async (marginToken: string, fuzzySearch: string) => {
-      const { data = [] } = await searchDerivative(marginToken, fuzzySearch)
+      const { data } = await searchDerivative(marginToken, fuzzySearch)
       setPairOptions({ data, loaded: false })
     }, 100),
     []
@@ -158,7 +155,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
       </div>
 
       <DropDownList
-        entry={currentTK}
+        entry={currentTk}
         height={588}
         loading={pairOptions.loaded}
         disabled={derivativeList.length === 0}
@@ -172,9 +169,9 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
             const refInit = index === len - 1 ? bottomRef : null
             const id = fuzzySearch.trim() ? undefined : idInit
             const ref = fuzzySearch.trim() ? null : refInit
-            const keys = Object.keys(marginIndicators ?? Object.create(null))
+            const keys = Object.keys(indicators ?? Object.create(null))
             const findKey = keys.find((key) => getAddress(key) === getAddress(o.token))
-            const values = marginIndicators?.[findKey ?? ''] ?? Object.create(null)
+            const values = indicators?.[findKey ?? ''] ?? Object.create(null)
             const findToken = (spotPrices ?? []).find((t) => t.name === o.name)
             const decimals = Number(findToken?.price ?? 0) === 0 ? 2 : o.price_decimals
             return (

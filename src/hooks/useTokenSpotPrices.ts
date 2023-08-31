@@ -40,7 +40,7 @@ export const usePriceDecimals = (list?: Rec[] | null) => {
 
 export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, quoteToken?: Rec) => {
   const enabled = !!(list && decimals)
-  const { data, refetch, isLoading } = useQuery(
+  const { data: spotPrices, refetch, isLoading } = useQuery(
     ['useTokenSpotPrices' + quoteToken],
     async () => {
       let output: Rec[] = []
@@ -86,7 +86,7 @@ export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, q
     }
   )
 
-  return { data, refetch, isLoading }
+  return { spotPrices, refetch, isLoading }
 }
 
 // There are duplicate trading pairs

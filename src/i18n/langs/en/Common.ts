@@ -8,6 +8,7 @@ export default {
     short: 'Short',
     twoway: '2-Way',
     Loading: 'Loading',
-    NoRecord: 'No Record'
+    NoRecord: 'No Record',
+    Frequently: 'Operate too frequently'
   }
 }

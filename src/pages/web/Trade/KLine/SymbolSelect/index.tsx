@@ -16,6 +16,7 @@ import { ZERO } from '@/config'
 import { getPairAddressList } from '@/funcs/helper'
 import { useTokenProtect } from '@/hooks/useTokenProtect'
 import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
+import Favorite from '@/pages/web/Trade/KLine/SymbolSelect/Favorite'
 import NoResults from '@/pages/web/Trade/c/NoResults'
 import { useMarginIndicatorsStore, useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -193,6 +194,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
                   isMobile ? (
                     <>
                       <aside>
+                        <Favorite token={o.token} />
                         <h5>{o.name}</h5>
                         <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
                       </aside>
@@ -203,6 +205,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
                     </>
                   ) : (
                     <>
+                      <Favorite token={o.token} />
                       <h5>{o.name}</h5>
                       <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
                       <ChangePercent value={values?.price_change_rate ?? 0} />

@@ -3,13 +3,22 @@ import { useAccount } from 'wagmi'
 
 import { useEffect } from 'react'
 
+import { asyncTraderFavoriteAtom } from '@/atoms/useTraderFavorite'
 import { asyncTraderVariablesAtom } from '@/atoms/useTraderVariables'
-import { useProtocolConfigStore } from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 import emitter, { EventTypes } from '@/utils/emitter'
 
 export default function TradingUpdater(): null {
   const { address } = useAccount()
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
+  const asyncTraderFavorite = useSetAtom(
+    asyncTraderFavoriteAtom({
+      trader: address,
+      marginToken: marginToken.address
+    })
+  )
   const asyncTraderVariables = useSetAtom(
     asyncTraderVariablesAtom({
       userAccount: address,
@@ -25,6 +34,15 @@ export default function TradingUpdater(): null {
       void asyncTraderVariables()
     })
   }, [address, protocolConfig])
+
+  // User Favorite Trade Pair
+  useEffect(() => {
+    if (address && marginToken) void asyncTraderFavorite()
+    emitter.removeAllListeners(EventTypes.updateTraderFavorite)
+    emitter.addListener(EventTypes.updateTraderFavorite, () => {
+      void asyncTraderFavorite()
+    })
+  }, [address, marginToken])
 
   return null
 }

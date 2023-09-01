@@ -514,6 +514,13 @@
 
   .web-c-drop-down-list-content-items {
     max-height: 466px;
+
+    .web-image {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
   }
 
   .open {

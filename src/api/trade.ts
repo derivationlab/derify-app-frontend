@@ -35,6 +35,8 @@ export const getFavoritePairsList = async (marginToken: string, trader: string) 
  * trader
  * marginToken
  * token
+ * name
+ * derivative
  * operation: add/delete
  * @param body
  */

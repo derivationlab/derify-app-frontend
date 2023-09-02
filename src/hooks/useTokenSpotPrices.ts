@@ -9,19 +9,27 @@ import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
-export const usePriceDecimals = (list?: Rec[] | null) => {
+type List<T> = T | null
+
+export const usePriceDecimals = (list?: List<Rec[]>, extra?: Rec[]) => {
   const [priceDecimals, setPriceDecimals] = useState<Rec | null>(null)
 
   const func = async (list: Rec[]) => {
     let output = Object.create(null)
-    const calls: Rec[] = []
-    list.forEach((l) => {
-      calls.push({
+    let calls = list.map((l) => ({
+      name: 'getSpotPriceDecimals',
+      address: l.derivative
+    }))
+    if (extra) {
+      const filter = extra.filter((e) => !list.find((l) => l.name === e.name))
+      const _calls = filter.map((f) => ({
         name: 'getSpotPriceDecimals',
-        address: l.derivative
-      })
-    })
-    const response = await multicall(derifyDerivativeAbi, calls as any)
+        address: f.derivative
+      }))
+      calls = [...calls, ..._calls]
+    }
+
+    const response = await multicall(derifyDerivativeAbi, calls as any[])
     if (response.length) {
       response.forEach(([decimals]: BigNumberish[], index: number) => {
         const _ = Number(decimals)
@@ -38,39 +46,41 @@ export const usePriceDecimals = (list?: Rec[] | null) => {
   return { priceDecimals }
 }
 
-export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, quoteToken?: Rec) => {
-  const enabled = !!(list && decimals)
+function keyValue(l: Rec) {
+  return {
+    name: 'getSpotPrice',
+    token: l.token,
+    symbol: l.name,
+    margin: l.margin_token,
+    address: l.derivative
+  }
+}
+
+export const useTokenSpotPrices = (list?: List<Rec[]>, decimals?: List<Rec>, extra?: Rec[]) => {
+  const enabled = !!(list && list.length && decimals)
   const {
     data: spotPrices,
     refetch,
     isLoading
   } = useQuery(
-    ['useTokenSpotPrices' + quoteToken],
+    [`useTokenSpotPrices${extra && '-extra'}`],
     async () => {
       let output: Rec[] = []
-      if (list && decimals) {
-        let calls = list.map((l) => ({
-          name: 'getSpotPrice',
-          address: l.derivative
-        }))
-        const find = list.find((l) => l.name === quoteToken?.name)
-        if (quoteToken && !find) {
-          calls = [
-            ...calls,
-            {
-              name: 'getSpotPrice',
-              address: quoteToken.derivative
-            }
-          ]
+      if (list && list.length && decimals) {
+        let calls = list.map((l) => keyValue(l))
+        if (extra) {
+          const filter = extra.filter((e) => !list.find((l) => l.name === e.name))
+          const _calls = filter.map((f) => keyValue(f))
+          calls = [...calls, ..._calls]
         }
-        const response = await multicall(derifyDerivativeAbi, calls)
+        const response = await multicall(derifyDerivativeAbi, calls as any[])
         if (response.length) {
           response.forEach(([spotPrice]: BigNumberish[], index: number) => {
             const x = {
-              name: list[index]?.name || quoteToken?.name,
+              name: calls[index].symbol,
               price: formatUnits(spotPrice, decimals[calls[index].address]),
-              token: list[index]?.token,
-              margin: list[index]?.margin_token || list[index]?.margin,
+              token: calls[index].token,
+              margin: calls[index].margin,
               precision: decimals[calls[index].address]
             }
             output = [...output, x]

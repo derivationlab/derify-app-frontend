@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import { getAddress } from 'ethers/lib/utils'
+import { useAtomValue } from 'jotai'
 import { debounce, uniqBy } from 'lodash'
 
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
@@ -8,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { useClickAway, useToggle } from 'react-use'
 
 import { getDerivativeList, searchDerivative } from '@/api'
+import { traderFavoriteAtom } from '@/atoms/useTraderFavorite'
 import ChangePercent from '@/components/common/ChangePercent'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Skeleton from '@/components/common/Skeleton'
@@ -24,7 +26,7 @@ import { Rec } from '@/typings'
 
 let seqCount = 0
 let temporaryStorage: any[] = []
-export const visibleCount = 50 // important!!!
+export const visibleCount = 12 // important!!!
 
 interface PairOptionsInit {
   data: Rec[]
@@ -33,21 +35,22 @@ interface PairOptionsInit {
 
 const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const ref = useRef(null)
-  const bottomRef = useRef<any>()
+  const bottomRef = useRef(null)
   const observerRef = useRef<IntersectionObserver | null>()
 
   const { t } = useTranslation()
   const [visible, toggleVisible] = useToggle(false)
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const [fuzzySearch, setFuzzySearch] = useState<string>('')
-  const { checking, quoteToken, derivativeList, updateQuoteToken } = useTokenProtect()
-  const { priceDecimals } = usePriceDecimals(pairOptions.data)
-  const { spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, quoteToken)
-  const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
+  const traderFavorite = useAtomValue(traderFavoriteAtom)
   const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
+  const { checking, quoteToken, derivativeList, updateQuoteToken } = useTokenProtect()
+  const { priceDecimals } = usePriceDecimals(pairOptions.data, [quoteToken, ...traderFavorite])
+  const { spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, [quoteToken, ...traderFavorite])
+  const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
 
   const indicator = useMemo(() => {
     if (indicators) {
@@ -122,9 +125,10 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
       if (protocolConfig) void fuzzySearchFunc(marginToken.address, fuzzySearch, protocolConfig.factory)
     } else {
       const data = temporaryStorage.length === 0 ? derivativeList : temporaryStorage
-      setPairOptions({ data, loaded: false })
+      const deduplication = uniqBy([...traderFavorite, ...data], 'token')
+      setPairOptions({ data: deduplication, loaded: false })
     }
-  }, [marginToken, fuzzySearch, derivativeList, protocolConfig])
+  }, [marginToken, fuzzySearch, derivativeList, protocolConfig, traderFavorite])
 
   useEffect(() => {
     if (pairOptions.data.length) {
@@ -147,7 +151,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
     return () => {
       observerRef.current && observerRef.current.disconnect()
     }
-  }, [pairOptions.data.length])
+  }, [pairOptions.data])
 
   useClickAway(ref, () => toggleVisible(false))
 
@@ -187,14 +191,14 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
             const decimals = Number(findToken?.price ?? 0) === 0 ? 2 : o.price_decimals
             return (
               <DropDownListItem
-                key={o.name}
+                key={o.name + index}
                 id={id}
                 ref={ref}
                 content={
                   isMobile ? (
                     <>
                       <aside>
-                        <Favorite token={o.token} />
+                        <Favorite data={o} />
                         <h5>{o.name}</h5>
                         <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
                       </aside>
@@ -205,7 +209,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
                     </>
                   ) : (
                     <>
-                      <Favorite token={o.token} />
+                      <Favorite data={o} />
                       <h5>{o.name}</h5>
                       <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
                       <ChangePercent value={values?.price_change_rate ?? 0} />

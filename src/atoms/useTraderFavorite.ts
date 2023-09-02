@@ -2,8 +2,9 @@ import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 
 import { getFavoritePairsList } from '@/api'
+import { Rec } from '@/typings'
 
-export const traderFavoriteAtom = atom<string[]>([])
+export const traderFavoriteAtom = atom<Rec[]>([])
 
 interface TraderFavorite {
   trader: string | undefined
@@ -16,7 +17,7 @@ export const asyncTraderFavoriteAtom = atomFamily((params: TraderFavorite) =>
     try {
       if (trader && marginToken) {
         const { data } = await getFavoritePairsList(marginToken, trader)
-        set(traderFavoriteAtom, data ?? [])
+        set(traderFavoriteAtom, data)
       }
     } catch (e) {
       set(traderFavoriteAtom, [])

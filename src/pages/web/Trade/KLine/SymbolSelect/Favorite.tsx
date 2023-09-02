@@ -43,7 +43,7 @@ const Favorite = ({ data }: Props) => {
       const data = await favoriteTradingPairs(params)
       if (data.code === 0) emitter.emit(EventTypes.updateTraderFavorite)
     } catch (e) {
-      window.toast.error(t('common.Frequently'))
+      window.toast.error(t('common.Error'))
     }
   }
 

@@ -9,6 +9,7 @@ import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 import { WEBSITE_URL } from '@/config'
 import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
 
 import MHeader from './MHeader'
 import Tool from './Tool'
@@ -17,7 +18,7 @@ const Header: FC = () => {
   const { t } = useTranslation()
   const { pathname } = useLocation()
 
-  const marginToken = useMarginTokenStore((state) => state.marginToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   if (isMobile) return <MHeader />
 
@@ -50,6 +51,7 @@ const Header: FC = () => {
             </ul>
           </span>
           <NavLink to="/faucet">{t('Nav.Nav.Faucet')}</NavLink>
+          <NavLink to="/advisor">{t('Nav.Nav.Advisor')}</NavLink>
         </nav>
         <div className="web-header-tools">
           <SelectNetworkButton />

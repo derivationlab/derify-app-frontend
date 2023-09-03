@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useBoolean } from 'react-use'
 
 import Button from '@/components/common/Button'
-import NotConnect from '@/components/web/NotConnect'
+import IsItConnected from '@/components/web/IsItConnected'
 import { useTokenMint } from '@/hooks/useTokenMint'
 import MarginToken from '@/pages/web/Faucet/MarginToken'
 import { useMarginTokenListStore } from '@/store'
@@ -23,13 +23,13 @@ const mintAmount: Rec = {
   XVS: 3000
 }
 
-const Faucet: FC = () => {
+const FaucetInner: FC = () => {
   const { t } = useTranslation()
-  const { address, connector } = useAccount()
+  const { connector } = useAccount()
   const { data: signer } = useSigner()
   const { mint } = useTokenMint()
-  const [isLoading, setLoading] = useBoolean(false)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const [isLoading, setLoading] = useBoolean(false)
   const [mintToken, setMintToken] = useState<Rec>(marginTokenList[0])
 
   const _mint = useCallback(async () => {
@@ -54,11 +54,7 @@ const Faucet: FC = () => {
     }
   }, [mintToken, connector])
 
-  return !address ? (
-    <div className="web-not-connect-container">
-      <NotConnect />
-    </div>
-  ) : (
+  return (
     <div className="web-faucet">
       <section className="web-faucet-inner">
         <MarginToken onSelect={setMintToken} />
@@ -73,6 +69,14 @@ const Faucet: FC = () => {
         </a>
       </section>
     </div>
+  )
+}
+
+const Faucet = () => {
+  return (
+    <IsItConnected>
+      <FaucetInner />
+    </IsItConnected>
   )
 }
 

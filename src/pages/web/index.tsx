@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, lazy } from 'react'
+import { Redirect, Switch, Route } from 'react-router-dom'
 
-import { Redirect, Switch, Route } from '@/components/common/Route'
 import Toast from '@/components/common/Toast'
 import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 import Header from '@/components/web/Header'
+import { R2, R4, R5, R8, R6, R7, R1, R3 } from '@/components/web/Route'
 import { useCheckMarginToken } from '@/hooks/useCheckMarginToken'
 import { useRegionalJudgment } from '@/hooks/useRegionalJudgment'
 import BrokerBind from '@/pages/web/Broker/Bind'
@@ -25,10 +26,12 @@ import Faucet from '@/pages/web/Faucet'
 import MiningRank from '@/pages/web/Mining'
 import MySpace from '@/pages/web/MySpace'
 import System from '@/pages/web/MySpace/System'
-import { R2, R4, R5, R8, R6, R7, R1, R3 } from '@/pages/web/Route'
 import Trade from '@/pages/web/Trade'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+
+const Apply = lazy(() => import('@/pages/web/apply'))
+const Consultant = lazy(() => import('@/pages/web/consultant'))
 
 const Web: FC = () => {
   useCheckMarginToken()
@@ -172,6 +175,8 @@ const Web: FC = () => {
         <Route path="/dashboard/grant" render={GrantList} />
         <Route path="/faucet" render={() => <Faucet />} />
         <Route path="/space" render={() => <MySpace />} />
+        <Route path="/apply" render={() => <Apply />} />
+        <Route path="/consultant" render={() => <Consultant />} />
         <Route path={`/${symbol}/system/parameters`} render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${symbol}/trade`} />} />
       </Switch>

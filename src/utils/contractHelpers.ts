@@ -5,6 +5,7 @@ import { ethers } from 'ethers'
 
 import { BEST_RPC_KEY, CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
 import DerifyBrokerRewardsAbi from '@/config/abi/DerifyBrokerRewards.json'
+import consultantAbi from '@/config/abi/DerifyConsultant.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
@@ -77,4 +78,8 @@ export const getPriceFeedContract = (address: string, signer?: TSigner) => {
 
 export const getTokenMintContract = (address: string, signer?: TSigner) => {
   return getContract(tokenMintAbi, address, signer)
+}
+
+export const getConsultantContract = (signer?: TSigner) => {
+  return getContract(consultantAbi, contracts.derifyConsultant.contractAddress, signer)
 }

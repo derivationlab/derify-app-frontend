@@ -1,32 +1,20 @@
 .web-not-connect {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba($cf7, .8);
-  z-index: 15;
   display: flex;
-  justify-content: center;
   align-items: center;
-
-  &-container {
-    @extend .web;
-    height: calc(100vh - 200px);
-    border-radius: 48px;
-    overflow: hidden;
-    position: relative;
-  }
+  justify-content: center;
+  background: rgba($cf7, .8);
+  border-radius: 48px;
+  height: calc(100vh - 200px);
+  min-height: 400px;
+  @extend .web;
 }
 
 .mobile-mode {
   .web-not-connect {
-    &-container {
-      width: auto;
-      margin: 0 rem(16);
-      border-radius: rem(36);
-      height: calc(100vh - rem(100));
-    }
+    width: auto;
+    margin: 0 rem(16);
+    border-radius: rem(36);
+    height: calc(100vh - rem(100));
   }
 }
 

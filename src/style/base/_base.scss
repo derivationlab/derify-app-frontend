@@ -43,7 +43,10 @@ body {
 .tc {
   text-align: center;
 }
-
+.ac{
+  display: flex;
+  align-items: center;
+}
 .cf {
   zoom: 1;
   &:before,

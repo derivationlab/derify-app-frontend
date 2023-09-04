@@ -34,7 +34,7 @@
 
       img {
         cursor: pointer;
-        margin-left: 4px
+        margin-left: 4px;
       }
     }
   }
@@ -54,13 +54,13 @@
     width: 300px;
 
     .web-c-drop-down-list {
-      padding: 0
+      padding: 0;
     }
 
     .web-c-drop-down-list-motion-div {
       left: -8px;
       right: -8px;
-      top: 56px
+      top: 56px;
     }
   }
 }
@@ -69,11 +69,11 @@
   .web-consultant {
     width: auto;
     margin: 0 rem(16);
-    border-radius: rem(36);
+    border-radius: rem(24);
     height: calc(100vh - rem(100));
 
     .button {
-      margin: rem(16) 0 rem(16);
+      margin-top: rem(16);
     }
 
     &-inner {
@@ -83,19 +83,24 @@
       .web-c-drop-down-list-motion-div {
         left: rem(-8);
         right: rem(-8);
-        top: rem(36)
+        top: rem(36);
       }
     }
 
     &-item {
       height: rem(36);
-      padding: 0 rem(12);
+      padding: 0 rem(16);
       font-size: rem(14);
+      border-radius: rem(36);
+      &:not(:last-child) {
+        margin-bottom: rem(16);
+      }
     }
   }
 }
 
-.dark, .mobile-mode.dark {
+.dark,
+.mobile-mode.dark {
   .web-consultant {
     background: $c33;
 

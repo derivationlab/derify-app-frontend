@@ -20,9 +20,9 @@ export type Chain = ChainId.MAINNET | ChainId.TESTNET
 
 export type ChainIdRec = { [key in Chain]: string }
 
-export type TokenKeys = 'drf' | 'edrf'
+export type TokenKeys = 'drf' | 'edrf' | 'usdt'
 
-export type ContractKeys = 'multicall' | 'derifyProtocol' | 'derifyConsultant'
+export type ContractKeys = 'multicall' | 'derifyProtocol' | 'derifyConsultant' | 'derifyApply'
 
 export const protocolConfig = {
   rank: '',

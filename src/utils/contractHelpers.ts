@@ -4,6 +4,7 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 
 import { BEST_RPC_KEY, CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
+import applyTokenAbi from '@/config/abi/DerifyApplyToken.json'
 import DerifyBrokerRewardsAbi from '@/config/abi/DerifyBrokerRewards.json'
 import consultantAbi from '@/config/abi/DerifyConsultant.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
@@ -82,4 +83,8 @@ export const getTokenMintContract = (address: string, signer?: TSigner) => {
 
 export const getConsultantContract = (signer?: TSigner) => {
   return getContract(consultantAbi, contracts.derifyConsultant.contractAddress, signer)
+}
+
+export const getApplyTokenContract = (signer?: TSigner) => {
+  return getContract(applyTokenAbi, contracts.derifyApply.contractAddress, signer)
 }

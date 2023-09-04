@@ -1,4 +1,4 @@
-import { visibleCount } from '@/pages/web/Trade/KLine/SymbolSelect'
+import { visibleCount } from '@/pages/web/trade/KLine/SymbolSelect'
 import { Rec } from '@/typings'
 import { get, post } from '@/utils/http'
 

@@ -1,3 +1,4 @@
+import { visibleCount } from '@/pages/web/trade/Bench/c/MarginTokenList'
 import { get } from '@/utils/http'
 
 export const searchMarginToken = async (key: string) => {
@@ -10,8 +11,8 @@ export const getMarginIndicators = async (marginToken: string) => {
   return response
 }
 
-export const getMarginTokenList = async (page = 0, size = 10) => {
-  const response = await get(`api/margin_token_list_apy/${page}/30`)
+export const getMarginTokenList = async (page = 0, size = visibleCount) => {
+  const response = await get(`api/margin_token_list_apy/${page}/${size}`)
   return response
 }
 

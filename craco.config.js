@@ -2,15 +2,28 @@ const path = require('path')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 
-const P = (p) => path.join(__dirname, p)
+const _path = (p) => path.join(__dirname, p)
 
 module.exports = {
   devServer: {
-    port: 3890
+    port: 3000
+  },
+  babel: {
+    plugins: [
+      [
+        'babel-plugin-import',
+        {
+          libraryName: '@arco-design/web-react',
+          libraryDirectory: 'es',
+          camel2DashComponentName: false,
+          style: 'css'
+        }
+      ]
+    ]
   },
   webpack: {
     alias: {
-      '@': P('src')
+      '@': _path('src')
     },
     resolve: {
       fallback: {

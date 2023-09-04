@@ -12,6 +12,16 @@ export const tokens: { [key in TokenKeys]: Token } = {
     18,
     2
   ),
+  usdt: new Token(
+    'Tether',
+    'USDT',
+    {
+      [ChainId.MAINNET]: '0x55d398326f99059fF775485246999027B3197955',
+      [ChainId.TESTNET]: '0x838506F265c56Ed6a3Ec215e5AC2B67Ba681FA58'
+    },
+    18,
+    2
+  ),
   edrf: new Token(
     'eDRF',
     'eDRF',

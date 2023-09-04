@@ -36,7 +36,7 @@ export const grantTargetOptions = (needAll = false): { value: GrantKeys | string
   const _ = [
     {
       value: 'mining',
-      label: 'Position Mining'
+      label: 'Position mining'
     },
     {
       value: 'awards',
@@ -44,7 +44,7 @@ export const grantTargetOptions = (needAll = false): { value: GrantKeys | string
     },
     {
       value: 'rank',
-      label: 'Trading Competition'
+      label: 'Trading competition'
     }
   ]
   return !needAll ? _ : [all, ..._]

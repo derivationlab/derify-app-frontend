@@ -176,6 +176,7 @@ const Web: FC = () => {
         <Route path="/faucet" render={() => <Faucet />} />
         <Route path="/space" render={() => <MySpace />} />
         <Route path="/apply" render={() => <Apply />} />
+        <Route path="/advisor" render={() => <Consultant />} />
         <Route path={`/${symbol}/system/parameters`} render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${symbol}/trade`} />} />
       </Switch>

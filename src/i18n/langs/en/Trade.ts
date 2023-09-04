@@ -172,7 +172,7 @@ export default {
       AmountToWithdraw: 'Amount to withdraw',
       Confirm: 'Confirm',
       WithdrawTip:
-        'Due to the system risk control rules, you will recieve <b>{{MarginAmount}} {{ MarginToken }}</b>, and <b>{{bMarginAmount}} {{bMarginToken}}</b> as compensation. You can exchange {{bMarginToken}} to {{MarginToken}} at 1 : 1 ratio when Buyback Pool >0.'
+        'Due to the system risk control rules, you will recieve <b>{{MarginAmount}} {{ MarginTokenList }}</b>, and <b>{{bMarginAmount}} {{bMarginToken}}</b> as compensation. You can exchange {{bMarginToken}} to {{MarginTokenList}} at 1 : 1 ratio when Buyback Pool >0.'
     }
   }
 }

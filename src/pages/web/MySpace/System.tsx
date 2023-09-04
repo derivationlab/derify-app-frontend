@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next'
 
 import { getDerivativeList, getSystemParams } from '@/api'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
+import { TRADING_VISIBLE_COUNT } from '@/config'
 import { useClearingParams } from '@/hooks/useClearingParams'
 import { useDerivativeParams } from '@/hooks/useDerivativeParams'
 import { useRewardsParams, useProtocolParams, useExchangeParams, useGrantPlanParams } from '@/hooks/useSysParams'
-import { visibleCount } from '@/pages/web/Trade/KLine/SymbolSelect'
 import { useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
@@ -154,7 +154,7 @@ const System: FC = () => {
       const combine = [...pairOptions.data, ...filter]
       const deduplication = uniqBy(combine, 'token')
       setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
-      if (data.records.length === 0 || data.records.length < visibleCount) seqCount = seqCount - 1
+      if (data.records.length === 0 || data.records.length < TRADING_VISIBLE_COUNT) seqCount = seqCount - 1
     }
   }, [protocolConfig, pairOptions.data])
 

@@ -1,4 +1,4 @@
-import { visibleCount } from '@/pages/web/trade/KLine/SymbolSelect'
+import { TRADING_VISIBLE_COUNT } from '@/config'
 import { Rec } from '@/typings'
 import { get, post } from '@/utils/http'
 
@@ -12,7 +12,7 @@ export const getDerivativeIndicator = async (marginToken: string) => {
   return response
 }
 
-export const getDerivativeList = async (marginToken: string, page = 0, size = visibleCount) => {
+export const getDerivativeList = async (marginToken: string, page = 0, size = TRADING_VISIBLE_COUNT) => {
   const response = await get(`api/derivative_list/${marginToken}/${page}/${size}`)
   return response
 }

@@ -9,9 +9,9 @@ import { getDerivativeList, getHistoryTradingDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { TRADING_VISIBLE_COUNT } from '@/config'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentTrading } from '@/hooks/useCurrentTrading'
-import { visibleCount } from '@/pages/web/Trade/KLine/SymbolSelect'
 import { useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
@@ -80,7 +80,7 @@ const TradingVolume: FC = () => {
       const combine = [...pairOptions.data, ...filter]
       const deduplication = uniqBy(combine, 'token')
       setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
-      if (data.records.length === 0 || data.records.length < visibleCount) seqCount = seqCount - 1
+      if (data.records.length === 0 || data.records.length < TRADING_VISIBLE_COUNT) seqCount = seqCount - 1
     }
   }, [protocolConfig, pairOptions.data])
 

@@ -14,7 +14,7 @@ import ChangePercent from '@/components/common/ChangePercent'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { ZERO } from '@/config'
+import { TRADING_VISIBLE_COUNT, ZERO } from '@/config'
 import { getPairAddressList } from '@/funcs/helper'
 import { useTokenProtect } from '@/hooks/useTokenProtect'
 import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
@@ -26,7 +26,6 @@ import { Rec } from '@/typings'
 
 let seqCount = 0
 let temporaryStorage: any[] = []
-export const visibleCount = 12 // important!!!
 
 interface PairOptionsInit {
   data: Rec[]
@@ -88,7 +87,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
       const deduplication = uniqBy(combine, 'token')
       temporaryStorage = deduplication
       setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
-      if (data.records.length === 0 || data.records.length < visibleCount) seqCount = seqCount - 1
+      if (data.records.length === 0 || data.records.length < TRADING_VISIBLE_COUNT) seqCount = seqCount - 1
     }
   }, [protocolConfig, pairOptions.data])
 

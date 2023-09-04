@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 import { searchMarginToken } from '@/api'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Image from '@/components/common/Image'
+import { MARGIN_VISIBLE_COUNT } from '@/config'
 import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { resortMargin } from '@/pages/web/MySpace'
 import NoResults from '@/pages/web/Trade/c/NoResults'
@@ -23,7 +24,7 @@ interface MarginOptions {
   loaded: boolean
 }
 
-const MarginToken: FC = () => {
+const MarginTokenList: FC = () => {
   const history = useHistory()
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
@@ -52,7 +53,7 @@ const MarginToken: FC = () => {
     const deduplication = uniqBy(combine, 'margin_token')
     setMarginOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
     updateMarginTokenListStore(deduplication)
-    if (records.length === 0 || records.length < 30) seqCount = seqCount - 1
+    if (records.length === 0 || records.length < MARGIN_VISIBLE_COUNT) seqCount = seqCount - 1
   }, [marginOptions.data])
 
   useEffect(() => {
@@ -140,4 +141,4 @@ const MarginToken: FC = () => {
   )
 }
 
-export default MarginToken
+export default MarginTokenList

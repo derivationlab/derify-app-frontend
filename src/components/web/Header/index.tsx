@@ -51,7 +51,6 @@ const Header: FC = () => {
             </ul>
           </span>
           <NavLink to="/faucet">{t('Nav.Nav.Faucet')}</NavLink>
-          <NavLink to="/advisor">{t('Nav.Nav.Advisor')}</NavLink>
         </nav>
         <div className="web-header-tools">
           <SelectNetworkButton />

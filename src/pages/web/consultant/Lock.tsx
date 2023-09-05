@@ -50,25 +50,25 @@ const Lock = () => {
   return (
     <section>
       <div className="web-consultant-item">
-        <span>{t('Consultant.amount')}</span>
+        <span>{t('Advisor.amount')}</span>
         <span>
           {thousandthsDivision(config.amount)} {PLATFORM_TOKEN.symbol}
         </span>
       </div>
       <div className="web-consultant-item">
-        <span>{t('Consultant.period')}</span>
+        <span>{t('Advisor.period')}</span>
         <span>
-          {config.period} {t('Consultant.days')}
+          {config.period} {t('Advisor.days')}
         </span>
       </div>
       <div className="web-consultant-balance">
-        <span>{t('Consultant.balance')}</span>
+        <span>{t('Advisor.balance')}</span>
         <span>
           {keepDecimals(balance, PLATFORM_TOKEN.decimals, true)} {PLATFORM_TOKEN.symbol}
         </span>
       </div>
       <Button full onClick={_addInsurance} loading={isLoading} disabled={disabled}>
-        {t('Consultant.lock')}
+        {t('Advisor.lock')}
       </Button>
     </section>
   )

@@ -19,28 +19,28 @@ const Locked = () => {
   return (
     <section>
       <div className="web-consultant-item">
-        <span>{t('Consultant.lockedAmount')}</span>
+        <span>{t('Advisor.lockedAmount')}</span>
         <span>
           {thousandthsDivision(config.amount)} {PLATFORM_TOKEN.symbol}
         </span>
       </div>
       <div className="web-consultant-item">
-        <span>{t('Consultant.lockedDays')}</span>
+        <span>{t('Advisor.lockedDays')}</span>
         <span>
-          {consultant?.lockedDays} {t('Consultant.days')}
+          {consultant?.lockedDays} {t('Advisor.days')}
         </span>
       </div>
       <div className="web-consultant-item">
-        <span>{t('Consultant.advisorAddress')}</span>
+        <span>{t('Advisor.advisorAddress')}</span>
         <span>
           {calcShortHash(address ?? '', 5, 4)}
           <CopyToClipboard text={address ?? ''} onCopy={() => window.toast.success('Copy successfully')}>
-            <Image src="icon/copy.svg" />
+            <em />
           </CopyToClipboard>
         </span>
       </div>
       <Button full disabled>
-        {t('Consultant.locked')}
+        {t('Advisor.locked')}
       </Button>
     </section>
   )

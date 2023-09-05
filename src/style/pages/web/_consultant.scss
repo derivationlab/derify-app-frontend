@@ -25,6 +25,14 @@
       margin-bottom: 20px;
     }
 
+    em {
+      display: block;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      background: url($res + 'icon/copy.svg') center/contain no-repeat;
+    }
+
     span {
       @extend .ac;
 
@@ -106,6 +114,10 @@
 
     &-item {
       background: $c44;
+
+      em {
+        background: url($res + 'icon/copy-dark.svg') center/contain no-repeat;
+      }
     }
   }
 }

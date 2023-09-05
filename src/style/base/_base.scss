@@ -9,8 +9,9 @@ html {
 }
 body {
   line-height: 1;
-  font-family: 'Urbanist', sans-serif;
-  font-size: 16px;
+  font-family: 'Urbanist', sans-serif!important;
+  font-size: 16px!important;
+  -webkit-font-smoothing: auto!important;
 
   & > iframe {
     display: none !important;

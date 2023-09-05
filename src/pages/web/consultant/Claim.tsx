@@ -44,19 +44,19 @@ const Claim = () => {
   return (
     <section>
       <div className="web-consultant-item">
-        <span>{t('Consultant.lockedAmount')}</span>
+        <span>{t('Advisor.lockedAmount')}</span>
         <span>
           {thousandthsDivision(config.amount)} {PLATFORM_TOKEN.symbol}
         </span>
       </div>
       <div className="web-consultant-item">
-        <span>{t('Consultant.lockedDays')}</span>
+        <span>{t('Advisor.lockedDays')}</span>
         <span>
-          {consultant?.lockedDays ?? 0} {t('Consultant.days')}
+          {consultant?.lockedDays ?? 0} {t('Advisor.days')}
         </span>
       </div>
       <div className="web-consultant-item">
-        <span>{t('Consultant.advisorAddress')}</span>
+        <span>{t('Advisor.advisorAddress')}</span>
         <span>
           {calcShortHash(address ?? '', 5, 4)}
           <CopyToClipboard text={address ?? ''} onCopy={() => window.toast.success('Copy successfully')}>
@@ -65,7 +65,7 @@ const Claim = () => {
         </span>
       </div>
       <Button full disabled={disabled} loading={isLoading} onClick={_claimInsurance}>
-        {t('Consultant.claim')}
+        {t('Advisor.claim')}
       </Button>
     </section>
   )

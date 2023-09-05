@@ -1,12 +1,11 @@
 const path = require('path')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
-
 const _path = (p) => path.join(__dirname, p)
 
 module.exports = {
   devServer: {
-    port: 3000
+    port: 3890
   },
   babel: {
     plugins: [

@@ -30,7 +30,7 @@ import Trade from '@/pages/web/Trade'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 
-const Apply = lazy(() => import('@/pages/web/apply'))
+const UserApply = lazy(() => import('@/pages/web/userApply'))
 const Consultant = lazy(() => import('@/pages/web/consultant'))
 
 const Web: FC = () => {
@@ -175,7 +175,7 @@ const Web: FC = () => {
         <Route path="/dashboard/grant" render={GrantList} />
         <Route path="/faucet" render={() => <Faucet />} />
         <Route path="/space" render={() => <MySpace />} />
-        <Route path="/apply" render={() => <Apply />} />
+        <Route path="/apply" render={() => <UserApply />} />
         <Route path="/advisor" render={() => <Consultant />} />
         <Route path={`/${symbol}/system/parameters`} render={() => <System />} />
         <Route path="*" render={() => <Redirect to={`/${symbol}/trade`} />} />

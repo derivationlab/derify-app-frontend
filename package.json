@@ -74,6 +74,7 @@
     ]
   },
   "devDependencies": {
+    "@arco-plugins/webpack-react": "^1.4.9-beta.2",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@craco/craco": "^7.0.0",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",

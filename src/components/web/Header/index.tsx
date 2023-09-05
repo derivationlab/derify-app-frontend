@@ -7,6 +7,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
+import NavDashboard from '@/components/web/Header/NavDashboard'
 import { WEBSITE_URL } from '@/config'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -35,21 +36,7 @@ const Header: FC = () => {
           <NavLink to={`/broker`} className={classNames({ active: pathname.indexOf('broker') > -1 })}>
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>
-          <span className={classNames({ active: pathname.indexOf('dashboard') > -1 })}>
-            {t('Nav.Nav.Dashboard', 'Dashboard')}
-            <em />
-            <ul>
-              <li>
-                <NavLink to="/dashboard/overview">{t('Nav.Nav.Overview', 'Overview')}</NavLink>
-              </li>
-              <li>
-                <NavLink to={`/dashboard/buyback`}>{t('Nav.Nav.BuybackPlan', 'Buyback Plan')}</NavLink>
-              </li>
-              <li>
-                <NavLink to={`/dashboard/grant`}>{t('Nav.Nav.GrantList', 'Grant List')}</NavLink>
-              </li>
-            </ul>
-          </span>
+          <NavDashboard />
           <NavLink to="/faucet">{t('Nav.Nav.Faucet')}</NavLink>
         </nav>
         <div className="web-header-tools">

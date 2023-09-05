@@ -5,7 +5,12 @@ import { QUOTE_TOKEN_KEY, ZERO } from '@/config'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
 import { derivativeList } from '@/store'
 import { PositionOrderTypes, PositionSideTypes } from '@/typings'
-import { getExchangeContract, getDerivativeContract, getProtocolContract } from '@/utils/contractHelpers'
+import {
+  getExchangeContract,
+  getDerivativeContract,
+  getProtocolContract,
+  getConsultantContract
+} from '@/utils/contractHelpers'
 import multicall from '@/utils/multicall'
 import {
   isGT,
@@ -216,4 +221,11 @@ export const outputErrorLog = (contractAddress: string, contractName: string, fu
   const parseMarginTokenInfo = JSON.parse(marginTokenInfo ?? '')
   console.info(`marginToken = ${parseMarginTokenInfo?.state?.marginToken?.symbol}(${parseMarginTokenInfo?.state?.marginToken?.address})\ncontractName = ${contractName}\nfunctionName = ${functionName}\ncontractAddress = ${contractAddress}
 `)
+}
+
+export const checkAdvisorAddress = async (address: string): Promise<boolean> => {
+  const contract = getConsultantContract()
+  const response = await contract.getInsurance(address)
+  const { amount, startTime, vestingDuration } = response
+  return Number(vestingDuration) > 0 && Number(amount) > 0 && Number(startTime) > 0
 }

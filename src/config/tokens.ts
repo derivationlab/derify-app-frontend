@@ -1,3 +1,5 @@
+import { memoize } from 'lodash'
+
 import Token from '@/class/Token'
 import { ChainId, TokenKeys } from '@/typings'
 
@@ -39,3 +41,12 @@ export const VALUATION_TOKEN_SYMBOL = 'USD'
 export const PLATFORM_TOKEN = tokens.drf
 
 export default tokens
+
+export const findToken = memoize((key: string): Token => {
+  // eslint-disable-next-line
+  const upper = String(key).toUpperCase()
+  const lower = String(key).toLowerCase()
+  return Object.values(tokens).find(
+    (t) => t.symbol === upper || t.symbol === lower || t.symbol === key || t.tokenAddress === lower
+  )!
+})

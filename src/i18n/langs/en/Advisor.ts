@@ -1,5 +1,5 @@
 export default {
-  section: 'Consultant',
+  section: 'Advisor',
   dictionary: {
     lock: 'Lock',
     amount: 'Amount',

@@ -68,17 +68,17 @@ export const useApplyToken = () => {
   }
 }
 
-export const usePaymentAmount = (token: string) => {
+export const usePaymentAmount = (token: string, base: number) => {
   const { data: tokenPrice } = usePlatformTokenPrice()
 
   return useMemo(() => {
     const target = paymentTypeOptions.find((l) => l.val === token)
     switch (target?.key) {
       case 'USDT':
-        return 5000
+        return base
       case 'DRF':
         const _ = Number(tokenPrice)
-        return _ === 0 ? 0 : keepDecimals((5000 * 0.9) / _, 2)
+        return _ === 0 ? 0 : keepDecimals((base * 0.9) / _, 2)
       default:
         throw new Error(`Unknown payment token: ${token}`)
     }

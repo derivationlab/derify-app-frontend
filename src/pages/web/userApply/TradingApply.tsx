@@ -6,10 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { useBoolean } from 'react-use'
 
 import Button from '@/components/common/Button'
-import { PLATFORM_TOKEN } from '@/config/tokens'
-import { checkAdvisorAddress } from '@/funcs/helper'
+import { findToken } from '@/config/tokens'
 import { useApplyToken, usePaymentAmount } from '@/hooks/useApplyToken'
-import ApplyOptions, { applyTypeOptionsDef } from '@/pages/web/userApply/ApplyOptions'
 import PaymentOptions, { paymentTypeOptionsDef } from '@/pages/web/userApply/PaymentOptions'
 import { useBalancesStore } from '@/store'
 import { isET, isLT, keepDecimals } from '@/utils/tools'
@@ -20,22 +18,23 @@ export const config = {
 }
 const FormItem = Form.Item
 
-const MarginApply = () => {
+const TradingApply = () => {
   const [form] = Form.useForm()
   const { t } = useTranslation()
-  const { address } = useAccount()
   const { data: signer } = useSigner()
-  const { applyNewMarginToken } = useApplyToken()
+  const { applyNewTradingToken } = useApplyToken()
   const [isLoading, setLoading] = useBoolean(false)
   const [payment, setPayment] = useState<string>(paymentTypeOptionsDef)
   const balances = useBalancesStore((state) => state.balances)
-  const paymentAmount = usePaymentAmount(payment, 5000)
+  const paymentAmount = usePaymentAmount(payment, 200)
 
-  const balance = useMemo(() => balances?.[PLATFORM_TOKEN.symbol] ?? 0, [balances])
+  const balance = useMemo(() => balances?.[payment] ?? 0, [payment, balances])
 
   const disabled = useMemo(() => {
     return !signer || isET(balance, 0) || isLT(balance, config.amount)
   }, [signer, balance])
+
+  const tokenInfo = useMemo(() => findToken(payment), [payment])
 
   const func = useCallback(async () => {
     setLoading(true)
@@ -60,11 +59,11 @@ const MarginApply = () => {
         signer
       })
 
-      const status = await applyNewMarginToken({
+      const status = await applyNewTradingToken({
         marginToken,
         paymentToken: payment,
         paymentAmount,
-        advisorAddress: advisor,
+        tradingToken: '',
         signer
       })
 
@@ -89,50 +88,17 @@ const MarginApply = () => {
   return (
     <section className="web-user-apply-margin">
       <Form form={form} layout="vertical" autoComplete="off" initialValues={{ payment: paymentTypeOptionsDef }}>
-        <FormItem field="marginName" rules={[{ required: true, message: t('Apply.Required') }]}>
-          <Input prefix={t('Apply.Name')} />
-        </FormItem>
-        <FormItem field="marginSymbol" rules={[{ required: true, message: t('Apply.Required') }]}>
-          <Input prefix={t('Apply.Symbol')} />
-        </FormItem>
-        <FormItem field="marginToken" rules={[{ required: true, message: t('Apply.Required') }]}>
-          <Input prefix={t('Apply.Address')} />
-        </FormItem>
         <FormItem field="payment">
           <PaymentOptions onChange={setPayment} />
         </FormItem>
         <FormItem field="paymentAmount">
           <Input prefix={t('Apply.Fee')} readOnly />
         </FormItem>
-        <FormItem
-          field="advisor"
-          rules={[
-            {
-              validator: async (value, callback) => {
-                if (!value) {
-                  return callback(t('Apply.Required'))
-                }
-                const status = await checkAdvisorAddress(address ?? '')
-                if (status) {
-                  return callback()
-                } else {
-                  return callback(t('Apply.NotExist'))
-                }
-              },
-              required: true
-            }
-          ]}
-        >
-          <Input prefix={t('Apply.Advisor')} />
-        </FormItem>
         <div className="form-item-balance">
           <span>{t('Advisor.balance')}</span>
           <span>
-            {keepDecimals(balance, PLATFORM_TOKEN.decimals, true)} {PLATFORM_TOKEN.symbol}
+            {keepDecimals(balance, tokenInfo.decimals, true)} {tokenInfo.symbol}
           </span>
-        </div>
-        <div className="form-item-tips">
-          <a href="/">{t('Apply.NoAdvisor')}</a>
         </div>
         <Button full onClick={func} loading={isLoading} disabled={disabled}>
           {t('Apply.Pay')}
@@ -142,4 +108,4 @@ const MarginApply = () => {
   )
 }
 
-export default MarginApply
+export default TradingApply

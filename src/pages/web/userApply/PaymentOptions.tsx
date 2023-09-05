@@ -9,16 +9,17 @@ import Image from '@/components/common/Image'
 import tokens from '@/config/tokens'
 
 const Option = Select.Option
+const baseURI = 'https://s2.coinmarketcap.com/static/img/coins/64x64/'
 export const paymentTypeOptions = [
   {
     key: tokens.drf.symbol,
     val: tokens.drf.tokenAddress,
-    img: 'https://s2.coinmarketcap.com/static/img/coins/64x64/19025.png'
+    img: `${baseURI}19025.png`
   },
   {
     key: tokens.usdt.symbol,
     val: tokens.usdt.tokenAddress,
-    img: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21763.png'
+    img: `${baseURI}21763.png`
   }
 ]
 export const paymentTypeOptionsDef = paymentTypeOptions[0].val
@@ -31,7 +32,7 @@ const PaymentOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   const triggerElement = useMemo(() => {
     const target = paymentTypeOptions.find((l) => l.val === selected)
     return (
-      <div className="form-item-select">
+      <div className="form-item-select s">
         <span className="form-item-select-label">{t('Apply.Payment')}</span>
         <div className="form-item-select-right">
           <Image src={target?.img} />

@@ -1,7 +1,7 @@
 import { Select } from '@arco-design/web-react'
 import classNames from 'classnames'
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBoolean } from 'react-use'
 
@@ -18,10 +18,10 @@ export const applyTypeOptions = [
 ]
 export const applyTypeOptionsDef = applyTypeOptions[0].val
 
-const ApplyOptions = () => {
+const ApplyOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   const { t } = useTranslation()
   const [visible, setVisible] = useBoolean(false)
-  const [selected, setSelected] = useState<string>(applyTypeOptions[0].val)
+  const [selected, setSelected] = useState<string>(applyTypeOptionsDef)
 
   const triggerElement = useMemo(() => {
     return (
@@ -32,8 +32,19 @@ const ApplyOptions = () => {
     )
   }, [t, selected, visible])
 
+  useEffect(() => {
+    onChange(applyTypeOptionsDef)
+  }, [])
+
   return (
-    <Select onChange={setSelected} triggerElement={triggerElement} onVisibleChange={setVisible}>
+    <Select
+      onChange={(v) => {
+        onChange(v)
+        setSelected(v)
+      }}
+      triggerElement={triggerElement}
+      onVisibleChange={setVisible}
+    >
       {applyTypeOptions.map((l) => (
         <Option key={l.key} value={l.val}>
           {t(`Apply.${l.val}`)}

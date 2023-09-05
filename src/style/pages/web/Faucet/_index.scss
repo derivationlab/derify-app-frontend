@@ -56,10 +56,11 @@
     @include ns();
 
     section {
-      display: flex;
+     @extend .ac;
 
       img {
         width: 24px;
+        height: 24px;
         border-radius: 100%;
         margin-right: 8px;
       }

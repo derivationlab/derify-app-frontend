@@ -8,7 +8,9 @@ import { useBoolean } from 'react-use'
 import Button from '@/components/common/Button'
 import { findToken } from '@/config/tokens'
 import { useApplyToken, usePaymentAmount } from '@/hooks/useApplyToken'
+import MarginOptions from '@/pages/web/userApply/MarginOptions'
 import PaymentOptions, { paymentTypeOptionsDef } from '@/pages/web/userApply/PaymentOptions'
+import TokenOptions from '@/pages/web/userApply/TokenOptions'
 import { useBalancesStore } from '@/store'
 import { isET, isLT, keepDecimals } from '@/utils/tools'
 
@@ -24,46 +26,46 @@ const TradingApply = () => {
   const { data: signer } = useSigner()
   const { applyNewTradingToken } = useApplyToken()
   const [isLoading, setLoading] = useBoolean(false)
-  const [payment, setPayment] = useState<string>(paymentTypeOptionsDef)
+  const [marginToken, setMarginToken] = useState<string>('')
+  const [paymentToken, setPaymentToken] = useState<string>('')
+  const [tradingToken, setTradingToken] = useState<string>('')
   const balances = useBalancesStore((state) => state.balances)
-  const paymentAmount = usePaymentAmount(payment, 200)
+  const paymentAmount = usePaymentAmount(paymentToken, 200)
 
-  const balance = useMemo(() => balances?.[payment] ?? 0, [payment, balances])
+  const balance = useMemo(() => balances?.[paymentToken] ?? 0, [paymentToken, balances])
 
   const disabled = useMemo(() => {
     return !signer || isET(balance, 0) || isLT(balance, config.amount)
   }, [signer, balance])
 
-  const tokenInfo = useMemo(() => findToken(payment), [payment])
+  const tokenInfo = useMemo(() => findToken(paymentToken), [paymentToken])
 
   const func = useCallback(async () => {
-    setLoading(true)
+    // setLoading(true)
 
     try {
       await form.validate()
 
       const toast = window.toast.loading(t('common.pending'))
-      const { marginName, marginSymbol, marginToken, payment, advisor, paymentAmount } = form.getFieldsValue([
-        'marginName',
-        'marginSymbol',
+      const { marginToken, tradingToken, paymentToken, paymentAmount } = form.getFieldsValue([
         'marginToken',
-        'payment',
-        'advisor',
+        'tradingToken',
+        'paymentToken',
         'paymentAmount'
       ])
       console.info({
         marginToken,
-        paymentToken: payment,
+        paymentToken,
+        tradingToken,
         paymentAmount,
-        advisorAddress: advisor,
         signer
       })
 
       const status = await applyNewTradingToken({
         marginToken,
-        paymentToken: payment,
+        paymentToken,
         paymentAmount,
-        tradingToken: '',
+        tradingToken,
         signer
       })
 
@@ -87,9 +89,15 @@ const TradingApply = () => {
 
   return (
     <section className="web-user-apply-margin">
-      <Form form={form} layout="vertical" autoComplete="off" initialValues={{ payment: paymentTypeOptionsDef }}>
-        <FormItem field="payment">
-          <PaymentOptions onChange={setPayment} />
+      <Form form={form} layout="vertical" autoComplete="off">
+        <FormItem field="marginToken">
+          <MarginOptions onChange={setMarginToken} />
+        </FormItem>
+        <FormItem field="tradingToken">
+          <TokenOptions onChange={setTradingToken} />
+        </FormItem>
+        <FormItem field="paymentToken">
+          <PaymentOptions onChange={setPaymentToken} />
         </FormItem>
         <FormItem field="paymentAmount">
           <Input prefix={t('Apply.Fee')} readOnly />
@@ -97,7 +105,7 @@ const TradingApply = () => {
         <div className="form-item-balance">
           <span>{t('Advisor.balance')}</span>
           <span>
-            {keepDecimals(balance, tokenInfo.decimals, true)} {tokenInfo.symbol}
+            {keepDecimals(balance, tokenInfo?.decimals, true)} {tokenInfo?.symbol}
           </span>
         </div>
         <Button full onClick={func} loading={isLoading} disabled={disabled}>
@@ -109,3 +117,27 @@ const TradingApply = () => {
 }
 
 export default TradingApply
+
+/**
+ <FormItem label="角色" field="role" rules={[{ required: true, message: '请选择角色' }]} shouldUpdate>
+ {(values) => {
+            const key = Object.keys(contractRoles).find((k) => values.type.includes(k))
+            const roles = contractRoles[key as ContractKeys]
+            return (
+              <Select placeholder="请选择角色" style={{ width: 240 }}>
+                {roles.map((r) => (
+                  <Option key={r.key} value={r.val}>
+                    {r.key}
+                  </Option>
+                ))}
+              </Select>
+            )
+          }}
+ </FormItem>
+
+ 选择Trading Token List，用户先选择保证金
+ （已部署&上架&保证金信息表中advisor不为空的保证金。编号7.4.3）
+
+ 选完保证金后，选择申请的交易代币，代币列表内容为系统全部的交易代币信息（编号7.4.7），
+ 同时如果该保证金已经部署过的交易对，无需显示；
+ */

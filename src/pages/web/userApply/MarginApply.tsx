@@ -5,12 +5,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBoolean } from 'react-use'
 
+import { applyMarginToken } from '@/api'
 import Button from '@/components/common/Button'
-import { PLATFORM_TOKEN } from '@/config/tokens'
+import { findToken } from '@/config/tokens'
 import { checkAdvisorAddress } from '@/funcs/helper'
 import { useApplyToken, usePaymentAmount } from '@/hooks/useApplyToken'
-import ApplyOptions, { applyTypeOptionsDef } from '@/pages/web/userApply/ApplyOptions'
-import PaymentOptions, { paymentTypeOptionsDef } from '@/pages/web/userApply/PaymentOptions'
+import PaymentOptions from '@/pages/web/userApply/PaymentOptions'
 import { useBalancesStore } from '@/store'
 import { isET, isLT, keepDecimals } from '@/utils/tools'
 
@@ -27,15 +27,17 @@ const MarginApply = () => {
   const { data: signer } = useSigner()
   const { applyNewMarginToken } = useApplyToken()
   const [isLoading, setLoading] = useBoolean(false)
-  const [payment, setPayment] = useState<string>(paymentTypeOptionsDef)
+  const [paymentToken, setPaymentToken] = useState<string>('')
   const balances = useBalancesStore((state) => state.balances)
-  const paymentAmount = usePaymentAmount(payment, 5000)
+  const paymentAmount = usePaymentAmount(paymentToken, 5000)
 
-  const balance = useMemo(() => balances?.[PLATFORM_TOKEN.symbol] ?? 0, [balances])
+  const balance = useMemo(() => balances?.[paymentToken] ?? 0, [paymentToken, balances])
 
   const disabled = useMemo(() => {
     return !signer || isET(balance, 0) || isLT(balance, config.amount)
   }, [signer, balance])
+
+  const tokenInfo = useMemo(() => findToken(paymentToken), [paymentToken])
 
   const func = useCallback(async () => {
     setLoading(true)
@@ -44,38 +46,44 @@ const MarginApply = () => {
       await form.validate()
 
       const toast = window.toast.loading(t('common.pending'))
-      const { marginName, marginSymbol, marginToken, payment, advisor, paymentAmount } = form.getFieldsValue([
-        'marginName',
-        'marginSymbol',
-        'marginToken',
-        'payment',
+
+      const { advisor, marginName, marginToken, marginSymbol, paymentToken, paymentAmount } = form.getFieldsValue([
         'advisor',
+        'marginName',
+        'marginToken',
+        'marginSymbol',
+        'paymentToken',
         'paymentAmount'
       ])
-      console.info({
-        marginToken,
-        paymentToken: payment,
-        paymentAmount,
-        advisorAddress: advisor,
-        signer
-      })
 
       const status = await applyNewMarginToken({
         marginToken,
-        paymentToken: payment,
+        paymentToken,
         paymentAmount,
         advisorAddress: advisor,
         signer
       })
 
       if (status) {
+        await applyMarginToken({
+          name: marginName,
+          symbol: marginSymbol,
+          advisor,
+          applicant: address,
+          paymentToken,
+          paymentAmount,
+          marginToken
+        })
+
         window.toast.success(t('common.success'))
+
         form.resetFields()
       } else {
         window.toast.error(t('common.failed'))
       }
 
       setLoading(false)
+
       window.toast.dismiss(toast)
     } catch (error) {
       setLoading(false)
@@ -88,7 +96,7 @@ const MarginApply = () => {
 
   return (
     <section className="web-user-apply-margin">
-      <Form form={form} layout="vertical" autoComplete="off" initialValues={{ payment: paymentTypeOptionsDef }}>
+      <Form form={form} layout="vertical" autoComplete="off">
         <FormItem field="marginName" rules={[{ required: true, message: t('Apply.Required') }]}>
           <Input prefix={t('Apply.Name')} />
         </FormItem>
@@ -98,8 +106,8 @@ const MarginApply = () => {
         <FormItem field="marginToken" rules={[{ required: true, message: t('Apply.Required') }]}>
           <Input prefix={t('Apply.Address')} />
         </FormItem>
-        <FormItem field="payment">
-          <PaymentOptions onChange={setPayment} />
+        <FormItem field="paymentToken">
+          <PaymentOptions onChange={setPaymentToken} />
         </FormItem>
         <FormItem field="paymentAmount">
           <Input prefix={t('Apply.Fee')} readOnly />
@@ -128,7 +136,7 @@ const MarginApply = () => {
         <div className="form-item-balance">
           <span>{t('Advisor.balance')}</span>
           <span>
-            {keepDecimals(balance, PLATFORM_TOKEN.decimals, true)} {PLATFORM_TOKEN.symbol}
+            {keepDecimals(balance, tokenInfo?.decimals, true)} {tokenInfo?.symbol}
           </span>
         </div>
         <div className="form-item-tips">

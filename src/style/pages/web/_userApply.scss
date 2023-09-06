@@ -3,8 +3,7 @@ $_apply: web-user-apply;
 $_width: 360px;
 
 .#{$_apply} {
-  height: calc(100vh - 200px);
-  min-height: 400px;
+  min-height: calc(100vh - 200px);
   background: $cf7;
   border-radius: 48px;
   flex-flow: column;
@@ -84,6 +83,10 @@ $_width: 360px;
 
       &-right {
         @extend .ac;
+
+        small {
+          color: lighten($c88, 10%);
+        }
 
         .active {
           color: $primary;
@@ -209,7 +212,7 @@ $_width: 360px;
   border-radius: 24px;
 
   .arco-select-option {
-    padding: 4px 16px;
+    padding: 2px 12px 2px 8px;
     font-size: 16px;
 
     &-hover {
@@ -219,13 +222,79 @@ $_width: 360px;
     }
   }
 
-  .payment-option {
+  .option {
     @extend .ac;
     justify-content: space-between;
 
     img {
       width: 24px;
       border-radius: 24px;
+    }
+  }
+
+  .search {
+    &.#{$_arco}-group-wrapper {
+      margin-bottom: 10px;
+
+      .#{$_arco}-inner-wrapper {
+        height: 40px;
+        padding: 0 10px;
+        background: $cff;
+        border-radius: 12px;
+        border: 2px solid rgba($c88, .15);
+
+        &-focus {
+          border: 2px solid rgba($c88, .15);
+        }
+
+        .#{$_arco}-group-prefix,
+        input::placeholder {
+          color: $c88;
+        }
+      }
+    }
+
+    &-null {
+      color: lighten($c88, 10%);
+      font-size: 12px;
+      justify-content: center;
+      @extend .ac;
+    }
+
+    &-null,
+    &-loading {
+      height: 18px;
+      padding-top: 10px;
+    }
+  }
+
+  .load-more {
+    gap: 8px;
+    color: lighten($c88, 10%);
+    width: calc(100% - 40px);
+    border: none;
+    cursor: pointer;
+    margin: 20px auto 0;
+    outline: none;
+    padding: 10px 20px;
+    font-size: 12px;
+    background: $cf7;
+    border-radius: 8px;
+    justify-content: center;
+    @extend .ac;
+    @include dz();
+    @include ns();
+
+    &:hover {
+      color: $primary;
+    }
+
+    &:disabled {
+      color: lighten($c88, 10%);
+    }
+
+    .web-spinner {
+      width: auto;
     }
   }
 }

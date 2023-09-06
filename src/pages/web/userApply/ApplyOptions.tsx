@@ -16,7 +16,7 @@ export const applyTypeOptions = [
     val: 'TRADING_APPLY'
   }
 ]
-export const applyTypeOptionsDef = applyTypeOptions[0].val
+export const applyTypeOptionsDef = applyTypeOptions[1].val
 
 const ApplyOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   const { t } = useTranslation()

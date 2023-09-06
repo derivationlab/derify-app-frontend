@@ -69,31 +69,38 @@ export const pagingParams = {
   totalItems: 0,
   currentPage: 0
 }
-
+//已部署&上架&保证金信息表中advisor不为空的保证金
 const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
   // Margin pagination parameter support
   pagingParams: pagingParams,
   marginTokenList: [],
   marginTokenListStore: [],
+  marginTokenListForApply: [],
   // All margin tokens
   allMarginTokenList: [],
-  marginTokenSymbol: [],
   marginTokenListLoaded: false,
   getMarginTokenList: async () => {
     const data = await getMarginTokenList()
     if (!isEmpty(data.records)) {
       const _data = data.records
       const deployStatus = await getMarginDeployStatus(_data)
-      const filterData = _data.filter((f: Rec) => deployStatus[f.symbol])
+      const marginTokenList = _data.filter((f: Rec) => deployStatus[f.symbol])
+      // const marginTokenListForApply = marginTokenList.filter((f: Rec) => f.advisor && f.open)
+      const marginTokenListForApply = marginTokenList.filter((f: Rec) => f.open)
       set({
         pagingParams: { currentPage: data.currentPage, totalItems: data.totalItems, totalPages: data.totalPages },
-        marginTokenList: filterData,
-        marginTokenSymbol: filterData.map((margin: Rec) => margin.symbol),
+        marginTokenList,
+        marginTokenListForApply,
         marginTokenListLoaded: true
       })
     }
   },
   getAllMarginTokenList: async () => {
+    /**
+     * Full data, no paging, used as parameters for some calculations:
+     * @Market Info
+     * @Buyback Plan
+     */
     const { data } = await getAllMarginTokenList()
     if (data.length) {
       const deployStatus = await getMarginDeployStatusForAllMarginTokenList(data)
@@ -103,6 +110,12 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
       })
     }
   },
+  /**
+   * Throttling data, processing the margin currency that appears in the address bar
+   * @user input
+   * @user click
+   * @param data
+   */
   updateMarginTokenListStore: (data: (typeof marginTokenList)[]) => {
     set({
       marginTokenListStore: data

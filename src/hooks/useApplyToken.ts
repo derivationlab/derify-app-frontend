@@ -35,7 +35,7 @@ export const useApplyToken = () => {
     try {
       const approve = await allowanceApprove(signer, contracts.derifyApply.contractAddress, tokenAddress, amount)
       if (!approve) return false
-      const response = await contract.addInsurance(marginToken, tokenAddress, amount, advisorAddress)
+      const response = await contract.applyMarginToken(marginToken, tokenAddress, amount, advisorAddress)
       const receipt = await response.wait()
       return receipt.status
     } catch (e) {
@@ -72,6 +72,7 @@ export const usePaymentAmount = (token: string, base: number) => {
   const { data: tokenPrice } = usePlatformTokenPrice()
 
   return useMemo(() => {
+    if (!token) return 0
     const target = paymentTypeOptions.find((l) => l.val === token)
     switch (target?.key) {
       case 'USDT':

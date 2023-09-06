@@ -24,7 +24,7 @@ export const paymentTypeOptions = [
 ]
 export const paymentTypeOptionsDef = paymentTypeOptions[0].val
 
-const PaymentOptions = ({ onChange }: { onChange: (p: string) => void }) => {
+const TokenOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   const { t } = useTranslation()
   const [visible, setVisible] = useBoolean(false)
   const [selected, setSelected] = useState<string>(paymentTypeOptionsDef)
@@ -33,8 +33,9 @@ const PaymentOptions = ({ onChange }: { onChange: (p: string) => void }) => {
     const target = paymentTypeOptions.find((l) => l.val === selected)
     return (
       <div className="form-item-select s">
-        <span className="form-item-select-label">{t('Apply.Payment')}</span>
+        <span className="form-item-select-label">{t('Apply.Trading')}</span>
         <div className="form-item-select-right">
+          {/*<small>{t('Apply.NoData')}</small>*/}
           <Image src={target?.img} />
           <span className={classNames({ active: visible })}>{target?.key}</span>
           <em className={classNames({ active: visible })} />
@@ -49,6 +50,7 @@ const PaymentOptions = ({ onChange }: { onChange: (p: string) => void }) => {
 
   return (
     <Select
+      // disabled
       onChange={(v) => {
         onChange(v)
         setSelected(v)
@@ -66,4 +68,4 @@ const PaymentOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   )
 }
 
-export default PaymentOptions
+export default TokenOptions

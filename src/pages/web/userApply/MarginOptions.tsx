@@ -108,9 +108,9 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   // Only initialize once
   useEffect(() => {
     if (mrOption.data.length && !once) {
-      onChange(mrOption.data[0]?.margin_token)
-      setSelected(mrOption.data[0]?.margin_token)
-
+      const _ = mrOption.data[0]?.margin_token
+      onChange(_)
+      setSelected(_)
       once = true
     }
   }, [mrOption])
@@ -127,12 +127,12 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
       dropdownRender={(options) => {
         return (
           <div>
-            <Input
-              className="search"
-              prefix={<IconSearch />}
-              onChange={setSKeyword}
-              placeholder={t('Apply.SearchTip')}
-            />
+            {/*<Input*/}
+            {/*  className="search"*/}
+            {/*  prefix={<IconSearch />}*/}
+            {/*  onChange={setSKeyword}*/}
+            {/*  placeholder={t('Apply.SearchTip')}*/}
+            {/*/>*/}
             {!mrOption.loaded && options}
             {mrOption.loaded && (
               <div className="search-loading">

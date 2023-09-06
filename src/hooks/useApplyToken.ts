@@ -1,10 +1,12 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useBoolean } from 'react-use'
 
+import { getDerivativeList, getTradingTokenList } from '@/api'
 import contracts from '@/config/contracts'
-import tokens, { findToken } from '@/config/tokens'
+import { findToken } from '@/config/tokens'
 import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { paymentTypeOptions } from '@/pages/web/userApply/PaymentOptions'
-import { TokenKeys, TSigner } from '@/typings'
+import { Rec, TokenKeys, TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getApplyTokenContract } from '@/utils/contractHelpers'
 import { inputParameterConversion, keepDecimals } from '@/utils/tools'
@@ -46,7 +48,7 @@ export const useApplyToken = () => {
 
   const applyNewTradingToken = async (params: ApplyNewTradingTokenParams): Promise<boolean> => {
     const { signer, marginToken, tradingToken, paymentToken, paymentAmount } = params
-    const { precision, tokenAddress } = tokens[paymentToken]
+    const { precision, tokenAddress } = findToken(paymentToken)
     if (!signer) return false
     const contract = getApplyTokenContract(signer)
     const amount = inputParameterConversion(paymentAmount, precision)
@@ -84,4 +86,29 @@ export const usePaymentAmount = (token: string, base: number) => {
         throw new Error(`Unknown payment token: ${token}`)
     }
   }, [token, tokenPrice])
+}
+
+export const useTradingList = (marginToken: string) => {
+  const [tradingList, setTradingList] = useState<Rec[]>([])
+  const [tradingLoad, setTradingLoad] = useBoolean(true)
+
+  const func = async (marginToken: string) => {
+    setTradingLoad(true)
+    setTradingList([])
+    const { data: data1 = [] } = await getTradingTokenList()
+    const { data: data2 = [] } = await getDerivativeList(marginToken)
+    const _data2: Rec[] = data2?.records ?? []
+    const filter = data1.filter((x: Rec) => !_data2.find((f) => f.token === x.token))
+    setTradingList(filter)
+    setTradingLoad(false)
+  }
+
+  useEffect(() => {
+    if (marginToken) void func(marginToken)
+  }, [marginToken])
+
+  return {
+    tradingLoad,
+    tradingList
+  }
 }

@@ -1,5 +1,5 @@
 import { Form, Input } from '@arco-design/web-react'
-import { useAccount, useSigner } from 'wagmi'
+import { useSigner } from 'wagmi'
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,7 +9,7 @@ import Button from '@/components/common/Button'
 import { findToken } from '@/config/tokens'
 import { useApplyToken, usePaymentAmount } from '@/hooks/useApplyToken'
 import MarginOptions from '@/pages/web/userApply/MarginOptions'
-import PaymentOptions, { paymentTypeOptionsDef } from '@/pages/web/userApply/PaymentOptions'
+import PaymentOptions from '@/pages/web/userApply/PaymentOptions'
 import TokenOptions from '@/pages/web/userApply/TokenOptions'
 import { useBalancesStore } from '@/store'
 import { isET, isLT, keepDecimals } from '@/utils/tools'
@@ -28,9 +28,8 @@ const TradingApply = () => {
   const [isLoading, setLoading] = useBoolean(false)
   const [marginToken, setMarginToken] = useState<string>('')
   const [paymentToken, setPaymentToken] = useState<string>('')
-  const [tradingToken, setTradingToken] = useState<string>('')
-  const balances = useBalancesStore((state) => state.balances)
   const paymentAmount = usePaymentAmount(paymentToken, 200)
+  const balances = useBalancesStore((state) => state.balances)
 
   const balance = useMemo(() => balances?.[paymentToken] ?? 0, [paymentToken, balances])
 
@@ -41,7 +40,7 @@ const TradingApply = () => {
   const tokenInfo = useMemo(() => findToken(paymentToken), [paymentToken])
 
   const func = useCallback(async () => {
-    // setLoading(true)
+    setLoading(true)
 
     try {
       await form.validate()
@@ -90,11 +89,11 @@ const TradingApply = () => {
   return (
     <section className="web-user-apply-margin">
       <Form form={form} layout="vertical" autoComplete="off">
-        <FormItem field="marginToken">
+        <FormItem field="marginToken" rules={[{ required: true, message: t('Apply.Required') }]}>
           <MarginOptions onChange={setMarginToken} />
         </FormItem>
-        <FormItem field="tradingToken">
-          <TokenOptions onChange={setTradingToken} />
+        <FormItem field="tradingToken" rules={[{ required: true, message: t('Apply.Required') }]}>
+          <TokenOptions onChange={() => null} marginToken={marginToken} />
         </FormItem>
         <FormItem field="paymentToken">
           <PaymentOptions onChange={setPaymentToken} />
@@ -117,27 +116,3 @@ const TradingApply = () => {
 }
 
 export default TradingApply
-
-/**
- <FormItem label="角色" field="role" rules={[{ required: true, message: '请选择角色' }]} shouldUpdate>
- {(values) => {
-            const key = Object.keys(contractRoles).find((k) => values.type.includes(k))
-            const roles = contractRoles[key as ContractKeys]
-            return (
-              <Select placeholder="请选择角色" style={{ width: 240 }}>
-                {roles.map((r) => (
-                  <Option key={r.key} value={r.val}>
-                    {r.key}
-                  </Option>
-                ))}
-              </Select>
-            )
-          }}
- </FormItem>
-
- 选择Trading Token List，用户先选择保证金
- （已部署&上架&保证金信息表中advisor不为空的保证金。编号7.4.3）
-
- 选完保证金后，选择申请的交易代币，代币列表内容为系统全部的交易代币信息（编号7.4.7），
- 同时如果该保证金已经部署过的交易对，无需显示；
- */

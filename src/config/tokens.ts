@@ -45,8 +45,5 @@ export default tokens
 export const findToken = memoize((key: string): Token => {
   // eslint-disable-next-line
   const upper = String(key).toUpperCase()
-  const lower = String(key).toLowerCase()
-  return Object.values(tokens).find(
-    (t) => t.symbol === upper || t.symbol === lower || t.symbol === key || t.tokenAddress === lower
-  )!
+  return Object.values(tokens).find((t) => t.symbol.toUpperCase() === upper || t.tokenAddress.toUpperCase() === upper)!
 })

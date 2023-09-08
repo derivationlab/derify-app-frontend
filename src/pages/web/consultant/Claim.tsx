@@ -24,7 +24,8 @@ const Claim = () => {
   const asyncConsultant = useSetAtom(asyncConsultantAtom(address))
 
   const disabled = useMemo(() => {
-    return !signer || isLTET(consultant?.lockedDays ?? 0, config.period)
+    const { lockedDays = 0, vestingDuration = 0 } = consultant ?? Object.create(null)
+    return !signer || isLTET(lockedDays, vestingDuration)
   }, [signer, consultant])
 
   const _claimInsurance = useCallback(async () => {

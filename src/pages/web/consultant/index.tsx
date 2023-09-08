@@ -7,7 +7,7 @@ import { asyncConsultantAtom, consultantAtom } from '@/atoms/useConsultant'
 import Spinner from '@/components/common/Spinner'
 import IsItConnected from '@/components/web/IsItConnected'
 import Claim from '@/pages/web/consultant/Claim'
-import Lock, { config } from '@/pages/web/consultant/Lock'
+import Lock from '@/pages/web/consultant/Lock'
 import Locked from '@/pages/web/consultant/Locked'
 
 const ConsultantInner = () => {
@@ -17,7 +17,7 @@ const ConsultantInner = () => {
 
   const content = useMemo(() => {
     if (!consultant) return <Spinner small />
-    if (consultant.lockedDays > config.period) return <Claim />
+    if (consultant.lockedDays > consultant.vestingDuration) return <Claim />
     if (consultant.vestingDuration === 0) return <Lock />
     if (consultant.vestingDuration > 0) return <Locked />
     return null

@@ -4,6 +4,8 @@ import { useAccount } from 'wagmi'
 import React, { FC, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
+import useTradingUpdate from '@/hooks/useTradingUpdate'
+
 import Bench from './Bench'
 import Data from './Data'
 import KLine from './KLine'
@@ -11,11 +13,10 @@ import Chart from './KLine/Chart'
 import HeaderData from './KLine/HeaderData'
 import MobileFixed from './KLine/MobileFixed'
 import SymbolSelect from './KLine/SymbolSelect'
-import useTradingUpdate from '@/hooks/useTradingUpdate'
 
 const Trade: FC = () => {
   useTradingUpdate()
-  
+
   const { address } = useAccount()
   const [toggle, setToggle] = useState<boolean>(false)
 

@@ -4,7 +4,7 @@ import { debounce, uniqBy } from 'lodash'
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
-import { useClickAway, useToggle } from 'react-use'
+import { useBoolean } from 'react-use'
 
 import { getDerivativeList, searchDerivative } from '@/api'
 import ChangePercent from '@/components/common/ChangePercent'
@@ -27,12 +27,10 @@ interface PairOptionsInit {
 }
 
 const SymbolSelect = () => {
-  const ref = useRef(null)
   const bottomRef = useRef(null)
   const observerRef = useRef<IntersectionObserver | null>()
 
   const { t } = useTranslation()
-  const [visible, toggleVisible] = useToggle(false)
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const [fuzzySearch, setFuzzySearch] = useState<string>('')
   const {
@@ -51,8 +49,7 @@ const SymbolSelect = () => {
 
   const indicator = useMemo(() => {
     if (indicators) {
-      const keys = Object.keys(indicators)
-      const find = keys.find((key) => getAddress(key) === getAddress(quoteToken.token))
+      const find = Object.keys(indicators).find((key) => getAddress(key) === getAddress(quoteToken.token))
       return find ? indicators[find]?.price_change_rate ?? 0 : 0
     }
     return 0
@@ -62,7 +59,7 @@ const SymbolSelect = () => {
     if (checking) return <div className="web-trade-symbol-select-curr s">{t('common.Loading')} ...</div>
     if (derivativeList.length)
       return (
-        <div className="web-trade-symbol-select-curr" onClick={() => toggleVisible(!visible)}>
+        <div className="web-trade-symbol-select-curr">
           <h4>{quoteToken.name}</h4>
           <aside>
             <Skeleton rowsProps={{ rows: 1 }} animation loading={!spotPrices}>
@@ -77,6 +74,7 @@ const SymbolSelect = () => {
   }, [spotPrice, quoteToken, checking])
 
   const morePairs = useCallback(async () => {
+    setPairOptions((val) => ({ ...val }))
     const { data } = await getDerivativeList(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
       const filterRecords = data.records.filter((r: Rec) => r.open) // opening
@@ -85,7 +83,7 @@ const SymbolSelect = () => {
       const combine = [...pairOptions.data, ...output]
       const deduplication = uniqBy(combine, 'token')
       temporaryStorage = deduplication
-      setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
+      setPairOptions((val) => ({ ...val, data: deduplication }))
       if (data.records.length === 0 || data.records.length < TRADING_VISIBLE_COUNT) seqCount = seqCount - 1
     }
   }, [protocolConfig, pairOptions.data])
@@ -105,9 +103,9 @@ const SymbolSelect = () => {
         const filterRecords = (data as any[]).filter((d) => d.open) // opening
         const pairAddresses = await getPairAddressList(factory, filterRecords)
         const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed
-        setPairOptions({ data: output, loaded: false })
+        setPairOptions((val) => ({ ...val, data: output, loaded: false }))
       } catch (e) {
-        setPairOptions({ data: [], loaded: false })
+        setPairOptions((val) => ({ ...val, data: [], loaded: false }))
       }
     }, 100),
     []
@@ -119,12 +117,12 @@ const SymbolSelect = () => {
 
   useEffect(() => {
     if (fuzzySearch.trim()) {
-      setPairOptions({ data: [], loaded: true })
+      setPairOptions((val) => ({ ...val, data: [], loaded: true }))
       if (protocolConfig) void fuzzySearchFunc(marginToken.address, fuzzySearch, protocolConfig.factory)
     } else {
       const data = temporaryStorage.length === 0 ? derivativeList : temporaryStorage
       const deduplication = uniqBy([...traderFavorite, ...data], 'token')
-      setPairOptions({ data: deduplication, loaded: false })
+      setPairOptions((val) => ({ ...val, data: deduplication, loaded: false }))
     }
   }, [marginToken, fuzzySearch, derivativeList, protocolConfig, traderFavorite])
 
@@ -134,6 +132,7 @@ const SymbolSelect = () => {
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
+              console.info('IntersectionObserver......')
               seqCount += 1
               void morePairs()
             }
@@ -149,9 +148,7 @@ const SymbolSelect = () => {
     return () => {
       observerRef.current && observerRef.current.disconnect()
     }
-  }, [pairOptions.data])
-
-  useClickAway(ref, () => toggleVisible(false))
+  }, [pairOptions.data.length])
 
   return (
     <div className="web-trade-symbol-select">

@@ -6,13 +6,11 @@ import { useTranslation } from 'react-i18next'
 import { useClickAway } from 'react-use'
 
 import Input from '@/components/common/Form/Input'
-import Spinner from '@/components/common/Spinner'
 
 interface DropDownListProps {
   entry: React.ReactNode
   height?: number
   loading?: boolean
-  fetching?: boolean
   disabled?: boolean
   onSearch?: (keywords: string) => void
   showSearch?: boolean
@@ -23,7 +21,6 @@ export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
   entry,
   height = 356,
   loading,
-  fetching,
   disabled,
   children,
   onSearch,
@@ -46,7 +43,7 @@ export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
         {entry}
       </div>
       <motion.div
-        className={classNames('web-c-drop-down-list-motion-div', { fetching: fetching })}
+        className={classNames('web-c-drop-down-list-motion-div')}
         initial={{ height: 0 }}
         animate={{ height: toggle ? height : 0 }}
         transition={{ duration: 0.1 }}

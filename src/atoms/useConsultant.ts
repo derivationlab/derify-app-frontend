@@ -27,12 +27,7 @@ export const asyncConsultantAtom = atomFamily((account: Account) =>
         const contract = getConsultantContract()
         const data = await contract.getInsurance(account)
         const { amount, startTime, vestingDuration } = data
-        console.info({
-          amount: formatUnits(amount, PLATFORM_TOKEN.precision),
-          startTime: Number(startTime),
-          lockedDays: getLockedDays(Number(startTime)),
-          vestingDuration: Number(vestingDuration)
-        })
+
         set(consultantAtom, {
           amount: formatUnits(amount, PLATFORM_TOKEN.precision),
           startTime: Number(startTime),

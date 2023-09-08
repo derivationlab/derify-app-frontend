@@ -57,8 +57,8 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
     debounce(async (searchKeyword: string) => {
       const { data = [] } = await searchMarginToken(searchKeyword)
       const deployStatus = await getMarginDeployStatus(data)
-      // const filter = data.filter((f: Rec) => deployStatus[f.symbol] && f.advisor && f.open)
-      const filter = data.filter((f: Rec) => deployStatus[f.symbol] && f.open)
+      const filter = data.filter((f: Rec) => deployStatus[f.symbol] && f.advisor && f.open)
+      // const filter = data.filter((f: Rec) => deployStatus[f.symbol] && f.open)
       setMrOption({ data: filter, loaded: false })
     }, 100),
     []
@@ -72,8 +72,8 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   const getMarginData = useCallback(async () => {
     const { records = [] } = await getMarginTokenList(seqCount)
     const deployStatus = await getMarginDeployStatus(records)
-    // const filter = records.filter((f: Rec) => deployStatus[f.symbol] && f.advisor && f.open)
-    const filter = records.filter((f: Rec) => deployStatus[f.symbol] && f.open)
+    const filter = records.filter((f: Rec) => deployStatus[f.symbol] && f.advisor && f.open)
+    // const filter = records.filter((f: Rec) => deployStatus[f.symbol] && f.open)
     const combine = [...mrOption.data, ...filter]
     const deduplication = uniqBy(combine, 'margin_token')
     temporaryStorage = deduplication

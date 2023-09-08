@@ -45,17 +45,7 @@ export const favoriteTradingPairs = async (body: Rec) => {
   return response
 }
 
-export const getTradingTokenList = async () => {
-  const headers = new Headers()
-  headers.append(
-    'x-access-token',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJEZXJpZnlBZG1pbiIsInJvbGUiOjIsImlhdCI6MTY5Mzk4NjQ3MiwiZXhwIjoxNjk0MDI5NjcyfQ.dU6o72awPNWK3Fg4Cb4hCyJt5TFK-yn1e3Am0Erls8M'
-  )
-  const response = await http(
-    new Request('https://admin-test-api.derify.exchange/sys/get_derivative_ref_list', {
-      method: 'get',
-      headers
-    })
-  )
+export const getTradingTokenList = async (page = 0, size = TRADING_VISIBLE_COUNT) => {
+  const response = await get(`api/derivative_ref_list/${page}/${size}`)
   return response
 }

@@ -85,8 +85,8 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
       const _data = data.records
       const deployStatus = await getMarginDeployStatus(_data)
       const marginTokenList = _data.filter((f: Rec) => deployStatus[f.symbol])
-      // const marginTokenListForApply = marginTokenList.filter((f: Rec) => f.advisor && f.open)
-      const marginTokenListForApply = marginTokenList.filter((f: Rec) => f.open)
+      const marginTokenListForApply = marginTokenList.filter((f: Rec) => f.advisor && f.open)
+      // const marginTokenListForApply = marginTokenList.filter((f: Rec) => f.open)
       set({
         pagingParams: { currentPage: data.currentPage, totalItems: data.totalItems, totalPages: data.totalPages },
         marginTokenList,

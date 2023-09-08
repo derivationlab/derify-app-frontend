@@ -95,10 +95,10 @@ export const useTradingList = (marginToken: string) => {
   const func = async (marginToken: string) => {
     setTradingLoad(true)
     setTradingList([])
-    const { data: data1 = [] } = await getTradingTokenList()
+    const { data: data1 } = await getTradingTokenList()
     const { data: data2 = [] } = await getDerivativeList(marginToken)
     const _data2: Rec[] = data2?.records ?? []
-    const filter = data1.filter((x: Rec) => !_data2.find((f) => f.token === x.token))
+    const filter = (data1?.records ?? []).filter((x: Rec) => !_data2.find((f) => f.token === x.token))
     setTradingList(filter)
     setTradingLoad(false)
   }

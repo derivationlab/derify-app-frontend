@@ -26,7 +26,7 @@ export const asyncConsultantAtom = atomFamily((account: Account) =>
     try {
       if (account) {
         const contract = getConsultantContract()
-        const data = await contract.getInsurance(address)
+        const data = await contract.getInsurance(account)
         const { amount, startTime, vestingDuration } = data
         console.info({
           amount: formatUnits(amount, PLATFORM_TOKEN.precision),

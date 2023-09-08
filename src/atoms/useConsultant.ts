@@ -16,6 +16,7 @@ export const consultantAtom = atom<{
 type Account = string | undefined
 
 const getLockedDays = (time: number): number => {
+  if (time === 0) return 0
   const diff = dayjs().diff(time * 1000)
   return dayjs.duration(diff).days()
 }
@@ -25,9 +26,14 @@ export const asyncConsultantAtom = atomFamily((account: Account) =>
     try {
       if (account) {
         const contract = getConsultantContract()
-        const data = await contract.getInsurance(account)
+        const data = await contract.getInsurance(address)
         const { amount, startTime, vestingDuration } = data
-
+        console.info({
+          amount: formatUnits(amount, PLATFORM_TOKEN.precision),
+          startTime: Number(startTime),
+          lockedDays: getLockedDays(Number(startTime)),
+          vestingDuration: Number(vestingDuration)
+        })
         set(consultantAtom, {
           amount: formatUnits(amount, PLATFORM_TOKEN.precision),
           startTime: Number(startTime),

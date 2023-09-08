@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 
 import { consultantAtom } from '@/atoms/useConsultant'
 import Button from '@/components/common/Button'
-import Image from '@/components/common/Image'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { config } from '@/pages/web/consultant/Lock'
 import { calcShortHash, thousandthsDivision } from '@/utils/tools'

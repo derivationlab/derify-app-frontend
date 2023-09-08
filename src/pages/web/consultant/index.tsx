@@ -17,9 +17,9 @@ const ConsultantInner = () => {
 
   const content = useMemo(() => {
     if (!consultant) return <Spinner small />
+    if (consultant.lockedDays > config.period) return <Claim />
     if (consultant.vestingDuration === 0) return <Lock />
     if (consultant.vestingDuration > 0) return <Locked />
-    if (consultant.lockedDays > config.period) return <Claim />
     return null
   }, [consultant])
 

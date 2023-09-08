@@ -9,7 +9,7 @@ import { Route, Switch } from 'react-router-dom'
 
 import Spinner from '@/components/common/Spinner'
 import { useMarginLoading } from '@/hooks/useMarginLoading'
-import GlobalUpdater from '@/pages/updater/GlobalUpdater'
+import Initial from '@/pages/web/initial'
 import '@/style/style.scss'
 
 window.toast = toast
@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-      <GlobalUpdater />
+      <Initial />
 
       <Suspense fallback={null}>
         <Switch>

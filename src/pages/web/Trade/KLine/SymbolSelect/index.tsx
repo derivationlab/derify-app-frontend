@@ -1,6 +1,4 @@
-import classNames from 'classnames'
 import { getAddress } from 'ethers/lib/utils'
-import { useAtomValue } from 'jotai'
 import { debounce, uniqBy } from 'lodash'
 
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
@@ -9,19 +7,15 @@ import { useTranslation } from 'react-i18next'
 import { useClickAway, useToggle } from 'react-use'
 
 import { getDerivativeList, searchDerivative } from '@/api'
-import { traderFavoriteAtom } from '@/atoms/useTraderFavorite'
 import ChangePercent from '@/components/common/ChangePercent'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { TRADING_VISIBLE_COUNT, ZERO } from '@/config'
 import { getPairAddressList } from '@/funcs/helper'
-import { useTokenProtect } from '@/hooks/useTokenProtect'
-import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
 import Favorite from '@/pages/web/Trade/KLine/SymbolSelect/Favorite'
+import { useInitData } from '@/pages/web/Trade/KLine/SymbolSelect/hooks'
 import NoResults from '@/pages/web/Trade/c/NoResults'
-import { useMarginIndicatorsStore, useMarginTokenStore, useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
-import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 
 let seqCount = 0
@@ -32,7 +26,7 @@ interface PairOptionsInit {
   loaded: boolean
 }
 
-const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
+const SymbolSelect = () => {
   const ref = useRef(null)
   const bottomRef = useRef(null)
   const observerRef = useRef<IntersectionObserver | null>()
@@ -41,15 +35,19 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   const [visible, toggleVisible] = useToggle(false)
   const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
   const [fuzzySearch, setFuzzySearch] = useState<string>('')
-  const traderFavorite = useAtomValue(traderFavoriteAtom)
-  const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
-  const { checking, quoteToken, derivativeList, updateQuoteToken } = useTokenProtect()
-  const { priceDecimals } = usePriceDecimals(pairOptions.data, [quoteToken, ...traderFavorite])
-  const { spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, [quoteToken, ...traderFavorite])
-  const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
+  const {
+    checking,
+    spotPrice,
+    quoteToken,
+    spotPrices,
+    indicators,
+    marginToken,
+    derivativeList,
+    traderFavorite,
+    protocolConfig,
+    updateSpotPrices,
+    updateQuoteToken
+  } = useInitData(pairOptions.data)
 
   const indicator = useMemo(() => {
     if (indicators) {
@@ -71,6 +69,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
               <BalanceShow value={spotPrice} decimal={Number(spotPrice) === 0 ? 2 : quoteToken.decimals} />
             </Skeleton>
             <ChangePercent value={indicator} />
+            <div className="icon" />
           </aside>
         </div>
       )
@@ -156,18 +155,6 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
 
   return (
     <div className="web-trade-symbol-select">
-      <div className={classNames('web-trade-symbol-select', { show: visible })} ref={ref}>
-        {isMobile && (
-          <div
-            className="web-trade-symbol-select-toggle"
-            onClick={() => {
-              onToggle?.()
-              toggleVisible(false)
-            }}
-          />
-        )}
-      </div>
-
       <DropDownList
         entry={currentTk}
         height={588}

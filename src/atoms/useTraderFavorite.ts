@@ -16,7 +16,7 @@ export const asyncTraderFavoriteAtom = atomFamily((params: TraderFavorite) =>
     const { trader, marginToken } = params
     try {
       if (trader && marginToken) {
-        const { data } = await getFavoritePairsList(marginToken, trader)
+        const { data = [] } = await getFavoritePairsList(marginToken, trader)
         set(traderFavoriteAtom, data)
       }
     } catch (e) {

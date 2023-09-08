@@ -12,7 +12,7 @@ import { formatUnits } from '@/utils/tools'
 type List<T> = T | null
 
 export const usePriceDecimals = (list?: List<Rec[]>, extra?: Rec[]) => {
-  const [priceDecimals, setPriceDecimals] = useState<Rec | null>(null)
+  const [decimals, setDecimals] = useState<Rec | null>(null)
 
   const func = async (list: Rec[]) => {
     let output = Object.create(null)
@@ -36,14 +36,14 @@ export const usePriceDecimals = (list?: List<Rec[]>, extra?: Rec[]) => {
         output = { ...output, [calls[index].address]: _ }
       })
     }
-    setPriceDecimals(output)
+    setDecimals(output)
   }
 
   useEffect(() => {
     if (list && list.length) void func(list)
   }, [list])
 
-  return { priceDecimals }
+  return { decimals }
 }
 
 function keyValue(l: Rec) {

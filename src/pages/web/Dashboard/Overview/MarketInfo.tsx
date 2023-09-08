@@ -44,8 +44,8 @@ const MarketInfo: FC = () => {
   const { data: allPositions } = useMarginPosVolume()
   const { factoryConfig } = useFactoryConfig(allPositions)
   const { pairAddrConfig } = usePairAddrConfig(factoryConfig, allPositions)
-  const { priceDecimals } = usePriceDecimals(pairAddrConfig)
-  const { spotPrices } = useTokenSpotPrices(pairAddrConfig, priceDecimals)
+  const { decimals } = usePriceDecimals(pairAddrConfig)
+  const { spotPrices } = useTokenSpotPrices(pairAddrConfig, decimals)
 
   const mColumns = useMemo(() => {
     return [

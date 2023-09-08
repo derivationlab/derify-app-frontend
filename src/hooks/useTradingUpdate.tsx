@@ -9,7 +9,7 @@ import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import emitter, { EventTypes } from '@/utils/emitter'
 
-export default function TradingUpdater(): null {
+export default function useTradingUpdate() {
   const { address } = useAccount()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
@@ -43,6 +43,4 @@ export default function TradingUpdater(): null {
       void asyncTraderFavorite()
     })
   }, [address, marginToken])
-
-  return null
 }

@@ -220,7 +220,7 @@
       }
     }
 
-    &-toggle {
+    .icon {
       position: absolute;
       right: rem(16);
       top: rem(16);
@@ -390,7 +390,7 @@
       }
     }
 
-    &-toggle {
+    .icon {
       background-image: url($res + 'icon/toggle-dark.svg');
     }
   }

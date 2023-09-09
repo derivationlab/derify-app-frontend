@@ -11,24 +11,15 @@ import { formatUnits } from '@/utils/tools'
 
 type List<T> = T | null
 
-export const usePriceDecimals = (list?: List<Rec[]>, extra?: Rec[]) => {
+export const usePriceDecimals = (list?: List<Rec[]>) => {
   const [decimals, setDecimals] = useState<Rec | null>(null)
 
   const func = async (list: Rec[]) => {
     let output = Object.create(null)
-    let calls = list.map((l) => ({
+    const calls = list.map((l) => ({
       name: 'getSpotPriceDecimals',
       address: l.derivative
     }))
-    if (extra) {
-      const filter = extra.filter((e) => !list.find((l) => l.name === e.name))
-      const _calls = filter.map((f) => ({
-        name: 'getSpotPriceDecimals',
-        address: f.derivative
-      }))
-      calls = [...calls, ..._calls]
-    }
-
     const response = await multicall(derifyDerivativeAbi, calls as any[])
     if (response.length) {
       response.forEach(([decimals]: BigNumberish[], index: number) => {
@@ -56,23 +47,18 @@ function keyValue(l: Rec) {
   }
 }
 
-export const useTokenSpotPrices = (list?: List<Rec[]>, decimals?: List<Rec>, extra?: Rec[]) => {
+export const useTokenSpotPrices = (list?: List<Rec[]>, decimals?: List<Rec>) => {
   const enabled = !!(list && list.length && decimals)
   const {
     data: spotPrices,
     refetch,
     isLoading
   } = useQuery(
-    [`useTokenSpotPrices${extra && '-extra'}`],
+    ['useTokenSpotPrices'],
     async () => {
       let output: Rec[] = []
       if (list && list.length && decimals) {
-        let calls = list.map((l) => keyValue(l))
-        if (extra) {
-          const filter = extra.filter((e) => !list.find((l) => l.name === e.name))
-          const _calls = filter.map((f) => keyValue(f))
-          calls = [...calls, ..._calls]
-        }
+        const calls = list.map((l) => keyValue(l))
         const response = await multicall(derifyDerivativeAbi, calls as any[])
         if (response.length) {
           response.forEach(([spotPrice]: BigNumberish[], index: number) => {

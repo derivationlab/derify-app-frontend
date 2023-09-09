@@ -1,4 +1,8 @@
+import { getAddress } from 'ethers/lib/utils'
 import { useAtomValue } from 'jotai'
+import { uniqBy } from 'lodash'
+
+import { useMemo } from 'react'
 
 import { traderFavoriteAtom } from '@/atoms/useTraderFavorite'
 import { useTokenProtect } from '@/hooks/useTokenProtect'
@@ -14,8 +18,8 @@ export const useInitData = (data: Rec[]) => {
   const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
   const traderFavorite = useAtomValue(traderFavoriteAtom)
   const { checking, quoteToken, derivativeList, updateQuoteToken } = useTokenProtect()
-  const { decimals } = usePriceDecimals(data, [quoteToken, ...traderFavorite])
-  const { spotPrices } = useTokenSpotPrices(data, decimals, [quoteToken, ...traderFavorite])
+  const { decimals } = usePriceDecimals(uniqBy([...data, quoteToken, ...traderFavorite], 'token'))
+  const { spotPrices } = useTokenSpotPrices(uniqBy([...data, quoteToken, ...traderFavorite], 'token'), decimals)
   const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
 
   return {
@@ -31,4 +35,16 @@ export const useInitData = (data: Rec[]) => {
     updateSpotPrices,
     updateQuoteToken
   }
+}
+
+export const useIndicator = (quoteToken: Rec) => {
+  const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+  const indicator = useMemo(() => {
+    if (indicators) {
+      const find = Object.keys(indicators).find((key) => getAddress(key) === getAddress(quoteToken.token))
+      return find ? indicators[find]?.price_change_rate ?? 0 : 0
+    }
+    return 0
+  }, [quoteToken, indicators])
+  return { indicator }
 }

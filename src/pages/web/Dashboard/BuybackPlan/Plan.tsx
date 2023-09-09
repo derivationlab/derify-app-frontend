@@ -23,7 +23,6 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
   const [state, dispatch] = useReducer(reducer, stateInit)
   const { t } = useTranslation()
   const { data: blockNumber = 0 } = useBlockNumber()
-
   const { data: tokenPrice } = usePlatformTokenPrice()
 
   const mColumns = useMemo(() => {

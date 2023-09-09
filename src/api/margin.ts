@@ -32,6 +32,11 @@ export const checkMarginToken = async (symbol: string) => {
   return response
 }
 
+export const getMarginTransactionEquity = async () => {
+  const response = await get(`api/margin_token_trading_net_value/all`)
+  return response
+}
+
 /**
  * applicant
  * marginToken

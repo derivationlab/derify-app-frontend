@@ -11,15 +11,13 @@ import Button from '@/components/common/Button'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
-import { useBoundPools } from '@/hooks/useBoundPools'
-import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
-import { useFactoryConfig, useMarginPosVolume, usePairAddrConfig } from '@/hooks/useMarginPosVolume'
-import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
-import { getMarginTokenList, useMarginTokenListStore } from '@/store'
+import { getMarginTokenList } from '@/store'
 import { bnMul, bnPlus } from '@/utils/tools'
 
 import { TableMargin } from '../c/TableCol'
+import { useInitData } from '@/pages/web/Dashboard/Overview/hooks'
+import { Rec } from '@/typings'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface IPagination {
   data: any[]
@@ -34,18 +32,18 @@ const MarketInfo: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
   const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
-  const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
-  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const allMarginTokenList = useMarginTokenListStore((state) => state.allMarginTokenList)
-  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
-  const { data: boundPools } = useBoundPools(allMarginTokenList)
-  const { data: tradingVol } = useAllCurrentTrading(allMarginTokenList)
-  const { data: indicators } = useAllMarginIndicators(allMarginTokenList)
-  const { data: allPositions } = useMarginPosVolume()
-  const { factoryConfig } = useFactoryConfig(allPositions)
-  const { pairAddrConfig } = usePairAddrConfig(factoryConfig, allPositions)
-  const { decimals } = usePriceDecimals(pairAddrConfig)
-  const { spotPrices } = useTokenSpotPrices(pairAddrConfig, decimals)
+  const {
+    prices,
+    spotPrices,
+    indicators,
+    boundPools,
+    tradingVol,
+    equityValues,
+    allPositions,
+    pagingParams,
+    marginTokenList,
+    marginTokenListLoaded
+  } = useInitData()
 
   const mColumns = useMemo(() => {
     return [
@@ -107,16 +105,24 @@ const MarketInfo: FC = () => {
       {
         title: t('NewDashboard.Overview.TradingVolume'),
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
-          const p = tradingVol?.[data.margin_token] ?? 0
-          return <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
+        render: (symbol: string, data: Rec) => {
+          const volume = tradingVol?.[data.margin_token] ?? 0
+          const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
+          const equityValue = findEquity?.trading_net_value ?? 0
+          return <>
+            <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
+            <BalanceShow classNames='s' value={equityValue} unit={VALUATION_TOKEN_SYMBOL}
+                         decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals} />
+          </>
         }
       },
       {
         title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
+        render: (symbol: string, data: Rec) => {
           let total = '0'
+          const _prices = prices ?? Object.create(null)
+          const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
           if (allPositions && data.margin_token in allPositions && spotPrices) {
             const p1 = allPositions[data.margin_token]
             const p2 = Object.keys(p1)
@@ -125,7 +131,12 @@ const MarketInfo: FC = () => {
               return bnPlus(bnMul(p1[n], price), p)
             }, '0')
           }
-          return <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
+          const equityValue = bnMul(_prices[findKey] ?? 0, total)
+          return <>
+            <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
+            <BalanceShow classNames='s' value={equityValue} unit={VALUATION_TOKEN_SYMBOL}
+                         decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals} />
+          </>
         }
       },
       {
@@ -141,13 +152,13 @@ const MarketInfo: FC = () => {
         dataIndex: 'Margin',
         align: 'right',
         render: (_: string, data: Record<string, any>) => (
-          <Button size="medium" disabled={!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
+          <Button size='medium' disabled={!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
             GO
           </Button>
         )
       }
     ]
-  }, [t, tradingVol, indicators, boundPools, allPositions, spotPrices])
+  }, [t, prices, tradingVol, indicators, boundPools, allPositions, spotPrices, equityValues])
 
   const emptyText = useMemo(() => {
     if (!marginTokenListLoaded) return <Spinner small />
@@ -168,10 +179,10 @@ const MarketInfo: FC = () => {
   }, [marginTokenList])
 
   return (
-    <div className="web-dashboard-overview-market">
-      <header className="web-dashboard-section-header">
+    <div className='web-dashboard-overview-market'>
+      <header className='web-dashboard-section-header'>
         <h3>{t('NewDashboard.Overview.MarketInfo')}</h3>
-        <div className="web-dashboard-section-header-search">
+        <div className='web-dashboard-section-header-search'>
           {/*todo search*/}
           {/*<Input value={keyword} onChange={setKeyword} placeholder={t('NewDashboard.Overview.SerchTip')}>*/}
           {/*  <button className='web-dashboard-section-header-search-button' onClick={onSearch} />*/}
@@ -179,7 +190,7 @@ const MarketInfo: FC = () => {
         </div>
       </header>
       <Table
-        rowKey="symbol"
+        rowKey='symbol'
         data={pagination.data}
         columns={isMobile ? mColumns : wColumns}
         className={classNames('web-broker-table', { 'web-space-table': isMobile })}

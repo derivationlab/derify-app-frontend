@@ -42,7 +42,7 @@ export const useMarginPosVolume = () => {
 }
 
 export const useFactoryConfig = (marginList: Rec) => {
-  const [factoryConfig, setFactoryConfig] = useState<Rec | null>(null)
+  const [output, setOutput] = useState<Rec[] | null>(null)
 
   const func = async (marginList: Rec) => {
     let output = Object.create(null)
@@ -60,7 +60,7 @@ export const useFactoryConfig = (marginList: Rec) => {
         [keys[index]]: derifyFactory
       }
     })
-    setFactoryConfig(output)
+    setOutput(output)
   }
 
   useEffect(() => {
@@ -70,12 +70,12 @@ export const useFactoryConfig = (marginList: Rec) => {
   }, [marginList])
 
   return {
-    factoryConfig
+    factoryConfig: output
   }
 }
 
-export const usePairAddrConfig = (factoryConfig: Rec | null, marginList: Rec | null) => {
-  const [pairAddrConfig, setPairAddrConfig] = useState<Rec[] | null>(null)
+export const useTradingAddresses = (factoryConfig: Rec | null, marginList: Rec | null) => {
+  const [output, setOutput] = useState<Rec[] | null>(null)
 
   const func = async (factoryConfig: Rec, marginList: Rec) => {
     let output: any[] = []
@@ -103,7 +103,7 @@ export const usePairAddrConfig = (factoryConfig: Rec | null, marginList: Rec | n
         output = [...output, x]
       })
       // console.info(output)
-      setPairAddrConfig(output)
+      setOutput(output)
     }
   }
 
@@ -114,7 +114,7 @@ export const usePairAddrConfig = (factoryConfig: Rec | null, marginList: Rec | n
   }, [factoryConfig, marginList])
 
   return {
-    pairAddrConfig
+    addresses: output
   }
 }
 

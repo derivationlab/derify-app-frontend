@@ -161,10 +161,10 @@ const SymbolSelect = () => {
         {different.length ? (
           different.map((o: Rec, index: number) => {
             const len = different.length
-            const idInit = index === len - 1 ? 'bottom' : undefined
-            const refInit = index === len - 1 ? bottomRef : null
-            const id = resource.searchKeywords.trim() ? undefined : idInit
-            const ref = resource.searchKeywords.trim() ? null : refInit
+            const id = index === len - 1 ? 'bottom' : undefined
+            const ref = index === len - 1 ? bottomRef : null
+            const idInit = resource.searchKeywords.trim() ? undefined : id
+            const refInit = resource.searchKeywords.trim() ? null : ref
             const keys = Object.keys(indicators ?? Object.create(null))
             const findKey = keys.find((key) => getAddress(key) === getAddress(o.token))
             const values = indicators?.[findKey ?? ''] ?? Object.create(null)
@@ -173,8 +173,8 @@ const SymbolSelect = () => {
             return (
               <DropDownListItem
                 key={o.name + index}
-                id={id}
-                ref={ref}
+                id={idInit}
+                ref={refInit}
                 content={
                   isMobile ? (
                     <>

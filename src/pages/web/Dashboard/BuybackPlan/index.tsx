@@ -1,22 +1,15 @@
-import React, { FC } from 'react'
-
-import { useMarginPriceFeed } from '@/hooks/useAllMarginPrice'
-import { useBuyBackPool } from '@/hooks/useDashboard'
-import { useMarginTokenListStore } from '@/store'
+import { useInitData } from '@/pages/web/Dashboard/BuybackPlan/hooks'
 
 import Data from './Data'
 import Plan from './Plan'
 
-const BuybackPlan: FC = () => {
-  const allMarginTokenList = useMarginTokenListStore((state) => state.allMarginTokenList)
-
-  const { priceFeed } = useMarginPriceFeed(allMarginTokenList)
-  const { data: buyBackInfo } = useBuyBackPool(allMarginTokenList)
+const BuybackPlan = () => {
+  const { tokenPrice, buyBackInfo, marginPrices, blockNumber } = useInitData()
 
   return (
     <div className="web-dashboard">
-      <Data buyBackInfo={buyBackInfo ?? {}} priceFeed={priceFeed ?? {}} />
-      <Plan buyBackInfo={buyBackInfo ?? {}} />
+      <Data tokenPrice={tokenPrice} blockNumber={blockNumber} buyBackInfo={buyBackInfo} marginPrices={marginPrices} />
+      <Plan tokenPrice={tokenPrice} blockNumber={blockNumber} buyBackInfo={buyBackInfo} marginPrices={marginPrices} />
     </div>
   )
 }

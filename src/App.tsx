@@ -25,7 +25,7 @@ function App() {
     <>
       <Initial />
 
-      <Suspense fallback={null}>
+      <Suspense fallback={<Spinner fixed />}>
         <Switch>
           <Route path="/" component={WebEntry} />
         </Switch>

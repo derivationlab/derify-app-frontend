@@ -55,21 +55,42 @@ const MarketInfo: FC = () => {
       {
         title: 'Trading/Position',
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
-          let total = '0'
-          const p = tradingVol?.[data.margin_token] ?? 0
+        render: (symbol: string, data: Rec) => {
+          const volume1 = tradingVol?.[data.margin_token] ?? 0
+          let volume2 = '0'
+          const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
+          const equityValue1 = findEquity?.trading_net_value ?? 0
           if (allPositions && data.margin_token in allPositions && spotPrices) {
             const p1 = allPositions[data.margin_token]
             const p2 = Object.keys(p1)
-            total = p2.reduce((p, n: string) => {
-              const price = spotPrices.find((f) => f.margin === data.margin_token && f.token === n)?.price ?? 0
+            volume2 = p2.reduce((p, n: string) => {
+              const price = spotPrices.find((f) => f.token === n)?.price ?? 0
               return bnPlus(bnMul(p1[n], price), p)
             }, '0')
           }
+          const _prices = prices ?? Object.create(null)
+          const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
+          const equityValue2 = bnMul(_prices[findKey] ?? 0, volume2)
           return (
             <>
-              <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
-              <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
+              <>
+                <BalanceShow value={volume1} unit={symbol} decimal={Number(volume1) === 0 ? 2 : data.amount_decimals} />
+                <BalanceShow
+                  classNames="s"
+                  value={equityValue1}
+                  unit={VALUATION_TOKEN_SYMBOL}
+                  decimal={Number(equityValue1) === 0 ? 2 : data.amount_decimals}
+                />
+              </>
+              <>
+                <BalanceShow value={volume2} unit={symbol} decimal={Number(volume2) === 0 ? 2 : data.amount_decimals} />
+                <BalanceShow
+                  classNames="s"
+                  value={equityValue2}
+                  unit={VALUATION_TOKEN_SYMBOL}
+                  decimal={Number(equityValue2) === 0 ? 2 : data.amount_decimals}
+                />
+              </>
             </>
           )
         }
@@ -86,7 +107,7 @@ const MarketInfo: FC = () => {
         }
       }
     ]
-  }, [t, indicators, boundPools, allPositions, spotPrices])
+  }, [t, prices, indicators, boundPools, allPositions, spotPrices, equityValues])
 
   const wColumns = useMemo(() => {
     return [
@@ -126,21 +147,21 @@ const MarketInfo: FC = () => {
         title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
         render: (symbol: string, data: Rec) => {
-          let total = '0'
+          let volume = '0'
           const _prices = prices ?? Object.create(null)
           const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
           if (allPositions && data.margin_token in allPositions && spotPrices) {
             const p1 = allPositions[data.margin_token]
             const p2 = Object.keys(p1)
-            total = p2.reduce((p, n: string) => {
+            volume = p2.reduce((p, n: string) => {
               const price = spotPrices.find((f) => f.token === n)?.price ?? 0
               return bnPlus(bnMul(p1[n], price), p)
             }, '0')
           }
-          const equityValue = bnMul(_prices[findKey] ?? 0, total)
+          const equityValue = bnMul(_prices[findKey] ?? 0, volume)
           return (
             <>
-              <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
+              <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
               <BalanceShow
                 classNames="s"
                 value={equityValue}

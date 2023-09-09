@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { isEmpty, orderBy } from 'lodash'
 import Table from 'rc-table'
 
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
@@ -45,6 +45,21 @@ const MarketInfo: FC = () => {
     marginTokenListLoaded
   } = useInitData()
 
+  const calcVolumeHelper = useCallback(
+    (marginToken: string) => {
+      let volume = '0'
+      if (allPositions && marginToken in allPositions && spotPrices) {
+        const base = allPositions[marginToken]
+        volume = Object.keys(base).reduce((p, n: string) => {
+          const price = spotPrices.find((f) => f.token === n)?.price ?? 0
+          return bnPlus(bnMul(base[n], price), p)
+        }, '0')
+      }
+      return volume
+    },
+    [spotPrices, allPositions]
+  )
+
   const mColumns = useMemo(() => {
     return [
       {
@@ -57,19 +72,11 @@ const MarketInfo: FC = () => {
         dataIndex: 'symbol',
         render: (symbol: string, data: Rec) => {
           const volume1 = tradingVol?.[data.margin_token] ?? 0
-          let volume2 = '0'
-          const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
-          const equityValue1 = findEquity?.trading_net_value ?? 0
-          if (allPositions && data.margin_token in allPositions && spotPrices) {
-            const p1 = allPositions[data.margin_token]
-            const p2 = Object.keys(p1)
-            volume2 = p2.reduce((p, n: string) => {
-              const price = spotPrices.find((f) => f.token === n)?.price ?? 0
-              return bnPlus(bnMul(p1[n], price), p)
-            }, '0')
-          }
+          const volume2 = calcVolumeHelper(data.margin_token)
           const _prices = prices ?? Object.create(null)
           const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
+          const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
+          const equityValue1 = findEquity?.trading_net_value ?? 0
           const equityValue2 = bnMul(_prices[findKey] ?? 0, volume2)
           return (
             <>
@@ -107,7 +114,7 @@ const MarketInfo: FC = () => {
         }
       }
     ]
-  }, [t, prices, indicators, boundPools, allPositions, spotPrices, equityValues])
+  }, [t, prices, calcVolumeHelper, indicators, equityValues])
 
   const wColumns = useMemo(() => {
     return [
@@ -147,17 +154,9 @@ const MarketInfo: FC = () => {
         title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
         render: (symbol: string, data: Rec) => {
-          let volume = '0'
+          const volume = calcVolumeHelper(data.margin_token)
           const _prices = prices ?? Object.create(null)
           const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
-          if (allPositions && data.margin_token in allPositions && spotPrices) {
-            const p1 = allPositions[data.margin_token]
-            const p2 = Object.keys(p1)
-            volume = p2.reduce((p, n: string) => {
-              const price = spotPrices.find((f) => f.token === n)?.price ?? 0
-              return bnPlus(bnMul(p1[n], price), p)
-            }, '0')
-          }
           const equityValue = bnMul(_prices[findKey] ?? 0, volume)
           return (
             <>
@@ -191,7 +190,7 @@ const MarketInfo: FC = () => {
         )
       }
     ]
-  }, [t, prices, tradingVol, indicators, boundPools, allPositions, spotPrices, equityValues])
+  }, [t, prices, tradingVol, indicators, boundPools, equityValues])
 
   const emptyText = useMemo(() => {
     if (!marginTokenListLoaded) return <Spinner small />

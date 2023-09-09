@@ -1,13 +1,14 @@
+import { useState, useEffect } from 'react'
+
 import { getMarginTransactionEquity } from '@/api'
-import { useMarginTokenListStore } from '@/store'
-import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
+import { useAllMarginPrice, useMarginPriceFeed } from '@/hooks/useAllMarginPrice'
+import { useBoundPools } from '@/hooks/useBoundPools'
 import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
 import { useFactoryConfig, useMarginPosVolume, useTradingAddresses } from '@/hooks/useMarginPosVolume'
 import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
+import { useMarginTokenListStore } from '@/store'
 import { Rec } from '@/typings'
-import { useState, useEffect } from 'react'
-import { useAllMarginPrice, useMarginPriceFeed } from '@/hooks/useAllMarginPrice'
 
 export const useInitData = () => {
   const [equityValues, setEquityValues] = useState<Rec[]>([])

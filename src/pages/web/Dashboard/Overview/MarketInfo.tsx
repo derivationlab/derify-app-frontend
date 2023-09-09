@@ -11,13 +11,13 @@ import Button from '@/components/common/Button'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useInitData } from '@/pages/web/Dashboard/Overview/hooks'
 import { getMarginTokenList } from '@/store'
+import { Rec } from '@/typings'
 import { bnMul, bnPlus } from '@/utils/tools'
 
 import { TableMargin } from '../c/TableCol'
-import { useInitData } from '@/pages/web/Dashboard/Overview/hooks'
-import { Rec } from '@/typings'
-import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 
 interface IPagination {
   data: any[]
@@ -109,11 +109,17 @@ const MarketInfo: FC = () => {
           const volume = tradingVol?.[data.margin_token] ?? 0
           const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
           const equityValue = findEquity?.trading_net_value ?? 0
-          return <>
-            <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
-            <BalanceShow classNames='s' value={equityValue} unit={VALUATION_TOKEN_SYMBOL}
-                         decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals} />
-          </>
+          return (
+            <>
+              <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
+              <BalanceShow
+                classNames="s"
+                value={equityValue}
+                unit={VALUATION_TOKEN_SYMBOL}
+                decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals}
+              />
+            </>
+          )
         }
       },
       {
@@ -132,11 +138,17 @@ const MarketInfo: FC = () => {
             }, '0')
           }
           const equityValue = bnMul(_prices[findKey] ?? 0, total)
-          return <>
-            <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
-            <BalanceShow classNames='s' value={equityValue} unit={VALUATION_TOKEN_SYMBOL}
-                         decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals} />
-          </>
+          return (
+            <>
+              <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
+              <BalanceShow
+                classNames="s"
+                value={equityValue}
+                unit={VALUATION_TOKEN_SYMBOL}
+                decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals}
+              />
+            </>
+          )
         }
       },
       {
@@ -152,7 +164,7 @@ const MarketInfo: FC = () => {
         dataIndex: 'Margin',
         align: 'right',
         render: (_: string, data: Record<string, any>) => (
-          <Button size='medium' disabled={!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
+          <Button size="medium" disabled={!data.open} onClick={() => history.push(`/${data.symbol}/trade`)}>
             GO
           </Button>
         )
@@ -179,10 +191,10 @@ const MarketInfo: FC = () => {
   }, [marginTokenList])
 
   return (
-    <div className='web-dashboard-overview-market'>
-      <header className='web-dashboard-section-header'>
+    <div className="web-dashboard-overview-market">
+      <header className="web-dashboard-section-header">
         <h3>{t('NewDashboard.Overview.MarketInfo')}</h3>
-        <div className='web-dashboard-section-header-search'>
+        <div className="web-dashboard-section-header-search">
           {/*todo search*/}
           {/*<Input value={keyword} onChange={setKeyword} placeholder={t('NewDashboard.Overview.SerchTip')}>*/}
           {/*  <button className='web-dashboard-section-header-search-button' onClick={onSearch} />*/}
@@ -190,7 +202,7 @@ const MarketInfo: FC = () => {
         </div>
       </header>
       <Table
-        rowKey='symbol'
+        rowKey="symbol"
         data={pagination.data}
         columns={isMobile ? mColumns : wColumns}
         className={classNames('web-broker-table', { 'web-space-table': isMobile })}

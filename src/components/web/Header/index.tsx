@@ -8,6 +8,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
 import SelectNetworkButton from '@/components/common/Wallet/SelectNetworkButton'
 import NavDashboard from '@/components/web/Header/NavDashboard'
+import { useBrokerInvite } from '@/components/web/Header/hooks'
 import { WEBSITE_URL } from '@/config'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -18,6 +19,7 @@ import Tool from './Tool'
 const Header: FC = () => {
   const { t } = useTranslation()
   const { pathname } = useLocation()
+  const disabled = useBrokerInvite(pathname)
 
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
@@ -29,7 +31,7 @@ const Header: FC = () => {
         <h1 className="web-header-logo">
           <a href={WEBSITE_URL} />
         </h1>
-        <nav className="web-header-nav">
+        <nav className={classNames('web-header-nav', { disabled: disabled })}>
           <NavLink to={`/${marginToken.symbol}/trade`}>{t('Nav.Nav.Trade', 'Trade')}</NavLink>
           <NavLink to={`/${marginToken.symbol}/earn`}>{t('Nav.Nav.Earn', 'Earn')}</NavLink>
           <NavLink to={`/${marginToken.symbol}/data`}>{t('Nav.Nav.Data', 'Data')}</NavLink>

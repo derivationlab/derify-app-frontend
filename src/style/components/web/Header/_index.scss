@@ -118,6 +118,21 @@
         }
       }
     }
+
+    &.disabled {
+      position: relative;
+
+      &::after {
+        content: '';
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        position: absolute;
+        background: rgba(247, 247, 247, 0.8);
+        border-radius: 12px;
+      }
+    }
   }
 
   &-tools {

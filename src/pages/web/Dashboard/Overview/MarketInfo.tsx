@@ -117,7 +117,7 @@ const MarketInfo: FC = () => {
       {
         title: t('NewDashboard.Overview.MaxPositionMiningAPY'),
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
+        render: (symbol: string, data: Rec) => {
           if (indicators?.[data.margin_token]) {
             const apy = Math.max.apply(null, Object.values(indicators[data.margin_token]))
             return <BalanceShow value={apy} percent />

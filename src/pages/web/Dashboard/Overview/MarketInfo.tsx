@@ -135,8 +135,10 @@ const MarketInfo: FC = () => {
         dataIndex: 'symbol',
         render: (symbol: string, data: Rec) => {
           const volume = tradingVol?.[data.margin_token] ?? 0
+          const _prices = prices ?? Object.create(null)
+          const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
           const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
-          const equityValue = findEquity?.trading_net_value ?? 0
+          const equityValue = bnMul(findEquity?.trading_net_value ?? 0, _prices[findKey] ?? 0)
           return (
             <>
               <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
@@ -169,14 +171,6 @@ const MarketInfo: FC = () => {
               />
             </>
           )
-        }
-      },
-      {
-        title: t('NewDashboard.Overview.BuybackPool'),
-        dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
-          const p = boundPools?.[data.margin_token] ?? 0
-          return <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
         }
       },
       {

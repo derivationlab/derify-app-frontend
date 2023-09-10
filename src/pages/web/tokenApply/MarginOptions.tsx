@@ -115,6 +115,14 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
     }
   }, [mrOption])
 
+  /**
+   * FIXME:
+   * If the search function is supported,
+   * do not use a variable to manage the search results and original data.
+   * @effect:
+   * 1. Select --> disabled
+   * 2. mrOption.data
+   */
   return (
     <Select
       onChange={(v) => {

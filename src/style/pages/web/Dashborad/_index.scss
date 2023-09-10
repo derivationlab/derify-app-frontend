@@ -110,6 +110,7 @@
 
     &-tabs {
       margin-top: 50px;
+      .rc-table-cell > a{display: flex;align-content: center}
     }
   }
 

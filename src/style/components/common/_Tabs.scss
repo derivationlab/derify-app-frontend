@@ -1,5 +1,6 @@
 .web-tabs {
   border: none;
+  @include ns;
   .rc-tabs-tab {
     font-size: 18px;background: none;
     &-btn {

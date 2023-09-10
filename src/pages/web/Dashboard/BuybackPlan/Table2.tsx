@@ -7,18 +7,21 @@ import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
 import { getTokenBurnHistory } from '@/api'
+import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { EXPLORER_SCAN_URL } from '@/config'
 import { RowTime } from '@/pages/web/Broker/Workbench/c/Data/common'
 import { reducer, stateInit } from '@/reducers/records'
+import { useMarginTokenListStore } from '@/store'
 import { Rec } from '@/typings'
 import { calcShortHash } from '@/utils/tools'
 
 const Table2 = () => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
+  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenListStore)
 
   const mColumns = useMemo(() => {
     return [
@@ -28,17 +31,23 @@ const Table2 = () => {
         render: (_: string) => (
           <a href={`${EXPLORER_SCAN_URL}/tx/${_}`} target="_blank">
             {isMobile ? calcShortHash(_, 4, 4) : calcShortHash(_)}
+            <Image src="icon/share.svg" />
           </a>
         )
       },
       {
         title: `${t('NewDashboard.BurnHistory.MarginTokenAmount')}/${t('NewDashboard.BurnHistory.BurnAmount')}`,
         dataIndex: 'margin_amount',
+        width: isMobile && 140,
         render: (_: string, data: Rec) => {
+          const findMargin1 = marginTokenList.find((m) => m.symbol === data.burn_symbol)
+          const decimals1 = Number(_) > 0 ? findMargin1?.amount_decimals : 2
+          const findMargin2 = marginTokenList.find((m) => m.symbol === data.margin_symbol)
+          const decimals2 = Number(_) > 0 ? findMargin2?.amount_decimals : 2
           return (
             <>
-              <BalanceShow value={_} unit={data.margin_symbol} decimal={Number(_) > 0 ? 4 : 2} />
-              <BalanceShow value={data.burn_amount} unit={data.burn_symbol} decimal={Number(_) > 0 ? 4 : 2} />
+              <BalanceShow value={_} unit={data.margin_symbol} decimal={decimals1} />
+              <BalanceShow value={data.burn_amount} unit={data.burn_symbol} decimal={decimals2} />
             </>
           )
         }
@@ -47,7 +56,7 @@ const Table2 = () => {
         title: t('NewDashboard.BurnHistory.Time', 'Time'),
         dataIndex: 'block_timestamp',
         align: 'right',
-        render: (text: string) => <RowTime time={text} />
+        render: (_: string) => <RowTime time={Number(_) * 1000} />
       }
     ]
   }, [t])
@@ -59,19 +68,23 @@ const Table2 = () => {
         title: t('NewDashboard.BurnHistory.MarginTokenAmount'),
         dataIndex: 'margin_amount',
         render: (_: string, data: Rec) => {
-          return <BalanceShow value={_} unit={data.margin_symbol} decimal={Number(_) > 0 ? 4 : 2} />
+          const findMargin = marginTokenList.find((m) => m.symbol === data.margin_symbol)
+          const decimals = Number(_) > 0 ? findMargin?.amount_decimals : 2
+          return <BalanceShow value={_} unit={data.margin_symbol} decimal={decimals} />
         }
       },
       {
         title: t('NewDashboard.BurnHistory.BurnAmount'),
         dataIndex: 'burn_amount',
         render: (_: string, data: Rec) => {
-          return <BalanceShow value={_} unit={data.burn_symbol} decimal={Number(_) > 0 ? 4 : 2} />
+          const findMargin = marginTokenList.find((m) => m.symbol === data.burn_symbol)
+          const decimals = Number(_) > 0 ? findMargin?.amount_decimals : 2
+          return <BalanceShow value={_} unit={data.burn_symbol} decimal={decimals} />
         }
       },
       mColumns[2]
     ]
-  }, [t])
+  }, [t, marginTokenList])
 
   const emptyText = useMemo(() => {
     if (state.records.loaded) return <Spinner small />
@@ -103,7 +116,7 @@ const Table2 = () => {
         data={state.records.records}
         // @ts-ignore
         columns={isMobile ? mColumns : wColumns}
-        className={classNames('web-broker-table1', { 'web-space-table': isMobile })}
+        className={classNames({ 'web-space-table': isMobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />

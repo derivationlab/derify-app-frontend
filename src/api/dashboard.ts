@@ -36,6 +36,6 @@ export const getHistoryTotalPositionsNetValue = async (marginToken: string, quot
 }
 
 export const getTokenBurnHistory = async (page: number, size = 10) => {
-  const response = await get(`api/drf_bdrf_burn_history/${page}/${size}`)
+  const response = await get(`api/drf_burn_history/${page}/${size}`)
   return response
 }

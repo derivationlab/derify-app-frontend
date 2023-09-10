@@ -76,18 +76,13 @@ const MarketInfo: FC = () => {
           const _prices = prices ?? Object.create(null)
           const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
           const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
-          const equityValue1 = findEquity?.trading_net_value ?? 0
+          const equityValue1 = bnMul(_prices[findKey] ?? 0, findEquity?.trading_net_value ?? 0)
           const equityValue2 = bnMul(_prices[findKey] ?? 0, volume2)
           return (
             <>
               <>
                 <BalanceShow value={volume1} unit={symbol} decimal={Number(volume1) === 0 ? 2 : data.amount_decimals} />
-                <BalanceShow
-                  classNames="s"
-                  value={equityValue1}
-                  unit={VALUATION_TOKEN_SYMBOL}
-                  decimal={Number(equityValue1) === 0 ? 2 : data.amount_decimals}
-                />
+                <BalanceShow classNames="s" value={equityValue1} unit={VALUATION_TOKEN_SYMBOL} decimal={2} />
               </>
               <>
                 <BalanceShow value={volume2} unit={symbol} decimal={Number(volume2) === 0 ? 2 : data.amount_decimals} />
@@ -142,12 +137,7 @@ const MarketInfo: FC = () => {
           return (
             <>
               <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
-              <BalanceShow
-                classNames="s"
-                value={equityValue}
-                unit={VALUATION_TOKEN_SYMBOL}
-                decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals}
-              />
+              <BalanceShow classNames="s" value={equityValue} unit={VALUATION_TOKEN_SYMBOL} decimal={2} />
             </>
           )
         }
@@ -163,12 +153,7 @@ const MarketInfo: FC = () => {
           return (
             <>
               <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
-              <BalanceShow
-                classNames="s"
-                value={equityValue}
-                unit={VALUATION_TOKEN_SYMBOL}
-                decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals}
-              />
+              <BalanceShow classNames="s" value={equityValue} unit={VALUATION_TOKEN_SYMBOL} decimal={2} />
             </>
           )
         }
@@ -184,7 +169,7 @@ const MarketInfo: FC = () => {
         )
       }
     ]
-  }, [t, prices, tradingVol, indicators, boundPools, equityValues])
+  }, [t, prices, tradingVol, indicators, boundPools, equityValues, calcVolumeHelper])
 
   const emptyText = useMemo(() => {
     if (!marginTokenListLoaded) return <Spinner small />

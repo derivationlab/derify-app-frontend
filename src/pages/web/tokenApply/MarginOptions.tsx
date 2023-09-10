@@ -1,7 +1,7 @@
 import { Input, Select } from '@arco-design/web-react'
 import { IconSearch } from '@arco-design/web-react/icon'
 import classNames from 'classnames'
-import { debounce, uniqBy } from 'lodash'
+import { debounce, uniqBy, isEmpty } from 'lodash'
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,7 +30,7 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   const [loadMore, setLoadMore] = useState<{ loaded: boolean; noData: boolean }>({ loaded: false, noData: false })
   const [selected, setSelected] = useState<string>()
   const [mrOption, setMrOption] = useState<MarginOptions>({ data: [], loaded: false })
-  const [sKeyword, setSKeyword] = useState<string>('')
+  const [keywords, setKeywords] = useState<string>('')
 
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenListForApply)
 
@@ -96,14 +96,14 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
   }, [visible, marginTokenList])
 
   useEffect(() => {
-    if (sKeyword.trim()) {
+    if (keywords.trim()) {
       setMrOption({ data: [], loaded: true })
-      void fuzzySearchFunc(sKeyword)
+      void fuzzySearchFunc(keywords)
     } else {
       const data = temporaryStorage.length === 0 ? marginTokenList : temporaryStorage
       setMrOption({ data, loaded: false })
     }
-  }, [sKeyword, marginTokenList])
+  }, [keywords, marginTokenList])
 
   // Only initialize once
   useEffect(() => {
@@ -121,6 +121,7 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
         onChange(v)
         setSelected(v)
       }}
+      disabled={isEmpty(mrOption.data)}
       triggerElement={triggerElement}
       onVisibleChange={setVisible}
       notFoundContent={<small className="search-null">{t('Apply.NoData')}</small>}
@@ -130,7 +131,7 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
             {/*<Input*/}
             {/*  className="search"*/}
             {/*  prefix={<IconSearch />}*/}
-            {/*  onChange={setSKeyword}*/}
+            {/*  onChange={setKeywords}*/}
             {/*  placeholder={t('Apply.SearchTip')}*/}
             {/*/>*/}
             {!mrOption.loaded && options}
@@ -149,7 +150,7 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
           <span>{l.symbol}</span>
         </Option>
       ))}
-      {mrOption.data.length === MARGIN_VISIBLE_COUNT && !loadMore.noData && !sKeyword.trim() && (
+      {mrOption.data.length === MARGIN_VISIBLE_COUNT && !loadMore.noData && !keywords.trim() && (
         <button className="load-more" onClick={getMoreMargin} disabled={loadMore.loaded}>
           {t('Apply.LoadMore')}
           {loadMore.loaded && <Spinner mini />}

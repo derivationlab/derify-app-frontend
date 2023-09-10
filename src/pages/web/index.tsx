@@ -30,7 +30,7 @@ import Trade from '@/pages/web/Trade'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 
-const UserApply = lazy(() => import('@/pages/web/userApply'))
+const UserApply = lazy(() => import('@/pages/web/tokenApply'))
 const Consultant = lazy(() => import('@/pages/web/consultant'))
 
 const Web: FC = () => {

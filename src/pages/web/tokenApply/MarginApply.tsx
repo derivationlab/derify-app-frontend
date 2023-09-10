@@ -1,16 +1,16 @@
 import { Form, Input } from '@arco-design/web-react'
-import { useSigner } from 'wagmi'
+import { useAccount, useSigner } from 'wagmi'
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBoolean } from 'react-use'
 
+import { applyMarginToken } from '@/api'
 import Button from '@/components/common/Button'
 import { findToken } from '@/config/tokens'
+import { checkAdvisorAddress } from '@/funcs/helper'
 import { useApplyToken, usePaymentAmount } from '@/hooks/useApplyToken'
-import MarginOptions from '@/pages/web/userApply/MarginOptions'
-import PaymentOptions from '@/pages/web/userApply/PaymentOptions'
-import TokenOptions from '@/pages/web/userApply/TokenOptions'
+import PaymentOptions from '@/pages/web/tokenApply/PaymentOptions'
 import { useBalancesStore } from '@/store'
 import { isET, isLT, keepDecimals } from '@/utils/tools'
 
@@ -20,16 +20,16 @@ export const config = {
 }
 const FormItem = Form.Item
 
-const TradingApply = () => {
+const MarginApply = () => {
   const [form] = Form.useForm()
   const { t } = useTranslation()
+  const { address } = useAccount()
   const { data: signer } = useSigner()
-  const { applyNewTradingToken } = useApplyToken()
+  const { applyNewMarginToken } = useApplyToken()
   const [isLoading, setLoading] = useBoolean(false)
-  const [marginToken, setMarginToken] = useState<string>('')
   const [paymentToken, setPaymentToken] = useState<string>('')
-  const paymentAmount = usePaymentAmount(paymentToken, 200)
   const balances = useBalancesStore((state) => state.balances)
+  const paymentAmount = usePaymentAmount(paymentToken, 5000)
 
   const balance = useMemo(() => balances?.[paymentToken] ?? 0, [paymentToken, balances])
 
@@ -46,36 +46,44 @@ const TradingApply = () => {
       await form.validate()
 
       const toast = window.toast.loading(t('common.pending'))
-      const { marginToken, tradingToken, paymentToken, paymentAmount } = form.getFieldsValue([
+
+      const { advisor, marginName, marginToken, marginSymbol, paymentToken, paymentAmount } = form.getFieldsValue([
+        'advisor',
+        'marginName',
         'marginToken',
-        'tradingToken',
+        'marginSymbol',
         'paymentToken',
         'paymentAmount'
       ])
-      console.info({
-        marginToken,
-        paymentToken,
-        tradingToken,
-        paymentAmount,
-        signer
-      })
 
-      const status = await applyNewTradingToken({
+      const status = await applyNewMarginToken({
         marginToken,
         paymentToken,
         paymentAmount,
-        tradingToken,
+        advisorAddress: advisor,
         signer
       })
 
       if (status) {
+        await applyMarginToken({
+          name: marginName,
+          symbol: marginSymbol,
+          advisor,
+          applicant: address,
+          paymentToken,
+          paymentAmount,
+          marginToken
+        })
+
         window.toast.success(t('common.success'))
+
         form.resetFields()
       } else {
         window.toast.error(t('common.failed'))
       }
 
       setLoading(false)
+
       window.toast.dismiss(toast)
     } catch (error) {
       setLoading(false)
@@ -89,11 +97,14 @@ const TradingApply = () => {
   return (
     <section className="web-user-apply-margin">
       <Form form={form} layout="vertical" autoComplete="off">
-        <FormItem field="marginToken" rules={[{ required: true, message: t('Apply.Required') }]}>
-          <MarginOptions onChange={setMarginToken} />
+        <FormItem field="marginName" rules={[{ required: true, message: t('Apply.Required') }]}>
+          <Input prefix={t('Apply.Name')} />
         </FormItem>
-        <FormItem field="tradingToken" rules={[{ required: true, message: t('Apply.Required') }]}>
-          <TokenOptions onChange={() => null} marginToken={marginToken} />
+        <FormItem field="marginSymbol" rules={[{ required: true, message: t('Apply.Required') }]}>
+          <Input prefix={t('Apply.Symbol')} />
+        </FormItem>
+        <FormItem field="marginToken" rules={[{ required: true, message: t('Apply.Required') }]}>
+          <Input prefix={t('Apply.Address')} />
         </FormItem>
         <FormItem field="paymentToken">
           <PaymentOptions onChange={setPaymentToken} />
@@ -101,11 +112,35 @@ const TradingApply = () => {
         <FormItem field="paymentAmount">
           <Input prefix={t('Apply.Fee')} readOnly />
         </FormItem>
+        <FormItem
+          field="advisor"
+          rules={[
+            {
+              validator: async (value, callback) => {
+                if (!value) {
+                  return callback(t('Apply.Required'))
+                }
+                const status = await checkAdvisorAddress(address ?? '')
+                if (status) {
+                  return callback()
+                } else {
+                  return callback(t('Apply.NotExist'))
+                }
+              },
+              required: true
+            }
+          ]}
+        >
+          <Input prefix={t('Apply.Advisor')} />
+        </FormItem>
         <div className="form-item-balance">
           <span>{t('Advisor.balance')}</span>
           <span>
             {keepDecimals(balance, tokenInfo?.decimals, true)} {tokenInfo?.symbol}
           </span>
+        </div>
+        <div className="form-item-tips">
+          <a href="/">{t('Apply.NoAdvisor')}</a>
         </div>
         <Button full onClick={func} loading={isLoading} disabled={disabled}>
           {t('Apply.Pay')}
@@ -115,4 +150,4 @@ const TradingApply = () => {
   )
 }
 
-export default TradingApply
+export default MarginApply

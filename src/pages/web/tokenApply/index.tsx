@@ -3,9 +3,9 @@ import { motion } from 'framer-motion'
 import React, { useState } from 'react'
 
 import IsItConnected from '@/components/web/IsItConnected'
-import ApplyOptions, { applyTypeOptions } from '@/pages/web/userApply/ApplyOptions'
-import MarginApply from '@/pages/web/userApply/MarginApply'
-import TradingApply from '@/pages/web/userApply/TradingApply'
+import ApplyOptions, { applyTypeOptions } from '@/pages/web/tokenApply/ApplyOptions'
+import MarginApply from '@/pages/web/tokenApply/MarginApply'
+import TradingApply from '@/pages/web/tokenApply/TradingApply'
 
 function UserApplyInner() {
   const [selected, setSelected] = useState<string>('')

@@ -1,5 +1,6 @@
 import { Select } from '@arco-design/web-react'
 import classNames from 'classnames'
+import { isEmpty } from 'lodash'
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -47,7 +48,7 @@ const TokenOptions = ({ onChange, marginToken }: { onChange: (p: string) => void
 
   return (
     <Select
-      disabled={tradingLoad}
+      disabled={tradingLoad || isEmpty(tradingList)}
       onChange={(v) => {
         onChange(v)
         setSelected(v)

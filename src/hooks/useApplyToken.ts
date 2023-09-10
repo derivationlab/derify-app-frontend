@@ -5,7 +5,7 @@ import { getDerivativeList, getTradingTokenList } from '@/api'
 import contracts from '@/config/contracts'
 import { findToken } from '@/config/tokens'
 import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
-import { paymentTypeOptions } from '@/pages/web/userApply/PaymentOptions'
+import { paymentTypeOptions } from '@/pages/web/tokenApply/PaymentOptions'
 import { Rec, TokenKeys, TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getApplyTokenContract } from '@/utils/contractHelpers'
@@ -95,16 +95,20 @@ export const useTradingList = (marginToken: string) => {
   const func = async (marginToken: string) => {
     setTradingLoad(true)
     setTradingList([])
-    const { data: data1 } = await getTradingTokenList()
-    const { data: data2 = [] } = await getDerivativeList(marginToken)
-    const _data2: Rec[] = data2?.records ?? []
-    const filter = (data1?.records ?? []).filter((x: Rec) => !_data2.find((f) => f.token === x.token))
-    setTradingList(filter)
-    setTradingLoad(false)
+    try {
+      const { data: data1 } = await getTradingTokenList()
+      const { data: data2 = [] } = await getDerivativeList(marginToken)
+      const _data2: Rec[] = data2?.records ?? []
+      const filter = (data1?.records ?? []).filter((x: Rec) => !_data2.find((f) => f.token === x.token))
+      setTradingList(filter)
+      setTradingLoad(false)
+    } catch (e) {
+      setTradingLoad(false)
+    }
   }
 
   useEffect(() => {
-    if (marginToken) void func(marginToken)
+    void func(marginToken)
   }, [marginToken])
 
   return {

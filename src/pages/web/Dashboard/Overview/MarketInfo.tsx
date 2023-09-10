@@ -225,7 +225,7 @@ const MarketInfo: FC = () => {
         rowKey="symbol"
         data={pagination.data}
         columns={isMobile ? mColumns : wColumns}
-        className={classNames('web-broker-table', { 'web-space-table': isMobile })}
+        className={classNames('web-broker-table1', { 'web-space-table': isMobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />

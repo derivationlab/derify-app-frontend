@@ -88,16 +88,15 @@
         }
         section {
           font-size: rem(24);margin: rem(8) 0;
-          & > small {
-            font-size: rem(16);margin-left: rem(4);
-          }
           .web-balance-show {
+            font-size: rem(16);
             strong {
-              font-size: rem(24);
+              font-size: inherit;
             }
             span {
-              font-size: rem(16);
+              font-size: inherit;
             }
+            small{font-size: 1em}
           }
         }
         footer {

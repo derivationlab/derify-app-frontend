@@ -107,6 +107,10 @@
         font-size: 12px;
       }
     }
+
+    &-tabs {
+      margin-top: 50px;
+    }
   }
 
   &-section-header {
@@ -114,15 +118,16 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 50px;
-    padding-bottom: 24px;
+    padding-bottom: 12px;
+    border-radius: 6px;
+    border-bottom: 12px solid $cf7;
 
     h3 {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
       color: $red;
       padding: 10px 20px 0;
       position: relative;
-      height: 48px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -560,7 +565,9 @@
 
     &-section-header {
       margin-top: rem(24);
-      padding-bottom: rem(16);
+      padding-bottom: rem(8);
+      border-radius: rem(4);
+      border-bottom: rem(8) solid $cf7;
 
       h3 {
         font-size: rem(16);

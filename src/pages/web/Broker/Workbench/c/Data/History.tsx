@@ -14,9 +14,9 @@ import { PLATFORM_TOKEN } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { keepDecimals } from '@/utils/tools'
+import { keepDecimals, calcShortHash } from '@/utils/tools'
 
-import { RowTime, calcShortHash, calcTimeStr } from './common'
+import { RowTime, calcTimeStr } from './common'
 
 interface DataProps {
   id: string
@@ -72,7 +72,6 @@ const RowBalance: FC<Record<string, any>> = ({ text = 0, coin }) => (
   </div>
 )
 
-// loading ui todo
 const History: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)
 

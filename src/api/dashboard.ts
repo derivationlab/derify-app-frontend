@@ -5,8 +5,8 @@ export const getPlatformTokenPrice = async () => {
   return response
 }
 
-export const getBuyBackPlans = async (page: number, offset: number) => {
-  const response = await get(`api/buy_back_margin_token_list/${page}/${offset}`)
+export const getBuyBackPlans = async (page: number, size: number) => {
+  const response = await get(`api/buy_back_margin_token_list/${page}/${size}`)
   return response
 }
 
@@ -32,5 +32,10 @@ export const getCurrentTotalPositionsNetValue = async (marginToken: string, quot
 
 export const getHistoryTotalPositionsNetValue = async (marginToken: string, quoteToken: string, days = 90) => {
   const response = await get(`api/history_total_positions_net_value/${quoteToken}/${days}/${marginToken}`)
+  return response
+}
+
+export const getTokenBurnHistory = async (page: number, size = 10) => {
+  const response = await get(`api/drf_bdrf_burn_history/${page}/${size}`)
   return response
 }

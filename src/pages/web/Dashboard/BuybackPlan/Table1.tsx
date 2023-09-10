@@ -24,7 +24,7 @@ interface Props {
   marginPrices: Rec
 }
 
-const Plan: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber = 0 }) => {
+const Table1: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber = 0 }) => {
   const { t } = useTranslation()
   const [state, dispatch] = useReducer(reducer, stateInit)
 
@@ -177,29 +177,19 @@ const Plan: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber = 
   }, [])
 
   return (
-    <div className="web-dashboard-plan-list">
-      <header className="web-dashboard-section-header">
-        <h3>{t('NewDashboard.BuybackPlan.BuybackPlan', 'Buyback Plan')}</h3>
-        <div className="web-dashboard-section-header-search">
-          {/*todo search*/}
-          {/*<Input value={keyword} onChange={setKeyword} placeholder={t('NewDashboard.BuybackPlan.SerchTip')}>*/}
-          {/*  <button className="web-dashboard-section-header-search-button" onClick={onSearch} />*/}
-          {/*</Input>*/}
-        </div>
-      </header>
-
+    <>
       <Table
         rowKey="symbol"
         data={state.records.records}
         // @ts-ignore
         columns={isMobile ? mColumns : wColumns}
-        className={classNames('web-broker-table', { 'web-space-table': isMobile })}
+        className={classNames({ 'web-space-table': isMobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
       <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
-    </div>
+    </>
   )
 }
 
-export default Plan
+export default Table1

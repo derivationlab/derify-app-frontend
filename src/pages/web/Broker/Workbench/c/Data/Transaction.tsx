@@ -14,9 +14,9 @@ import { EXPLORER_SCAN_URL } from '@/config'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { keepDecimals } from '@/utils/tools'
+import { keepDecimals, calcShortHash } from '@/utils/tools'
 
-import { RowTime, calcShortHash, calcTimeStr } from './common'
+import { RowTime, calcTimeStr } from './common'
 
 interface DataProps {
   id: string

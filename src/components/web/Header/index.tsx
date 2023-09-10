@@ -19,8 +19,7 @@ import Tool from './Tool'
 const Header: FC = () => {
   const { t } = useTranslation()
   const { pathname } = useLocation()
-  const disabled = useBrokerInvite(pathname)
-
+  const { disabled } = useBrokerInvite(pathname)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   if (isMobile) return <MHeader />

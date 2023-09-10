@@ -23,7 +23,7 @@ const Favorite = ({ data }: Props) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const traderFavorite = useAtomValue(traderFavoriteAtom)
 
-  const find = useMemo(() => {
+  const event = useMemo(() => {
     const find = traderFavorite.find((t) => t.name === name)
     return [find ? 'star-fill.svg' : 'star.svg', Boolean(find)]
   }, [traderFavorite])
@@ -35,7 +35,7 @@ const Favorite = ({ data }: Props) => {
         name,
         token,
         trader: address,
-        operation: find[1] ? 'delete' : 'add',
+        operation: event[1] ? 'delete' : 'add',
         derivative,
         marginToken: marginToken.address,
         price_decimals
@@ -43,11 +43,11 @@ const Favorite = ({ data }: Props) => {
       const data = await favoriteTradingPairs(params)
       if (data.code === 0) emitter.emit(EventTypes.updateTraderFavorite)
     } catch (e) {
-      window.toast.error(t('common.Error'))
+      window.toast.error(t('common.failed'))
     }
   }
 
-  return <Image src={`icon/${find[0]}`} onClick={func} />
+  return <Image src={`icon/${event[0]}`} onClick={func} />
 }
 
 export default Favorite

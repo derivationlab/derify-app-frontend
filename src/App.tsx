@@ -18,7 +18,6 @@ const WebEntry = lazy(() => import('@/pages/web'))
 
 function App() {
   const { isAccessible } = useMarginLoading()
-
   if (!isAccessible) return <Spinner fixed />
 
   return (

@@ -59,7 +59,7 @@ const Table2 = () => {
         render: (_: string) => <RowTime time={Number(_) * 1000} />
       }
     ]
-  }, [t])
+  }, [t]) as Rec[]
 
   const wColumns = useMemo(() => {
     return [
@@ -84,7 +84,7 @@ const Table2 = () => {
       },
       mColumns[2]
     ]
-  }, [t, marginTokenList])
+  }, [t, marginTokenList]) as Rec[]
 
   const emptyText = useMemo(() => {
     if (state.records.loaded) return <Spinner small />
@@ -114,7 +114,6 @@ const Table2 = () => {
       <Table
         rowKey="symbol"
         data={state.records.records}
-        // @ts-ignore
         columns={isMobile ? mColumns : wColumns}
         className={classNames({ 'web-space-table': isMobile })}
         emptyText={emptyText}

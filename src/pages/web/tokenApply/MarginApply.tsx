@@ -13,6 +13,7 @@ import { useApplyToken, usePaymentAmount } from '@/hooks/useApplyToken'
 import PaymentOptions from '@/pages/web/tokenApply/PaymentOptions'
 import { useBalancesStore } from '@/store'
 import { isET, isLT, keepDecimals } from '@/utils/tools'
+import { Advisor } from '@/config'
 
 export const config = {
   amount: 100000,
@@ -140,7 +141,7 @@ const MarginApply = () => {
           </span>
         </div>
         <div className="form-item-tips">
-          <a href="/">{t('Apply.NoAdvisor')}</a>
+          <a href={Advisor} target='_blank'>{t('Apply.NoAdvisor')}</a>
         </div>
         <Button full onClick={func} loading={isLoading} disabled={disabled}>
           {t('Apply.Pay')}

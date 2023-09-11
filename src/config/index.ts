@@ -38,6 +38,7 @@ export const Github = 'https://github.com/derivationlab'
 export const Discord = 'https://discord.gg/kSR6tz2pdm'
 export const Twitter = 'https://twitter.com/DerifyProtocol'
 export const Telegram = 'https://t.me/DerifyProtocol_Official'
+export const Advisor = 'https://docs.google.com/forms/d/e/1FAIpQLSeaY9mj4Ix473wlGiGgROGXPIZsbps7ekbYvz5JBYoJacypSA/viewform'
 export const Communities = {
   Twitter,
   Telegram,

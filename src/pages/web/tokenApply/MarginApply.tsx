@@ -7,13 +7,13 @@ import { useBoolean } from 'react-use'
 
 import { applyMarginToken } from '@/api'
 import Button from '@/components/common/Button'
+import { Advisor } from '@/config'
 import { findToken } from '@/config/tokens'
 import { checkAdvisorAddress } from '@/funcs/helper'
 import { useApplyToken, usePaymentAmount } from '@/hooks/useApplyToken'
 import PaymentOptions from '@/pages/web/tokenApply/PaymentOptions'
 import { useBalancesStore } from '@/store'
 import { isET, isLT, keepDecimals } from '@/utils/tools'
-import { Advisor } from '@/config'
 
 export const config = {
   amount: 100000,
@@ -121,7 +121,7 @@ const MarginApply = () => {
                 if (!value) {
                   return callback(t('Apply.Required'))
                 }
-                const status = await checkAdvisorAddress(address ?? '')
+                const status = await checkAdvisorAddress(value)
                 if (status) {
                   return callback()
                 } else {
@@ -141,7 +141,9 @@ const MarginApply = () => {
           </span>
         </div>
         <div className="form-item-tips">
-          <a href={Advisor} target='_blank'>{t('Apply.NoAdvisor')}</a>
+          <a href={Advisor} target="_blank">
+            {t('Apply.NoAdvisor')}
+          </a>
         </div>
         <Button full onClick={func} loading={isLoading} disabled={disabled}>
           {t('Apply.Pay')}

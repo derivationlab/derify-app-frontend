@@ -226,6 +226,7 @@ export const outputErrorLog = (contractAddress: string, contractName: string, fu
 export const checkAdvisorAddress = async (address: string): Promise<boolean> => {
   const contract = getConsultantContract()
   const response = await contract.getInsurance(address)
+  console.info(String(response), address) // 0x36edF659e13a90B468788d1D147E13A765eee451
   const { amount, startTime, vestingDuration } = response
   return Number(vestingDuration) > 0 && Number(amount) > 0 && Number(startTime) > 0
 }

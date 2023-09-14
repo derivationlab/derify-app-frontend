@@ -130,8 +130,6 @@ const MarketInfo: FC = () => {
         dataIndex: 'symbol',
         render: (symbol: string, data: Rec) => {
           const volume = tradingVol?.[data.margin_token] ?? 0
-          const _prices = prices ?? Object.create(null)
-          const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
           const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
           const equityValue = findEquity?.trading_net_value ?? 0
           return (

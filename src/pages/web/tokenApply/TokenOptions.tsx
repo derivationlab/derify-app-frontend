@@ -21,7 +21,6 @@ const TokenOptions = ({ onChange, marginToken }: { onChange: (p: string[]) => vo
 
   const innerContent = useMemo(() => {
     const { list, loaded } = tradingList
-    console.info(tradingList)
     if (loaded) return <Spinner mini />
     if (!loaded && list.length === 0) return <small className="null">{t('Apply.NoData')}</small>
     if (!loaded && list.length > 0) {
@@ -63,18 +62,15 @@ const TokenOptions = ({ onChange, marginToken }: { onChange: (p: string[]) => vo
     )
   }, [t, innerContent])
 
-  // useEffect(() => {
-  //   if (tradingList.length) {
-  //     const _ = [tradingList[0]?.token]
-  //     onChange(_)
-  //     setSelected(_)
-  //   }
-  // }, [tradingList])
+  useEffect(() => {
+    onChange([])
+    setSelected([])
+  }, [marginToken])
 
   return (
     <Select
       mode="multiple"
-      // value={selected}
+      value={selected}
       disabled={tradingList.loaded || isEmpty(tradingList.list)}
       onChange={(v) => {
         onChange(v)

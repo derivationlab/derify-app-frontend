@@ -85,7 +85,7 @@ export const usePaymentAmount = (token: string, base: number, count = 1) => {
     } else {
       throw new Error(`Unknown payment token: ${token}`)
     }
-  }, [token, tokenPrice])
+  }, [count, token, tokenPrice])
 }
 
 export const useTradingList = (marginToken: string) => {

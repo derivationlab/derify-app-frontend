@@ -43,11 +43,9 @@ export const traderInfoUpdates = async (body: Rec) => {
 }
 
 interface GiveawayParams {
-  sign: string
   value: string
   event: string //your chosen event
   remark: string //add remark optional
-  track_id: string // url search
 }
 
 export const giveawayEventTrack = async (body: GiveawayParams) => {

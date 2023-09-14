@@ -62,10 +62,18 @@ const TokenOptions = ({ onChange, marginToken }: { onChange: (p: string[]) => vo
     )
   }, [t, innerContent])
 
+  // useEffect(() => {
+  //   onChange([])
+  //   setSelected([])
+  // }, [marginToken])
+
   useEffect(() => {
-    onChange([])
-    setSelected([])
-  }, [marginToken])
+    if (tradingList.list.length) {
+      const _ = [tradingList.list[0]?.token]
+      onChange(_)
+      setSelected(_)
+    }
+  }, [marginToken, tradingList])
 
   return (
     <Select

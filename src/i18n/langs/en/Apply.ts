@@ -10,6 +10,7 @@ export default {
     Payment: 'Fee Token',
     Trading: 'Trading',
     NoData: 'No Data',
+    Select: 'Please select',
     Advisor: 'Advisor',
     Required: 'required',
     NoAdvisor: 'No Advisor Address ?',

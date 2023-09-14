@@ -50,8 +50,8 @@ $_width: 360px;
 
     // common select
     .form-item-select {
-      height: 48px;
-      padding: 0 20px;
+      min-height: 48px;
+      padding: 8px 20px;
       background: $cff;
       border-radius: 24px;
       justify-content: space-between;
@@ -59,7 +59,40 @@ $_width: 360px;
       @include ns();
       @extend .ac;
 
-      em {
+      &:not(.s) {
+        margin-bottom: 20px;
+      }
+
+      &-right {
+        margin-left: 20px;
+        @extend .ac;
+
+        .null {
+          color: lighten($c88, 10%);
+        }
+
+        .active {
+          color: $primary;
+        }
+
+        .token-icon {
+          width: 24px;
+          height: 24px;
+          margin-right: 10px;
+          border-radius: 100%;
+        }
+
+        .arco-avatar {
+          width: 28px;
+          height: 28px;
+        }
+      }
+
+      &-label {
+        color: lighten($c88, 10%);
+      }
+
+      .arrow {
         width: 12px;
         height: 12px;
         margin-left: 10px;
@@ -68,33 +101,6 @@ $_width: 360px;
         &.active {
           background: url($res + 'icon/arrow-down-light-theme-2.svg') center/contain no-repeat;
         }
-      }
-
-      img {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
-        border-radius: 100%;
-      }
-
-      &:not(.s) {
-        margin-bottom: 20px;
-      }
-
-      &-right {
-        @extend .ac;
-
-        small {
-          color: lighten($c88, 10%);
-        }
-
-        .active {
-          color: $primary;
-        }
-      }
-
-      &-label {
-        color: lighten($c88, 10%);
       }
     }
 
@@ -165,8 +171,8 @@ $_width: 360px;
 
       // common select
       .form-item-select {
-        height: rem(36);
-        padding: 0 rem(16);
+        min-height: rem(36);
+        padding: rem(4) rem(16);
         font-size: rem(13);
         border-radius: rem(36);
 
@@ -225,6 +231,7 @@ $_width: 360px;
       }
 
       &-right {
+        margin-left: rem(10);
         .active {
           color: $yellow;
         }
@@ -250,6 +257,14 @@ $_width: 360px;
       background: $cf7;
       border-radius: 12px;
     }
+  }
+
+  .arco-checkbox-checked .arco-checkbox-mask {
+    background-color: $primary;
+  }
+
+  .arco-checkbox-mask {
+    border-radius: 4px;
   }
 
   .option {
@@ -386,6 +401,10 @@ $_width: 360px;
         background: $c33;
         border-radius: 12px;
       }
+    }
+
+    .arco-checkbox-checked .arco-checkbox-mask {
+      background-color: $yellow;
     }
   }
 }

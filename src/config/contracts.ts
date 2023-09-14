@@ -16,7 +16,7 @@ export const contracts: { [key in ContractKeys]: Contract } = {
   }),
   derifyApply: new Contract('DerifyApply', {
     [ChainId.MAINNET]: '0x0000000000000000000000000000000000000000',
-    [ChainId.TESTNET]: '0x2e63719E9Bf66C0937A8DCf5b5f1EA1e68AeD4ba'
+    [ChainId.TESTNET]: '0x4f62BA86c0285fe3A8Fc5ce004ddDEc49C26eeCb'
   })
 }
 

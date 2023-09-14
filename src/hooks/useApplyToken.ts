@@ -9,7 +9,7 @@ import { paymentTypeOptions } from '@/pages/web/tokenApply/PaymentOptions'
 import { Rec, TokenKeys, TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getApplyTokenContract } from '@/utils/contractHelpers'
-import { inputParameterConversion, keepDecimals } from '@/utils/tools'
+import { bnMul, inputParameterConversion, keepDecimals } from '@/utils/tools'
 
 interface ApplyNewMarginTokenParams {
   marginToken: string
@@ -21,7 +21,7 @@ interface ApplyNewMarginTokenParams {
 
 interface ApplyNewTradingTokenParams {
   marginToken: string
-  tradingToken: string
+  tradingToken: string[]
   paymentToken: TokenKeys
   paymentAmount: string
   signer: TSigner
@@ -51,11 +51,11 @@ export const useApplyToken = () => {
     const { precision, tokenAddress } = findToken(paymentToken)
     if (!signer) return false
     const contract = getApplyTokenContract(signer)
-    const amount = inputParameterConversion(paymentAmount, precision)
+    const amount = inputParameterConversion(bnMul(paymentAmount, tradingToken.length), precision)
     try {
       const approve = await allowanceApprove(signer, contracts.derifyApply.contractAddress, tokenAddress, amount)
       if (!approve) return false
-      const response = await contract.applySpotToken(marginToken, tradingToken, tokenAddress, amount)
+      const response = await contract.applySpotTokens(marginToken, tradingToken, tokenAddress, amount)
       const receipt = await response.wait()
       return receipt.status
     } catch (e) {
@@ -89,21 +89,19 @@ export const usePaymentAmount = (token: string, base: number) => {
 }
 
 export const useTradingList = (marginToken: string) => {
-  const [tradingList, setTradingList] = useState<Rec[]>([])
-  const [tradingLoad, setTradingLoad] = useBoolean(true)
+  const [tradingList, setTradingList] = useState<{ list: Rec[]; loaded: boolean }>({ list: [], loaded: true })
 
   const func = async (marginToken: string) => {
-    setTradingLoad(true)
-    setTradingList([])
+    setTradingList((val) => ({ ...val, list: [], loaded: true }))
     try {
       const { data: data1 } = await getTradingTokenList()
       const { data: data2 = [] } = await getDerivativeList(marginToken)
       const _data2: Rec[] = data2?.records ?? []
       const filter = (data1?.records ?? []).filter((x: Rec) => !_data2.find((f) => f.token === x.token))
       setTradingList(filter)
-      setTradingLoad(false)
+      setTradingList((val) => ({ ...val, list: filter, loaded: false }))
     } catch (e) {
-      setTradingLoad(false)
+      setTradingList((val) => ({ ...val, list: [], loaded: false }))
     }
   }
 
@@ -112,7 +110,6 @@ export const useTradingList = (marginToken: string) => {
   }, [marginToken])
 
   return {
-    tradingLoad,
     tradingList
   }
 }

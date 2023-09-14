@@ -8,6 +8,7 @@ export default {
     Margin: '保证金',
     Trading: '交易对',
     NoData: '无数据',
+    Select: '请选择',
     Address: '合约地址',
     Advisor: '顾问地址',
     Payment: '付款代币',

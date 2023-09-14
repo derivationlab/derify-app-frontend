@@ -35,9 +35,9 @@ const PaymentOptions = ({ onChange }: { onChange: (p: string) => void }) => {
       <div className="form-item-select s">
         <span className="form-item-select-label">{t('Apply.Payment')}</span>
         <div className="form-item-select-right">
-          <Image src={target?.img} />
+          <Image src={target?.img} className="token-icon" />
           <span className={classNames({ active: visible })}>{target?.key}</span>
-          <em className={classNames({ active: visible })} />
+          <em className={classNames('arrow', { active: visible })} />
         </div>
       </div>
     )

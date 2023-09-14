@@ -42,12 +42,12 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
         <div className="form-item-select-right">
           {target && (
             <>
-              <Image src={target?.logo} />
+              <Image src={target?.logo} className="token-icon" />
               <span className={classNames({ active: visible })}>{target?.symbol}</span>
-              <em className={classNames({ active: visible })} />
+              <em className={classNames('arrow', { active: visible })} />
             </>
           )}
-          {!target && <small>{t('Apply.NoData')}</small>}
+          {!target && <small className="null">{t('Apply.NoData')}</small>}
         </div>
       </div>
     )

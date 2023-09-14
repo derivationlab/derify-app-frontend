@@ -177,6 +177,34 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "marginToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address[]",
+        "name": "spotTokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address",
+        "name": "paymentToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "paymentAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "applySpotTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "derifyConsultant",
     "outputs": [

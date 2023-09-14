@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useBoolean } from 'react-use'
 
 import { getDerivativeList, getTradingTokenList } from '@/api'
 import contracts from '@/config/contracts'
@@ -94,12 +93,15 @@ export const useTradingList = (marginToken: string) => {
   const func = async (marginToken: string) => {
     setTradingList((val) => ({ ...val, list: [], loaded: true }))
     try {
-      const { data: data1 } = await getTradingTokenList()
-      const { data: data2 = [] } = await getDerivativeList(marginToken)
-      const _data2: Rec[] = data2?.records ?? []
-      const filter = (data1?.records ?? []).filter((x: Rec) => !_data2.find((f) => f.token === x.token))
-      setTradingList(filter)
-      setTradingList((val) => ({ ...val, list: filter, loaded: false }))
+      if (!marginToken) {
+        setTradingList((val) => ({ ...val, list: [], loaded: false }))
+      } else {
+        const { data: data1 } = await getTradingTokenList()
+        const { data: data2 = [] } = await getDerivativeList(marginToken)
+        const _data2: Rec[] = data2?.records ?? []
+        const filter = (data1?.records ?? []).filter((x: Rec) => !_data2.find((f) => f.token === x.token))
+        setTradingList((val) => ({ ...val, list: filter, loaded: false }))
+      }
     } catch (e) {
       setTradingList((val) => ({ ...val, list: [], loaded: false }))
     }

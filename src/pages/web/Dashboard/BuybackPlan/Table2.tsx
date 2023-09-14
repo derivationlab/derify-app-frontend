@@ -16,7 +16,7 @@ import { RowTime } from '@/pages/web/Broker/Workbench/c/Data/common'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenListStore } from '@/store'
 import { Rec } from '@/typings'
-import { calcShortHash } from '@/utils/tools'
+import { calcDateDuration, calcShortHash } from '@/utils/tools'
 
 const Table2 = () => {
   const { t } = useTranslation()
@@ -56,7 +56,10 @@ const Table2 = () => {
         title: t('NewDashboard.BurnHistory.Time', 'Time'),
         dataIndex: 'block_timestamp',
         align: 'right',
-        render: (_: string) => <RowTime time={Number(_) * 1000} />
+        render: (_: string) => {
+          const [days, hours] = calcDateDuration(Number(_) * 1000, true)
+          return <RowTime time={Number(_) * 1000} text={`${days} days ${hours} hrs ago`} />
+        }
       }
     ]
   }, [t]) as Rec[]

@@ -8,14 +8,15 @@ dayjs.extend(relativeTime)
 
 interface TimeProps {
   time: string | number
+  text?: string
 }
 
-export const RowTime: FC<TimeProps> = ({ time }) => {
+export const RowTime: FC<TimeProps> = ({ time, text }) => {
   const timeFormat = isMobile ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss'
   return (
     <div className="web-broker-table-time">
       <time>{time ? dayjs(time).format(timeFormat) : 'No Tx.'}</time>
-      {time && <em>{dayjs(time).fromNow()}</em>}
+      {time && <em>{text || dayjs(time).fromNow()}</em>}
     </div>
   )
 }

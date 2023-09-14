@@ -76,7 +76,7 @@ const MarketInfo: FC = () => {
           const _prices = prices ?? Object.create(null)
           const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
           const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
-          const equityValue1 = bnMul(_prices[findKey] ?? 0, findEquity?.trading_net_value ?? 0)
+          const equityValue1 = findEquity?.trading_net_value ?? 0
           const equityValue2 = bnMul(_prices[findKey] ?? 0, volume2)
           return (
             <>
@@ -133,7 +133,7 @@ const MarketInfo: FC = () => {
           const _prices = prices ?? Object.create(null)
           const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
           const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
-          const equityValue = bnMul(findEquity?.trading_net_value ?? 0, _prices[findKey] ?? 0)
+          const equityValue = findEquity?.trading_net_value ?? 0
           return (
             <>
               <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />

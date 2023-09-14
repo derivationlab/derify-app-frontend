@@ -50,7 +50,7 @@ export const useApplyToken = () => {
     const { precision, tokenAddress } = findToken(paymentToken)
     if (!signer) return false
     const contract = getApplyTokenContract(signer)
-    const amount = inputParameterConversion(bnMul(paymentAmount, tradingToken.length), precision)
+    const amount = inputParameterConversion(paymentAmount, precision)
     try {
       const approve = await allowanceApprove(signer, contracts.derifyApply.contractAddress, tokenAddress, amount)
       if (!approve) return false
@@ -69,20 +69,21 @@ export const useApplyToken = () => {
   }
 }
 
-export const usePaymentAmount = (token: string, base: number) => {
+export const usePaymentAmount = (token: string, base: number, count = 1) => {
   const { data: tokenPrice } = usePlatformTokenPrice()
-
   return useMemo(() => {
-    if (!token) return 0
+    if (!token) return ['0', '0']
     const target = paymentTypeOptions.find((l) => l.val === token)
-    switch (target?.key) {
-      case 'USDT':
-        return base
-      case 'DRF':
-        const _ = Number(tokenPrice)
-        return _ === 0 ? 0 : keepDecimals((base * 0.9) / _, 2)
-      default:
-        throw new Error(`Unknown payment token: ${token}`)
+    if (target?.key === 'USDT') {
+      const total1 = bnMul(base, count)
+      return [keepDecimals(total1, 2), total1]
+    } else if (target?.key === 'DRF') {
+      const price = Number(tokenPrice)
+      const discount = price === 0 ? 0 : (base * 0.9) / price
+      const total2 = bnMul(discount, count)
+      return [keepDecimals(total2, 2), total2]
+    } else {
+      throw new Error(`Unknown payment token: ${token}`)
     }
   }, [token, tokenPrice])
 }

@@ -27,8 +27,9 @@ const TradingApply = () => {
   const { applyNewTradingToken } = useApplyToken()
   const [isLoading, setLoading] = useBoolean(false)
   const [marginToken, setMarginToken] = useState<string>('')
+  const [tradingToken, setTradingToken] = useState<string[]>([])
   const [paymentToken, setPaymentToken] = useState<string>('')
-  const paymentAmount = usePaymentAmount(paymentToken, 200)
+  const [paymentAmount, paymentAmountOriginValue] = usePaymentAmount(paymentToken, 200, tradingToken.length)
   const balances = useBalancesStore((state) => state.balances)
 
   const balance = useMemo(() => balances?.[paymentToken] ?? 0, [paymentToken, balances])
@@ -46,24 +47,23 @@ const TradingApply = () => {
       await form.validate()
 
       const toast = window.toast.loading(t('common.pending'))
-      const { marginToken, tradingToken, paymentToken, paymentAmount } = form.getFieldsValue([
+      const { marginToken, tradingToken, paymentToken } = form.getFieldsValue([
         'marginToken',
         'tradingToken',
-        'paymentToken',
-        'paymentAmount'
+        'paymentToken'
       ])
       console.info({
         marginToken,
         paymentToken,
         tradingToken,
-        paymentAmount,
+        paymentAmount: paymentAmountOriginValue,
         signer
       })
 
       const status = await applyNewTradingToken({
         marginToken,
         paymentToken,
-        paymentAmount,
+        paymentAmount: paymentAmountOriginValue,
         tradingToken,
         signer
       })
@@ -80,7 +80,7 @@ const TradingApply = () => {
     } catch (error) {
       setLoading(false)
     }
-  }, [signer])
+  }, [signer, paymentAmountOriginValue])
 
   useEffect(() => {
     form.setFieldValue('paymentAmount', paymentAmount)
@@ -93,7 +93,7 @@ const TradingApply = () => {
           <MarginOptions onChange={setMarginToken} />
         </FormItem>
         <FormItem field="tradingToken" rules={[{ required: true, message: t('Apply.Required') }]}>
-          <TokenOptions onChange={() => null} marginToken={marginToken} />
+          <TokenOptions onChange={setTradingToken} marginToken={marginToken} />
         </FormItem>
         <FormItem field="paymentToken">
           <PaymentOptions onChange={setPaymentToken} />

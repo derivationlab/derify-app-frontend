@@ -30,7 +30,7 @@ const MarginApply = () => {
   const [isLoading, setLoading] = useBoolean(false)
   const [paymentToken, setPaymentToken] = useState<string>('')
   const balances = useBalancesStore((state) => state.balances)
-  const paymentAmount = usePaymentAmount(paymentToken, 5000)
+  const [paymentAmount] = usePaymentAmount(paymentToken, 5000)
 
   const balance = useMemo(() => balances?.[paymentToken] ?? 0, [paymentToken, balances])
 

@@ -27,7 +27,7 @@ const ApplyOptions = ({ onChange }: { onChange: (p: string) => void }) => {
     return (
       <div className="form-item-select">
         <span>{t(`Apply.${applyTypeOptions.find((l) => l.val === selected)?.val}`)}</span>
-        <em className={classNames({ open: visible })} />
+        <em className={classNames('arrow', { open: visible })} />
       </div>
     )
   }, [t, selected, visible])

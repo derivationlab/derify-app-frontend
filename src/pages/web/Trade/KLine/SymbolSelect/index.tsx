@@ -18,6 +18,7 @@ import NoResults from '@/pages/web/Trade/c/NoResults'
 import { Rec } from '@/typings'
 
 let seqCount = 0
+let switchSettings = 0
 let temporaryStorage: any[] = []
 
 interface Resource {
@@ -73,6 +74,8 @@ const SymbolSelect = () => {
   }, [spotPrice, quoteToken, checking])
 
   const morePairs = useCallback(async () => {
+    switchSettings = 1
+
     const { data } = await getDerivativeList(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
       const filterRecords = data.records.filter((r: Rec) => r.open) // opening
@@ -84,6 +87,8 @@ const SymbolSelect = () => {
       setResource((val) => ({ ...val, originData: deduplication }))
       if (data.records.length === 0 || data.records.length < TRADING_VISIBLE_COUNT) seqCount = seqCount - 1
     }
+
+    switchSettings = 0
   }, [protocolConfig, resource.originData])
 
   /**
@@ -132,7 +137,7 @@ const SymbolSelect = () => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
               console.info('IntersectionObserver......')
               seqCount += 1
-              void morePairs()
+              if (switchSettings === 0) void morePairs()
             }
           })
         },

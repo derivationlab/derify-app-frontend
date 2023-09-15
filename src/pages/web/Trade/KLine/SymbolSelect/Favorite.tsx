@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useAccount } from 'wagmi'
 
-import { useMemo } from 'react'
+import { useMemo, MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { favoriteTradingPairs } from '@/api'
@@ -28,7 +28,7 @@ const Favorite = ({ data }: Props) => {
     return [find ? 'star-fill.svg' : 'star.svg', Boolean(find)]
   }, [traderFavorite])
 
-  const func = async (e: any) => {
+  const func = async (e: MouseEvent<HTMLElement>) => {
     if (typeof e?.stopPropagation === 'function') e.stopPropagation()
     try {
       const params = {

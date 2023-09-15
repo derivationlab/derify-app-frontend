@@ -28,8 +28,8 @@ const Favorite = ({ data }: Props) => {
     return [find ? 'star-fill.svg' : 'star.svg', Boolean(find)]
   }, [traderFavorite])
 
-  const func = async (event: any) => {
-    if (typeof event?.stopPropagation === 'function') event.stopPropagation()
+  const func = async (e: any) => {
+    if (typeof e?.stopPropagation === 'function') e.stopPropagation()
     try {
       const params = {
         name,

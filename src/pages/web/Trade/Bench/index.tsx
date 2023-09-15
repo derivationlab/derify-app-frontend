@@ -7,12 +7,12 @@ import { useTranslation } from 'react-i18next'
 import { userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import LeverageSelect from '@/components/common/Form/LeverageSelect'
-import NotConnect from '@/components/web/NotConnect'
 import { isOpeningMinLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { useOpeningMinLimit } from '@/hooks/useOpeningMinLimit'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
 import { useTokenSpotPrice } from '@/hooks/useTokenSpotPrices'
+import NotConnected from '@/pages/web/Trade/Bench/c/NotConnected'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
@@ -255,9 +255,7 @@ const Bench: FC = () => {
             </Row>
           )}
         </div>
-        <div className="web-trade-bench-connect">
-          <NotConnect />
-        </div>
+        <NotConnected />
       </div>
       <PositionOpenDialog
         data={state.openingParams}

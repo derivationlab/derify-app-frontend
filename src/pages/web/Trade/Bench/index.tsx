@@ -255,7 +255,9 @@ const Bench: FC = () => {
             </Row>
           )}
         </div>
-        <NotConnect />
+        <div className="web-trade-bench-connect">
+          <NotConnect />
+        </div>
       </div>
       <PositionOpenDialog
         data={state.openingParams}

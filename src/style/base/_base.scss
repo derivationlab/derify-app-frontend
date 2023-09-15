@@ -129,5 +129,10 @@ body {
   }
 }
 
+.overlay{
+  top:0;left:0;right:0;bottom:0;
+  position: absolute;
+}
+
 $header-height: 114px;
 $header-bottom: 4px;

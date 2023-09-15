@@ -10,14 +10,15 @@ import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
 import { useTradingList } from '@/hooks/useApplyToken'
 import { MultipleToken } from '@/pages/web/tokenApply/MultipleToken'
+import emitter, { EventTypes } from '@/utils/emitter'
 
 const Option = Select.Option
 
 const TokenOptions = ({ onChange, marginToken }: { onChange: (p: string[]) => void; marginToken: string }) => {
   const { t } = useTranslation()
+  const { tradingList } = useTradingList(marginToken)
   const [visible, setVisible] = useBoolean(false)
   const [selected, setSelected] = useState<string[]>([])
-  const { tradingList } = useTradingList(marginToken)
 
   const innerContent = useMemo(() => {
     const { list, loaded } = tradingList
@@ -62,17 +63,18 @@ const TokenOptions = ({ onChange, marginToken }: { onChange: (p: string[]) => vo
     )
   }, [t, innerContent])
 
-  // useEffect(() => {
-  //   onChange([])
-  //   setSelected([])
-  // }, [marginToken])
-
   useEffect(() => {
     if (tradingList.list.length) {
       const _ = [tradingList.list[0]?.token]
       onChange(_)
       setSelected(_)
     }
+    emitter.removeAllListeners(EventTypes.resetTokenApplyForm)
+    emitter.addListener(EventTypes.resetTokenApplyForm, () => {
+      const _ = [tradingList.list[0]?.token]
+      onChange(_)
+      setSelected(_)
+    })
   }, [marginToken, tradingList])
 
   return (

@@ -12,6 +12,7 @@ import MarginOptions from '@/pages/web/tokenApply/MarginOptions'
 import PaymentOptions from '@/pages/web/tokenApply/PaymentOptions'
 import TokenOptions from '@/pages/web/tokenApply/TokenOptions'
 import { useBalancesStore } from '@/store'
+import emitter, { EventTypes } from '@/utils/emitter'
 import { isET, isLT, keepDecimals } from '@/utils/tools'
 
 export const config = {
@@ -52,14 +53,6 @@ const TradingApply = () => {
         'tradingToken',
         'paymentToken'
       ])
-      console.info({
-        marginToken,
-        paymentToken,
-        tradingToken,
-        paymentAmount: paymentAmountOriginValue,
-        signer
-      })
-
       const status = await applyNewTradingToken({
         marginToken,
         paymentToken,
@@ -71,6 +64,7 @@ const TradingApply = () => {
       if (status) {
         window.toast.success(t('common.success'))
         form.resetFields()
+        emitter.emit(EventTypes.resetTokenApplyForm)
       } else {
         window.toast.error(t('common.failed'))
       }

@@ -38,7 +38,6 @@ const Header: FC = () => {
             {t('Nav.Nav.Broker', 'Broker')}
           </NavLink>
           <NavDashboard />
-          <NavLink to="/faucet">{t('Nav.Nav.Faucet')}</NavLink>
         </nav>
         <div className="web-header-tools">
           <SelectNetworkButton />

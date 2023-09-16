@@ -39,12 +39,6 @@ export const traderInfoUpdates = async (body: Rec) => {
   return response
 }
 
-interface GiveawayParams {
-  value: string
-  event: string //your chosen event
-  remark: string //add remark optional
-}
-
 export * from './data'
 export * from './earn'
 export * from './trade'

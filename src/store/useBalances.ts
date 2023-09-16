@@ -20,7 +20,7 @@ export const getTokenBalance = async (account: string, address: string) => {
 
 export const getTokenBalances = async (account: string, list: (typeof marginTokenList)[]) => {
   let output = Object.create(null)
-  const _tokens = [tokens.edrf, ...list]
+  const _tokens = [...Object.values(tokens), ...list]
   const calls = _tokens.map((t: Rec) => ({
     name: 'balanceOf',
     params: [account],
@@ -37,6 +37,7 @@ export const getTokenBalances = async (account: string, list: (typeof marginToke
       const balance = formatUnits(t[0], 18)
       output = {
         ...output,
+        [calls[index].address]: balance,
         [_tokens[index].symbol]: balance,
         [_tokens[index].symbol.toLowerCase()]: balance
       }

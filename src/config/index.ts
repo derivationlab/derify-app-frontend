@@ -22,6 +22,8 @@ export const WEBSITE_URL = 'https://derify.finance/'
 export const PANCAKE_SWAP_URL = 'https://pancakeswap.finance/'
 export const STATIC_RESOURCES_URL = 'https://derify-app-resources.vercel.app/image/'
 export const LANG_CACHE_KEY = 'LANG'
+export const TRADING_VISIBLE_COUNT = 100
+export const MARGIN_VISIBLE_COUNT = 100
 export const BEST_RPC_KEY = 'rpc'
 export const QUOTE_TOKEN_KEY = 'quote_v0.0.1'
 export const MARGIN_TOKEN_KEY = 'margin_v0.0.1'
@@ -35,6 +37,8 @@ export const Github = 'https://github.com/derivationlab'
 export const Discord = 'https://discord.gg/kSR6tz2pdm'
 export const Twitter = 'https://twitter.com/DerifyProtocol'
 export const Telegram = 'https://t.me/DerifyProtocol_Official'
+export const Advisor =
+  'https://docs.google.com/forms/d/e/1FAIpQLSeaY9mj4Ix473wlGiGgROGXPIZsbps7ekbYvz5JBYoJacypSA/viewform'
 export const Communities = {
   Twitter,
   Telegram,

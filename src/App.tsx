@@ -9,7 +9,7 @@ import { Route, Switch } from 'react-router-dom'
 
 import Spinner from '@/components/common/Spinner'
 import { useMarginLoading } from '@/hooks/useMarginLoading'
-import GlobalUpdater from '@/pages/updater/GlobalUpdater'
+import Initial from '@/pages/web/initial'
 import '@/style/style.scss'
 
 window.toast = toast
@@ -18,14 +18,13 @@ const WebEntry = lazy(() => import('@/pages/web'))
 
 function App() {
   const { isAccessible } = useMarginLoading()
-
   if (!isAccessible) return <Spinner fixed />
 
   return (
     <>
-      <GlobalUpdater />
+      <Initial />
 
-      <Suspense fallback={null}>
+      <Suspense fallback={<Spinner fixed />}>
         <Switch>
           <Route path="/" component={WebEntry} />
         </Switch>

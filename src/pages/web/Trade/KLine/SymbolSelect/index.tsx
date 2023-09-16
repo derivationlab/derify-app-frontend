@@ -1,103 +1,115 @@
-import classNames from 'classnames'
 import { getAddress } from 'ethers/lib/utils'
 import { debounce, uniqBy } from 'lodash'
 
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
-import { useClickAway, useToggle } from 'react-use'
 
 import { getDerivativeList, searchDerivative } from '@/api'
 import ChangePercent from '@/components/common/ChangePercent'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { ZERO } from '@/config'
-import { usePriceDecimals, useTokenSpotPrice, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
+import { TRADING_VISIBLE_COUNT, ZERO } from '@/config'
+import { getPairAddressList } from '@/funcs/helper'
+import Favorite from '@/pages/web/Trade/KLine/SymbolSelect/Favorite'
+import { useIndicator, useInitData } from '@/pages/web/Trade/KLine/SymbolSelect/hooks'
 import NoResults from '@/pages/web/Trade/c/NoResults'
-import {
-  getPairAddressList,
-  useDerivativeListStore,
-  useMarginIndicatorsStore,
-  useMarginTokenStore,
-  useProtocolConfigStore,
-  useQuoteTokenStore,
-  useTokenSpotPricesStore
-} from '@/store'
-import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 
 let seqCount = 0
-const visibleCount = 12
+let switchSettings = 0
+let temporaryStorage: any[] = []
 
-interface PairOptionsInit {
-  data: Rec[]
-  loaded: boolean
+interface Resource {
+  originData: Rec[]
+  searchData: Rec[]
+  searchKeywords: string
+  searchLoaded: boolean
 }
 
-const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
-  const ref = useRef(null)
-  const bottomRef = useRef<any>()
+const initResource = { originData: [], searchData: [], searchLoaded: false, searchKeywords: '' }
+
+const SymbolSelect = () => {
+  const bottomRef = useRef(null)
   const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
-  const [visible, toggleVisible] = useToggle(false)
-  const [pairOptions, setPairOptions] = useState<PairOptionsInit>({ data: [], loaded: false })
-  const [fuzzySearch, setFuzzySearch] = useState<string>('')
-  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
-  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const derivativeList = useDerivativeListStore((state) => state.derivativeListOpen)
-  const derivativeListLoaded = useDerivativeListStore((state) => state.derivativeListLoaded)
-  const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
-  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
-  const updateSpotPrices = useTokenSpotPricesStore((state) => state.updateTokenSpotPricesForTrading)
-  const { priceDecimals } = usePriceDecimals(pairOptions.data)
-  const { data: spotPrices } = useTokenSpotPrices(pairOptions.data, priceDecimals, quoteToken)
-  const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
+  const [resource, setResource] = useState<Resource>(initResource)
+  const {
+    checking,
+    spotPrice,
+    quoteToken,
+    spotPrices,
+    indicators,
+    marginToken,
+    derivativeList,
+    traderFavorite,
+    protocolConfig,
+    updateSpotPrices,
+    updateQuoteToken
+  } = useInitData(uniqBy([...resource.originData, ...resource.searchData], 'token'))
+  const { indicator } = useIndicator(quoteToken)
 
-  const indicator = useMemo(() => {
-    if (marginIndicators) {
-      const keys = Object.keys(marginIndicators)
-      const find = keys.find((key) => getAddress(key) === getAddress(quoteToken.token))
-      return find ? marginIndicators[find]?.price_change_rate ?? 0 : 0
-    }
-    return 0
-  }, [quoteToken, marginIndicators])
+  const different = useMemo(() => {
+    const reset = uniqBy([...traderFavorite, ...resource.originData], 'token')
+    return resource.searchKeywords.trim() ? resource.searchData : reset
+  }, [resource, traderFavorite])
 
-  const currentTK = useMemo(() => {
-    if (!derivativeListLoaded) return <div className="web-trade-symbol-select-curr s">{t('common.Loading')} ...</div>
+  const currentTk = useMemo(() => {
+    if (checking) return <div className="web-trade-symbol-select-curr s">{t('common.Loading')} ...</div>
     if (derivativeList.length)
       return (
-        <div className="web-trade-symbol-select-curr" onClick={() => toggleVisible(!visible)}>
+        <div className="web-trade-symbol-select-curr">
           <h4>{quoteToken.name}</h4>
           <aside>
             <Skeleton rowsProps={{ rows: 1 }} animation loading={!spotPrices}>
               <BalanceShow value={spotPrice} decimal={Number(spotPrice) === 0 ? 2 : quoteToken.decimals} />
             </Skeleton>
             <ChangePercent value={indicator} />
+            <div className="icon" />
           </aside>
         </div>
       )
     return <div className="web-trade-symbol-select-curr s">{t('Trade.Derivative.NoTrading')}</div>
-  }, [spotPrice, quoteToken, derivativeListLoaded])
+  }, [spotPrice, quoteToken, checking])
 
   const morePairs = useCallback(async () => {
+    switchSettings = 1
+
     const { data } = await getDerivativeList(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
       const filterRecords = data.records.filter((r: Rec) => r.open) // opening
       const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)
       const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed
-      const combine = [...pairOptions.data, ...output]
+      const combine = [...resource.originData, ...output]
       const deduplication = uniqBy(combine, 'token')
-      setPairOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
-      if (data.records.length === 0 || data.records.length < visibleCount) seqCount = seqCount - 1
+      temporaryStorage = deduplication
+      setResource((val) => ({ ...val, originData: deduplication }))
+      if (data.records.length === 0 || data.records.length < TRADING_VISIBLE_COUNT) seqCount = seqCount - 1
     }
-  }, [protocolConfig, pairOptions.data])
 
+    switchSettings = 0
+  }, [protocolConfig, resource.originData])
+
+  /**
+   * TODO:
+   * If the transaction pair cached by the browser is found to be off the shelf (open or not open),
+   * other transaction pair information will be displayed
+   *
+   * FIXME：
+   * xx/xx - api error
+   */
   const fuzzySearchFunc = useCallback(
-    debounce(async (marginToken: string, fuzzySearch: string) => {
-      const { data = [] } = await searchDerivative(marginToken, fuzzySearch)
-      setPairOptions({ data, loaded: false })
+    debounce(async (marginToken: string, fuzzySearch: string, factory: string) => {
+      try {
+        const { data } = await searchDerivative(marginToken, fuzzySearch)
+        const filterRecords = (data as any[]).filter((d) => d.open) // opening
+        const pairAddresses = await getPairAddressList(factory, filterRecords)
+        const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed
+        setResource((val) => ({ ...val, searchData: output, searchLoaded: false }))
+      } catch (e) {
+        setResource((val) => ({ ...val, searchData: [], searchLoaded: false }))
+      }
     }, 100),
     []
   )
@@ -107,25 +119,25 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
   }, [spotPrices])
 
   useEffect(() => {
-    if (fuzzySearch.trim()) {
-      setPairOptions({ data: [], loaded: true })
-      void fuzzySearchFunc(marginToken.address, fuzzySearch)
+    if (resource.searchKeywords.trim()) {
+      setResource((val) => ({ ...val, searchData: [], searchLoaded: true }))
+      if (protocolConfig) void fuzzySearchFunc(marginToken.address, resource.searchKeywords, protocolConfig.factory)
     } else {
-      seqCount = 0
-      if (derivativeList.length) {
-        setPairOptions({ data: derivativeList, loaded: false })
-      }
+      const data = temporaryStorage.length === 0 ? derivativeList : temporaryStorage
+      const deduplication = uniqBy([...traderFavorite, ...data], 'token')
+      setResource((val) => ({ ...val, originData: deduplication, searchData: [], searchLoaded: false }))
     }
-  }, [marginToken, fuzzySearch, derivativeList])
+  }, [marginToken, derivativeList, protocolConfig, traderFavorite, resource.searchKeywords])
 
   useEffect(() => {
-    if (pairOptions.data.length) {
+    if (resource.originData.length) {
       const intersectionObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting && entry.target.id === 'bottom') {
+              console.info('IntersectionObserver......')
               seqCount += 1
-              void morePairs()
+              if (switchSettings === 0) void morePairs()
             }
           })
         },
@@ -139,53 +151,40 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
     return () => {
       observerRef.current && observerRef.current.disconnect()
     }
-  }, [pairOptions.data.length])
-
-  useClickAway(ref, () => toggleVisible(false))
+  }, [resource.originData.length])
 
   return (
     <div className="web-trade-symbol-select">
-      <div className={classNames('web-trade-symbol-select', { show: visible })} ref={ref}>
-        {isMobile && (
-          <div
-            className="web-trade-symbol-select-toggle"
-            onClick={() => {
-              onToggle?.()
-              toggleVisible(false)
-            }}
-          />
-        )}
-      </div>
-
       <DropDownList
-        entry={currentTK}
+        entry={currentTk}
         height={588}
-        loading={pairOptions.loaded}
+        loading={resource.searchLoaded}
         disabled={derivativeList.length === 0}
-        onSearch={setFuzzySearch}
+        onSearch={(key) => setResource((val) => ({ ...val, searchKeywords: key }))}
         placeholder={t('Trade.kline.SearchTip')}
       >
-        {pairOptions.data.length ? (
-          pairOptions.data.map((o: Rec, index: number) => {
-            const len = pairOptions.data.length
-            const idInit = index === len - 1 ? 'bottom' : undefined
-            const refInit = index === len - 1 ? bottomRef : null
-            const id = fuzzySearch.trim() ? undefined : idInit
-            const ref = fuzzySearch.trim() ? null : refInit
-            const keys = Object.keys(marginIndicators ?? Object.create(null))
+        {different.length ? (
+          different.map((o: Rec, index: number) => {
+            const len = different.length
+            const id = index === len - 1 ? 'bottom' : undefined
+            const ref = index === len - 1 ? bottomRef : null
+            const idInit = resource.searchKeywords.trim() ? undefined : id
+            const refInit = resource.searchKeywords.trim() ? null : ref
+            const keys = Object.keys(indicators ?? Object.create(null))
             const findKey = keys.find((key) => getAddress(key) === getAddress(o.token))
-            const values = marginIndicators?.[findKey ?? ''] ?? Object.create(null)
+            const values = indicators?.[findKey ?? ''] ?? Object.create(null)
             const findToken = (spotPrices ?? []).find((t) => t.name === o.name)
             const decimals = Number(findToken?.price ?? 0) === 0 ? 2 : o.price_decimals
             return (
               <DropDownListItem
-                key={o.name}
-                id={id}
-                ref={ref}
+                key={o.name + index}
+                id={idInit}
+                ref={refInit}
                 content={
                   isMobile ? (
                     <>
                       <aside>
+                        <Favorite data={o} />
                         <h5>{o.name}</h5>
                         <BalanceShow value={values?.apy ?? 0} percent unit="APR" />
                       </aside>
@@ -196,6 +195,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
                     </>
                   ) : (
                     <>
+                      <Favorite data={o} />
                       <h5>{o.name}</h5>
                       <BalanceShow value={findToken?.price ?? 0} decimal={decimals} />
                       <ChangePercent value={values?.price_change_rate ?? 0} />
@@ -210,7 +210,7 @@ const SymbolSelect = ({ onToggle }: { onToggle?: () => void }) => {
               />
             )
           })
-        ) : pairOptions.loaded ? null : (
+        ) : resource.searchLoaded ? null : (
           <NoResults />
         )}
       </DropDownList>

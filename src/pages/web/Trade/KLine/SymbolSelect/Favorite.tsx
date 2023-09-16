@@ -1,0 +1,53 @@
+import { useAtomValue } from 'jotai'
+import { useAccount } from 'wagmi'
+
+import { useMemo, MouseEvent } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { favoriteTradingPairs } from '@/api'
+import { traderFavoriteAtom } from '@/atoms/useTraderFavorite'
+import Image from '@/components/common/Image'
+import { useMarginTokenStore } from '@/store'
+import { MarginTokenState } from '@/store/types'
+import { Rec } from '@/typings'
+import emitter, { EventTypes } from '@/utils/emitter'
+
+interface Props {
+  data: Rec
+}
+
+const Favorite = ({ data }: Props) => {
+  const { t } = useTranslation()
+  const { address } = useAccount()
+  const { name, token, derivative, price_decimals } = data
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const traderFavorite = useAtomValue(traderFavoriteAtom)
+
+  const event = useMemo(() => {
+    const find = traderFavorite.find((t) => t.name === name)
+    return [find ? 'star-fill.svg' : 'star.svg', Boolean(find)]
+  }, [traderFavorite])
+
+  const func = async (e: MouseEvent<HTMLElement>) => {
+    if (typeof e?.stopPropagation === 'function') e.stopPropagation()
+    try {
+      const params = {
+        name,
+        token,
+        trader: address,
+        operation: event[1] ? 'delete' : 'add',
+        derivative,
+        marginToken: marginToken.address,
+        price_decimals
+      }
+      const data = await favoriteTradingPairs(params)
+      if (data.code === 0) emitter.emit(EventTypes.updateTraderFavorite)
+    } catch (e) {
+      window.toast.error(t('common.failed'))
+    }
+  }
+
+  return <Image src={`icon/${event[0]}`} onClick={func} />
+}
+
+export default Favorite

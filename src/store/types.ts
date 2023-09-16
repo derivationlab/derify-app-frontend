@@ -56,7 +56,7 @@ export interface MarginTokenListState {
   pagingParams: typeof pagingParams
   marginTokenList: (typeof marginTokenList)[]
   marginTokenListStore: (typeof marginTokenList)[]
-  marginTokenSymbol: string[]
+  marginTokenListForApply: (typeof marginTokenList)[]
   allMarginTokenList: string[]
   marginTokenListLoaded: boolean
   getMarginTokenList: (index?: number) => Promise<void>

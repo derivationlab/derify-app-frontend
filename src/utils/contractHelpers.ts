@@ -4,7 +4,9 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 
 import { BEST_RPC_KEY, CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
+import applyTokenAbi from '@/config/abi/DerifyApplyToken.json'
 import DerifyBrokerRewardsAbi from '@/config/abi/DerifyBrokerRewards.json'
+import consultantAbi from '@/config/abi/DerifyConsultant.json'
 import DerifyDerivativeAbi from '@/config/abi/DerifyDerivative.json'
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
@@ -13,6 +15,7 @@ import derifyPoolAbi from '@/config/abi/DerifyPool.json'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import DerifyRankAbi from '@/config/abi/DerifyRank.json'
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
+import tokenMintAbi from '@/config/abi/DerifyTokenMint.json'
 import multiCallAbi from '@/config/abi/MM.json'
 import priceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 import bep20Abi from '@/config/abi/erc20.json'
@@ -77,4 +80,16 @@ export const getPriceFeedContract = (address: string, signer?: TSigner) => {
 
 export const getDerifyPoolContract = (signer?: TSigner) => {
   return getContract(derifyPoolAbi, contracts.derifyPool.contractAddress, signer)
+}
+
+export const getTokenMintContract = (address: string, signer?: TSigner) => {
+  return getContract(tokenMintAbi, address, signer)
+}
+
+export const getConsultantContract = (signer?: TSigner) => {
+  return getContract(consultantAbi, contracts.derifyConsultant.contractAddress, signer)
+}
+
+export const getApplyTokenContract = (signer?: TSigner) => {
+  return getContract(applyTokenAbi, contracts.derifyApply.contractAddress, signer)
 }

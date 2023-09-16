@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { getDerivativeList } from '@/api'
 import { ZERO } from '@/config'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
-import { getPairAddressList } from '@/store'
+import { getPairAddressList } from '@/funcs/helper'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
 import multicall, { Call } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
@@ -234,7 +234,16 @@ export const useOwnedPositionsBackUp = (trader?: string, factory?: string, margi
 
   const func = useCallback(
     debounce(async (trader: string, factory: string, marginToken: string) => {
-      const { data } = await getDerivativeList(marginToken, 0, 100)
+      /**
+       * FIXME:?
+       * Orders need to display all trading pairs,
+       * which conflicts with the trading pair paging function.
+       * Currently, more trading pair data is pulled to make up for it.
+       *
+       * If the transaction pair data exceeds 200,
+       * or the centralized interface limits the number, it will be troublesome
+       */
+      const { data } = await getDerivativeList(marginToken, 0, 200)
       if (data?.records) {
         const _pairList = await getPairAddressList(factory, data.records)
         if (_pairList) {

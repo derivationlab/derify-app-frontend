@@ -1,5 +1,6 @@
+import { TRADING_VISIBLE_COUNT } from '@/config'
 import { Rec } from '@/typings'
-import { get, post } from '@/utils/http'
+import { get, http, post } from '@/utils/http'
 
 export const getTradingHistory = async (address: string, trader: string, page: number, offset = 10) => {
   const response = await get(`api/trade_records/${trader}/${address}/${page}/${offset}`)
@@ -11,7 +12,7 @@ export const getDerivativeIndicator = async (marginToken: string) => {
   return response
 }
 
-export const getDerivativeList = async (marginToken: string, page = 0, size = 50) => {
+export const getDerivativeList = async (marginToken: string, page = 0, size = TRADING_VISIBLE_COUNT) => {
   const response = await get(`api/derivative_list/${marginToken}/${page}/${size}`)
   return response
 }
@@ -34,10 +35,17 @@ export const getFavoritePairsList = async (marginToken: string, trader: string) 
  * trader
  * marginToken
  * token
+ * name
+ * derivative
  * operation: add/delete
  * @param body
  */
 export const favoriteTradingPairs = async (body: Rec) => {
   const response = await post('api/collect_token', body)
+  return response
+}
+
+export const getTradingTokenList = async (page = 0, size = TRADING_VISIBLE_COUNT) => {
+  const response = await get(`api/derivative_ref_list/${page}/${size}`)
   return response
 }

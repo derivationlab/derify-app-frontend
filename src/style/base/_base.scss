@@ -9,8 +9,9 @@ html {
 }
 body {
   line-height: 1;
-  font-family: 'Urbanist', sans-serif;
-  font-size: 16px;
+  font-family: 'Urbanist', sans-serif!important;
+  font-size: 16px!important;
+  -webkit-font-smoothing: auto!important;
 
   & > iframe {
     display: none !important;
@@ -43,7 +44,10 @@ body {
 .tc {
   text-align: center;
 }
-
+.ac{
+  display: flex;
+  align-items: center;
+}
 .cf {
   zoom: 1;
   &:before,
@@ -63,8 +67,8 @@ body {
   }
 }
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
   // background: #000;
 }
 ::-webkit-scrollbar-thumb {
@@ -123,6 +127,11 @@ body {
   ::-webkit-scrollbar-track-piece {
     background: $c22;
   }
+}
+
+.overlay{
+  top:0;left:0;right:0;bottom:0;
+  position: absolute;
 }
 
 $header-height: 114px;

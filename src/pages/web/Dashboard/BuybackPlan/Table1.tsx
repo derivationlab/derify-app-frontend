@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import { isEmpty } from 'lodash'
 import Table from 'rc-table'
-import { useBlockNumber } from 'wagmi'
 
 import React, { FC, useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -12,19 +11,22 @@ import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { reducer, stateInit } from '@/reducers/records'
 import { Rec } from '@/typings'
-import { isGT, isGTET, isLT, nonBigNumberInterception } from '@/utils/tools'
+import { bnMul, isGT, isGTET, isLT, nonBigNumberInterception } from '@/utils/tools'
 
 import { TableMargin, TableCountDown } from '../c/TableCol'
 
-const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
-  const [state, dispatch] = useReducer(reducer, stateInit)
-  const { t } = useTranslation()
-  const { data: blockNumber = 0 } = useBlockNumber()
+interface Props {
+  tokenPrice: string
+  buyBackInfo: Rec
+  blockNumber: number
+  marginPrices: Rec
+}
 
-  const { data: tokenPrice } = usePlatformTokenPrice()
+const Table1: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber = 0 }) => {
+  const { t } = useTranslation()
+  const [state, dispatch] = useReducer(reducer, stateInit)
 
   const mColumns = useMemo(() => {
     return [
@@ -37,16 +39,26 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         title: 'Pool/DRF Price',
         dataIndex: 'symbol',
         align: 'right',
-        render: (symbol: string, data: Record<string, any>) => {
+        render: (symbol: string, data: Rec) => {
           let cls = ''
           const price = nonBigNumberInterception(data?.last_drf_price ?? 0, 4)
           if (isGTET(price, tokenPrice)) cls = 'rise'
           if (isLT(price, tokenPrice) && isGT(price, 0)) cls = 'fall'
-          const p = buyBackInfo?.[data.margin_token] ?? 0
+          const findKey = Object.keys(marginPrices).find((l) => l === data.margin_token) ?? ''
+          const volume = buyBackInfo?.[data.margin_token] ?? 0
+          const equityValue = bnMul(marginPrices[findKey] ?? 0, volume)
           return (
             <>
               {buyBackInfo ? (
-                <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
+                <>
+                  <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
+                  <BalanceShow
+                    classNames="s"
+                    value={equityValue}
+                    unit={VALUATION_TOKEN_SYMBOL}
+                    decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals}
+                  />
+                </>
               ) : (
                 <Spinner text="loading" />
               )}
@@ -74,7 +86,7 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         }
       }
     ]
-  }, [t, blockNumber, tokenPrice, buyBackInfo])
+  }, [t, blockNumber, tokenPrice, buyBackInfo, marginPrices])
 
   const wColumns = useMemo(() => {
     return [
@@ -89,8 +101,20 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
           if (!buyBackInfo) return <Spinner text="loading" />
-          const p = buyBackInfo?.[data.margin_token] ?? 0
-          return <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
+          const findKey = Object.keys(marginPrices).find((l) => l === data.margin_token) ?? ''
+          const volume = buyBackInfo?.[data.margin_token] ?? 0
+          const equityValue = bnMul(marginPrices[findKey] ?? 0, volume)
+          return (
+            <>
+              <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
+              <BalanceShow
+                classNames="s"
+                value={equityValue}
+                unit={VALUATION_TOKEN_SYMBOL}
+                decimal={Number(equityValue) === 0 ? 2 : data.amount_decimals}
+              />
+            </>
+          )
         }
       },
       {
@@ -126,7 +150,7 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
         }
       }
     ]
-  }, [t, blockNumber, tokenPrice, buyBackInfo])
+  }, [t, blockNumber, tokenPrice, buyBackInfo, marginPrices])
 
   const emptyText = useMemo(() => {
     if (state.records.loaded) return <Spinner small />
@@ -153,29 +177,19 @@ const Plan: FC<{ buyBackInfo: Rec }> = ({ buyBackInfo }) => {
   }, [])
 
   return (
-    <div className="web-dashboard-plan-list">
-      <header className="web-dashboard-section-header">
-        <h3>{t('NewDashboard.BuybackPlan.BuybackPlan', 'Buyback Plan')}</h3>
-        <div className="web-dashboard-section-header-search">
-          {/*todo search*/}
-          {/*<Input value={keyword} onChange={setKeyword} placeholder={t('NewDashboard.BuybackPlan.SerchTip')}>*/}
-          {/*  <button className="web-dashboard-section-header-search-button" onClick={onSearch} />*/}
-          {/*</Input>*/}
-        </div>
-      </header>
-
+    <>
       <Table
         rowKey="symbol"
         data={state.records.records}
         // @ts-ignore
         columns={isMobile ? mColumns : wColumns}
-        className={classNames('web-broker-table', { 'web-space-table': isMobile })}
+        className={classNames({ 'web-space-table': isMobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />
       <Pagination page={state.pageIndex} total={state.records.totalItems} onChange={onPagination} />
-    </div>
+    </>
   )
 }
 
-export default Plan
+export default Table1

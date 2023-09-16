@@ -12,7 +12,8 @@ export default {
       Data: '数据',
       Overview: '总览',
       BuybackPlan: '回购计划',
-      GrantList: '奖励计划'
+      GrantList: '奖励计划',
+      Advisor: '保证金顾问'
     },
     CW: {
       Title: '选择钱包',

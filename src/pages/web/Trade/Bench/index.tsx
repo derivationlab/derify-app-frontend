@@ -7,12 +7,12 @@ import { useTranslation } from 'react-i18next'
 import { userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import LeverageSelect from '@/components/common/Form/LeverageSelect'
-import NotConnect from '@/components/web/NotConnect'
 import { isOpeningMinLimit } from '@/funcs/helper'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { useOpeningMinLimit } from '@/hooks/useOpeningMinLimit'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
 import { useTokenSpotPrice } from '@/hooks/useTokenSpotPrices'
+import NotConnected from '@/pages/web/Trade/Bench/c/NotConnected'
 import PositionOpenDialog from '@/pages/web/Trade/Dialogs/PositionOpen'
 import { reducer, stateInit } from '@/reducers/opening'
 import {
@@ -79,13 +79,10 @@ const Bench: FC = () => {
     return '--'
   }, [quoteToken, marginIndicators])
 
-  const disabled1 = useMemo(() => {
-    return isLTET(Number(state.openingAmount), 0)
-  }, [state.openingAmount])
-
-  const disabled2 = useMemo(() => {
-    return isLTET(openingParams.openingPrice, 0)
-  }, [openingParams.openingPrice])
+  const disabled = useMemo(
+    () => isLTET(openingParams.openingPrice, 0) || isLTET(Number(state.openingAmount), 0) || !quoteToken.token,
+    [quoteToken, state.openingAmount, openingParams.openingPrice]
+  )
 
   const isOrderConversion = (openType: PositionOrderTypes, price: string): boolean => {
     return openType === PositionOrderTypes.Limit ? isET(spotPrice, price) : false
@@ -210,7 +207,7 @@ const Bench: FC = () => {
           <Row>
             <Col>
               <Button
-                disabled={disabled1 || disabled2 || !quoteToken.token}
+                disabled={disabled}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSideTypes.long)}
@@ -224,7 +221,7 @@ const Bench: FC = () => {
             </Col>
             <Col>
               <Button
-                disabled={disabled1 || disabled2 || !quoteToken.token}
+                disabled={disabled}
                 noDisabledStyle
                 className="web-trade-bench-button-short"
                 onClick={() => openPositionDialog(PositionSideTypes.short)}
@@ -241,7 +238,7 @@ const Bench: FC = () => {
             <Row>
               <Col>
                 <Button
-                  disabled={disabled1 || disabled2 || !quoteToken.token}
+                  disabled={disabled}
                   noDisabledStyle
                   className="web-trade-bench-button-full"
                   onClick={() => openPositionDialog(PositionSideTypes.twoWay)}
@@ -258,7 +255,7 @@ const Bench: FC = () => {
             </Row>
           )}
         </div>
-        <NotConnect />
+        <NotConnected />
       </div>
       <PositionOpenDialog
         data={state.openingParams}

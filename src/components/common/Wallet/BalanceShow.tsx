@@ -1,4 +1,4 @@
-import classNames from 'classnames'
+import cls from 'classnames'
 import numeral from 'numeral'
 
 import React, { FC, useMemo } from 'react'
@@ -11,12 +11,13 @@ interface Props {
   value: number | string
   percent?: boolean
   decimal?: number
+  classNames?: string | string[]
 }
 
 const limit = 0.000001
 const million = 1000000
 
-const BalanceShow: FC<Props> = ({ unit, rule, value, percent = false, decimal = 2 }) => {
+const BalanceShow: FC<Props> = ({ unit, rule, value, percent = false, decimal = 2, classNames }) => {
   const [isMillion, int, dec] = useMemo(() => {
     let split = []
     const padEnd = '0'.padEnd(decimal, '0')
@@ -29,7 +30,7 @@ const BalanceShow: FC<Props> = ({ unit, rule, value, percent = false, decimal = 
   }, [value, percent])
 
   return (
-    <div className={classNames('web-balance-show', { million: isMillion })}>
+    <div className={cls('web-balance-show', classNames, { million: isMillion })}>
       <strong>{int ?? 0}</strong>
       <small>
         {dec && `.${dec}`}

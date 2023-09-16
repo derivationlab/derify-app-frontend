@@ -1,5 +1,6 @@
 .web-tabs {
   border: none;
+  @include ns;
   .rc-tabs-tab {
     font-size: 18px;background: none;
     &-btn {
@@ -20,6 +21,15 @@
   }
   .rc-tabs-ink-bar {
     height: 12px;border-radius: 6px;background: $red;
+  }
+
+  // table in tabs style reset
+  .rc-table {
+    padding-top: 0;
+    &:after,
+    &:before{
+      height: 0;
+    }
   }
 }
 

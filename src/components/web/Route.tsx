@@ -8,7 +8,7 @@ import { Redirect, useParams } from 'react-router-dom'
 import { checkMarginToken } from '@/api'
 import { userBrokerBoundAtom, whetherUserIsBrokerAtom } from '@/atoms/useBrokerData'
 import Spinner from '@/components/common/Spinner'
-import BrokerConnect from '@/pages/web/Broker/c/Connect'
+import NotConnect from '@/components/web/NotConnect'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 
@@ -47,7 +47,7 @@ export const R2 = (props: PropsWithChildren<any>) => {
   const userBrokerBound = useAtomValue(userBrokerBoundAtom)
 
   return useMemo(() => {
-    if (!address) return <BrokerConnect />
+    if (!address) return <NotConnect />
     if (!isUndefined(userBrokerBound)) return userBrokerBound ? <Redirect to="/broker" /> : children
     return <Spinner fixed />
   }, [address, userBrokerBound])
@@ -61,7 +61,7 @@ export const R3 = (props: PropsWithChildren<any>) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   return useMemo(() => {
-    if (!address) return <BrokerConnect />
+    if (!address) return <NotConnect />
     if (!isUndefined(userBrokerBound) && !isUndefined(whetherUserIsBroker)) {
       if (whetherUserIsBroker) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
       if (!isEmpty(userBrokerBound)) return children
@@ -79,7 +79,7 @@ export const R4 = (props: PropsWithChildren<any>) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   return useMemo(() => {
-    if (!address) return <BrokerConnect />
+    if (!address) return <NotConnect />
     if (!isUndefined(userBrokerBound) && !isUndefined(whetherUserIsBroker)) {
       if (whetherUserIsBroker) return <Redirect to={`/${marginToken.symbol}/broker/workbench`} />
       if (!isEmpty(userBrokerBound)) return <Redirect to="/broker" />
@@ -109,7 +109,7 @@ export const R5 = (props: PropsWithChildren<any>) => {
   return useMemo(() => {
     if (testing === null) return <Spinner fixed />
     const content = testing ? children : <Redirect to={`/${marginToken.symbol}/${pathKey}`} />
-    if (!address) return <BrokerConnect />
+    if (!address) return <NotConnect />
     if (!isUndefined(whetherUserIsBroker)) return whetherUserIsBroker ? content : <Redirect to="/broker" />
     return <Spinner fixed />
   }, [address, pathKey, testing, marginToken, whetherUserIsBroker])
@@ -122,7 +122,7 @@ export const R6 = (props: PropsWithChildren<any>) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   return useMemo(() => {
-    if (!address) return <BrokerConnect />
+    if (!address) return <NotConnect />
     if (!isUndefined(whetherUserIsBroker))
       return whetherUserIsBroker ? <Redirect to={`/${marginToken.symbol}/broker/workbench`} /> : children
     return <Spinner fixed />
@@ -138,7 +138,7 @@ export const R7 = (props: PropsWithChildren<any>) => {
    * todo: is_enable
    */
   return useMemo(() => {
-    if (!address) return <BrokerConnect />
+    if (!address) return <NotConnect />
     if (!isUndefined(whetherUserIsBroker))
       return whetherUserIsBroker ? <Redirect to={`/${marginToken.symbol}/broker/workbench`} /> : children
     return <Spinner fixed />
@@ -151,7 +151,7 @@ export const R8 = (props: PropsWithChildren<any>) => {
   const whetherUserIsBroker = useAtomValue(whetherUserIsBrokerAtom)
 
   return useMemo(() => {
-    if (!address) return <BrokerConnect />
+    if (!address) return <NotConnect />
     if (!isUndefined(whetherUserIsBroker)) return whetherUserIsBroker ? children : <Redirect to="/broker/bind" />
     return <Spinner fixed />
   }, [address, whetherUserIsBroker])

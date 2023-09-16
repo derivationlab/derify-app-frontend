@@ -1,9 +1,17 @@
 import BN from 'bignumber.js'
 
 import { checkMarginToken as _checkMarginToken } from '@/api'
-import { ZERO } from '@/config'
+import { QUOTE_TOKEN_KEY, ZERO } from '@/config'
+import factoryAbi from '@/config/abi/DerifyFactory.json'
+import { derivativeList } from '@/store'
 import { PositionOrderTypes, PositionSideTypes } from '@/typings'
-import { getExchangeContract, getDerivativeContract, getProtocolContract } from '@/utils/contractHelpers'
+import {
+  getExchangeContract,
+  getDerivativeContract,
+  getProtocolContract,
+  getConsultantContract
+} from '@/utils/contractHelpers'
+import multicall from '@/utils/multicall'
 import {
   isGT,
   isLT,
@@ -165,6 +173,32 @@ export const calcDisposableAmount = async (
   }
 }
 
+export const getPairAddressList = async (
+  factory: string,
+  list: (typeof derivativeList)[]
+): Promise<(typeof derivativeList)[] | null> => {
+  const calls = list.map((derivative) => ({
+    name: 'getDerivative',
+    params: [derivative.token],
+    address: factory
+  }))
+
+  try {
+    const response = await multicall(factoryAbi, calls)
+
+    if (response.length) {
+      const output = response.map(([address]: string[], index: number) => ({ ...list[index], derivative: address }))
+      // console.info(output)
+      return output
+    }
+
+    return null
+  } catch (e) {
+    console.info(e)
+    return null
+  }
+}
+
 export const getPosMaxLeverage = async (address: string) => {
   const contract = getDerivativeContract(address)
   const response = await contract.maxLeverage()
@@ -180,4 +214,19 @@ export const checkMarginToken = async (marginToken: string) => {
     return address !== ZERO ? data : null
   }
   return null
+}
+
+export const outputErrorLog = (contractAddress: string, contractName: string, functionName: string) => {
+  const marginTokenInfo = localStorage.getItem(QUOTE_TOKEN_KEY)
+  const parseMarginTokenInfo = JSON.parse(marginTokenInfo ?? '')
+  console.info(`marginToken = ${parseMarginTokenInfo?.state?.marginToken?.symbol}(${parseMarginTokenInfo?.state?.marginToken?.address})\ncontractName = ${contractName}\nfunctionName = ${functionName}\ncontractAddress = ${contractAddress}
+`)
+}
+
+export const checkAdvisorAddress = async (address: string): Promise<boolean> => {
+  const contract = getConsultantContract()
+  const response = await contract.getInsurance(address)
+  console.info(String(response), address) // 0x36edF659e13a90B468788d1D147E13A765eee451
+  const { amount, startTime, vestingDuration } = response
+  return Number(vestingDuration) > 0 && Number(amount) > 0 && Number(startTime) > 0
 }

@@ -30,6 +30,14 @@
     animation: spin-circle .8s infinite linear;
   }
 
+  &.mini{
+    .spinner {
+      width: 12px;
+      height: 12px;
+      border: 1px $yellow solid;
+      border-top: 1px $red solid;
+    }
+  }
   &.small{
     .spinner {
       width: 18px;

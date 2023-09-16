@@ -46,6 +46,13 @@
           width: 160px;margin-bottom: 24px;
         }
       }
+      .web-not-connect {
+        height: auto;
+        min-height: auto;
+        margin: 0;
+        position: absolute;
+        top: 0;bottom: 0;left:0;right:0;
+      }
     }
     &-dashboard {
       width: 220px;height: 236px;background: $cff;font-size: 18px;border-radius: 36px;line-height: 30px;z-index: 16;

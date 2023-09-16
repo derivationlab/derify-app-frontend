@@ -220,7 +220,7 @@
       }
     }
 
-    &-toggle {
+    .icon {
       position: absolute;
       right: rem(16);
       top: rem(16);
@@ -380,6 +380,9 @@
           background-image: url($res + 'icon/dot-dark.svg');
         }
       }
+      &.s{
+        font-size: rem(14)
+      }
     }
 
     &.show .web-trade-symbol-select-curr {
@@ -390,7 +393,7 @@
       }
     }
 
-    &-toggle {
+    .icon {
       background-image: url($res + 'icon/toggle-dark.svg');
     }
   }
@@ -514,6 +517,14 @@
 
   .web-c-drop-down-list-content-items {
     max-height: 466px;
+
+    .web-image {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      margin-right: 8px;
+      border-radius: 0;
+    }
   }
 
   .open {

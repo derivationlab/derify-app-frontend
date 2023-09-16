@@ -29,6 +29,13 @@ export default {
       SearchTip: 'Search name or contract address ...',
       NoResultsFound: 'No results found.'
     },
+    BurnHistory: {
+      BurnHistory: 'Burn History',
+      Transaction: 'Transaction',
+      MarginTokenAmount: 'Margin Token Amount',
+      BurnAmount: 'Burn Amount',
+      Time: 'Time'
+    },
     GrantList: {
       Margin: 'Margin',
       All: 'All',

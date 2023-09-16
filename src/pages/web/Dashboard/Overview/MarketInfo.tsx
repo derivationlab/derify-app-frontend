@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { isEmpty, orderBy } from 'lodash'
 import Table from 'rc-table'
 
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
@@ -11,12 +11,10 @@ import Button from '@/components/common/Button'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
-import { useBoundPools } from '@/hooks/useBoundPools'
-import { useAllMarginIndicators } from '@/hooks/useMarginIndicators'
-import { useFactoryConfig, useMarginPosVolume, usePairAddrConfig } from '@/hooks/useMarginPosVolume'
-import { usePriceDecimals, useTokenSpotPrices } from '@/hooks/useTokenSpotPrices'
-import { getMarginTokenList, useMarginTokenListStore } from '@/store'
+import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useInitData } from '@/pages/web/Dashboard/Overview/hooks'
+import { getMarginTokenList } from '@/store'
+import { Rec } from '@/typings'
 import { bnMul, bnPlus } from '@/utils/tools'
 
 import { TableMargin } from '../c/TableCol'
@@ -34,18 +32,33 @@ const MarketInfo: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
   const [pagination, setPagination] = useState<IPagination>({ data: [], index: 0 })
-  const pagingParams = useMarginTokenListStore((state) => state.pagingParams)
-  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-  const allMarginTokenList = useMarginTokenListStore((state) => state.allMarginTokenList)
-  const marginTokenListLoaded = useMarginTokenListStore((state) => state.marginTokenListLoaded)
-  const { data: boundPools } = useBoundPools(allMarginTokenList)
-  const { data: tradingVol } = useAllCurrentTrading(allMarginTokenList)
-  const { data: indicators } = useAllMarginIndicators(allMarginTokenList)
-  const { data: allPositions } = useMarginPosVolume()
-  const { factoryConfig } = useFactoryConfig(allPositions)
-  const { pairAddrConfig } = usePairAddrConfig(factoryConfig, allPositions)
-  const { priceDecimals } = usePriceDecimals(pairAddrConfig)
-  const { data: spotPrices } = useTokenSpotPrices(pairAddrConfig, priceDecimals)
+  const {
+    prices,
+    spotPrices,
+    indicators,
+    boundPools,
+    tradingVol,
+    equityValues,
+    allPositions,
+    pagingParams,
+    marginTokenList,
+    marginTokenListLoaded
+  } = useInitData()
+
+  const calcVolumeHelper = useCallback(
+    (marginToken: string) => {
+      let volume = '0'
+      if (allPositions && marginToken in allPositions && spotPrices) {
+        const base = allPositions[marginToken]
+        volume = Object.keys(base).reduce((p, n: string) => {
+          const price = spotPrices.find((f) => f.token === n)?.price ?? 0
+          return bnPlus(bnMul(base[n], price), p)
+        }, '0')
+      }
+      return volume
+    },
+    [spotPrices, allPositions]
+  )
 
   const mColumns = useMemo(() => {
     return [
@@ -57,21 +70,29 @@ const MarketInfo: FC = () => {
       {
         title: 'Trading/Position',
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
-          let total = '0'
-          const p = tradingVol?.[data.margin_token] ?? 0
-          if (allPositions && data.margin_token in allPositions && spotPrices) {
-            const p1 = allPositions[data.margin_token]
-            const p2 = Object.keys(p1)
-            total = p2.reduce((p, n: string) => {
-              const price = spotPrices.find((f) => f.margin === data.margin_token && f.token === n)?.price ?? 0
-              return bnPlus(bnMul(p1[n], price), p)
-            }, '0')
-          }
+        render: (symbol: string, data: Rec) => {
+          const volume1 = tradingVol?.[data.margin_token] ?? 0
+          const volume2 = calcVolumeHelper(data.margin_token)
+          const _prices = prices ?? Object.create(null)
+          const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
+          const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
+          const equityValue1 = findEquity?.trading_net_value ?? 0
+          const equityValue2 = bnMul(_prices[findKey] ?? 0, volume2)
           return (
             <>
-              <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
-              <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
+              <>
+                <BalanceShow value={volume1} unit={symbol} decimal={Number(volume1) === 0 ? 2 : data.amount_decimals} />
+                <BalanceShow classNames="s" value={equityValue1} unit={VALUATION_TOKEN_SYMBOL} decimal={2} />
+              </>
+              <>
+                <BalanceShow value={volume2} unit={symbol} decimal={Number(volume2) === 0 ? 2 : data.amount_decimals} />
+                <BalanceShow
+                  classNames="s"
+                  value={equityValue2}
+                  unit={VALUATION_TOKEN_SYMBOL}
+                  decimal={Number(equityValue2) === 0 ? 2 : data.amount_decimals}
+                />
+              </>
             </>
           )
         }
@@ -88,7 +109,7 @@ const MarketInfo: FC = () => {
         }
       }
     ]
-  }, [t, indicators, boundPools, allPositions, spotPrices])
+  }, [t, prices, calcVolumeHelper, indicators, equityValues])
 
   const wColumns = useMemo(() => {
     return [
@@ -96,7 +117,7 @@ const MarketInfo: FC = () => {
       {
         title: t('NewDashboard.Overview.MaxPositionMiningAPY'),
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
+        render: (symbol: string, data: Rec) => {
           if (indicators?.[data.margin_token]) {
             const apy = Math.max.apply(null, Object.values(indicators[data.margin_token]))
             return <BalanceShow value={apy} percent />
@@ -107,33 +128,32 @@ const MarketInfo: FC = () => {
       {
         title: t('NewDashboard.Overview.TradingVolume'),
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
-          const p = tradingVol?.[data.margin_token] ?? 0
-          return <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
+        render: (symbol: string, data: Rec) => {
+          const volume = tradingVol?.[data.margin_token] ?? 0
+          const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
+          const equityValue = findEquity?.trading_net_value ?? 0
+          return (
+            <>
+              <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
+              <BalanceShow classNames="s" value={equityValue} unit={VALUATION_TOKEN_SYMBOL} decimal={2} />
+            </>
+          )
         }
       },
       {
         title: t('NewDashboard.Overview.PositionVolume'),
         dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
-          let total = '0'
-          if (allPositions && data.margin_token in allPositions && spotPrices) {
-            const p1 = allPositions[data.margin_token]
-            const p2 = Object.keys(p1)
-            total = p2.reduce((p, n: string) => {
-              const price = spotPrices.find((f) => f.token === n)?.price ?? 0
-              return bnPlus(bnMul(p1[n], price), p)
-            }, '0')
-          }
-          return <BalanceShow value={total} unit={symbol} decimal={Number(total) === 0 ? 2 : data.amount_decimals} />
-        }
-      },
-      {
-        title: t('NewDashboard.Overview.BuybackPool'),
-        dataIndex: 'symbol',
-        render: (symbol: string, data: Record<string, any>) => {
-          const p = boundPools?.[data.margin_token] ?? 0
-          return <BalanceShow value={p} unit={symbol} decimal={Number(p) === 0 ? 2 : data.amount_decimals} />
+        render: (symbol: string, data: Rec) => {
+          const volume = calcVolumeHelper(data.margin_token)
+          const _prices = prices ?? Object.create(null)
+          const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
+          const equityValue = bnMul(_prices[findKey] ?? 0, volume)
+          return (
+            <>
+              <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />
+              <BalanceShow classNames="s" value={equityValue} unit={VALUATION_TOKEN_SYMBOL} decimal={2} />
+            </>
+          )
         }
       },
       {
@@ -147,7 +167,7 @@ const MarketInfo: FC = () => {
         )
       }
     ]
-  }, [t, tradingVol, indicators, boundPools, allPositions, spotPrices])
+  }, [t, prices, tradingVol, indicators, boundPools, equityValues, calcVolumeHelper])
 
   const emptyText = useMemo(() => {
     if (!marginTokenListLoaded) return <Spinner small />
@@ -182,7 +202,7 @@ const MarketInfo: FC = () => {
         rowKey="symbol"
         data={pagination.data}
         columns={isMobile ? mColumns : wColumns}
-        className={classNames('web-broker-table', { 'web-space-table': isMobile })}
+        className={classNames('web-broker-table1', { 'web-space-table': isMobile })}
         emptyText={emptyText}
         rowClassName={(record) => (!!record.open ? 'open' : 'close')}
       />

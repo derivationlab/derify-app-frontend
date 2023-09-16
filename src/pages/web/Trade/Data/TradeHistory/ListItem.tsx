@@ -36,7 +36,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
     if (derivativeList.length)
       return derivativeList.find((d) => getAddress(d.token) === getAddress(data.token))?.name ?? ''
     return ''
-  }, [data?.token])
+  }, [data?.token, derivativeList])
 
   const memoMarginToken = useMemo(() => {
     if (marginTokenList.length) return marginTokenList.find((d) => d.margin_token === data?.margin_token)?.symbol ?? ''

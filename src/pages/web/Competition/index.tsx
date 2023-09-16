@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { upperFirst, isEmpty, isArray } from 'lodash'
+import { upperFirst, isEmpty } from 'lodash'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
@@ -93,7 +93,7 @@ const CompetitionRank: FC = () => {
 
   const _getCompetitionRank = useCallback(
     async (pageIndex = 0) => {
-      const [id, status] = state.filterCondition.split('#')
+      const [id, status] = state.filterCondition.current.split('#')
       try {
         const { data } = await getCompetitionRank(status, id, pageIndex)
         if (data) {
@@ -124,8 +124,7 @@ const CompetitionRank: FC = () => {
         label: `${upperFirst(d.status)} | ${dayjs(d.start_time).format('MM/DD/YYYY HH:mm:ss')}`,
         value: `${d.id}#${d.status}`
       }))
-      dispatch({ type: 'SET_FILTER_CONDITION', payload: _[0]?.value ?? '' })
-      dispatch({ type: 'SET_FILTER_CONDITIONS', payload: _ })
+      dispatch({ type: 'SET_FILTER_CONDITION', payload: { data: _, loaded: false, current: _[0]?.value ?? '' } })
     }
   }, [marginToken])
 
@@ -139,7 +138,7 @@ const CompetitionRank: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (state.filterCondition) {
+    if (state.filterCondition.current) {
       dispatch({ type: 'SET_OUTPUT_DATA', payload: { loaded: true } })
       void _getCompetitionRank()
     }
@@ -149,15 +148,15 @@ const CompetitionRank: FC = () => {
     <div className="web-competition-rank">
       <h2>{t('Earn.Trading.TradingCompetitionRank')}</h2>
       <aside>
-        <Skeleton rowsProps={{ rows: 1 }} animation loading={!state.filterConditions}>
-          {isArray(state.filterConditions) && state.filterConditions.length === 0 && (
+        <Skeleton rowsProps={{ rows: 1 }} animation loading={state.filterCondition.loaded}>
+          {state.filterCondition.data.length === 0 && (
             <section className="web-competition-rank-null">{t('common.NoRecord')}</section>
           )}
-          {isArray(state.filterConditions) && state.filterConditions.length > 0 && (
+          {state.filterCondition.data.length > 0 && (
             <Select
-              value={state.filterCondition}
-              onChange={(v) => dispatch({ type: 'SET_FILTER_CONDITION', payload: v })}
-              objOptions={state.filterConditions as any}
+              value={state.filterCondition.current}
+              onChange={(v) => dispatch({ type: 'SET_FILTER_CONDITION', payload: { current: v } })}
+              objOptions={state.filterCondition.data as any}
             />
           )}
         </Skeleton>

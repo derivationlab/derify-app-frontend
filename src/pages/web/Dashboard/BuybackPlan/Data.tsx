@@ -1,5 +1,4 @@
 import { isEmpty } from 'lodash'
-import { useBlockNumber } from 'wagmi'
 
 import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,22 +7,22 @@ import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useAllCurrentIndex } from '@/hooks/useAllCurrentIndex'
-import { useAllMarginPrice } from '@/hooks/useAllMarginPrice'
-import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 import { bnMul, bnPlus } from '@/utils/tools'
 
-const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo }) => {
-  const { t } = useTranslation()
-  const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
+interface Props {
+  tokenPrice: string
+  blockNumber: number
+  buyBackInfo: Rec
+  marginPrices: Rec
+}
 
+const Data: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber = 0 }) => {
+  const { t } = useTranslation()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
-
-  const { data: tokenPrice } = usePlatformTokenPrice()
-  const { data: marginPrice } = useAllMarginPrice(priceFeed)
   const { data: currentIndex } = useAllCurrentIndex(marginTokenList)
 
   const tokenDecimal = useMemo(() => {
@@ -37,16 +36,16 @@ const Data: FC<{ priceFeed: Rec; buyBackInfo: Rec }> = ({ priceFeed, buyBackInfo
   }, [marginToken, currentIndex])
 
   const buybackValue = useMemo(() => {
-    if (marginPrice && !isEmpty(buyBackInfo)) {
+    if (marginPrices && !isEmpty(buyBackInfo)) {
       const keys = Object.keys(buyBackInfo) as any[]
       return keys.reduce((p, n: string) => {
-        const price = marginPrice[n] ?? 0
+        const price = marginPrices[n] ?? 0
         const amount = buyBackInfo[n] ?? 0
         return bnPlus(bnMul(amount, price), p)
       }, '0')
     }
     return '0'
-  }, [buyBackInfo, marginPrice])
+  }, [buyBackInfo, marginPrices])
 
   return (
     <div className="web-dashboard-plan-datas">

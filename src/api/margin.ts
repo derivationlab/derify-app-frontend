@@ -1,4 +1,6 @@
-import { get } from '@/utils/http'
+import { MARGIN_VISIBLE_COUNT } from '@/config'
+import { Rec } from '@/typings'
+import { get, post } from '@/utils/http'
 
 export const searchMarginToken = async (key: string) => {
   const response = await get(`api/search_margin_token/${key}`)
@@ -10,8 +12,8 @@ export const getMarginIndicators = async (marginToken: string) => {
   return response
 }
 
-export const getMarginTokenList = async (page = 0, size = 10) => {
-  const response = await get(`api/margin_token_list_apy/${page}/30`)
+export const getMarginTokenList = async (page = 0, size = MARGIN_VISIBLE_COUNT) => {
+  const response = await get(`api/margin_token_list_apy/${page}/${size}`)
   return response
 }
 
@@ -27,5 +29,25 @@ export const getAllMarginPositions = async () => {
 
 export const checkMarginToken = async (symbol: string) => {
   const response = await get(`api/check_margin_token/${symbol}`)
+  return response
+}
+
+export const getMarginTransactionEquity = async () => {
+  const response = await get(`api/margin_token_trading_net_value/all`)
+  return response
+}
+
+/**
+ * applicant
+ * marginToken
+ * name
+ * symbol
+ * paymentToken
+ * paymentAmount
+ * advisor
+ * @param body
+ */
+export const applyMarginToken = async (body: Rec) => {
+  const response = await post('api/apply_margin_token', body)
   return response
 }

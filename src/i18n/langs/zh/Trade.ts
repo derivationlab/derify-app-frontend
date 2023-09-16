@@ -166,7 +166,7 @@ export default {
       AmountToWithdraw: '取回数量',
       Confirm: '确认',
       WithdrawTip:
-        '根据系统风控规则，你将收到 <b>{{MarginAmount}} {{ MarginToken }}</b> 和 <b>{{bMarginAmount}} {{bMarginToken}}</b>作为补偿，你可以在回购池余额>0时以1:1的比例将{{bMarginToken}}换回{{MarginToken}}'
+        '根据系统风控规则，你将收到 <b>{{MarginAmount}} {{ MarginTokenList }}</b> 和 <b>{{bMarginAmount}} {{bMarginToken}}</b>作为补偿，你可以在回购池余额>0时以1:1的比例将{{bMarginToken}}换回{{MarginTokenList}}'
     }
   }
 }

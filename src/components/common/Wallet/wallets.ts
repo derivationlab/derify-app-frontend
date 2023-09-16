@@ -1,5 +1,4 @@
 import { ConnectorIds } from '@/typings'
-import { metaMaskConnector } from '@/utils/wagmiConfig'
 
 export type Wallet<T = ConnectorIds> = {
   id: string

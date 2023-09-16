@@ -12,7 +12,8 @@ export default {
       Data: 'Data',
       Overview: 'Overview',
       BuybackPlan: 'Buyback Plan',
-      GrantList: 'Grant List'
+      GrantList: 'Grant List',
+      Advisor: 'Advisor'
     },
     CW: {
       Title: 'Select a wallet',

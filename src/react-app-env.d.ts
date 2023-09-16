@@ -2,7 +2,7 @@
 
 interface Window {
   toast: any
-  ethereum?: GlobalType.Ethereum
+  ethereum: GlobalType.Ethereum
 }
 
 namespace NodeJS {
@@ -12,5 +12,4 @@ namespace NodeJS {
 }
 
 declare module 'store'
-declare module 'qrcode'
 declare module 'pubsub-js'

@@ -13,7 +13,7 @@ interface TraderVariablesAtomParams {
   userAccount: UserAccount
 }
 
-const init = {
+const initValues = {
   loaded: false,
   data: {
     balance: '0',
@@ -25,9 +25,9 @@ const init = {
   }
 }
 
-export const traderVariablesAtom = atom<typeof init>(init)
+export const traderVariablesAtom = atom<typeof initValues>(initValues)
 
-const getTraderVariables = async (trader: string, exchange: string): Promise<typeof init.data> => {
+const getTraderVariables = async (trader: string, exchange: string): Promise<typeof initValues.data> => {
   const calls = [
     {
       name: 'getTraderAccount',
@@ -71,15 +71,15 @@ const getTraderVariables = async (trader: string, exchange: string): Promise<typ
       }
     }
 
-    return init.data
+    return initValues.data
   } catch (e) {
     console.info(e)
-    return init.data
+    return initValues.data
   }
 }
 
 export const asyncTraderVariablesAtom = atomFamily((params: TraderVariablesAtomParams) =>
-  atom(init, async (get, set) => {
+  atom(initValues, async (get, set) => {
     const { userAccount, exchange } = params
     try {
       if (userAccount && exchange) {
@@ -87,7 +87,7 @@ export const asyncTraderVariablesAtom = atomFamily((params: TraderVariablesAtomP
         set(traderVariablesAtom, { loaded: true, data })
       }
     } catch (e) {
-      set(traderVariablesAtom, init)
+      set(traderVariablesAtom, initValues)
     }
   })
 )

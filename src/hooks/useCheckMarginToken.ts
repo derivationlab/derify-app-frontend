@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { routingWithMarginInfo } from '@/components/web/Route'
 import { checkMarginToken } from '@/funcs/helper'
-import { routingWithMarginInfo } from '@/pages/web/Route'
 import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 

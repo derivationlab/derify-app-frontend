@@ -8,6 +8,7 @@ export default {
     short: '开空',
     twoway: '双向对冲',
     Loading: '正在加载',
-    NoRecord: '无数据'
+    NoRecord: '无数据',
+    Frequently: '操作太频繁'
   }
 }

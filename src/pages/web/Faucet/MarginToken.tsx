@@ -1,19 +1,14 @@
 import classNames from 'classnames'
 import { debounce, uniqBy } from 'lodash'
-import { useAccount } from 'wagmi'
 
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useHistory } from 'react-router-dom'
 
 import { searchMarginToken } from '@/api'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Image from '@/components/common/Image'
-import { useMarginBalances } from '@/hooks/useMarginBalances'
-import { resortMargin } from '@/pages/web/MySpace'
 import NoResults from '@/pages/web/Trade/c/NoResults'
-import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
-import { MarginTokenState } from '@/store/types'
+import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore } from '@/store'
 import { Rec } from '@/typings'
 
 let seqCount = 0
@@ -23,18 +18,17 @@ interface MarginOptions {
   loaded: boolean
 }
 
-const MarginToken: FC = () => {
-  const history = useHistory()
+const MarginToken: FC<{ onSelect: (marginToken: Rec) => void }> = ({ onSelect }) => {
+  const { t } = useTranslation()
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
-  const { t } = useTranslation()
-  const { address } = useAccount()
-  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const marginTokens = useMarginTokenListStore((state) => state.marginTokenList)
   const updateMarginTokenListStore = useMarginTokenListStore((state) => state.updateMarginTokenListStore)
-  const { data: marginBalances } = useMarginBalances(address, marginTokenList, marginToken)
+  const [selectedValue, setSelectedValue] = useState<Rec>({})
   const [marginOptions, setMarginOptions] = useState<MarginOptions>({ data: [], loaded: false })
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+
+  const marginTokenList = useMemo(() => marginTokens.filter((l) => l.open), [marginTokens])
 
   const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
@@ -47,7 +41,7 @@ const MarginToken: FC = () => {
   const funcAsync = useCallback(async () => {
     const { records = [] } = await getMarginTokenList(seqCount)
     const deployStatus = await getMarginDeployStatus(records)
-    const filter = records.filter((f: Rec) => deployStatus[f.symbol])
+    const filter = records.filter((f: Rec) => deployStatus[f.symbol] && f.open)
     const combine = [...marginOptions.data, ...filter]
     const deduplication = uniqBy(combine, 'margin_token')
     setMarginOptions((val: any) => ({ ...val, data: deduplication, loaded: false }))
@@ -61,16 +55,12 @@ const MarginToken: FC = () => {
       void fuzzySearchFunc(searchKeyword)
     } else {
       seqCount = 0
-      if (marginTokenList.length && marginBalances) {
-        const _ = marginTokenList.map((margin) => {
-          const marginBalance = marginBalances?.[margin.symbol] ?? 0
-          return { ...margin, marginBalance: Number(marginBalance) }
-        })
-        setMarginOptions({ data: resortMargin(_), loaded: false })
+      if (marginTokenList.length) {
+        setMarginOptions({ data: marginTokenList, loaded: false })
         updateMarginTokenListStore(marginTokenList)
       }
     }
-  }, [searchKeyword, marginBalances, marginTokenList])
+  }, [searchKeyword, marginTokenList])
 
   useEffect(() => {
     if (marginOptions.data.length) {
@@ -95,14 +85,18 @@ const MarginToken: FC = () => {
     }
   }, [marginOptions.data.length])
 
+  useEffect(() => {
+    if (marginTokenList.length) setSelectedValue(marginTokenList[0])
+  }, [marginTokenList])
+
   return (
     <DropDownList
       entry={
-        <div className="web-trade-bench-margin-token">
+        <div className="web-faucet-margin-token">
           <label>{t('Trade.Bench.Margin')}</label>
           <section>
-            <Image src={marginToken.logo} />
-            <strong>{marginToken.symbol}</strong>
+            <Image src={selectedValue.logo} />
+            <span>{selectedValue.symbol}</span>
           </section>
         </div>
       }
@@ -128,8 +122,14 @@ const MarginToken: FC = () => {
                   {o.symbol}
                 </>
               }
-              onSelect={() => history.push(`/${o.symbol}/trade`)}
-              className={classNames('web-trade-bench-margin-item', { close: !o.open })}
+              onSelect={() => {
+                onSelect(o)
+                setSelectedValue(o)
+              }}
+              className={classNames('web-faucet-margin-token-item', {
+                active: selectedValue.margin_token === o.margin_token,
+                close: !o.open
+              })}
             />
           )
         })

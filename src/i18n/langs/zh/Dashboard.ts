@@ -29,6 +29,13 @@ export default {
       SearchTip: '搜索名称或合约地址',
       NoResultsFound: '无搜索结果'
     },
+    BurnHistory: {
+      BurnHistory: '销毁历史',
+      Transaction: '交易',
+      MarginTokenAmount: '保证金数量',
+      BurnAmount: '销毁数量',
+      Time: '时间'
+    },
     GrantList: {
       Margin: '保证金',
       All: '全部',

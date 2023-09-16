@@ -14,9 +14,9 @@ import { EXPLORER_SCAN_URL } from '@/config'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
-import { keepDecimals } from '@/utils/tools'
+import { keepDecimals, calcShortHash } from '@/utils/tools'
 
-import { RowTime, calcShortHash, calcTimeStr } from './common'
+import { RowTime, calcTimeStr } from './common'
 
 interface DataProps {
   id: string
@@ -109,7 +109,12 @@ const Transaction: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerTransactions(address, marginToken.address, index, 10)
+      const { data } = await getBrokerTransactions(
+        address,
+        marginToken.address,
+        index,
+        10
+      )
 
       dispatch({
         type: 'SET_RECORDS',

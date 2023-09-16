@@ -1,0 +1,123 @@
+.web-consultant {
+  @extend .web;
+  background: $cf7;
+  border-radius: 48px;
+  height: calc(100vh - 200px);
+  min-height: 400px;
+  flex-flow: column;
+  justify-content: center;
+  @extend .ac;
+
+  button {
+    margin-top: 20px;
+  }
+
+  &-item {
+    background: $cff;
+    border-radius: 24px;
+    height: 48px;
+    padding: 0 20px;
+    justify-content: space-between;
+    @include ns();
+    @extend .ac;
+
+    &:not(:last-child) {
+      margin-bottom: 20px;
+    }
+
+    em {
+      display: block;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      background: url($res + 'icon/copy.svg') center/contain no-repeat;
+    }
+
+    span {
+      @extend .ac;
+
+      &:first-child {
+        color: lighten($c88, 10%);
+      }
+
+      img {
+        cursor: pointer;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  &-balance {
+    padding: 0 20px;
+    font-size: 12px;
+    justify-content: space-between;
+    @extend .ac;
+
+    span:first-child {
+      color: lighten($c88, 10%);
+    }
+  }
+
+  &-inner {
+    width: 300px;
+
+    .web-c-drop-down-list {
+      padding: 0;
+    }
+
+    .web-c-drop-down-list-motion-div {
+      left: -8px;
+      right: -8px;
+      top: 56px;
+    }
+  }
+}
+
+.mobile-mode {
+  .web-consultant {
+    width: auto;
+    margin: 0 rem(16);
+    border-radius: rem(24);
+    height: calc(100vh - rem(100));
+
+    .button {
+      margin-top: rem(16);
+    }
+
+    &-inner {
+      width: 100%;
+      padding: 0 rem(16);
+
+      .web-c-drop-down-list-motion-div {
+        left: rem(-8);
+        right: rem(-8);
+        top: rem(36);
+      }
+    }
+
+    &-item {
+      height: rem(36);
+      padding: 0 rem(16);
+      font-size: rem(14);
+      border-radius: rem(36);
+      &:not(:last-child) {
+        margin-bottom: rem(16);
+      }
+    }
+  }
+}
+
+.dark,
+.mobile-mode.dark {
+  .web-consultant {
+    background: $c33;
+
+    &-item {
+      background: $c44;
+
+      em {
+        background: url($res + 'icon/copy-dark.svg') center/contain no-repeat;
+      }
+    }
+  }
+}

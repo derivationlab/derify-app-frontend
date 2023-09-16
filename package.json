@@ -5,18 +5,19 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx}\"",
-    "format:check:staged": "pretty-quick --staged",
-    "format:write": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
+    "staged": "pretty-quick --staged",
+    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx}\"",
     "style": "node ./src/style/build.js"
   },
   "dependencies": {
+    "@arco-design/web-react": "^2.52.2",
     "@tanstack/react-query": "^4.24.4",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "bignumber.js": "^9.0.2",
     "buffer": "^6.0.3",
     "classnames": "^2.3.1",
+    "crypto-js": "^4.1.1",
     "dayjs": "^1.11.3",
     "ethers": "^5.6.4",
     "events": "^3.3.0",
@@ -74,9 +75,11 @@
     ]
   },
   "devDependencies": {
+    "@arco-plugins/webpack-react": "^1.4.9-beta.2",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@craco/craco": "^7.0.0",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
+    "@types/crypto-js": "^4.1.2",
     "@types/fbemitter": "^2.0.32",
     "@types/loadable__component": "^5.13.4",
     "@types/lodash": "^4.14.182",
@@ -90,6 +93,7 @@
     "@types/styled-components": "^5.1.25",
     "@types/styled-system": "^5.1.15",
     "@types/webpack-env": "^1.17.0",
+    "babel-plugin-import": "^1.13.8",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.6.2",

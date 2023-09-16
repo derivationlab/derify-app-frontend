@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { isEmpty, debounce } from 'lodash'
 
-import React, { FC, useCallback, useEffect, useReducer } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
@@ -36,6 +36,11 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { spotPrice } = useTokenSpotPrice(spotPrices, quoteToken.name)
   const { openingMaxLimit } = useOpeningMaxLimit(protocolConfig?.exchange, quoteToken)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
+
+  const disabled = useMemo(
+    () => !marginToken.open || (Number(state.positionLimits.maximum) === 0 && state.positionLimits.isGreater),
+    [marginToken, state.positionLimits]
+  )
 
   const _checkOpeningLimit = async (params: Rec) => {
     const [maximum, isGreater, effective] = checkOpeningLimit(
@@ -218,10 +223,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
             </dl>
           </div>
         </div>
-        <Button
-          onClick={() => onClick(state.positionLimits.value)}
-          disabled={Number(state.positionLimits.maximum) === 0 && state.positionLimits.isGreater}
-        >
+        <Button onClick={() => onClick(state.positionLimits.value)} disabled={disabled}>
           {t('Trade.COP.Confirm', 'Confirm')}
         </Button>
       </div>

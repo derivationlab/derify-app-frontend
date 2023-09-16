@@ -13,6 +13,14 @@ export const contracts: { [key in ContractKeys]: Contract } = {
   derifyProtocol: new Contract('DerifyProtocol', {
     [ChainId.MAINNET]: '0x6A936426323Af1d1Af61E57bA83Bdde4233687cD',
     [ChainId.TESTNET]: '0xCc632e817d113DcA1fEC9395615361E9c665B1C3'
+  }),
+  derifyConsultant: new Contract('DerifyConsultant', {
+    [ChainId.MAINNET]: '0x0000000000000000000000000000000000000000',
+    [ChainId.TESTNET]: '0x0706bbc99c38BcC796600aac6DfF56e814642443'
+  }),
+  derifyApply: new Contract('DerifyApply', {
+    [ChainId.MAINNET]: '0x0000000000000000000000000000000000000000',
+    [ChainId.TESTNET]: '0x4f62BA86c0285fe3A8Fc5ce004ddDEc49C26eeCb'
   })
 }
 

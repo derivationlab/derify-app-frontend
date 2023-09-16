@@ -9,64 +9,66 @@ import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
-export const usePriceDecimals = (list?: Rec[] | null) => {
-  const [priceDecimals, setPriceDecimals] = useState<Rec | null>(null)
+type List<T> = T | null
+
+export const usePriceDecimals = (list?: List<Rec[]>) => {
+  const [decimals, setDecimals] = useState<Rec | null>(null)
 
   const func = async (list: Rec[]) => {
     let output = Object.create(null)
-    const calls: Rec[] = []
-    list.forEach((l) => {
-      calls.push({
-        name: 'getSpotPriceDecimals',
-        address: l.derivative
-      })
-    })
-    const response = await multicall(derifyDerivativeAbi, calls as any)
+    const calls = list.map((l) => ({
+      name: 'getSpotPriceDecimals',
+      address: l.derivative
+    }))
+    const response = await multicall(derifyDerivativeAbi, calls as any[])
     if (response.length) {
       response.forEach(([decimals]: BigNumberish[], index: number) => {
         const _ = Number(decimals)
         output = { ...output, [calls[index].address]: _ }
       })
     }
-    setPriceDecimals(output)
+    setDecimals(output)
   }
 
   useEffect(() => {
-    if (list && list.length) void func(list)
-  }, [list])
+    if (list && list.length) {
+      void func(list)
+    }
+  }, [list?.length])
 
-  return { priceDecimals }
+  return { decimals }
 }
 
-export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, quoteToken?: Rec) => {
-  const enabled = !!(list && decimals)
-  const { data, refetch, isLoading } = useQuery(
-    ['useTokenSpotPrices' + quoteToken],
+function keyValue(l: Rec) {
+  return {
+    name: 'getSpotPrice',
+    token: l.token,
+    symbol: l.name,
+    margin: l.margin_token,
+    address: l.derivative
+  }
+}
+
+export const useTokenSpotPrices = (list?: List<Rec[]>, decimals?: List<Rec>) => {
+  const enabled = !!(list && list.length && decimals)
+  const {
+    data: spotPrices,
+    refetch,
+    isLoading
+  } = useQuery(
+    ['useTokenSpotPrices'],
     async () => {
       let output: Rec[] = []
-      if (list && decimals) {
-        let calls = list.map((l) => ({
-          name: 'getSpotPrice',
-          address: l.derivative
-        }))
-        const find = list.find((l) => l.name === quoteToken?.name)
-        if (quoteToken && !find) {
-          calls = [
-            ...calls,
-            {
-              name: 'getSpotPrice',
-              address: quoteToken.derivative
-            }
-          ]
-        }
-        const response = await multicall(derifyDerivativeAbi, calls)
+      if (list && list.length && decimals) {
+        const calls = list.map((l) => keyValue(l))
+        const response = await multicall(derifyDerivativeAbi, calls as any[])
         if (response.length) {
           response.forEach(([spotPrice]: BigNumberish[], index: number) => {
             const x = {
-              name: list[index]?.name || quoteToken?.name,
+              name: calls[index].symbol,
               price: formatUnits(spotPrice, decimals[calls[index].address]),
-              token: list[index]?.token,
-              margin: list[index]?.margin_token || list[index]?.margin,
+              token: calls[index].token,
+              margin: calls[index].margin,
               precision: decimals[calls[index].address]
             }
             output = [...output, x]
@@ -86,7 +88,7 @@ export const useTokenSpotPrices = (list?: Rec[] | null, decimals?: Rec | null, q
     }
   )
 
-  return { data, refetch, isLoading }
+  return { spotPrices, refetch, isLoading }
 }
 
 // There are duplicate trading pairs

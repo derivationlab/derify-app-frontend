@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import React, { FC, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 
-import TradingUpdater from '@/pages/updater/TradingUpdater'
+import useTradingUpdate from '@/hooks/useTradingUpdate'
 
 import Bench from './Bench'
 import Data from './Data'
@@ -15,16 +15,17 @@ import MobileFixed from './KLine/MobileFixed'
 import SymbolSelect from './KLine/SymbolSelect'
 
 const Trade: FC = () => {
+  useTradingUpdate()
+
   const { address } = useAccount()
   const [toggle, setToggle] = useState<boolean>(false)
 
   if (isMobile) {
     return (
       <>
-        <TradingUpdater />
         <div className="web-trade">
           <div className="web-trade-mobile-header">
-            <SymbolSelect onToggle={() => setToggle(!toggle)} />
+            <SymbolSelect />
             <div className={classNames({ none: toggle })}>
               <Chart />
             </div>
@@ -42,7 +43,6 @@ const Trade: FC = () => {
 
   return (
     <div className="web-trade">
-      <TradingUpdater />
       <main className="web-trade-main">
         <KLine />
         <Data />

@@ -19,7 +19,7 @@ import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useMarginIndicatorsStore } from '@/store/useMarginIndicators'
 import { PubSubEvents } from '@/typings'
 
-export default function GlobalUpdater(): null {
+export default function Initial(): null {
   const { address } = useAccount()
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)

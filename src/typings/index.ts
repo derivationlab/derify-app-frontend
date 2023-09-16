@@ -1,7 +1,5 @@
 import { Signer } from 'ethers'
 
-import GlobalType from '@/typings/global'
-
 export type Rec = Record<string, any>
 
 export enum ChainId {
@@ -18,11 +16,13 @@ export enum ConnectorIds {
 
 export type TSigner = Signer | null | undefined
 
-export type ChainIdRec = { [key in GlobalType.Chain]: string }
+export type Chain = ChainId.MAINNET | ChainId.TESTNET
 
-export type AllTokenKeys = 'drf' | 'edrf'
+export type ChainIdRec = { [key in Chain]: string }
 
-export type ContractKeys = 'multicall' | 'derifyProtocol' | 'derifyPool'
+export type TokenKeys = 'drf' | 'edrf' | 'usdt'
+
+export type ContractKeys = 'multicall' | 'derifyProtocol' | 'derifyConsultant' | 'derifyApply' | 'derifyPool'
 
 export const protocolConfig = {
   rank: '',
@@ -73,5 +73,3 @@ export const dataRecordInit = {
   currentPage: 0,
   loaded: true
 }
-
-export type DataRecord = typeof dataRecordInit

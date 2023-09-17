@@ -1,7 +1,7 @@
 import { ChainId, ChainIdRec } from '@/typings'
 
 const API_PREFIX_URLS: ChainIdRec = {
-  [ChainId.MAINNET]: 'https://api-bnb-v2.derify.exchange/',
+  [ChainId.MAINNET]: 'https://pre-api-bnb-v2.derify.exchange/',
   [ChainId.TESTNET]: 'https://test-api-v2.derify.exchange/'
 }
 

@@ -11,7 +11,6 @@ import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useConsultant } from '@/hooks/useConsultant'
-import { config } from '@/pages/web/consultant/Lock'
 import { calcShortHash, isLTET, thousandthsDivision } from '@/utils/tools'
 
 const Claim = () => {
@@ -48,7 +47,7 @@ const Claim = () => {
       <div className="web-consultant-item">
         <span>{t('Advisor.lockedAmount')}</span>
         <span>
-          {thousandthsDivision(config.amount)} {PLATFORM_TOKEN.symbol}
+          {thousandthsDivision(consultant?.amount ?? 0)} {PLATFORM_TOKEN.symbol}
         </span>
       </div>
       <div className="web-consultant-item">

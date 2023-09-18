@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next'
 import { consultantAtom } from '@/atoms/useConsultant'
 import Button from '@/components/common/Button'
 import { PLATFORM_TOKEN } from '@/config/tokens'
-import { config } from '@/pages/web/consultant/Lock'
 import { calcShortHash, thousandthsDivision } from '@/utils/tools'
 
 const Locked = () => {
@@ -20,7 +19,7 @@ const Locked = () => {
       <div className="web-consultant-item">
         <span>{t('Advisor.lockedAmount')}</span>
         <span>
-          {thousandthsDivision(config.amount)} {PLATFORM_TOKEN.symbol}
+          {thousandthsDivision(consultant?.amount ?? 0)} {PLATFORM_TOKEN.symbol}
         </span>
       </div>
       <div className="web-consultant-item">

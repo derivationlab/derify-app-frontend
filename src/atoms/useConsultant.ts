@@ -4,7 +4,7 @@ import { atomFamily } from 'jotai/utils'
 
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { getConsultantContract } from '@/utils/contractHelpers'
-import { formatUnits } from '@/utils/tools'
+import { formatUnits, safeInterceptionValues } from '@/utils/tools'
 
 export const consultantAtom = atom<{
   amount: string
@@ -28,14 +28,8 @@ export const asyncConsultantAtom = atomFamily((account: Account) =>
         const contract = getConsultantContract()
         const data = await contract.getInsurance(account)
         const { amount, startTime, vestingDuration } = data
-        console.info({
-          amount: formatUnits(amount, PLATFORM_TOKEN.precision),
-          startTime: Number(startTime),
-          lockedDays: getLockedDays(Number(startTime)),
-          vestingDuration: Number(vestingDuration)
-        })
         set(consultantAtom, {
-          amount: formatUnits(amount, PLATFORM_TOKEN.precision),
+          amount: safeInterceptionValues(amount, 8, PLATFORM_TOKEN.precision),
           startTime: Number(startTime),
           lockedDays: getLockedDays(Number(startTime)),
           vestingDuration: Number(vestingDuration)

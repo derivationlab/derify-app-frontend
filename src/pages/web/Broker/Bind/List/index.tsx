@@ -4,12 +4,13 @@ import { useAccount } from 'wagmi'
 import React, { FC, useCallback, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
-import { useHistory, Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 import { bindingYourBroker, getBrokersList } from '@/api'
 import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Select from '@/components/common/Form/Select'
 import Pagination from '@/components/common/Pagination'
+import { Link } from '@/components/common/Route'
 import Spinner from '@/components/common/Spinner'
 import {
   SelectLangOptionsForFilter as SelectLangOptions,

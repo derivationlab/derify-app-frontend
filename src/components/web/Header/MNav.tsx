@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import { useClickAway } from 'react-use'
 
+import { NavLink } from '@/components/common/Route'
 import { WEBSITE_URL, Communities } from '@/config'
-import { _NavLink } from '@/components/web/Header/index'
 
 interface Props {
   show: boolean
@@ -48,13 +48,13 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
           <ul>
             {list.map((item, index: number) => (
               <li key={index}>
-                <_NavLink
+                <NavLink
                   to={item.url}
                   onClick={handleNavLinkEv}
                   className={classNames({ active: P.indexOf('broker') > -1 && item.url === '/broker' })}
                 >
                   {item.name}
-                </_NavLink>
+                </NavLink>
               </li>
             ))}
             <nav className={classNames({ active: P.indexOf('dashboard') > -1, show: showMenu })}>
@@ -63,19 +63,19 @@ const MNav: FC<Props> = ({ show, list, onClose }) => {
               </span>
               <ul>
                 <li>
-                  <_NavLink to="/dashboard/overview" onClick={handleNavLinkEv}>
+                  <NavLink to="/dashboard/overview" onClick={handleNavLinkEv}>
                     {t('Nav.Nav.Overview', 'Overview')}
-                  </_NavLink>
+                  </NavLink>
                 </li>
                 <li>
-                  <_NavLink to={`/dashboard/buyback`} onClick={handleNavLinkEv}>
+                  <NavLink to={`/dashboard/buyback`} onClick={handleNavLinkEv}>
                     {t('Nav.Nav.BuybackPlan', 'Buyback Plan')}
-                  </_NavLink>
+                  </NavLink>
                 </li>
                 <li>
-                  <_NavLink to={`/dashboard/grant`} onClick={handleNavLinkEv}>
+                  <NavLink to={`/dashboard/grant`} onClick={handleNavLinkEv}>
                     {t('Nav.Nav.GrantList', 'Grant List')}
-                  </_NavLink>
+                  </NavLink>
                 </li>
               </ul>
             </nav>

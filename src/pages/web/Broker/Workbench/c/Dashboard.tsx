@@ -6,7 +6,6 @@ import { useAccount, useSigner } from 'wagmi'
 import React, { FC, useCallback, useEffect, useMemo } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 
 import {
   asyncBrokerRankingAtom,
@@ -15,6 +14,7 @@ import {
   brokerSignUpTimeAtom
 } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
+import { Link } from '@/components/common/Route'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useBrokerAssets } from '@/hooks/useBrokerAssets'

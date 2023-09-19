@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 
-import { _NavLink } from '@/components/web/Header/index'
+import { NavLink } from '@/components/common/Route'
 
 const NavDashboard = () => {
   const { t } = useTranslation()
@@ -15,13 +15,13 @@ const NavDashboard = () => {
       <em />
       <ul>
         <li>
-          <_NavLink to="/dashboard/overview">{t('Nav.Nav.Overview', 'Overview')}</_NavLink>
+          <NavLink to="/dashboard/overview">{t('Nav.Nav.Overview', 'Overview')}</NavLink>
         </li>
         <li>
-          <_NavLink to={`/dashboard/buyback`}>{t('Nav.Nav.BuybackPlan', 'Buyback Plan')}</_NavLink>
+          <NavLink to={`/dashboard/buyback`}>{t('Nav.Nav.BuybackPlan', 'Buyback Plan')}</NavLink>
         </li>
         <li>
-          <_NavLink to={`/dashboard/grant`}>{t('Nav.Nav.GrantList', 'Grant List')}</_NavLink>
+          <NavLink to={`/dashboard/grant`}>{t('Nav.Nav.GrantList', 'Grant List')}</NavLink>
         </li>
       </ul>
     </span>

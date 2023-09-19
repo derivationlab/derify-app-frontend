@@ -5,7 +5,7 @@ import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
 import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getConsultantContract } from '@/utils/contractHelpers'
-import { formatUnits, inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
+import { inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
 
 export const useConsultant = () => {
   const addInsurance = async (signer: TSigner): Promise<boolean> => {

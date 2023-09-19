@@ -16,6 +16,7 @@ import { MarginTokenState } from '@/store/types'
 import MHeader from './MHeader'
 import Tool from './Tool'
 
+export const _NavLink = NavLink as any
 const Header: FC = () => {
   const { t } = useTranslation()
   const { pathname } = useLocation()
@@ -31,12 +32,12 @@ const Header: FC = () => {
           <a href={WEBSITE_URL} />
         </h1>
         <nav className={classNames('web-header-nav', { disabled: disabled })}>
-          <NavLink to={`/${marginToken.symbol}/trade`}>{t('Nav.Nav.Trade', 'Trade')}</NavLink>
-          <NavLink to={`/${marginToken.symbol}/earn`}>{t('Nav.Nav.Earn', 'Earn')}</NavLink>
-          <NavLink to={`/${marginToken.symbol}/data`}>{t('Nav.Nav.Data', 'Data')}</NavLink>
-          <NavLink to={`/broker`} className={classNames({ active: pathname.indexOf('broker') > -1 })}>
+          <_NavLink to={`/${marginToken.symbol}/trade`}>{t('Nav.Nav.Trade', 'Trade')}</_NavLink>
+          <_NavLink to={`/${marginToken.symbol}/earn`}>{t('Nav.Nav.Earn', 'Earn')}</_NavLink>
+          <_NavLink to={`/${marginToken.symbol}/data`}>{t('Nav.Nav.Data', 'Data')}</_NavLink>
+          <_NavLink to={`/broker`} className={classNames({ active: pathname.indexOf('broker') > -1 })}>
             {t('Nav.Nav.Broker', 'Broker')}
-          </NavLink>
+          </_NavLink>
           <NavDashboard />
         </nav>
         <div className="web-header-tools">

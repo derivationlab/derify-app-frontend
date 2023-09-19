@@ -23,7 +23,6 @@ function App() {
   return (
     <>
       <Initial />
-
       <Suspense fallback={<Spinner fixed />}>
         <Switch>
           <Route path="/" component={WebEntry} />

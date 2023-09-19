@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react'
 
 import contracts from '@/config/contracts'
 import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
+import { advisorConfig } from '@/pages/web/consultant/Lock'
 import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getConsultantContract } from '@/utils/contractHelpers'
-import { formatUnits, inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
+import { inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
 
 export const useConsultant = () => {
   const addInsurance = async (signer: TSigner): Promise<boolean> => {
     if (!signer) return false
     const c = getConsultantContract(signer)
-    const amount = inputParameterConversion(100000, PLATFORM_TOKEN.precision)
+    const amount = inputParameterConversion(advisorConfig.amount, PLATFORM_TOKEN.precision)
     try {
       const approve = await allowanceApprove(
         signer,

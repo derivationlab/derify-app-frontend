@@ -17,6 +17,7 @@ import MHeader from './MHeader'
 import Tool from './Tool'
 
 export const _NavLink = NavLink as any
+
 const Header: FC = () => {
   const { t } = useTranslation()
   const { pathname } = useLocation()

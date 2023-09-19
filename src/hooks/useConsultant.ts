@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 
 import contracts from '@/config/contracts'
 import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
+import { advisorConfig } from '@/pages/web/consultant/Lock'
 import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getConsultantContract } from '@/utils/contractHelpers'
 import { inputParameterConversion, safeInterceptionValues } from '@/utils/tools'
-import { advisorConfig } from '@/pages/web/consultant/Lock'
 
 export const useConsultant = () => {
   const addInsurance = async (signer: TSigner): Promise<boolean> => {

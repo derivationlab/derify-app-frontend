@@ -8,7 +8,7 @@ const Small = styled.small`
   padding: 12px 0;
   text-align: center;
   display: block;
-`
+` as any
 
 function NoResults() {
   const { t } = useTranslation()

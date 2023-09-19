@@ -10,14 +10,11 @@ import Button from '@/components/common/Button'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { useConsultant, useConsultantConf } from '@/hooks/useConsultant'
 import { useBalancesStore } from '@/store'
-import {
-  isET,
-  isLT,
-  keepDecimals,
-  nonBigNumberInterception,
-  safeInterceptionValues,
-  thousandthsDivision
-} from '@/utils/tools'
+import { isET, isLT, keepDecimals, thousandthsDivision } from '@/utils/tools'
+
+export const advisorConfig = {
+  amount: 100
+}
 
 const Lock = () => {
   const { t } = useTranslation()
@@ -33,8 +30,8 @@ const Lock = () => {
   const balance = useMemo(() => balances?.[PLATFORM_TOKEN.symbol] ?? 0, [balances])
 
   const disabled = useMemo(() => {
-    return !signer || isET(balance, 0) || isET(config.amount, 0) || isLT(balance, config.amount)
-  }, [config, signer, balance])
+    return !signer || isET(balance, 0) || isLT(balance, advisorConfig.amount)
+  }, [signer, balance])
 
   const _addInsurance = useCallback(async () => {
     setLoading(true)
@@ -55,7 +52,7 @@ const Lock = () => {
       <div className="web-consultant-item">
         <span>{t('Advisor.amount')}</span>
         <span>
-          {thousandthsDivision(config.amount)} {PLATFORM_TOKEN.symbol}
+          {thousandthsDivision(advisorConfig.amount)} {PLATFORM_TOKEN.symbol}
         </span>
       </div>
       <div className="web-consultant-item">

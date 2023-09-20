@@ -70,7 +70,7 @@ const Data: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber = 
       <div className="web-dashboard-plan-datas-item">
         <header>{t('NewDashboard.BuybackPlan.TotalDestroyed', 'Total Destroyed')}</header>
         <section>
-          <Skeleton rowsProps={{ rows: 1 }} animation loading={Number(totalDestroyed) === 0}>
+          <Skeleton rowsProps={{ rows: 1 }} animation loading={isEmpty(currentIndex)}>
             <BalanceShow value={totalDestroyed} />
             <u>{PLATFORM_TOKEN.symbol}</u>
           </Skeleton>

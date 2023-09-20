@@ -30,8 +30,8 @@ const Lock = () => {
   const balance = useMemo(() => balances?.[PLATFORM_TOKEN.symbol] ?? 0, [balances])
 
   const disabled = useMemo(() => {
-    return !signer || isET(balance, 0) || isET(config.amount, 0) || isLT(balance, config.amount)
-  }, [config, signer, balance])
+    return !signer || isET(balance, 0) || isLT(balance, advisorConfig.amount)
+  }, [signer, balance])
 
   const _addInsurance = useCallback(async () => {
     setLoading(true)

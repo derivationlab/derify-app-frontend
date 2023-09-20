@@ -10,8 +10,8 @@ export const getBuyBackPlans = async (page: number, size: number) => {
   return response
 }
 
-export const getCurrentIndexDAT = async (address: string) => {
-  const response = await get(`api/current_index_data/${address}`)
+export const getCurrentIndexDAT = async (marginToken: string) => {
+  const response = await get(`api/current_index_data/${marginToken}`)
   return response
 }
 

@@ -109,12 +109,7 @@ const Transaction: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerTransactions(
-        '0x02d33286fe1d09e12443f9B9336e5Bc8Ce836f9F',
-        marginToken.address,
-        index,
-        10
-      )
+      const { data } = await getBrokerTransactions(address, marginToken.address, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

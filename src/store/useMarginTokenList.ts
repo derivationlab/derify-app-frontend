@@ -69,7 +69,7 @@ export const pagingParams = {
   totalItems: 0,
   currentPage: 0
 }
-//已部署&上架&保证金信息表中advisor不为空的保证金
+
 const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
   // Margin pagination parameter support
   pagingParams: pagingParams,

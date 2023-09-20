@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 
 import contracts from '@/config/contracts'
 import tokens from '@/config/tokens'
-import { outputErrorLog } from '@/funcs/helper'
 import { TSigner } from '@/typings'
 import { allowanceApprove } from '@/utils/allowanceApprove'
 import { getProtocolContract, getRewardsContract } from '@/utils/contractHelpers'
@@ -49,7 +48,6 @@ export const useBrokerOperation = () => {
       return receipt.status
     } catch (e) {
       console.info(e)
-      outputErrorLog(c.address, 'DerifyRewards.abi', 'withdrawBrokerReward')
       return false
     }
   }, [])

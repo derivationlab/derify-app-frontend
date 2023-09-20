@@ -191,8 +191,9 @@ const MarketInfo: FC = () => {
     <div className="web-dashboard-overview-market">
       <header className="web-dashboard-section-header">
         <h3>{t('NewDashboard.Overview.MarketInfo')}</h3>
+        <div className="web-dashboard-section-header-line" />
         <div className="web-dashboard-section-header-search">
-          {/*todo search*/}
+          {/*TODO search*/}
           {/*<Input value={keyword} onChange={setKeyword} placeholder={t('NewDashboard.Overview.SerchTip')}>*/}
           {/*  <button className='web-dashboard-section-header-search-button' onClick={onSearch} />*/}
           {/*</Input>*/}

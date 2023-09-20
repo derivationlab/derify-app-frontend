@@ -12,10 +12,6 @@ import { useConsultant, useConsultantConf } from '@/hooks/useConsultant'
 import { useBalancesStore } from '@/store'
 import { isET, isLT, keepDecimals, thousandthsDivision } from '@/utils/tools'
 
-export const advisorConfig = {
-  amount: 100
-}
-
 const Lock = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
@@ -30,13 +26,13 @@ const Lock = () => {
   const balance = useMemo(() => balances?.[PLATFORM_TOKEN.symbol] ?? 0, [balances])
 
   const disabled = useMemo(() => {
-    return !signer || isET(balance, 0) || isLT(balance, advisorConfig.amount)
-  }, [signer, balance])
+    return !signer || isET(balance, 0) || isET(config.amount, 0) || isLT(balance, config.amount)
+  }, [config, signer, balance])
 
   const _addInsurance = useCallback(async () => {
     setLoading(true)
     const toast = window.toast.loading(t('common.pending'))
-    const status = await addInsurance(signer)
+    const status = await addInsurance(config.amount, signer)
     if (status) {
       window.toast.success(t('common.success'))
       void (await asyncConsultant())
@@ -45,14 +41,14 @@ const Lock = () => {
     }
     setLoading(false)
     window.toast.dismiss(toast)
-  }, [signer])
+  }, [config, signer])
 
   return (
     <section>
       <div className="web-consultant-item">
         <span>{t('Advisor.amount')}</span>
         <span>
-          {thousandthsDivision(advisorConfig.amount)} {PLATFORM_TOKEN.symbol}
+          {thousandthsDivision(config.amount)} {PLATFORM_TOKEN.symbol}
         </span>
       </div>
       <div className="web-consultant-item">

@@ -3,9 +3,10 @@ import { useAccount } from 'wagmi'
 
 import React, { FC, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useClickAway } from 'react-use'
 
+import { NavLink } from '@/components/common/Route'
 import { WEBSITE_URL, Communities } from '@/config'
 
 interface Props {

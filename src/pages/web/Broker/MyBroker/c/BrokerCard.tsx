@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
+import { Link } from '@/components/common/Route'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'

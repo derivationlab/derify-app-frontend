@@ -1,7 +1,7 @@
-import { isEmpty } from 'lodash'
+import { getAllMarginTokenList, getMarginTokenList as _getMarginTokenList } from 'derify-apis-test'
+import { isEmpty } from 'lodash-es'
 import { create } from 'zustand'
 
-import { getAllMarginTokenList, getMarginTokenList as _getMarginTokenList } from '@/api'
 import { ZERO } from '@/config'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
@@ -10,7 +10,7 @@ import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 
 export const getMarginTokenList = async (page = 0) => {
-  const { data } = await _getMarginTokenList(page)
+  const { data } = await _getMarginTokenList<{ data: Rec }>(page)
   return data
 }
 
@@ -101,7 +101,7 @@ const useMarginTokenListStore = create<MarginTokenListState>((set) => ({
      * @Market Info
      * @Buyback Plan
      */
-    const { data } = await getAllMarginTokenList()
+    const { data } = await getAllMarginTokenList<{ data: string[] }>()
     if (data.length) {
       const deployStatus = await getMarginDeployStatusForAllMarginTokenList(data)
       const filterData = data.filter((address: string) => deployStatus[address])

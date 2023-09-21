@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 
 import DerifyRewardsAbi from '@/config/abi/DerifyRewards.json'
 import { Rec } from '@/typings'

@@ -1,10 +1,10 @@
+import { traderInfoUpdates } from 'derify-apis-test'
 import PubSub from 'pubsub-js'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 
 import React, { FC, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { traderInfoUpdates } from '@/api'
 import Button from '@/components/common/Button'
 import WalletDialog from '@/components/common/Wallet'
 import { Wallet } from '@/components/common/Wallet/wallets'

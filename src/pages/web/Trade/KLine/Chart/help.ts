@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
+import { getKLineDAT as getKLineDataApi } from 'derify-apis-test'
 
-import { getKLineDAT as getKLineDataApi } from '@/api'
+import { Rec } from '@/typings'
 import { sleep } from '@/utils/tools'
 
 interface klineData {
@@ -36,8 +37,8 @@ export const getKLineDAT = async (token: string, time: number, endTime: number, 
     await sleep(1000)
     return { data: [], more: true }
   }
-  const data = await getKLineDataApi(token, time, endTime, limit)
-  const filter = data.filter((d: number[]) => d.slice(1).some((l) => l > 0))
+  const { data } = await getKLineDataApi<{ data: Rec }>(token, time, endTime, limit)
+  const filter = (data ?? []).filter((d: number[]) => d.slice(1).some((l) => l > 0))
   const klineData = calcKlineData(filter)
   const more = klineData.length === limit
   return {

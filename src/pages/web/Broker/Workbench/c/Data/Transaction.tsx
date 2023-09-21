@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { isEmpty } from 'lodash'
+import { getBrokerTransactions } from 'derify-apis-test'
+import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
@@ -7,13 +8,13 @@ import React, { FC, useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getBrokerTransactions } from '@/api'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { EXPLORER_SCAN_URL } from '@/config'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+import { Rec } from '@/typings'
 import { keepDecimals, calcShortHash } from '@/utils/tools'
 
 import { RowTime, calcTimeStr } from './common'
@@ -109,7 +110,7 @@ const Transaction: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerTransactions(address, marginToken.address, index, 10)
+      const { data } = await getBrokerTransactions<{ data: Rec }>(address, marginToken.address, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

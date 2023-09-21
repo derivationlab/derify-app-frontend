@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { flatten } from 'lodash'
+import { getAllMarginPositions } from 'derify-apis-test'
+import { flatten } from 'lodash-es'
 
 import { useEffect, useState } from 'react'
 
-import { getAllMarginPositions } from '@/api'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
 import protocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
@@ -16,7 +16,7 @@ export const useMarginPosVolume = () => {
   const { data, refetch } = useQuery(
     ['useMarginPosVolume'],
     async () => {
-      const { data } = await getAllMarginPositions()
+      const { data } = await getAllMarginPositions<{ data: Rec[] }>()
       if (data) {
         data.forEach((d: Rec) => {
           output[d.margin_token] = {

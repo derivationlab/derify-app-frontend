@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { getMarginIndicators, getDerivativeIndicator } from 'derify-apis-test'
 
-import { getMarginIndicators, getDerivativeIndicator } from '@/api'
+import { Rec } from '@/typings'
 import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'
 
 /**
@@ -19,7 +20,7 @@ export const useMarginIndicators = (marginTokenAddress: string) => {
   const { data } = useQuery(
     ['useMarginIndicators'],
     async () => {
-      const { data } = await getMarginIndicators(marginTokenAddress)
+      const { data } = await getMarginIndicators<{ data: Rec }>(marginTokenAddress)
       if (data && data.length > 0) {
         data.forEach(
           ({
@@ -69,7 +70,7 @@ export const useAllMarginIndicators = (list: string[]) => {
     async () => {
       if (list.length) {
         const promises = list.map(async (address) => {
-          return [await getDerivativeIndicator(address).then(({ data }) => data)]
+          return [await getDerivativeIndicator<{ data: Rec }>(address).then(({ data }) => data)]
         })
 
         const response = await Promise.all(promises)

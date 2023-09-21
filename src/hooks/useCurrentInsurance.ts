@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { isEmpty } from 'lodash'
+import { getCurrentInsuranceDAT } from 'derify-apis-test'
+import { isEmpty } from 'lodash-es'
 
-import { getCurrentInsuranceDAT } from '@/api'
+import { Rec } from '@/typings'
 
 export const useCurrentInsurance = (address: string) => {
   const { data, refetch } = useQuery(
     ['getCurrentInsuranceDAT'],
     async () => {
-      const data = await getCurrentInsuranceDAT(address)
+      const data = await getCurrentInsuranceDAT<{ data: Rec }>(address)
       return data?.data ?? {}
     },
     {

@@ -1,4 +1,5 @@
-import { isEmpty } from 'lodash'
+import { getBrokerRevenueRecord } from 'derify-apis-test'
+import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
@@ -6,7 +7,6 @@ import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getBrokerRevenueRecord } from '@/api'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { EXPLORER_SCAN_URL } from '@/config'
@@ -14,6 +14,7 @@ import { PLATFORM_TOKEN } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+import { Rec } from '@/typings'
 import { keepDecimals, calcShortHash } from '@/utils/tools'
 
 import { RowTime, calcTimeStr } from './common'
@@ -83,7 +84,7 @@ const History: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerRevenueRecord(address, marginToken.address, index, 10)
+      const { data } = await getBrokerRevenueRecord<{ data: Rec }>(address, marginToken.address, index, 10)
 
       dispatch({
         type: 'SET_RECORDS',

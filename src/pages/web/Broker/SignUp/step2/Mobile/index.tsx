@@ -1,16 +1,17 @@
+import { getBrokerInfoWithBrokerId, updateBrokerInfo } from 'derify-apis-test'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
 import { asyncBrokerInfoAtom, brokerInfoAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
+import { Rec } from '@/typings'
 import { calcShortHash } from '@/utils/tools'
 
 import { patterns, rules } from '../config'
@@ -88,14 +89,14 @@ const BrokerSignUpStep2Mobile: FC = () => {
       return
     }
 
-    const { data: brokerInfo } = await getBrokerInfoWithBrokerId(brokerId)
+    const { data: brokerInfo } = await getBrokerInfoWithBrokerId<{ data: Rec }>(brokerId)
 
     if (!isEmpty(brokerInfo) && brokerInfo[0]?.broker !== address) {
       window.toast.error(t('Broker.Reg.Occupied', 'Your Code is occupied, choose another one.'))
       return
     }
 
-    const data = await updateBrokerInfo({
+    const data = await updateBrokerInfo<{ code: number }>({
       logo: _logo,
       id: brokerId,
       name: brokerName,

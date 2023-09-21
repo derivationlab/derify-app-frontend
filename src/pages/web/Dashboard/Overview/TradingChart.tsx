@@ -1,13 +1,14 @@
-import { isArray } from 'lodash'
+import { getHistoryTotalTradingNetValue } from 'derify-apis-test'
+import { isArray } from 'lodash-es'
 
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getHistoryTotalTradingNetValue } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useCurrentNetTrading } from '@/hooks/useCurrentNetTrading'
+import { Rec } from '@/typings'
 import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
@@ -17,7 +18,7 @@ let output: { day_time: string; trading_net_value: number } = {
 }
 
 const TradingChart: FC = () => {
-  const [chartData, setChartData] = useState<any>([])
+  const [chartData, setChartData] = useState<Rec[]>([])
 
   const { t } = useTranslation()
 
@@ -29,7 +30,7 @@ const TradingChart: FC = () => {
   }, [chartData, data])
 
   const historyDAT = async () => {
-    const { data } = await getHistoryTotalTradingNetValue('all', 'all')
+    const { data } = await getHistoryTotalTradingNetValue<{ data: Rec[] }>('all', 'all')
 
     if (isArray(data)) {
       const convert = data.map((o) => ({ ...o, trading_net_value: Number(o.trading_net_value) })).reverse()

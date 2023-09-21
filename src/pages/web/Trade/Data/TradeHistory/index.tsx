@@ -1,14 +1,15 @@
-import { isEmpty } from 'lodash'
+import { getTradingHistory } from 'derify-apis-test'
+import { isEmpty } from 'lodash-es'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 
-import { getTradingHistory } from '@/api'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+import { Rec } from '@/typings'
 
 import NoRecord from '../c/NoRecord'
 import ListItem from './ListItem'
@@ -22,7 +23,7 @@ const TradeHistory: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getTradingHistory(marginToken.address, address, index)
+      const { data } = await getTradingHistory<{ data: Rec }>(marginToken.address, address, index)
 
       dispatch({
         type: 'SET_RECORDS',

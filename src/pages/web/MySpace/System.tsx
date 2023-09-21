@@ -1,11 +1,11 @@
-import { uniqBy } from 'lodash'
+import { getDerivativeList, getSystemParams } from 'derify-apis-test'
+import { uniqBy } from 'lodash-es'
 import Table from 'rc-table'
 
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getDerivativeList, getSystemParams } from '@/api'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import { TRADING_VISIBLE_COUNT } from '@/config'
 import { useClearingParams } from '@/hooks/useClearingParams'
@@ -148,7 +148,7 @@ const System: FC = () => {
   ]
 
   const morePairs = useCallback(async () => {
-    const { data } = await getDerivativeList(marginToken.address, seqCount)
+    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
       const filter = data.records.filter((r: Rec) => r.open)
       const combine = [...pairOptions.data, ...filter]
@@ -183,7 +183,7 @@ const System: FC = () => {
 
   useEffect(() => {
     const func = async () => {
-      const { data } = await getSystemParams(marginToken.address)
+      const { data } = await getSystemParams<{ data: Rec }>(marginToken.address)
       setParameters({
         buybackPeriod: data.buyback_period,
         buybackSlippage: data.buyback_sllipage

@@ -1,4 +1,4 @@
-import { isEmpty, orderBy } from 'lodash'
+import { isEmpty, orderBy } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 

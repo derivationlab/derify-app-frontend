@@ -1,19 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
+import { getCurrentTotalTradingNetValue } from 'derify-apis-test'
 
-import { getCurrentTotalTradingNetValue } from '@/api'
+import { Rec } from '@/typings'
 
+const init = { trading_net_value: 0 }
 export const useCurrentNetTrading = (marginToken: string, quoteToken: string) => {
-  const base = { trading_net_value: 0 }
   const { data, refetch } = useQuery(
     ['useCurrentTotalTradingNetValue'],
-    async (): Promise<typeof base> => {
-      const { data } = await getCurrentTotalTradingNetValue(marginToken, quoteToken)
+    async (): Promise<typeof init> => {
+      const { data } = await getCurrentTotalTradingNetValue<{ data: Rec }>(marginToken, quoteToken)
 
-      return data?.[0] ?? base
+      return data?.[0] ?? init
     },
     {
       retry: 0,
-      initialData: base,
+      initialData: init,
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false

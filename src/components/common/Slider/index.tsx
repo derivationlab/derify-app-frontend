@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { last, head, round } from 'lodash'
+import { last, head, round } from 'lodash-es'
 
 import React, { FC } from 'react'
 import ReactSlider from 'react-slider'

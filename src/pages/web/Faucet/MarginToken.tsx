@@ -1,10 +1,10 @@
 import classNames from 'classnames'
-import { debounce, uniqBy } from 'lodash'
+import { searchMarginToken } from 'derify-apis-test'
+import { debounce, uniqBy } from 'lodash-es'
 
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { searchMarginToken } from '@/api'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Image from '@/components/common/Image'
 import NoResults from '@/pages/web/Trade/c/NoResults'
@@ -32,7 +32,7 @@ const MarginToken: FC<{ onSelect: (marginToken: Rec) => void }> = ({ onSelect })
 
   const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
-      const { data = [] } = await searchMarginToken(searchKeyword)
+      const { data = [] } = await searchMarginToken<{ data: Rec[] }>(searchKeyword)
       setMarginOptions({ data, loaded: false })
     }, 100),
     []

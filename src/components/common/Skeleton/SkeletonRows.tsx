@@ -1,5 +1,5 @@
 import cls from 'classnames'
-import { times } from 'lodash'
+import { times } from 'lodash-es'
 
 import React, { FC } from 'react'
 

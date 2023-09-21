@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
+import { getPlatformTokenPrice } from 'derify-apis-test'
 
-import { getPlatformTokenPrice } from '@/api'
 import { nonBigNumberInterception } from '@/utils/tools'
 
 export const usePlatformTokenPrice = () => {
   const { data } = useQuery(
     ['usePlatformTokenPrice'],
     async (): Promise<string> => {
-      const { data } = await getPlatformTokenPrice()
+      const { data } = await getPlatformTokenPrice<{ data: string }>()
       return nonBigNumberInterception(data, 4)
     },
     {

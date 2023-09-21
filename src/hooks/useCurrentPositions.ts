@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
+import { getCurrentPositionsAmount } from 'derify-apis-test'
 
-import { getCurrentPositionsAmount } from '@/api'
+import { Rec } from '@/typings'
 
 export const useCurrentPositions = (quoteToken: string, marginToken: string) => {
   const { data, refetch } = useQuery(
     [`useCurrentPositionsAmount-${marginToken}`],
     async () => {
       if (quoteToken && marginToken) {
-        const data = await getCurrentPositionsAmount(quoteToken, marginToken)
-        return data?.data
+        const { data } = await getCurrentPositionsAmount<{ data: Rec }>(quoteToken, marginToken)
+        return data
       }
       return null
     },

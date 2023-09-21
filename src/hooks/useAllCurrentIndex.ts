@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { getCurrentIndexDAT } from 'derify-apis-test'
 
-import { getCurrentIndexDAT } from '@/api'
 import { marginTokenList } from '@/store'
+import { Rec } from '@/typings'
 
 export const useAllCurrentIndex = (list: (typeof marginTokenList)[]) => {
   let output = Object.create(null)
@@ -11,7 +12,7 @@ export const useAllCurrentIndex = (list: (typeof marginTokenList)[]) => {
     async () => {
       if (list.length) {
         const promises = list.map(
-          async (token) => await getCurrentIndexDAT(token.margin_token).then(({ data }) => data)
+          async (token) => await getCurrentIndexDAT<{ data: Rec }>(token.margin_token).then(({ data }) => data)
         )
         const response = await Promise.allSettled(promises)
         response.forEach((res, index) => {

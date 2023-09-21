@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 
 import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

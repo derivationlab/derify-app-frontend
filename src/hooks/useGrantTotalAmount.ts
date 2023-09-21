@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-
-import { getGrantPlanAmount } from '@/api'
+import { getGrantPlanAmount } from 'derify-apis-test'
 
 export const useGrantTotalAmount = (marginToken: string) => {
   const { data } = useQuery(
     ['getGrantPlanAmount'],
     async (): Promise<{ totalAmount: number }> => {
-      const data = await getGrantPlanAmount(marginToken)
-      return data?.data ?? { totalAmount: 10 }
+      const { data } = await getGrantPlanAmount<{ data: { totalAmount: number } }>(marginToken)
+      return data ?? { totalAmount: 10 }
     },
     {
       retry: 0,

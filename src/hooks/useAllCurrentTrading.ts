@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { getCurrentTradingAmount } from 'derify-apis-test'
 
-import { getCurrentTradingAmount } from '@/api'
+import { Rec } from '@/typings'
 
 export const useAllCurrentTrading = (list: string[]) => {
   let output = Object.create(null)
@@ -10,7 +11,7 @@ export const useAllCurrentTrading = (list: string[]) => {
     async () => {
       if (list.length) {
         const promises = list.map(async (address) => {
-          return [await getCurrentTradingAmount('all', address).then(({ data }) => data)]
+          return [await getCurrentTradingAmount<{ data: Rec }>('all', address).then(({ data }) => data)]
         })
 
         const response = await Promise.all(promises)

@@ -1,6 +1,6 @@
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 
 import DerifyExchangeAbi from '@/config/abi/DerifyExchange.json'
 import { multicallV2 } from '@/utils/multicall'

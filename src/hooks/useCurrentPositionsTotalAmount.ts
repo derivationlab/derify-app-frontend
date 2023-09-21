@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { getCurrentPositionsAmount } from 'derify-apis-test'
 
-import { getCurrentPositionsAmount } from '@/api'
+import { Rec } from '@/typings'
 
 /**
  {
@@ -15,7 +16,7 @@ export const useCurrentPositionsTotalAmount = (quoteTokenAddress: string, margin
     ['useCurrentPositionsTotalAmount'],
     async () => {
       if (quoteTokenAddress) {
-        const { data } = await getCurrentPositionsAmount(quoteTokenAddress, marginTokenAddress)
+        const { data } = await getCurrentPositionsAmount<{ data: Rec }>(quoteTokenAddress, marginTokenAddress)
         return data ?? null
       }
       return null

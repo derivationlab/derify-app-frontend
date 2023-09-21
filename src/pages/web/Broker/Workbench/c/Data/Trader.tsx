@@ -1,4 +1,5 @@
-import { isEmpty } from 'lodash'
+import { getBrokerSubordinate } from 'derify-apis-staging'
+import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
@@ -6,7 +7,6 @@ import React, { FC, useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getBrokerSubordinate } from '@/api'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
@@ -14,6 +14,7 @@ import { EXPLORER_SCAN_URL } from '@/config'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+import { Rec } from '@/typings'
 import { calcShortHash } from '@/utils/tools'
 
 import { RowTime } from './common'
@@ -61,7 +62,7 @@ const Trader: FC = () => {
 
   const fetchData = async (index = 0) => {
     if (address) {
-      const { data } = await getBrokerSubordinate(address, marginToken.address, index, 10)
+      const { data } = await getBrokerSubordinate<{ data: Rec }>(address, marginToken.address, index)
 
       dispatch({
         type: 'SET_RECORDS',

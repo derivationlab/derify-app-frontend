@@ -1,5 +1,5 @@
 import { useSetAtom } from 'jotai'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 

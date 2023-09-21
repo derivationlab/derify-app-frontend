@@ -1,15 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import { isEmpty } from 'lodash'
+import { getCurrentTradingAmount } from 'derify-apis-staging'
+import { isEmpty } from 'lodash-es'
 
-import { getCurrentTradingAmount } from '@/api'
+import { Rec } from '@/typings'
 
 export const useCurrentTrading = (address: string, marginToken: string) => {
   const { data, refetch } = useQuery(
     ['useCurrentTradingAmount'],
-    async (): Promise<any[]> => {
+    async (): Promise<Rec[]> => {
       if (address && marginToken) {
-        const data = await getCurrentTradingAmount(address, marginToken)
-        return data?.data
+        const { data } = await getCurrentTradingAmount<{ data: Rec[] }>(address, marginToken)
+        return data
       }
       return []
     },

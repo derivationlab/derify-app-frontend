@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 
 import React, { FC, useCallback, useRef, useEffect, useReducer, useMemo } from 'react'
 import { useInterval } from 'react-use'

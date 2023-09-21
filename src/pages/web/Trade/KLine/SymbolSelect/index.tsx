@@ -1,11 +1,11 @@
+import { getDerivativeList, searchDerivative } from 'derify-apis-staging'
 import { getAddress } from 'ethers/lib/utils'
-import { debounce, uniqBy } from 'lodash'
+import { debounce, uniqBy } from 'lodash-es'
 
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getDerivativeList, searchDerivative } from '@/api'
 import ChangePercent from '@/components/common/ChangePercent'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Skeleton from '@/components/common/Skeleton'
@@ -76,7 +76,7 @@ const SymbolSelect = () => {
   const morePairs = useCallback(async () => {
     switchSettings = 1
 
-    const { data } = await getDerivativeList(marginToken.address, seqCount)
+    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
       const filterRecords = data.records.filter((r: Rec) => r.open) // opening
       const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)
@@ -102,7 +102,7 @@ const SymbolSelect = () => {
   const fuzzySearchFunc = useCallback(
     debounce(async (marginToken: string, fuzzySearch: string, factory: string) => {
       try {
-        const { data } = await searchDerivative(marginToken, fuzzySearch)
+        const { data } = await searchDerivative<{ data: Rec }>(marginToken, fuzzySearch)
         const filterRecords = (data as any[]).filter((d) => d.open) // opening
         const pairAddresses = await getPairAddressList(factory, filterRecords)
         const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed

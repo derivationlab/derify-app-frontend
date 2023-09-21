@@ -1,16 +1,17 @@
+import { checkMarginToken } from 'derify-apis-staging'
 import { useAtomValue } from 'jotai'
-import { isEmpty, isUndefined } from 'lodash'
+import { isEmpty, isUndefined } from 'lodash-es'
 import { useAccount } from 'wagmi'
 
 import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { Redirect, useParams } from 'react-router-dom'
 
-import { checkMarginToken } from '@/api'
 import { userBrokerBoundAtom, whetherUserIsBrokerAtom } from '@/atoms/useBrokerData'
 import Spinner from '@/components/common/Spinner'
 import NotConnect from '@/components/web/NotConnect'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+import { Rec } from '@/typings'
 
 export const R1 = (props: PropsWithChildren<any>) => {
   const params: any = useParams()
@@ -21,7 +22,7 @@ export const R1 = (props: PropsWithChildren<any>) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const _testing = async () => {
-    const { data } = await checkMarginToken(params.id)
+    const { data } = await checkMarginToken<{ data: Rec }>(params.id)
     testResult(!!data)
   }
 
@@ -98,7 +99,7 @@ export const R5 = (props: PropsWithChildren<any>) => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const _testing = async () => {
-    const { data } = await checkMarginToken(params.id)
+    const { data } = await checkMarginToken<{ data: Rec }>(params.id)
     testResult(!!data)
   }
 

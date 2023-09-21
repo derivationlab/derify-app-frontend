@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { times } from 'lodash'
+import { times } from 'lodash-es'
 import invariant from 'tiny-invariant'
 
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'

@@ -1,3 +1,4 @@
+import { bindingYourBroker, getBrokerInfoWithBrokerId } from 'derify-apis-staging'
 import { useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 
@@ -6,9 +7,9 @@ import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
-import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
 import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
+import { Rec } from '@/typings'
 
 import BrokerDialog from './BrokerDialog'
 
@@ -33,7 +34,7 @@ const Bind: FC = () => {
 
     setVisibleStatus('')
 
-    const data = await bindingYourBroker({ trader: address, brokerId })
+    const data = await bindingYourBroker<{ code: number }>({ trader: address, brokerId })
     if (data.code === 0) {
       // succeed
       void (await asyncUserBrokerBound())
@@ -50,7 +51,7 @@ const Bind: FC = () => {
   const onConfirmEv = async () => {
     setLoading(true)
 
-    const { data } = await getBrokerInfoWithBrokerId(brokerId)
+    const { data } = await getBrokerInfoWithBrokerId<{ data: Rec }>(brokerId)
 
     if (data && data[0]) {
       setBrokerData(data[0])

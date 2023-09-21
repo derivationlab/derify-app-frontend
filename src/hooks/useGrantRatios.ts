@@ -1,15 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-
-import { getGrantPlanRatios } from '@/api'
+import { getGrantPlanRatios } from 'derify-apis-staging'
 
 export const useGrantRatios = (marginToken: string, trader?: string) => {
   const { data } = useQuery(
     ['getGrantPlanRatios'],
     async (): Promise<number> => {
       if (trader) {
-        const data = await getGrantPlanRatios(marginToken, trader)
+        const { data } = await getGrantPlanRatios<{ data: number[] }>(marginToken, trader)
 
-        const _data = data?.data ?? []
+        const _data = data ?? []
 
         return _data.length > 0 ? Math.min.apply(null, _data) : 0
       }

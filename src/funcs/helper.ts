@@ -1,11 +1,11 @@
 import BN from 'bignumber.js'
+import { checkMarginToken as _checkMarginToken } from 'derify-apis-staging'
 import { isAddress } from 'ethers/lib/utils'
 
-import { checkMarginToken as _checkMarginToken } from '@/api'
 import { QUOTE_TOKEN_KEY, ZERO } from '@/config'
 import factoryAbi from '@/config/abi/DerifyFactory.json'
 import { derivativeList } from '@/store'
-import { PositionOrderTypes, PositionSideTypes } from '@/typings'
+import { PositionOrderTypes, PositionSideTypes, Rec } from '@/typings'
 import {
   getExchangeContract,
   getDerivativeContract,
@@ -207,7 +207,7 @@ export const getPosMaxLeverage = async (address: string) => {
 }
 
 export const checkMarginToken = async (marginToken: string) => {
-  const { data } = await _checkMarginToken(marginToken)
+  const { data } = await _checkMarginToken<{ data: Rec }>(marginToken)
   if (data) {
     const contract = getProtocolContract()
     const response = await contract.getMarginTokenContractCollections(data.margin_token)

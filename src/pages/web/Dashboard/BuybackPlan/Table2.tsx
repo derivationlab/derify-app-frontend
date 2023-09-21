@@ -1,12 +1,12 @@
 import classNames from 'classnames'
-import { isEmpty } from 'lodash'
+import { getTokenBurnHistory } from 'derify-apis-staging'
+import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 
 import React, { useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getTokenBurnHistory } from '@/api'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
@@ -96,7 +96,7 @@ const Table2 = () => {
   }, [t, state.records])
 
   const _getTokenBurnHistory = async (index = 0) => {
-    const { data } = await getTokenBurnHistory(index)
+    const { data } = await getTokenBurnHistory<{ data: Rec }>(index)
     dispatch({
       type: 'SET_RECORDS',
       payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
@@ -115,7 +115,7 @@ const Table2 = () => {
   return (
     <>
       <Table
-        rowKey="symbol"
+        rowKey="tx"
         data={state.records.records}
         columns={isMobile ? mColumns : wColumns}
         className={classNames({ 'web-space-table': isMobile })}

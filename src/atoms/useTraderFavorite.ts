@@ -1,7 +1,7 @@
+import { getFavoritePairsList } from 'derify-apis-staging'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 
-import { getFavoritePairsList } from '@/api'
 import { Rec } from '@/typings'
 
 export const traderFavoriteAtom = atom<Rec[]>([])
@@ -16,7 +16,7 @@ export const asyncTraderFavoriteAtom = atomFamily((params: TraderFavorite) =>
     const { trader, marginToken } = params
     try {
       if (trader && marginToken) {
-        const { data = [] } = await getFavoritePairsList(marginToken, trader)
+        const { data = [] } = await getFavoritePairsList<{ data: Rec[] }>(marginToken, trader)
         set(traderFavoriteAtom, data)
       }
     } catch (e) {

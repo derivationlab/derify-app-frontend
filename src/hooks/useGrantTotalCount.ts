@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-
-import { getGrantPlanCount } from '@/api'
+import { getGrantPlanCount } from 'derify-apis-staging'
 
 export const useGrantTotalCount = (marginToken: string) => {
   const { data } = useQuery(
     ['getGrantPlanCount'],
     async (): Promise<{ count: number }> => {
-      const data = await getGrantPlanCount(marginToken)
-      return data?.data ?? { count: 0 }
+      const { data } = await getGrantPlanCount<{ data: { count: number } }>(marginToken)
+      return data ?? { count: 0 }
     },
     {
       retry: 0,

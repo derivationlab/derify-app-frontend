@@ -1,6 +1,7 @@
+import { getDerivativeList, getTradingTokenList } from 'derify-apis-staging'
+
 import { useEffect, useMemo, useState } from 'react'
 
-import { getDerivativeList, getTradingTokenList } from '@/api'
 import contracts from '@/config/contracts'
 import { findToken } from '@/config/tokens'
 import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
@@ -97,8 +98,8 @@ export const useTradingList = (marginToken: string) => {
       if (!marginToken) {
         setTradingList((val) => ({ ...val, list: [], loaded: false }))
       } else {
-        const { data: data1 } = await getTradingTokenList()
-        const { data: data2 = [] } = await getDerivativeList(marginToken)
+        const { data: data1 } = await getTradingTokenList<{ data: Rec }>()
+        const { data: data2 = [] } = await getDerivativeList<{ data: Rec }>(marginToken)
         const _data2: Rec[] = data2?.records ?? []
         const filter = (data1?.records ?? []).filter((x: Rec) => !_data2.find((f) => f.token === x.token))
         setTradingList((val) => ({ ...val, list: filter, loaded: false }))

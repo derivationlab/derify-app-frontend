@@ -1,11 +1,11 @@
 import classNames from 'classnames'
-import { isArray, uniqBy } from 'lodash'
+import { getDerivativeList, getHistoryPositionsDAT } from 'derify-apis-staging'
+import { isArray, uniqBy } from 'lodash-es'
 
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getDerivativeList, getHistoryPositionsDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -73,7 +73,7 @@ const PositionVolume: FC = () => {
   }, [theme])
 
   const historyDAT = useCallback(async () => {
-    const { data: history } = await getHistoryPositionsDAT(
+    const { data: history } = await getHistoryPositionsDAT<{ data: Rec[] }>(
       derivativeSel.token,
       matchTimeLineOptions[timeSelectVal],
       marginToken.address
@@ -94,7 +94,7 @@ const PositionVolume: FC = () => {
   }, [timeSelectVal, derivativeSel])
 
   const morePairs = useCallback(async () => {
-    const { data } = await getDerivativeList(marginToken.address, seqCount)
+    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
       const filter = data.records.filter((r: Rec) => r.open)
       const combine = [...pairOptions.data, ...filter]

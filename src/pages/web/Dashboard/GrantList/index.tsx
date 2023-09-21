@@ -1,12 +1,12 @@
 import classNames from 'classnames'
+import { getGrantPlanList, searchMarginToken } from 'derify-apis-staging'
 import { isAddress } from 'ethers/lib/utils'
-import { debounce, sortBy, uniqBy } from 'lodash'
+import { debounce, sortBy, uniqBy } from 'lodash-es'
 import PubSub from 'pubsub-js'
 
 import React, { FC, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getGrantPlanList, searchMarginToken } from '@/api'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
@@ -54,7 +54,7 @@ const GrantListInner: FC = () => {
   )
 
   const _getGrantPlanList = useCallback(async (index = 0, marginToken, grantStatus, grantTarget) => {
-    const { data } = await getGrantPlanList(marginToken, grantTarget, grantStatus, index, 8)
+    const { data } = await getGrantPlanList<{ data: Rec }>(marginToken, grantTarget, grantStatus, index, 8)
 
     const sort = sortBy(data?.records ?? [], ['open'], 'desc')
 
@@ -66,7 +66,7 @@ const GrantListInner: FC = () => {
 
   const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
-      const { data = [] } = await searchMarginToken(searchKeyword)
+      const { data = [] } = await searchMarginToken<{ data: Rec[] }>(searchKeyword)
       setMarginOptions({ data, loaded: false })
     }, 1500),
     []

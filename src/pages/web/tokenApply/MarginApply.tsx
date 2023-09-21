@@ -1,11 +1,11 @@
 import { Form, Input } from '@arco-design/web-react'
+import { applyMarginToken } from 'derify-apis-staging'
 import { useAccount, useSigner } from 'wagmi'
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBoolean } from 'react-use'
 
-import { applyMarginToken } from '@/api'
 import Button from '@/components/common/Button'
 import { Advisor } from '@/config'
 import { findToken } from '@/config/tokens'

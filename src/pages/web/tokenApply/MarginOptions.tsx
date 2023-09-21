@@ -1,13 +1,13 @@
 import { Input, Select } from '@arco-design/web-react'
 import { IconSearch } from '@arco-design/web-react/icon'
 import classNames from 'classnames'
-import { debounce, uniqBy, isEmpty } from 'lodash'
+import { searchMarginToken } from 'derify-apis-staging'
+import { debounce, uniqBy, isEmpty } from 'lodash-es'
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useBoolean } from 'react-use'
 
-import { searchMarginToken } from '@/api'
 import Image from '@/components/common/Image'
 import Spinner from '@/components/common/Spinner'
 import { MARGIN_VISIBLE_COUNT } from '@/config'
@@ -55,7 +55,7 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
 
   const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
-      const { data = [] } = await searchMarginToken(searchKeyword)
+      const { data = [] } = await searchMarginToken<{ data: any[] }>(searchKeyword)
       const deployStatus = await getMarginDeployStatus(data)
       const filter = data.filter((f: Rec) => deployStatus[f.symbol] && f.advisor && f.open)
       // const filter = data.filter((f: Rec) => deployStatus[f.symbol] && f.open)

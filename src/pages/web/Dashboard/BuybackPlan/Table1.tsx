@@ -1,12 +1,12 @@
 import classNames from 'classnames'
-import { isEmpty } from 'lodash'
+import { getBuyBackPlans } from 'derify-apis-staging'
+import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 
 import React, { FC, useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getBuyBackPlans } from '@/api'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -159,7 +159,7 @@ const Table1: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber 
   }, [t, state.records])
 
   const _getBuyBackPlans = async (index = 0) => {
-    const { data } = await getBuyBackPlans(index, 10)
+    const { data } = await getBuyBackPlans<{ data: Rec }>(index)
     dispatch({
       type: 'SET_RECORDS',
       payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }

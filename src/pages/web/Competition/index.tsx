@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
-import { upperFirst, isEmpty } from 'lodash'
+import { getCompetitionList, getCompetitionRank } from 'derify-apis-staging'
+import { upperFirst, isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
@@ -7,7 +8,6 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getCompetitionList, getCompetitionRank } from '@/api'
 import Select from '@/components/common/Form/Select'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
@@ -95,7 +95,7 @@ const CompetitionRank: FC = () => {
     async (pageIndex = 0) => {
       const [id, status] = state.filterCondition.current.split('#')
       try {
-        const { data } = await getCompetitionRank(status, id, pageIndex)
+        const { data } = await getCompetitionRank<{ data: Rec }>(status, id, pageIndex)
         if (data) {
           const totalItems = data.totalItems
           const _records = data.records
@@ -117,7 +117,7 @@ const CompetitionRank: FC = () => {
   )
 
   const _getCompetitionList = useCallback(async () => {
-    const { data } = await getCompetitionList(marginToken.address)
+    const { data } = await getCompetitionList<{ data: Rec }>(marginToken.address)
 
     if (data) {
       const _ = data.map((d: Record<string, any>) => ({

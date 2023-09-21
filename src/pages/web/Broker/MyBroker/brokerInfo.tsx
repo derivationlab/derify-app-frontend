@@ -1,12 +1,13 @@
+import { bindingYourBroker, getBrokerInfoWithBrokerId } from 'derify-apis-staging'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
-import { bindingYourBroker, getBrokerInfoWithBrokerId } from '@/api'
 import { asyncUserBrokerBoundAtom, userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Spinner from '@/components/common/Spinner'
+import { Rec } from '@/typings'
 
 import BrokerCard from './c/BrokerCard'
 
@@ -22,7 +23,7 @@ const BrokerInfo: FC = () => {
   const bindBrokerFunc = async () => {
     const toast = window.toast.loading('binding...')
 
-    const data = await bindingYourBroker({ trader: address, brokerId })
+    const data = await bindingYourBroker<{ code: number }>({ trader: address, brokerId })
 
     if (data.code === 0) {
       // succeed
@@ -43,7 +44,7 @@ const BrokerInfo: FC = () => {
     if (userBrokerBound?.broker) {
       history.push('/broker')
     } else {
-      const { data } = await getBrokerInfoWithBrokerId(brokerId)
+      const { data } = await getBrokerInfoWithBrokerId<{ data: Rec[] }>(brokerId)
 
       if (data.length > 0) {
         const [info] = data

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { isEmpty, debounce } from 'lodash'
+import { isEmpty, debounce } from 'lodash-es'
 
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,4 +1,5 @@
-import { isEmpty } from 'lodash'
+import { getTradersRankList } from 'derify-apis-staging'
+import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
@@ -6,7 +7,6 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getTradersRankList } from '@/api'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
@@ -14,6 +14,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
+import { Rec } from '@/typings'
 import { calcShortHash, keepDecimals } from '@/utils/tools'
 
 interface RowTextProps {
@@ -49,7 +50,7 @@ const Rank: FC = () => {
 
   const fetchData = useCallback(
     async (index = 0) => {
-      const { data } = await getTradersRankList(marginToken.address, index, 10)
+      const { data } = await getTradersRankList<{ data: Rec }>(marginToken.address, index)
 
       // console.info(data)
 

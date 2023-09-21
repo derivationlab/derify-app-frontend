@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
+import { get } from 'derify-apis-staging'
 
-import { get } from '@/utils/http'
+import { Rec } from '@/typings'
 
 export const useCurrentIndex = () => {
   const { data, refetch } = useQuery(
     ['useCurrentIndex'],
     async () => {
-      const { data } = await get('https://api.derify.exchange/api/current_index_data')
+      const { data } = await get<{ data: Rec }>('https://api.derify.exchange/api/current_index_data')
       // console.info(data)
       return data
     },

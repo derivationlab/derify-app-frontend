@@ -1,5 +1,6 @@
+import { getBrokerInfoWithBrokerId, updateBrokerInfo } from 'derify-apis-staging'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import { useAccount } from 'wagmi'
 
 import React, { FC, useContext, useEffect } from 'react'
@@ -7,7 +8,6 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import { getBrokerInfoWithBrokerId, updateBrokerInfo } from '@/api'
 import { asyncBrokerInfoAtom, brokerInfoAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import Form from '@/components/common/Form/Form'
@@ -18,6 +18,7 @@ import FormUploadImage from '@/components/common/Form/FormUploadImage'
 import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
 import { ThemeContext } from '@/providers/Theme'
+import { Rec } from '@/typings'
 
 import { defaultValues, FormInputProps, patterns, rules } from '../config'
 
@@ -85,14 +86,14 @@ const BrokerSignUpStep2: FC = () => {
       return
     }
 
-    const { data: brokerInfo } = await getBrokerInfoWithBrokerId(id)
+    const { data: brokerInfo } = await getBrokerInfoWithBrokerId<{ data: Rec }>(id)
 
     if (!isEmpty(brokerInfo) && brokerInfo[0]?.broker !== address) {
       window.toast.error(t('Broker.Reg.Occupied', 'Your Code is occupied, choose another one.'))
       return
     }
 
-    const data = await updateBrokerInfo({
+    const data = await updateBrokerInfo<{ code: number }>({
       logo: _logo,
       id,
       name,

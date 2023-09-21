@@ -1,11 +1,11 @@
 import classNames from 'classnames'
-import { isArray, uniqBy } from 'lodash'
+import { getDerivativeList, getHistoryTradingDAT } from 'derify-apis-staging'
+import { isArray, uniqBy } from 'lodash-es'
 
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getDerivativeList, getHistoryTradingDAT } from '@/api'
 import { BarChart } from '@/components/common/Chart'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
@@ -18,7 +18,7 @@ import { Rec } from '@/typings'
 import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
-let output = {
+let output: Rec = {
   day_time: time,
   trading_amount: 0
 }
@@ -53,14 +53,14 @@ const TradingVolume: FC = () => {
   }, [tradingVolume, marginToken])
 
   const combineDAT = useMemo(() => {
-    if (tradingVolume) output = { day_time: time, ...tradingVolume[0] }
+    if (tradingVolume) output = { day_time: time, ...[0] }
     return [...tradingData, output]
   }, [tradingData, tradingVolume])
 
   const currentTimeLine = useMemo(() => timeLineOptions.find((time) => time === timeSelectVal), [timeSelectVal])
 
   const historyDAT = useCallback(async () => {
-    const { data: trading } = await getHistoryTradingDAT(
+    const { data: trading } = await getHistoryTradingDAT<{ data: Rec[] }>(
       derivativeSel.token,
       matchTimeLineOptions[timeSelectVal],
       marginToken.address
@@ -74,7 +74,7 @@ const TradingVolume: FC = () => {
   }, [timeSelectVal, derivativeSel])
 
   const morePairs = useCallback(async () => {
-    const { data } = await getDerivativeList(marginToken.address, seqCount)
+    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount)
     if (protocolConfig && data?.records) {
       const filter = data.records.filter((r: Rec) => r.open)
       const combine = [...pairOptions.data, ...filter]

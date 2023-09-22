@@ -22,14 +22,12 @@ const TradeHistory: FC = () => {
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   const fetchData = async (index = 0) => {
-    if (address) {
-      const { data } = await getTradingHistory<{ data: Rec }>(marginToken.address, address, index)
-
-      dispatch({
-        type: 'SET_RECORDS',
-        payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
-      })
-    }
+    if (!address) return
+    const { data } = await getTradingHistory<{ data: Rec }>(marginToken.address, address, index)
+    dispatch({
+      type: 'SET_RECORDS',
+      payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }
+    })
   }
 
   const onPagination = (index: number) => {

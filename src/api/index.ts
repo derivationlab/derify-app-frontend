@@ -1,7 +1,7 @@
 import hmacSHA256 from 'crypto-js/hmac-sha256'
 import { get, post } from 'derify-apis-test'
 
-import { GIVEAWAY_API_KEY } from '@/config'
+const GIVEAWAY_API_KEY = 'sWDQ1YiQj6qPFqwOmpln4MUJs0tycOHV1AkxL1ONLCW4t4s5cOlRxaMzu8midtPM'
 
 /**
  *

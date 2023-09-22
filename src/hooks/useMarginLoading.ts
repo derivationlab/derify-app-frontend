@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useEffectOnce } from 'react-use'
 
-import { giveawayEventTrack } from '@/api'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { useMarginTokenListStore } from '@/store/useMarginTokenList'
@@ -31,10 +30,6 @@ export const useMarginLoading = () => {
     void getMarginTokenList()
     void getAllMarginTokenList()
   })
-
-  useEffect(() => {
-    void giveawayEventTrack({ value: '1', remark: '2', event: 'invite' })
-  }, [])
 
   return {
     isAccessible

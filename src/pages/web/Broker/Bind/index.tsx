@@ -7,9 +7,9 @@ import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
-import { giveawayEventTrack } from '@/api'
 import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
+import { useTrackBindBroker } from '@/hooks/useGiveawayTrack'
 import { Rec } from '@/typings'
 
 import BrokerDialog from './BrokerDialog'
@@ -18,6 +18,7 @@ const Bind: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
   const { address } = useAccount()
+  const { trackBindBrokerEvent } = useTrackBindBroker(address)
   const asyncUserBrokerBound = useSetAtom(asyncUserBrokerBoundAtom(address))
 
   const [brokerId, setBrokerId] = useState<string>('')
@@ -38,11 +39,7 @@ const Bind: FC = () => {
     const data = await bindingYourBroker<{ code: number }>({ trader: address, brokerId })
     if (data.code === 0) {
       // succeed
-      void (await giveawayEventTrack({
-        value: address as string,
-        remark: `${address} has been bound to broker ${brokerId}`,
-        event: 'BindBroker'
-      }))
+      void (await trackBindBrokerEvent(brokerId))
       void (await asyncUserBrokerBound())
       history.push('/broker')
     } else {

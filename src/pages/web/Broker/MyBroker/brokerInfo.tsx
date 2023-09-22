@@ -7,6 +7,7 @@ import { useHistory, useParams } from 'react-router-dom'
 
 import { asyncUserBrokerBoundAtom, userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Spinner from '@/components/common/Spinner'
+import { useTrackBindBroker } from '@/hooks/useGiveawayTrack'
 import { Rec } from '@/typings'
 
 import BrokerCard from './c/BrokerCard'
@@ -15,6 +16,7 @@ const BrokerInfo: FC = () => {
   const history = useHistory()
   const { address } = useAccount()
   const { id: brokerId } = useParams<{ id: string }>()
+  const { trackBindBrokerEvent } = useTrackBindBroker(address)
   const [brokerInfo, setBrokerInfo] = useState<Record<string, any>>({})
   const [infoLoaded, setInfoLoaded] = useState<boolean>(true)
   const userBrokerBound = useAtomValue(userBrokerBoundAtom)
@@ -27,6 +29,7 @@ const BrokerInfo: FC = () => {
 
     if (data.code === 0) {
       // succeed
+      void (await trackBindBrokerEvent(brokerId))
       void (await asyncUserBrokerBound())
       history.push('/broker')
     } else {

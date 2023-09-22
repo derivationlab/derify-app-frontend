@@ -10,12 +10,12 @@ import { useHistory } from 'react-router-dom'
 import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Select from '@/components/common/Form/Select'
 import Pagination from '@/components/common/Pagination'
-import { Link } from '@/components/common/Route'
 import Spinner from '@/components/common/Spinner'
 import {
   SelectLangOptionsForFilter as SelectLangOptions,
   SelectCommunityOptionsForFilter as SelectCommunityOptions
 } from '@/data'
+import { useTrackBindBroker } from '@/hooks/useGiveawayTrack'
 import { reducer, stateInit } from '@/reducers/brokerBind'
 import { useMarginTokenStore } from '@/store'
 import { Rec } from '@/typings'
@@ -30,6 +30,7 @@ const List: FC = () => {
   const history = useHistory()
   const { t } = useTranslation()
   const { address } = useAccount()
+  const { trackBindBrokerEvent } = useTrackBindBroker(address)
   const asyncUserBrokerBound = useSetAtom(asyncUserBrokerBoundAtom(address))
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
@@ -55,6 +56,7 @@ const List: FC = () => {
     if (data.code === 0) {
       // succeed
       window.toast.success(t('common.success'))
+      void (await trackBindBrokerEvent(state.toBindDAT.id))
       void (await asyncUserBrokerBound())
       history.push('/broker')
     } else {
@@ -92,9 +94,9 @@ const List: FC = () => {
     <div className="web-broker-list">
       <header className="web-broker-list-header">
         <h2>{t('Nav.BindBroker.SelectBroker', 'Select a broker')}</h2>
-        <Link to="/broker/bind">
+        <span className="a" onClick={() => history.go(-1)}>
           {!isMobile ? t('Nav.BindBroker.InputCode', 'I want to input my broker code ...') : ''}
-        </Link>
+        </span>
       </header>
       <section className="web-broker-list-filter">
         <main>

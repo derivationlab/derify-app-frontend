@@ -11,7 +11,7 @@ import Data from './Data'
 
 const BuybackPlan = () => {
   const { t } = useTranslation()
-  const [activeKey, setActiveKey] = useState('BurnHistory')
+  const [activeKey, setActiveKey] = useState('BuybackPlan')
   const allMarginTokenList = useMarginTokenListStore((state) => state.allMarginTokenList)
   const { priceFeed } = useMarginPriceFeed(allMarginTokenList)
 

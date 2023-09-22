@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash-es'
+import { useBlockNumber } from 'wagmi'
 
 import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -7,22 +8,27 @@ import Skeleton from '@/components/common/Skeleton'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { PLATFORM_TOKEN, VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useAllCurrentIndex } from '@/hooks/useAllCurrentIndex'
+import { useAllMarginPrice } from '@/hooks/useAllMarginPrice'
+import { useBuyBackPool } from '@/hooks/useDashboard'
+import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
 import { bnMul, bnPlus } from '@/utils/tools'
 
 interface Props {
-  tokenPrice: string
-  blockNumber: number
-  buyBackInfo: Rec
-  marginPrices: Rec
+  priceFeed: Rec | undefined
+  allMarginTokenList: string[]
 }
 
-const Data: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber = 0 }) => {
+const Data = ({ priceFeed, allMarginTokenList }: Props) => {
   const { t } = useTranslation()
+  const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
+  const { data: tokenPrice } = usePlatformTokenPrice()
+  const { data: buyBackInfo } = useBuyBackPool(allMarginTokenList)
+  const { data: marginPrices } = useAllMarginPrice(priceFeed)
   const { data: currentIndex } = useAllCurrentIndex(marginTokenList)
 
   const tokenDecimal = useMemo(() => {

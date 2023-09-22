@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { getBuyBackPlans } from 'derify-apis-test'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
+import { useBlockNumber } from 'wagmi'
 
 import React, { FC, useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -11,6 +12,9 @@ import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
+import { useAllMarginPrice } from '@/hooks/useAllMarginPrice'
+import { useBuyBackPool } from '@/hooks/useDashboard'
+import { usePlatformTokenPrice } from '@/hooks/usePlatformTokenPrice'
 import { reducer, stateInit } from '@/reducers/records'
 import { Rec } from '@/typings'
 import { bnMul, isGT, isGTET, isLT, nonBigNumberInterception } from '@/utils/tools'
@@ -18,14 +22,16 @@ import { bnMul, isGT, isGTET, isLT, nonBigNumberInterception } from '@/utils/too
 import { TableMargin, TableCountDown } from '../c/TableCol'
 
 interface Props {
-  tokenPrice: string
-  buyBackInfo: Rec
-  blockNumber: number
-  marginPrices: Rec
+  priceFeed: Rec | undefined
+  allMarginTokenList: string[]
 }
 
-const Table1: FC<Props> = ({ tokenPrice, buyBackInfo, marginPrices, blockNumber = 0 }) => {
+const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
   const { t } = useTranslation()
+  const { data: blockNumber = 0 } = useBlockNumber({ watch: true })
+  const { data: tokenPrice } = usePlatformTokenPrice()
+  const { data: buyBackInfo } = useBuyBackPool(allMarginTokenList)
+  const { data: marginPrices } = useAllMarginPrice(priceFeed)
   const [state, dispatch] = useReducer(reducer, stateInit)
 
   const mColumns = useMemo(() => {

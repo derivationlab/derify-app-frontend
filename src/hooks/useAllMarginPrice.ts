@@ -33,17 +33,14 @@ export const useAllMarginPrice = (list?: Rec) => {
             [calls[index].marginToken]: formatUnits(data, 8)
           }
         })
-
-        // console.info(output)
-        return output
       }
 
-      return null
+      return output
     },
     {
       retry: false,
       enabled,
-      initialData: null,
+      initialData: output,
       refetchInterval: 6000,
       keepPreviousData: true,
       refetchOnWindowFocus: false

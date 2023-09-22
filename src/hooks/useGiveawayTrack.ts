@@ -1,6 +1,6 @@
-import { useCallback } from 'react'
-
 import { giveawayEventTrack } from 'derify-apis-test'
+
+import { useCallback } from 'react'
 
 export const useTrackBindBroker = (address: string | undefined) => {
   const trackBindBrokerEvent = useCallback(

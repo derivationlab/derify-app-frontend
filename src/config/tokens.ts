@@ -1,4 +1,4 @@
-import { memoize } from 'lodash'
+import { memoize } from 'lodash-es'
 
 import Token from '@/class/Token'
 import { ChainId, TokenKeys } from '@/typings'

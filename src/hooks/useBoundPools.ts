@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 
 import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { getBrokerRewardsToday } from 'derify-apis'
 
-import { getBrokerRewardsToday } from '@/api'
+import { useEffect, useState } from 'react'
 
 const brokerRewardsTodayInit = {
   margin_token_reward: '',
@@ -15,7 +15,7 @@ export const useBrokerRewardsToday = (address: string | undefined, marginToken: 
 
   const func = async (address: string) => {
     try {
-      const { data } = await getBrokerRewardsToday(address, marginToken)
+      const { data } = await getBrokerRewardsToday<{ data: typeof brokerRewardsTodayInit }>(address, marginToken)
       setBrokerRewardsToday(data)
     } catch (e) {
       setBrokerRewardsToday(brokerRewardsTodayInit)

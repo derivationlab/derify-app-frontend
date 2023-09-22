@@ -1,3 +1,4 @@
+import { bindingYourBroker, getBrokersList } from 'derify-apis'
 import { useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 
@@ -6,7 +7,6 @@ import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
-import { bindingYourBroker, getBrokersList } from '@/api'
 import { asyncUserBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Select from '@/components/common/Form/Select'
 import Pagination from '@/components/common/Pagination'
@@ -18,6 +18,7 @@ import {
 } from '@/data'
 import { reducer, stateInit } from '@/reducers/brokerBind'
 import { useMarginTokenStore } from '@/store'
+import { Rec } from '@/typings'
 
 import BrokerDialog from '../BrokerDialog'
 import BrokerItem from './BrokerItem'
@@ -49,7 +50,7 @@ const List: FC = () => {
     dispatch({ type: 'SET_OPT_SELECT', payload: { i: state.toBindDAT.id } })
     dispatch({ type: 'SET_SHOW_MODAL', payload: '' })
 
-    const data = await bindingYourBroker({ trader: address, brokerId: state.toBindDAT.id })
+    const data = await bindingYourBroker<{ code: number }>({ trader: address, brokerId: state.toBindDAT.id })
 
     if (data.code === 0) {
       // succeed
@@ -71,7 +72,13 @@ const List: FC = () => {
     async (index: number) => {
       const {
         data: { records, totalItems }
-      } = await getBrokersList(marginToken.address, index, pageSize, state.optSelect.l, state.optSelect.c)
+      } = await getBrokersList<{ data: Rec }>(
+        marginToken.address,
+        state.optSelect.l,
+        state.optSelect.c,
+        index,
+        pageSize
+      )
       dispatch({ type: 'SET_BROKER_DAT', payload: { isLoaded: false, records, totalItems } })
     },
     [state.optSelect, marginToken]

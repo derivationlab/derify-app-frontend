@@ -1,6 +1,6 @@
 import { getAddress } from 'ethers/lib/utils'
 import { useAtomValue } from 'jotai'
-import { uniqBy } from 'lodash'
+import { uniqBy } from 'lodash-es'
 
 import { useMemo } from 'react'
 

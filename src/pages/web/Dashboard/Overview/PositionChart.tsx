@@ -1,13 +1,14 @@
-import { isArray } from 'lodash'
+import { getHistoryTotalPositionsNetValue } from 'derify-apis'
+import { isArray } from 'lodash-es'
 
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getHistoryTotalPositionsNetValue } from '@/api'
 import { AreaChart } from '@/components/common/Chart'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
 import { useCurrentNetPositions } from '@/hooks/useCurrentNetPositions'
+import { Rec } from '@/typings'
 import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
@@ -28,7 +29,7 @@ const PositionChart: FC = () => {
   }, [chartData, data])
 
   const historyDAT = async () => {
-    const { data } = await getHistoryTotalPositionsNetValue('all', 'all')
+    const { data } = await getHistoryTotalPositionsNetValue<{ data: Rec[] }>('all', 'all')
 
     if (isArray(data)) {
       const convert = data

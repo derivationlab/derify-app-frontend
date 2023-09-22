@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { getTraderWithdrawAmount } from 'derify-apis'
 
-import { getTraderWithdrawAmount } from '@/api'
+import { useEffect, useState } from 'react'
 
 const init = {
   marginTokenAmount: '0',
@@ -12,7 +12,7 @@ export const useAmountCanWithdrawn = (account: string | undefined, amount: strin
 
   useEffect(() => {
     const func = async (account: string, amount: string, marginToken: string) => {
-      const { data } = await getTraderWithdrawAmount(account, amount, marginToken)
+      const { data } = await getTraderWithdrawAmount<{ data: typeof init }>(account, amount, marginToken)
       setCanWithdrawn(data)
     }
 

@@ -1,10 +1,10 @@
+import { favoriteTradingPairs } from 'derify-apis'
 import { useAtomValue } from 'jotai'
 import { useAccount } from 'wagmi'
 
 import { useMemo, MouseEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { favoriteTradingPairs } from '@/api'
 import { traderFavoriteAtom } from '@/atoms/useTraderFavorite'
 import Image from '@/components/common/Image'
 import { useMarginTokenStore } from '@/store'
@@ -40,7 +40,7 @@ const Favorite = ({ data }: Props) => {
         marginToken: marginToken.address,
         price_decimals
       }
-      const data = await favoriteTradingPairs(params)
+      const data = await favoriteTradingPairs<{ code: number }>(params)
       if (data.code === 0) emitter.emit(EventTypes.updateTraderFavorite)
     } catch (e) {
       window.toast.error(t('common.failed'))

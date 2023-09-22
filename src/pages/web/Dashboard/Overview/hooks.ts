@@ -1,6 +1,7 @@
+import { getMarginTransactionEquity } from 'derify-apis'
+
 import { useState, useEffect } from 'react'
 
-import { getMarginTransactionEquity } from '@/api'
 import { useAllCurrentTrading } from '@/hooks/useAllCurrentTrading'
 import { useAllMarginPrice, useMarginPriceFeed } from '@/hooks/useAllMarginPrice'
 import { useBoundPools } from '@/hooks/useBoundPools'
@@ -35,7 +36,7 @@ export const useInitData = () => {
     "margin_token": "0x6744e566f2C9E97d4aA6CbeedAb231f7Ea135640"
 }
      */
-    const { data } = await getMarginTransactionEquity()
+    const { data } = await getMarginTransactionEquity<{ data: Rec[] }>()
     setEquityValues(data ?? [])
   }
 

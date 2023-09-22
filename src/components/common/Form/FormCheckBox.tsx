@@ -1,6 +1,6 @@
 // @ts-nocheck
 import classNames from 'classnames'
-import { pull } from 'lodash'
+import { pull } from 'lodash-es'
 
 import React, { FC, useContext, useMemo, useState } from 'react'
 

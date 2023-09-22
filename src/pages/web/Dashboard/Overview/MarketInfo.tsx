@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { isEmpty, orderBy } from 'lodash'
+import { isEmpty, orderBy } from 'lodash-es'
 import Table from 'rc-table'
 
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'

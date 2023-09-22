@@ -1,10 +1,11 @@
-import { last, sortBy } from 'lodash'
+import { checkRpcHealthStatus } from 'derify-apis'
+import { last, sortBy } from 'lodash-es'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { checkRpcHealthStatus } from '@/api'
 import { BEST_RPC_KEY, CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
 import { RpcNodeState, WalletState } from '@/store/types'
+import { Rec } from '@/typings'
 
 const loadJsonFile = (key: string, path = '/abi'): Promise<Record<string, any>> => {
   return new Promise((resolve, reject) => {
@@ -22,7 +23,7 @@ const getHealthyNode = async (): Promise<string> => {
   const json = await loadJsonFile('rpcs', '')
   const rpcList = json[CHAIN_ID].rpc
   const queries = rpcList.map((rpc: string) =>
-    checkRpcHealthStatus(rpc, {
+    checkRpcHealthStatus<Rec>(rpc, {
       jsonrpc: '2.0',
       method: 'eth_getBlockByNumber',
       params: ['latest', false],

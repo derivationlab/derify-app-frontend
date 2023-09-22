@@ -1,13 +1,13 @@
-import { atom } from 'jotai'
-import { atomFamily } from 'jotai/utils'
-
 import {
-  getBrokerBound,
+  getBrokerBoundInfo,
   getBrokerInfoWithAddress,
   getBrokerRanking,
   getBrokerRegistrationTime,
   getBrokerValidityPeriod
-} from '@/api'
+} from 'derify-apis'
+import { atom } from 'jotai'
+import { atomFamily } from 'jotai/utils'
+
 import { Rec } from '@/typings'
 import { getProtocolContract } from '@/utils/contractHelpers'
 
@@ -30,7 +30,7 @@ export const asyncBrokerRankingAtom = atomFamily((params: BrokerRankingAtomParam
     const { userAccount, marginToken } = params
     try {
       if (userAccount && marginToken) {
-        const { data } = await getBrokerRanking(userAccount, marginToken)
+        const { data } = await getBrokerRanking<{ data: number | null }>(userAccount, marginToken)
         set(brokerRankingAtom, data ?? null)
       }
     } catch (e) {
@@ -48,7 +48,7 @@ export const asyncBrokerInfoAtom = atomFamily((userAccount: UserAccount) =>
      */
     try {
       if (userAccount) {
-        const { data } = await getBrokerInfoWithAddress(userAccount)
+        const { data } = await getBrokerInfoWithAddress<{ data: Rec }>(userAccount)
         set(brokerInfoAtom, data ?? null)
       }
     } catch (e) {
@@ -61,7 +61,7 @@ export const asyncBrokerSignUpTimeAtom = atomFamily((userAccount: UserAccount) =
   atom(null, async (get, set) => {
     try {
       if (userAccount) {
-        const { data } = await getBrokerRegistrationTime(userAccount)
+        const { data } = await getBrokerRegistrationTime<{ data: string }>(userAccount)
         set(brokerSignUpTimeAtom, data ?? null)
       }
     } catch (e) {
@@ -79,7 +79,7 @@ export const asyncBrokerPrivilegesValidityPeriodAtom = atomFamily((userAccount: 
      */
     try {
       if (userAccount) {
-        const { data } = await getBrokerValidityPeriod(userAccount)
+        const { data } = await getBrokerValidityPeriod<{ data: number }>(userAccount)
         set(brokerPrivilegesValidityPeriodAtom, data ?? 0)
       }
     } catch (e) {
@@ -106,7 +106,7 @@ export const asyncUserBrokerBoundAtom = atomFamily((userAccount: UserAccount) =>
   atom(undefined, async (get, set) => {
     try {
       if (userAccount) {
-        const { data } = await getBrokerBound(userAccount)
+        const { data } = await getBrokerBoundInfo<{ data: Rec }>(userAccount)
         set(userBrokerBoundAtom, data ?? null)
       }
     } catch (e) {

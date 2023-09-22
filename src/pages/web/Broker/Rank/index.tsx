@@ -1,4 +1,5 @@
-import { isEmpty } from 'lodash'
+import { getBrokerRankList } from 'derify-apis'
+import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'
 
@@ -6,13 +7,13 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 
-import { getBrokersRankList } from '@/api'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
+import { Rec } from '@/typings'
 
 interface RowTextProps {
   value: string | number
@@ -45,7 +46,7 @@ const Rank: FC = () => {
   const marginToken = useMarginTokenStore((state) => state.marginToken)
 
   const fetchData = useCallback(async (index = 0) => {
-    const { data } = await getBrokersRankList(marginToken.address, index)
+    const { data } = await getBrokerRankList<{ data: Rec }>(marginToken.address, index)
     dispatch({
       type: 'SET_RECORDS',
       payload: { records: data?.records ?? [], totalItems: data?.totalItems ?? 0, isLoaded: false }

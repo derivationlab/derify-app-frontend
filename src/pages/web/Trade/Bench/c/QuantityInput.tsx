@@ -1,4 +1,4 @@
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import PubSub from 'pubsub-js'
 import { useAccount } from 'wagmi'
 

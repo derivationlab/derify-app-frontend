@@ -1,6 +1,6 @@
 import { BigNumberish } from '@ethersproject/bignumber'
 import { useQuery } from '@tanstack/react-query'
-import { uniqBy } from 'lodash'
+import { uniqBy } from 'lodash-es'
 
 import { useEffect, useMemo, useState } from 'react'
 

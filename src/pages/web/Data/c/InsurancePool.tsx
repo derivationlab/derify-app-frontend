@@ -1,16 +1,17 @@
 import classNames from 'classnames'
-import { isArray } from 'lodash'
+import { getHistoryInsuranceDAT } from 'derify-apis'
+import { isArray } from 'lodash-es'
 
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { getHistoryInsuranceDAT } from '@/api'
 import { AreaChart } from '@/components/common/Chart'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentInsurance } from '@/hooks/useCurrentInsurance'
 import { useMarginTokenStore } from '@/store'
+import { Rec } from '@/typings'
 import { dayjsStartOf } from '@/utils/tools'
 
 const time = dayjsStartOf()
@@ -42,7 +43,10 @@ const InsurancePool: FC = () => {
   const currentTimeLine = useMemo(() => timeLineOptions.find((time) => time === timeSelectVal), [timeSelectVal])
 
   const historyDAT = useCallback(async () => {
-    const { data: history } = await getHistoryInsuranceDAT(matchTimeLineOptions[timeSelectVal], marginToken.address)
+    const { data: history } = await getHistoryInsuranceDAT<{ data: Rec[] }>(
+      matchTimeLineOptions[timeSelectVal],
+      marginToken.address
+    )
 
     if (isArray(history)) {
       // Huge data will have hidden dangers todo

@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import dayjs from 'dayjs'
-import { debounce, uniqBy } from 'lodash'
+import { searchMarginToken } from 'derify-apis'
+import { debounce, uniqBy } from 'lodash-es'
 
 import React, { FC, useState, useMemo, useReducer, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { searchMarginToken } from '@/api'
 import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
@@ -95,7 +95,7 @@ const AddGrantDialog: FC<Props> = ({ visible, onClose, onConfirm }) => {
 
   const fuzzySearchFunc = useCallback(
     debounce(async (searchKeyword: string) => {
-      const { data = [] } = await searchMarginToken(searchKeyword)
+      const { data = [] } = await searchMarginToken<{ data: Rec[] }>(searchKeyword)
       setMarginOptions({ data, loaded: false })
     }, 1500),
     []

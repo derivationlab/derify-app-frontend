@@ -15,13 +15,9 @@ export const dayjsStartOf = (): string => dayjs().utc().startOf('days').format()
 export const calcDateDuration = (s: number, reverse?: boolean): [number, string, string, string, boolean] => {
   const duration = dayjs.duration(reverse ? dayjs().diff(dayjs(s)) : dayjs(s).diff(dayjs()))
   const days = parseInt(duration.asDays().toString())
-  console.info(s)
-  console.info(duration.asDays().toString())
-  console.info(dayjs().format('YYYY-MM-DD HH:mm:ss'), dayjs(s).format('YYYY-MM-DD HH:mm:ss'))
-  console.info(dayjs().diff(dayjs(s)).valueOf(), dayjs.duration(dayjs().diff(dayjs(s)).valueOf()))
-  const hours = String(duration.hours()).padStart(2, '0')
-  const minutes = String(duration.minutes()).padStart(2, '0')
-  const seconds = String(duration.seconds()).padStart(2, '0')
+  const hours = String(parseInt(duration.hours().toString())).padStart(2, '0')
+  const minutes = String(parseInt(duration.minutes().toString())).padStart(2, '0')
+  const seconds = String(parseInt(duration.seconds().toString())).padStart(2, '0')
 
   const over = Math.floor(duration.asSeconds()) <= 0
 

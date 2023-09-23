@@ -13,7 +13,7 @@ dayjs.extend(duration)
 export const dayjsStartOf = (): string => dayjs().utc().startOf('days').format()
 
 export const calcDateDuration = (s: number, reverse?: boolean): [number, string, string, string, boolean] => {
-  const duration = dayjs.duration(reverse ? dayjs().utc().diff(dayjs(s)) : dayjs(s).diff(dayjs()))
+  const duration = dayjs.duration(reverse ? dayjs().diff(dayjs(s)) : dayjs(s).diff(dayjs()))
   const days = parseInt(duration.asDays().toString())
   const hours = String(duration.hours()).padStart(2, '0')
   const minutes = String(duration.minutes()).padStart(2, '0')

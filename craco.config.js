@@ -44,9 +44,9 @@ module.exports = {
                 comments: false
               },
               compress: {
-                // drop_console: true,
-                // drop_debugger: true,
-                // pure_funcs: ['console.log']
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ['console.log']
               }
             }
           })

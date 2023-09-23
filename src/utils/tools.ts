@@ -14,7 +14,7 @@ export const dayjsStartOf = (): string => dayjs().utc().startOf('days').format()
 
 export const calcDateDuration = (s: number, reverse?: boolean): [number, string, string, string, boolean] => {
   const duration = dayjs.duration(reverse ? dayjs().diff(dayjs(s)) : dayjs(s).diff(dayjs()))
-  const days = parseInt(duration.days().toString())
+  const days = parseInt(duration.asDays().toString())
   const hours = String(duration.hours()).padStart(2, '0')
   const minutes = String(duration.minutes()).padStart(2, '0')
   const seconds = String(duration.seconds()).padStart(2, '0')
@@ -22,14 +22,6 @@ export const calcDateDuration = (s: number, reverse?: boolean): [number, string,
   const over = Math.floor(duration.asSeconds()) <= 0
 
   return over ? [0, '0', '0', '0', true] : [days, hours, minutes, seconds, false]
-}
-
-export const toType = (obj: any): string => {
-  // @ts-ignore
-  return {}.toString
-    .call(obj)
-    .match(/\s([a-zA-Z]+)/)[1]
-    .toLowerCase()
 }
 
 export const isMobile = (): boolean => {

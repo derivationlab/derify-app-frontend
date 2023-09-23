@@ -1,7 +1,5 @@
-import { isNumber } from 'lodash-es'
+import { isNumber, isObjectLike } from 'lodash-es'
 import store from 'store'
-
-import { toType } from './tools'
 
 export const get = (key: string) => {
   const cacheData = store.get(key)
@@ -9,7 +7,7 @@ export const get = (key: string) => {
     return null
   }
 
-  if (toType(cacheData) !== 'object') {
+  if (!isObjectLike(cacheData)) {
     return cacheData
   }
   if (cacheData.tool && cacheData.tool === 'localstore') {
@@ -29,7 +27,7 @@ export const get = (key: string) => {
 }
 // time: cache time, unix is hour
 export const set = (key: string, value: any, time?: number) => {
-  const data: Record<string, any> = { value, type: toType(value), tool: 'localstore' }
+  const data: Record<string, any> = { value, tool: 'localstore' }
   if (time) {
     if (!isNumber(time)) {
       throw new Error('only number')

@@ -60,13 +60,13 @@ const Table2 = () => {
         render: (_: string) => {
           const s = Number(_) * 1000
           const duration = dayjs.duration(dayjs().diff(dayjs(s)))
-          const days = parseInt(duration.asDays().toString())
+          const days = duration.asDays().toString()
           const hours = String(duration.hours()).padStart(2, '0')
           // const [days, hours] = calcDateDuration(Number(_) * 1000, true)
           return (
             <>
               {dayjs(s).format('YYYY-MM-DD HH:mm:ss')}
-              <em>{`${days} days ${hours} hrs ago`}</em>
+              <em>{`${parseInt(days)} days ${hours} hrs ago`}</em>
               {/*<RowTime time={Number(_) * 1000} text={`${days} days ${hours} hrs ago`} />*/}
               <small>{days}</small>
             </>

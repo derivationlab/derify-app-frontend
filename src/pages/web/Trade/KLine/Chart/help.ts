@@ -2,7 +2,6 @@ import dayjs from 'dayjs'
 import { getKLineDAT as getKLineDataApi } from 'derify-apis-test'
 
 import { Rec } from '@/typings'
-import { sleep } from '@/utils/tools'
 
 interface klineData {
   open: number
@@ -34,7 +33,6 @@ let initToken = ''
 export const getKLineDAT = async (token: string, time: number, endTime: number, limit = 10, isInit: boolean) => {
   if (isInit) initToken = token
   if (token !== initToken) {
-    await sleep(1000)
     return { data: [], more: true }
   }
   const { data } = await getKLineDataApi<{ data: Rec }>(token, time, endTime, limit)

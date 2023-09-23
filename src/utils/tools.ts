@@ -32,22 +32,6 @@ export const toType = (obj: any): string => {
     .toLowerCase()
 }
 
-export const copyText = (text: string) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const input = document.createElement('textarea')
-      input.value = text
-      document.body.appendChild(input)
-      input.select()
-      document.execCommand('copy')
-      input?.parentElement?.removeChild(input)
-      resolve(text)
-    } catch (e) {
-      reject(e)
-    }
-  })
-}
-
 export const isMobile = (): boolean => {
   return (
     navigator.userAgent.match(
@@ -62,10 +46,6 @@ export const px2rem = (px: number | string): string => {
 
 export const num2size = (num: number | string): string => {
   return isMobile() ? px2rem(num) : `${String(num)}px`
-}
-
-export const sleep = async (time: number): Promise<any> => {
-  return new Promise((resolve) => setTimeout(resolve, time))
 }
 
 export const getMaxZIndex = (): number => {

@@ -7,6 +7,8 @@ import utc from 'dayjs/plugin/utc'
 import { ethers } from 'ethers'
 import numeral from 'numeral'
 
+import { isMobile } from 'react-device-detect'
+
 dayjs.extend(utc)
 dayjs.extend(duration)
 
@@ -24,20 +26,12 @@ export const calcDateDuration = (s: number, reverse?: boolean): [number, string,
   return over ? [0, '0', '0', '0', true] : [days, hours, minutes, seconds, false]
 }
 
-export const isMobile = (): boolean => {
-  return (
-    navigator.userAgent.match(
-      /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
-    ) != null
-  )
-}
-
 export const px2rem = (px: number | string): string => {
   return `${String(Number(px) / 100)}rem`
 }
 
 export const num2size = (num: number | string): string => {
-  return isMobile() ? px2rem(num) : `${String(num)}px`
+  return isMobile ? px2rem(num) : `${String(num)}px`
 }
 
 export const getMaxZIndex = (): number => {

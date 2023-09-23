@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import dayjs from 'dayjs'
 import { getTokenBurnHistory } from 'derify-apis-test'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
@@ -57,8 +58,19 @@ const Table2 = () => {
         dataIndex: 'block_timestamp',
         align: 'right',
         render: (_: string) => {
-          const [days, hours] = calcDateDuration(Number(_) * 1000, true)
-          return <RowTime time={Number(_) * 1000} text={`${days} days ${hours} hrs ago`} />
+          const s = Number(_) * 1000
+          const duration = dayjs.duration(dayjs().diff(dayjs(s)))
+          const days = parseInt(duration.asDays().toString())
+          const hours = String(duration.hours()).padStart(2, '0')
+          // const [days, hours] = calcDateDuration(Number(_) * 1000, true)
+          return (
+            <>
+              {dayjs(s).format('YYYY-MM-DD HH:mm:ss')}
+              <em>{`${days} days ${hours} hrs ago`}</em>
+              {/*<RowTime time={Number(_) * 1000} text={`${days} days ${hours} hrs ago`} />*/}
+              <small>{days}</small>
+            </>
+          )
         }
       }
     ]

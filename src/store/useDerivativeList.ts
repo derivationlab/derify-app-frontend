@@ -26,6 +26,7 @@ const useDerivativeListStore = create<DerivativeListState>((set) => ({
     const pairList = await getPairAddressList(factory, records)
     const deployed = (pairList ?? []).filter((l) => l.derivative !== ZERO) // deployed, get pair address config
     const inTrading = deployed.filter((r) => r.open) // opening
+    console.info(inTrading)
     set({
       derivativeList: deployed,
       derivativeListOpen: inTrading,

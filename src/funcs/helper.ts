@@ -174,10 +174,7 @@ export const calcDisposableAmount = async (
   }
 }
 
-export const getPairAddressList = async (
-  factory: string,
-  list: (typeof derivativeList)[]
-): Promise<(typeof derivativeList)[] | null> => {
+export const getPairAddressList = async (factory: string, list: Rec[]): Promise<(typeof derivativeList)[] | null> => {
   const calls = list.map((derivative) => ({
     name: 'getDerivative',
     params: [derivative.token],

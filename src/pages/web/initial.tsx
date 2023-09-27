@@ -6,7 +6,6 @@ import { useAccount } from 'wagmi'
 import { useEffect } from 'react'
 
 import { asyncUserBrokerBoundAtom, asyncWhetherUserIsBrokerAtom } from '@/atoms/useBrokerData'
-import { useMarginIndicators } from '@/hooks/useMarginIndicators'
 import {
   useBalancesStore,
   useDerivativeListStore,
@@ -16,14 +15,12 @@ import {
   useQuoteTokenStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
-import { useMarginIndicatorsStore } from '@/store/useMarginIndicators'
 import { PubSubEvents } from '@/typings'
 
 export default function Initial(): null {
   const { address } = useAccount()
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const resetBalances = useBalancesStore((state) => state.reset)
   const getTokenBalances = useBalancesStore((state) => state.getTokenBalances)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
@@ -31,39 +28,28 @@ export default function Initial(): null {
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const getProtocolConfig = useProtocolConfigStore((state) => state.getProtocolConfig)
   const updateQuoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.updateQuoteToken)
-  const updateMarginIndicators = useMarginIndicatorsStore((state) => state.updateMarginIndicators)
   const asyncUserBrokerBound = useSetAtom(asyncUserBrokerBoundAtom(address))
   const asyncWhetherUserIsBroker = useSetAtom(asyncWhetherUserIsBrokerAtom(address))
-  const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
-  // Margin token balances
+  // user margin token balances
   useEffect(() => {
-    if (address) {
-      void resetBalances()
-      if (marginTokenList.length) void getTokenBalances(address, marginTokenList)
-    }
-
+    const account = address ?? ''
+    void getTokenBalances(account, marginTokenList)
     PubSub.unsubscribe(PubSubEvents.UPDATE_BALANCE)
     PubSub.subscribe(PubSubEvents.UPDATE_BALANCE, () => {
-      if (address && marginTokenList.length) void getTokenBalances(address, marginTokenList)
+      void getTokenBalances(account, marginTokenList)
     })
   }, [address, marginTokenList])
 
-  // Margin token indicators
-  useEffect(() => {
-    if (marginIndicators) {
-      updateMarginIndicators(marginIndicators)
-    }
-  }, [marginIndicators])
-
   // Initialize margin token with protocol config
   useEffect(() => {
-    if (marginToken) void getProtocolConfig(marginToken.address)
+    void getProtocolConfig(marginToken.address)
   }, [marginToken])
 
   // Get trading pair data
   useEffect(() => {
-    if (protocolConfig) void getDerivativeList(marginToken.address, protocolConfig.factory)
+    const factory = protocolConfig?.factory ?? ''
+    void getDerivativeList(marginToken.address, factory)
   }, [protocolConfig])
 
   // Initialize quote token default information

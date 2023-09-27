@@ -20,13 +20,20 @@ const useDerivativeListStore = create<DerivativeListState>((set) => ({
   derivativeList: [],
   derivativeListOpen: [],
   derivativeListLoaded: false,
-  getDerivativeList: async (marginToken: string, factory: string, page = 0) => {
-    const { data } = await getDerivativeList<{ data: Rec }>(marginToken, page)
+  getDerivativeList: async (marginTokenAddress: string, factory: string, page = 0) => {
+    if (!marginTokenAddress || !factory) {
+      set({
+        derivativeList: [],
+        derivativeListOpen: [],
+        derivativeListLoaded: false
+      })
+      return
+    }
+    const { data } = await getDerivativeList<{ data: Rec }>(marginTokenAddress, page)
     const records = data?.records ?? []
     const pairList = await getPairAddressList(factory, records)
     const deployed = (pairList ?? []).filter((l) => l.derivative !== ZERO) // deployed, get pair address config
     const inTrading = deployed.filter((r) => r.open) // opening
-    console.info(inTrading)
     set({
       derivativeList: deployed,
       derivativeListOpen: inTrading,

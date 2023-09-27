@@ -10,7 +10,8 @@ import {
   getExchangeContract,
   getDerivativeContract,
   getProtocolContract,
-  getConsultantContract
+  getConsultantContract,
+  getBep20Contract
 } from '@/utils/contractHelpers'
 import multicall from '@/utils/multicall'
 import {
@@ -227,4 +228,11 @@ export const checkAdvisorAddress = async (address: string): Promise<boolean> => 
   const response = await contract.getInsurance(address)
   const { amount, startTime, vestingDuration } = response
   return Number(vestingDuration) > 0 && Number(amount) > 0 && Number(startTime) > 0
+}
+
+export const getTokenBalance = async (account: string, address: string) => {
+  const contract = getBep20Contract(address)
+  const decimals = await contract.decimals()
+  const balance = await contract.balanceOf(account)
+  return formatUnits(balance, decimals)
 }

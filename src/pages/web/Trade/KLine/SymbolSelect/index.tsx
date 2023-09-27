@@ -13,7 +13,7 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { TRADING_VISIBLE_COUNT, ZERO } from '@/config'
 import { getPairAddressList } from '@/funcs/helper'
 import Favorite from '@/pages/web/Trade/KLine/SymbolSelect/Favorite'
-import { useIndicator, useInitData } from '@/pages/web/Trade/KLine/SymbolSelect/hooks'
+import { useInitData } from '@/pages/web/Trade/KLine/SymbolSelect/hooks'
 import NoResults from '@/pages/web/Trade/c/NoResults'
 import { Rec } from '@/typings'
 
@@ -37,6 +37,7 @@ const SymbolSelect = () => {
   const {
     checking,
     spotPrice,
+    indicator,
     quoteToken,
     spotPrices,
     indicators,
@@ -47,7 +48,6 @@ const SymbolSelect = () => {
     updateSpotPrices,
     updateQuoteToken
   } = useInitData(uniqBy([...resource.originData, ...resource.searchData], 'token'))
-  const { indicator } = useIndicator(quoteToken)
 
   const different = useMemo(() => {
     return resource.searchKeywords ? resource.searchData : resource.originData

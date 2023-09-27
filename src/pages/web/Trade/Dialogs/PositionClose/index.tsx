@@ -8,7 +8,8 @@ import Dialog from '@/components/common/Dialog'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { usePositionOperationStore, useMarginTokenStore, useMarginIndicatorsStore } from '@/store'
+import { useMarginIndicators } from '@/hooks/useMarginIndicators'
+import { usePositionOperationStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes } from '@/typings'
 import { bnMul, formatUnits, isGT, isGTET, keepDecimals, nonBigNumberInterception, numeralNumber } from '@/utils/tools'
@@ -26,9 +27,9 @@ interface Props {
 const PositionClose: FC<Props> = ({ data, visible, onClose, onClick }) => {
   const { t } = useTranslation()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
+  const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
   const positionVolume = useMemo(
     () => nonBigNumberInterception(bnMul(data.spotPrice, data.size), data.decimals),

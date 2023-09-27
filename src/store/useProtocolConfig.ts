@@ -36,11 +36,13 @@ export const getProtocolConfig = async (marginTokenAddress: string): Promise<Pro
 
 const useProtocolConfigStore = create<ProtocolConfigState>((set) => ({
   protocolConfig: null,
-  protocolConfigLoaded: false,
   getProtocolConfig: async (marginTokenAddress: string) => {
+    if (!marginTokenAddress) {
+      set({ protocolConfig: null })
+      return
+    }
     const protocolConfig = await getProtocolConfig(marginTokenAddress)
-
-    set({ protocolConfig, protocolConfigLoaded: true })
+    set({ protocolConfig })
   }
 }))
 

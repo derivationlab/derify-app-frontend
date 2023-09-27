@@ -4,20 +4,9 @@ import { getMarginIndicators, getDerivativeIndicator } from 'derify-apis-test'
 import { Rec } from '@/typings'
 import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'
 
-/**
- {
-    "token": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-    "longMarginTokenPmrRate": "0",
-    "shortMarginTokenPmrRate": "0",
-    "longDrfPmrRate": "0",
-    "shortDrfPmrRate": "0",
-    "price_change_rate": "-0.010566311805753606"
-}
- * @param marginTokenAddress
- */
 export const useMarginIndicators = (marginTokenAddress: string) => {
   const output = Object.create(null)
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     ['useMarginIndicators'],
     async () => {
       const { data } = await getMarginIndicators<{ data: Rec }>(marginTokenAddress)
@@ -31,7 +20,7 @@ export const useMarginIndicators = (marginTokenAddress: string) => {
             longMarginTokenPmrRate = 0,
             shortMarginTokenPmrRate = 0,
             ...rest
-          }: Record<string, any>) => {
+          }: Rec) => {
             const longPmrRate = bnPlus(longDrfPmrRate, longMarginTokenPmrRate)
             const shortPmrRate = bnPlus(shortDrfPmrRate, shortMarginTokenPmrRate)
             const apy = keepDecimals(Math.max(Number(longPmrRate), Number(shortPmrRate)), 4)
@@ -46,26 +35,23 @@ export const useMarginIndicators = (marginTokenAddress: string) => {
             }
           }
         )
-        return output
       }
-      return null
+      return output
     },
     {
       retry: false,
-      initialData: null,
       refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  return { data }
+  return { data, isLoading }
 }
 
 export const useAllMarginIndicators = (list: string[]) => {
   const output = Object.create(null)
-
-  const { data } = useQuery(
+  const { data, isLoading } = useQuery(
     ['useAllMarginIndicators'],
     async () => {
       if (list.length) {
@@ -96,20 +82,17 @@ export const useAllMarginIndicators = (list: string[]) => {
               }
             )
           })
-          return output
         }
       }
-
-      return null
+      return output
     },
     {
       retry: false,
-      initialData: null,
-      refetchInterval: 6000,
+      refetchInterval: 10000,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
   )
 
-  return { data }
+  return { data, isLoading }
 }

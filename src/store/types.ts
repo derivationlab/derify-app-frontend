@@ -1,3 +1,4 @@
+import { TMarginTokenList } from '@/store/useBalances'
 import { derivativeList } from '@/store/useDerivativeList'
 import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList, pagingParams } from '@/store/useMarginTokenList'
@@ -24,8 +25,7 @@ export interface PositionOperationState {
 export interface BalancesState {
   loaded: boolean
   balances: Rec | null
-  getTokenBalances: (account: string, list: (typeof marginTokenList)[]) => Promise<void>
-  reset: () => void
+  getTokenBalances: (account: string, list: TMarginTokenList) => Promise<void>
 }
 
 export interface PositionState {
@@ -38,7 +38,6 @@ export interface PositionState {
 
 export interface ProtocolConfigState {
   protocolConfig: ProtocolConfig | null
-  protocolConfigLoaded: boolean
   getProtocolConfig: (marginTokenAddress: string) => Promise<void>
 }
 
@@ -69,12 +68,6 @@ export interface DerivativeListState {
   derivativeListOpen: (typeof derivativeList)[]
   derivativeListLoaded: boolean
   getDerivativeList: (marginToken: string, factory: string, page?: number, size?: number) => Promise<void>
-}
-
-export interface MarginIndicatorsState {
-  marginIndicators: Rec | null
-  marginIndicatorsLoaded: boolean
-  updateMarginIndicators: (data: Rec) => void
 }
 
 export interface TokenSpotPricesState {

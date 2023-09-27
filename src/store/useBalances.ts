@@ -1,31 +1,42 @@
 import { BigNumber } from 'ethers'
+import { chunk, uniqBy } from 'lodash-es'
 import { create } from 'zustand'
 
 import erc20Abi from '@/config/abi/erc20.json'
-import tokens from '@/config/tokens'
+import baseTokens from '@/config/tokens'
 import { BalancesState } from '@/store/types'
 import { marginTokenList } from '@/store/useMarginTokenList'
 import { Rec } from '@/typings'
-import { getBep20Contract, getJsonRpcProvider } from '@/utils/contractHelpers'
+import { getJsonRpcProvider } from '@/utils/contractHelpers'
 import multicall from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
+export type TMarginTokenList = (typeof marginTokenList)[]
+
 const jsonRpc = getJsonRpcProvider()
 
-export const getTokenBalance = async (account: string, address: string) => {
-  const c = getBep20Contract(address)
-  const res = await c.balanceOf(account)
-  return formatUnits(res, 18)
+const uniqByTokens = (list: Rec[]) => {
+  return uniqBy([...Object.values(baseTokens), ...list], 'symbol')
 }
 
-export const getTokenBalances = async (account: string, list: (typeof marginTokenList)[]) => {
+const handleCalls = (tokens: Rec[], account: string) => {
+  return [
+    ...tokens.map((t: Rec) => ({
+      name: 'balanceOf',
+      params: [account],
+      address: t.margin_token || t.tokenAddress
+    })),
+    ...tokens.map((t: Rec) => ({
+      name: 'decimals',
+      address: t.margin_token || t.tokenAddress
+    }))
+  ]
+}
+
+export const getTokenBalances = async (account: string, list: Rec[]) => {
   let output = Object.create(null)
-  const _tokens = [...Object.values(tokens), ...list]
-  const calls = _tokens.map((t: Rec) => ({
-    name: 'balanceOf',
-    params: [account],
-    address: t.margin_token || t.tokenAddress
-  }))
+  const tokens = uniqByTokens(list)
+  const calls = handleCalls(tokens, account)
 
   const res = await multicall(erc20Abi, calls)
   const bnb = await jsonRpc.getBalance(account)
@@ -33,13 +44,16 @@ export const getTokenBalances = async (account: string, list: (typeof marginToke
   const bnbBalance = formatUnits(bnb, 18)
 
   if (res.length > 0) {
-    res.forEach((t: BigNumber[], index: number) => {
-      const balance = formatUnits(t[0], 18)
+    const [balances, decimals] = chunk(res, tokens.length)
+    balances.forEach((balanceArr, index: number) => {
+      const [decimal] = (decimals as number[][])[index]
+      const [balance] = balanceArr as BigNumber[]
+      const _balance = formatUnits(balance, decimal)
       output = {
         ...output,
-        [calls[index].address]: balance,
-        [_tokens[index].symbol]: balance,
-        [_tokens[index].symbol.toLowerCase()]: balance
+        [calls[index].address]: _balance,
+        [tokens[index].symbol]: _balance,
+        [tokens[index].symbol.toLowerCase()]: _balance
       }
     })
   }
@@ -50,13 +64,14 @@ export const getTokenBalances = async (account: string, list: (typeof marginToke
 const useBalancesStore = create<BalancesState>((set) => ({
   balances: null,
   loaded: false,
-  getTokenBalances: async (account: string, list: (typeof marginTokenList)[]) => {
+  getTokenBalances: async (account: string, list: TMarginTokenList) => {
+    if (!account || list.length === 0) {
+      set({ balances: null, loaded: true })
+      return
+    }
     const data = await getTokenBalances(account, list)
-    // console.info(`getTokenBalances:`)
-    // console.info(data)
     set({ balances: data, loaded: true })
-  },
-  reset: () => set(() => ({ balances: null }))
+  }
 }))
 
 export { useBalancesStore }

@@ -8,6 +8,7 @@ import { userBrokerBoundAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
 import LeverageSelect from '@/components/common/Form/LeverageSelect'
 import { isOpeningMinLimit } from '@/funcs/helper'
+import { useMarginIndicators } from '@/hooks/useMarginIndicators'
 import { useMarginPrice } from '@/hooks/useMarginPrice'
 import { useOpeningMinLimit } from '@/hooks/useOpeningMinLimit'
 import { usePositionOperation } from '@/hooks/usePositionOperation'
@@ -20,7 +21,6 @@ import {
   useQuoteTokenStore,
   useMarginTokenStore,
   useTokenSpotPricesStore,
-  useMarginIndicatorsStore,
   useProtocolConfigStore
 } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
@@ -44,12 +44,12 @@ const Bench: FC = () => {
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
-  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const openingParams = usePositionOperationStore((state) => state.openingParams)
   const updateOpeningParams = usePositionOperationStore((state) => state.updateOpeningParams)
   const { openingMinLimit } = useOpeningMinLimit(protocolConfig?.exchange)
   const { data: marginPrice } = useMarginPrice(protocolConfig?.priceFeed)
   const { spotPrice, precision } = useTokenSpotPrice(spotPrices, quoteToken.name)
+  const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
   const longPosApy = useMemo(() => {
     const p = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)

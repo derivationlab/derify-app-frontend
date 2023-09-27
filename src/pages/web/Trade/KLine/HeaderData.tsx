@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useCurrentPositionsTotalAmount } from '@/hooks/useCurrentPositionsTotalAmount'
+import { useMarginIndicators } from '@/hooks/useMarginIndicators'
 import { usePositionChangeFeeRatios } from '@/hooks/usePositionChangeFeeRatios'
-import { useMarginTokenStore, useQuoteTokenStore, useMarginIndicatorsStore } from '@/store'
+import { useMarginTokenStore, useQuoteTokenStore } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { useDerivativeListStore } from '@/store/useDerivativeList'
 import { bnDiv, bnMinus, bnPlus, isLTET, keepDecimals, numeralNumber } from '@/utils/tools'
@@ -17,8 +18,8 @@ const HeaderData: FC = () => {
   const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const derivativeList = useDerivativeListStore((state) => state.derivativeList)
-  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const { data: pcfRatios } = usePositionChangeFeeRatios(derivativeList)
+  const { data: marginIndicators } = useMarginIndicators(marginToken.address)
   const { data: currentOpenInterest, refetch: refetchCurrentOpenInterest } = useCurrentPositionsTotalAmount(
     quoteToken.token,
     marginToken.address

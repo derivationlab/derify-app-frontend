@@ -14,17 +14,18 @@ import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import NotConnect from '@/components/web/NotConnect'
 import tokens, { PLATFORM_TOKEN } from '@/config/tokens'
 import { useCurrentPositionsTotalAmount } from '@/hooks/useCurrentPositionsTotalAmount'
+import { useMarginIndicators } from '@/hooks/useMarginIndicators'
 import { useMiningOperation } from '@/hooks/useMiningOperation'
 import { usePoolEarning } from '@/hooks/usePoolEarning'
-import { useMarginTokenStore, useMarginIndicatorsStore, useProtocolConfigStore } from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
+import { Rec } from '@/typings'
 import { bnPlus, isGT, isLT, keepDecimals, numeralNumber } from '@/utils/tools'
 
 const PositionMining: FC = () => {
   const { t } = useTranslation()
   const { address } = useAccount()
   const { data: signer } = useSigner()
-  const indicators = useMarginIndicatorsStore((state) => state.marginIndicators)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const protocolConfig = useProtocolConfigStore((state) => state.protocolConfig)
   const variables = useAtomValue(traderVariablesAtom)
@@ -34,13 +35,14 @@ const PositionMining: FC = () => {
       exchange: protocolConfig?.exchange
     })
   )
+  const { data: indicators } = useMarginIndicators(marginToken.address)
   const { data: rewardsInfo } = usePoolEarning(address, protocolConfig?.rewards)
   const { data: totalAmount } = useCurrentPositionsTotalAmount('all', marginToken.address)
   const { withdrawPositionReward } = useMiningOperation()
 
   const ratio = useMemo(() => {
     if (indicators) {
-      const values = Object.values(indicators)
+      const values = Object.values(indicators) as Rec[]
       const apyMax = values.map((d) => Math.max(Number(d.longPmrRate), Number(d.shortPmrRate)))
       return Math.max.apply(null, apyMax) * 100
     }

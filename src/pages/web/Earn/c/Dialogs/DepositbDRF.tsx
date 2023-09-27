@@ -7,8 +7,9 @@ import Button from '@/components/common/Button'
 import Dialog from '@/components/common/Dialog'
 import AmountInput from '@/components/common/Wallet/AmountInput'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { getTokenBalance } from '@/funcs/helper'
 import { reducer, stateInit } from '@/reducers/staking'
-import { getTokenBalance, useMarginTokenStore, useProtocolConfigStore } from '@/store'
+import { useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { isGT, isGTET, nonBigNumberInterception } from '@/utils/tools'
 
 interface Props {

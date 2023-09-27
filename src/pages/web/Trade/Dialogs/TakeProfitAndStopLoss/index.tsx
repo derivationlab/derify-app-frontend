@@ -9,7 +9,8 @@ import Input from '@/components/common/Form/Input'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import MultipleStatus from '@/components/web/MultipleStatus'
 import { VALUATION_TOKEN_SYMBOL } from '@/config/tokens'
-import { useMarginTokenStore, useMarginIndicatorsStore } from '@/store'
+import { useMarginIndicators } from '@/hooks/useMarginIndicators'
+import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
 import { bnMinus, bnMul, formatUnits, isET, isGT, keepDecimals } from '@/utils/tools'
@@ -37,7 +38,7 @@ const TakeProfitAndStopLoss: FC<Props> = ({ data, visible, onClose, onClick }) =
   const { t } = useTranslation()
   const [pnlParams, setPnLParams] = useState<typeof initPnLParams>(initPnLParams)
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
-  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+  const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
   const memoStopLoss = useMemo(() => {
     const averagePrice = formatUnits(data.averagePrice, data.pricePrecision)

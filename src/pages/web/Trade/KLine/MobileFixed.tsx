@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/common/Button'
 import ConnectButton from '@/components/common/Wallet/ConnectButton'
-import { useMarginIndicatorsStore, useQuoteTokenStore } from '@/store'
+import { useMarginIndicators } from '@/hooks/useMarginIndicators'
+import { useMarginTokenStore, useQuoteTokenStore } from '@/store'
+import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { isLTET, keepDecimals } from '@/utils/tools'
 
 interface Props {
@@ -14,9 +16,9 @@ interface Props {
 
 const MobileFixed: FC<Props> = ({ address, isKline, goBench }) => {
   const { t } = useTranslation()
-
-  const quoteToken = useQuoteTokenStore((state) => state.quoteToken)
-  const marginIndicators = useMarginIndicatorsStore((state) => state.marginIndicators)
+  const quoteToken = useQuoteTokenStore((state: QuoteTokenState) => state.quoteToken)
+  const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
+  const { data: marginIndicators } = useMarginIndicators(marginToken.address)
 
   const memoLongPosApy = useMemo(() => {
     const p = Number(marginIndicators?.[quoteToken.token]?.longPmrRate ?? 0)

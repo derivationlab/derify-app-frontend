@@ -19,7 +19,6 @@ import { Rec } from '@/typings'
 
 let seqCount = 0
 let switchSettings = 0
-let temporaryStorage: any[] = []
 
 interface Resource {
   originData: Rec[]
@@ -51,8 +50,7 @@ const SymbolSelect = () => {
   const { indicator } = useIndicator(quoteToken)
 
   const different = useMemo(() => {
-    const reset = uniqBy([...traderFavorite, ...resource.originData], 'token')
-    return resource.searchKeywords.trim() ? resource.searchData : reset
+    return resource.searchKeywords ? resource.searchData : resource.originData
   }, [resource, traderFavorite])
 
   const currentTk = useMemo(() => {
@@ -83,7 +81,6 @@ const SymbolSelect = () => {
       const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed
       const combine = [...resource.originData, ...output]
       const deduplication = uniqBy(combine, 'token')
-      temporaryStorage = deduplication
       setResource((val) => ({ ...val, originData: deduplication }))
       if (data.records.length === 0 || data.records.length < TRADING_VISIBLE_COUNT) seqCount = seqCount - 1
     }
@@ -100,18 +97,44 @@ const SymbolSelect = () => {
    * xx/xx - api error
    */
   const fuzzySearchFunc = useCallback(
-    debounce(async (marginToken: string, fuzzySearch: string, factory: string) => {
+    debounce(async (marginToken: string, derivativeList: Rec[], fuzzySearch: string, factory: string) => {
+      let searchData: Rec[]
       try {
-        const { data } = await searchDerivative<{ data: Rec }>(marginToken, fuzzySearch)
-        const filterRecords = (data as any[]).filter((d) => d.open) // opening
-        const pairAddresses = await getPairAddressList(factory, filterRecords)
-        const output = (pairAddresses ?? []).filter((l) => l.derivative !== ZERO) // deployed
-        setResource((val) => ({ ...val, searchData: output, searchLoaded: false }))
+        const { data } = await searchDerivative<{ data: Rec[] }>(marginToken, fuzzySearch)
+        const notIncludedInDerivativeList = data.filter((d) => !derivativeList.some((p) => p.token === d.token))
+        if (notIncludedInDerivativeList.length) {
+          const openList = notIncludedInDerivativeList.filter((d) => d.open) // opening
+          const contract = await getPairAddressList(factory, openList)
+          searchData = (contract ?? []).filter((l) => l.derivative !== ZERO) // deployed
+        } else {
+          searchData = data
+        }
+        setResource((val) => ({ ...val, searchData }))
       } catch (e) {
-        setResource((val) => ({ ...val, searchData: [], searchLoaded: false }))
+        setResource((val) => ({ ...val, searchData: [] }))
+      } finally {
+        setResource((val) => ({ ...val, searchLoaded: false }))
       }
-    }, 100),
+    }, 200),
     []
+  )
+
+  const handleSearch = useCallback(
+    (v: string) => {
+      if (!v.trim()) {
+        setResource((val) => ({
+          ...val,
+          originData: uniqBy([...traderFavorite, ...derivativeList], 'token'),
+          searchData: [],
+          searchLoaded: false,
+          searchKeywords: ''
+        }))
+      } else {
+        setResource((val) => ({ ...val, searchKeywords: v.trim(), searchData: [], searchLoaded: true }))
+        void fuzzySearchFunc(marginToken.address, derivativeList, v.trim(), protocolConfig?.factory ?? '')
+      }
+    },
+    [marginToken, protocolConfig, derivativeList, traderFavorite]
   )
 
   useEffect(() => {
@@ -119,15 +142,8 @@ const SymbolSelect = () => {
   }, [spotPrices])
 
   useEffect(() => {
-    if (resource.searchKeywords.trim()) {
-      setResource((val) => ({ ...val, searchData: [], searchLoaded: true }))
-      if (protocolConfig) void fuzzySearchFunc(marginToken.address, resource.searchKeywords, protocolConfig.factory)
-    } else {
-      const data = temporaryStorage.length === 0 ? derivativeList : temporaryStorage
-      const deduplication = uniqBy([...traderFavorite, ...data], 'token')
-      setResource((val) => ({ ...val, originData: deduplication, searchData: [], searchLoaded: false }))
-    }
-  }, [marginToken, derivativeList, protocolConfig, traderFavorite, resource.searchKeywords])
+    setResource((val) => ({ ...val, originData: uniqBy([...traderFavorite, ...derivativeList], 'token') }))
+  }, [derivativeList, traderFavorite])
 
   useEffect(() => {
     if (resource.originData.length) {
@@ -153,6 +169,10 @@ const SymbolSelect = () => {
     }
   }, [resource.originData.length])
 
+  // useEffect(() => {
+  //   console.info(derivativeList)
+  // }, [derivativeList])
+
   return (
     <div className="web-trade-symbol-select">
       <DropDownList
@@ -160,7 +180,7 @@ const SymbolSelect = () => {
         height={588}
         loading={resource.searchLoaded}
         disabled={derivativeList.length === 0}
-        onSearch={(key) => setResource((val) => ({ ...val, searchKeywords: key }))}
+        onSearch={handleSearch}
         placeholder={t('Trade.kline.SearchTip')}
       >
         {different.length ? (

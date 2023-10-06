@@ -140,8 +140,8 @@ const PositionMining: FC = () => {
             <BalanceShow value={positions[0]} unit={marginToken.symbol} decimal={positions[1] as number} />
             <div className="block" />
             <p>
-              {t('Earn.PositionMining.TotalPositions')}
-              <strong>{numeralNumber(volume, marginToken.decimals)}</strong> {marginToken.symbol}
+              {t('Earn.PositionMining.TotalPositions')} <strong>{numeralNumber(volume, marginToken.decimals)}</strong>{' '}
+              {marginToken.symbol}
             </p>
           </main>
           <aside>

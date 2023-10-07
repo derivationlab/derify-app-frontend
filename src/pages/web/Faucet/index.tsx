@@ -16,7 +16,7 @@ const mintAmount: Rec = {
   USDT: 10000,
   DRF: 10000,
   BUSD: 10000,
-  xx: 10000,
+  SOR: 10000,
   BTC: 2100,
   PIG: 100000000000,
   CAKE: 75000,

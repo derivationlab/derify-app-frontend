@@ -1,24 +1,24 @@
 import { TSigner } from '@/typings'
-import { getTokenMintContract } from '@/utils/contractHelpers'
+import { getBep20Contract, getTokenMintContract } from '@/utils/contractHelpers'
 import { estimateGas } from '@/utils/estimateGas'
 import { inputParameterConversion } from '@/utils/tools'
+
+async function calcMintAmount(token: string, amount: string): Promise<string> {
+  const tokenContract = getBep20Contract(token)
+  const decimals = await tokenContract.decimals()
+  return inputParameterConversion(amount, Number(decimals))
+}
 
 export const useTokenMint = () => {
   const mint = async (token: string, amount: string, signer: TSigner): Promise<boolean> => {
     if (!signer) return false
 
-    const c = getTokenMintContract(token, signer)
-    const _amount = inputParameterConversion(amount, 18)
-
     try {
+      const mintContract = getTokenMintContract(token, signer)
+      const _amount = await calcMintAmount(token, amount)
       const account = await signer.getAddress()
-      console.info(`mint token:
-     BUSD=${token}
-     Amount=${amount}(${_amount})
-     mint(wallet=${account},amount=${_amount})
-     `)
-      const gasLimit = await estimateGas(c, 'mint', [account, _amount])
-      const response = await c.mint(account, _amount, { gasLimit })
+      const gasLimit = await estimateGas(mintContract, 'mint', [account, _amount])
+      const response = await mintContract.mint(account, _amount, { gasLimit })
       const receipt = await response.wait()
       return receipt.status
     } catch (e) {

@@ -32,15 +32,6 @@
       position: relative;
       background: url($res + 'logo.png') center/contain no-repeat;
       font-weight: normal;
-
-      &:after {
-        content: 'Beta';
-        position: absolute;
-        right: -46px;
-        bottom: 0;
-        font-size: 16px;
-        color: $c88;
-      }
     }
   }
 

@@ -16,6 +16,7 @@ import CloseAllDialog from '@/pages/web/Trade/Dialogs/PositionCloseAll'
 import { ThemeContext } from '@/providers/Theme'
 import { useProtocolConfigStore, useTokenSpotPricesStore } from '@/store'
 import { PubSubEvents, Rec } from '@/typings'
+import emitter, { EventTypes } from '@/utils/emitter'
 
 import NoRecord from '../c/NoRecord'
 import ListItem from './ListItem'
@@ -41,6 +42,7 @@ const MyPosition: FC<{ data: Rec[]; loaded: boolean }> = ({ data, loaded }) => {
         window.toast.success(t('common.success'))
         PubSub.publish(PubSubEvents.UPDATE_OPENED_POSITION)
         PubSub.publish(PubSubEvents.UPDATE_POSITION_VOLUME)
+        emitter.emit(EventTypes.updateTraderVariables)
       } else {
         window.toast.error(t('common.failed'))
       }

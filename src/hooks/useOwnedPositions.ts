@@ -243,7 +243,7 @@ export const useOwnedPositionsBackUp = (trader?: string, factory?: string, margi
        * If the transaction pair data exceeds 200,
        * or the centralized interface limits the number, it will be troublesome
        */
-      const { data } = await getDerivativeList<{ data: Rec }>(marginToken, 0, 200)
+      const { data } = await getDerivativeList<{ data: Rec }>(marginToken, 0, 20)
       if (data?.records) {
         const _pairList = await getPairAddressList(factory, data.records)
         if (_pairList) {

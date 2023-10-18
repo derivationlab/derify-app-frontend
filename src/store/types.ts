@@ -3,17 +3,12 @@ import { marginToken } from '@/store/useMarginToken'
 import { marginTokenList, pagingParams } from '@/store/useMarginTokenList'
 import { initOpeningParams } from '@/store/usePositionOperation'
 import { quoteToken } from '@/store/useQuoteToken'
-import { ChainId, ProtocolConfig, Rec } from '@/typings'
+import { ProtocolConfig, Rec } from '@/typings'
 
 export interface WalletState {
   loaded: boolean
   account: string
   updateAccount: (data: string) => void
-}
-
-export interface RpcNodeState {
-  rpc: string
-  fetch: (chainId: ChainId) => Promise<void>
 }
 
 export interface PositionOperationState {

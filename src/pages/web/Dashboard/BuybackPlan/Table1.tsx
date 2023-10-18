@@ -47,12 +47,13 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
         align: 'right',
         render: (symbol: string, data: Rec) => {
           let cls = ''
+          const mPrices = marginPrices ?? {}
           const price = nonBigNumberInterception(data?.last_drf_price ?? 0, 4)
           if (isGTET(price, tokenPrice)) cls = 'rise'
           if (isLT(price, tokenPrice) && isGT(price, 0)) cls = 'fall'
-          const findKey = Object.keys(marginPrices).find((l) => l === data.margin_token) ?? ''
+          const findKey = Object.keys(mPrices).find((l) => l === data.margin_token) ?? ''
           const volume = buyBackInfo?.[data.margin_token] ?? 0
-          const equityValue = bnMul(marginPrices[findKey] ?? 0, volume)
+          const equityValue = bnMul(mPrices[findKey] ?? 0, volume)
           return (
             <>
               {buyBackInfo ? (
@@ -107,9 +108,10 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
           if (!buyBackInfo) return <Spinner text="loading" />
-          const findKey = Object.keys(marginPrices).find((l) => l === data.margin_token) ?? ''
+          const mPrices = marginPrices ?? {}
+          const findKey = Object.keys(mPrices).find((l) => l === data.margin_token) ?? ''
           const volume = buyBackInfo?.[data.margin_token] ?? 0
-          const equityValue = bnMul(marginPrices[findKey] ?? 0, volume)
+          const equityValue = bnMul(mPrices[findKey] ?? 0, volume)
           return (
             <>
               <BalanceShow value={volume} unit={symbol} decimal={Number(volume) === 0 ? 2 : data.amount_decimals} />

@@ -15,16 +15,16 @@ import { useCurrentTrading } from '@/hooks/useCurrentTrading'
 import { useDerivativeListStore, useMarginTokenStore, useProtocolConfigStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-import { dayjsStartOf } from '@/utils/tools'
+import { dayjsStartOf, keepDecimals } from '@/utils/tools'
 
 const time = dayjsStartOf()
-let output: Rec = {
-  day_time: time,
-  trading_amount: 0
-}
 const all = {
   name: 'All Derivatives',
   token: 'all'
+}
+let output: Rec = {
+  day_time: time,
+  trading_amount: 0
 }
 
 interface PairOptionsInit {
@@ -53,7 +53,7 @@ const TradingVolume: FC = () => {
   }, [tradingVolume, marginToken])
 
   const combineDAT = useMemo(() => {
-    if (tradingVolume) output = { day_time: time, ...[0] }
+    if (tradingVolume) output = { day_time: time, ...tradingVolume[0] }
     return [...tradingData, output]
   }, [tradingData, tradingVolume])
 
@@ -122,7 +122,11 @@ const TradingVolume: FC = () => {
       <header className="web-data-chart-header">
         <h3>
           {t('Dashboard.TradingVolume', 'Trading Volume')} :
-          <BalanceShow value={tradingVolume?.[0]?.trading_amount ?? 0} unit={marginToken.symbol} decimal={decimals} />
+          <BalanceShow
+            value={keepDecimals(tradingVolume?.[0]?.trading_amount ?? 0, 2)}
+            unit={marginToken.symbol}
+            decimal={decimals}
+          />
         </h3>
         <aside>
           <DropDownList

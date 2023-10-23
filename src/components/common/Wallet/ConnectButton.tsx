@@ -9,7 +9,6 @@ import Button from '@/components/common/Button'
 import WalletDialog from '@/components/common/Wallet'
 import { Wallet } from '@/components/common/Wallet/wallets'
 import useConnecting from '@/hooks/useConnecting'
-import { useWalletStore } from '@/store'
 import { PubSubEvents } from '@/typings'
 
 interface Props {
@@ -26,8 +25,6 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   const [needSwitchNet, setNeedSwitchNet] = useState<boolean>(false)
 
   const { connectWallet } = useConnecting()
-
-  const updateAccount = useWalletStore((state) => state.updateAccount)
 
   const connectWalletFunc = async (wallet: Wallet) => {
     const { installed, connectorId, downloadLink } = wallet
@@ -55,11 +52,7 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
     if (isConnected && address) {
       setModalStatus(false)
 
-      updateAccount(address)
-
       void traderInfoUpdates({ trader: address })
-    } else {
-      updateAccount('')
     }
   }, [isConnected, address])
 

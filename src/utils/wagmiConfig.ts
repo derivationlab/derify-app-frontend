@@ -7,15 +7,16 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectLegacyConnector } from 'wagmi/connectors/walletConnectLegacy'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
-import { CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
-
-const rpcUrl = DEFAULT_PRC_URLS[CHAIN_ID]
+export const INIT_RPC_URL = () => {
+  const _rpc = localStorage.getItem('rpc')
+  return _rpc ? _rpc : bsc?.rpcUrls?.default?.http?.[0] ?? ''
+}
 
 const { provider, chains } = configureChains(
   [bsc],
   [
     jsonRpcProvider({
-      rpc: () => ({ http: rpcUrl })
+      rpc: () => ({ http: INIT_RPC_URL() })
     })
   ]
 )

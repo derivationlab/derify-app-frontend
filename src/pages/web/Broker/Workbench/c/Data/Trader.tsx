@@ -1,7 +1,7 @@
 import { getBrokerSubordinate } from 'derify-apis-staging'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 import React, { FC, useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next'
 import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
-import { EXPLORER_SCAN_URL } from '@/config'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -30,27 +29,31 @@ interface RowProps {
 }
 
 const RowTrader: FC<{ data: Record<string, any> }> = ({ data }) => {
+  const { chain } = useNetwork()
   return (
     <div className="web-broker-table-trader-tx">
       <Image src="icon/normal-ico.svg" cover />
-      <a href={`${EXPLORER_SCAN_URL}/address/${data.trader}`} title={data.trader} target="_blank">
+      <a href={`${chain?.blockExplorers?.default.url}/address/${data.trader}`} title={data.trader} target="_blank">
         {isMobile ? calcShortHash(data.trader, 4, 4) : calcShortHash(data.trader)}
       </a>
     </div>
   )
 }
 
-const RowLastTransaction: FC<RowProps> = ({ text }) => (
-  <div className="web-broker-table-trader-tx">
-    {text ? (
-      <a href={`${EXPLORER_SCAN_URL}/tx/${text}`} target="_blank" title={text}>
-        {calcShortHash(text ?? '')}
-      </a>
-    ) : (
-      '-'
-    )}
-  </div>
-)
+const RowLastTransaction: FC<RowProps> = ({ text }) => {
+  const { chain } = useNetwork()
+  return (
+    <div className="web-broker-table-trader-tx">
+      {text ? (
+        <a href={`${chain?.blockExplorers?.default.url}/tx/${text}`} target="_blank" title={text}>
+          {calcShortHash(text ?? '')}
+        </a>
+      ) : (
+        '-'
+      )}
+    </div>
+  )
+}
 
 const Trader: FC = () => {
   const [state, dispatch] = useReducer(reducer, stateInit)

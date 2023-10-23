@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { getBrokerTransactions } from 'derify-apis-staging'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 import React, { FC, useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next'
 
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
-import { EXPLORER_SCAN_URL } from '@/config'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
@@ -31,15 +30,16 @@ interface DataProps {
 }
 
 const RowTransaction: FC<{ data: Record<string, any> }> = ({ data }) => {
+  const { chain } = useNetwork()
   return (
     <div className="web-broker-table-transaction-tx">
-      <a href={`${EXPLORER_SCAN_URL}/tx/${data.tx}`} target="_blank" title={data.tx}>
+      <a href={`${chain?.blockExplorers?.default.url}/tx/${data.tx}`} target="_blank" title={data.tx}>
         {isMobile ? calcShortHash(data.tx, 4, 4) : calcShortHash(data.tx)}
       </a>
       {isMobile ? (
         <time>{calcTimeStr(data.event_time)}</time>
       ) : (
-        <a href={`${EXPLORER_SCAN_URL}/address/${data.user}`} target="_blank" title={data.user}>
+        <a href={`${chain?.blockExplorers?.default.url}/address/${data.user}`} target="_blank" title={data.user}>
           by trader {calcShortHash(data.user)}
         </a>
       )}

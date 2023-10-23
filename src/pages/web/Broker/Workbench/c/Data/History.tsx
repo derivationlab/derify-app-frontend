@@ -1,7 +1,7 @@
 import { getBrokerRevenueRecord } from 'derify-apis-staging'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 
 import React, { FC, useEffect, useMemo, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next'
 
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
-import { EXPLORER_SCAN_URL } from '@/config'
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
@@ -33,6 +32,7 @@ interface DataProps {
 
 const RowType: FC<{ data: DataProps }> = ({ data }) => {
   const { t } = useTranslation()
+  const { chain } = useNetwork()
 
   const TypeEnum = [
     t('Broker.History.Type0', 'Income'),
@@ -51,7 +51,7 @@ const RowType: FC<{ data: DataProps }> = ({ data }) => {
       {isMobile ? (
         <time>{calcTimeStr(data.event_time)}</time>
       ) : (
-        <a href={`${EXPLORER_SCAN_URL}/tx/${data.tx}`} target="_blank" title={data.tx}>
+        <a href={`${chain?.blockExplorers?.default.url}/tx/${data.tx}`} target="_blank" title={data.tx}>
           txid {calcShortHash(data.tx)}
         </a>
       )}

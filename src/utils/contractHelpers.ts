@@ -3,7 +3,6 @@ import type { ContractInterface } from '@ethersproject/contracts'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 
-import { BEST_RPC_KEY, CHAIN_ID, DEFAULT_PRC_URLS } from '@/config'
 import applyTokenAbi from '@/config/abi/DerifyApplyToken.json'
 import DerifyBrokerRewardsAbi from '@/config/abi/DerifyBrokerRewards.json'
 import consultantAbi from '@/config/abi/DerifyConsultant.json'
@@ -21,12 +20,10 @@ import priceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 import bep20Abi from '@/config/abi/erc20.json'
 import contracts from '@/config/contracts'
 import { TSigner } from '@/typings'
+import { INIT_RPC_URL } from '@/utils/wagmiConfig'
 
 export const getJsonRpcProvider = (): StaticJsonRpcProvider => {
-  const local = localStorage.getItem(BEST_RPC_KEY)
-  const rpc = local ? JSON.parse(local)?.state.rpc : DEFAULT_PRC_URLS[CHAIN_ID]
-  // console.info(rpc)
-  return new StaticJsonRpcProvider(rpc)
+  return new StaticJsonRpcProvider(INIT_RPC_URL())
 }
 
 export const getContract = (abi: ContractInterface, address: string, signer?: TSigner): Contract => {

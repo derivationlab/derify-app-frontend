@@ -5,11 +5,6 @@ const API_PREFIX_URLS: ChainIdRec = {
   [ChainId.TESTNET]: 'https://test-api-v2.derify.exchange/'
 }
 
-const EXPLORER_SCAN_URLS: ChainIdRec = {
-  [ChainId.MAINNET]: 'https://bscscan.com',
-  [ChainId.TESTNET]: 'https://testnet.bscscan.com'
-}
-
 export const DEFAULT_PRC_URLS: ChainIdRec = {
   [ChainId.MAINNET]: 'https://bsc-dataseed1.binance.org',
   [ChainId.TESTNET]: 'https://data-seed-prebsc-1-s1.binance.org:8545'
@@ -17,14 +12,12 @@ export const DEFAULT_PRC_URLS: ChainIdRec = {
 
 export const CHAIN_ID = process.env.REACT_APP_CHAIN_ID ?? ChainId.MAINNET
 export const API_PREFIX_URL = API_PREFIX_URLS[CHAIN_ID]
-export const EXPLORER_SCAN_URL = EXPLORER_SCAN_URLS[CHAIN_ID]
 export const WEBSITE_URL = 'https://derify.finance/'
 export const PANCAKE_SWAP_URL = 'https://pancakeswap.finance/'
 export const STATIC_RESOURCES_URL = 'https://derify-app-resources.vercel.app/image/'
 export const LANG_CACHE_KEY = 'LANG'
 export const TRADING_VISIBLE_COUNT = 20
 export const MARGIN_VISIBLE_COUNT = 20
-export const BEST_RPC_KEY = 'rpc'
 export const QUOTE_TOKEN_KEY = 'quote_v0.0.1'
 export const MARGIN_TOKEN_KEY = 'margin_v0.0.1'
 export const ZERO = '0x0000000000000000000000000000000000000000'

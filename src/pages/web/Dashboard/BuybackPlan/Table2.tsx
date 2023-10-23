@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { getTokenBurnHistory } from 'derify-apis-staging'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
+import { useNetwork } from 'wagmi'
 
 import React, { useMemo, useEffect, useReducer } from 'react'
 import { isMobile } from 'react-device-detect'
@@ -11,7 +12,6 @@ import Image from '@/components/common/Image'
 import Pagination from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
-import { EXPLORER_SCAN_URL } from '@/config'
 import { RowTime } from '@/pages/web/Broker/Workbench/c/Data/common'
 import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenListStore } from '@/store'
@@ -20,6 +20,7 @@ import { calcDateDuration, calcShortHash } from '@/utils/tools'
 
 const Table2 = () => {
   const { t } = useTranslation()
+  const { chain } = useNetwork()
   const [state, dispatch] = useReducer(reducer, stateInit)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenListStore)
 
@@ -29,7 +30,7 @@ const Table2 = () => {
         title: t('NewDashboard.BurnHistory.Transaction', 'Buyback Cycle'),
         dataIndex: 'tx',
         render: (_: string) => (
-          <a href={`${EXPLORER_SCAN_URL}/tx/${_}`} target="_blank">
+          <a href={`${chain?.blockExplorers?.default.url}/tx/${_}`} target="_blank">
             {isMobile ? calcShortHash(_, 4, 4) : calcShortHash(_)}
             <Image src="icon/share.svg" />
           </a>

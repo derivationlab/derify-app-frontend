@@ -5,12 +5,6 @@ import { initOpeningParams } from '@/store/usePositionOperation'
 import { quoteToken } from '@/store/useQuoteToken'
 import { ProtocolConfig, Rec } from '@/typings'
 
-export interface WalletState {
-  loaded: boolean
-  account: string
-  updateAccount: (data: string) => void
-}
-
 export interface PositionOperationState {
   openingParams: typeof initOpeningParams
   updateOpeningParams: (p: Partial<typeof initOpeningParams>) => void

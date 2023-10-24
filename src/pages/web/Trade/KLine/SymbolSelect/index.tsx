@@ -74,7 +74,7 @@ const SymbolSelect = () => {
   const morePairs = useCallback(async () => {
     switchSettings = 1
 
-    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount)
+    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount, TRADING_VISIBLE_COUNT)
     if (protocolConfig && data?.records) {
       const filterRecords = data.records.filter((r: Rec) => r.open) // opening
       const pairAddresses = await getPairAddressList(protocolConfig.factory, filterRecords)

@@ -4,7 +4,7 @@ import { isEmpty, debounce } from 'lodash-es'
 
 import { useCallback, useEffect, useState } from 'react'
 
-import { ZERO } from '@/config'
+import { TRADING_VISIBLE_COUNT, ZERO } from '@/config'
 import DerifyDerivativAbi from '@/config/abi/DerifyDerivative.json'
 import { getPairAddressList } from '@/funcs/helper'
 import { PositionSideTypes, PositionTriggerTypes, Rec } from '@/typings'
@@ -243,7 +243,7 @@ export const useOwnedPositionsBackUp = (trader?: string, factory?: string, margi
        * If the transaction pair data exceeds 200,
        * or the centralized interface limits the number, it will be troublesome
        */
-      const { data } = await getDerivativeList<{ data: Rec }>(marginToken, 0, 20)
+      const { data } = await getDerivativeList<{ data: Rec }>(marginToken, 0, TRADING_VISIBLE_COUNT)
       if (data?.records) {
         const _pairList = await getPairAddressList(factory, data.records)
         if (_pairList) {

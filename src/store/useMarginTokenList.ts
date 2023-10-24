@@ -2,7 +2,7 @@ import { getAllMarginTokenList, getMarginTokenList as _getMarginTokenList } from
 import { isEmpty } from 'lodash-es'
 import { create } from 'zustand'
 
-import { ZERO } from '@/config'
+import { MARGIN_VISIBLE_COUNT, ZERO } from '@/config'
 import DerifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import contracts from '@/config/contracts'
 import { MarginTokenListState } from '@/store/types'
@@ -10,7 +10,7 @@ import { Rec } from '@/typings'
 import multicall from '@/utils/multicall'
 
 export const getMarginTokenList = async (page = 0) => {
-  const { data } = await _getMarginTokenList<{ data: Rec }>(page)
+  const { data } = await _getMarginTokenList<{ data: Rec }>(page, MARGIN_VISIBLE_COUNT)
   return data
 }
 

@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { BarChart } from '@/components/common/Chart'
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
+import { TRADING_VISIBLE_COUNT } from '@/config'
 import { timeLineOptions, matchTimeLineOptions } from '@/data'
 import { useCurrentPositions } from '@/hooks/useCurrentPositions'
 import { ThemeContext } from '@/providers/Theme'
@@ -94,7 +95,7 @@ const PositionVolume: FC = () => {
   }, [timeSelectVal, derivativeSel])
 
   const morePairs = useCallback(async () => {
-    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount)
+    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount, TRADING_VISIBLE_COUNT)
     if (protocolConfig && data?.records) {
       const filter = data.records.filter((r: Rec) => r.open)
       const combine = [...pairOptions.data, ...filter]

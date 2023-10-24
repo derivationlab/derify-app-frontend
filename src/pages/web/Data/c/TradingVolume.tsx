@@ -74,7 +74,7 @@ const TradingVolume: FC = () => {
   }, [timeSelectVal, derivativeSel])
 
   const morePairs = useCallback(async () => {
-    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount)
+    const { data } = await getDerivativeList<{ data: Rec }>(marginToken.address, seqCount, TRADING_VISIBLE_COUNT)
     if (protocolConfig && data?.records) {
       const filter = data.records.filter((r: Rec) => r.open)
       const combine = [...pairOptions.data, ...filter]

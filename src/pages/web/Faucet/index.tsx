@@ -17,6 +17,8 @@ const mintAmount: Rec = {
   DRF: 10000,
   BUSD: 10000,
   SOR: 10000,
+  RYIU: 20000,
+  LITHO: 1000000,
   BTC: 2100,
   PIG: 100000000000,
   CAKE: 75000,

@@ -6,7 +6,6 @@ import { inputParameterConversion } from '@/utils/tools'
 async function calcMintAmount(token: string, amount: string): Promise<string> {
   const tokenContract = getBep20Contract(token)
   const decimals = await tokenContract.decimals()
-  console.info(decimals)
   return inputParameterConversion(amount, Number(decimals))
 }
 
@@ -17,7 +16,6 @@ export const useTokenMint = () => {
     try {
       const mintContract = getTokenMintContract(token, signer)
       const _amount = await calcMintAmount(token, amount)
-      console.info(_amount)
       const account = await signer.getAddress()
       const gasLimit = await estimateGas(mintContract, 'mint', [account, _amount])
       const response = await mintContract.mint(account, _amount, { gasLimit })

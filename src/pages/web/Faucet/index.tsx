@@ -11,6 +11,7 @@ import { useTokenMint } from '@/hooks/useTokenMint'
 import MarginToken from '@/pages/web/Faucet/MarginToken'
 import { useMarginTokenListStore } from '@/store'
 import { PubSubEvents, Rec } from '@/typings'
+import { getBep20Contract } from '@/utils/contractHelpers'
 
 const mintAmount: Rec = {
   USDT: 10000,
@@ -53,7 +54,8 @@ const FaucetInner: FC = () => {
   const _register = useCallback(async () => {
     if (connector) {
       const { logo: image, symbol, margin_token: address } = mintToken
-      await connector.watchAsset?.({ address, symbol, image })
+      const decimals = await getBep20Contract(address).decimals()
+      await connector.watchAsset?.({ address, symbol, image, decimals: Number(decimals) })
     }
   }, [mintToken, connector])
 

@@ -580,7 +580,7 @@
     padding-bottom: 20px;
     @include ns();
 
-    img {
+    img:first-child {
       width: 24px;
       border-radius: 100%;
       margin-right: 8px;
@@ -598,6 +598,12 @@
     strong {
       display: flex;
       align-items: center
+    }
+
+    img:last-child {
+      width: 18px;
+      cursor: pointer;
+      margin-left: 16px;
     }
   }
 }

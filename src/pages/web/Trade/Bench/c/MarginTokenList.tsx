@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Image from '@/components/common/Image'
+import { findWallet } from '@/components/common/Wallet/wallets'
 import { Advisor, MARGIN_VISIBLE_COUNT } from '@/config'
 import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { resortMargin } from '@/pages/web/MySpace'
@@ -16,6 +17,7 @@ import NoResults from '@/pages/web/Trade/c/NoResults'
 import { getMarginDeployStatus, getMarginTokenList, useMarginTokenListStore, useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
+import { getBep20Contract } from '@/utils/contractHelpers'
 
 let seqCount = 0
 
@@ -29,7 +31,7 @@ const MarginTokenList: FC = () => {
   const bottomRef = useRef<any>()
   const observerRef = useRef<IntersectionObserver | null>()
   const { t } = useTranslation()
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
   const marginToken = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
   const marginTokenList = useMarginTokenListStore((state) => state.marginTokenList)
   const updateMarginTokenListStore = useMarginTokenListStore((state) => state.updateMarginTokenListStore)
@@ -55,6 +57,15 @@ const MarginTokenList: FC = () => {
     updateMarginTokenListStore(deduplication)
     if (records.length === 0 || records.length < MARGIN_VISIBLE_COUNT) seqCount = seqCount - 1
   }, [marginOptions.data])
+
+  const registerToken = useCallback(async (e: any) => {
+    if (e && e?.stopPropagation) e.stopPropagation()
+    if (connector) {
+      const { logo: image, symbol, address } = marginToken
+      const decimals = await getBep20Contract(address).decimals()
+      await connector.watchAsset?.({ address, symbol, image, decimals: Number(decimals) })
+    }
+  }, [marginToken, connector])
 
   useEffect(() => {
     if (searchKeyword.trim()) {
@@ -104,6 +115,7 @@ const MarginTokenList: FC = () => {
           <section>
             <Image src={marginToken.logo} />
             <strong>{marginToken.symbol}</strong>
+            <Image src={`icon/${findWallet(connector?.id ?? '')?.icon}`} onClick={registerToken} />
           </section>
         </div>
       }

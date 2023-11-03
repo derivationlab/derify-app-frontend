@@ -50,6 +50,10 @@ const wallets: Wallet[] = [
   }
 ]
 
+export const findWallet = (id: string) => {
+  return wallets.find((w) => w.id === id)
+}
+
 export const getWallets = () => {
   return wallets
 }

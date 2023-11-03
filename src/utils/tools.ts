@@ -3,10 +3,10 @@ import { formatUnits as _formatUnits } from '@ethersproject/units'
 import BN from 'bignumber.js'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc'
 import { ethers } from 'ethers'
 import numeral from 'numeral'
-import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(utc)
 dayjs.extend(duration)

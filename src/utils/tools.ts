@@ -6,9 +6,13 @@ import duration from 'dayjs/plugin/duration'
 import utc from 'dayjs/plugin/utc'
 import { ethers } from 'ethers'
 import numeral from 'numeral'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(utc)
 dayjs.extend(duration)
+dayjs.extend(relativeTime)
+
+export const D = dayjs
 
 export const dayjsStartOf = (): string => dayjs().utc().startOf('days').format()
 

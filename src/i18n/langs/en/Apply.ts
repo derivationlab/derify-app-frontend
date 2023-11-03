@@ -15,7 +15,7 @@ export default {
     Required: 'required',
     NoAdvisor: 'No Advisor Address ?',
     MARGIN_APPLY: 'Margin Token List',
-    TRADING_APPLY: 'Trading Token List',
+    TRADING_APPLY: 'Trading Pair List',
     NotExist: 'advisor address not exist',
     LoadMore: 'Load More',
     SearchTip: 'Search name or contract address ...'

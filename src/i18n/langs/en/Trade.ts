@@ -90,6 +90,7 @@ export default {
       Time: 'Time'
     },
     Bench: {
+      ListMyToken: 'List My Token',
       Margin: 'Margin',
       MarginBalance: 'Margin Balance',
       MarginBalanceTip:

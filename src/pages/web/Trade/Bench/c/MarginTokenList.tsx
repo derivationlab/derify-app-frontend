@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom'
 
 import { DropDownList, DropDownListItem } from '@/components/common/DropDownList'
 import Image from '@/components/common/Image'
-import { MARGIN_VISIBLE_COUNT } from '@/config'
+import { Advisor, MARGIN_VISIBLE_COUNT } from '@/config'
 import { useMarginBalances } from '@/hooks/useMarginBalances'
 import { resortMargin } from '@/pages/web/MySpace'
 import NoResults from '@/pages/web/Trade/c/NoResults'
@@ -105,6 +105,13 @@ const MarginTokenList: FC = () => {
             <Image src={marginToken.logo} />
             <strong>{marginToken.symbol}</strong>
           </section>
+        </div>
+      }
+      extra={
+        <div className="apply-link">
+          <a href={Advisor} target="_blank">
+            {t('Trade.Bench.ListMyToken')}
+          </a>
         </div>
       }
       loading={marginOptions.loaded}

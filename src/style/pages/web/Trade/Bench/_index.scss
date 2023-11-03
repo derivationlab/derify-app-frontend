@@ -292,6 +292,19 @@
   .web-form-input input {
     font-weight: bold;
   }
+
+  .apply-link {
+    text-align: center;
+    font-size: 14px;
+    padding: 16px 0 0;
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+
+    a {
+      color: $blue;
+      text-decoration: underline;
+    }
+  }
 }
 
 .mobile-mode {
@@ -474,6 +487,12 @@
       .web-c-skeleton {
         padding: rem(10) 0
       }
+    }
+
+    .apply-link {
+      font-size: rem(12);
+      padding: rem(16) 0 0;
+      margin-top: rem(10);
     }
   }
 }

@@ -9,6 +9,7 @@ import Input from '@/components/common/Form/Input'
 
 interface DropDownListProps {
   entry: React.ReactNode
+  extra?: React.ReactNode
   height?: number
   loading?: boolean
   disabled?: boolean
@@ -18,6 +19,7 @@ interface DropDownListProps {
 }
 
 export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
+  extra,
   entry,
   height = 356,
   loading,
@@ -73,6 +75,7 @@ export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
               )}
               <ul onClick={() => setToggle(false)}>{children}</ul>
             </div>
+            {extra}
           </div>
         </div>
       </motion.div>

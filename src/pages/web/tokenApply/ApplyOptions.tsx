@@ -12,7 +12,7 @@ export const applyTypeOptions = [
     val: 'MARGIN_APPLY'
   },
   {
-    key: 'Trading Token List',
+    key: 'Trading Pair List',
     val: 'TRADING_APPLY'
   }
 ]

@@ -8,12 +8,12 @@ import { useBoolean } from 'react-use'
 const Option = Select.Option
 export const applyTypeOptions = [
   {
-    key: 'Margin Token List',
-    val: 'MARGIN_APPLY'
-  },
-  {
     key: 'Trading Pair List',
     val: 'TRADING_APPLY'
+  },
+  {
+    key: 'Margin Token List',
+    val: 'MARGIN_APPLY'
   }
 ]
 export const applyTypeOptionsDef = applyTypeOptions[0].val

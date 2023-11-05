@@ -58,14 +58,17 @@ const MarginTokenList: FC = () => {
     if (records.length === 0 || records.length < MARGIN_VISIBLE_COUNT) seqCount = seqCount - 1
   }, [marginOptions.data])
 
-  const registerToken = useCallback(async (e: any) => {
-    if (e && e?.stopPropagation) e.stopPropagation()
-    if (connector) {
-      const { logo: image, symbol, address } = marginToken
-      const decimals = await getBep20Contract(address).decimals()
-      await connector.watchAsset?.({ address, symbol, image, decimals: Number(decimals) })
-    }
-  }, [marginToken, connector])
+  const registerToken = useCallback(
+    async (e: any) => {
+      if (e && e?.stopPropagation) e.stopPropagation()
+      if (connector) {
+        const { logo: image, symbol, address } = marginToken
+        const decimals = await getBep20Contract(address).decimals()
+        await connector.watchAsset?.({ address, symbol, image, decimals: Number(decimals) })
+      }
+    },
+    [marginToken, connector]
+  )
 
   useEffect(() => {
     if (searchKeyword.trim()) {

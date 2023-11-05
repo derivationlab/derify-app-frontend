@@ -21,7 +21,7 @@ interface DropDownListProps {
 export const DropDownList: FC<PropsWithChildren<DropDownListProps>> = ({
   extra,
   entry,
-  height = 356,
+  height = 398,
   loading,
   disabled,
   children,

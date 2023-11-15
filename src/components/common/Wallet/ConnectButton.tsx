@@ -9,6 +9,7 @@ import Button from '@/components/common/Button'
 import WalletDialog from '@/components/common/Wallet'
 import { Wallet } from '@/components/common/Wallet/wallets'
 import useConnecting from '@/hooks/useConnecting'
+import { useSpaceName } from '@/hooks/useSpaceName'
 import { PubSubEvents } from '@/typings'
 
 interface Props {
@@ -20,6 +21,7 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   const { chain, chains } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const { isConnected, address } = useAccount()
+  const { spaceName } = useSpaceName()
 
   const [visibleStatus, setModalStatus] = useState<boolean>(false)
   const [needSwitchNet, setNeedSwitchNet] = useState<boolean>(false)
@@ -60,7 +62,7 @@ const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
     <>
       {isConnected && address ? (
         <Button className="c-connect-wallet-btn" size={size} to="/space">
-          {address.replace(/(\w{5})\w*(\w{4})/, '$1...$2')}
+          {spaceName ?? address.replace(/(\w{5})\w*(\w{4})/, '$1...$2')}
         </Button>
       ) : (
         <Button className="c-connect-wallet-btn" size={size} onClick={() => setModalStatus(true)}>

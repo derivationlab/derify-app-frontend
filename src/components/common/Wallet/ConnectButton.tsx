@@ -18,10 +18,10 @@ interface Props {
 
 const ConnectButton: FC<Props> = ({ size = 'mini' }) => {
   const { t } = useTranslation()
+  const { spaceName } = useSpaceName()
   const { chain, chains } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const { isConnected, address } = useAccount()
-  const { spaceName } = useSpaceName()
 
   const [visibleStatus, setModalStatus] = useState<boolean>(false)
   const [needSwitchNet, setNeedSwitchNet] = useState<boolean>(false)

@@ -35,7 +35,7 @@ const DerifyTokenPool: FC = () => {
   const { data: drfBalance } = useStakingDRF()
   const { data: stakingInfo } = usePoolStaking(address)
   const { data: dashboardDAT } = useCurrentIndex(marginToken.address)
-  const { data: edrfBalance, isLoading } = useTraderEDRFBalance(address)
+  const { data: edrfBalance, isLoading } = useTraderEDRFBalance('0x8d8Ae4b9374eB53Ee1E406f94d9D3b2Bec5Bc9f4')
 
   const [visibleStatus, setVisibleStatus] = useState<string>('')
 

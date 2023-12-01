@@ -1,4 +1,4 @@
-import { Select, Avatar } from '@arco-design/web-react'
+import { Select } from '@arco-design/web-react'
 import classNames from 'classnames'
 import { isEmpty } from 'lodash-es'
 

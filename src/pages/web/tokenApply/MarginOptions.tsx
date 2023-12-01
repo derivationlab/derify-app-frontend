@@ -79,7 +79,7 @@ const MarginOptions = ({ onChange }: { onChange: (p: string) => void }) => {
     temporaryStorage = deduplication
     setMrOption((val: any) => ({ ...val, data: deduplication, loaded: false }))
     if (records.length === 0 || records.length < MARGIN_VISIBLE_COUNT) seqCount = seqCount - 1
-    setLoadMore((val) => ({ noData: filter < MARGIN_VISIBLE_COUNT, loaded: false }))
+    setLoadMore(() => ({ noData: filter < MARGIN_VISIBLE_COUNT, loaded: false }))
   }, [mrOption.data])
 
   const getMoreMargin = () => {

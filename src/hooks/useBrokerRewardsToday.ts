@@ -1,4 +1,4 @@
-import { getBrokerRewardsToday } from 'derify-apis'
+import { getBrokerRewardsToday } from 'derify-apis-v20'
 
 import { useEffect, useState } from 'react'
 

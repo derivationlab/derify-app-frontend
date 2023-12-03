@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { getHistoryInsuranceDAT } from 'derify-apis'
+import { getHistoryInsuranceDAT } from 'derify-apis-v20'
 import { isArray } from 'lodash-es'
 
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'

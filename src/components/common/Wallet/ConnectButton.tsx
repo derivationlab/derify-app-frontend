@@ -1,4 +1,4 @@
-import { traderInfoUpdates } from 'derify-apis'
+import { traderInfoUpdates } from 'derify-apis-v20'
 import PubSub from 'pubsub-js'
 import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 

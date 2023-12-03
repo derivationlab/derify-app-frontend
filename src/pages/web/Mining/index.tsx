@@ -1,4 +1,4 @@
-import { getTradersRankList } from 'derify-apis'
+import { getTradersRankList } from 'derify-apis-v20'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'

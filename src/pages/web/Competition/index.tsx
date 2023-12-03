@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { getCompetitionList, getCompetitionRank } from 'derify-apis'
+import { getCompetitionList, getCompetitionRank } from 'derify-apis-v20'
 import { upperFirst, isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount } from 'wagmi'

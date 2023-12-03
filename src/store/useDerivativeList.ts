@@ -1,4 +1,4 @@
-import { getDerivativeList } from 'derify-apis'
+import { getDerivativeList } from 'derify-apis-v20'
 import { create } from 'zustand'
 
 import { TRADING_VISIBLE_COUNT, ZERO } from '@/config'

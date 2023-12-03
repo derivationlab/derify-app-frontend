@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import dayjs from 'dayjs'
-import { searchMarginToken } from 'derify-apis'
+import { searchMarginToken } from 'derify-apis-v20'
 import { debounce, uniqBy } from 'lodash-es'
 
 import React, { FC, useState, useMemo, useReducer, useEffect, useCallback, useRef } from 'react'

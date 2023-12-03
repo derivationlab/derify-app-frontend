@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { get } from 'derify-apis'
+import { get } from 'derify-apis-v20'
 
 import { Rec } from '@/typings'
 

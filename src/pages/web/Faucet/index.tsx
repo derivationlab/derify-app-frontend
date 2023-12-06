@@ -24,7 +24,8 @@ const mintAmount: Rec = {
   BTC: 2100,
   PIG: 100000000000,
   CAKE: 75000,
-  XVS: 3000
+  XVS: 3000,
+  PRRT: 1000000000000
 }
 
 const FaucetInner: FC = () => {

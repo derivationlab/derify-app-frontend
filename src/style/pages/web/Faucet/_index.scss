@@ -58,11 +58,17 @@
     section {
      @extend .ac;
 
-      img {
+      img,.img {
         width: 24px;
         height: 24px;
         border-radius: 100%;
         margin-right: 8px;
+      }
+
+      .img{
+        border:1px solid $cf7;
+        background: $ce7;
+        box-sizing: border-box;
       }
 
       span {
@@ -83,6 +89,18 @@
     &-item {
       display: flex;
       justify-content: space-between;
+
+      .img {
+        width: 24px;
+        height: 24px;
+        border-radius: 100%;
+      }
+
+      .img{
+        border:2px solid $cf7;
+        background: $ce7;
+        box-sizing: border-box;
+      }
     }
   }
 

@@ -104,6 +104,7 @@ export const numeralNumber = (value: string | number, decimal = 2): string => {
   const padEnd = '0'.padEnd(decimal, '0')
   const isMillion = Math.abs(Number(_value)) >= 1000000
   const formatRule = isMillion ? `0,0.${padEnd} a` : `0.${padEnd}`
+  console.info(_value, formatRule)
   return numeral(_value).format(formatRule).toUpperCase()
 }
 

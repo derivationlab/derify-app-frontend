@@ -22,9 +22,10 @@ const BalanceShow: FC<Props> = ({ unit, rule, value, percent = false, decimal = 
     let split = []
     const padEnd = '0'.padEnd(decimal, '0')
     const output = percent ? bnMul(value, 100) : value
-    const isMillion = Math.abs(Number(output)) >= million
+    const absValue = Math.abs(Number(output))
+    const isMillion = absValue >= million
     const formatRule = rule || (isMillion ? `0,0.${padEnd} a` : `0,0.${padEnd}`)
-    if (Number(output) < limit) split = Number(output).toFixed(decimal).split('.')
+    if (absValue < limit) split = Number(output).toFixed(decimal).split('.')
     else split = numeral(output).format(formatRule).split('.')
     return [isMillion, ...split]
   }, [value, percent])

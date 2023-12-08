@@ -20,8 +20,8 @@ export const useAllMarginPrice = (list?: Rec) => {
     ['useAllMarginPrice'],
     async () => {
       if (list) {
-        const calls1: Rec[] = []
-        const calls2: Rec[] = []
+        const calls1: Call[] = []
+        const calls2: Call[] = []
         const keys = Object.keys(list)
         keys.forEach((key) => {
           calls1.push({
@@ -36,7 +36,7 @@ export const useAllMarginPrice = (list?: Rec) => {
           })
         })
 
-        const response = await multicall(priceFeedAbi, [...calls1, ...calls2] as Call[])
+        const response = await multicall(priceFeedAbi, [...calls1, ...calls2])
         const [prices, decimals] = chunk(response, response.length / 2) as [BigNumberish[][], number[]]
         prices.forEach(([data], index: number) => {
           output = {

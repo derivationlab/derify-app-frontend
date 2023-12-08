@@ -6,7 +6,6 @@ import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 import Header from '@/components/web/Header'
 import { R2, R4, R5, R8, R6, R7, R1, R3 } from '@/components/web/Route'
 import { useCheckMarginToken } from '@/hooks/useCheckMarginToken'
-import { useRegionalJudgment } from '@/hooks/useRegionalJudgment'
 import BrokerBind from '@/pages/web/Broker/Bind'
 import BrokerBindList from '@/pages/web/Broker/Bind/List'
 import BrokerBound from '@/pages/web/Broker/MyBroker'
@@ -35,7 +34,6 @@ const Consultant = lazy(() => import('@/pages/web/consultant'))
 
 const Web: FC = () => {
   useCheckMarginToken()
-  const { warning } = useRegionalJudgment()
   const { symbol } = useMarginTokenStore((state: MarginTokenState) => state.marginToken)
 
   return (
@@ -181,7 +179,6 @@ const Web: FC = () => {
         <Route path="*" render={() => <Redirect to={`/${symbol}/trade`} />} />
       </Switch>
       <Toast />
-      <AccessDeniedDialog visible={warning} />
     </>
   )
 }

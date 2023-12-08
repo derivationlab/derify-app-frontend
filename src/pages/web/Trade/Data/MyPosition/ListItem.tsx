@@ -61,7 +61,6 @@ const MyPositionListItem: FC<{ data: Rec }> = ({ data }) => {
   const { spotPrice, precision } = useTokenSpotPrice(tokenSpotPrices, data.name)
 
   const collateral = useMemo(() => {
-    console.info(data.size, spotPrice, data.leverage, bnDiv(bnMul(data.size, spotPrice), data.leverage))
     return bnDiv(bnMul(data.size, spotPrice), data.leverage)
   }, [data, spotPrice])
 

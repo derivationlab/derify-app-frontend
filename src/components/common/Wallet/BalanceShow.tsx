@@ -31,8 +31,8 @@ const BalanceShow: FC<Props> = ({ unit, rule, value, percent = false, decimal = 
   }, [value, percent])
 
   const _dec = useMemo(() => {
-    const a = dec.replace(/k|m|b|t/gi, '')
-    const b = dec.replace(/[0-9]+/g, '')
+    const a = dec?.replace(/k|m|b|t/gi, '')
+    const b = dec?.replace(/[0-9]+/g, '')
     return (
       <>
         .<u>{a}</u>

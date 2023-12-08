@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { BigNumberish } from 'ethers'
+import { chunk } from 'lodash-es'
 
 import { useEffect, useState } from 'react'
 
@@ -7,7 +8,7 @@ import derifyProtocolAbi from '@/config/abi/DerifyProtocol.json'
 import priceFeedAbi from '@/config/abi/MarginTokenPriceFeed.json'
 import contracts from '@/config/contracts'
 import { Rec } from '@/typings'
-import multicall from '@/utils/multicall'
+import multicall, { Call } from '@/utils/multicall'
 import { formatUnits } from '@/utils/tools'
 
 let output = Object.create(null)
@@ -19,18 +20,28 @@ export const useAllMarginPrice = (list?: Rec) => {
     ['useAllMarginPrice'],
     async () => {
       if (list) {
-        const calls = Object.keys(list).map((key) => ({
-          name: 'getMarginTokenPrice',
-          address: list[key],
-          marginToken: key
-        }))
+        const calls1: Rec[] = []
+        const calls2: Rec[] = []
+        const keys = Object.keys(list)
+        keys.forEach((key) => {
+          calls1.push({
+            name: 'getMarginTokenPrice',
+            address: list[key],
+            marginToken: key
+          })
+          calls2.push({
+            name: 'getMarginTokenDecimals',
+            address: list[key],
+            marginToken: key
+          })
+        })
 
-        const response = await multicall(priceFeedAbi, calls)
-
-        response.forEach(([data]: BigNumberish[], index: number) => {
+        const response = await multicall(priceFeedAbi, [...calls1, ...calls2] as Call[])
+        const [prices, decimals] = chunk(response, response.length / 2) as [BigNumberish[][], number[]]
+        prices.forEach(([data], index: number) => {
           output = {
             ...output,
-            [calls[index].marginToken]: formatUnits(data, 8)
+            [calls1[index].marginToken]: formatUnits(data, decimals[index])
           }
         })
       }

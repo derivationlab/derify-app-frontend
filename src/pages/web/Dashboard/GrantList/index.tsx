@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { getGrantPlanList, searchMarginToken } from 'derify-apis'
+import { getGrantPlanList, searchMarginToken } from 'derify-apis-v22'
 import { isAddress } from 'ethers/lib/utils'
 import { debounce, sortBy, uniqBy } from 'lodash-es'
 import PubSub from 'pubsub-js'

@@ -22,7 +22,7 @@ import QuestionPopover from '@/components/common/QuestionPopover'
 import ExtendDialog from '@/components/common/Wallet/Extend'
 import { useBrokerOperation } from '@/hooks/useBrokerOperation'
 import { PubSubEvents } from '@/typings'
-import { API_PREFIX_URL } from 'derify-apis'
+import { API_PREFIX_URL } from 'derify-apis-v22'
 
 const addDay = (d: number) => dayjs().add(d, 'days').format('YYYY-MM-DD')
 

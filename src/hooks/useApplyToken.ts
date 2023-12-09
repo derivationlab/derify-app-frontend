@@ -1,4 +1,4 @@
-import { getDerivativeList, getTradingTokenList } from 'derify-apis'
+import { getDerivativeList, getTradingTokenList } from 'derify-apis-v22'
 
 import { useEffect, useMemo, useState } from 'react'
 

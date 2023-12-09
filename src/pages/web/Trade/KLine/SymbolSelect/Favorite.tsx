@@ -1,4 +1,4 @@
-import { favoriteTradingPairs } from 'derify-apis'
+import { favoriteTradingPairs } from 'derify-apis-v22'
 import { useAtomValue } from 'jotai'
 import { useAccount } from 'wagmi'
 

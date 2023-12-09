@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getPlatformTokenPrice } from 'derify-apis'
+import { getPlatformTokenPrice } from 'derify-apis-v22'
 
 import { nonBigNumberInterception } from '@/utils/tools'
 

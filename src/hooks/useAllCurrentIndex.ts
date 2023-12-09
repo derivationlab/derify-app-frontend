@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getCurrentIndexDAT } from 'derify-apis'
+import { getCurrentIndexDAT } from 'derify-apis-v22'
 
 import { marginTokenList } from '@/store'
 import { Rec } from '@/typings'

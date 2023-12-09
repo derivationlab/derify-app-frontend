@@ -1,4 +1,4 @@
-import { bindingYourBroker, getBrokersList } from 'derify-apis'
+import { bindingYourBroker, getBrokersList } from 'derify-apis-v22'
 import { useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 

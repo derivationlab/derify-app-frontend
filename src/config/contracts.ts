@@ -11,15 +11,15 @@ export const contracts: { [key in ContractKeys]: Contract } = {
     [ChainId.TESTNET]: '0x4922D9769197d3FE27c3c6c4372D3fb76C49B27E'
   }),
   derifyProtocol: new Contract('DerifyProtocol', {
-    [ChainId.MAINNET]: '0x6A936426323Af1d1Af61E57bA83Bdde4233687cD',
+    [ChainId.MAINNET]: '0xd09c3Ed28d2b52223C3B3172A80D5C91B5091b15',
     [ChainId.TESTNET]: '0xCc632e817d113DcA1fEC9395615361E9c665B1C3'
   }),
   derifyConsultant: new Contract('DerifyConsultant', {
-    [ChainId.MAINNET]: '0xEd59DC837Bb39804398F18BC6b7Fd0F370D80Cd5',
+    [ChainId.MAINNET]: '0x40f68ea3f599DDf4A09A9a196092990681E95A36',
     [ChainId.TESTNET]: '0x0706bbc99c38BcC796600aac6DfF56e814642443'
   }),
   derifyApply: new Contract('DerifyApply', {
-    [ChainId.MAINNET]: '0x8933351B6a3783CCe181A586bC5334e7d64A9162',
+    [ChainId.MAINNET]: '0x62599c6AC0c22BfBf3231B2EA9817fa8D6879584',
     [ChainId.TESTNET]: '0x4f62BA86c0285fe3A8Fc5ce004ddDEc49C26eeCb'
   })
 }

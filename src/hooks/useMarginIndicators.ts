@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getMarginIndicators, getDerivativeIndicator } from 'derify-apis-staging'
+import { getMarginIndicators, getDerivativeIndicator } from 'derify-apis'
 
 import { Rec } from '@/typings'
 import { bnPlus, isGTET, keepDecimals } from '@/utils/tools'

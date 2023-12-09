@@ -4,7 +4,7 @@ import {
   getBrokerRanking,
   getBrokerRegistrationTime,
   getBrokerValidityPeriod
-} from 'derify-apis-staging'
+} from 'derify-apis'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 

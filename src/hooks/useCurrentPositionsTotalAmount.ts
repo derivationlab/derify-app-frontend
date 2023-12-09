@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getCurrentPositionsAmount } from 'derify-apis-staging'
+import { getCurrentPositionsAmount } from 'derify-apis'
 
 import { Rec } from '@/typings'
 

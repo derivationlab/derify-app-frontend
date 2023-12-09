@@ -1,4 +1,4 @@
-// import { get, post } from 'derify-apis-staging'
+// import { get, post } from 'derify-apis'
 
 /**
  *

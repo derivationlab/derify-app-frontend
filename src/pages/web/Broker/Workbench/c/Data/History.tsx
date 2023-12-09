@@ -1,4 +1,4 @@
-import { getBrokerRevenueRecord } from 'derify-apis-staging'
+import { getBrokerRevenueRecord } from 'derify-apis'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount, useNetwork } from 'wagmi'

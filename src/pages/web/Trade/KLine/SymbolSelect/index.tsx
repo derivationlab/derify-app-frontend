@@ -1,4 +1,4 @@
-import { getDerivativeList, searchDerivative } from 'derify-apis-staging'
+import { getDerivativeList, searchDerivative } from 'derify-apis'
 import { getAddress } from 'ethers/lib/utils'
 import { debounce, uniqBy } from 'lodash-es'
 

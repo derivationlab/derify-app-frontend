@@ -1,4 +1,4 @@
-import { bindingYourBroker, getBrokerInfoWithBrokerId } from 'derify-apis-staging'
+import { bindingYourBroker, getBrokerInfoWithBrokerId } from 'derify-apis'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useAccount } from 'wagmi'
 

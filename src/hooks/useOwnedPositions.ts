@@ -1,4 +1,4 @@
-import { getDerivativeList } from 'derify-apis-staging'
+import { getDerivativeList } from 'derify-apis'
 import { BigNumber } from 'ethers'
 import { isEmpty, debounce } from 'lodash-es'
 

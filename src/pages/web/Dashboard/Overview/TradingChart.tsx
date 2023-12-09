@@ -1,4 +1,4 @@
-import { getHistoryTotalTradingNetValue } from 'derify-apis-staging'
+import { getHistoryTotalTradingNetValue } from 'derify-apis'
 import { isArray } from 'lodash-es'
 
 import React, { FC, useEffect, useMemo, useState } from 'react'

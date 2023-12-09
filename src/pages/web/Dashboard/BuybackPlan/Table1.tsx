@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { getBuyBackPlans } from 'derify-apis-staging'
+import { getBuyBackPlans } from 'derify-apis'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useBlockNumber } from 'wagmi'

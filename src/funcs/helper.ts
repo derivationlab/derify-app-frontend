@@ -1,5 +1,5 @@
 import BN from 'bignumber.js'
-import { checkMarginToken as _checkMarginToken } from 'derify-apis-staging'
+import { checkMarginToken as _checkMarginToken } from 'derify-apis'
 import { isAddress } from 'ethers/lib/utils'
 
 import { QUOTE_TOKEN_KEY, ZERO } from '@/config'

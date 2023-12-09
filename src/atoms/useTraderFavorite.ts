@@ -1,4 +1,4 @@
-import { getFavoritePairsList } from 'derify-apis-staging'
+import { getFavoritePairsList } from 'derify-apis'
 import { atom } from 'jotai'
 import { atomFamily } from 'jotai/utils'
 

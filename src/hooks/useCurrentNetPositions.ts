@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getCurrentTotalPositionsNetValue } from 'derify-apis-staging'
+import { getCurrentTotalPositionsNetValue } from 'derify-apis'
 
 export const useCurrentNetPositions = (marginToken: string, quoteToken: string) => {
   const base = { total_positions_net_value: 0 }

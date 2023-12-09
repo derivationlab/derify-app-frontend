@@ -1,4 +1,4 @@
-import { getRegionalJudgment } from 'derify-apis-staging'
+import { getRegionalJudgment } from 'derify-apis'
 
 import { useEffect, useState } from 'react'
 

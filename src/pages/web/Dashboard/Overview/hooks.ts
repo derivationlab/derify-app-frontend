@@ -1,4 +1,4 @@
-import { getMarginTransactionEquity } from 'derify-apis-staging'
+import { getMarginTransactionEquity } from 'derify-apis'
 
 import { useState, useEffect } from 'react'
 

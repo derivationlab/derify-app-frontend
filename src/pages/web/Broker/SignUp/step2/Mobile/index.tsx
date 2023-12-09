@@ -1,4 +1,4 @@
-import { getBrokerInfoWithBrokerId, updateBrokerInfo } from 'derify-apis'
+import { API_PREFIX_URL, getBrokerInfoWithBrokerId, updateBrokerInfo } from 'derify-apis'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { isEmpty } from 'lodash-es'
 import { useAccount } from 'wagmi'
@@ -9,7 +9,6 @@ import { useHistory, useLocation } from 'react-router-dom'
 
 import { asyncBrokerInfoAtom, brokerInfoAtom } from '@/atoms/useBrokerData'
 import Button from '@/components/common/Button'
-import { API_PREFIX_URL } from '@/config'
 import { SelectLangOptions } from '@/data'
 import { Rec } from '@/typings'
 import { calcShortHash } from '@/utils/tools'

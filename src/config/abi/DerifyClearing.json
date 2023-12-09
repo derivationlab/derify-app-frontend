@@ -989,13 +989,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "withdrawReward",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "stateMutability": "payable",
     "type": "receive"
   }

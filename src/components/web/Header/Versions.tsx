@@ -4,7 +4,7 @@ import React, { FC, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useClickAway } from 'react-use'
 
-import { DerifyV1 } from '@/config'
+import { DerifyV1, DerifyV20 } from '@/config'
 
 const Versions: FC = () => {
   const ref = useRef(null)
@@ -24,6 +24,11 @@ const Versions: FC = () => {
         <li className="px-0">
           <a href={DerifyV1} target="_blank">
             Version 1.0
+          </a>
+        </li>
+        <li className="px-0">
+          <a href={DerifyV20} target="_blank">
+            Version 2.0
           </a>
         </li>
       </ul>

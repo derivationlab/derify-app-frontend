@@ -2,7 +2,6 @@ import React, { FC, lazy } from 'react'
 import { Redirect, Switch, Route } from 'react-router-dom'
 
 import Toast from '@/components/common/Toast'
-import AccessDeniedDialog from '@/components/common/Wallet/AccessDenied'
 import Header from '@/components/web/Header'
 import { R2, R4, R5, R8, R6, R7, R1, R3 } from '@/components/web/Route'
 import { useCheckMarginToken } from '@/hooks/useCheckMarginToken'

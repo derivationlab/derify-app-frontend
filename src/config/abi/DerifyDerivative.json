@@ -1359,16 +1359,6 @@
           },
           {
             "internalType": "address",
-            "name": "exchange",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "clearing",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
             "name": "aggregator",
             "type": "address"
           },

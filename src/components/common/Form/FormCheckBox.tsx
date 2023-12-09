@@ -1,12 +1,10 @@
 // @ts-nocheck
 import classNames from 'classnames'
-import { pull } from 'lodash-es'
+import { isString, pull } from 'lodash-es'
 
 import React, { FC, useContext, useMemo, useState } from 'react'
 
 // import { useFieldArray } from "react-hook-form"
-import { toType } from '@/utils/tools'
-
 import FormContext from './FormContext'
 
 interface OptionProps {
@@ -23,7 +21,7 @@ const FormCheckBox: FC<CheckBoxProps> = ({ name, options }) => {
   const { register, rules, setValue } = useContext(FormContext)
   const [currValue, setCurrValue] = useState<any[]>([])
   const calcOptions: OptionProps[] = useMemo(() => {
-    if (options[0] && toType(options[0]) === 'string') {
+    if (options[0] && isString(options[0])) {
       return options.map((item) => ({ value: item, label: item }))
     }
     return [...options]

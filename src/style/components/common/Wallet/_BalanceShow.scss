@@ -12,6 +12,7 @@
   &.million, &.dec {
     small {
       font-weight: bold;text-transform: uppercase;
+      u:first-child{margin-right: 4px}
     }
   }
 }

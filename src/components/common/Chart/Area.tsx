@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import React, { FC, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { keepDecimals } from '@/utils/tools'
+import { keepDecimals, numeralNumber } from '@/utils/tools'
 
 interface Props {
   data: any[]
@@ -20,7 +20,7 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yKey, yLabel, timeFormatStr }) 
   const formatTime = (value: string) => {
     return dayjs(value).format(timeFormatStr)
   }
-  const formatValue = (value: number) => keepDecimals(value, 2)
+  const formatValue = (value: number) => numeralNumber(value, 2)
   const formatTip = (value: any) => [formatValue(value) as typeof value, yLabel]
   const toolTipStyle = theme === 'Dark' ? { backgroundColor: '#222', color: '#fff', borderColor: '#444' } : {}
 

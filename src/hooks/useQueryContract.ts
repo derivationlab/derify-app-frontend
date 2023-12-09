@@ -36,7 +36,7 @@ export function useQueryContract<
   return query
 }
 
-export function useQueryMulticall(abi: any[], calls: Call[], refetchInterval = 3000) {
+export function useQueryMulticall(abi: any[], calls: Call[], refetchInterval = 3000, enabled = true) {
   const query = useQuery(
     [abi, calls],
     async () => {
@@ -45,6 +45,7 @@ export function useQueryMulticall(abi: any[], calls: Call[], refetchInterval = 3
     },
     {
       retry: false,
+      enabled,
       refetchInterval,
       keepPreviousData: true,
       refetchOnWindowFocus: false

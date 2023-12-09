@@ -1,7 +1,9 @@
 import classNames from 'classnames'
 
 import { useTranslation } from 'react-i18next'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+
+import { NavLink } from '@/components/common/Route'
 
 const NavDashboard = () => {
   const { t } = useTranslation()

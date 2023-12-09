@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import React, { FC, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { keepDecimals } from '@/utils/tools'
+import { keepDecimals, numeralNumber } from '@/utils/tools'
 
 interface FormatProps {
   label: string
@@ -28,7 +28,7 @@ const AreaC: FC<Props> = ({ chartId, data, xKey, yFormat, timeFormatStr, enableL
     return dayjs(value).format(timeFormatStr)
   }
 
-  const formatValue = (value: number) => keepDecimals(value, 2)
+  const formatValue = (value: number) => numeralNumber(value, 2)
   const formatLegend = (value: string) => {
     const o = yFormat.find((item) => item.value === value)
     return o?.label

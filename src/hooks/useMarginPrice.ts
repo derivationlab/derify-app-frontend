@@ -11,8 +11,9 @@ export const useMarginPrice = (priceFeed?: string) => {
     async (): Promise<string> => {
       if (priceFeed) {
         const contract = getPriceFeedContract(priceFeed)
+        const decimals = await contract.getMarginTokenDecimals()
         const response = await contract.getMarginTokenPrice()
-        return formatUnits(response, 8)
+        return formatUnits(response, decimals)
       }
 
       return '0'

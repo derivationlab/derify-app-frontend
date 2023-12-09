@@ -1,20 +1,17 @@
+import { isNumber, isObjectLike } from 'lodash-es'
 import store from 'store'
 
-import { toType } from './tools'
-
-const isNum = (num: any) => {
-  return num != null && toType(num) === 'number'
-}
 export const get = (key: string) => {
   const cacheData = store.get(key)
   if (cacheData == null) {
     return null
   }
-  if (toType(cacheData) !== 'object') {
+
+  if (!isObjectLike(cacheData)) {
     return cacheData
   }
   if (cacheData.tool && cacheData.tool === 'localstore') {
-    if (isNum(cacheData.expiryTime) && isNum(cacheData.cacheTime)) {
+    if (isNumber(cacheData.expiryTime) && isNumber(cacheData.cacheTime)) {
       const now = +new Date()
       if (now - cacheData.cacheTime >= cacheData.expiryTime) {
         return null
@@ -30,9 +27,9 @@ export const get = (key: string) => {
 }
 // time: cache time, unix is hour
 export const set = (key: string, value: any, time?: number) => {
-  const data: Record<string, any> = { value, type: toType(value), tool: 'localstore' }
+  const data: Record<string, any> = { value, tool: 'localstore' }
   if (time) {
-    if (!isNum(time)) {
+    if (!isNumber(time)) {
       throw new Error('only number')
     }
     data.cacheTime = +new Date()

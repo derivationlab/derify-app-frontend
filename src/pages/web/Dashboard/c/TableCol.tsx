@@ -36,7 +36,7 @@ export const TableCountDown: FC<TableCountDownProps> = ({ cycle, blockNumber }) 
 
   const funcAsync = async (blockNumber: number) => {
     const { timestamp } = await getJsonRpcProvider().getBlock(blockNumber)
-    setInitTimestamp(timestamp * 1000 + cycle * 3 * 1000)
+    setInitTimestamp((timestamp ?? 0) * 1000 + cycle * 3 * 1000)
   }
 
   useEffect(() => {

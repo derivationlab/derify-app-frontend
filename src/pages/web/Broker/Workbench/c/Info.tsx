@@ -20,9 +20,9 @@ import Button from '@/components/common/Button'
 import Image from '@/components/common/Image'
 import QuestionPopover from '@/components/common/QuestionPopover'
 import ExtendDialog from '@/components/common/Wallet/Extend'
-import { API_PREFIX_URL } from '@/config'
 import { useBrokerOperation } from '@/hooks/useBrokerOperation'
 import { PubSubEvents } from '@/typings'
+import { API_PREFIX_URL } from 'derify-apis'
 
 const addDay = (d: number) => dayjs().add(d, 'days').format('YYYY-MM-DD')
 

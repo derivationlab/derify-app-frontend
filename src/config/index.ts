@@ -1,12 +1,3 @@
-import { ChainId, ChainIdRec } from '@/typings'
-
-const API_PREFIX_URLS: ChainIdRec = {
-  [ChainId.MAINNET]: 'https://pre-api-bnb-v2.derify.exchange/',
-  [ChainId.TESTNET]: 'https://test-api-v2.derify.exchange/'
-}
-
-export const CHAIN_ID = process.env.REACT_APP_CHAIN_ID ?? ChainId.MAINNET
-export const API_PREFIX_URL = API_PREFIX_URLS[CHAIN_ID]
 export const WEBSITE_URL = 'https://derify.finance/'
 export const PANCAKE_SWAP_URL = 'https://pancakeswap.finance/'
 export const STATIC_RESOURCES_URL = 'https://derify-app-resources.vercel.app/image/'
@@ -35,3 +26,4 @@ export const Communities = {
   Medium,
   Github
 }
+

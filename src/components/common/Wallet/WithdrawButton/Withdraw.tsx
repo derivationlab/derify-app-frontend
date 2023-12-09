@@ -10,7 +10,7 @@ import Dialog from '@/components/common/Dialog'
 import BalanceShow from '@/components/common/Wallet/BalanceShow'
 import { useAmountCanWithdrawn } from '@/hooks/useAmountCanWithdrawn'
 import { useMarginTokenStore } from '@/store'
-import { bnDiv, bnMinus, bnMul, isET, isLT, isLTET, keepDecimals } from '@/utils/tools'
+import { bnDiv, bnMinus, bnMul, isET, isLT, isLTET, keepDecimals, numeralNumber } from '@/utils/tools'
 
 import AmountInput from '../AmountInput'
 
@@ -61,7 +61,8 @@ const WithdrawDialog: FC<Props> = ({ visible, onClose, onClick }) => {
               </dd>
             </dl>
             <address>
-              {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}: <em>{collateral[0]}</em> {marginToken.symbol}{' '}
+              {t('Trade.Withdraw.MarginUsage', 'Margin Usage')}:{' '}
+              <em>{numeralNumber(collateral[0], marginToken.decimals)}</em> {marginToken.symbol}{' '}
               <em>( {collateral[1]}%)</em>
             </address>
           </div>

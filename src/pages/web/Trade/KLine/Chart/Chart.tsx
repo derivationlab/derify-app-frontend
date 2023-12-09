@@ -50,9 +50,9 @@ const Chart: FC = () => {
         const reorganize = reorganizeLastPieceOfData(data, spotPrice)
 
         dispatch({ type: 'SET_KLINE_INIT', payload: { data: reorganize } })
-        kline.current?.initData(reorganize, more)
+        kline.current.initData(reorganize, more)
       } else {
-        kline.current?.initData([], false)
+        kline.current.initData([], false)
       }
 
       onetime = true

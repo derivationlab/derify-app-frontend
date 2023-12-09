@@ -17,7 +17,7 @@ import { reducer, stateInit } from '@/reducers/opening'
 import { useMarginTokenStore, useProtocolConfigStore, useQuoteTokenStore, useTokenSpotPricesStore } from '@/store'
 import { MarginTokenState, QuoteTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import { bnDiv, keepDecimals } from '@/utils/tools'
+import { bnDiv, keepDecimals, numeralNumber } from '@/utils/tools'
 
 interface Props {
   data: Record<string, any>
@@ -147,12 +147,12 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <section>
                       <aside>
                         <MultipleStatus direction="Long" />
-                        <em>{keepDecimals(bnDiv(state.positionLimits.value, 2), marginToken.decimals)}</em>
+                        <em>{numeralNumber(bnDiv(state.positionLimits.value, 2), marginToken.decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                       <aside>
                         <MultipleStatus direction="Short" />
-                        <em>{keepDecimals(bnDiv(state.positionLimits.value, 2), marginToken.decimals)}</em>
+                        <em>{numeralNumber(bnDiv(state.positionLimits.value, 2), marginToken.decimals)}</em>
                         <u>{data?.symbol}</u>
                       </aside>
                     </section>
@@ -164,7 +164,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                     <small>loading...</small>
                   ) : (
                     <span className={classNames({ error: state.positionLimits.isGreater })}>
-                      <em>{keepDecimals(state.positionLimits.value, marginToken.decimals)}</em>
+                      <em>{numeralNumber(state.positionLimits.value, marginToken.decimals)}</em>
                       <u>{data?.symbol}</u>
                     </span>
                   )}
@@ -173,7 +173,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                       size="mini"
                       icon="icon/warning.svg"
                       text={t('Trade.Bench.TheMaximumPositionValue', {
-                        Amount: `${keepDecimals(state.positionLimits.maximum, marginToken.decimals)} ${
+                        Amount: `${numeralNumber(state.positionLimits.maximum, marginToken.decimals)} ${
                           marginToken.symbol
                         }`
                       })}
@@ -196,7 +196,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>loading...</small>
                 ) : (
                   <div>
-                    <em>{keepDecimals(state.posChangeFee.value, marginToken.decimals)}</em>
+                    <em>{numeralNumber(state.posChangeFee.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </div>
                 )}
@@ -215,7 +215,7 @@ const PositionOpen: FC<Props> = ({ data, visible, onClose, onClick }) => {
                   <small>loading...</small>
                 ) : (
                   <div>
-                    <em>-{keepDecimals(state.tradingFeeInfo.value, marginToken.decimals)}</em>
+                    <em>-{numeralNumber(state.tradingFeeInfo.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </div>
                 )}

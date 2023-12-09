@@ -15,7 +15,7 @@ import { reducer, stateInit } from '@/reducers/opening'
 import { useMarginTokenStore, useProtocolConfigStore, usePositionOperationStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import { isGT, keepDecimals } from '@/utils/tools'
+import { isGT, keepDecimals, numeralNumber } from '@/utils/tools'
 
 interface Props {
   data: Record<string, any>
@@ -127,7 +127,7 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
                   <small>loading...</small>
                 ) : (
                   <span className={classNames({ error: state.positionLimits.isGreater })}>
-                    <em>{keepDecimals(state.positionLimits.value, marginToken.decimals)}</em>
+                    <em>{numeralNumber(state.positionLimits.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </span>
                 )}
@@ -136,7 +136,7 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
                     size="mini"
                     icon="icon/warning.svg"
                     text={t('Trade.Bench.TheMaximumPositionValue', {
-                      Amount: `${keepDecimals(state.positionLimits.maximum, marginToken.decimals)} ${
+                      Amount: `${numeralNumber(state.positionLimits.maximum, marginToken.decimals)} ${
                         marginToken.symbol
                       }`
                     })}
@@ -154,7 +154,7 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
                   <small>loading...</small>
                 ) : (
                   <>
-                    <em>{keepDecimals(state.posChangeFee.value, marginToken.decimals)}</em>
+                    <em>{numeralNumber(state.posChangeFee.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </>
                 )}
@@ -173,7 +173,7 @@ const PositionClose: FC<Props> = ({ data, loading, disabled, visible, onClose, o
                   <small>loading...</small>
                 ) : (
                   <>
-                    <em>-{keepDecimals(state.tradingFeeInfo.value, marginToken.decimals)}</em>
+                    <em>-{numeralNumber(state.tradingFeeInfo.value, marginToken.decimals)}</em>
                     <u>{marginToken.symbol}</u>
                   </>
                 )}

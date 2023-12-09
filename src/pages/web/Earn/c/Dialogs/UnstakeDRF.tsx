@@ -26,11 +26,11 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
   const { data: stakingInfo } = usePoolStaking(address)
 
   const memoDisabled = useMemo(() => {
-    return isGT(stakingInfo.drfBalance, 0)
-  }, [stakingInfo.drfBalance])
+    return isGT(stakingInfo?.drfBalance ?? 0, 0)
+  }, [stakingInfo?.drfBalance])
 
   const onChangeEv = (v: string) => {
-    if (isGTET(stakingInfo.drfBalance, v) && isGT(v, 0)) {
+    if (isGTET(stakingInfo?.drfBalance ?? 0, v) && isGT(v, 0)) {
       setIsDisabled(false)
       setDepositAmount(v)
     } else {
@@ -52,14 +52,14 @@ const UnstakeDRFDialog: FC<Props> = ({ visible, onClose, onClick }) => {
             <dl>
               <dt>{t('Earn.DerifyTokenPool.StakingAmount', 'Staking Amount')}</dt>
               <dd>
-                <BalanceShow value={stakingInfo.drfBalance} unit="DRF" />
+                <BalanceShow value={stakingInfo?.drfBalance ?? 0} unit="DRF" />
               </dd>
             </dl>
             <address>{address}</address>
           </div>
           <div className="amount">
             <AmountInput
-              max={stakingInfo.drfBalance}
+              max={stakingInfo?.drfBalance ?? 0}
               title={t('Earn.DerifyTokenPool.AmountToUnstake', 'Amount to unstake')}
               unit="DRF"
               onChange={onChangeEv}

@@ -110,7 +110,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
             down: memoTradingFee < 0
           })}
         >
-          {keepDecimals(memoTradingFee, marginToken.decimals)}
+          {numeralNumber(memoTradingFee, marginToken.decimals)}
         </span>
       </DataAtom>
     ),
@@ -124,7 +124,7 @@ const TradeHistoryListItem: FC<Props> = ({ data }) => {
         footer={memoMarginToken}
       >
         <span className={classNames({ up: memoChangeFee > 0, down: memoChangeFee < 0 })}>
-          {keepDecimals(memoChangeFee, marginToken.decimals)}
+          {numeralNumber(memoChangeFee, marginToken.decimals)}
         </span>
       </DataAtom>
     ),

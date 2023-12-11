@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getGrantPlanCount } from 'derify-apis-v22'
+import { getGrantPlanCount } from 'derify-apis'
 
 export const useGrantTotalCount = (marginToken: string) => {
   const { data } = useQuery(

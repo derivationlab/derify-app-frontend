@@ -15,7 +15,7 @@ import { reducer, stateInit } from '@/reducers/opening'
 import { useMarginTokenStore, useProtocolConfigStore, usePositionOperationStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { PositionSideTypes, Rec } from '@/typings'
-import { isGT, keepDecimals, numeralNumber } from '@/utils/tools'
+import { isGT, numeralNumber } from '@/utils/tools'
 
 interface Props {
   data: Record<string, any>

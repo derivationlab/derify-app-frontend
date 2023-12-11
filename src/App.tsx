@@ -4,15 +4,12 @@ import 'rc-table/assets/index.css'
 import 'rc-tabs/assets/index.css'
 
 import React, { lazy, Suspense } from 'react'
-import toast from 'react-hot-toast'
 import { Route, Switch } from 'react-router-dom'
 
 import Spinner from '@/components/common/Spinner'
 import { useMarginLoading } from '@/hooks/useMarginLoading'
 import Initial from '@/pages/web/initial'
 import '@/style/style.scss'
-
-window.toast = toast
 
 const WebEntry = lazy(() => import('@/pages/web'))
 

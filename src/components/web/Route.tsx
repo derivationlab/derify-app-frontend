@@ -1,4 +1,4 @@
-import { checkMarginToken } from 'derify-apis-v22'
+import { checkMarginToken } from 'derify-apis'
 import { useAtomValue } from 'jotai'
 import { isEmpty, isUndefined } from 'lodash-es'
 import { useAccount } from 'wagmi'

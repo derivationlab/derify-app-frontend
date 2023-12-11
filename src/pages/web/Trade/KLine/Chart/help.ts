@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { getKLineDAT as getKLineDataApi } from 'derify-apis-v22'
+import { getKLineDAT as getKLineDataApi } from 'derify-apis'
 
 import { Rec } from '@/typings'
 import { sleep } from '@/utils/tools'

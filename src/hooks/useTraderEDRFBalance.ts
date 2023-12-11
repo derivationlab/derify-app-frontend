@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getTraderEDRFBalance } from 'derify-apis-v22'
+import { getTraderEDRFBalance } from 'derify-apis'
 
 export const useTraderEDRFBalance = (trader = '') => {
   const enabled = !!trader

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { getDerivativeList, getHistoryPositionsDAT } from 'derify-apis-v22'
+import { getDerivativeList, getHistoryPositionsDAT } from 'derify-apis'
 import { isArray, uniqBy } from 'lodash-es'
 
 import React, { FC, useCallback, useEffect, useState, useContext, useMemo, useRef } from 'react'

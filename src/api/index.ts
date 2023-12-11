@@ -1,4 +1,4 @@
-// import { get, post } from 'derify-apis-v22'
+// import { get, post } from 'derify-apis'
 
 /**
  *

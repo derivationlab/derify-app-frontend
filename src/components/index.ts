@@ -2,7 +2,7 @@ const modulesFiles = require.context('./', true, /.tsx$/)
 
 interface Props {
   name?: string
-  Components?: Function
+  Components?: JSX.Element
 }
 
 const modules = modulesFiles.keys().reduce((modules: { [index: string]: any }, path) => {

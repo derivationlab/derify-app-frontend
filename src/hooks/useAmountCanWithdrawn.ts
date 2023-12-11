@@ -1,4 +1,4 @@
-import { getTraderWithdrawAmount } from 'derify-apis-v22'
+import { getTraderWithdrawAmount } from 'derify-apis'
 
 import { useEffect, useState } from 'react'
 

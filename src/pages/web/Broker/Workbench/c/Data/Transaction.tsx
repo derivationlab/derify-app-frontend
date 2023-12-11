@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { getBrokerTransactions } from 'derify-apis-v22'
+import { getBrokerTransactions } from 'derify-apis'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount, useNetwork } from 'wagmi'
@@ -14,7 +14,7 @@ import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-import { keepDecimals, calcShortHash, numeralNumber } from '@/utils/tools'
+import { calcShortHash, numeralNumber } from '@/utils/tools'
 
 import { RowTime, calcTimeStr } from './common'
 

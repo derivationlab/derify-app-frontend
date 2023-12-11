@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getAllMarginPositions } from 'derify-apis-v22'
+import { getAllMarginPositions } from 'derify-apis'
 import { flatten } from 'lodash-es'
 
 import { useEffect, useState } from 'react'

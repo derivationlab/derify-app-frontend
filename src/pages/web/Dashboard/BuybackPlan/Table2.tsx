@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { getTokenBurnHistory } from 'derify-apis-v22'
+import { getTokenBurnHistory } from 'derify-apis'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useNetwork } from 'wagmi'

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getGrantPlanRatios } from 'derify-apis'
+import { getGrantPlanRatios } from 'derify-apis-v22'
 
 export const useGrantRatios = (marginToken: string, trader?: string) => {
   const { data } = useQuery(

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { searchMarginToken } from 'derify-apis'
+import { searchMarginToken } from 'derify-apis-v22'
 import { debounce, uniqBy } from 'lodash-es'
 
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'

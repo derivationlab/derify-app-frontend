@@ -1,4 +1,4 @@
-import { getTradingHistory } from 'derify-apis'
+import { getTradingHistory } from 'derify-apis-v22'
 import { isEmpty } from 'lodash-es'
 import { useAccount } from 'wagmi'
 

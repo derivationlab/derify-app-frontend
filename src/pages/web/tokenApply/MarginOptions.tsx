@@ -1,7 +1,7 @@
 import { Input, Select } from '@arco-design/web-react'
 import { IconSearch } from '@arco-design/web-react/icon'
 import classNames from 'classnames'
-import { searchMarginToken } from 'derify-apis'
+import { searchMarginToken } from 'derify-apis-v22'
 import { debounce, uniqBy, isEmpty } from 'lodash-es'
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'

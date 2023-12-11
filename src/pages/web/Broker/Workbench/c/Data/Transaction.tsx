@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { getBrokerTransactions } from 'derify-apis'
+import { getBrokerTransactions } from 'derify-apis-v22'
 import { isEmpty } from 'lodash-es'
 import Table from 'rc-table'
 import { useAccount, useNetwork } from 'wagmi'

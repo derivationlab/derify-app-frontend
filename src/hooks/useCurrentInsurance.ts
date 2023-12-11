@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getCurrentInsuranceDAT } from 'derify-apis'
+import { getCurrentInsuranceDAT } from 'derify-apis-v22'
 import { isEmpty } from 'lodash-es'
 
 import { Rec } from '@/typings'

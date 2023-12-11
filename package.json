@@ -20,7 +20,7 @@
     "classnames": "^2.3.1",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.3",
-    "derify-apis-v22": "^0.1.26",
+    "derify-apis-v22": "^0.1.27",
     "ethers": "^5.6.4",
     "events": "^3.3.0",
     "fbemitter": "^3.0.0",

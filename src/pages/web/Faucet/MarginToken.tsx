@@ -95,7 +95,7 @@ const MarginToken: FC<{ onSelect: (marginToken: Rec) => void }> = ({ onSelect })
         <div className="web-faucet-margin-token">
           <label>{t('Trade.Bench.Margin')}</label>
           <section>
-            <Image src={selectedValue.logo} />
+            {selectedValue.logo ? <Image src={selectedValue.logo} /> : <em className="img" />}
             <span>{selectedValue.symbol}</span>
           </section>
         </div>
@@ -118,7 +118,7 @@ const MarginToken: FC<{ onSelect: (marginToken: Rec) => void }> = ({ onSelect })
               ref={_ref}
               content={
                 <>
-                  <Image src={o.logo} style={{ width: '24px' }} />
+                  {o.logo ? <Image src={o.logo} style={{ width: '24px' }} /> : <em className="img" />}
                   {o.symbol}
                 </>
               }

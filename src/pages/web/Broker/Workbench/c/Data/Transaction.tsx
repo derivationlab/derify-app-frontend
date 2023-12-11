@@ -14,7 +14,7 @@ import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-import { keepDecimals, calcShortHash } from '@/utils/tools'
+import { keepDecimals, calcShortHash, numeralNumber } from '@/utils/tools'
 
 import { RowTime, calcTimeStr } from './common'
 
@@ -88,7 +88,7 @@ const RowRealizedPnl: FC<{ data: Record<string, any> }> = ({ data }) => {
   //
   const up = useMemo(() => Number(data.pnl_margin_token) > 0, [data.pnl_margin_token])
   const down = useMemo(() => Number(data.pnl_margin_token) < 0, [data.pnl_margin_token])
-  const pnl_margin_token = keepDecimals(data.pnl_margin_token, marginToken.decimals)
+  const pnl_margin_token = numeralNumber(data.pnl_margin_token, marginToken.decimals)
 
   return (
     <div className="web-broker-table-transaction-pnl">

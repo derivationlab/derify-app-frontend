@@ -8,9 +8,9 @@
     h2 {
       font-size: 24px;font-weight: normal;
     }
-    a {
+    a,.a {
       position: absolute;left: 0;font-weight: bold;color: $red;
-      display: flex;align-items: center;
+      display: flex;align-items: center;cursor: pointer;
       &:before {
         content: '';display: block;width: 12px;height: 12px;margin-right: 8px;
         background: url($res + 'icon/arrow-left.svg') center/contain no-repeat;
@@ -142,7 +142,7 @@
       h2 {
         font-size: rem(20);
       }
-      a {
+      a,.a {
         text-indent: -9999px;
         width: rem(48); height: rem(48);
         &:before {

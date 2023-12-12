@@ -4,7 +4,7 @@ import { atomFamily } from 'jotai/utils'
 
 import { PLATFORM_TOKEN } from '@/config/tokens'
 import { getConsultantContract } from '@/utils/contractHelpers'
-import { formatUnits, safeInterceptionValues } from '@/utils/tools'
+import { safeInterceptionValues } from '@/utils/tools'
 
 export const consultantAtom = atom<{
   amount: string

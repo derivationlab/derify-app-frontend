@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import React, { FC, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { keepDecimals, numeralNumber } from '@/utils/tools'
+import { numeralNumber } from '@/utils/tools'
 
 interface FormatProps {
   label: string

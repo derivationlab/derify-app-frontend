@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import React, { FC, useContext } from 'react'
 
 import { ThemeContext } from '@/providers/Theme'
-import { keepDecimals, numeralNumber } from '@/utils/tools'
+import { numeralNumber } from '@/utils/tools'
 
 interface Props {
   data: any[]

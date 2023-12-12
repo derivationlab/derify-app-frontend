@@ -1,4 +1,4 @@
-import { getDerivativeList, getSystemParams } from 'derify-apis'
+import { getDerivativeList, getSystemParams } from 'derify-apis-staging'
 import { uniqBy } from 'lodash-es'
 import Table from 'rc-table'
 

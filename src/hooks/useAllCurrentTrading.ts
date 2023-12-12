@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getCurrentTradingAmount } from 'derify-apis'
+import { getCurrentTradingAmount } from 'derify-apis-staging'
 
 import { Rec } from '@/typings'
 

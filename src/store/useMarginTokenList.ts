@@ -1,4 +1,4 @@
-import { getAllMarginTokenList, getMarginTokenList as _getMarginTokenList } from 'derify-apis'
+import { getAllMarginTokenList, getMarginTokenList as _getMarginTokenList } from 'derify-apis-staging'
 import { isEmpty } from 'lodash-es'
 import { create } from 'zustand'
 

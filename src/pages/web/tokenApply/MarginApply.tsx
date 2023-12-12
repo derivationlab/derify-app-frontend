@@ -1,5 +1,5 @@
 import { Form, Input } from '@arco-design/web-react'
-import { applyMarginToken } from 'derify-apis'
+import { applyMarginToken } from 'derify-apis-staging'
 import { useAccount, useSigner } from 'wagmi'
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'

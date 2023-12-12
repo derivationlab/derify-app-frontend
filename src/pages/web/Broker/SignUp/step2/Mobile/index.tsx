@@ -1,4 +1,4 @@
-import { API_PREFIX_URL, getBrokerInfoWithBrokerId, updateBrokerInfo } from 'derify-apis'
+import { API_PREFIX_URL, getBrokerInfoWithBrokerId, updateBrokerInfo } from 'derify-apis-staging'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { isEmpty } from 'lodash-es'
 import { useAccount } from 'wagmi'

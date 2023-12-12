@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getTraderBondBalance } from 'derify-apis'
+import { getTraderBondBalance } from 'derify-apis-staging'
 
 export const useTraderBondBalance = (trader = '', address: string) => {
   const { data, isLoading } = useQuery(

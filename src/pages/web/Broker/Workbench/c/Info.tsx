@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import dayjs from 'dayjs'
-import { API_PREFIX_URL } from 'derify-apis'
+import { API_PREFIX_URL } from 'derify-apis-staging'
 import { useAtomValue, useSetAtom } from 'jotai'
 import PubSub from 'pubsub-js'
 import { useAccount, useSigner } from 'wagmi'

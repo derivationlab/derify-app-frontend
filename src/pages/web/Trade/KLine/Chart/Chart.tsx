@@ -20,8 +20,6 @@ interface KlineChartProps {
   initData: (data: any, more?: boolean) => void
 }
 
-let onetime = false
-
 const Chart: FC = () => {
   const store = useRef<Record<string, any>>({})
   const kline = useRef<KlineChartProps>(null)
@@ -39,8 +37,6 @@ const Chart: FC = () => {
 
   const getBaseData = useCallback(async () => {
     dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
-    // if (!onetime) dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: true } })
-
     if (kline.current) {
       if (quoteToken.token) {
         const { data, more } = await getKLineDAT(quoteToken.token, state.kline.timeLine, getKlineEndTime(), 130, true)
@@ -54,8 +50,6 @@ const Chart: FC = () => {
       } else {
         kline.current.initData([], false)
       }
-
-      onetime = true
       dispatch({ type: 'SET_KLINE_INIT', payload: { loaded: false } })
     }
   }, [spotPrice, quoteToken, state.kline.timeLine])
@@ -108,7 +102,6 @@ const Chart: FC = () => {
         value={state.kline.timeLine}
         objOptions={KLineTimes}
         onChange={(val) => {
-          onetime = false
           dispatch({ type: 'SET_KLINE_INIT', payload: { timeLine: Number(val) } })
         }}
       />

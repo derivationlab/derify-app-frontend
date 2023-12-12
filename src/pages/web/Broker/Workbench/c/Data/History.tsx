@@ -14,7 +14,7 @@ import { reducer, stateInit } from '@/reducers/records'
 import { useMarginTokenStore } from '@/store'
 import { MarginTokenState } from '@/store/types'
 import { Rec } from '@/typings'
-import { keepDecimals, calcShortHash, numeralNumber } from '@/utils/tools'
+import { calcShortHash, numeralNumber } from '@/utils/tools'
 
 import { RowTime, calcTimeStr } from './common'
 

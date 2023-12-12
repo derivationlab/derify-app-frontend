@@ -7,8 +7,6 @@ export const MARGIN_VISIBLE_COUNT = 20
 export const QUOTE_TOKEN_KEY = 'quote_v0.0.1'
 export const MARGIN_TOKEN_KEY = 'margin_v0.0.1'
 export const ZERO = '0x0000000000000000000000000000000000000000'
-export const DerifyV1 = 'http://v1.derify.exchange/'
-export const DerifyV20 = 'https://v20.derify.exchange/'
 export const Docs = 'https://docs.derify.finance/'
 export const Tutorial = 'https://docs.derify.finance/getting-started/tutorial'
 export const Support = 'https://discord.com/channels/822422051099902053/827112242449350686'
@@ -26,4 +24,3 @@ export const Communities = {
   Medium,
   Github
 }
-

@@ -56,7 +56,7 @@ const DepositDialog: FC<Props> = ({ visible, onClose, onClick }) => {
           </div>
           <div className="amount">
             <AmountInput
-              max={nonBigNumberInterception(balances?.[marginToken.symbol] ?? 0, 8)}
+              max={nonBigNumberInterception(balances?.[marginToken.symbol] ?? 0, 18)}
               unit={marginToken.symbol}
               title={t('Trade.Deposit.AmountToDeposit', 'Amount to deposit')}
               onChange={onChange}

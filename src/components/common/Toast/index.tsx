@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
-import { Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
+
+window.toast = toast
 
 const Toast: FC = () => {
   const option = {

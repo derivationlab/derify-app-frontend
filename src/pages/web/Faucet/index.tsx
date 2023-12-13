@@ -26,7 +26,7 @@ const mintAmount: Rec = {
   CAKE: 75000,
   XVS: 3000,
   PRRT: 1000000000000,
-  LBR: 100000,
+  LBR: 100000
 }
 
 const FaucetInner: FC = () => {

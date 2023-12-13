@@ -11,12 +11,12 @@ export const useSpaceName = () => {
   const [spaceName, setSpaceName] = useState<string | null>(null)
 
   useEffect(() => {
-    const func = async (address: string) => {
+    const func = async (address: string, web3Name:any) => {
       const name = await web3Name.getDomainName({ address, queryTldList: ['bnb'] })
       setSpaceName(name)
     }
-    if (address) void func(address)
-  }, [address])
+    if (address && web3Name) void func(address, web3Name)
+  }, [address, web3Name])
 
   return {
     spaceName

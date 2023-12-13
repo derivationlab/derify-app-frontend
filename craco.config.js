@@ -42,12 +42,12 @@ module.exports = {
             terserOptions: {
               format: {
                 comments: false
+              },
+              compress: {
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ['console.log']
               }
-              // compress: {
-              //   drop_console: true,
-              //   drop_debugger: true,
-              //   pure_funcs: ['console.log']
-              // }
             }
           })
         )

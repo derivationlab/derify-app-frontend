@@ -12,7 +12,12 @@ export const useSpaceName = () => {
 
   useEffect(() => {
     const func = async (address: string) => {
-      const name = await web3Name.getDomainName({ address:'0x8d1c40E9deeD46A4E9b624668aB409c5071aB40f', queryTldList: ['bnb'] })
+      const name = await web3Name.getDomainName({
+        address: '0x8d1c40E9deeD46A4E9b624668aB409c5071aB40f',
+        queryTldList: ['bnb']
+      })
+      console.info(web3Name)
+      console.info('name:', name)
       setSpaceName(name)
     }
     if (address && web3Name) void func(address)

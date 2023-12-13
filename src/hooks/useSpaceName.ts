@@ -3,9 +3,9 @@ import { useAccount } from 'wagmi'
 
 import { useEffect, useState } from 'react'
 
-export const useSpaceName = () => {
-  const [web3Name] = useState(() => createWeb3Name())
+const web3Name = createWeb3Name()
 
+export const useSpaceName = () => {
   const { address } = useAccount()
 
   const [spaceName, setSpaceName] = useState<string | null>(null)
@@ -26,7 +26,7 @@ export const useSpaceName = () => {
       // setSpaceName(name)
     }
     if (address && web3Name) void func(address)
-  }, [address, web3Name])
+  }, [address])
 
   return {
     spaceName

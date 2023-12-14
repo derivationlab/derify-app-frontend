@@ -3,6 +3,8 @@ import { useAccount } from 'wagmi'
 
 import { useEffect, useState } from 'react'
 
+import { INIT_RPC_URL } from '@/utils/wagmiConfig'
+
 export const useSpaceName = () => {
   const [web3Name] = useState(() => createWeb3Name())
 
@@ -11,8 +13,12 @@ export const useSpaceName = () => {
   const [spaceName, setSpaceName] = useState<string | null>(null)
 
   useEffect(() => {
-    const func = async (address: string, web3Name:any) => {
-      const name = await web3Name.getDomainName({ address, queryTldList: ['bnb'] })
+    const func = async (address: string, web3Name: any) => {
+      const name = await web3Name.getDomainName({
+        address,
+        // queryTldList: ['bnb'],
+        rpcUrl: INIT_RPC_URL()
+      })
       setSpaceName(name)
     }
     if (address && web3Name) void func(address, web3Name)

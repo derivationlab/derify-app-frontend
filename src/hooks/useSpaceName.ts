@@ -16,7 +16,6 @@ export const useSpaceName = () => {
     const func = async (address: string, web3Name: any) => {
       const name = await web3Name.getDomainName({
         address,
-        // queryTldList: ['bnb'],
         rpcUrl: INIT_RPC_URL()
       })
       setSpaceName(name)

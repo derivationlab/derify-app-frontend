@@ -41,7 +41,7 @@ export const useAllMarginPrice = (list?: Rec) => {
         prices.forEach(([data], index: number) => {
           output = {
             ...output,
-            [calls1[index].marginToken]: formatUnits(data, decimals[index])
+            [calls1[index].marginToken.toLowerCase()]: formatUnits(data, decimals[index])
           }
         })
       }

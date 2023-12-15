@@ -63,7 +63,7 @@ const AddTokenTool: FC = () => {
     if (token.direction === 'Sell') {
       window.open(`${PANCAKE_SWAP_URL}swap?inputCurrency=${token.address}`)
     } else {
-      window.open(`${PANCAKE_SWAP_URL}${token.swap}`)
+      window.open(`${PANCAKE_SWAP_URL}${token.swap}&inputCurrency=${tokens.usdt.tokenAddress}`)
     }
     setMenuStatus(false)
   }

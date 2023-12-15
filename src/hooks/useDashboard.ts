@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Contract } from 'ethers'
-import { isEmpty } from 'lodash-es'
+import { isEmpty, lowerCase } from 'lodash-es'
 import { useSigner } from 'wagmi'
 
 import { useCallback } from 'react'
@@ -107,7 +107,7 @@ export const useBuyBackPool = (list?: string[]) => {
           response.forEach(([data]: any, index: number) => {
             outputInit = {
               ...outputInit,
-              [calls[index].marginToken]: formatUnits(String(data[0]), 8)
+              [(calls[index].marginToken).toLowerCase()]: formatUnits(String(data[0]), 8)
             }
           })
 

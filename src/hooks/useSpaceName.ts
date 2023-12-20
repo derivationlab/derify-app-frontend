@@ -1,7 +1,7 @@
 import { useAccount } from 'wagmi'
 
 import { useEffect, useState } from 'react'
-import { getAddressSpaceName } from 'derify-apis-staging'
+import { getAddressSpaceName } from 'derify-apis'
 import { Rec } from '@/typings'
 
 export const useSpaceName = () => {

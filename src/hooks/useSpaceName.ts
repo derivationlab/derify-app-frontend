@@ -1,22 +1,23 @@
 import { createWeb3Name } from '@web3-name-sdk/core'
+import { getAddressSpaceName } from 'derify-apis-staging'
 import { useAccount } from 'wagmi'
 
 import { useEffect, useState } from 'react'
 
-export const useSpaceName = () => {
-  const [web3Name] = useState(() => createWeb3Name())
+import { Rec } from '@/typings'
 
+export const useSpaceName = () => {
   const { address } = useAccount()
 
   const [spaceName, setSpaceName] = useState<string | null>(null)
 
   useEffect(() => {
-    const func = async (address: string, web3Name:any) => {
-      const name = await web3Name.getDomainName({ address, queryTldList: ['bnb'] })
+    const func = async (address: string) => {
+      const { name } = await getAddressSpaceName<Rec>(address, 'bnb')
       setSpaceName(name)
     }
-    if (address && web3Name) void func(address, web3Name)
-  }, [address, web3Name])
+    if (address) void func(address)
+  }, [address])
 
   return {
     spaceName

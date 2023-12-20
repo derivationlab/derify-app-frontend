@@ -109,8 +109,8 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
         render: (symbol: string, data: Record<string, any>) => {
           if (!buyBackInfo) return <Spinner text="loading" />
           const mPrices = marginPrices ?? {}
-          const findKey = Object.keys(mPrices).find((l) => (l).toLowerCase() === (data.margin_token).toLowerCase()) ?? ''
-          const volume = buyBackInfo?.[(data.margin_token).toLowerCase()] ?? 0
+          const findKey = Object.keys(mPrices).find((l) => l.toLowerCase() === data.margin_token.toLowerCase()) ?? ''
+          const volume = buyBackInfo?.[data.margin_token.toLowerCase()] ?? 0
           const equityValue = bnMul(mPrices[findKey] ?? 0, volume)
           return (
             <>

@@ -107,7 +107,7 @@ export const useBuyBackPool = (list?: string[]) => {
           response.forEach(([data]: any, index: number) => {
             outputInit = {
               ...outputInit,
-              [(calls[index].marginToken).toLowerCase()]: formatUnits(String(data[0]), 8)
+              [calls[index].marginToken.toLowerCase()]: formatUnits(String(data[0]), 8)
             }
           })
 

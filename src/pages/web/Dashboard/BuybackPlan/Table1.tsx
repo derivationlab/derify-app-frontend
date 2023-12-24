@@ -158,7 +158,7 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
         }
       }
     ]
-  }, [t, blockNumber, tokenPrice, buyBackInfo, marginPrices])
+  }, [t, blockNumber, tokenPrice, buyBackInfo, marginPrices, state.records])
 
   const emptyText = useMemo(() => {
     if (state.records.loaded) return <Spinner small />

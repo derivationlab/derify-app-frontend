@@ -33,7 +33,7 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
   const { data: buyBackInfo } = useBuyBackPool(allMarginTokenList)
   const { data: marginPrices } = useAllMarginPrice(priceFeed)
   const [state, dispatch] = useReducer(reducer, stateInit)
-  console.info(marginPrices)
+
   const mColumns = useMemo(() => {
     return [
       {
@@ -158,7 +158,7 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
         }
       }
     ]
-  }, [t, blockNumber, tokenPrice, buyBackInfo, marginPrices])
+  }, [t, blockNumber, tokenPrice, buyBackInfo, marginPrices, state.records])
 
   const emptyText = useMemo(() => {
     if (state.records.loaded) return <Spinner small />

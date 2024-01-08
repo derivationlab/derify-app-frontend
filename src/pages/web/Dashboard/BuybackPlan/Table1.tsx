@@ -33,7 +33,7 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
   const { data: buyBackInfo } = useBuyBackPool(allMarginTokenList)
   const { data: marginPrices } = useAllMarginPrice(priceFeed)
   const [state, dispatch] = useReducer(reducer, stateInit)
-  console.info(marginPrices)
+
   const mColumns = useMemo(() => {
     return [
       {
@@ -47,12 +47,13 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
         align: 'right',
         render: (symbol: string, data: Rec) => {
           let cls = ''
+          const key = data.margin_token.toLowerCase()
           const mPrices = marginPrices ?? {}
           const price = nonBigNumberInterception(data?.last_drf_price ?? 0, 4)
           if (isGTET(price, tokenPrice)) cls = 'rise'
           if (isLT(price, tokenPrice) && isGT(price, 0)) cls = 'fall'
-          const findKey = Object.keys(mPrices).find((l) => l === data.margin_token) ?? ''
-          const volume = buyBackInfo?.[data.margin_token] ?? 0
+          const findKey = Object.keys(mPrices).find((l) => l === key) ?? ''
+          const volume = buyBackInfo?.[key] ?? 0
           const equityValue = bnMul(mPrices[findKey] ?? 0, volume)
           return (
             <>
@@ -108,9 +109,10 @@ const Table1: FC<Props> = ({ priceFeed, allMarginTokenList }) => {
         dataIndex: 'symbol',
         render: (symbol: string, data: Record<string, any>) => {
           if (!buyBackInfo) return <Spinner text="loading" />
+          const key = data.margin_token.toLowerCase()
           const mPrices = marginPrices ?? {}
-          const findKey = Object.keys(mPrices).find((l) => l.toLowerCase() === data.margin_token.toLowerCase()) ?? ''
-          const volume = buyBackInfo?.[data.margin_token.toLowerCase()] ?? 0
+          const findKey = Object.keys(mPrices).find((l) => l.toLowerCase() === key) ?? ''
+          const volume = buyBackInfo?.[key] ?? 0
           const equityValue = bnMul(mPrices[findKey] ?? 0, volume)
           return (
             <>

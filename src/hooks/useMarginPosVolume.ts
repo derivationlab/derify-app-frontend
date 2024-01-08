@@ -24,7 +24,8 @@ export const useMarginPosVolume = () => {
             [d.token]: d.total_size
           }
         })
-        // console.info(output)
+        console.info(data)
+        console.info(output)
         return output
       }
       return null

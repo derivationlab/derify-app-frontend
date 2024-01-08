@@ -1,7 +1,8 @@
+import { getAddressSpaceName } from 'derify-apis'
 import { useAccount } from 'wagmi'
 
 import { useEffect, useState } from 'react'
-import { getAddressSpaceName } from 'derify-apis'
+
 import { Rec } from '@/typings'
 
 export const useSpaceName = () => {
@@ -11,7 +12,7 @@ export const useSpaceName = () => {
 
   useEffect(() => {
     const func = async (address: string) => {
-      const { name } = await getAddressSpaceName<Rec>(address,'bnb')
+      const { name } = await getAddressSpaceName<Rec>(address, 'bnb')
       setSpaceName(name)
     }
     if (address) void func(address)

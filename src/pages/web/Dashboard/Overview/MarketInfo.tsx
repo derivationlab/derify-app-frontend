@@ -74,7 +74,7 @@ const MarketInfo: FC = () => {
           const volume1 = tradingVol?.[data.margin_token] ?? 0
           const volume2 = calcVolumeHelper(data.margin_token)
           const _prices = prices ?? Object.create(null)
-          const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
+          const findKey = Object.keys(_prices).find((l) => l === data.margin_token.toLowerCase()) ?? ''
           const findEquity = equityValues.find((l) => l.margin_token === data.margin_token)
           const equityValue1 = findEquity?.trading_net_value ?? 0
           const equityValue2 = bnMul(_prices[findKey] ?? 0, volume2)
@@ -146,7 +146,7 @@ const MarketInfo: FC = () => {
         render: (symbol: string, data: Rec) => {
           const volume = calcVolumeHelper(data.margin_token)
           const _prices = prices ?? Object.create(null)
-          const findKey = Object.keys(_prices).find((l) => l === data.margin_token) ?? ''
+          const findKey = Object.keys(_prices).find((l) => l === data.margin_token.toLowerCase()) ?? ''
           const equityValue = bnMul(_prices[findKey] ?? 0, volume)
           return (
             <>
